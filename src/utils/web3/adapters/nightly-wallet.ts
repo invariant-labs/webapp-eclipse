@@ -1,6 +1,6 @@
 import { PublicKey, Transaction, VersionedTransaction } from '@solana/web3.js'
 import { WalletAdapter } from './types'
-import { DEFAULT_PUBLICKEY } from '@store/consts/static'
+import { DEFAULT_PUBLICKEY, ECLIPSE_MAINNET_GENESIS_HASH } from '@store/consts/static'
 import { ensureError } from '@utils/utils'
 
 interface NightlyProvider {
@@ -16,6 +16,7 @@ interface NightlyProvider {
   sendMessage: (message: Uint8Array) => Promise<any>
   connect: () => Promise<void>
   disconnect: () => Promise<void>
+  changeNetwork: (options: any) => Promise<void>
   features: {
     'standard:connect': { version: string; connect: () => Promise<void> }
     'standard:disconnect': { version: string; disconnect: () => Promise<void> }
@@ -93,9 +94,14 @@ export class NightlyAdapter implements WalletAdapter {
       window.open('https://nightly.app/', '_blank')
       return
     }
-    if (!provider?._activeAccount?.address) {
-      await provider?.features['standard:connect'].connect()
+
+    if (!provider.isConnected) {
+      // await provider?.features['standard:connect'].connect()
+      await provider.changeNetwork({
+        genesisHash: ECLIPSE_MAINNET_GENESIS_HASH
+      })
     }
+
     this._nightlyProvider = provider
   }
   disconnect = async () => {

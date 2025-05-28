@@ -3,13 +3,16 @@ import Slippage from '@components/Modals/Slippage/Slippage'
 import Refresher from '@common/Refresher/Refresher'
 import { Box, Button, Fade, Grid, Hidden, Typography, useMediaQuery } from '@mui/material'
 import {
+  ADDRESSES_TO_REVERT_TOKEN_PAIRS,
   ALL_FEE_TIERS_DATA,
   autoSwapPools,
   DepositOptions,
   NetworkType,
   PositionTokenBlock,
   promotedTiers,
-  REFRESHER_INTERVAL
+  REFRESHER_INTERVAL,
+  USDC_MAIN,
+  USDT_MAIN
 } from '@store/consts/static'
 import {
   addressToTicker,
@@ -19,6 +22,7 @@ import {
   convertBalanceToBN,
   determinePositionTokenBlock,
   getConcentrationIndex,
+  initialXtoY,
   parseFeeToPathFee,
   printBN,
   ROUTES,
@@ -165,6 +169,7 @@ export interface INewPosition {
   onMaxSlippageToleranceCreatePositionChange: (val: string) => void
   initialMaxSlippageToleranceCreatePosition: string
   updateLiquidity: (lq: BN) => void
+  suggestedPrice: number
 }
 
 export const NewPosition: React.FC<INewPosition> = ({
@@ -240,7 +245,8 @@ export const NewPosition: React.FC<INewPosition> = ({
   onMaxSlippageToleranceSwapChange,
   initialMaxSlippageToleranceSwap,
   onMaxSlippageToleranceCreatePositionChange,
-  initialMaxSlippageToleranceCreatePosition
+  initialMaxSlippageToleranceCreatePosition,
+  suggestedPrice
 }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
@@ -278,10 +284,13 @@ export const NewPosition: React.FC<INewPosition> = ({
 
   const [shouldReversePlot, setShouldReversePlot] = useState(false)
 
-  const concentrationArray = useMemo(() => {
+  const concentrationArray: number[] = useMemo(() => {
     const validatedMidPrice = validConcentrationMidPriceTick(midPrice.index, isXtoY, tickSpacing)
 
-    return getConcentrationArray(tickSpacing, 2, validatedMidPrice).sort((a, b) => a - b)
+    const array = getConcentrationArray(tickSpacing, 2, validatedMidPrice).sort((a, b) => a - b)
+    const maxConcentrationArray = [...array, calculateConcentration(0, tickSpacing)]
+
+    return maxConcentrationArray
   }, [tickSpacing, midPrice.index])
 
   const [concentrationIndex, setConcentrationIndex] = useState(
@@ -841,6 +850,52 @@ export const NewPosition: React.FC<INewPosition> = ({
     updateLiquidity(liquidityBasedOnTokenB)
   }, [alignment])
 
+  const [wasRefreshed, setWasRefreshed] = useState(false)
+
+  useEffect(() => {
+    if (isWaitingForNewPool) {
+      setWasRefreshed(true)
+    }
+  }, [isWaitingForNewPool])
+
+  const usdcPrice = useMemo(() => {
+    if (tokenAIndex === null || tokenBIndex === null) return null
+
+    const revertDenominator = initialXtoY(
+      tokens[tokenAIndex].assetAddress.toString(),
+      tokens[tokenBIndex].assetAddress.toString()
+    )
+
+    if (
+      tokens[tokenAIndex].assetAddress.equals(USDC_MAIN.address) ||
+      tokens[tokenBIndex].assetAddress.equals(USDC_MAIN.address) ||
+      tokens[tokenAIndex].assetAddress.equals(USDT_MAIN.address) ||
+      tokens[tokenBIndex].assetAddress.equals(USDT_MAIN.address)
+    ) {
+      return null
+    }
+
+    const shouldDisplayPrice =
+      ADDRESSES_TO_REVERT_TOKEN_PAIRS.includes(tokens[tokenAIndex].assetAddress.toString()) ||
+      ADDRESSES_TO_REVERT_TOKEN_PAIRS.includes(tokens[tokenBIndex].assetAddress.toString())
+
+    if (!shouldDisplayPrice) {
+      return null
+    }
+
+    const ratioToDenominator = revertDenominator ? midPrice.x : 1 / midPrice.x
+    const denominatorPrice = revertDenominator ? tokenBPriceData?.price : tokenAPriceData?.price
+
+    if (!denominatorPrice) {
+      return null
+    }
+
+    return {
+      token: revertDenominator ? tokens[tokenAIndex].symbol : tokens[tokenBIndex].symbol,
+      price: ratioToDenominator * denominatorPrice
+    }
+  }, [midPrice.x, priceALoading, priceBLoading])
+
   return (
     <Grid container className={classes.wrapper}>
       <Link to={ROUTES.PORTFOLIO} style={{ textDecoration: 'none', maxWidth: 'fit-content' }}>
@@ -1317,6 +1372,8 @@ export const NewPosition: React.FC<INewPosition> = ({
             unblockUpdatePriceRange={unblockUpdatePriceRange}
             onlyUserPositions={onlyUserPositions}
             setOnlyUserPositions={setOnlyUserPositions}
+            usdcPrice={usdcPrice}
+            suggestedPrice={suggestedPrice}
           />
         ) : (
           <PoolInit
@@ -1328,6 +1385,7 @@ export const NewPosition: React.FC<INewPosition> = ({
             tokenASymbol={tokenAIndex !== null ? tokens[tokenAIndex].symbol : 'ABC'}
             tokenBSymbol={tokenBIndex !== null ? tokens[tokenBIndex].symbol : 'XYZ'}
             midPriceIndex={midPrice.index}
+            midPriceSqrtPrice={midPrice.sqrtPrice}
             onChangeMidPrice={onChangeMidPrice}
             currentPairReversed={currentPairReversed}
             positionOpeningMethod={positionOpeningMethod}
@@ -1346,6 +1404,9 @@ export const NewPosition: React.FC<INewPosition> = ({
               )
             }
             currentFeeIndex={currentFeeIndex}
+            suggestedPrice={suggestedPrice}
+            wasRefreshed={wasRefreshed}
+            setWasRefreshed={setWasRefreshed}
           />
         )}
       </Grid>

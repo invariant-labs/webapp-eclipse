@@ -1,16 +1,16 @@
-import { alpha } from '@mui/material'
 import { colors, theme, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => ({
   container: {
-    maxWidth: 1072,
+    maxWidth: 1210,
     borderRadius: '24px',
     maxHeight: 'fit-content',
     position: 'relative',
     zIndex: 2,
+
     backgroundColor: `${colors.invariant.component} !important`,
-    padding: '24px 32px',
+    padding: '24px',
     [theme.breakpoints.down('sm')]: {
       padding: '24px 12px'
     },
@@ -34,7 +34,14 @@ export const useStyles = makeStyles()(() => ({
       display: 'none'
     },
     '&.Mui-expanded': {
-      margin: '0px !important',
+      '&:last-child': {
+        marginBottom: '0px !important'
+      },
+      '&:first-child': {
+        marginTop: '0px !important'
+      },
+      marginBottom: '8px !important',
+      marginTop: '8px !important',
       '&::after': {
         content: '""',
         position: 'absolute',
@@ -42,13 +49,15 @@ export const useStyles = makeStyles()(() => ({
         top: 0,
         pointerEvents: 'none',
         height: '100%',
-        padding: '0px 10px',
         transiton: 'all 0.3s ease-in-out',
         width: '100%',
-        background: `linear-gradient(to right, ${alpha(colors.invariant.light, 0.2)} , transparent)`,
-        opacity: 1
+        borderRadius: '24px',
+        zIndex: 1,
+        background: colors.invariant.pinkGreenLinearGradientOpacity
       }
-    },
+    }
+  },
+  separator: {
     '&:not(:last-child)': {
       borderBottom: `1px solid ${colors.invariant.light}`
     }
@@ -57,31 +66,37 @@ export const useStyles = makeStyles()(() => ({
     display: 'grid',
     gridTemplateColumns: '1fr 40px',
     alignItems: 'center',
-    padding: '16px 2px',
+    padding: '24px',
+
     '& .MuiAccordionSummary-content': {
       margin: 0
     },
     '& .MuiAccordionSummary-expandIconWrapper': {
       display: 'flex',
       justifyContent: 'center',
+      zIndex: 5,
       alignItems: 'center'
     },
     '& p': {
       color: colors.invariant.text,
-      fontSize: '16px',
-      fontWeight: 500
+      ...typography.heading4
     }
   },
   item: {
+    ...typography.body2,
+    fontWeight: 400,
+    color: colors.invariant.textGrey,
+    fontSize: '20px',
+    padding: '0px 24px 24px',
     '& a': {
-      color: '#2EE09A',
+      color: colors.invariant.green,
       textDecoration: 'none',
       '&:hover': {
         textDecoration: 'underline'
       }
     },
     '& ul': {
-      paddingLeft: theme.spacing(2),
+      paddingLeft: '32px',
       marginTop: theme.spacing(1),
       marginBottom: theme.spacing(1)
     },
@@ -97,9 +112,6 @@ export const useStyles = makeStyles()(() => ({
     '& p': {
       color: colors.invariant.textGrey,
       ...typography.body2,
-      fontWeight: 400,
-      lineHeight: '20px',
-      fontSize: '16px',
       opacity: 0.8
     }
   }

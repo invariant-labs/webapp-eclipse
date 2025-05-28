@@ -1,15 +1,18 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import useStyles from './styles'
-import { Grid, Typography } from '@mui/material'
+import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
 import {
   fees24,
   isLoading,
+  lastInterval,
   liquidityPlot,
   poolsStatsWithTokensDetails,
   tokensStatsWithTokensDetails,
   tvl24,
+  volume,
+  tvl,
   volume24,
   volumePlot
 } from '@store/selectors/stats'
@@ -26,14 +29,23 @@ import { actions as snackbarActions } from '@store/reducers/snackbars'
 import { VariantType } from 'notistack'
 import { getPromotedPools } from '@store/selectors/leaderboard'
 import { FilterSearch, ISearchToken } from '@common/FilterSearch/FilterSearch'
+import { Intervals as IntervalsKeys } from '@store/consts/static'
+import { Separator } from '@common/Separator/Separator'
+import { colors, theme } from '@static/theme'
+import Intervals from '@components/Stats/Intervals/Intervals'
 
 export const WrappedStats: React.FC = () => {
-  const { classes } = useStyles()
+  const { classes, cx } = useStyles()
+
+  const isSm = useMediaQuery(theme.breakpoints.down('sm'))
 
   const dispatch = useDispatch()
 
   const poolsList = useSelector(poolsStatsWithTokensDetails)
   const tokensList = useSelector(tokensStatsWithTokensDetails)
+  const volumeInterval = useSelector(volume)
+  const tvlInterval = useSelector(tvl)
+
   const volume24h = useSelector(volume24)
   const tvl24h = useSelector(tvl24)
   const fees24h = useSelector(fees24)
@@ -42,13 +54,22 @@ export const WrappedStats: React.FC = () => {
   const isLoadingStats = useSelector(isLoading)
   const currentNetwork = useSelector(network)
   const promotedPools = useSelector(getPromotedPools)
+
+  const lastFetchedInterval = useSelector(lastInterval)
+  const [interval, setInterval] = useState<IntervalsKeys>(
+    (lastFetchedInterval as IntervalsKeys) || IntervalsKeys.Daily
+  )
   const [searchTokensValue, setSearchTokensValue] = useState<ISearchToken[]>([])
   const [searchPoolsValue, setSearchPoolsValue] = useState<ISearchToken[]>([])
 
   useEffect(() => {
-    dispatch(actions.getCurrentStats())
+    dispatch(actions.getCurrentIntervalStats({ interval }))
     dispatch(leaderboardActions.getLeaderboardConfig())
   }, [])
+
+  useEffect(() => {
+    dispatch(actions.getCurrentIntervalStats({ interval }))
+  }, [interval])
 
   const filteredTokenList = useMemo(() => {
     if (searchTokensValue.length === 0) {
@@ -117,21 +138,39 @@ export const WrappedStats: React.FC = () => {
       ) : (
         <>
           <Typography className={classes.subheader}>Overview</Typography>
-          <Grid container className={classes.plotsRow}>
-            <Volume
-              volume={volume24h.value}
-              percentVolume={volume24h.change}
-              data={volumePlotData}
-              className={classes.plot}
-              isLoading={isLoadingStats}
-            />
-            <Liquidity
-              liquidityVolume={tvl24h.value}
-              liquidityPercent={tvl24h.change}
-              data={liquidityPlotData}
-              className={classes.plot}
-              isLoading={isLoadingStats}
-            />
+          <Grid
+            container
+            className={cx(classes.plotsRow, {
+              [classes.loadingOverlay]: isLoadingStats
+            })}>
+            <>
+              <Intervals interval={interval} setInterval={setInterval} />
+
+              <Box display='flex' gap={'24px'} flexDirection={isSm ? 'column' : 'row'}>
+                <Volume
+                  volume={volumeInterval.value}
+                  data={volumePlotData}
+                  className={classes.plot}
+                  isLoading={isLoadingStats}
+                  interval={interval}
+                />
+                {
+                  <Separator
+                    color={colors.invariant.light}
+                    margin={isSm ? '0 24px' : '24px 0'}
+                    width={1}
+                    isHorizontal={isSm}
+                  />
+                }
+                <Liquidity
+                  liquidityVolume={tvlInterval.value}
+                  data={liquidityPlotData}
+                  className={classes.plot}
+                  isLoading={isLoadingStats}
+                  interval={interval}
+                />
+              </Box>
+            </>
           </Grid>
           <Grid className={classes.row}>
             <VolumeBar
@@ -142,12 +181,67 @@ export const WrappedStats: React.FC = () => {
               feesVolume={fees24h.value}
               percentFees={fees24h.change}
               isLoading={isLoadingStats}
+              interval={IntervalsKeys.Daily}
+            />
+          </Grid>
+          <Grid className={classes.rowContainer}>
+            <Typography className={classes.subheader} mb={2}>
+              Top pools
+            </Typography>
+            <FilterSearch
+              networkType={currentNetwork}
+              setSelectedFilters={setSearchPoolsValue}
+              selectedFilters={searchPoolsValue}
+              filtersAmount={2}
+            />
+          </Grid>
+          <Grid container className={classes.row}>
+            <PoolList
+              initialLength={poolsList.length}
+              interval={interval}
+              data={filteredPoolsList.map(poolData => ({
+                symbolFrom: poolData.tokenXDetails?.symbol ?? poolData.tokenX.toString(),
+                symbolTo: poolData.tokenYDetails?.symbol ?? poolData.tokenY.toString(),
+                iconFrom: poolData.tokenXDetails?.logoURI ?? unknownTokenIcon,
+                iconTo: poolData.tokenYDetails?.logoURI ?? unknownTokenIcon,
+                volume: poolData.volume24,
+                TVL: poolData.tvl,
+                fee: poolData.fee,
+                addressFrom: poolData.tokenX.toString(),
+                addressTo: poolData.tokenY.toString(),
+                apy: poolData.apy,
+                lockedX: poolData.lockedX,
+                lockedY: poolData.lockedY,
+                liquidityX: poolData.liquidityX,
+                liquidityY: poolData.liquidityY,
+                apyData: {
+                  fees: poolData.apy,
+                  accumulatedFarmsSingleTick: 0,
+                  accumulatedFarmsAvg: 0
+                },
+
+                isUnknownFrom: poolData.tokenXDetails?.isUnknown ?? false,
+                isUnknownTo: poolData.tokenYDetails?.isUnknown ?? false,
+                poolAddress: poolData.poolAddress.toString(),
+                pointsPerSecond:
+                  promotedPools.find(pool => pool.address === poolData.poolAddress.toString())
+                    ?.pointsPerSecond || '0',
+                isPromoted: promotedPools.some(
+                  pool => pool.address === poolData.poolAddress.toString()
+                )
+              }))}
+              network={currentNetwork}
+              copyAddressHandler={copyAddressHandler}
+              isLoading={isLoadingStats}
+              showAPY={showAPY}
+              filteredTokens={searchPoolsValue}
             />
           </Grid>
           <Grid className={classes.rowContainer}>
             <Typography className={classes.subheader} mb={2}>
               Top tokens
             </Typography>
+
             <FilterSearch
               networkType={currentNetwork}
               selectedFilters={searchTokensValue}
@@ -156,74 +250,23 @@ export const WrappedStats: React.FC = () => {
               closeOnSelect={true}
             />
           </Grid>
-          <Grid container className={classes.row}>
-            <TokensList
-              initialLength={tokensList.length}
-              data={filteredTokenList.map(tokenData => ({
-                icon: tokenData.tokenDetails?.logoURI ?? unknownTokenIcon,
-                name: tokenData.tokenDetails?.name ?? tokenData.address.toString(),
-                symbol: tokenData.tokenDetails?.symbol ?? tokenData.address.toString(),
-                price: tokenData.price,
-                // priceChange: tokenData.priceChange,
-                volume: tokenData.volume24,
-                TVL: tokenData.tvl,
-                address: tokenData.address.toString(),
-                isUnknown: tokenData.tokenDetails?.isUnknown ?? false
-              }))}
-              network={currentNetwork}
-              copyAddressHandler={copyAddressHandler}
-              isLoading={isLoadingStats}
-            />
-          </Grid>
-          <Grid className={classes.rowContainer}>
-            <Typography className={classes.subheader} mb={2}>
-              Top pools
-            </Typography>
-
-            <FilterSearch
-              networkType={currentNetwork}
-              setSelectedFilters={setSearchPoolsValue}
-              selectedFilters={searchPoolsValue}
-              filtersAmount={2}
-            />
-          </Grid>
-          <PoolList
-            initialLength={poolsList.length}
-            data={filteredPoolsList.map(poolData => ({
-              symbolFrom: poolData.tokenXDetails?.symbol ?? poolData.tokenX.toString(),
-              symbolTo: poolData.tokenYDetails?.symbol ?? poolData.tokenY.toString(),
-              iconFrom: poolData.tokenXDetails?.logoURI ?? unknownTokenIcon,
-              iconTo: poolData.tokenYDetails?.logoURI ?? unknownTokenIcon,
-              volume: poolData.volume24,
-              TVL: poolData.tvl,
-              fee: poolData.fee,
-              addressFrom: poolData.tokenX.toString(),
-              addressTo: poolData.tokenY.toString(),
-              apy: poolData.apy,
-              lockedX: poolData.lockedX,
-              lockedY: poolData.lockedY,
-              liquidityX: poolData.liquidityX,
-              liquidityY: poolData.liquidityY,
-              apyData: {
-                fees: poolData.apy,
-                accumulatedFarmsSingleTick: 0,
-                accumulatedFarmsAvg: 0
-              },
-
-              isUnknownFrom: poolData.tokenXDetails?.isUnknown ?? false,
-              isUnknownTo: poolData.tokenYDetails?.isUnknown ?? false,
-              poolAddress: poolData.poolAddress.toString(),
-              pointsPerSecond:
-                promotedPools.find(pool => pool.address === poolData.poolAddress.toString())
-                  ?.pointsPerSecond || '0',
-              isPromoted: promotedPools.some(
-                pool => pool.address === poolData.poolAddress.toString()
-              )
+          <TokensList
+            initialLength={tokensList.length}
+            data={filteredTokenList.map(tokenData => ({
+              icon: tokenData.tokenDetails?.logoURI ?? unknownTokenIcon,
+              name: tokenData.tokenDetails?.name ?? tokenData.address.toString(),
+              symbol: tokenData.tokenDetails?.symbol ?? tokenData.address.toString(),
+              price: tokenData.price,
+              // priceChange: tokenData.priceChange,
+              volume: tokenData.volume24,
+              TVL: tokenData.tvl,
+              address: tokenData.address.toString(),
+              isUnknown: tokenData.tokenDetails?.isUnknown ?? false
             }))}
             network={currentNetwork}
             copyAddressHandler={copyAddressHandler}
             isLoading={isLoadingStats}
-            showAPY={showAPY}
+            interval={interval}
           />
         </>
       )}

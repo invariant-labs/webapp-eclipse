@@ -72,30 +72,22 @@ import assetsEmptyIcon from './svg/assets_empty.svg'
 import settings3Icon from './svg/settings3.svg'
 import faucetIcon from './svg/faucet.svg'
 import searchIcon from './svg/lupaDark.svg'
-import allDomainsIcon from '@static/svg/allDomains.svg'
-import turboTapIcon from '@static/svg/turboTap.svg'
-import nucleusIcon from '@static/svg/nucleus.svg'
 import navRightIcon from '@static/svg/navRight.svg'
 import navLeftIcon from '@static/svg/navLeft.svg'
 import checkIcon from '@static/svg/checkFill.svg'
-import celestialMammothIcon from '@static/svg/celestialMammoth.svg'
-import edasIcon from '@static/svg/edas.svg'
 import leaderboardGoldenIcon from '@static/svg/leaderboardGolden.svg'
 import leaderboardSilverIcon from '@static/svg/leaderboardSilver.svg'
 import leaderboardBronzeIcon from '@static/svg/leaderboardBronze.svg'
-import ensofiIcon from '@static/svg/ensofi.svg'
 import disconnectIcon from '@static/svg/disconnect.svg'
 import refreshIcon from '@static/svg/refresh.svg'
 import backIcon from '@static/svg/back-arrow.svg'
 import settingIcon from '@static/svg/settings.svg'
-import revertIcon from '@static/svg/revert.svg'
 import unlockIcon from '@static/svg/unlock.svg'
 import swapPositionIcon from '@static/svg/swap-position.svg'
 import handleMaxIcon from '@static/svg/narrowChartMaxHandle.svg'
 import handleMinIcon from '@static/svg/narrowChartMinHandle.svg'
 import zoomInIcon from '@static/svg/zoom-in-icon.svg'
 import zoomOutIcon from '@static/svg/zoom-out-icon.svg'
-import reverseTokensIcon from './svg/reverse-tokens.svg'
 import backArrowIcon from '@static/svg/back-arrow.svg'
 import lockIcon2 from '@static/svg/lock.svg'
 import boostPointsBoldIcon from '@static/svg/boostPointsBold.svg'
@@ -106,6 +98,8 @@ import snackbarSwapIcon from './svg/snackbarSwap.svg'
 import circleDolarIcon from './svg/circleDolar.svg'
 import depositIcon from './svg/depositIcon.svg'
 import withdrawIcon from './svg/withdrawIcon.svg'
+import centerToRangeIcon from './svg/centerToRange.svg'
+import warning3 from './svg/warning3.svg'
 import connectWalletIcon from './svg/connectWalletIcon.svg'
 
 export {
@@ -183,30 +177,22 @@ export {
   faucetIcon,
   closeYellowIcon,
   searchIcon,
-  allDomainsIcon,
-  turboTapIcon,
-  nucleusIcon,
   navRightIcon,
   navLeftIcon,
   checkIcon,
-  celestialMammothIcon,
-  edasIcon,
   leaderboardGoldenIcon,
   leaderboardSilverIcon,
   leaderboardBronzeIcon,
-  ensofiIcon,
   disconnectIcon,
   refreshIcon,
   backIcon,
   settingIcon,
-  revertIcon,
   unlockIcon,
   swapPositionIcon,
   handleMaxIcon,
   handleMinIcon,
   zoomInIcon,
   zoomOutIcon,
-  reverseTokensIcon,
   backArrowIcon,
   lockIcon2,
   boostPointsBoldIcon,
@@ -217,6 +203,8 @@ export {
   circleDolarIcon,
   depositIcon,
   withdrawIcon,
+  centerToRangeIcon,
+  warning3,
   connectWalletIcon
 }
 

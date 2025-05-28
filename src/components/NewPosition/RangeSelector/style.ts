@@ -19,7 +19,9 @@ const useStyles = makeStyles()(theme => {
     },
     headerContainer: {
       justifyContent: 'space-between',
-      marginBottom: 12
+      marginBottom: 12,
+      flexDirection: 'row',
+      minHeight: 65
     },
     header: {
       ...typography.heading4,
@@ -38,7 +40,11 @@ const useStyles = makeStyles()(theme => {
     },
     plot: {
       width: '100%',
-      height: 185
+      height: 185,
+      [theme.breakpoints.down('md')]: {
+        height: 253,
+        marginBottom: 24
+      }
     },
     subheader: {
       ...typography.heading4,
@@ -221,11 +227,34 @@ const useStyles = makeStyles()(theme => {
       height: 60,
       marginLeft: 16
     },
+    currentPriceContainer: {
+      marginTop: 23
+    },
     currentPrice: {
       display: 'inline-block',
       color: colors.invariant.yellow,
-      ...typography.caption2,
-      textAlign: 'right'
+      ...typography.caption2
+    },
+    priceWarning: {
+      display: 'inline-block',
+      color: colors.invariant.Error,
+      ...typography.body2,
+      marginLeft: 4,
+      marginTop: 2,
+      fontSize: 14
+    },
+    priceWarningIcon: {
+      width: 16,
+      height: 16
+    },
+    priceWarningContainer: {
+      display: 'flex',
+      alignItems: 'center'
+    },
+    usdcCurrentPrice: {
+      display: 'inline-block',
+      color: colors.invariant.text,
+      ...typography.body2
     },
     checkboxLabel: {
       color: colors.invariant.textGrey,
@@ -241,21 +270,14 @@ const useStyles = makeStyles()(theme => {
     subheaderWrapper: {
       justifyContent: 'space-between',
       alignItems: 'center',
-      minHeight: 36
+      minHeight: 36,
+      rowGap: 16
     },
     priceRangeContainer: {
+      display: 'flex',
       flexDirection: 'column',
-      width: 'auto',
-      height: 43,
       alignItems: 'flex-start',
-      justifyContent: 'space-between'
-    },
-    currentPriceContainer: {
-      flexDirection: 'column',
-      width: 'auto',
-      height: 43,
-      alignItems: 'flex-start',
-      justifyContent: 'flex-end'
+      minHeight: 87
     },
     rangeConcentration: {
       display: 'flex',

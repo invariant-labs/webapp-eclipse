@@ -17,6 +17,8 @@ export interface TokensDetailsProps {
   tokenYAmount: string
   tokenXIcon: string
   tokenYIcon: string
+  tokenXSymbol: string
+  tokenYSymbol: string
   earnedPoints?: string
   tokenXIconAutoSwap?: string
   tokenYIconAutoSwap?: string

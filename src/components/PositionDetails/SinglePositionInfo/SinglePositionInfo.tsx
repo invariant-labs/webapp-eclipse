@@ -13,6 +13,7 @@ import { PoolDetails as PoolDetailsType } from '@containers/SinglePositionWrappe
 import { calculateAPYAndAPR } from '@utils/utils'
 import { PublicKey } from '@solana/web3.js'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
+import { Intervals } from '@store/consts/static'
 
 interface IProp {
   onClickClaimFee: () => void
@@ -30,6 +31,8 @@ interface IProp {
   isPreview: boolean
   showPositionLoader?: boolean
   isPromotedLoading: boolean
+  isClosing: boolean
+  interval: Intervals
 }
 
 const SinglePositionInfo: React.FC<IProp> = ({
@@ -47,7 +50,9 @@ const SinglePositionInfo: React.FC<IProp> = ({
   isPreview,
   points24,
   arePointsDistributed,
-  isPromotedLoading
+  isPromotedLoading,
+  isClosing,
+  interval
 }) => {
   const [isFeeTooltipOpen, setIsFeeTooltipOpen] = useState(false)
   const { classes } = useStyles()
@@ -136,7 +141,7 @@ const SinglePositionInfo: React.FC<IProp> = ({
               <TooltipHover title={"Can't claim fees in preview"}>
                 <Button
                   className={classes.claimButton}
-                  disabled={tokenX.claimValue + tokenY.claimValue === 0 || isPreview}
+                  disabled={tokenX.claimValue + tokenY.claimValue === 0 || isPreview || isClosing}
                   variant='contained'
                   onClick={() => onClickClaimFee()}>
                   Claim
@@ -145,7 +150,7 @@ const SinglePositionInfo: React.FC<IProp> = ({
             ) : (
               <Button
                 className={classes.claimButton}
-                disabled={tokenX.claimValue + tokenY.claimValue === 0 || isPreview}
+                disabled={tokenX.claimValue + tokenY.claimValue === 0 || isPreview || isClosing}
                 variant='contained'
                 onClick={() => onClickClaimFee()}>
                 Claim
@@ -196,6 +201,7 @@ const SinglePositionInfo: React.FC<IProp> = ({
             volume24={poolDetails?.volume24 ?? 0}
             fee24={poolDetails?.fee24 ?? 0}
             showPoolDetailsLoader={showPoolDetailsLoader}
+            interval={interval}
           />
         </Section>
       </Box>

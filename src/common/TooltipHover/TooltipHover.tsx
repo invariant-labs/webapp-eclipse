@@ -72,7 +72,7 @@ export const TooltipHover = ({
     return () => {
       if (callback) clearTimeout(callback)
     }
-  }, [titleHover, childrenHover, 100])
+  }, [titleHover, childrenHover])
 
   useEffect(() => {
     if (isMobile && open) {
@@ -87,7 +87,13 @@ export const TooltipHover = ({
       if (callback) clearTimeout(callback)
     }
   }, [open, isMobile])
+  useEffect(() => {
+    if (!allowEnterTooltip) {
+      setOpen(false)
+    }
+  }, [allowEnterTooltip])
 
+  if (!title) return children
   return (
     <Tooltip
       classes={{ tooltip: gradient ? classes.tooltipGradient : classes.tooltipNoGradient }}
@@ -98,6 +104,7 @@ export const TooltipHover = ({
       open={open}
       title={
         <Box
+          maxWidth={300}
           onMouseEnter={allowEnterTooltip ? () => setTitleHover(true) : undefined}
           onMouseLeave={allowEnterTooltip ? () => setTitleHover(false) : undefined}
           textAlign={textAlign}>
@@ -113,10 +120,27 @@ export const TooltipHover = ({
             setOpen(true)
           }
         }}
-        onMouseEnter={() => setChildrenHover(true)}
+        onMouseEnter={() => {
+          if (allowEnterTooltip && !isMobile) {
+            setChildrenHover(true)
+            setOpen(true)
+          }
+        }}
+        onMouseDown={() => {
+          console.log('mousedown')
+          console.log(allowEnterTooltip)
+          if (allowEnterTooltip && isMobile) {
+            console.log('mouseenter')
+            setChildrenHover(true)
+            setOpen(true)
+          }
+        }}
         onMouseLeave={() => setChildrenHover(false)}
-        onFocus={() => setChildrenHover(true)}
-        onBlur={() => setChildrenHover(false)}>
+        onFocus={allowEnterTooltip ? () => setChildrenHover(true) : undefined}
+        onBlur={() => {
+          setChildrenHover(false)
+          setOpen(false)
+        }}>
         {children}
       </span>
     </Tooltip>

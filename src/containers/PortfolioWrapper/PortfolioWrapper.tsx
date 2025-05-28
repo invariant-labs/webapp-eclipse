@@ -1,4 +1,5 @@
 import {
+  Intervals,
   NetworkType,
   POSITIONS_PER_PAGE,
   WETH_CLOSE_POSITION_LAMPORTS_MAIN,
@@ -23,7 +24,8 @@ import {
   PositionData,
   positionListSwitcher,
   positionsWithPoolsData,
-  prices
+  prices,
+  shouldDisable
 } from '@store/selectors/positions'
 import { address, balanceLoading, status, swapTokens, balance } from '@store/selectors/solanaWallet'
 import { useEffect, useMemo } from 'react'
@@ -57,6 +59,7 @@ const PortfolioWrapper = () => {
   const isBalanceLoading = useSelector(balanceLoading)
   const pricesData = useSelector(prices)
   const ethBalance = useSelector(balance)
+  const disabledButton = useSelector(shouldDisable)
   const positionListAlignment = useSelector(positionListSwitcher)
 
   const navigate = useNavigate()
@@ -83,7 +86,7 @@ const PortfolioWrapper = () => {
   }
 
   useEffect(() => {
-    dispatch(actionsStats.getCurrentStats())
+    dispatch(actionsStats.getCurrentIntervalStats({ interval: Intervals.Daily }))
   }, [])
 
   const handleLockPosition = (index: number) => {
@@ -333,6 +336,7 @@ const PortfolioWrapper = () => {
 
   return isConnected ? (
     <Portfolio
+      shouldDisable={disabledButton}
       tokensList={tokensList}
       isBalanceLoading={isBalanceLoading}
       handleSnackbar={handleSnackbar}

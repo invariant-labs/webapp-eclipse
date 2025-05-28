@@ -2,8 +2,15 @@ import React, { useMemo, useEffect, useState } from 'react'
 import PoolListItem from '@components/Stats/PoolListItem/PoolListItem'
 import { useStyles } from './style'
 import { Grid, useMediaQuery } from '@mui/material'
-import { BTC_TEST, NetworkType, SortTypePoolList, USDC_TEST, WETH_TEST } from '@store/consts/static'
-import { PaginationList } from '@common/Pagination/Pagination'
+import {
+  BTC_TEST,
+  Intervals,
+  NetworkType,
+  SortTypePoolList,
+  USDC_TEST,
+  WETH_TEST
+} from '@store/consts/static'
+import { InputPagination } from '@common/Pagination/InputPagination/InputPagination'
 import { VariantType } from 'notistack'
 import { useNavigate } from 'react-router-dom'
 
@@ -37,6 +44,8 @@ export interface PoolListInterface {
   copyAddressHandler: (message: string, variant: VariantType) => void
   isLoading: boolean
   showAPY: boolean
+  filteredTokens: ISearchToken[]
+  interval: Intervals
 }
 
 import { Keypair } from '@solana/web3.js'
@@ -44,7 +53,8 @@ import { BN } from '@coral-xyz/anchor'
 import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
 import { ROUTES } from '@utils/utils'
 import { colors, theme } from '@static/theme'
-import { TableBoundsLabel } from '@common/TableBoundsLabel/TableBoundsLabel'
+import { ISearchToken } from '@common/FilterSearch/FilterSearch'
+import { shortenAddress } from '@utils/uiUtils'
 
 const ITEMS_PER_PAGE = 10
 
@@ -84,14 +94,18 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
   initialLength,
   copyAddressHandler,
   isLoading,
-  showAPY
+  showAPY,
+  filteredTokens,
+  interval
 }) => {
   const [page, setPage] = React.useState(1)
   const [sortType, setSortType] = React.useState(SortTypePoolList.VOLUME_DESC)
   const navigate = useNavigate()
   const [initialDataLength, setInitialDataLength] = useState(initialLength)
   const isCenterAligment = useMediaQuery(theme.breakpoints.down(1280))
-  const height = initialDataLength > ITEMS_PER_PAGE ? (isCenterAligment ? 120 : 90) : 69
+  const height = initialDataLength > ITEMS_PER_PAGE ? (isCenterAligment ? 176 : 90) : 69
+  const filteredTokenX = filteredTokens[0] ?? ''
+  const filteredTokenY = filteredTokens[1] ?? ''
   const { classes, cx } = useStyles()
   const sortedData = useMemo(() => {
     if (isLoading) {
@@ -111,6 +125,10 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
         return data.sort((a, b) => a.fee - b.fee)
       case SortTypePoolList.FEE_DESC:
         return data.sort((a, b) => b.fee - a.fee)
+      case SortTypePoolList.FEE_24_ASC:
+        return data.sort((a, b) => a.fee * a.volume - b.fee * b.volume)
+      case SortTypePoolList.FEE_24_DESC:
+        return data.sort((a, b) => b.fee * b.volume - a.fee * a.volume)
       case SortTypePoolList.VOLUME_ASC:
         return data.sort((a, b) => (a.volume === b.volume ? a.TVL - b.TVL : a.volume - b.volume))
       case SortTypePoolList.VOLUME_DESC:
@@ -167,11 +185,13 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
         sortType={sortType}
         network={network}
         showAPY={showAPY}
+        interval={interval}
       />
       {data.length > 0 || isLoading ? (
         <>
           {paginator(page).map((element, index) => (
             <PoolListItem
+              interval={interval}
               itemNumber={index + 1 + (page - 1) * ITEMS_PER_PAGE}
               displayType='token'
               tokenIndex={index + 1 + (page - 1) * ITEMS_PER_PAGE}
@@ -221,13 +241,20 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
       ) : (
         <Grid container className={classes.emptyWrapper}>
           <EmptyPlaceholder
-            height={initialDataLength < ITEMS_PER_PAGE ? initialDataLength * 69 : 690}
+            height={initialDataLength < ITEMS_PER_PAGE ? initialDataLength * 69 : 688}
             newVersion
-            mainTitle='Pool not found...'
+            mainTitle={`The ${shortenAddress(filteredTokenX.symbol ?? '')}/${shortenAddress(filteredTokenY.symbol ?? '')} pool was not found...`}
             desc={initialDataLength < 3 ? '' : 'You can create it yourself!'}
             desc2={initialDataLength < 5 ? '' : 'Or try adjusting your search criteria!'}
             buttonName='Create Pool'
-            onAction={() => navigate(ROUTES.NEW_POSITION)}
+            onAction={() =>
+              navigate(
+                ROUTES.getNewPositionRoute(filteredTokenX.address, filteredTokenY.address, '0_10'),
+                {
+                  state: { referer: 'stats' }
+                }
+              )
+            }
             withButton={true}
             withImg={initialDataLength > 3}
           />
@@ -239,19 +266,19 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
           height: height
         }}>
         {pages > 0 && (
-          <TableBoundsLabel
+          <InputPagination
             borderTop={false}
-            lowerBound={lowerBound}
-            totalItems={totalItems}
-            upperBound={upperBound}>
-            <PaginationList
-              pages={pages}
-              defaultPage={1}
-              handleChangePage={handleChangePagination}
-              variant='center'
-              page={page}
-            />
-          </TableBoundsLabel>
+            pages={pages}
+            defaultPage={1}
+            handleChangePage={handleChangePagination}
+            variant='center'
+            page={page}
+            pagesNumeration={{
+              lowerBound: lowerBound,
+              totalItems: totalItems,
+              upperBound: upperBound
+            }}
+          />
         )}
       </Grid>
     </Grid>

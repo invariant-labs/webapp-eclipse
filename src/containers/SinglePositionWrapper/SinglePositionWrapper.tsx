@@ -20,9 +20,12 @@ import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
 import { network, timeoutError } from '@store/selectors/solanaConnection'
 import {
   isLoadingPositionsList,
+  lockedPositionsNavigationData,
   plotTicks,
   positionData,
+  positionsNavigationData,
   positionWithPoolData,
+  shouldDisable,
   singlePositionData,
   showFeesLoader as storeFeesLoader
 } from '@store/selectors/positions'
@@ -39,13 +42,13 @@ import { calculateClaimAmount } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { lockerState } from '@store/selectors/locker'
 import { theme } from '@static/theme'
 import { actions as statsActions } from '@store/reducers/stats'
-import { isLoading, poolsStatsWithTokensDetails } from '@store/selectors/stats'
+import { isLoading, lastInterval, poolsStatsWithTokensDetails } from '@store/selectors/stats'
 import { getPromotedPools, isLoading as promotedLoading } from '@store/selectors/leaderboard'
 import { actions as leaderboardActions } from '@store/reducers/leaderboard'
-import { estimatePointsForUserPositions } from '@invariant-labs/points-sdk'
 import { BN } from '@coral-xyz/anchor'
-import { LEADERBOARD_DECIMAL } from '@store/consts/static'
+import { Intervals, LEADERBOARD_DECIMAL } from '@store/consts/static'
 import { poolsArraySortedByFees } from '@store/selectors/pools'
+import { estimatePointsForUserPositions } from '@invariant-labs/points-sdk'
 
 export interface IProps {
   id: string
@@ -76,6 +79,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   const poolsList = useSelector(poolsArraySortedByFees)
   const statsPolsList = useSelector(poolsStatsWithTokensDetails)
   const isLoadingList = useSelector(isLoadingPositionsList)
+  const disableButton = useSelector(shouldDisable)
   const {
     allData: ticksData,
     loading: ticksLoading,
@@ -88,6 +92,9 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   const walletStatus = useSelector(status)
   const ethBalance = useSelector(balance)
 
+  const navigationData = useSelector(positionsNavigationData)
+  const lockedNavigationData = useSelector(lockedPositionsNavigationData)
+  const poolStatsInterval = useSelector(lastInterval)
   const isTimeoutError = useSelector(timeoutError)
 
   const [showFeesLoader, setShowFeesLoader] = useState(true)
@@ -98,6 +105,64 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   const [isClosingPosition, setIsClosingPosition] = useState(false)
 
   const isLoadingStats = useSelector(isLoading)
+
+  const previousPosition = useMemo(() => {
+    const data = position?.isLocked ? lockedNavigationData : navigationData
+
+    if (data.length < 2) {
+      return null
+    }
+
+    const currentIndex = data.findIndex(position => position.id.toString() === id)
+
+    if (currentIndex === -1) {
+      return null
+    }
+
+    return data[currentIndex - 1] ?? null
+  }, [position?.isLocked, lockedNavigationData, navigationData, id])
+
+  const nextPosition = useMemo(() => {
+    const data = position?.isLocked ? lockedNavigationData : navigationData
+
+    if (data.length < 2) {
+      return null
+    }
+
+    const currentIndex = data.findIndex(position => position.id.toString() === id)
+
+    if (currentIndex === -1) {
+      return null
+    }
+
+    return data[currentIndex + 1] ?? null
+  }, [position?.isLocked, lockedNavigationData, navigationData, id])
+
+  const lastPosition = useMemo(() => {
+    const data = position?.isLocked ? lockedNavigationData : navigationData
+
+    if (data.length < 2) {
+      return null
+    }
+
+    return data[data.length - 1]
+  }, [position?.isLocked, lockedNavigationData, navigationData, id])
+
+  const paginationData = useMemo(() => {
+    const data = position?.isLocked ? lockedNavigationData : navigationData
+
+    const currentIndex = data.findIndex(position => position.id.toString() === id)
+    return {
+      totalPages: data.length,
+      currentPage: currentIndex + 1
+    }
+  }, [position?.isLocked, lockedNavigationData, navigationData])
+
+  const handleChangePagination = (currentIndex: number) => {
+    const data = position?.isLocked ? lockedNavigationData : navigationData
+    const navigateToData = data[currentIndex - 1]
+    navigate(ROUTES.getPositionRoute(navigateToData.id))
+  }
 
   useEffect(() => {
     if (position?.id) {
@@ -185,7 +250,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
             position.tokenY.decimals
           )
         : 0,
-    [position?.lowerTickIndex]
+    [position?.lowerTickIndex, position?.id.toString()]
   )
   const max = useMemo(
     () =>
@@ -196,7 +261,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
             position.tokenY.decimals
           )
         : 0,
-    [position?.upperTickIndex]
+    [position?.upperTickIndex, position?.id.toString()]
   )
   const current = useMemo(
     () =>
@@ -208,7 +273,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
             position.tokenY.decimals
           )
         : 0,
-    [position]
+    [position, position?.id.toString()]
   )
 
   const tokenXLiquidity = useMemo(() => {
@@ -287,27 +352,35 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     }
 
     return ticksData
-  }, [ticksData, ticksLoading, position?.id])
+  }, [ticksData, ticksLoading, position?.id.toString()])
 
   const [triggerFetchPrice, setTriggerFetchPrice] = useState(false)
 
   const [tokenXPriceData, setTokenXPriceData] = useState<TokenPriceData | undefined>(undefined)
+  const [pricesLoading, setPricesLoading] = useState(false)
+
   const [tokenYPriceData, setTokenYPriceData] = useState<TokenPriceData | undefined>(undefined)
 
   useEffect(() => {
     if (!position) {
       return
     }
-
+    setPricesLoading(true)
     const xAddr = position.tokenX.assetAddress.toString()
     getTokenPrice(xAddr, currentNetwork)
       .then(data => setTokenXPriceData({ price: data ?? 0 }))
       .catch(() => setTokenXPriceData(getMockedTokenPrice(position.tokenX.symbol, currentNetwork)))
+      .finally(() => {
+        setPricesLoading(false)
+      })
 
     const yAddr = position.tokenY.assetAddress.toString()
     getTokenPrice(yAddr, currentNetwork)
       .then(data => setTokenYPriceData({ price: data ?? 0 }))
       .catch(() => setTokenYPriceData(getMockedTokenPrice(position.tokenY.symbol, currentNetwork)))
+      .finally(() => {
+        setPricesLoading(false)
+      })
   }, [position?.id, triggerFetchPrice])
 
   const copyPoolAddressHandler = (message: string, variant: VariantType) => {
@@ -391,7 +464,14 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       if (position?.positionIndex === undefined && isClosingPosition) {
         setIsClosingPosition(false)
         dispatch(connectionActions.setTimeoutError(false))
-        navigate(ROUTES.PORTFOLIO)
+
+        if (nextPosition) {
+          navigate(ROUTES.getPositionRoute(nextPosition.id))
+        } else if (previousPosition) {
+          navigate(ROUTES.getPositionRoute(previousPosition.id))
+        } else {
+          navigate(ROUTES.PORTFOLIO)
+        }
       } else {
         dispatch(connectionActions.setTimeoutError(false))
         onRefresh()
@@ -400,7 +480,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   }, [isLoadingList])
 
   useEffect(() => {
-    dispatch(statsActions.getCurrentStats())
+    dispatch(statsActions.getCurrentIntervalStats({ interval: Intervals.Daily }))
   }, [])
 
   const poolDetails = useMemo(() => {
@@ -442,20 +522,26 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       pool => pool.address === position?.poolData.address.toString()
     )?.pointsPerSecond
 
-    return estimatePointsForUserPositions(
-      [position],
-      position.poolData,
-      new BN(pointsPerSecond, 'hex').mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL)))
-    )
+    try {
+      return estimatePointsForUserPositions(
+        [position],
+        position.poolData,
+        new BN(pointsPerSecond, 'hex').mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL)))
+      )
+    } catch {
+      return 0
+    }
   }
   const points24 = calculatePoints24()
 
   if (position) {
     return (
       <PositionDetails
+        shouldDisable={disableButton}
         tokenXAddress={position.tokenX.assetAddress}
         tokenYAddress={position.tokenY.assetAddress}
         poolAddress={position.poolData.address}
+        interval={poolStatsInterval || Intervals.Daily}
         copyPoolAddressHandler={copyPoolAddressHandler}
         detailsData={data}
         midPrice={midPrice}
@@ -481,7 +567,13 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
             actions.closePosition({
               positionIndex: position.positionIndex,
               onSuccess: () => {
-                navigate(ROUTES.PORTFOLIO)
+                if (lastPosition && nextPosition) {
+                  navigate(ROUTES.getPositionRoute(lastPosition.id))
+                } else if (previousPosition) {
+                  navigate(ROUTES.getPositionRoute(previousPosition.id))
+                } else {
+                  navigate(ROUTES.PORTFOLIO)
+                }
               },
               claimFarmRewards
             })
@@ -542,6 +634,12 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         isPreview={isPreview}
         showPositionLoader={position.ticksLoading}
         isPromotedLoading={isPromotedLoading}
+        pricesLoading={pricesLoading}
+        previousPosition={previousPosition}
+        nextPosition={nextPosition}
+        positionId={id}
+        paginationData={paginationData}
+        handleChangePagination={handleChangePagination}
       />
     )
   }
@@ -567,10 +665,8 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
           themeDark
           style={isMobile ? { paddingTop: 8 } : {}}
           roundedCorners={true}
-          mainTitle='Wallet is not connected
-'
-          desc='No liquidity positions to show
-'
+          mainTitle='Wallet is not connected'
+          desc='No liquidity positions to show'
           withButton={false}
           connectButton={true}
           onAction2={() => dispatch(walletActions.connect(false))}
