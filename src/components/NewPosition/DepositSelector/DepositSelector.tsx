@@ -59,6 +59,7 @@ import {
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import DepoSitOptionsModal from '@components/Modals/DepositOptionsModal/DepositOptionsModal'
 import { theme } from '@static/theme'
+import loadingAnimation from '@static/gif/loading.gif'
 
 export interface InputState {
   value: string
@@ -672,7 +673,12 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
 
   const renderWarning = useCallback(() => {
     if (isSimulating || throttle) {
-      return <Skeleton variant='rectangular' className={classes.skeleton} />
+      return (
+        <Box position='relative'>
+          <Skeleton variant='rectangular' className={classes.skeleton}></Skeleton>
+          <img src={loadingAnimation} alt='Loader' className={classes.loadingAnimation} />
+        </Box>
+      )
     }
     if (!simulation) {
       return <></>
