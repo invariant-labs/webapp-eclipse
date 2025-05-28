@@ -57,6 +57,7 @@ import { PayloadAction } from '@reduxjs/toolkit'
 
 export function* getWallet(): SagaGenerator<WalletAdapter> {
   const wallet = yield* call(getEclipseWallet)
+
   return wallet
 }
 export function* getBalance(pubKey: PublicKey): SagaGenerator<BN> {

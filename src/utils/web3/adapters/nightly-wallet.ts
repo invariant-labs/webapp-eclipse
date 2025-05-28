@@ -40,11 +40,11 @@ export class NightlyAdapter implements WalletAdapter {
     this.connect = this.connect.bind(this)
   }
   get connected() {
-    return this._nightlyProvider?._activeAccount?.address || false
+    return this._nightlyProvider && this._nightlyProvider.accounts?.length > 0 ? true : false
   }
   get publicKey() {
-    return this._nightlyProvider?._activeAccount.publicKey
-      ? new PublicKey(this._nightlyProvider?._activeAccount?.address?.toString())
+    return this._nightlyProvider?.accounts?.length
+      ? new PublicKey(this._nightlyProvider?.accounts[0].address?.toString())
       : DEFAULT_PUBLICKEY
   }
   signAllTransactions = async (
