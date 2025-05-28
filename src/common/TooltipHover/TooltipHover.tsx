@@ -128,10 +128,7 @@ export const TooltipHover = ({
           }
         }}
         onMouseDown={() => {
-          console.log('mousedown')
-          console.log(allowEnterTooltip)
           if (allowEnterTooltip && isMobile) {
-            console.log('mouseenter')
             setChildrenHover(true)
             setOpen(true)
           }
