@@ -622,6 +622,11 @@ export const promotedTiers = [
     tokenX: BITZ_MAIN.address,
     tokenY: WETH_MAIN.address,
     index: 6
+  },
+  {
+    tokenX: USDC_MAIN.address,
+    tokenY: TUSD_MAIN.address,
+    index: 1
   }
 ]
 
@@ -893,6 +898,11 @@ export const getPopularPools = (network: NetworkType) => {
           tokenX: 'GU7NS9xCwgNPiAdJ69iusFrRfawjDDPjeMBovhV1d4kn',
           tokenY: 'So11111111111111111111111111111111111111112',
           fee: '0.01'
+        },
+        {
+          tokenX: 'GKJFjUts7QWb29g3h5P6Pw8hBECh2tsHrVzasjvCYtGJ',
+          tokenY: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
+          fee: '0.02'
         }
       ]
     default:
