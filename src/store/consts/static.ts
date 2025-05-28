@@ -594,6 +594,16 @@ export const autoSwapPools = [
       feeIndex: 6
     }
   }
+  // {
+  //   pair: {
+  //     tokenX: new PublicKey('AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE'),
+  //     tokenY: new PublicKey('27Kkn8PWJbKJsRZrxbsYDdedpUQKnJ5vNfserCxNEJ3R')
+  //   },
+  //   swapPool: {
+  //     address: new PublicKey('1Zxv7bYYzMuK8eey85ZSowa24S8B7QNfDx3GQpKQ4Bf'),
+  //     feeIndex: 0
+  //   }
+  // }
 ]
 export const promotedTiers = [
   {
@@ -620,6 +630,11 @@ export const promotedTiers = [
     tokenX: BITZ_MAIN.address,
     tokenY: WETH_MAIN.address,
     index: 6
+  },
+  {
+    tokenX: USDC_MAIN.address,
+    tokenY: TUSD_MAIN.address,
+    index: 0
   }
 ]
 
@@ -892,6 +907,11 @@ export const getPopularPools = (network: NetworkType) => {
           tokenY: 'So11111111111111111111111111111111111111112',
           fee: '0.01'
         }
+        // {
+        //   tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
+        //   tokenY: '27Kkn8PWJbKJsRZrxbsYDdedpUQKnJ5vNfserCxNEJ3R',
+        //   fee: '0.01'
+        // }
       ]
     default:
       return []
