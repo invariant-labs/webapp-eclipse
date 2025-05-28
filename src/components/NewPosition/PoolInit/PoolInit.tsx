@@ -346,18 +346,23 @@ export const PoolInit: React.FC<IPoolInit> = ({
           formatterFunction={validateMidPriceInput}
           suggestedPrice={suggestedPrice}
           tooltipTitle={
-            <span className={classes.suggestedPriceTooltipText}>
-              <p>
-                Set the initial pool price based on the price from the most liquid existing market,{' '}
-                <span className={classes.boldedText}>
-                  {tokenASymbol}/{tokenBSymbol}{' '}
-                  {Number(printBN(ALL_FEE_TIERS_DATA[bestFeeIndex].tier.fee, DECIMAL - 2)).toFixed(
-                    2
-                  )}
-                  %{' '}
-                </span>
-              </p>
-            </span>
+            bestFeeIndex !== -1 && suggestedPrice ? (
+              <span className={classes.suggestedPriceTooltipText}>
+                <p>
+                  Set the initial pool price based on the price from the most liquid existing
+                  market,{' '}
+                  <span className={classes.boldedText}>
+                    {tokenASymbol}/{tokenBSymbol}{' '}
+                    {Number(
+                      printBN(ALL_FEE_TIERS_DATA[bestFeeIndex].tier.fee, DECIMAL - 2)
+                    ).toFixed(2)}
+                    %{' '}
+                  </span>
+                </p>
+              </span>
+            ) : (
+              ''
+            )
           }
         />
 

@@ -532,7 +532,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
                 <TooltipHover
                   placement='bottom'
                   title={
-                    bestFeeIndex !== -1 ? (
+                    bestFeeIndex !== -1 && currentFeeIndex !== -1 ? (
                       <span className={classes.suggestedPriceTooltipText}>
                         <p>
                           The price on the{' '}
