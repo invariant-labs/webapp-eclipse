@@ -654,17 +654,19 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
               : ''
           }
           classes={{ tooltip: classes.tooltip }}>
-          <Button
-            onClick={handleClickDepositOptions}
-            className={classes.optionsIconBtn}
-            disableRipple
-            disabled={!isAutoswapOn}>
-            <img
-              src={settingIcon}
-              className={!isAutoswapOn ? classes.grayscaleIcon : classes.whiteIcon}
-              alt='options'
-            />
-          </Button>
+          <div>
+            <Button
+              onClick={handleClickDepositOptions}
+              className={classes.optionsIconBtn}
+              disableRipple
+              disabled={!isAutoswapOn}>
+              <img
+                src={settingIcon}
+                className={!isAutoswapOn ? classes.grayscaleIcon : classes.whiteIcon}
+                alt='options'
+              />
+            </Button>
+          </div>
         </Tooltip>
       </>
     ),
@@ -1153,20 +1155,22 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             fullSpan
             title='More ETH is required to cover the transaction fee. Obtain more ETH to complete this transaction.'
             top={-10}>
-            <AnimatedButton
-              className={cx(
-                classes.addButton,
-                progress === 'none' ? classes.hoverButton : undefined
-              )}
-              onClick={() => {
-                if (progress === 'none') {
-                  onAddLiquidity()
-                }
-              }}
-              disabled={getButtonMessage() !== 'Add Position'}
-              content={getButtonMessage()}
-              progress={progress}
-            />
+            <Box width={'100%'}>
+              <AnimatedButton
+                className={cx(
+                  classes.addButton,
+                  progress === 'none' ? classes.hoverButton : undefined
+                )}
+                onClick={() => {
+                  if (progress === 'none') {
+                    onAddLiquidity()
+                  }
+                }}
+                disabled={getButtonMessage() !== 'Add Position'}
+                content={getButtonMessage()}
+                progress={progress}
+              />
+            </Box>
           </TooltipHover>
         ) : (
           <AnimatedButton

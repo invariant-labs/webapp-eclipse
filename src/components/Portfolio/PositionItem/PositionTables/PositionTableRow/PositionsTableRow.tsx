@@ -1,4 +1,4 @@
-import { Grid, TableRow, TableCell, Typography, useMediaQuery, Box, Skeleton } from '@mui/material'
+import { Grid, TableCell, Typography, useMediaQuery, Box, Skeleton } from '@mui/material'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { MinMaxChart } from '../../components/MinMaxChart/MinMaxChart'
 import { colors, theme } from '@static/theme'
@@ -381,7 +381,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
   const { success, inProgress } = useSelector(lockerState)
 
   return (
-    <TableRow>
+    <>
       <LockLiquidityModal
         open={isLockPositionModalOpen}
         onClose={() => setIsLockPositionModalOpen(false)}
@@ -437,6 +437,6 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
       <TableCell className={`${classes.cellBase} ${classes.actionCell} action-button`}>
         {actionsFragment}
       </TableCell>
-    </TableRow>
+    </>
   )
 }
