@@ -1,5 +1,5 @@
 import React from 'react'
-import { alpha, Box, Grid, Typography, useMediaQuery } from '@mui/material'
+import { alpha, Grid, Typography, useMediaQuery } from '@mui/material'
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
 import LaunchIcon from '@mui/icons-material/Launch'
 import { colors, theme, typography } from '@static/theme'
@@ -122,11 +122,9 @@ const LeaderboardLpItem: React.FC<LeaderboardLpItemProps> = props => {
               : domain
             : shortenAddress(address.toString(), 4)}{' '}
           {isYou ? (
-            <Typography style={{ color: colors.invariant.pink, marginLeft: '5px' }}>
-              (You)
-            </Typography>
+            <span style={{ color: colors.invariant.pink, marginLeft: '5px' }}>(You)</span>
           ) : null}
-          <Box className={classes.copyWrapper}>
+          <span className={classes.copyWrapper}>
             <TooltipHover title='Copy address'>
               <FileCopyOutlinedIcon
                 onClick={copyToClipboard}
@@ -140,7 +138,7 @@ const LeaderboardLpItem: React.FC<LeaderboardLpItemProps> = props => {
                 <LaunchIcon classes={{ root: classes.clipboardIcon }} />
               </Link>
             </TooltipHover>
-          </Box>
+          </span>
         </Typography>
 
         <Typography>
@@ -153,25 +151,21 @@ const LeaderboardLpItem: React.FC<LeaderboardLpItemProps> = props => {
         {!isMd && <Typography>{positions}</Typography>}
 
         {!isMd && (
-          <Typography>
-            <Typography
-              style={{
-                color: colors.invariant.green,
-                ...typography.heading4
-              }}>
-              {new BN(last24hPoints, 'hex').lt(pointOneValue) ? (
-                <span style={{ color: colors.invariant.text }}>0</span>
-              ) : (
-                <span>
-                  +{' '}
-                  {formatNumberWithCommas(
-                    parseFloat(printBN(new BN(last24hPoints, 'hex'), LEADERBOARD_DECIMAL)).toFixed(
-                      1
-                    )
-                  )}
-                </span>
-              )}
-            </Typography>
+          <Typography
+            style={{
+              color: colors.invariant.green,
+              ...typography.heading4
+            }}>
+            {new BN(last24hPoints, 'hex').lt(pointOneValue) ? (
+              <span style={{ color: colors.invariant.text }}>0</span>
+            ) : (
+              <span>
+                +{' '}
+                {formatNumberWithCommas(
+                  parseFloat(printBN(new BN(last24hPoints, 'hex'), LEADERBOARD_DECIMAL)).toFixed(1)
+                )}
+              </span>
+            )}
           </Typography>
         )}
       </Grid>

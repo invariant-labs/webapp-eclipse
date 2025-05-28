@@ -66,7 +66,7 @@ const useStyles = makeStyles<{ isEmpty: boolean }>()((_theme: Theme, { isEmpty }
       textDecoration: 'none'
     },
     row: {
-      '&:first-child': {
+      '&:first-of-type': {
         borderTop: `1px solid ${colors.invariant.light}`
       },
 

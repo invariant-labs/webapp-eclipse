@@ -71,7 +71,7 @@ export const Claim: React.FC<ClaimProps> = ({
                 </Box>
               </Box>
             </Box>
-            <Typography className={classes.description2}>
+            <Box className={classes.description2}>
               If you want to learn more about points distribution, check out our docs.
               <Link
                 to='https://docs.invariant.app/docs/invariant_points/mechanism'
@@ -85,7 +85,7 @@ export const Claim: React.FC<ClaimProps> = ({
                   </Button>
                 </Box>
               </Link>
-            </Typography>
+            </Box>
           </>
         </Box>
       </Box>

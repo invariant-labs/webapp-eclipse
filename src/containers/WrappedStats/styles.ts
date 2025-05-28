@@ -26,7 +26,8 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     borderRadius: 24,
     padding: 24,
     [theme.breakpoints.down('sm')]: {
-      flexDirection: 'column'
+      flexDirection: 'column',
+      padding: '12px 8px'
     }
   },
   row: {
