@@ -481,7 +481,7 @@ export const KYSOL_MAIN: Token = {
 }
 
 export const TUSD_MAIN: Token = {
-  tokenProgram: TOKEN_PROGRAM_ID,
+  tokenProgram: TOKEN_2022_PROGRAM_ID,
   symbol: 'tUSD',
   address: new PublicKey('GKJFjUts7QWb29g3h5P6Pw8hBECh2tsHrVzasjvCYtGJ'),
   decimals: 6,
@@ -775,9 +775,9 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
       TURBO_AI: TURBO_AI_MAIN.address.toString(),
       ORCA: ORCA_MAIN.address.toString(),
       SOLAR: SOLAR_MAIN.address.toString(),
-      KYSOL_MAIN: KYSOL_MAIN.address.toString(),
-      EZSOL_MAIN: EZSOL_MAIN.address.toString(),
-      TUSD_MAIN: TUSD_MAIN.address.toString()
+      KYSOL: KYSOL_MAIN.address.toString(),
+      EZSOL: EZSOL_MAIN.address.toString(),
+      TUSD: TUSD_MAIN.address.toString()
     }
   }
 }
