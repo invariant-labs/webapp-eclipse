@@ -7,6 +7,7 @@ import {
   DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_SWAP,
   DEFAULT_AUTOSWAP_MIN_UTILIZATION,
   DEFAULT_NEW_POSITION_SLIPPAGE,
+  Intervals,
   LEADERBOARD_DECIMAL,
   autoSwapPools,
   commonTokensForNetworks
@@ -773,7 +774,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   const isLoadingStats = useSelector(isLoading)
 
   useEffect(() => {
-    dispatch(statsActions.getCurrentStats())
+    dispatch(statsActions.getCurrentIntervalStats({ interval: Intervals.Daily }))
   }, [])
 
   const { feeTiersWithTvl, totalTvl } = useMemo(() => {
@@ -836,6 +837,47 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       )
     }
   }, [autoSwapPoolData])
+
+  const suggestedPrice = useMemo(() => {
+    if (tokenAIndex === null || tokenBIndex === null) {
+      return 0
+    }
+
+    const feeTiersTVLValues = Object.values(feeTiersWithTvl)
+    const bestFee = feeTiersTVLValues.length > 0 ? Math.max(...feeTiersTVLValues) : 0
+    const bestTierIndex = ALL_FEE_TIERS_DATA.findIndex(tier => {
+      return feeTiersWithTvl[+printBN(tier.tier.fee, DECIMAL - 2)] === bestFee && bestFee > 0
+    })
+
+    if (bestTierIndex === -1) {
+      return 0
+    }
+
+    const poolIndex = allPools.findIndex(
+      pool =>
+        pool.fee.eq(ALL_FEE_TIERS_DATA[bestTierIndex].tier.fee) &&
+        ((pool.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
+          pool.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
+          (pool.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
+            pool.tokenY.equals(tokens[tokenAIndex].assetAddress)))
+    )
+
+    if (poolIndex === -1) {
+      dispatch(
+        poolsActions.getPoolData(
+          new Pair(tokens[tokenAIndex].assetAddress, tokens[tokenBIndex].assetAddress, {
+            fee: ALL_FEE_TIERS_DATA[bestTierIndex].tier.fee,
+            tickSpacing: ALL_FEE_TIERS_DATA[bestTierIndex].tier.tickSpacing
+          })
+        )
+      )
+      return 0
+    }
+
+    return poolIndex !== -1
+      ? calcPriceBySqrtPrice(allPools[poolIndex].sqrtPrice, isXtoY, xDecimal, yDecimal)
+      : 0
+  }, [tokenAIndex, tokenBIndex, allPools.length, currentPairReversed])
 
   return (
     <NewPosition
@@ -1106,6 +1148,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       initialMaxSlippageToleranceSwap={initialMaxSlippageToleranceSwap}
       onMaxSlippageToleranceCreatePositionChange={onMaxSlippageToleranceCreatePositionChange}
       initialMaxSlippageToleranceCreatePosition={initialMaxSlippageToleranceCreatePosition}
+      suggestedPrice={suggestedPrice}
     />
   )
 }

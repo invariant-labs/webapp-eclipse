@@ -2,8 +2,15 @@ import React, { useMemo, useEffect, useState } from 'react'
 import PoolListItem from '@components/Stats/PoolListItem/PoolListItem'
 import { useStyles } from './style'
 import { Grid, useMediaQuery } from '@mui/material'
-import { BTC_TEST, NetworkType, SortTypePoolList, USDC_TEST, WETH_TEST } from '@store/consts/static'
-import { PaginationList } from '@common/Pagination/Pagination'
+import {
+  BTC_TEST,
+  Intervals,
+  NetworkType,
+  SortTypePoolList,
+  USDC_TEST,
+  WETH_TEST
+} from '@store/consts/static'
+import { InputPagination } from '@common/Pagination/InputPagination/InputPagination'
 import { VariantType } from 'notistack'
 import { useNavigate } from 'react-router-dom'
 
@@ -38,6 +45,7 @@ export interface PoolListInterface {
   isLoading: boolean
   showAPY: boolean
   filteredTokens: ISearchToken[]
+  interval: Intervals
 }
 
 import { Keypair } from '@solana/web3.js'
@@ -45,7 +53,6 @@ import { BN } from '@coral-xyz/anchor'
 import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
 import { ROUTES } from '@utils/utils'
 import { colors, theme } from '@static/theme'
-import { TableBoundsLabel } from '@common/TableBoundsLabel/TableBoundsLabel'
 import { ISearchToken } from '@common/FilterSearch/FilterSearch'
 import { shortenAddress } from '@utils/uiUtils'
 
@@ -88,14 +95,15 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
   copyAddressHandler,
   isLoading,
   showAPY,
-  filteredTokens
+  filteredTokens,
+  interval
 }) => {
   const [page, setPage] = React.useState(1)
   const [sortType, setSortType] = React.useState(SortTypePoolList.VOLUME_DESC)
   const navigate = useNavigate()
   const [initialDataLength, setInitialDataLength] = useState(initialLength)
   const isCenterAligment = useMediaQuery(theme.breakpoints.down(1280))
-  const height = initialDataLength > ITEMS_PER_PAGE ? (isCenterAligment ? 120 : 90) : 69
+  const height = initialDataLength > ITEMS_PER_PAGE ? (isCenterAligment ? 176 : 90) : 69
   const filteredTokenX = filteredTokens[0] ?? ''
   const filteredTokenY = filteredTokens[1] ?? ''
   const { classes, cx } = useStyles()
@@ -177,11 +185,13 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
         sortType={sortType}
         network={network}
         showAPY={showAPY}
+        interval={interval}
       />
       {data.length > 0 || isLoading ? (
         <>
           {paginator(page).map((element, index) => (
             <PoolListItem
+              interval={interval}
               itemNumber={index + 1 + (page - 1) * ITEMS_PER_PAGE}
               displayType='token'
               tokenIndex={index + 1 + (page - 1) * ITEMS_PER_PAGE}
@@ -256,19 +266,19 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
           height: height
         }}>
         {pages > 0 && (
-          <TableBoundsLabel
+          <InputPagination
             borderTop={false}
-            lowerBound={lowerBound}
-            totalItems={totalItems}
-            upperBound={upperBound}>
-            <PaginationList
-              pages={pages}
-              defaultPage={1}
-              handleChangePage={handleChangePagination}
-              variant='center'
-              page={page}
-            />
-          </TableBoundsLabel>
+            pages={pages}
+            defaultPage={1}
+            handleChangePage={handleChangePagination}
+            variant='center'
+            page={page}
+            pagesNumeration={{
+              lowerBound: lowerBound,
+              totalItems: totalItems,
+              upperBound: upperBound
+            }}
+          />
         )}
       </Grid>
     </Grid>

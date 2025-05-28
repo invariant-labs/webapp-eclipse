@@ -169,6 +169,7 @@ export interface INewPosition {
   onMaxSlippageToleranceCreatePositionChange: (val: string) => void
   initialMaxSlippageToleranceCreatePosition: string
   updateLiquidity: (lq: BN) => void
+  suggestedPrice: number
 }
 
 export const NewPosition: React.FC<INewPosition> = ({
@@ -244,7 +245,8 @@ export const NewPosition: React.FC<INewPosition> = ({
   onMaxSlippageToleranceSwapChange,
   initialMaxSlippageToleranceSwap,
   onMaxSlippageToleranceCreatePositionChange,
-  initialMaxSlippageToleranceCreatePosition
+  initialMaxSlippageToleranceCreatePosition,
+  suggestedPrice
 }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
@@ -1371,6 +1373,7 @@ export const NewPosition: React.FC<INewPosition> = ({
             onlyUserPositions={onlyUserPositions}
             setOnlyUserPositions={setOnlyUserPositions}
             usdcPrice={usdcPrice}
+            suggestedPrice={suggestedPrice}
           />
         ) : (
           <PoolInit
@@ -1401,6 +1404,7 @@ export const NewPosition: React.FC<INewPosition> = ({
               )
             }
             currentFeeIndex={currentFeeIndex}
+            suggestedPrice={suggestedPrice}
             wasRefreshed={wasRefreshed}
             setWasRefreshed={setWasRefreshed}
           />

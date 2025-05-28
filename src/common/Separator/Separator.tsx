@@ -6,15 +6,17 @@ type Props = {
   isHorizontal?: boolean
   color?: string
   margin?: string
+  width?: number
 }
 
 export const Separator = ({
   size = 'auto',
   isHorizontal = false,
   color = colors.invariant.componentBcg,
-  margin = '0'
+  margin = '0',
+  width
 }: Props) => {
-  const { classes } = useStyles({ size, isHorizontal, color, margin })
+  const { classes } = useStyles({ size, isHorizontal, color, margin, width })
 
   return <hr className={classes.separator} />
 }

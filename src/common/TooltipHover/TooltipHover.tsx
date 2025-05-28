@@ -121,17 +121,27 @@ export const TooltipHover = ({
             setOpen(true)
           }
         }}
-        onMouseEnter={
-          allowEnterTooltip
-            ? () => {
-                setChildrenHover(true)
-                setOpen(true)
-              }
-            : undefined
-        }
+        onMouseEnter={() => {
+          if (allowEnterTooltip && !isMobile) {
+            setChildrenHover(true)
+            setOpen(true)
+          }
+        }}
+        onMouseDown={() => {
+          console.log('mousedown')
+          console.log(allowEnterTooltip)
+          if (allowEnterTooltip && isMobile) {
+            console.log('mouseenter')
+            setChildrenHover(true)
+            setOpen(true)
+          }
+        }}
         onMouseLeave={() => setChildrenHover(false)}
         onFocus={allowEnterTooltip ? () => setChildrenHover(true) : undefined}
-        onBlur={() => setChildrenHover(false)}>
+        onBlur={() => {
+          setChildrenHover(false)
+          setOpen(false)
+        }}>
         {children}
       </span>
     </Tooltip>
