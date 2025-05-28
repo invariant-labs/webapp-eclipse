@@ -37,17 +37,22 @@ export const InputPagination: React.FC<IPaginationList> = ({
   const { classes } = useStyles({ borderTop, isMobile })
   const [currentPage, setCurrentPage] = useState<number | string>(defaultPage)
 
+  const [inputValue, setInputValue] = useState<string>(defaultPage.toString())
   const [inputWidth, setInputWidth] = useState<number | string>(0)
 
-  const changePage = (value: string) => {
+  const changePageImmediate = (value: string) => {
     const num = parseInt(value)
+    console.log(num)
+    console.log(isNaN(num))
+
     if (isNaN(num)) {
-      setCurrentPage('')
+      console.log('test')
+      setCurrentPage(1)
       handleChangePage(1)
       return
     }
 
-    if (num < 1 || !value) {
+    if (num < 1) {
       setCurrentPage(1)
       handleChangePage(1)
       return
@@ -63,17 +68,26 @@ export const InputPagination: React.FC<IPaginationList> = ({
     handleChangePage(num)
   }
 
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      changePageImmediate(inputValue)
+    }, 500)
+
+    return () => clearTimeout(timeout)
+  }, [inputValue])
+
   useLayoutEffect(() => {
-    if (currentPage) {
-      setInputWidth(currentPage.toString().length * 12 + 16)
+    if (inputValue) {
+      setInputWidth(inputValue.length * 12 + 16)
     } else {
       setInputWidth(1 * 12 + 16)
     }
-  }, [currentPage])
+  }, [inputValue])
 
   useEffect(() => {
     if (defaultPage) {
       setCurrentPage(defaultPage)
+      setInputValue(defaultPage.toString())
       handleChangePage(defaultPage)
     }
   }, [pages])
@@ -92,15 +106,37 @@ export const InputPagination: React.FC<IPaginationList> = ({
             <input
               className={classes.input}
               style={{ width: inputWidth }}
-              value={currentPage}
-              onChange={e => changePage(e.target.value)}
-              type='number'
+              value={inputValue}
+              onChange={e => {
+                const value = e.target.value
+
+                if (value === '') {
+                  setInputValue('')
+                  return
+                }
+
+                if (!/^\d+$/.test(value)) {
+                  return
+                }
+
+                const numericValue = Number(value)
+
+                if (numericValue > pages) {
+                  setInputValue(String(pages))
+                  return
+                }
+
+                setInputValue(value)
+              }}
+              type='text'
+              inputMode='numeric'
               onBlur={() => {
-                if (!currentPage) {
-                  setCurrentPage(1)
+                if (inputValue === '') {
+                  setInputValue('1')
                 }
               }}
             />
+
             <Typography className={classes.labelText}> page</Typography>
           </Box>
         )}
@@ -115,6 +151,7 @@ export const InputPagination: React.FC<IPaginationList> = ({
           page={typeof currentPage === 'number' ? currentPage : 1}
           onChange={(_e, newPage) => {
             setCurrentPage(newPage)
+            setInputValue(newPage.toString())
             handleChangePage(newPage)
           }}
         />
@@ -129,8 +166,8 @@ export const InputPagination: React.FC<IPaginationList> = ({
             <input
               className={classes.input}
               style={{ width: inputWidth }}
-              value={currentPage}
-              onChange={e => changePage(e.target.value)}
+              value={inputValue}
+              onChange={e => setInputValue(e.target.value)}
               type='number'
             />
             <Typography className={classes.labelText}> page</Typography>
