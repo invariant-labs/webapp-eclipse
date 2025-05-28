@@ -41,9 +41,12 @@ export const InputPagination: React.FC<IPaginationList> = ({
   const [inputWidth, setInputWidth] = useState<number | string>(0)
 
   const changePageImmediate = (value: string) => {
-    console.log(value)
     const num = parseInt(value)
+    console.log(num)
+    console.log(isNaN(num))
+
     if (isNaN(num)) {
+      console.log('test')
       setCurrentPage(1)
       handleChangePage(1)
       return
@@ -104,14 +107,36 @@ export const InputPagination: React.FC<IPaginationList> = ({
               className={classes.input}
               style={{ width: inputWidth }}
               value={inputValue}
-              onChange={e => setInputValue(e.target.value)}
-              type='number'
+              onChange={e => {
+                const value = e.target.value
+
+                if (value === '') {
+                  setInputValue('')
+                  return
+                }
+
+                if (!/^\d+$/.test(value)) {
+                  return
+                }
+
+                const numericValue = Number(value)
+
+                if (numericValue > pages) {
+                  setInputValue(String(pages))
+                  return
+                }
+
+                setInputValue(value)
+              }}
+              type='text'
+              inputMode='numeric'
               onBlur={() => {
-                if (!currentPage) {
-                  setCurrentPage(1)
+                if (inputValue === '') {
+                  setInputValue('1')
                 }
               }}
             />
+
             <Typography className={classes.labelText}> page</Typography>
           </Box>
         )}
