@@ -53,14 +53,29 @@ export class NightlyAdapter implements WalletAdapter {
     if (!this._nightlyProvider) {
       return transactions
     }
-    return await this._nightlyProvider.signAllTransactions(transactions)
+
+    const signer = this._nightlyProvider.features['solana:signTransaction'].signTransaction as (
+      tx: Transaction | VersionedTransaction
+    ) => Promise<Transaction | VersionedTransaction>
+
+    const signedTxs = await Promise.all(transactions.map(tx => signer(tx)))
+
+    // Return as consistent type
+    if ('version' in transactions[0]) {
+      return signedTxs as VersionedTransaction[]
+    } else {
+      return signedTxs as Transaction[]
+    }
   }
 
   signTransaction = async (transaction: Transaction | VersionedTransaction) => {
     if (!this._nightlyProvider) {
       return transaction
     }
-    return await this._nightlyProvider.signTransaction(transaction)
+
+    return await this._nightlyProvider.features['solana:signTransaction'].signTransaction(
+      transaction
+    )
   }
 
   sendMessage = async (message: Uint8Array) => {
@@ -96,7 +111,6 @@ export class NightlyAdapter implements WalletAdapter {
       return
     }
 
-    console.log(provider?.features)
     if (provider.accounts.length === 0) {
       await provider?.features['standard:connect'].connect()
       await provider.changeNetwork({
