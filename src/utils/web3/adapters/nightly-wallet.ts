@@ -32,6 +32,7 @@ interface NightlyProvider {
     'solana:signMessage': { version: string; signMessage: (message: any) => Promise<any> }
   }
   _activeAccount: any
+  accounts: any[]
 }
 export class NightlyAdapter implements WalletAdapter {
   _nightlyProvider: NightlyProvider | undefined
@@ -95,9 +96,7 @@ export class NightlyAdapter implements WalletAdapter {
       return
     }
 
-    if (!provider.isConnected) {
-      console.log()
-      await provider.connect()
+    if (provider.accounts.length === 0) {
       await provider?.features['standard:connect'].connect()
       await provider.changeNetwork({
         genesisHash: ECLIPSE_MAINNET_GENESIS_HASH
