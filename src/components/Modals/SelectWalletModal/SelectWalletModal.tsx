@@ -60,6 +60,7 @@ export const SelectWalletModal: React.FC<ISelectWalletModal> = ({
           root: classes.popoverRoot,
           paper: classes.paper
         }}
+        anchorEl={document.body}
         onClose={handleClose}>
         <Box className={classes.root}>
           <Grid

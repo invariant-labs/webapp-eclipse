@@ -14,7 +14,9 @@ export function* handleRpcError(error: string): Generator {
   const networkType = yield* select(network)
 
   console.log(error)
-
+  if (!error || error === 'undefined') {
+    return
+  }
   if (
     currentRpc !== RECOMMENDED_RPC_ADDRESS[networkType] &&
     (error.includes('Failed to fetch') || error.includes('400') || error.includes('403'))

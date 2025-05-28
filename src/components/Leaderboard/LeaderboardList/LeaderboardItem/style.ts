@@ -94,12 +94,12 @@ export const useStyles = makeStyles()(() => ({
   },
   copyWrapper: {
     display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'baseline'
+    justifyContent: 'center'
   },
   clipboardIcon: {
     marginLeft: 4,
     width: 18,
+    height: '100%',
     cursor: 'pointer',
     color: colors.invariant.lightHover,
     '&:hover': {

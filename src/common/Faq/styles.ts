@@ -37,7 +37,7 @@ export const useStyles = makeStyles()(() => ({
       '&:last-child': {
         marginBottom: '0px !important'
       },
-      '&:first-child': {
+      '&:first-of-type': {
         marginTop: '0px !important'
       },
       marginBottom: '8px !important',

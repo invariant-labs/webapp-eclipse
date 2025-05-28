@@ -16,7 +16,7 @@ import {
   Typography,
   useMediaQuery
 } from '@mui/material'
-import { forwardRef, useMemo, useState, useCallback, memo, useEffect } from 'react'
+import React, { forwardRef, useMemo, useState, useCallback, memo, useEffect } from 'react'
 import { commonTokensForNetworks, NetworkType } from '@store/consts/static'
 import { theme, typography } from '@static/theme'
 import useStyles from './styles'
@@ -213,7 +213,11 @@ export const FilterSearch: React.FC<IFilterSearch> = memo(
         _ownerState: AutocompleteOwnerState<ISearchToken, true, false, false, 'div'>
       ): React.ReactNode => {
         return (
-          <Box component='li' {...optionProps} sx={{ padding: '0 !important' }}>
+          <Box
+            component='li'
+            {...optionProps}
+            key={option.address.toString()}
+            sx={{ padding: '0 !important' }}>
             <TokenOption option={option} networkUrl={networkUrl} isSmall={isSmall} />
           </Box>
         )
@@ -224,7 +228,9 @@ export const FilterSearch: React.FC<IFilterSearch> = memo(
     const renderTags = useCallback(
       (value: ISearchToken[], getTagProps: AutocompleteRenderGetTagProps) =>
         value.map((option, index) => (
-          <TokenChip option={option} onRemove={handleRemoveToken} {...getTagProps({ index })} />
+          <React.Fragment key={option.address.toString()}>
+            <TokenChip option={option} onRemove={handleRemoveToken} {...getTagProps({ index })} />
+          </React.Fragment>
         )),
       [handleRemoveToken]
     )
