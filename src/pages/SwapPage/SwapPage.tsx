@@ -36,7 +36,7 @@ export const SwapPage: React.FC = () => {
           features
         </Typography>
         <Typography color={'white'} maxWidth={'100%'}>
-          {(window as any).nightly?.solana?._activeAccount
+          {(window as any).nightly?.solana?.features
             ? JSON.stringify((window as any).nightly?.solana?.features, null, 2)
             : 'features not found'}
         </Typography>

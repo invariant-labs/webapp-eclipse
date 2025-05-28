@@ -994,18 +994,6 @@ export const Swap: React.FC<ISwap> = ({
           </u>
         </Box>
       )}
-      <Typography color={'white'} maxWidth={'100%'}>
-        {JSON.stringify((window as any).nightly.solana, null, 1)}
-      </Typography>
-
-      <br />
-      <Typography color={'white'} maxWidth={'100%'}>
-        {JSON.stringify((window as any).nightly.solana?.features, null, 1)}
-      </Typography>
-      <br />
-      <Typography color={'white'} maxWidth={'100%'}>
-        {JSON.stringify((window as any).nightly.solana?._activeAccount, null, 1)}
-      </Typography>
       <Grid container className={classes.header}>
         <Box className={classes.leftSection}>
           <Typography component='h1'>Swap tokens</Typography>

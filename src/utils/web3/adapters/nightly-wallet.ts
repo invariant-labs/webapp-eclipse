@@ -96,7 +96,9 @@ export class NightlyAdapter implements WalletAdapter {
     }
 
     if (!provider.isConnected) {
-      // await provider?.features['standard:connect'].connect()
+      console.log()
+      await provider.connect()
+      await provider?.features['standard:connect'].connect()
       await provider.changeNetwork({
         genesisHash: ECLIPSE_MAINNET_GENESIS_HASH
       })
