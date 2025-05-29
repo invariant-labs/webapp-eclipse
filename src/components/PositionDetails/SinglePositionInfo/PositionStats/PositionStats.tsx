@@ -11,7 +11,7 @@ import { LEADERBOARD_DECIMAL } from '@store/consts/static'
 type Props = {
   value: number
   pendingFees: number
-  poolApr: number
+  poolApy: number
   points24: number
   arePointsDistributed: boolean
   isLoading: boolean
@@ -21,7 +21,7 @@ type Props = {
 export const PositionStats = ({
   value,
   pendingFees,
-  poolApr,
+  poolApy,
   points24,
   arePointsDistributed,
   isLoading,
@@ -83,9 +83,9 @@ export const PositionStats = ({
           )}
         </Box>
         <Box className={cx(classes.statContainer, classes.statContainerHiglight)}>
-          <Typography className={classes.statName}>Pool APR:</Typography>
+          <Typography className={classes.statName}>Pool APY:</Typography>
           <Typography className={cx(classes.statValue, classes.statValueHiglight)}>
-            {poolApr.toFixed(2)}%
+            {poolApy.toFixed(2)}%
           </Typography>
         </Box>
       </Box>

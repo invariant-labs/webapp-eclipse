@@ -20,7 +20,7 @@
     "@coral-xyz/anchor": "^0.29.0",
     "@invariant-labs/locker-eclipse-sdk": "^0.0.23",
     "@invariant-labs/points-sdk": "^0.0.5",
-    "@invariant-labs/sdk-eclipse": "^0.0.121",
+    "@invariant-labs/sdk-eclipse": "^0.0.122",
     "@irys/web-upload": "*",
     "@irys/web-upload-solana": "^0.1.7",
     "@metaplex-foundation/js": "^0.20.1",
