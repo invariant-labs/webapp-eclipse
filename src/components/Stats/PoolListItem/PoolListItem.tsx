@@ -230,6 +230,7 @@ const PoolListItem: React.FC<IProps> = ({
       </button>
       {isLocked && (
         <TooltipHover
+          maxWidth='none'
           title={
             <LockStatsPopover
               anchorEl={lockIconRef.current}
@@ -355,6 +356,7 @@ const PoolListItem: React.FC<IProps> = ({
             <Box className={classes.action}>
               {isLocked && (
                 <TooltipHover
+                  maxWidth='none'
                   title={
                     <LockStatsPopover
                       anchorEl={lockIconRef.current}
