@@ -21,7 +21,7 @@ const Intervals: React.FC<IntervalsProps> = ({ interval, setInterval, marginRigh
   const getButtonStyle = (buttonInterval: IntervalsKeys) => {
     const isSelected = interval === buttonInterval
     return {
-      background: isSelected ? colors.invariant.light : colors.invariant.newDark,
+      background: isSelected ? colors.invariant.light : colors.invariant.component,
       color: isSelected ? colors.invariant.text : colors.invariant.textGrey,
       '&:hover': {
         boxShadow: 'none',
@@ -43,7 +43,7 @@ const Intervals: React.FC<IntervalsProps> = ({ interval, setInterval, marginRigh
         scheme='normal'
         width={36}
         height={28}
-        padding={8}
+        padding={16}
         borderRadius={8}
         style={getButtonStyle(IntervalsKeys.Daily)}>
         24H
@@ -54,7 +54,7 @@ const Intervals: React.FC<IntervalsProps> = ({ interval, setInterval, marginRigh
         scheme='normal'
         width={36}
         height={28}
-        padding={8}
+        padding={16}
         borderRadius={8}
         style={getButtonStyle(IntervalsKeys.Weekly)}>
         1W
@@ -64,7 +64,7 @@ const Intervals: React.FC<IntervalsProps> = ({ interval, setInterval, marginRigh
         scheme='normal'
         width={36}
         height={28}
-        padding={8}
+        padding={16}
         borderRadius={8}
         style={getButtonStyle(IntervalsKeys.Monthly)}>
         1M
