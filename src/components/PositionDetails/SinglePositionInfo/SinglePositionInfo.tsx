@@ -33,6 +33,7 @@ interface IProp {
   isPromotedLoading: boolean
   isClosing: boolean
   interval: Intervals
+  isLocked?: boolean
 }
 
 const SinglePositionInfo: React.FC<IProp> = ({
@@ -52,7 +53,8 @@ const SinglePositionInfo: React.FC<IProp> = ({
   arePointsDistributed,
   isPromotedLoading,
   isClosing,
-  interval
+  interval,
+  isLocked
 }) => {
   const [isFeeTooltipOpen, setIsFeeTooltipOpen] = useState(false)
   const { classes } = useStyles()
@@ -93,6 +95,7 @@ const SinglePositionInfo: React.FC<IProp> = ({
           points24={points24}
           arePointsDistributed={arePointsDistributed}
           isLoading={showPositionLoader}
+          isLocked={isLocked}
         />
         <Separator size='100%' isHorizontal color={colors.invariant.light} />
         <Section title='Liquidity'>

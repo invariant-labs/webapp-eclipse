@@ -168,7 +168,7 @@ export const PositionHeader = ({
       </Box>
     </TooltipHover>
   )
-
+  console.log(!isPromoted && !isActive && !isLocked)
   return (
     <Box className={classes.headerContainer}>
       <Box className={classes.navigation}>
@@ -251,11 +251,13 @@ export const PositionHeader = ({
             </TooltipHover>
             <TooltipHover
               title={
-                isPromoted ? 'This pool distributes points' : "This pool doesn't distribute points"
+                isPromoted && !isLocked
+                  ? 'This pool distributes points'
+                  : "This pool doesn't distribute points"
               }>
               <img
                 className={cx(classes.airdropIcon, {
-                  [classes.airdropIconInActive]: !isPromoted
+                  [classes.airdropIconInActive]: !(isPromoted && isActive && !isLocked)
                 })}
                 src={airdropRainbowIcon}
                 alt='Points'
