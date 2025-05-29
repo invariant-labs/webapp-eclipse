@@ -180,9 +180,9 @@ export const PositionHeader = ({
         </p>
       )
     } else if (isPromoted) {
-      ;('This pool distributes points')
+      return 'This pool distributes points'
     } else {
-      ;("This pool doesn't distribute points")
+      return "This pool doesn't distribute points"
     }
   }, [isLocked, isPromoted])
 
@@ -291,8 +291,7 @@ export const PositionHeader = ({
                   </>
                 )
               }
-              placement='top'
-              increasePadding>
+              placement='top'>
               <Box
                 className={cx(classes.feeContainer, {
                   [classes.feeContainerIsActive]: isActive
