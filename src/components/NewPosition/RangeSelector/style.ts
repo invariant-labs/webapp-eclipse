@@ -307,6 +307,9 @@ const useStyles = makeStyles()(theme => {
     },
     boldedText: {
       fontWeight: 800
+    },
+    tooltipContainer: {
+      maxWidth: 512
     }
   }
 })
