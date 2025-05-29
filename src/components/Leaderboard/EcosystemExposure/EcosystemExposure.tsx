@@ -294,24 +294,6 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
     )
   }
 
-  const PrevArrow = (props: any) => {
-    const { className, onClick } = props
-    return (
-      <div className={className} onClick={onClick}>
-        <img src={navLeftIcon} alt='prev' />
-      </div>
-    )
-  }
-
-  const NextArrow = (props: any) => {
-    const { className, onClick } = props
-    return (
-      <div className={className} onClick={onClick}>
-        <img src={navRightIcon} alt='next' />
-      </div>
-    )
-  }
-
   return (
     <Grid className={classes.mainWrapper}>
       <Grid sx={{ position: 'relative' }} className={classes.boxWrapper}>
@@ -339,8 +321,8 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
             className={classes.slider}
             slidesToShow={isSm ? 3 : 4}
             infinite={false}
-            prevArrow={<PrevArrow />}
-            nextArrow={<NextArrow />}>
+            prevArrow={<div />}
+            nextArrow={<div />}>
             {projects.map(tasks => (
               <React.Fragment key={tasks.id}>
                 <TooltipHover
