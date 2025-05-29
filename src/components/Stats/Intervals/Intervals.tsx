@@ -46,7 +46,7 @@ const Intervals: React.FC<IntervalsProps> = ({ interval, setInterval, marginRigh
         padding={8}
         borderRadius={8}
         style={getButtonStyle(IntervalsKeys.Daily)}>
-        1D
+        24H
       </Button>
 
       <Button
