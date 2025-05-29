@@ -233,6 +233,7 @@ const useStyles = makeStyles()(theme => {
     currentPrice: {
       display: 'inline-block',
       color: colors.invariant.yellow,
+
       ...typography.caption2
     },
     priceWarning: {
@@ -240,16 +241,21 @@ const useStyles = makeStyles()(theme => {
       color: colors.invariant.Error,
       ...typography.body2,
       marginLeft: 4,
-      marginTop: 2,
       fontSize: 14
     },
     priceWarningIcon: {
       width: 16,
-      height: 16
+      height: 16,
+      flexShrink: 0
     },
     priceWarningContainer: {
       display: 'flex',
-      alignItems: 'center'
+      alignItems: 'center',
+
+      marginTop: 2,
+      [theme.breakpoints.down('sm')]: {
+        maxWidth: 190
+      }
     },
     usdcCurrentPrice: {
       display: 'inline-block',
