@@ -62,7 +62,7 @@ const Liquidity: React.FC<LiquidityInterface> = ({
           key={`${interval}-${isLoading}`}
           animate={false}
           sliceTooltip={() => <></>}
-          enableCrosshair={false}
+          enableCrosshair
           enablePointLabel={false}
           debugSlices={false}
           enableSlices={false}
@@ -80,17 +80,6 @@ const Liquidity: React.FC<LiquidityInterface> = ({
             max: 'auto',
             type: 'linear'
           }}
-          layers={[
-            'grid',
-            'markers',
-            'areas',
-            'lines',
-            'points',
-            'slices',
-            'mesh',
-            'legends',
-            'axes'
-          ]}
           data={[
             {
               id: 'liquidity',
