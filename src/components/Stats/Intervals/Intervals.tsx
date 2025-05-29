@@ -13,7 +13,6 @@ const Intervals: React.FC<IntervalsProps> = ({ interval, setInterval }) => {
   const { classes } = useStyles({ interval })
 
   const handleIntervalChange = (_: any, newInterval: string) => {
-    console.log(newInterval)
     if (!newInterval) return
     if (newInterval === '1W') {
       setInterval(IntervalsKeys.Weekly)
