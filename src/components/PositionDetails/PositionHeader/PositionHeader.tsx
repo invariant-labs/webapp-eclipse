@@ -168,7 +168,24 @@ export const PositionHeader = ({
       </Box>
     </TooltipHover>
   )
-  console.log(!isPromoted && !isActive && !isLocked)
+
+  const tooltipText = useMemo(() => {
+    if (isLocked) {
+      return (
+        <p>
+          This position is <b>locked</b> and <b>will not</b> earn points.
+          <br />
+          <br />A locked position does not generate points, even if it is active and the pool is
+          generating points.
+        </p>
+      )
+    } else if (isPromoted) {
+      ;('This pool distributes points')
+    } else {
+      ;("This pool doesn't distribute points")
+    }
+  }, [isLocked, isPromoted])
+
   return (
     <Box className={classes.headerContainer}>
       <Box className={classes.navigation}>
@@ -249,12 +266,7 @@ export const PositionHeader = ({
                 {truncateString(tokenA.ticker, 3)} - {truncateString(tokenB.ticker, 3)}
               </Typography>
             </TooltipHover>
-            <TooltipHover
-              title={
-                isPromoted && !isLocked
-                  ? 'This pool distributes points'
-                  : "This pool doesn't distribute points"
-              }>
+            <TooltipHover title={tooltipText}>
               <img
                 className={cx(classes.airdropIcon, {
                   [classes.airdropIconInActive]: !(isPromoted && isActive && !isLocked)
