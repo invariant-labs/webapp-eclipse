@@ -2089,7 +2089,8 @@ export const getIntervalsFullSnap = async (
   name: string,
   interval: Intervals
 ): Promise<FullSnap> => {
-  const parsedInterval = interval === Intervals.Daily ? 'daily' : interval
+  const parsedInterval =
+    interval === Intervals.Daily ? 'daily' : interval === Intervals.Weekly ? 'weekly' : 'monthly'
   const { data } = await axios.get<FullSnap>(
     `https://stats.invariant.app/eclipse/intervals/eclipse-${name}?interval=${parsedInterval}`
   )

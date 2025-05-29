@@ -1,85 +1,65 @@
 import React from 'react'
-import { useStyles } from './style'
+import useStyles from './style'
 import { Box } from '@mui/system'
-import { Button } from '@common/Button/Button'
-import { colors } from '@static/theme'
 import { Intervals as IntervalsKeys } from '@store/consts/static'
+import { ToggleButton, ToggleButtonGroup } from '@mui/material'
 
 interface IntervalsProps {
   interval: string
   setInterval: (interval: IntervalsKeys) => void
-  marginRight?: number
 }
 
-const Intervals: React.FC<IntervalsProps> = ({ interval, setInterval, marginRight }) => {
-  const { classes } = useStyles()
+const Intervals: React.FC<IntervalsProps> = ({ interval, setInterval }) => {
+  const { classes } = useStyles({ interval })
 
-  const handleIntervalChange = (newInterval: IntervalsKeys) => {
-    setInterval(newInterval)
-  }
-
-  const getButtonStyle = (buttonInterval: IntervalsKeys) => {
-    const isSelected = interval === buttonInterval
-    return {
-      background: isSelected ? colors.invariant.light : colors.invariant.component,
-      color: isSelected ? colors.invariant.text : colors.invariant.textGrey,
-      '&:hover': {
-        boxShadow: 'none',
-        filter: 'brightness(1.15)',
-        '@media (hover: none)': {
-          filter: 'none'
-        }
-      }
+  const handleIntervalChange = (_: any, newInterval: string) => {
+    console.log(newInterval)
+    if (!newInterval) return
+    if (newInterval === '1W') {
+      setInterval(IntervalsKeys.Weekly)
+    } else if (newInterval === '1M') {
+      setInterval(IntervalsKeys.Monthly)
+    } else {
+      setInterval(IntervalsKeys.Daily)
     }
   }
 
   return (
-    <Box
-      className={classes.container}
-      style={{ marginRight: marginRight ?? 0 }}
-      width={'fit-content'}>
-      <Button
-        onClick={() => handleIntervalChange(IntervalsKeys.Daily)}
-        scheme='normal'
-        width={36}
-        height={28}
-        padding={16}
-        borderRadius={8}
-        style={getButtonStyle(IntervalsKeys.Daily)}>
-        24H
-      </Button>
-
-      <Button
-        onClick={() => handleIntervalChange(IntervalsKeys.Weekly)}
-        scheme='normal'
-        width={36}
-        height={28}
-        padding={16}
-        borderRadius={8}
-        style={getButtonStyle(IntervalsKeys.Weekly)}>
-        1W
-      </Button>
-      <Button
-        onClick={() => handleIntervalChange(IntervalsKeys.Monthly)}
-        scheme='normal'
-        width={36}
-        height={28}
-        padding={16}
-        borderRadius={8}
-        style={getButtonStyle(IntervalsKeys.Monthly)}>
-        1M
-      </Button>
-
-      {/* <Button
-        onClick={() => handleIntervalChange(IntervalsKeys.Yearly)}
-        scheme='normal'
-        width={36}
-        height={28}
-        padding={8}
-        borderRadius={8}
-        style={getButtonStyle(IntervalsKeys.Yearly)}>
-        1Y
-      </Button> */}
+    <Box className={classes.mainWrapper}>
+      <Box className={classes.switchWrapper}>
+        <Box className={classes.container}>
+          <Box className={classes.switchPoolsContainer}>
+            <Box className={classes.switchPoolsMarker} />
+            <ToggleButtonGroup
+              value={interval}
+              exclusive
+              onChange={handleIntervalChange}
+              className={classes.switchPoolsButtonsGroup}>
+              <ToggleButton
+                value={IntervalsKeys.Daily}
+                disableRipple
+                className={classes.switchPoolsButton}
+                style={{ fontWeight: interval === IntervalsKeys.Daily ? 700 : 400 }}>
+                {IntervalsKeys.Daily}
+              </ToggleButton>
+              <ToggleButton
+                value={IntervalsKeys.Weekly}
+                disableRipple
+                className={classes.switchPoolsButton}
+                style={{ fontWeight: interval === IntervalsKeys.Weekly ? 700 : 400 }}>
+                {IntervalsKeys.Weekly}
+              </ToggleButton>
+              <ToggleButton
+                value={IntervalsKeys.Monthly}
+                disableRipple
+                className={classes.switchPoolsButton}
+                style={{ fontWeight: interval === IntervalsKeys.Monthly ? 700 : 400 }}>
+                {IntervalsKeys.Monthly}
+              </ToggleButton>
+            </ToggleButtonGroup>
+          </Box>
+        </Box>
+      </Box>
     </Box>
   )
 }
