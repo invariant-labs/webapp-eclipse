@@ -4,6 +4,7 @@ import { TickPlotPositionData } from '@common/PriceRangePlot/PriceRangePlot'
 import { Box, Fade, useMediaQuery } from '@mui/material'
 import {
   ADDRESSES_TO_REVERT_TOKEN_PAIRS,
+  Intervals,
   NetworkType,
   REFRESHER_INTERVAL,
   USDC_MAIN,
@@ -37,7 +38,7 @@ import { Information } from '@components/Information/Information'
 import { theme } from '@static/theme'
 import { eyeYellowIcon } from '@static/icons'
 import { DesktopNavigation } from './Navigation/DesktopNavigation/DesktopNavigation'
-import { PaginationList } from '@common/Pagination/Pagination'
+import { PaginationList } from '@common/Pagination/Pagination/Pagination'
 
 interface IProps {
   tokenXAddress: PublicKey
@@ -88,6 +89,7 @@ interface IProps {
     totalPages: number
     currentPage: number
   }
+  interval: Intervals
   handleChangePagination: (page: number) => void
 }
 
@@ -137,6 +139,7 @@ const PositionDetails: React.FC<IProps> = ({
   nextPosition,
   positionId,
   paginationData,
+  interval,
   handleChangePagination
 }) => {
   const { classes } = useStyles()
@@ -147,7 +150,7 @@ const PositionDetails: React.FC<IProps> = ({
   const [xToY, setXToY] = useState<boolean>(
     initialXtoY(tokenXAddress.toString(), tokenYAddress.toString())
   )
-  console.log(positionId)
+
   const [isLockPositionModalOpen, setIsLockPositionModalOpen] = useState(false)
 
   const [refresherTime, setRefresherTime] = useState<number>(REFRESHER_INTERVAL)
@@ -409,6 +412,7 @@ const PositionDetails: React.FC<IProps> = ({
                 isPreview={showPreviewInfo}
                 isPromotedLoading={isPromotedLoading}
                 isClosing={shouldDisable}
+                interval={interval}
               />
             </Box>
             <Box className={classes.rightSide}>

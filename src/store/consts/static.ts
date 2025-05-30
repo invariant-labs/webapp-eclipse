@@ -362,8 +362,7 @@ export const BRICK_MAIN: Token = {
   address: new PublicKey('3Q5RQRTKCH4RWGFVFht1RtM1fx3SSxNGAk1sTuVank6w'),
   decimals: 9,
   name: 'Brick',
-  logoURI:
-    'https://beige-random-platypus-427.mypinata.cloud/ipfs/QmQqSjag5q4nQTDcAnqkGrxp5Y2DzBqWB4L6FMM38cszbm',
+  logoURI: 'https://ipfs.io/ipfs/QmQqSjag5q4nQTDcAnqkGrxp5Y2DzBqWB4L6FMM38cszbm',
   coingeckoId: ''
 }
 
@@ -393,8 +392,7 @@ export const DOGW_MAIN: Token = {
   address: new PublicKey('Ev6go111sv39uMrAQeWsatFWgSYdfENuQGtBmr5QRwbJ'),
   decimals: 9,
   name: 'dog wif meat',
-  logoURI:
-    'https://lime-peculiar-eel-621.mypinata.cloud/ipfs/QmVYxFNgSnVFXrbaxTh7Pz6iQ9AJU8e7BLBMcyWiE476mU',
+  logoURI: 'https://ipfs.io/ipfs/QmVYxFNgSnVFXrbaxTh7Pz6iQ9AJU8e7BLBMcyWiE476mU',
   coingeckoId: ''
 }
 
@@ -494,9 +492,9 @@ export const KYSOL_MAIN: Token = {
 }
 
 export const TUSD_MAIN: Token = {
-  tokenProgram: TOKEN_PROGRAM_ID,
+  tokenProgram: TOKEN_2022_PROGRAM_ID,
   symbol: 'tUSD',
-  address: new PublicKey('GKJFjUts7QWb29g3h5P6Pw8hBECh2tsHrVzasjvCYtGJ'),
+  address: new PublicKey('27Kkn8PWJbKJsRZrxbsYDdedpUQKnJ5vNfserCxNEJ3R'),
   decimals: 6,
   name: 'Turbo USD',
   logoURI:
@@ -606,6 +604,16 @@ export const autoSwapPools = [
       address: new PublicKey('HG7iQMk29cgs74ZhSwrnye3C6SLQwKnfsbXqJVRi1x8H'),
       feeIndex: 6
     }
+  },
+  {
+    pair: {
+      tokenX: new PublicKey('AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE'),
+      tokenY: new PublicKey('27Kkn8PWJbKJsRZrxbsYDdedpUQKnJ5vNfserCxNEJ3R')
+    },
+    swapPool: {
+      address: new PublicKey('1Zxv7bYYzMuK8eey85ZSowa24S8B7QNfDx3GQpKQ4Bf'),
+      feeIndex: 0
+    }
   }
 ]
 export const promotedTiers = [
@@ -633,6 +641,11 @@ export const promotedTiers = [
     tokenX: BITZ_MAIN.address,
     tokenY: WETH_MAIN.address,
     index: 6
+  },
+  {
+    tokenX: USDC_MAIN.address,
+    tokenY: TUSD_MAIN.address,
+    index: 0
   }
 ]
 
@@ -788,9 +801,9 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
       TURBO_AI: TURBO_AI_MAIN.address.toString(),
       ORCA: ORCA_MAIN.address.toString(),
       SOLAR: SOLAR_MAIN.address.toString(),
-      KYSOL_MAIN: KYSOL_MAIN.address.toString(),
-      EZSOL_MAIN: EZSOL_MAIN.address.toString(),
-      TUSD_MAIN: TUSD_MAIN.address.toString()
+      KYSOL: KYSOL_MAIN.address.toString(),
+      EZSOL: EZSOL_MAIN.address.toString(),
+      TUSD: TUSD_MAIN.address.toString()
     }
   }
 }
@@ -886,9 +899,9 @@ export const getPopularPools = (network: NetworkType) => {
           fee: '0.09'
         },
         {
-          tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
-          tokenY: 'BeRUj3h7BqkbdfFU7FBNYbodgf8GCHodzKvF9aVjNNfL',
-          fee: '0.09'
+          tokenX: '64mggk2nXg6vHC1qCdsZdEFzd5QGN4id54Vbho4PswCF',
+          tokenY: 'So11111111111111111111111111111111111111112',
+          fee: '1'
         },
         {
           tokenX: 'BeRUj3h7BqkbdfFU7FBNYbodgf8GCHodzKvF9aVjNNfL',
@@ -896,9 +909,14 @@ export const getPopularPools = (network: NetworkType) => {
           fee: '0.09'
         },
         {
-          tokenX: '64mggk2nXg6vHC1qCdsZdEFzd5QGN4id54Vbho4PswCF',
-          tokenY: 'So11111111111111111111111111111111111111112',
-          fee: '1'
+          tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
+          tokenY: 'BeRUj3h7BqkbdfFU7FBNYbodgf8GCHodzKvF9aVjNNfL',
+          fee: '0.09'
+        },
+        {
+          tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
+          tokenY: '27Kkn8PWJbKJsRZrxbsYDdedpUQKnJ5vNfserCxNEJ3R',
+          fee: '0.01'
         },
         {
           tokenX: 'GU7NS9xCwgNPiAdJ69iusFrRfawjDDPjeMBovhV1d4kn',
@@ -952,20 +970,45 @@ export enum ErrorCodeExtractionKeys {
   RightBracket = '}',
   Dot = '.'
 }
+
+const SLIPPAGE_ERROR_MESSAGE = 'Price changed – increase slippage or retry'
+
 export const ERROR_CODE_TO_MESSAGE: Record<number, string> = {
-  0x1778: 'Price changed – increase slippage or retry',
-  0x1773: 'Price changed – increase slippage or retry',
-  0x1795: 'Price changed – increase slippage or retry',
-  0x1796: 'Price changed – increase slippage or retry',
-  0x1775: 'Price changed – increase slippage or retry',
-  0x1785: 'Price changed – increase slippage or retry'
+  0x1778: SLIPPAGE_ERROR_MESSAGE,
+  0x1773: SLIPPAGE_ERROR_MESSAGE,
+  0x1795: SLIPPAGE_ERROR_MESSAGE,
+  0x1796: SLIPPAGE_ERROR_MESSAGE,
+  0x1775: SLIPPAGE_ERROR_MESSAGE,
+  0x1785: SLIPPAGE_ERROR_MESSAGE
 }
 
 export const COMMON_ERROR_MESSAGE: string = 'Failed to send. Please try again'
-export const APPROVAL_DENIED_MESSAGE: string = 'Transaction approval rejected.'
+export const APPROVAL_DENIED_MESSAGE: string = 'Transaction approval rejected'
 
 export const ECLIPSE_MAINNET_GENESIS_HASH = 'EAQLJCV2mh23BsK2P9oYpV5CHVLDNHTxYss3URrNmg3s'
 export const SOLANA_MAINNET_GENESIS_HASH = '5eykt4UsFv8P8NJdTREpY1vzqKqZKvdpKuc147dw2N9d'
+
+export enum Intervals {
+  Daily = 'daily',
+  Weekly = 'weekly',
+  Monthly = 'monthly'
+  // Yearly = 'yearly' Don't show year in UI
+}
+
+export const MONTH_NAMES = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December'
+]
 
 export const chartPlaceholder = {
   tickmaps: [

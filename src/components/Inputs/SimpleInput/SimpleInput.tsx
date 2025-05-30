@@ -1,6 +1,7 @@
 import React, { CSSProperties, useRef } from 'react'
 import useStyles from './style'
 import { Input } from '@mui/material'
+import { Button } from '@common/Button/Button'
 
 interface IProps {
   setValue: (value: string) => void
@@ -11,6 +12,8 @@ interface IProps {
   placeholder?: string
   style?: CSSProperties
   onBlur?: React.FocusEventHandler<HTMLInputElement | HTMLTextAreaElement>
+  suggestedPrice: number
+  formatterFunction: (value: string) => string
 }
 
 export const SimpleInput: React.FC<IProps> = ({
@@ -21,7 +24,9 @@ export const SimpleInput: React.FC<IProps> = ({
   decimal,
   placeholder,
   style,
-  onBlur
+  onBlur,
+  suggestedPrice,
+  formatterFunction
 }) => {
   const { classes, cx } = useStyles()
 
@@ -80,6 +85,18 @@ export const SimpleInput: React.FC<IProps> = ({
       inputProps={{
         inputMode: 'decimal'
       }}
+      endAdornment={
+        suggestedPrice ? (
+          <Button
+            scheme='green'
+            height={40}
+            onClick={() => {
+              setValue(formatterFunction(suggestedPrice.toString()))
+            }}>
+            <p className={classes.suggestedPriceText}>Suggested price</p>
+          </Button>
+        ) : null
+      }
     />
   )
 }

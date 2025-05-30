@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { PublicKey } from '@solana/web3.js'
+import { Intervals } from '@store/consts/static'
 import { PayloadType } from '@store/consts/types'
 
 export interface TimeData {
@@ -40,10 +41,14 @@ export interface IStatsStore {
   volume24: Value24H
   tvl24: Value24H
   fees24: Value24H
+  volume: Value24H
+  tvl: Value24H
+  fees: Value24H
   tokensData: TokenStatsData[]
   poolsData: PoolStatsData[]
   isLoading: boolean
   lastTimestamp: number
+  lastInterval: Intervals | null
 }
 
 export const defaultState: IStatsStore = {
@@ -61,10 +66,23 @@ export const defaultState: IStatsStore = {
     value: 0,
     change: 0
   },
+  volume: {
+    value: 0,
+    change: 0
+  },
+  tvl: {
+    value: 0,
+    change: 0
+  },
+  fees: {
+    value: 0,
+    change: 0
+  },
   tokensData: [],
   poolsData: [],
   isLoading: false,
-  lastTimestamp: 0
+  lastTimestamp: 0,
+  lastInterval: null
 }
 
 export const statsSliceName = 'stats'
@@ -72,7 +90,10 @@ const statsSlice = createSlice({
   name: statsSliceName,
   initialState: defaultState,
   reducers: {
-    setCurrentStats(state, action: PayloadAction<Omit<IStatsStore, 'isLoading'>>) {
+    setCurrentStats(
+      state,
+      action: PayloadAction<Omit<IStatsStore, 'isLoading'> & { lastInterval: Intervals }>
+    ) {
       state = {
         ...action.payload,
         isLoading: false,
@@ -83,6 +104,10 @@ const statsSlice = createSlice({
     getCurrentStats(state) {
       state.isLoading = true
 
+      return state
+    },
+    getCurrentIntervalStats(state, _action: PayloadAction<{ interval: Intervals }>) {
+      state.isLoading = true
       return state
     },
     setLoadingStats(state, action: PayloadAction<boolean>) {

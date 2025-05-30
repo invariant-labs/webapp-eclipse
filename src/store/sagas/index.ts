@@ -4,7 +4,7 @@ import { poolsSaga } from './pool'
 import { swapSaga } from './swap'
 import { walletSaga } from './wallet'
 import { positionsSaga } from './positions'
-import { statsHandler } from './stats'
+import { intervalStatsHandler } from './stats'
 import { creatorSaga } from './creator'
 import { lockerSaga } from './locker'
 import { leaderboardSaga } from './leaderboard'
@@ -18,7 +18,7 @@ export function* rootSaga(): Generator {
       swapSaga,
       positionsSaga,
       poolsSaga,
-      statsHandler,
+      intervalStatsHandler,
       creatorSaga,
       leaderboardSaga,
       lockerSaga,

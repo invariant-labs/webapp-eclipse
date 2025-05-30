@@ -360,6 +360,13 @@ export const useStyles = makeStyles()(theme => {
       overflow: 'hidden',
       display: 'flex',
       alignItems: 'center'
+    },
+    loadingAnimation: {
+      width: 20,
+      height: 20,
+      position: 'absolute',
+      top: 'calc(50% - 10px)',
+      left: 'calc(50% - 10px)'
     }
   }
 })

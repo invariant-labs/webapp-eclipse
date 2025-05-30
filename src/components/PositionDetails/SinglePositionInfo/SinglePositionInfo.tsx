@@ -13,6 +13,7 @@ import { PoolDetails as PoolDetailsType } from '@containers/SinglePositionWrappe
 import { calculateAPYAndAPR } from '@utils/utils'
 import { PublicKey } from '@solana/web3.js'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
+import { Intervals } from '@store/consts/static'
 
 interface IProp {
   onClickClaimFee: () => void
@@ -31,6 +32,7 @@ interface IProp {
   showPositionLoader?: boolean
   isPromotedLoading: boolean
   isClosing: boolean
+  interval: Intervals
 }
 
 const SinglePositionInfo: React.FC<IProp> = ({
@@ -49,7 +51,8 @@ const SinglePositionInfo: React.FC<IProp> = ({
   points24,
   arePointsDistributed,
   isPromotedLoading,
-  isClosing
+  isClosing,
+  interval
 }) => {
   const [isFeeTooltipOpen, setIsFeeTooltipOpen] = useState(false)
   const { classes } = useStyles()
@@ -64,7 +67,7 @@ const SinglePositionInfo: React.FC<IProp> = ({
       className={classes.overlay}
     />
   )
-  const { convertedApr } = calculateAPYAndAPR(
+  const { convertedApy } = calculateAPYAndAPR(
     poolDetails?.apy ?? 0,
     poolAddress.toString(),
     poolDetails?.volume24 ?? 0,
@@ -86,7 +89,7 @@ const SinglePositionInfo: React.FC<IProp> = ({
             tokenX.claimValue * (tokenXPriceData?.price ?? 0) +
             tokenY.claimValue * (tokenYPriceData?.price ?? 0)
           }
-          poolApr={convertedApr}
+          poolApy={convertedApy}
           points24={points24}
           arePointsDistributed={arePointsDistributed}
           isLoading={showPositionLoader}
@@ -198,6 +201,7 @@ const SinglePositionInfo: React.FC<IProp> = ({
             volume24={poolDetails?.volume24 ?? 0}
             fee24={poolDetails?.fee24 ?? 0}
             showPoolDetailsLoader={showPoolDetailsLoader}
+            interval={interval}
           />
         </Section>
       </Box>

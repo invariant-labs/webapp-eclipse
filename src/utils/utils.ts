@@ -100,6 +100,7 @@ import {
   MAX_CROSSES_IN_SINGLE_TX_WITH_LUTS,
   BITZ_MAIN,
   PRICE_API_URL,
+  Intervals,
   SALE_TEST,
   ERROR_CODE_TO_MESSAGE,
   COMMON_ERROR_MESSAGE,
@@ -1489,14 +1490,18 @@ export const getPoolsFromAddresses = async (
       addresses
     )) as Array<RawPoolStructure | null>
 
-    return pools
-      .filter(pool => !!pool)
-      .map((pool, index) => {
-        return {
+    const parsedPools: Array<PoolWithAddress> = []
+
+    pools.map((pool, index) => {
+      if (pool) {
+        parsedPools.push({
           ...parsePool(pool),
           address: addresses[index]
-        }
-      }) as PoolWithAddress[]
+        })
+      }
+    })
+
+    return parsedPools
   } catch (e: unknown) {
     const error = ensureError(e)
     console.log(error)
@@ -1851,7 +1856,6 @@ export const addressToTicker = (network: NetworkType, address: string): string =
 
 export const initialXtoY = (tokenXAddress?: string | null, tokenYAddress?: string | null) => {
   if (!tokenXAddress || !tokenYAddress) {
-    console.log('revert other tokens')
     return true
   }
 
@@ -2086,6 +2090,16 @@ export const getFullSnap = async (name: string): Promise<FullSnap> => {
 
   return data
 }
+
+export const getIntervalsFullSnap = async (
+  name: string,
+  interval: Intervals
+): Promise<FullSnap> => {
+  const { data } = await axios.get<FullSnap>(
+    `https://stats.invariant.app/eclipse/intervals/eclipse-${name}?interval=${interval}`
+  )
+  return data
+}
 export const isValidPublicKey = (keyString?: string | null) => {
   try {
     if (!keyString) {
@@ -2118,11 +2132,11 @@ export const trimDecimalZeros = (numStr: string): string => {
   return trimmedDecimal ? `${trimmedInteger || '0'}.${trimmedDecimal}` : trimmedInteger || '0'
 }
 
-const poolsToRecalculateAPY = [
-  'HRgVv1pyBLXdsAddq4ubSqo8xdQWRrYbvmXqEDtectce', // USDC_ETH 0.09%
-  '86vPh8ctgeQnnn8qPADy5BkzrqoH5XjMCWvkd4tYhhmM', //SOL_ETH 0.09%
-  'E2B7KUFwjxrsy9cC17hmadPsxWHD1NufZXTyrtuz8YxC', // USDC_SOL 0.09%
-  'HG7iQMk29cgs74ZhSwrnye3C6SLQwKnfsbXqJVRi1x8H' // ETH-BITZ 1%
+const poolsToRecalculateAPY: string[] = [
+  // 'HRgVv1pyBLXdsAddq4ubSqo8xdQWRrYbvmXqEDtectce', // USDC_ETH 0.09%
+  // '86vPh8ctgeQnnn8qPADy5BkzrqoH5XjMCWvkd4tYhhmM', //SOL_ETH 0.09%
+  // 'E2B7KUFwjxrsy9cC17hmadPsxWHD1NufZXTyrtuz8YxC', // USDC_SOL 0.09%
+  // 'HG7iQMk29cgs74ZhSwrnye3C6SLQwKnfsbXqJVRi1x8H' // ETH-BITZ 1%
 ]
 
 export const calculateAPYAndAPR = (

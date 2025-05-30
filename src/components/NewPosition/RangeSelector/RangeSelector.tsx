@@ -13,12 +13,13 @@ import {
   toMaxNumericPlaces
 } from '@utils/utils'
 import { PlotTickData } from '@store/reducers/positions'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import ConcentrationSlider from '../ConcentrationSlider/ConcentrationSlider'
 import useStyles from './style'
 import { PositionOpeningMethod } from '@store/consts/types'
 import { getMaxTick, getMinTick } from '@invariant-labs/sdk-eclipse/lib/utils'
-import { boostPointsIcon } from '@static/icons'
+import { boostPointsIcon, warning3 } from '@static/icons'
+
 export interface IRangeSelector {
   updatePath: (concIndex: number) => void
   initialConcentration: string
@@ -61,6 +62,7 @@ export interface IRangeSelector {
     token: string
     price?: number
   } | null
+  suggestedPrice: number
 }
 
 export const RangeSelector: React.FC<IRangeSelector> = ({
@@ -94,7 +96,8 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
   unblockUpdatePriceRange,
   // onlyUserPositions,
   // setOnlyUserPositions,
-  usdcPrice
+  usdcPrice,
+  suggestedPrice
 }) => {
   const { classes } = useStyles()
 
@@ -494,6 +497,12 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     autoZoomHandler(leftRange, rightRange, true)
   }, [tokenASymbol, tokenBSymbol])
 
+  const showPriceWarning = useMemo(() => {
+    const lowerBound = midPrice.x * 0.9
+    const upperBound = midPrice.x * 1.1
+    return suggestedPrice < lowerBound || suggestedPrice > upperBound
+  }, [suggestedPrice, midPrice.x])
+
   return (
     <Grid container className={classes.wrapper}>
       <Grid className={classes.topInnerWrapper}>
@@ -506,20 +515,21 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
                 {formatNumberWithoutSuffix(midPrice.x)} {tokenBSymbol} per {tokenASymbol}
               </Typography>
             )}
-            {poolIndex !== null && usdcPrice !== null && usdcPrice.price ? (
+            {poolIndex !== null && usdcPrice !== null && usdcPrice.price && (
               <Typography className={classes.usdcCurrentPrice}>
                 {usdcPrice.token} ${formatNumberWithoutSuffix(usdcPrice.price)}
               </Typography>
-            ) : (
-              <Box minHeight={20} />
+            )}
+            {suggestedPrice !== 0 && showPriceWarning && !blocked && !isLoadingTicksOrTickmap && (
+              <Box className={classes.priceWarningContainer}>
+                <img className={classes.priceWarningIcon} src={warning3} alt='warning icon' />
+                <Typography className={classes.priceWarning}>
+                  The pool price may differ from the actual price
+                </Typography>
+              </Box>
             )}
           </Grid>
-          <Grid
-            display='flex'
-            flexDirection={'row'}
-            alignItems={'center'}
-            alignSelf={'flex-end'}
-            mb={'18px'}>
+          <Grid className={classes.currentPriceContainer}>
             <Typography className={classes.currentPrice} mb={0}>
               Current price
             </Typography>

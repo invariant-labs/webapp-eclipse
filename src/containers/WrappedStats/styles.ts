@@ -1,4 +1,4 @@
-import { Theme } from '@mui/material'
+import { alpha, Theme } from '@mui/material'
 import { typography, colors } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
@@ -21,10 +21,13 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   plotsRow: {
     flexWrap: 'nowrap',
     marginBottom: 24,
-    flexDirection: 'row',
-
+    flexDirection: 'column',
+    background: colors.invariant.component,
+    borderRadius: 24,
+    padding: 24,
     [theme.breakpoints.down('sm')]: {
-      flexDirection: 'column'
+      flexDirection: 'column',
+      padding: '12px 8px'
     }
   },
   row: {
@@ -38,17 +41,8 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   plot: {
     width: 605,
 
-    '&:first-child': {
-      marginRight: 24
-    },
-
     [theme.breakpoints.down('sm')]: {
-      width: '100%',
-
-      '&:first-child': {
-        marginRight: 0,
-        marginBottom: 24
-      }
+      width: '100%'
     }
   },
   searchBar: {
@@ -76,6 +70,21 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     [theme.breakpoints.down('sm')]: {
       flexDirection: 'column',
       alignItems: 'flex-start'
+    }
+  },
+  loadingOverlay: {
+    position: 'relative',
+    width: '100%',
+    height: '100%',
+    '&::after': {
+      content: '""',
+      position: 'absolute',
+      inset: 0,
+      backgroundColor: alpha(colors.invariant.newDark, 0.7),
+      backdropFilter: 'blur(4px)',
+      zIndex: 1,
+      pointerEvents: 'none',
+      borderRadius: '24px'
     }
   }
 }))
