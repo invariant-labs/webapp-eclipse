@@ -1,4 +1,3 @@
-import { token } from '@metaplex-foundation/js'
 import useStyles from './style'
 import { Typography, LinearProgress, Box, useMediaQuery } from '@mui/material'
 import { ResponsivePie } from '@nivo/pie'
