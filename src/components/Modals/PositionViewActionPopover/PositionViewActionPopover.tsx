@@ -5,7 +5,7 @@ import { Button, Grid, Popover, Typography } from '@mui/material'
 export interface IPositionViewActionPopover {
   open: boolean
   anchorEl: HTMLButtonElement | null
-  unclaimedFeesInUSD: number
+  unclaimedFeesInUSD: { value: number; loading: boolean; isClaimAvailable: boolean }
   closePosition: () => void
   claimFee: () => void
   handleClose: () => void
@@ -53,7 +53,7 @@ export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = (
             <Typography className={classes.name}>Create position</Typography>
           </Button>
           <Button
-            disabled={unclaimedFeesInUSD <= 0 || shouldDisable}
+            disabled={!unclaimedFeesInUSD.isClaimAvailable || shouldDisable}
             className={cx(classes.listItem)}
             onClick={() => {
               claimFee()
