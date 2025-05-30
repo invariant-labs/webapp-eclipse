@@ -12,11 +12,9 @@ export interface ILockStatsPopover {
   liquidityY: number
   symbolX: string
   symbolY: string
-  anchorEl: HTMLElement | null
 }
 
 export const LockStatsPopover = ({
-  anchorEl,
   lockedX,
   lockedY,
   liquidityX,
@@ -98,8 +96,6 @@ export const LockStatsPopover = ({
       return () => clearTimeout(timer)
     }
   }, [])
-
-  if (!anchorEl) return null
 
   const progressStyles = {
     height: 3,
