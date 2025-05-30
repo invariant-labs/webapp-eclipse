@@ -4,8 +4,9 @@ import useStyles from './style'
 import classNames from 'classnames'
 import { BN } from '@coral-xyz/anchor'
 import { formatNumberWithCommas, printBNandTrimZeros } from '@utils/utils'
-import { EFFECTIVE_TARGET_MULTIPLIER, PERCENTAGE_SCALE } from '@invariant-labs/sale-sdk'
+import { EFFECTIVE_TARGET_MULTIPLIER, PERCENTAGE_SCALE, TIER1, TIER2, TIER3, TIER4 } from '@invariant-labs/sale-sdk'
 import { Status } from '@store/reducers/solanaWallet'
+import { colors } from '@static/theme'
 
 interface RoundComponentProps {
   isActive: boolean
@@ -54,14 +55,7 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
     isActive
   })
 
-  const calculateInversePrice = (price: BN): string => {
-    if (price.isZero()) return "0";
 
-    const baseValue = new BN(10).pow(new BN(mintDecimals));
-    const inverted = baseValue.mul(baseValue).div(price);
-
-    return printBNandTrimZeros(inverted, mintDecimals, 3);
-  }
 
   const renderPriceWithSkeleton = (amount: BN, decimals: number, width = "80px", isLoading = isLoadingSaleStats) => {
     if (isLoading) {
@@ -69,8 +63,9 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
     }
 
     if (priceFormat === 'usdc-to-token') {
-      const invertedAmount = calculateInversePrice(amount);
-      return <>1$ = {invertedAmount} INVT</>
+      const currentTierPrice = roundNumber >= 0 ?
+        [TIER1, TIER2, TIER3, TIER4][Math.min(roundNumber, 3)] : 0;
+      return <>1$ = {printBNandTrimZeros(currentTierPrice, decimals)} INVT</>
     } else {
       return <>1 INVT = {printBNandTrimZeros(amount, decimals, 3)}$</>
     }
@@ -81,7 +76,7 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
       return <Skeleton variant="text" width={width} height={24} />
     }
 
-    return <Typography>{prefix}{formatNumberWithCommas(printBNandTrimZeros(amount, decimals, 3))}{suffix}</Typography>
+    return <Typography sx={{ color: colors.invariant.text }}>{prefix}{formatNumberWithCommas(printBNandTrimZeros(amount, decimals, 3))}{suffix}</Typography>
   }
 
   return (
@@ -90,7 +85,7 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
 
       {!isActive && (
         <Box className={classNames(classes.infoRow)} marginTop={'24px'}>
-          <Typography className={classes.infoLabelBigger}>Current price: </Typography>
+          <Typography className={classes.infoLabelBigger}>Current ratio: </Typography>
           <Typography className={classes.currentPriceBigger}>
             {renderPriceWithSkeleton(currentPrice, mintDecimals, "160px", isLoadingSaleStats)}
           </Typography>
@@ -156,13 +151,13 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
         {isActive && (
           <>
             <Box className={classes.infoRow}>
-              <Typography className={classes.infoLabel}>Current price: </Typography>
+              <Typography className={classes.infoLabel}>Current ratio: </Typography>
               <Typography className={classes.currentPrice}>
                 {renderPriceWithSkeleton(currentPrice, mintDecimals, "160px", isLoadingSaleStats)}
               </Typography>
             </Box>
             <Box className={classes.infoRow}>
-              <Typography className={classes.infoLabel}>Next price: </Typography>
+              <Typography className={classes.infoLabel}>Next ratio: </Typography>
               <Typography className={classes.nextPrice}>
                 {renderPriceWithSkeleton(nextPrice, mintDecimals, "160px", isLoadingSaleStats)}
               </Typography>

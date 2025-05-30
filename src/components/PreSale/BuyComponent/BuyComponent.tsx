@@ -25,7 +25,7 @@ interface IProps {
   saleDidNotStart: boolean
   saleEnded: boolean
   saleSoldOut: boolean
-  isPublic: Boolean
+  isPublic: boolean
   userDepositedAmount: BN
   whitelistWalletLimit: BN
   currentRound: number
@@ -226,7 +226,7 @@ export const BuyComponent: React.FC<IProps> = ({
                 </Box>
                 <Grid container className={classes.barWrapper}>
                   <Typography className={classes.sliderLabel}>0%</Typography>
-                  <Typography className={classes.sliderLabel}>{filledPercentage}%</Typography>
+                  <Typography className={classes.sliderLabel}>{filledPercentage.toFixed(2)}%</Typography>
                   <Typography className={classes.sliderLabel}>100%</Typography>
                 </Grid>
               </>
@@ -251,6 +251,7 @@ export const BuyComponent: React.FC<IProps> = ({
           <DepositAmountInput
             tokenPrice={1}
             setValue={value => setValue(value)}
+            limit={1e14}
             decimalsLimit={mintDecimals}
             currency={tokenIndex !== null ? tokens[tokenIndex].symbol : null}
             currencyIconSrc={tokenIndex !== null ? tokens[tokenIndex].logoURI : undefined}
@@ -261,7 +262,7 @@ export const BuyComponent: React.FC<IProps> = ({
               {
                 label: 'Max',
                 onClick: () => {
-                  actions.maxSale(tokenIndex, currentRound, userDepositedAmount, whitelistWalletLimit, currentAmount, targetAmount)
+                  actions.maxSale(tokenIndex, currentRound, userDepositedAmount, whitelistWalletLimit, currentAmount, targetAmount, isPublic)
 
                 },
                 variant: 'max'

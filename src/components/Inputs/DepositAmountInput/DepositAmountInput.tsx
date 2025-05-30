@@ -33,6 +33,8 @@ interface IProps {
   balanceValue?: string
   disabled?: boolean
   priceLoading?: boolean
+  limit?: number
+
   isBalanceLoading: boolean
   disableBackgroundColor?: boolean
   walletUninitialized: boolean
@@ -46,6 +48,7 @@ export const DepositAmountInput: React.FC<IProps> = ({
   setValue,
   placeholder,
   style,
+  limit,
   blocked = false,
   blockerInfo,
   onBlur,
@@ -66,8 +69,14 @@ export const DepositAmountInput: React.FC<IProps> = ({
 
   const allowOnlyDigitsAndTrimUnnecessaryZeros: React.ChangeEventHandler<HTMLInputElement> = e => {
     const inputValue = e.target.value.replace(/,/g, '.')
-    const regex = /^\d*\.?\d*$/
+    const onlyNumbersRegex = /^\d*\.?\d*$/
+    const trimDecimal = `^\\d*\\.?\\d{0,${decimalsLimit}}$`
+    const regex = new RegExp(trimDecimal, 'g')
     if (inputValue === '' || regex.test(inputValue)) {
+      if ((typeof limit !== 'undefined' && +inputValue > limit) || disabled) {
+        return
+      }
+
       const startValue = inputValue
       const caretPosition = e.target.selectionStart
 
@@ -76,12 +85,10 @@ export const DepositAmountInput: React.FC<IProps> = ({
       if (zerosRegex.test(parsed)) {
         parsed = parsed.replace(/^0+/, '')
       }
-
       const dotRegex = /^\.\d*$/
       if (dotRegex.test(parsed)) {
         parsed = `0${parsed}`
       }
-
       if (getScaleFromString(parsed) > decimalsLimit) {
         const parts = parsed.split('.')
         parsed = parts[0] + '.' + parts[1].slice(0, decimalsLimit)
@@ -98,10 +105,13 @@ export const DepositAmountInput: React.FC<IProps> = ({
           }
         }, 0)
       }
-    } else if (!regex.test(inputValue)) {
+    } else if (!onlyNumbersRegex.test(inputValue)) {
       setValue('')
+    } else if (!regex.test(inputValue)) {
+      setValue(inputValue.slice(0, inputValue.length - 1))
     }
   }
+
 
   const usdBalance = tokenPrice && value ? tokenPrice * +value : 0
 

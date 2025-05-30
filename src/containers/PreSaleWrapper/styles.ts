@@ -358,5 +358,14 @@ export const useStyles = makeStyles()(() => ({
     [theme.breakpoints.down('md')]: {
       marginTop: '48px'
     }
+  },
+  dexChartContainer: {
+    maxWidth: '1072px',
+    marginTop: '24px',
+    position: 'relative',
+
+    [theme.breakpoints.down('xl')]: {
+      maxWidth: '100%'
+    }
   }
 }))

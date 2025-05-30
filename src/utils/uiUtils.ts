@@ -93,9 +93,16 @@ export const createButtonActions = (config: MaxButtonConfig) => {
       deposited: number,
       whitelistWalletLimit: BN,
       currentAmount?: BN,
-      targetAmount?: BN
+      targetAmount?: BN,
+      isPublicSale?: boolean
     ) => {
       if (tokenIndex === null || currentRound === undefined || currentRound === null) {
+        return
+      }
+
+      if (isPublicSale) {
+        const amount = calculateAmount(tokenIndex)
+        config.onAmountSet(trimDecimalZeros(printBN(amount, config.tokens[tokenIndex].decimals)))
         return
       }
 

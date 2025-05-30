@@ -55,6 +55,8 @@ import { OverlayWrapper } from '@components/PreSale/Overlay/Overlay'
 import { getEclipseWallet } from '@utils/web3/wallet'
 import { DEFAULT_PUBLICKEY } from '@store/consts/static'
 import { auditByLogoIcon, swapArrowClean } from '@static/icons'
+import { Tokenomics } from '@components/PreSale/Tokenomics/Tokenomics'
+import { DEXChart } from '@components/PreSale/DEXChart/DEXChart'
 
 function SampleNextArrow(props) {
   const { className, style, onClick } = props
@@ -375,7 +377,6 @@ export const PreSaleWrapper = () => {
         [TIER1, TIER2, TIER3, TIER4][Math.min(tierIndex, 3)] : price;
       const nextTierPrice = tierIndex > 0 ?
         [TIER1, TIER2, TIER3, TIER4][Math.min(tierIndex + 1, 3)] : nextPrice;
-
       return {
         currentPrice: currentTierPrice,
         nextPrice: nextTierPrice
@@ -567,6 +568,18 @@ export const PreSaleWrapper = () => {
       <Box className={classes.sectionTitle}>
         <Typography
           sx={{ ...typography.heading1, textAlign: 'center', color: colors.invariant.text }}>
+          The most capital-efficient DEX
+        </Typography>
+        <Box className={classes.dexChartContainer}>
+
+          <DEXChart />
+        </Box>
+      </Box>
+
+
+      <Box className={classes.sectionTitle}>
+        <Typography
+          sx={{ ...typography.heading1, textAlign: 'center', color: colors.invariant.text }}>
           The Invariant Journey
         </Typography>
 
@@ -670,22 +683,21 @@ export const PreSaleWrapper = () => {
               }
               heroImage={PubliSaleHero}
             />
-
-
-
-
-
-
-
-
-
-
-
-
-
           </Slider>
         </Box>
       </Box>
+
+      <Box className={classes.sectionTitle}>
+        <Typography
+          sx={{ ...typography.heading1, textAlign: 'center', color: colors.invariant.text }}>
+          Tokenomics
+        </Typography>
+        <Box sx={{ width: '100%', marginTop: '24px', position: 'relative' }}>
+
+          <Tokenomics />
+        </Box>
+      </Box>
+
 
       <Box className={classes.sectionTitle}>
         <Typography
@@ -695,7 +707,6 @@ export const PreSaleWrapper = () => {
         <img src={auditByLogoIcon} alt='Audit' style={{ marginTop: '24px' }} width={289} />
       </Box>
 
-      {/* Sekcja "FAQ" */}
       <Box className={classes.faqContainer}>
         <Typography
           sx={{
