@@ -80,6 +80,18 @@ const Liquidity: React.FC<LiquidityInterface> = ({
             max: 'auto',
             type: 'linear'
           }}
+          layers={[
+            'grid',
+            'markers',
+            'areas',
+            'lines',
+            'points',
+            'slices',
+            'mesh',
+            'legends',
+            'axes',
+            'crosshair'
+          ]}
           data={[
             {
               id: 'liquidity',
