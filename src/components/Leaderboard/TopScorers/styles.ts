@@ -19,6 +19,12 @@ const useStyles = makeStyles()(() => {
       gap: 24,
       [theme.breakpoints.down('sm')]: {
         flexDirection: 'column'
+      },
+
+      [theme.breakpoints.up('lg')]: {
+        width: '100%',
+        justifyContent: 'space-between',
+        marginInline: 48
       }
     },
     headerBigText: {
