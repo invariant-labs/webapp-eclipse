@@ -51,6 +51,7 @@ export const faqData = [
          <li><span style="color: #2EE09A; font-weight: bold;">SOL/ETH</span> (<b>0.09%</b> fee tier)</li>
          <li><span style="color: #2EE09A; font-weight: bold;">tETH/ETH</span> (<b>0.01%</b> fee tier)</li>
          <li><span style="color: #2EE09A; font-weight: bold;">SOL/USDC</span> (<b>0.09%</b> fee tier)</li>
+         <li><span style="color: #2EE09A; font-weight: bold;">tUSD/USDC</span> (<b>0.01%</b> fee tier)</li>
 
        </ul>
       <br></br>

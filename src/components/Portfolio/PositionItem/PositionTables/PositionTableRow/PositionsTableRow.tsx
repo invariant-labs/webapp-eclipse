@@ -1,4 +1,4 @@
-import { Grid, TableRow, TableCell, Typography, useMediaQuery, Box, Skeleton } from '@mui/material'
+import { Grid, TableCell, Typography, useMediaQuery, Box, Skeleton } from '@mui/material'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { MinMaxChart } from '../../components/MinMaxChart/MinMaxChart'
 import { colors, theme } from '@static/theme'
@@ -40,6 +40,7 @@ interface IPositionsTableRow extends IPositionItem {
   handleLockPosition: (index: number) => void
   handleClosePosition: (index: number) => void
   handleClaimFee: (index: number, isLocked: boolean) => void
+  createNewPosition: () => void
   shouldDisable: boolean
 }
 
@@ -68,6 +69,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
   handleClaimFee,
   handleLockPosition,
   handleClosePosition,
+  createNewPosition,
   shouldDisable
 }) => {
   const { classes, cx } = useStyles()
@@ -381,7 +383,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
   const { success, inProgress } = useSelector(lockerState)
 
   return (
-    <TableRow>
+    <>
       <LockLiquidityModal
         open={isLockPositionModalOpen}
         onClose={() => setIsLockPositionModalOpen(false)}
@@ -412,6 +414,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
         }
         closePosition={() => handleClosePosition(positionSingleData?.positionIndex ?? 0)}
         onLockPosition={() => setIsLockPositionModalOpen(true)}
+        createPosition={createNewPosition}
       />
       <TableCell className={`${classes.pairNameCell} ${classes.cellBase}`}>
         {pairNameContent}
@@ -437,6 +440,6 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
       <TableCell className={`${classes.cellBase} ${classes.actionCell} action-button`}>
         {actionsFragment}
       </TableCell>
-    </TableRow>
+    </>
   )
 }

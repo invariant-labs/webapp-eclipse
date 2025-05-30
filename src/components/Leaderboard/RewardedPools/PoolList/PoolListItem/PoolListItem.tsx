@@ -183,11 +183,10 @@ const PoolListItem: React.FC<IProps> = ({
           </Grid>
           {!isSm && showAPY ? (
             <Typography className={classes.row}>
-              {`${convertedApr > 1000 ? '>1000%' : convertedApr === 0 ? '-' : Math.abs(convertedApr).toFixed(2) + '%'}`}
-              <span
-                className={
-                  classes.apy
-                }>{`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '' : Math.abs(convertedApy).toFixed(2) + '%'}`}</span>
+              {`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '' : Math.abs(convertedApy).toFixed(2) + '%'}`}
+              <span className={classes.apy}>
+                {`${convertedApr > 1000 ? '>1000%' : convertedApr === 0 ? '-' : Math.abs(convertedApr).toFixed(2) + '%'}`}
+              </span>
             </Typography>
           ) : null}
           <Typography>{fee}%</Typography>
@@ -222,7 +221,7 @@ const PoolListItem: React.FC<IProps> = ({
           <Typography style={{ cursor: 'pointer' }}>Name</Typography>
           {!isSm && showAPY ? (
             <Typography className={classes.row} style={{ cursor: 'pointer' }}>
-              APR <span className={classes.apy}>APY</span>
+              APY<span className={classes.apy}>APR</span>
             </Typography>
           ) : null}
           <Typography style={{ cursor: 'pointer' }}>Fee</Typography>

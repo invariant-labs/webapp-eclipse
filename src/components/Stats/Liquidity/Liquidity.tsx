@@ -61,6 +61,36 @@ const Liquidity: React.FC<LiquidityInterface> = ({
         <ResponsiveLine
           key={`${interval}-${isLoading}`}
           animate={false}
+          sliceTooltip={() => <></>}
+          enableCrosshair={false}
+          enablePointLabel={false}
+          debugSlices={false}
+          enableSlices={false}
+          debugMesh={false}
+          areaBaselineValue={0}
+          pointBorderWidth={0}
+          areaBlendMode='normal'
+          pointLabel=''
+          pointBorderColor=''
+          pointColor=''
+          areaOpacity={0.4}
+          pointSize={2}
+          yScale={{
+            min: 0,
+            max: 'auto',
+            type: 'linear'
+          }}
+          layers={[
+            'grid',
+            'markers',
+            'areas',
+            'lines',
+            'points',
+            'slices',
+            'mesh',
+            'legends',
+            'axes'
+          ]}
           data={[
             {
               id: 'liquidity',
@@ -139,7 +169,7 @@ const Liquidity: React.FC<LiquidityInterface> = ({
             linearGradientDef('gradient', [
               { offset: 0, color: 'inherit' },
               { offset: 50, color: 'inherit' },
-              { offset: 100, color: 'inherit', opacity: 0 }
+              { offset: 100, color: 'inherit', opacity: 0.2 }
             ])
           ]}
           fill={[{ match: '*', id: 'gradient' }]}

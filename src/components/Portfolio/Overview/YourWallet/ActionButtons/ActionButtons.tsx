@@ -39,7 +39,7 @@ export const ActionButtons = ({ pool, strategy, currentNetwork }: IActionButtons
           onClick={() => {
             const sourceToken = addressToTicker(currentNetwork, strategy.tokenAddressA)
             const targetToken =
-              sourceToken === 'ETH'
+              strategy.tokenAddressB ?? sourceToken === 'ETH'
                 ? currentNetwork === NetworkType.Mainnet
                   ? USDC_MAIN.address
                   : USDC_TEST.address
