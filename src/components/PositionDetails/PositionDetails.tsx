@@ -413,6 +413,7 @@ const PositionDetails: React.FC<IProps> = ({
                 isPromotedLoading={isPromotedLoading}
                 isClosing={shouldDisable}
                 interval={interval}
+                isLocked={isLocked}
               />
             </Box>
             <Box className={classes.rightSide}>

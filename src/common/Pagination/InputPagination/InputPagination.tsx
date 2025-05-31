@@ -42,11 +42,7 @@ export const InputPagination: React.FC<IPaginationList> = ({
 
   const changePageImmediate = (value: string) => {
     const num = parseInt(value)
-    console.log(num)
-    console.log(isNaN(num))
-
     if (isNaN(num)) {
-      console.log('test')
       setCurrentPage(1)
       handleChangePage(1)
       return
