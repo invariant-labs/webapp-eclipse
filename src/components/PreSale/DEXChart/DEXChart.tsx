@@ -81,7 +81,7 @@ export enum SwitcherAlignment {
     FEE_TVL = 'fee/tvl',
 }
 export const DEXChart = () => {
-    const [alignment, setAlignment] = useState<SwitcherAlignment>(SwitcherAlignment.VOLUME_TVL);
+    const [alignment, setAlignment] = useState<SwitcherAlignment>(SwitcherAlignment.FEE_TVL);
     const { classes } = useStyles({ alignment });
 
     const handleSwitchPools = (
