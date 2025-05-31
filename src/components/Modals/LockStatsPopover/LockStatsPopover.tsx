@@ -113,6 +113,26 @@ export const LockStatsPopover = ({
     }
   }
 
+  const tokenXAmount = useMemo(() => {
+    if (percentagesAndValues.xStandardVal < 0.01) {
+      return '<$0.01'
+    }
+    if (percentagesAndValues.xStandardVal < 1) {
+      return '<$1'
+    }
+    return '$' + formatNumberWithSuffix(percentagesAndValues.xStandardVal)
+  }, [percentagesAndValues.xStandardVal])
+
+  const tokenYAmount = useMemo(() => {
+    if (percentagesAndValues.yStandardVal < 0.01) {
+      return '<$0.01'
+    }
+    if (percentagesAndValues.yStandardVal < 1) {
+      return '<$1'
+    }
+    return '$' + formatNumberWithSuffix(percentagesAndValues.yStandardVal)
+  }, [percentagesAndValues.yStandardVal])
+
   return (
     <div className={classes.backgroundContainer}>
       <div className={classes.statsContainer}>
@@ -174,11 +194,7 @@ export const LockStatsPopover = ({
           <div className={classes.chartsWrapper}>
             <div className={classes.chartWrapper}>
               <Typography style={{ textWrap: 'nowrap', width: '300px' }}>
-                {symbolX}:{' '}
-                <span style={{ color: colors.invariant.pink }}>
-                  ${formatNumberWithSuffix(percentagesAndValues.xStandardVal)}{' '}
-                </span>
-                of
+                {symbolX}: <span style={{ color: colors.invariant.pink }}>{tokenXAmount}</span> of
                 <span style={{ color: colors.invariant.pink }}>
                   {' '}
                   ${formatNumberWithSuffix(liquidityX)}
@@ -219,11 +235,7 @@ export const LockStatsPopover = ({
 
             <div className={classes.chartWrapper}>
               <Typography style={{ textWrap: 'nowrap', width: '300px' }}>
-                {symbolY}:{' '}
-                <span style={{ color: colors.invariant.green }}>
-                  ${formatNumberWithSuffix(percentagesAndValues.yStandardVal)}{' '}
-                </span>
-                of{' '}
+                {symbolY}: <span style={{ color: colors.invariant.green }}>{tokenYAmount}</span> of{' '}
                 <span style={{ color: colors.invariant.green }}>
                   ${formatNumberWithSuffix(liquidityY)}
                 </span>{' '}
