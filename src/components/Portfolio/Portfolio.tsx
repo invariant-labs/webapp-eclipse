@@ -302,7 +302,6 @@ const Portfolio: React.FC<IProps> = ({
           handleClosePosition={handleClosePosition}
           handleClaimFee={handleClaimFee}
           createNewPosition={() => {
-            console.log(element)
             createNewPosition(element)
           }}
         />

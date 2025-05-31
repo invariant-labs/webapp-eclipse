@@ -141,7 +141,11 @@ const PortfolioWrapper = () => {
       (pricesData.data[position.tokenY.assetAddress.toString()] ?? 0)
 
     const unclaimedFeesInUSD = xValue + yValue
-    return unclaimedFeesInUSD
+    return {
+      usdValue: unclaimedFeesInUSD,
+      isClaimAvailable:
+        +printBN(bnX, position.tokenX.decimals) > 0 || +printBN(bnY, position.tokenY.decimals) > 0
+    }
   }
 
   const data: IPositionItem[] = useMemo(
@@ -203,7 +207,7 @@ const PortfolioWrapper = () => {
         const valueX = tokenXLiq + tokenYLiq / currentPrice
         const valueY = tokenYLiq + tokenXLiq * currentPrice
 
-        const unclaimedFeesInUSD = calculateUnclaimedFees(position)
+        const { usdValue, isClaimAvailable } = calculateUnclaimedFees(position)
         return {
           tokenXName: position.tokenX.symbol,
           tokenYName: position.tokenY.symbol,
@@ -227,7 +231,7 @@ const PortfolioWrapper = () => {
           network: currentNetwork,
           isFullRange: position.lowerTickIndex === minTick && position.upperTickIndex === maxTick,
           isLocked: position.isLocked,
-          unclaimedFeesInUSD: { value: unclaimedFeesInUSD, loading: position.ticksLoading }
+          unclaimedFeesInUSD: { value: usdValue, loading: position.ticksLoading, isClaimAvailable }
         }
       }),
     [list, pricesData]
@@ -292,7 +296,7 @@ const PortfolioWrapper = () => {
         const valueX = tokenXLiq + tokenYLiq / currentPrice
         const valueY = tokenYLiq + tokenXLiq * currentPrice
 
-        const unclaimedFeesInUSD = calculateUnclaimedFees(position)
+        const { usdValue, isClaimAvailable } = calculateUnclaimedFees(position)
         return {
           tokenXName: position.tokenX.symbol,
           tokenYName: position.tokenY.symbol,
@@ -316,7 +320,7 @@ const PortfolioWrapper = () => {
           network: currentNetwork,
           isFullRange: position.lowerTickIndex === minTick && position.upperTickIndex === maxTick,
           isLocked: position.isLocked,
-          unclaimedFeesInUSD: { value: unclaimedFeesInUSD, loading: position.ticksLoading }
+          unclaimedFeesInUSD: { value: usdValue, loading: position.ticksLoading, isClaimAvailable }
         }
       }),
     [lockedList, pricesData]
