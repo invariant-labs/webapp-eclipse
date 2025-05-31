@@ -142,7 +142,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
     setAllowPropagation(!isLockPositionModalOpen)
   }, [isLockPositionModalOpen])
   const promotedIconFragment = useMemo(() => {
-    if (isPromoted && isActive) {
+    if (isPromoted && isActive && !positionSingleData?.isLocked) {
       return (
         <>
           <PromotedPoolPopover
@@ -171,7 +171,10 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
 
     return (
       <>
-        <InactivePoolsPopover isActive={isActive} isPromoted={isPromoted}>
+        <InactivePoolsPopover
+          isActive={isActive}
+          isPromoted={isPromoted}
+          isLocked={positionSingleData?.isLocked ?? false}>
           <div
             className={classes.actionButton}
             onClick={() => {

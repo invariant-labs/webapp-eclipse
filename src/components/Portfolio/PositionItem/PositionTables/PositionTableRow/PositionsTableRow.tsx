@@ -310,7 +310,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
   }, [loading])
 
   const promotedIconContent = useMemo(() => {
-    if (isPromoted && isActive) {
+    if (isPromoted && isActive && !positionSingleData?.isLocked) {
       return (
         <>
           <PromotedPoolPopover
@@ -341,7 +341,13 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
 
     return (
       <TooltipHover
-        title={<PositionStatusTooltip isActive={isActive} isPromoted={isPromoted} />}
+        title={
+          <PositionStatusTooltip
+            isActive={isActive}
+            isPromoted={isPromoted}
+            isLocked={positionSingleData?.isLocked ?? false}
+          />
+        }
         placement='top'
         increasePadding>
         <div style={{ display: 'flex', justifyContent: 'center' }}>
