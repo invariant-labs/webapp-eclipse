@@ -137,15 +137,16 @@ export const WrappedStats: React.FC = () => {
         </Grid>
       ) : (
         <>
-          <Typography className={classes.subheader}>Overview</Typography>
+          <Box display='flex' justifyContent='space-between' alignItems='center' mb={4}>
+            <Typography className={classes.subheader}>Overview</Typography>
+            <Intervals interval={interval} setInterval={setInterval} />
+          </Box>
           <Grid
             container
             className={cx(classes.plotsRow, {
               [classes.loadingOverlay]: isLoadingStats
             })}>
             <>
-              <Intervals interval={interval} setInterval={setInterval} />
-
               <Box display='flex' gap={'24px'} flexDirection={isSm ? 'column' : 'row'}>
                 <Volume
                   volume={volumeInterval.value}
