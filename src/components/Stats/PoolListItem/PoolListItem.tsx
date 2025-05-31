@@ -106,7 +106,6 @@ const PoolListItem: React.FC<IProps> = ({
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
   const isSmd = useMediaQuery(theme.breakpoints.down('md'))
   const isMd = useMediaQuery(theme.breakpoints.down(1160))
-  const lockIconRef = useRef<HTMLButtonElement>(null)
   const airdropIconRef = useRef<HTMLDivElement>(null)
   const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
   const intervalSuffix = mapIntervalToString(interval)
@@ -233,7 +232,6 @@ const PoolListItem: React.FC<IProps> = ({
           maxWidth='none'
           title={
             <LockStatsPopover
-              anchorEl={lockIconRef.current}
               lockedX={tokenAData.locked}
               lockedY={tokenBData.locked}
               symbolX={shortenAddress(tokenAData.symbol ?? '')}
@@ -244,8 +242,7 @@ const PoolListItem: React.FC<IProps> = ({
           }>
           <button
             onClick={(e: React.MouseEvent) => e.stopPropagation()}
-            className={classes.actionButton}
-            ref={lockIconRef}>
+            className={classes.actionButton}>
             <img width={28} src={lockIcon} alt={'Lock info'} />
           </button>
         </TooltipHover>
@@ -358,7 +355,6 @@ const PoolListItem: React.FC<IProps> = ({
                   maxWidth='none'
                   title={
                     <LockStatsPopover
-                      anchorEl={lockIconRef.current}
                       lockedX={tokenAData.locked}
                       lockedY={tokenBData.locked}
                       symbolX={shortenAddress(tokenAData.symbol ?? '')}
@@ -367,7 +363,7 @@ const PoolListItem: React.FC<IProps> = ({
                       liquidityY={tokenBData.liquidity}
                     />
                   }>
-                  <button className={classes.actionButton} ref={lockIconRef}>
+                  <button className={classes.actionButton}>
                     <img width={32} height={32} src={lockIcon} alt={'Lock info'} />
                   </button>
                 </TooltipHover>
