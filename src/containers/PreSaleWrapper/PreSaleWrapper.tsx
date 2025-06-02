@@ -427,7 +427,7 @@ export const PreSaleWrapper = () => {
             <Box className={classes.roundComponentContainer}>
               <RoundComponent
                 isActive={isActive}
-                saleDidNotStart={saleDidNotStart}
+                saleDidNotStart={false}
                 targetAmount={targetAmount}
                 amountDeposited={currentAmount}
                 amountNeeded={amountNeeded}

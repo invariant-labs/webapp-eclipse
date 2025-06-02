@@ -6,7 +6,7 @@ const useStyles = makeStyles()(theme => ({
     padding: '24px',
     borderRadius: '24px',
     display: 'flex',
-    flexDirection: 'column',
+    flexDirection: 'column-reverse',
     zIndex: 90,
     position: 'relative',
     [theme.breakpoints.down('lg')]: {
@@ -20,7 +20,7 @@ const useStyles = makeStyles()(theme => ({
   mobileChartContainer: {
     display: 'flex',
     justifyContent: 'center',
-    marginBottom: theme.spacing(4)
+    marginTop: theme.spacing(4)
   },
   mobileChart: {
     width: '250px',

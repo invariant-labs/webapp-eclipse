@@ -208,9 +208,9 @@ export const BuyComponent: React.FC<IProps> = ({
                 ) : (
                   <>
                     <Typography className={classes.greenBodyText}>
-                      ${formatNumberWithCommas(printBNandTrimZeros(currentAmount, mintDecimals, 3))}
+                      ${formatNumberWithCommas(printBNandTrimZeros(currentAmount, mintDecimals, 2))}
                     </Typography>
-                    {' / '}${formatNumberWithCommas(printBNandTrimZeros(targetAmount, mintDecimals, 3))}
+                    {' / '}${formatNumberWithCommas(printBNandTrimZeros(targetAmount, mintDecimals, 2))}
                   </>
                 )}
               </Typography>
