@@ -593,17 +593,17 @@ export const autoSwapPools = [
       address: new PublicKey('HG7iQMk29cgs74ZhSwrnye3C6SLQwKnfsbXqJVRi1x8H'),
       feeIndex: 6
     }
+  },
+  {
+    pair: {
+      tokenX: new PublicKey('AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE'),
+      tokenY: new PublicKey('27Kkn8PWJbKJsRZrxbsYDdedpUQKnJ5vNfserCxNEJ3R')
+    },
+    swapPool: {
+      address: new PublicKey('1Zxv7bYYzMuK8eey85ZSowa24S8B7QNfDx3GQpKQ4Bf'),
+      feeIndex: 0
+    }
   }
-  // {
-  //   pair: {
-  //     tokenX: new PublicKey('AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE'),
-  //     tokenY: new PublicKey('27Kkn8PWJbKJsRZrxbsYDdedpUQKnJ5vNfserCxNEJ3R')
-  //   },
-  //   swapPool: {
-  //     address: new PublicKey('1Zxv7bYYzMuK8eey85ZSowa24S8B7QNfDx3GQpKQ4Bf'),
-  //     feeIndex: 0
-  //   }
-  // }
 ]
 export const promotedTiers = [
   {
@@ -648,7 +648,7 @@ export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
     USDT_MAIN.address,
     BITZ_MAIN.address,
     LAIKA_MAIN.address,
-    TIA_MAIN.address
+    TUSD_MAIN.address
   ],
   Testnet: [USDC_TEST.address, BTC_TEST.address, WETH_TEST.address],
   Local: []
@@ -888,9 +888,9 @@ export const getPopularPools = (network: NetworkType) => {
           fee: '0.09'
         },
         {
-          tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
-          tokenY: 'BeRUj3h7BqkbdfFU7FBNYbodgf8GCHodzKvF9aVjNNfL',
-          fee: '0.09'
+          tokenX: '64mggk2nXg6vHC1qCdsZdEFzd5QGN4id54Vbho4PswCF',
+          tokenY: 'So11111111111111111111111111111111111111112',
+          fee: '1'
         },
         {
           tokenX: 'BeRUj3h7BqkbdfFU7FBNYbodgf8GCHodzKvF9aVjNNfL',
@@ -898,20 +898,20 @@ export const getPopularPools = (network: NetworkType) => {
           fee: '0.09'
         },
         {
-          tokenX: '64mggk2nXg6vHC1qCdsZdEFzd5QGN4id54Vbho4PswCF',
-          tokenY: 'So11111111111111111111111111111111111111112',
-          fee: '1'
+          tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
+          tokenY: 'BeRUj3h7BqkbdfFU7FBNYbodgf8GCHodzKvF9aVjNNfL',
+          fee: '0.09'
+        },
+        {
+          tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
+          tokenY: '27Kkn8PWJbKJsRZrxbsYDdedpUQKnJ5vNfserCxNEJ3R',
+          fee: '0.01'
         },
         {
           tokenX: 'GU7NS9xCwgNPiAdJ69iusFrRfawjDDPjeMBovhV1d4kn',
           tokenY: 'So11111111111111111111111111111111111111112',
           fee: '0.01'
         }
-        // {
-        //   tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
-        //   tokenY: '27Kkn8PWJbKJsRZrxbsYDdedpUQKnJ5vNfserCxNEJ3R',
-        //   fee: '0.01'
-        // }
       ]
     default:
       return []
