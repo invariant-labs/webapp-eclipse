@@ -64,7 +64,7 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
 
     if (priceFormat === 'usdc-to-token') {
       const currentTierPrice = roundNumber >= 0 ?
-        [TIER1, TIER2, TIER3, TIER4][Math.min(roundNumber, 3)] : 0;
+        [TIER1, TIER2, TIER3, TIER4][Math.min(roundNumber - 1, 3)] : 0;
       return <>1$ = {printBNandTrimZeros(currentTierPrice, decimals)} INVT</>
     } else {
       return <>1 INVT = {printBNandTrimZeros(amount, decimals, 3)}$</>

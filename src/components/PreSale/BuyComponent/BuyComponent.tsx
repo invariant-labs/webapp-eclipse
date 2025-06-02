@@ -194,42 +194,53 @@ export const BuyComponent: React.FC<IProps> = ({
           <Box sx={{ height: '1px', width: '100%' }}>
             <Box className={classes.sectionDivider} />
           </Box>
-          <Typography className={classes.titleText}>
-            <Typography className={classes.pinkText}>INVARIANT</Typography>
-            <Typography className={classes.headingText}>TOKEN PRESALE</Typography>
-            <Typography className={classes.greenText}>$INVT</Typography>
-          </Typography>
-          <Typography className={classes.raisedInfo}>
-            <Typography className={classes.greyText}>Raised:</Typography>
-            {isLoading ? (
-              <Skeleton variant='rounded' width={150} height={24} sx={{ ml: 1 }} />
-            ) : (
-              <>
-                <Typography className={classes.greenBodyText}>
-                  ${formatNumberWithCommas(printBNandTrimZeros(currentAmount, mintDecimals, 3))}
-                </Typography>
-                {' / '}${formatNumberWithCommas(printBNandTrimZeros(targetAmount, mintDecimals, 3))}
-              </>
-            )}
-          </Typography>
+          {!saleDidNotStart && (
+            <>
+              <Typography className={classes.titleText}>
+                <Typography className={classes.pinkText}>INVARIANT</Typography>
+                <Typography className={classes.headingText}>TOKEN PRESALE</Typography>
+                <Typography className={classes.greenText}>$INVT</Typography>
+              </Typography>
+              <Typography className={classes.raisedInfo}>
+                <Typography className={classes.greyText}>Raised:</Typography>
+                {isLoading ? (
+                  <Skeleton variant='rounded' width={150} height={24} sx={{ ml: 1 }} />
+                ) : (
+                  <>
+                    <Typography className={classes.greenBodyText}>
+                      ${formatNumberWithCommas(printBNandTrimZeros(currentAmount, mintDecimals, 3))}
+                    </Typography>
+                    {' / '}${formatNumberWithCommas(printBNandTrimZeros(targetAmount, mintDecimals, 3))}
+                  </>
+                )}
+              </Typography>
+            </>
+          )}
+
         </Box>
-        <Box sx={{ height: '49px' }}>
+        <Box sx={{ height: saleDidNotStart ? 'auto' : '49px' }}>
 
           <>
-            {isLoading ? (
+            {isLoading && !saleDidNotStart ? (
               <Skeleton variant='rounded' width={'100%'} height={49} sx={{ marginTop: '8px' }} />
             ) : (
               <>
+                {!saleDidNotStart && (
+                  <>
+                    <Box className={classes.darkBackground}>
+                      <Box className={classes.gradientProgress} />
+                    </Box>
+                    <Grid container className={classes.barWrapper}>
+                      <Typography className={classes.sliderLabel}>0%</Typography>
+                      <Typography className={classes.sliderLabel}>{filledPercentage.toFixed(2)}%</Typography>
+                      <Typography className={classes.sliderLabel}>100%</Typography>
+                    </Grid></>
 
-                <Box className={classes.darkBackground}>
-                  <Box className={classes.gradientProgress} />
-                </Box>
-                <Grid container className={classes.barWrapper}>
-                  <Typography className={classes.sliderLabel}>0%</Typography>
-                  <Typography className={classes.sliderLabel}>{filledPercentage.toFixed(2)}%</Typography>
-                  <Typography className={classes.sliderLabel}>100%</Typography>
-                </Grid>
+                )}
               </>
+
+
+
             )}
           </>
         </Box>
@@ -237,8 +248,11 @@ export const BuyComponent: React.FC<IProps> = ({
         {saleDidNotStart && (
           <Box
             sx={{
-              marginTop: '16px',
-              width: '467px'
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginTop: '32px',
+              width: '100%',
             }}>
             <Timer hours={hours} minutes={minutes} seconds={seconds} />
           </Box>

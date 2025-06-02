@@ -226,8 +226,6 @@ export const PreSaleWrapper = () => {
       [saleStats]
     )
 
-
-
   useEffect(() => {
     const index = tokens.findIndex(token => token.assetAddress.equals(mint))
     if (index !== -1) setTokenIndex(index)
@@ -301,6 +299,7 @@ export const PreSaleWrapper = () => {
   const isActive = useMemo(() => {
     return !saleDidNotStart && !saleEnded && !saleSoldOut
   }, [saleDidNotStart, saleEnded, saleSoldOut])
+
 
   const isPublic = useMemo(() => round === 4, [round])
 

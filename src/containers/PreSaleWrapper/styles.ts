@@ -238,7 +238,7 @@ export const useStyles = makeStyles()(() => ({
     height: 40,
     padding: '8px 12px',
     borderRadius: '12px',
-    background: colors.invariant.component,
+    background: colors.invariant.light,
     transition: 'all 0.4s cubic-bezier(0.25, 1, 0.5, 1)',
     position: 'relative',
     overflow: 'hidden',
@@ -259,7 +259,7 @@ export const useStyles = makeStyles()(() => ({
       left: 0,
       width: '100%',
       height: '100%',
-      background: 'linear-gradient(90deg, rgba(80, 207, 61, 0.1), rgba(80, 207, 61, 0))',
+      background: 'linear-gradient(90deg, rgba(36, 248, 3, 0.12), rgba(80, 207, 61, 0))',
       transform: 'translateX(-100%)',
       transition: 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)',
       zIndex: 0

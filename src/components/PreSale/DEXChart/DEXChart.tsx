@@ -25,7 +25,6 @@ const volumeTvlData = [
         label: 'Orca',
         color: '#FFD15C',
         logo: OrcaLogo
-
     },
     {
         log: 'Log3',
@@ -33,7 +32,6 @@ const volumeTvlData = [
         label: 'Umbra',
         color: 'gradient-umbra',
         logo: UmbraLogo
-
     },
     {
         log: 'Log4',
@@ -56,7 +54,7 @@ const feeTvlData = [
         log: 'Log2',
         value: 0.007,
         label: 'Orca',
-        color: '#FFD15C',
+        color: colors.invariant.goldenYellow,
         logo: OrcaLogo
     },
     {
@@ -70,12 +68,12 @@ const feeTvlData = [
         log: 'Log4',
         value: 0.0005,
         label: 'Solar DEX',
-        color: '#FBFBFB',
+        color: colors.invariant.offWhite,
         logo: SolarLogo
     },
 ]
 
-const availableGradients = ['gradient', 'gradient2', 'gradient3']
+const availableGradients = ['gradient-invariant', 'gradient-umbra']
 export enum SwitcherAlignment {
     VOLUME_TVL = 'volume/tvl',
     FEE_TVL = 'fee/tvl',

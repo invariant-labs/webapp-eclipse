@@ -10,31 +10,13 @@ interface ArcProps {
     glowIntensity?: number;
 }
 
-const hexToRgb = (hex: string) => {
-    const cleanHex = hex.startsWith('#') ? hex.slice(1) : hex;
-
-    if (!/^([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(cleanHex)) {
-        return { r: 0.18, g: 0.88, b: 0.6 };
-    }
-
-    const r = parseInt(cleanHex.slice(0, 2), 16) / 255;
-    const g = parseInt(cleanHex.slice(2, 4), 16) / 255;
-    const b = parseInt(cleanHex.slice(4, 6), 16) / 255;
-
-    return { r, g, b };
-};
 
 export const TokenomicsArc: React.FC<ArcProps> = ({
     color = colors.invariant.green,
     width = 65,
     height = 98,
-    glowColor = colors.invariant.green,
 }) => {
     const safeColor = color.startsWith('#') ? color : '#2EE09A';
-    const safeGlowColor = glowColor.startsWith('#') ? glowColor : '#2EE09A';
-    const rgb = hexToRgb(safeGlowColor);
-
-    console.log(`Using glow color: ${safeGlowColor}, RGB: ${rgb.r}, ${rgb.g}, ${rgb.b}`);
 
     return (
         <Box sx={{ width, height }}>
