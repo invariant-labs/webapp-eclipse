@@ -16,6 +16,7 @@ type Props = {
   arePointsDistributed: boolean
   isLoading: boolean
   isPromotedLoading: boolean
+  isLocked?: boolean
 }
 
 export const PositionStats = ({
@@ -25,7 +26,8 @@ export const PositionStats = ({
   points24,
   arePointsDistributed,
   isLoading,
-  isPromotedLoading
+  isPromotedLoading,
+  isLocked = false
 }: Props) => {
   const { classes, cx } = useStyles()
 
@@ -63,7 +65,7 @@ export const PositionStats = ({
         <Box className={cx(classes.statContainer, classes.statCOntainerRainbow)}>
           {isLoading || isPromotedLoading ? (
             <Skeleton height={20} width={140} variant='rounded' />
-          ) : arePointsDistributed ? (
+          ) : arePointsDistributed && !isLocked ? (
             <>
               <Typography className={classes.statName}>Points 24H:</Typography>
               <Typography className={classes.statValue}>
