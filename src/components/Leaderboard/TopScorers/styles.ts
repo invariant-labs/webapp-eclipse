@@ -56,11 +56,14 @@ const useStyles = makeStyles()(() => {
       marginTop: '24px'
     },
     topScorersItem: {
-      width: 288,
+      width: 284,
       display: 'flex',
       alignItems: 'center',
       flexDirection: 'column',
-      gap: 24
+      gap: 24,
+      [theme.breakpoints.up('lg')]: {
+        width: 316
+      }
     },
     topScorersItemBox: {
       display: 'flex',
@@ -72,12 +75,16 @@ const useStyles = makeStyles()(() => {
       border: '2px solid #EF84F580',
       paddingTop: 12,
       paddingBottom: 12,
-      paddingLeft: 18,
-      paddingRight: 18,
+      paddingLeft: 16,
+      paddingRight: 16,
       background: colors.invariant.component,
       [theme.breakpoints.down('sm')]: {
         boxSizing: 'border-box',
         width: '100%'
+      },
+      [theme.breakpoints.up('lg')]: {
+        paddingLeft: 32,
+        paddingRight: 32
       }
     },
     skeleton: {
