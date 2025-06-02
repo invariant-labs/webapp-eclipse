@@ -6,7 +6,7 @@ import { useStyles } from './style'
 import { TimeData } from '@store/reducers/stats'
 import { Grid, Typography, useMediaQuery } from '@mui/material'
 import { Box } from '@mui/system'
-import { formatNumberWithSuffix, trimZeros } from '@utils/utils'
+import { formatNumberWithoutSuffix, formatNumberWithSuffix, trimZeros } from '@utils/utils'
 import {
   getLimitingTimestamp,
   formatLargeNumber,
@@ -59,7 +59,7 @@ const Volume: React.FC<StatsInterface> = ({ volume, data, className, isLoading, 
         </Grid>
         <div className={classes.volumePercentContainer}>
           <Typography className={classes.volumePercentHeader}>
-            ${formatNumberWithSuffix(isLoading ? Math.random() * 10000 : volume)}
+            ${formatNumberWithoutSuffix(isLoading ? Math.random() * 10000 : volume)}
           </Typography>
         </div>
       </Box>
