@@ -55,7 +55,7 @@ const useStyles = makeStyles<StyleProps>()((theme, { interval }) => {
         width: '95%'
       },
       [theme.breakpoints.down('sm')]: {
-        height: 48,
+        height: 36,
         width: '100%'
       }
     },
