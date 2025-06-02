@@ -31,24 +31,37 @@ export const InputPagination: React.FC<IPaginationList> = ({
 }) => {
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
   const isMobile = useMediaQuery(theme.breakpoints.down('lg'))
-
   const matches = useMediaQuery(theme.breakpoints.down('lg'))
 
   const { classes } = useStyles({ borderTop, isMobile })
   const [currentPage, setCurrentPage] = useState<number | string>(defaultPage)
-
   const [inputValue, setInputValue] = useState<string>(defaultPage.toString())
   const [inputWidth, setInputWidth] = useState<number | string>(0)
 
-  const changePageImmediate = (value: string) => {
-    const num = parseInt(value)
-    if (isNaN(num)) {
-      setCurrentPage(1)
-      handleChangePage(1)
+  const handleInputChange = (value: string) => {
+    if (value === '') {
+      setInputValue('')
       return
     }
 
-    if (num < 1) {
+    if (!/^\d+$/.test(value)) {
+      return
+    }
+
+    const numericValue = Number(value)
+
+    if (numericValue > pages) {
+      setInputValue(String(pages))
+      return
+    }
+
+    setInputValue(value)
+  }
+
+  const changePageImmediate = (value: string) => {
+    const num = parseInt(value)
+
+    if (isNaN(num) || num < 1) {
       setCurrentPage(1)
       handleChangePage(1)
       return
@@ -89,95 +102,73 @@ export const InputPagination: React.FC<IPaginationList> = ({
   }, [pages])
 
   return (
-    <>
-      <Box className={classes.pagination}>
-        {!isMobile && activeInput && (
-          <Box
-            display='flex'
-            alignItems='center'
-            justifyContent={isMobile ? 'center' : 'flex-start'}
-            gap={1}
-            width={240}>
-            <Typography className={classes.labelText}> Go to</Typography>
-            <input
-              className={classes.input}
-              style={{ width: inputWidth }}
-              value={inputValue}
-              onChange={e => {
-                const value = e.target.value
+    <Box className={classes.pagination}>
+      {!isMobile && activeInput && (
+        <Box display='flex' alignItems='center' justifyContent='flex-start' gap={1} width={240}>
+          <Typography className={classes.labelText}> Go to</Typography>
+          <input
+            className={classes.input}
+            style={{ width: inputWidth }}
+            value={inputValue}
+            onChange={e => handleInputChange(e.target.value)}
+            type='text'
+            inputMode='numeric'
+            onBlur={() => {
+              if (inputValue === '' || parseInt(inputValue) < 1) {
+                setInputValue('1')
+              } else if (parseInt(inputValue) > pages) {
+                setInputValue(String(pages))
+              }
+            }}
+          />
+          <Typography className={classes.labelText}> page</Typography>
+        </Box>
+      )}
 
-                if (value === '') {
-                  setInputValue('')
-                  return
-                }
+      <Pagination
+        style={{ justifyContent: isSm ? 'center' : `${variant}` }}
+        className={classes.root}
+        count={pages}
+        shape='rounded'
+        siblingCount={squeeze ? 0 : matches ? 0 : 1}
+        page={typeof currentPage === 'number' ? currentPage : 1}
+        onChange={(_e, newPage) => {
+          setCurrentPage(newPage)
+          setInputValue(newPage.toString())
+          handleChangePage(newPage)
+        }}
+      />
 
-                if (!/^\d+$/.test(value)) {
-                  return
-                }
+      {isMobile && activeInput && (
+        <Box display='flex' alignItems='center' justifyContent='center' gap={1} width={240}>
+          <Typography className={classes.labelText}> Go to</Typography>
+          <input
+            className={classes.input}
+            style={{ width: inputWidth }}
+            value={inputValue}
+            onChange={e => handleInputChange(e.target.value)}
+            type='text'
+            inputMode='numeric'
+            onBlur={() => {
+              if (inputValue === '' || parseInt(inputValue) < 1) {
+                setInputValue('1')
+              } else if (parseInt(inputValue) > pages) {
+                setInputValue(String(pages))
+              }
+            }}
+          />
+          <Typography className={classes.labelText}> page</Typography>
+        </Box>
+      )}
 
-                const numericValue = Number(value)
-
-                if (numericValue > pages) {
-                  setInputValue(String(pages))
-                  return
-                }
-
-                setInputValue(value)
-              }}
-              type='text'
-              inputMode='numeric'
-              onBlur={() => {
-                if (inputValue === '') {
-                  setInputValue('1')
-                }
-              }}
-            />
-
-            <Typography className={classes.labelText}> page</Typography>
-          </Box>
-        )}
-        <Pagination
-          style={{
-            justifyContent: isSm ? 'center' : `${variant}`
-          }}
-          className={classes.root}
-          count={pages}
-          shape='rounded'
-          siblingCount={squeeze ? 0 : matches ? 0 : 1}
-          page={typeof currentPage === 'number' ? currentPage : 1}
-          onChange={(_e, newPage) => {
-            setCurrentPage(newPage)
-            setInputValue(newPage.toString())
-            handleChangePage(newPage)
-          }}
-        />
-        {isMobile && activeInput && (
-          <Box
-            display='flex'
-            alignItems='center'
-            justifyContent={isMobile ? 'center' : 'flex-start'}
-            gap={1}
-            width={240}>
-            <Typography className={classes.labelText}> Go to</Typography>
-            <input
-              className={classes.input}
-              style={{ width: inputWidth }}
-              value={inputValue}
-              onChange={e => setInputValue(e.target.value)}
-              type='number'
-            />
-            <Typography className={classes.labelText}> page</Typography>
-          </Box>
-        )}
-        {pagesNumeration ? (
-          <Typography className={classes.labelText} width={240}>
-            Showing {pagesNumeration.lowerBound}-{pagesNumeration.upperBound} of{' '}
-            {pagesNumeration.totalItems}
-          </Typography>
-        ) : (
-          <Box width={240} />
-        )}
-      </Box>
-    </>
+      {pagesNumeration ? (
+        <Typography className={classes.labelText} width={240}>
+          Showing {pagesNumeration.lowerBound}-{pagesNumeration.upperBound} of{' '}
+          {pagesNumeration.totalItems}
+        </Typography>
+      ) : (
+        <Box width={240} />
+      )}
+    </Box>
   )
 }
