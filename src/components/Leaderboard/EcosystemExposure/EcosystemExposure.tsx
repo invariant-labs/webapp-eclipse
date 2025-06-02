@@ -294,23 +294,17 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
     )
   }
 
-  const PrevArrow = (props: any) => {
-    const { className, onClick } = props
-    return (
-      <div className={className} onClick={onClick}>
-        <img src={navLeftIcon} alt='prev' />
-      </div>
-    )
-  }
+  const PrevArrow = ({ className, style, onClick }: any) => (
+    <div className={className} style={style} onClick={onClick}>
+      <img src={navLeftIcon} alt='prev' />
+    </div>
+  )
 
-  const NextArrow = (props: any) => {
-    const { className, onClick } = props
-    return (
-      <div className={className} onClick={onClick}>
-        <img src={navRightIcon} alt='next' />
-      </div>
-    )
-  }
+  const NextArrow = ({ className, style, onClick }: any) => (
+    <div className={className} style={style} onClick={onClick}>
+      <img src={navRightIcon} alt='next' />
+    </div>
+  )
 
   return (
     <Grid className={classes.mainWrapper}>
