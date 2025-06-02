@@ -317,6 +317,8 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
 
   const highlightLayer = ({ innerWidth, innerHeight }) => {
     const unitLen = innerWidth / (plotMax - plotMin)
+    const rawWidth = ((rightRange?.x ?? 0) - (leftRange?.x ?? 0)) * unitLen
+    const width = Math.max(0, rawWidth)
 
     return (
       <svg width='100%' height='100%' pointerEvents={'none'}>
@@ -327,9 +329,9 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
           </linearGradient>
         </defs>
         <rect
-          x={(leftRange?.x - plotMin) * unitLen}
+          x={(leftRange?.x - plotMin) * unitLen > 0 ? (leftRange?.x - plotMin) * unitLen : 0}
           y={0}
-          width={(rightRange?.x - leftRange?.x) * unitLen}
+          width={width}
           height={innerHeight}
           fill='url(#gradient1)'
         />
@@ -467,17 +469,18 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
           data={[
             {
               id: 'less than range',
-              data: currentLessThanRange.length ? currentLessThanRange : [{ x: plotMin, y: 0 }]
+              data: currentLessThanRange.length > 0 ? currentLessThanRange : [{ x: plotMin, y: 0 }]
             },
             {
               id: 'range',
-              data: currentRange
+              data: currentRange.length > 0 ? currentRange : [{ x: plotMin, y: plotMax }]
             },
             {
               id: 'greater than range',
-              data: currentGreaterThanRange.length
-                ? currentGreaterThanRange
-                : [{ x: plotMax, y: 0 }]
+              data:
+                currentGreaterThanRange.length > 0
+                  ? currentGreaterThanRange
+                  : [{ x: plotMax, y: 0 }]
             }
           ]}
           curve={isXtoY ? 'stepAfter' : 'stepBefore'}

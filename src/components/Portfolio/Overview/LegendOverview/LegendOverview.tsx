@@ -60,7 +60,13 @@ export const LegendOverview: React.FC<LegendOverviewProps> = ({
                 </Typography>
               </Grid>
 
-              <Grid container justifyContent='flex-end' xs={7} alignContent='center' gap={'8px'}>
+              <Grid
+                display='flex'
+                item
+                justifyContent='flex-end'
+                xs={7}
+                alignContent='center'
+                gap={'8px'}>
                 <Typography className={classes.valueText}>
                   ${formatNumberWithoutSuffix(token.value, { twoDecimals: true })}
                 </Typography>

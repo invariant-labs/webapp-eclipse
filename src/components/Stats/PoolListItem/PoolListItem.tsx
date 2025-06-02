@@ -14,7 +14,7 @@ import {
   unknownTokenIcon,
   warningIcon
 } from '@static/icons'
-import { ITEMS_PER_PAGE, NetworkType, SortTypePoolList } from '@store/consts/static'
+import { Intervals, ITEMS_PER_PAGE, NetworkType, SortTypePoolList } from '@store/consts/static'
 import {
   addressToTicker,
   calculateAPYAndAPR,
@@ -27,7 +27,7 @@ import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { VariantType } from 'notistack'
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
-import { shortenAddress } from '@utils/uiUtils'
+import { mapIntervalToString, shortenAddress } from '@utils/uiUtils'
 import LockStatsPopover from '@components/Modals/LockStatsPopover/LockStatsPopover'
 import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
 import { BN } from '@coral-xyz/anchor'
@@ -65,6 +65,7 @@ interface IProps {
   showAPY: boolean
   points?: BN
   itemNumber?: number
+  interval?: Intervals
 }
 
 const PoolListItem: React.FC<IProps> = ({
@@ -95,7 +96,8 @@ const PoolListItem: React.FC<IProps> = ({
   copyAddressHandler,
   points,
   showAPY,
-  itemNumber = 0
+  itemNumber = 0,
+  interval = Intervals.Daily
 }) => {
   const [showInfo, setShowInfo] = useState(false)
   const { classes, cx } = useStyles({ showInfo })
@@ -104,10 +106,9 @@ const PoolListItem: React.FC<IProps> = ({
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
   const isSmd = useMediaQuery(theme.breakpoints.down('md'))
   const isMd = useMediaQuery(theme.breakpoints.down(1160))
-  const lockIconRef = useRef<HTMLButtonElement>(null)
   const airdropIconRef = useRef<HTMLDivElement>(null)
-  const [isLockPopoverOpen, setLockPopoverOpen] = useState(false)
   const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
+  const intervalSuffix = mapIntervalToString(interval)
 
   const isMobile = useMediaQuery(theme.breakpoints.down('lg'))
 
@@ -199,13 +200,7 @@ const PoolListItem: React.FC<IProps> = ({
         copyAddressHandler('Failed to copy Market ID to Clipboard', 'error')
       })
   }
-  const handlePointerEnter = () => {
-    setLockPopoverOpen(true)
-  }
 
-  const handlePointerLeave = () => {
-    setLockPopoverOpen(false)
-  }
   useEffect(() => {
     if (!isSmd) {
       setShowInfo(false)
@@ -215,26 +210,15 @@ const PoolListItem: React.FC<IProps> = ({
   const { convertedApy, convertedApr } = calculateAPYAndAPR(apy, poolAddress, volume, fee, TVL)
   const ActionsButtons = (
     <Box className={classes.action}>
-      <button
-        className={classes.actionButton}
-        onClick={(e: React.MouseEvent) => {
-          e.stopPropagation()
-          handleOpenSwap
-        }}>
+      <button className={classes.actionButton} onClick={handleOpenSwap}>
         <img width={28} src={horizontalSwapIcon} alt={'Exchange'} />
       </button>
-      <button
-        className={classes.actionButton}
-        onClick={(e: React.MouseEvent) => {
-          e.stopPropagation()
-          handleOpenPosition
-        }}>
+      <button className={classes.actionButton} onClick={handleOpenPosition}>
         <img width={28} src={plusIcon} alt={'Open'} />
       </button>
       <button
         className={classes.actionButton}
-        onClick={(e: React.MouseEvent) => {
-          e.stopPropagation()
+        onClick={() => {
           window.open(
             `https://eclipsescan.xyz/account/${poolAddress}${networkUrl}`,
             '_blank',
@@ -244,29 +228,24 @@ const PoolListItem: React.FC<IProps> = ({
         <img width={28} src={newTabBtnIcon} alt={'Exchange'} />
       </button>
       {isLocked && (
-        <>
+        <TooltipHover
+          maxWidth='none'
+          title={
+            <LockStatsPopover
+              lockedX={tokenAData.locked}
+              lockedY={tokenBData.locked}
+              symbolX={shortenAddress(tokenAData.symbol ?? '')}
+              symbolY={shortenAddress(tokenBData.symbol ?? '')}
+              liquidityX={tokenAData.liquidity}
+              liquidityY={tokenBData.liquidity}
+            />
+          }>
           <button
             onClick={(e: React.MouseEvent) => e.stopPropagation()}
-            className={classes.actionButton}
-            ref={lockIconRef}
-            onPointerLeave={handlePointerLeave}
-            onPointerEnter={handlePointerEnter}>
+            className={classes.actionButton}>
             <img width={28} src={lockIcon} alt={'Lock info'} />
           </button>
-          <LockStatsPopover
-            anchorEl={lockIconRef.current}
-            open={isLockPopoverOpen}
-            lockedX={tokenAData.locked}
-            lockedY={tokenBData.locked}
-            symbolX={shortenAddress(tokenAData.symbol ?? '')}
-            symbolY={shortenAddress(tokenBData.symbol ?? '')}
-            liquidityX={tokenAData.liquidity}
-            liquidityY={tokenBData.liquidity}
-            onClose={() => {
-              setLockPopoverOpen(false)
-            }}
-          />
-        </>
+        </TooltipHover>
       )}
     </Box>
   )
@@ -326,12 +305,11 @@ const PoolListItem: React.FC<IProps> = ({
             <Grid className={classes.row} sx={{ justifyContent: 'space-between' }}>
               <Grid sx={{ display: 'flex', gap: '4px' }}>
                 <Typography>
-                  {`${convertedApr > 1000 ? '>1000%' : convertedApr === 0 ? '-' : Math.abs(convertedApr).toFixed(2) + '%'}`}
+                  {`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '' : Math.abs(convertedApy).toFixed(2) + '%'}`}
                 </Typography>{' '}
-                <Typography
-                  className={
-                    classes.apyLabel
-                  }>{`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '' : Math.abs(convertedApy).toFixed(2) + '%'}`}</Typography>
+                <Typography className={classes.apyLabel}>
+                  {`${convertedApr > 1000 ? '>1000%' : convertedApr === 0 ? '-' : Math.abs(convertedApr).toFixed(2) + '%'}`}
+                </Typography>
               </Grid>
               {isPromoted && (
                 <PromotedPoolPopover apr={convertedApr} apy={convertedApy} points={points}>
@@ -373,28 +351,22 @@ const PoolListItem: React.FC<IProps> = ({
           {!isMd && (
             <Box className={classes.action}>
               {isLocked && (
-                <>
-                  <button
-                    className={classes.actionButton}
-                    ref={lockIconRef}
-                    onPointerLeave={handlePointerLeave}
-                    onPointerEnter={handlePointerEnter}>
+                <TooltipHover
+                  maxWidth='none'
+                  title={
+                    <LockStatsPopover
+                      lockedX={tokenAData.locked}
+                      lockedY={tokenBData.locked}
+                      symbolX={shortenAddress(tokenAData.symbol ?? '')}
+                      symbolY={shortenAddress(tokenBData.symbol ?? '')}
+                      liquidityX={tokenAData.liquidity}
+                      liquidityY={tokenBData.liquidity}
+                    />
+                  }>
+                  <button className={classes.actionButton}>
                     <img width={32} height={32} src={lockIcon} alt={'Lock info'} />
                   </button>
-                  <LockStatsPopover
-                    anchorEl={lockIconRef.current}
-                    open={isLockPopoverOpen}
-                    lockedX={tokenAData.locked}
-                    lockedY={tokenBData.locked}
-                    symbolX={shortenAddress(tokenAData.symbol ?? '')}
-                    symbolY={shortenAddress(tokenBData.symbol ?? '')}
-                    liquidityX={tokenAData.liquidity}
-                    liquidityY={tokenBData.liquidity}
-                    onClose={() => {
-                      setLockPopoverOpen(false)
-                    }}
-                  />
-                </>
+                </TooltipHover>
               )}
 
               <TooltipHover title='Exchange'>
@@ -426,13 +398,12 @@ const PoolListItem: React.FC<IProps> = ({
             <>
               <>
                 <Typography component='h5' className={classes.extendedRowTitle}>
-                  Fee (24h){' '}
+                  Fee ({intervalSuffix}){' '}
                   <span className={classes.extendedRowContent}>
                     ${formatNumberWithSuffix((fee * 0.01 * volume).toFixed(2))}
                   </span>
                 </Typography>
                 <Typography>{''}</Typography>
-
                 <Typography component='h5' className={classes.extendedRowTitle}>
                   APY{' '}
                   <span className={classes.extendedRowContent}>
@@ -503,7 +474,7 @@ const PoolListItem: React.FC<IProps> = ({
                   onSort?.(SortTypePoolList.APY_DESC)
                 }
               }}>
-              APR <span className={classes.apy}>APY</span>
+              APY <span className={classes.apy}>APR</span>
               {sortType === SortTypePoolList.APY_ASC ? (
                 <ArrowDropUpIcon className={classes.icon} />
               ) : sortType === SortTypePoolList.APY_DESC ? (
@@ -537,7 +508,7 @@ const PoolListItem: React.FC<IProps> = ({
                   onSort?.(SortTypePoolList.FEE_24_DESC)
                 }
               }}>
-              Fee 24H
+              Fee {intervalSuffix}
               {sortType === SortTypePoolList.FEE_24_ASC ? (
                 <ArrowDropUpIcon className={classes.icon} />
               ) : sortType === SortTypePoolList.FEE_24_DESC ? (
@@ -554,7 +525,7 @@ const PoolListItem: React.FC<IProps> = ({
                 onSort?.(SortTypePoolList.VOLUME_DESC)
               }
             }}>
-            Volume 24H
+            Volume {intervalSuffix}
             {sortType === SortTypePoolList.VOLUME_ASC ? (
               <ArrowDropUpIcon className={classes.icon} />
             ) : sortType === SortTypePoolList.VOLUME_DESC ? (

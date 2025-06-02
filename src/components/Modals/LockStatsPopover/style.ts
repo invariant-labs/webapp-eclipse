@@ -4,9 +4,6 @@ import { makeStyles } from 'tss-react/mui'
 
 const useStyles = makeStyles()((theme: Theme) => {
   return {
-    popover: {
-      pointerEvents: 'none'
-    },
     chart: {
       height: '100px',
       width: '160px'
@@ -41,9 +38,10 @@ const useStyles = makeStyles()((theme: Theme) => {
       gap: '16px',
 
       [theme.breakpoints.down(671)]: {
-        width: 400,
+        width: '100%',
         flexDirection: 'column',
-        alignItems: 'center'
+        alignItems: 'center',
+        padding: 8
       }
     },
     paper: {
