@@ -183,9 +183,9 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
           <Typography className={classes.secondaryLabel}>
             Your remaining allocation:{' '}
           </Typography>
-          {isLoadingUserStats ? (
+          {isLoadingUserStats && walletStatus === Status.Initialized ? (
             <Skeleton variant="text" width="80px" height={24} />
-          ) : isActive && !(roundNumber === 4 || (roundNumber < 4 && !proofOfInclusion)) ? (
+          ) : isActive && walletStatus === Status.Initialized && !(roundNumber === 4 || (roundNumber < 4 && !proofOfInclusion)) ? (
             <Typography className={classes.value}>
               {renderFormattedNumberWithSkeleton(userRemainingAllocation, mintDecimals, "$", '', "80px", isLoadingUserStats)}
             </Typography>
