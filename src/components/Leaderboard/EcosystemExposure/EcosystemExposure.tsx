@@ -9,7 +9,7 @@ import { BN } from '@coral-xyz/anchor'
 import { printBN } from '@utils/utils'
 import { LEADERBOARD_DECIMAL } from '@store/consts/static'
 import { BlurOverlay } from '../YourProgress/BlurOverlay'
-import { checkIcon, infoIcon } from '@static/icons'
+import { checkIcon, infoIcon, navLeftIcon, navRightIcon } from '@static/icons'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import cryptara from '@static/png/exposure/cryptara.webp'
 import celestialMammothIcon from '@static/png/exposure/celestialMammoth.webp'
@@ -294,6 +294,18 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
     )
   }
 
+  const PrevArrow = ({ className, style, onClick }: any) => (
+    <div className={className} style={style} onClick={onClick}>
+      <img src={navLeftIcon} alt='prev' />
+    </div>
+  )
+
+  const NextArrow = ({ className, style, onClick }: any) => (
+    <div className={className} style={style} onClick={onClick}>
+      <img src={navRightIcon} alt='next' />
+    </div>
+  )
+
   return (
     <Grid className={classes.mainWrapper}>
       <Grid sx={{ position: 'relative' }} className={classes.boxWrapper}>
@@ -321,8 +333,8 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
             className={classes.slider}
             slidesToShow={isSm ? 3 : 4}
             infinite={false}
-            prevArrow={<div />}
-            nextArrow={<div />}>
+            prevArrow={<PrevArrow />}
+            nextArrow={<NextArrow />}>
             {projects.map(tasks => (
               <React.Fragment key={tasks.id}>
                 <TooltipHover
