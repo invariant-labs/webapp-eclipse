@@ -239,11 +239,7 @@ export function* handleAirdrop(): Generator {
       // transfer sol
       // yield* call([connection, connection.requestAirdrop], airdropAdmin.publicKey, 1 * 1e9)
       // yield* call(transferAirdropSOL)
-      yield* call(
-        getCollateralTokenAirdrop,
-        airdropTokens[networkType],
-        airdropQuantities[networkType]
-      )
+      yield* call(getTokenAirdrop, airdropTokens[networkType], airdropQuantities[networkType])
 
       yield put(
         snackbarsActions.add({
@@ -272,11 +268,7 @@ export function* handleAirdrop(): Generator {
         })
       )
 
-      yield* call(
-        getCollateralTokenAirdrop,
-        airdropTokens[networkType],
-        airdropQuantities[networkType]
-      )
+      yield* call(getTokenAirdrop, airdropTokens[networkType], airdropQuantities[networkType])
 
       yield put(
         snackbarsActions.add({
@@ -289,11 +281,7 @@ export function* handleAirdrop(): Generator {
     } else {
       yield* call([connection, connection.requestAirdrop], wallet.publicKey, 1 * 1e9)
 
-      yield* call(
-        getCollateralTokenAirdrop,
-        airdropTokens[networkType],
-        airdropQuantities[networkType]
-      )
+      yield* call(getTokenAirdrop, airdropTokens[networkType], airdropQuantities[networkType])
       yield put(
         snackbarsActions.add({
           message: 'You will soon receive airdrop',
@@ -322,15 +310,15 @@ export function* handleAirdrop(): Generator {
   }
 }
 
-export function* setEmptyAccounts(collateralsAddresses: PublicKey[]): Generator {
+export function* setEmptyAccounts(addresses: PublicKey[]): Generator {
   const tokensAccounts = yield* select(accounts)
   const acc: PublicKey[] = []
-  for (const collateral of collateralsAddresses) {
-    const accountAddress = tokensAccounts[collateral.toString()]
-      ? tokensAccounts[collateral.toString()].address
+  for (const address of addresses) {
+    const accountAddress = tokensAccounts[address.toString()]
+      ? tokensAccounts[address.toString()].address
       : null
     if (accountAddress == null) {
-      acc.push(collateral)
+      acc.push(address)
     }
   }
   if (acc.length !== 0) {
@@ -348,10 +336,13 @@ export function* transferAirdropSOL(): Generator {
     })
   )
   const connection = yield* call(getConnection)
-  const blockhash = yield* call([connection, connection.getLatestBlockhash])
+  const { blockhash, lastValidBlockHeight } = yield* call([
+    connection,
+    connection.getLatestBlockhash
+  ])
   tx.feePayer = airdropAdmin.publicKey
-  tx.recentBlockhash = blockhash.blockhash
-  tx.setSigners(airdropAdmin.publicKey)
+  tx.recentBlockhash = blockhash
+  tx.lastValidBlockHeight = lastValidBlockHeight
   tx.partialSign(airdropAdmin as Signer)
 
   const txid = yield* call(sendAndConfirmRawTransaction, connection, tx.serialize(), {
@@ -379,21 +370,18 @@ export function* transferAirdropSOL(): Generator {
   }
 }
 
-export function* getCollateralTokenAirdrop(
-  collateralsAddresses: PublicKey[],
-  collateralsQuantities: number[]
-): Generator {
+export function* getTokenAirdrop(addresses: PublicKey[], quantities: number[]): Generator {
   const wallet = yield* call(getWallet)
   const instructions: TransactionInstruction[] = []
-  yield* call(setEmptyAccounts, collateralsAddresses)
+  yield* call(setEmptyAccounts, addresses)
   const tokensAccounts = yield* select(accounts)
-  for (const [index, collateral] of collateralsAddresses.entries()) {
+  for (const [index, address] of addresses.entries()) {
     instructions.push(
       createMintToInstruction(
-        collateral,
-        tokensAccounts[collateral.toString()].address,
+        address,
+        tokensAccounts[address.toString()].address,
         airdropAdmin.publicKey,
-        collateralsQuantities[index],
+        quantities[index],
         [],
         TOKEN_PROGRAM_ID
       )
@@ -401,9 +389,13 @@ export function* getCollateralTokenAirdrop(
   }
   const tx = instructions.reduce((tx, ix) => tx.add(ix), new Transaction())
   const connection = yield* call(getConnection)
-  const blockhash = yield* call([connection, connection.getLatestBlockhash])
+  const { blockhash, lastValidBlockHeight } = yield* call([
+    connection,
+    connection.getLatestBlockhash
+  ])
   tx.feePayer = wallet.publicKey
-  tx.recentBlockhash = blockhash.blockhash
+  tx.recentBlockhash = blockhash
+  tx.lastValidBlockHeight = lastValidBlockHeight
   tx.partialSign(airdropAdmin)
 
   const signedTx = (yield* call([wallet, wallet.signTransaction], tx)) as Transaction
@@ -415,9 +407,13 @@ export function* getCollateralTokenAirdrop(
 
 export function* signAndSend(wallet: WalletAdapter, tx: Transaction): SagaGenerator<string> {
   const connection = yield* call(getConnection)
-  const blockhash = yield* call([connection, connection.getLatestBlockhash])
+  const { blockhash, lastValidBlockHeight } = yield* call([
+    connection,
+    connection.getLatestBlockhash
+  ])
   tx.feePayer = wallet.publicKey
-  tx.recentBlockhash = blockhash.blockhash
+  tx.recentBlockhash = blockhash
+  tx.lastValidBlockHeight = lastValidBlockHeight
   const signedTx = (yield* call([wallet, wallet.signTransaction], tx)) as Transaction
   const signature = yield* call([connection, connection.sendRawTransaction], signedTx.serialize())
   return signature
@@ -695,8 +691,12 @@ export function* handleUnwrapWETH(): Generator {
       unwrapTx.add(unwrapIx)
     })
 
-    const unwrapBlockhash = yield* call([connection, connection.getLatestBlockhash])
-    unwrapTx.recentBlockhash = unwrapBlockhash.blockhash
+    const { blockhash, lastValidBlockHeight } = yield* call([
+      connection,
+      connection.getLatestBlockhash
+    ])
+    unwrapTx.recentBlockhash = blockhash
+    unwrapTx.lastValidBlockHeight = lastValidBlockHeight
     unwrapTx.feePayer = wallet.publicKey
 
     const unwrapSignedTx = (yield* call([wallet, wallet.signTransaction], unwrapTx)) as Transaction

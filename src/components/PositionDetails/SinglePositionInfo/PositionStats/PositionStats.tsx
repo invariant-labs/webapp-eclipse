@@ -11,21 +11,23 @@ import { LEADERBOARD_DECIMAL } from '@store/consts/static'
 type Props = {
   value: number
   pendingFees: number
-  poolApr: number
+  poolApy: number
   points24: number
   arePointsDistributed: boolean
   isLoading: boolean
   isPromotedLoading: boolean
+  isLocked?: boolean
 }
 
 export const PositionStats = ({
   value,
   pendingFees,
-  poolApr,
+  poolApy,
   points24,
   arePointsDistributed,
   isLoading,
-  isPromotedLoading
+  isPromotedLoading,
+  isLocked = false
 }: Props) => {
   const { classes, cx } = useStyles()
 
@@ -63,7 +65,7 @@ export const PositionStats = ({
         <Box className={cx(classes.statContainer, classes.statCOntainerRainbow)}>
           {isLoading || isPromotedLoading ? (
             <Skeleton height={20} width={140} variant='rounded' />
-          ) : arePointsDistributed ? (
+          ) : arePointsDistributed && !isLocked ? (
             <>
               <Typography className={classes.statName}>Points 24H:</Typography>
               <Typography className={classes.statValue}>
@@ -83,9 +85,9 @@ export const PositionStats = ({
           )}
         </Box>
         <Box className={cx(classes.statContainer, classes.statContainerHiglight)}>
-          <Typography className={classes.statName}>Pool APR:</Typography>
+          <Typography className={classes.statName}>Pool APY:</Typography>
           <Typography className={cx(classes.statValue, classes.statValueHiglight)}>
-            {poolApr.toFixed(2)}%
+            {poolApy.toFixed(2)}%
           </Typography>
         </Box>
       </Box>

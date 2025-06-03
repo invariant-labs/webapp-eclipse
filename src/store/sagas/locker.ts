@@ -1,7 +1,7 @@
 import { actions, LockPositionPayload } from '@store/reducers/locker'
 import { all, call, put, select, spawn, takeLatest } from 'typed-redux-saga'
 import { getWallet } from './wallet'
-import { sendAndConfirmRawTransaction, Transaction } from '@solana/web3.js'
+import { sendAndConfirmRawTransaction, SendTransactionError, Transaction } from '@solana/web3.js'
 import { getLockerProgram, getMarketProgram } from '@utils/web3/programs/amm'
 import { rpcAddress } from '@store/selectors/solanaConnection'
 import { getConnection } from './connection'
@@ -10,8 +10,20 @@ import { IWallet } from '@invariant-labs/sdk-eclipse'
 import { PayloadAction } from '@reduxjs/toolkit'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { actions as positionsActions } from '@store/reducers/positions'
-import { DEFAULT_PUBLICKEY, SIGNING_SNACKBAR_CONFIG } from '@store/consts/static'
-import { createLoaderKey, ensureError } from '@utils/utils'
+import {
+  APPROVAL_DENIED_MESSAGE,
+  COMMON_ERROR_MESSAGE,
+  DEFAULT_PUBLICKEY,
+  SIGNING_SNACKBAR_CONFIG
+} from '@store/consts/static'
+import {
+  createLoaderKey,
+  ensureApprovalDenied,
+  ensureError,
+  extractErrorCode,
+  extractRuntimeErrorCode,
+  mapErrorCodeToMessage
+} from '@utils/utils'
 import { closeSnackbar } from 'notistack'
 
 export function* handleLockPosition(action: PayloadAction<LockPositionPayload>) {
@@ -25,6 +37,7 @@ export function* handleLockPosition(action: PayloadAction<LockPositionPayload>) 
     const rpc = yield* select(rpcAddress)
     const marketProgram = yield* call(getMarketProgram, network, rpc, wallet as IWallet)
     const locker = yield* call(getLockerProgram, network, rpc, wallet as IWallet)
+    yield put(positionsActions.setShouldDisable(true))
 
     if (wallet.publicKey.toBase58() === DEFAULT_PUBLICKEY.toBase58() || !connection) {
       yield put(
@@ -102,15 +115,43 @@ export function* handleLockPosition(action: PayloadAction<LockPositionPayload>) 
       return
     }
     yield put(actions.setLockSuccess(false))
+    yield put(positionsActions.setShouldDisable(false))
   } catch (e: unknown) {
     const error = ensureError(e)
     console.log(error)
+    let msg: string = ''
+    if (error instanceof SendTransactionError) {
+      const err = error.transactionError
+      try {
+        const errorCode = extractRuntimeErrorCode(err)
+        msg = mapErrorCodeToMessage(errorCode)
+      } catch {
+        const errorCode = extractErrorCode(error)
+        msg = mapErrorCodeToMessage(errorCode)
+      }
+    } else {
+      try {
+        const errorCode = extractErrorCode(error)
+        msg = mapErrorCodeToMessage(errorCode)
+      } catch (e: unknown) {
+        const error = ensureError(e)
+        msg = ensureApprovalDenied(error) ? APPROVAL_DENIED_MESSAGE : COMMON_ERROR_MESSAGE
+      }
+    }
 
+    yield put(positionsActions.setShouldDisable(false))
     yield put(actions.setLockSuccess(false))
     closeSnackbar(loaderLockPosition)
     yield put(snackbarsActions.remove(loaderLockPosition))
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
+    yield put(
+      snackbarsActions.add({
+        message: msg,
+        variant: 'error',
+        persist: false
+      })
+    )
   }
 }
 

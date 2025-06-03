@@ -1,16 +1,20 @@
 import { Box, Typography, useMediaQuery } from '@mui/material'
 import { useStyles } from './style'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
-import { airdropRainbowIcon, backArrowIcon, newTabIcon, reverseTokensIcon } from '@static/icons'
+import { airdropRainbowIcon, backArrowIcon, newTabIcon } from '@static/icons'
 import { theme } from '@static/theme'
 import MarketIdLabel from '@components/NewPosition/MarketIdLabel/MarketIdLabel'
 import { VariantType } from 'notistack'
 import Refresher from '@common/Refresher/Refresher'
 import { REFRESHER_INTERVAL } from '@store/consts/static'
 import { useEffect, useMemo, useState } from 'react'
-import { truncateString } from '@utils/utils'
+import { ROUTES, truncateString } from '@utils/utils'
 import { LockButton } from './LockButton'
 import { Button } from '@common/Button/Button'
+import { INavigatePosition } from '@store/consts/types'
+import { MobileNavigation } from '../Navigation/MobileNavigation/MobileNavigation'
+import { useNavigate } from 'react-router-dom'
+import { ReverseTokensIcon } from '@static/componentIcon/ReverseTokensIcon'
 
 type Props = {
   tokenA: {
@@ -37,6 +41,9 @@ type Props = {
   onLockClick: () => void
   copyPoolAddressHandler: (message: string, variant: VariantType) => void
   isPreview: boolean
+  isClosing: boolean
+  previousPosition: INavigatePosition | null
+  nextPosition: INavigatePosition | null
 }
 
 export const PositionHeader = ({
@@ -57,13 +64,18 @@ export const PositionHeader = ({
   onGoBackClick,
   onLockClick,
   copyPoolAddressHandler,
-  isPreview
+  isPreview,
+  isClosing,
+  previousPosition,
+  nextPosition
 }: Props) => {
   const { classes, cx } = useStyles()
   const isSmDown = useMediaQuery(theme.breakpoints.down(688))
   const isMdDown = useMediaQuery(theme.breakpoints.down(1040))
-  const isMdUp = useMediaQuery(theme.breakpoints.up(1040))
+  const isLgDown = useMediaQuery(theme.breakpoints.down('lg'))
   const [refresherTime, setRefresherTime] = useState(REFRESHER_INTERVAL)
+
+  const navigate = useNavigate()
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -97,9 +109,9 @@ export const PositionHeader = ({
   const closeButton = closeButtonTitle ? (
     <TooltipHover title={closeButtonTitle}>
       <Button
-        height={36}
+        height={40}
         scheme='green'
-        disabled={isLocked || !hasEnoughETH || isPreview}
+        disabled={isLocked || !hasEnoughETH || isPreview || isClosing}
         variant='contained'
         onClick={() => onClosePositionClick()}>
         Close position
@@ -107,9 +119,9 @@ export const PositionHeader = ({
     </TooltipHover>
   ) : (
     <Button
-      height={36}
+      height={40}
       scheme='green'
-      disabled={isLocked || !hasEnoughETH || isPreview}
+      disabled={isLocked || !hasEnoughETH || isPreview || isClosing}
       variant='contained'
       onClick={() => onClosePositionClick()}>
       Close position
@@ -117,8 +129,8 @@ export const PositionHeader = ({
   )
 
   const addButton = (
-    <TooltipHover title='Add more liquidity to this pool'>
-      <Button scheme='pink' variant='contained' onClick={() => onAddPositionClick()}>
+    <TooltipHover title='Add more liquidity to this pool' fullSpan={isSmDown}>
+      <Button scheme='pink' variant='contained' onClick={() => onAddPositionClick()} width='100%'>
         + Add position
       </Button>
     </TooltipHover>
@@ -157,6 +169,23 @@ export const PositionHeader = ({
     </TooltipHover>
   )
 
+  const tooltipText = useMemo(() => {
+    if (isLocked) {
+      return (
+        <p>
+          This position is <b>locked</b> and <b>will not</b> earn points.
+          <br />
+          <br />A locked position does not generate points, even if it is active and the pool is
+          generating points.
+        </p>
+      )
+    } else if (isPromoted) {
+      return 'This pool distributes points'
+    } else {
+      return "This pool doesn't distribute points"
+    }
+  }, [isLocked, isPromoted])
+
   return (
     <Box className={classes.headerContainer}>
       <Box className={classes.navigation}>
@@ -169,32 +198,78 @@ export const PositionHeader = ({
             {marketIdLabel} {refresher}
           </Box>
         )}
+        {!isMdDown && isLgDown && (previousPosition || nextPosition) && (
+          <Box className={classes.tabletNavigation}>
+            <MobileNavigation
+              position={previousPosition}
+              direction='left'
+              onClick={() => {
+                if (previousPosition) {
+                  navigate(ROUTES.getPositionRoute(previousPosition.id))
+                }
+              }}
+            />
+            <MobileNavigation
+              position={nextPosition}
+              direction='right'
+              onClick={() => {
+                if (nextPosition) {
+                  navigate(ROUTES.getPositionRoute(nextPosition.id))
+                }
+              }}
+            />
+          </Box>
+        )}
       </Box>
+      {isMdDown && (previousPosition || nextPosition) && (
+        <Box display='flex' gap={1}>
+          <MobileNavigation
+            position={previousPosition}
+            direction='left'
+            onClick={() => {
+              if (previousPosition) {
+                navigate(ROUTES.getPositionRoute(previousPosition.id))
+              }
+            }}
+          />
+          <MobileNavigation
+            position={nextPosition}
+            direction='right'
+            onClick={() => {
+              if (nextPosition) {
+                navigate(ROUTES.getPositionRoute(nextPosition.id))
+              }
+            }}
+          />
+        </Box>
+      )}
       <Box className={classes.container}>
         <Box className={classes.upperContainer}>
           <Box className={classes.wrapper}>
             <Box className={classes.iconContainer}>
               <img className={classes.icon} src={tokenA.icon} alt={tokenA.ticker} />
               <TooltipHover title='Reverse tokens'>
-                <img
+                <ReverseTokensIcon
                   className={classes.reverseTokensIcon}
-                  src={reverseTokensIcon}
-                  alt='Reverse tokens'
                   onClick={() => onReverseTokensClick()}
                 />
               </TooltipHover>
               <img className={classes.icon} src={tokenB.icon} alt={tokenB.ticker} />
             </Box>
-            <Typography className={classes.tickerContainer}>
-              {truncateString(tokenA.ticker, 4)} - {truncateString(tokenB.ticker, 4)}
-            </Typography>
             <TooltipHover
               title={
-                isPromoted ? 'This pool distributes points' : "This pool doesn't distribute points"
+                tokenA.ticker.length > 4 || tokenB.ticker.length > 4
+                  ? tokenA.ticker + ' - ' + tokenB.ticker
+                  : ''
               }>
+              <Typography className={classes.tickerContainer}>
+                {truncateString(tokenA.ticker, 3)} - {truncateString(tokenB.ticker, 3)}
+              </Typography>
+            </TooltipHover>
+            <TooltipHover title={tooltipText}>
               <img
                 className={cx(classes.airdropIcon, {
-                  [classes.airdropIconInActive]: !isPromoted
+                  [classes.airdropIconInActive]: !(isPromoted && isActive && !isLocked)
                 })}
                 src={airdropRainbowIcon}
                 alt='Points'
@@ -216,8 +291,7 @@ export const PositionHeader = ({
                   </>
                 )
               }
-              placement='top'
-              increasePadding>
+              placement='top'>
               <Box
                 className={cx(classes.feeContainer, {
                   [classes.feeContainerIsActive]: isActive
@@ -229,26 +303,43 @@ export const PositionHeader = ({
             {!isSmDown && isMdDown && (
               <>
                 {addButton}
-                <LockButton isLocked={isLocked} isPreview={isPreview} onLockClick={onLockClick} />
+                <LockButton
+                  isClosing={isClosing}
+                  isLocked={isLocked}
+                  isPreview={isPreview}
+                  onLockClick={onLockClick}
+                />
               </>
             )}
           </Box>
         </Box>
-        {(isSmDown || isMdUp) && (
+        {(isSmDown || !isMdDown) && (
           <Box className={classes.lowerContainer}>
             {!isMdDown ? (
               <>
                 {marketIdLabel}
                 <Box className={classes.wrapper}>
-                  {refresher} {addButton}{' '}
-                  <LockButton isLocked={isLocked} isPreview={isPreview} onLockClick={onLockClick} />
+                  {refresher} {addButton}
+                  <LockButton
+                    isLocked={isLocked}
+                    isClosing={isClosing}
+                    isPreview={isPreview}
+                    onLockClick={onLockClick}
+                  />
                 </Box>
               </>
             ) : (
               <>
                 {closeButton}
-                {addButton}
-                <LockButton isLocked={isLocked} isPreview={isPreview} onLockClick={onLockClick} />
+                <Box display={'flex'} flexGrow={1}>
+                  {addButton}
+                </Box>
+                <LockButton
+                  isClosing={isClosing}
+                  isLocked={isLocked}
+                  isPreview={isPreview}
+                  onLockClick={onLockClick}
+                />
               </>
             )}
           </Box>

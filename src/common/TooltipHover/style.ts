@@ -8,7 +8,8 @@ const useStyles = makeStyles<{
   bottom?: number | string
   fullSpan?: boolean
   increasePadding?: boolean
-}>()((_theme, { top, left, right, bottom, fullSpan, increasePadding }) => ({
+  maxWidth?: string | number
+}>()((_theme, { top, left, right, bottom, fullSpan, increasePadding, maxWidth }) => ({
   tooltipGradient: {
     minWidth: 'fit-content',
     position: 'relative',
@@ -49,7 +50,12 @@ const useStyles = makeStyles<{
     right: right ? right : 'auto',
     bottom: bottom ? bottom : 'auto',
     boxShadow: `0px 2px 8px ${colors.invariant.black}`,
-    padding: increasePadding ? '16px 24px' : '8px 12px'
+    padding: increasePadding ? '16px 24px' : '8px 12px',
+    ...(maxWidth && {
+      '.MuiBox-root': {
+        maxWidth: maxWidth
+      }
+    })
   },
   tooltipSpan: {
     width: fullSpan ? '100%' : 'auto',

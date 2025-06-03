@@ -13,7 +13,7 @@ const useStyles = makeStyles<{ exposure: number }>()((_theme, { exposure }) => {
     },
 
     mainWrapper: {
-      maxWidth: '524px',
+      maxWidth: 605,
       width: '100%',
       [theme.breakpoints.down('sm')]: {
         maxWidth: '100%'
@@ -97,6 +97,10 @@ const useStyles = makeStyles<{ exposure: number }>()((_theme, { exposure }) => {
       '& .slick-next.slick-disabled, & .slick-prev.slick-disabled': {
         filter: 'grayscale(100%)',
         opacity: 0.2
+      },
+      '.slick-prev::before, .slick-next::before': {
+        display: 'none !important',
+        content: '""" !important"'
       }
     },
 

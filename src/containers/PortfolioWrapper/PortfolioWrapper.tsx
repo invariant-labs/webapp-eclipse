@@ -1,4 +1,5 @@
 import {
+  Intervals,
   NetworkType,
   POSITIONS_PER_PAGE,
   WETH_CLOSE_POSITION_LAMPORTS_MAIN,
@@ -23,7 +24,8 @@ import {
   PositionData,
   positionListSwitcher,
   positionsWithPoolsData,
-  prices
+  prices,
+  shouldDisable
 } from '@store/selectors/positions'
 import { address, balanceLoading, status, swapTokens, balance } from '@store/selectors/solanaWallet'
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
@@ -73,6 +75,7 @@ const PortfolioWrapper = () => {
     }
     return true
   })
+  const disabledButton = useSelector(shouldDisable)
   const positionListAlignment = useSelector(positionListSwitcher)
 
   const navigate = useNavigate()
@@ -137,7 +140,7 @@ const PortfolioWrapper = () => {
   }
 
   useEffect(() => {
-    dispatch(actionsStats.getCurrentStats())
+    dispatch(actionsStats.getCurrentIntervalStats({ interval: Intervals.Daily }))
   }, [])
 
   const handleLockPosition = (index: number) => {
@@ -192,7 +195,11 @@ const PortfolioWrapper = () => {
       (pricesData.data[position.tokenY.assetAddress.toString()] ?? 0)
 
     const unclaimedFeesInUSD = xValue + yValue
-    return unclaimedFeesInUSD
+    return {
+      usdValue: unclaimedFeesInUSD,
+      isClaimAvailable:
+        +printBN(bnX, position.tokenX.decimals) > 0 || +printBN(bnY, position.tokenY.decimals) > 0
+    }
   }
 
   const data: IPositionItem[] = useMemo(
@@ -254,7 +261,7 @@ const PortfolioWrapper = () => {
         const valueX = tokenXLiq + tokenYLiq / currentPrice
         const valueY = tokenYLiq + tokenXLiq * currentPrice
 
-        const unclaimedFeesInUSD = calculateUnclaimedFees(position)
+        const { usdValue, isClaimAvailable } = calculateUnclaimedFees(position)
         return {
           tokenXName: position.tokenX.symbol,
           tokenYName: position.tokenY.symbol,
@@ -278,7 +285,7 @@ const PortfolioWrapper = () => {
           network: currentNetwork,
           isFullRange: position.lowerTickIndex === minTick && position.upperTickIndex === maxTick,
           isLocked: position.isLocked,
-          unclaimedFeesInUSD: { value: unclaimedFeesInUSD, loading: position.ticksLoading }
+          unclaimedFeesInUSD: { value: usdValue, loading: position.ticksLoading, isClaimAvailable }
         }
       }),
     [list, pricesData]
@@ -343,7 +350,7 @@ const PortfolioWrapper = () => {
         const valueX = tokenXLiq + tokenYLiq / currentPrice
         const valueY = tokenYLiq + tokenXLiq * currentPrice
 
-        const unclaimedFeesInUSD = calculateUnclaimedFees(position)
+        const { usdValue, isClaimAvailable } = calculateUnclaimedFees(position)
         return {
           tokenXName: position.tokenX.symbol,
           tokenYName: position.tokenY.symbol,
@@ -367,7 +374,7 @@ const PortfolioWrapper = () => {
           network: currentNetwork,
           isFullRange: position.lowerTickIndex === minTick && position.upperTickIndex === maxTick,
           isLocked: position.isLocked,
-          unclaimedFeesInUSD: { value: unclaimedFeesInUSD, loading: position.ticksLoading }
+          unclaimedFeesInUSD: { value: usdValue, loading: position.ticksLoading, isClaimAvailable }
         }
       }),
     [lockedList, pricesData]
@@ -390,6 +397,7 @@ const PortfolioWrapper = () => {
       handleCloseBanner={handleBannerClose}
       showBanner={showBanner}
       isHiding={isHiding}
+      shouldDisable={disabledButton}
       tokensList={tokensList}
       isBalanceLoading={isBalanceLoading}
       handleSnackbar={handleSnackbar}

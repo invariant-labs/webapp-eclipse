@@ -19,7 +19,10 @@ const useStyles = makeStyles()(theme => {
     },
     headerContainer: {
       justifyContent: 'space-between',
-      marginBottom: 12
+      marginBottom: 12,
+      flexDirection: 'row',
+      minHeight: 65,
+      flexWrap: 'nowrap'
     },
     header: {
       ...typography.heading4,
@@ -38,7 +41,11 @@ const useStyles = makeStyles()(theme => {
     },
     plot: {
       width: '100%',
-      height: 185
+      height: 185,
+      [theme.breakpoints.down('md')]: {
+        height: 253,
+        marginBottom: 24
+      }
     },
     subheader: {
       ...typography.heading4,
@@ -221,11 +228,39 @@ const useStyles = makeStyles()(theme => {
       height: 60,
       marginLeft: 16
     },
+    currentPriceContainer: {
+      marginTop: 23,
+      textWrap: 'nowrap',
+      minWidth: 'fit-content'
+    },
     currentPrice: {
       display: 'inline-block',
       color: colors.invariant.yellow,
-      ...typography.caption2,
-      textAlign: 'right'
+
+      ...typography.caption2
+    },
+    priceWarning: {
+      display: 'inline-block',
+      color: colors.invariant.Error,
+      ...typography.body2,
+      marginLeft: 4,
+      fontSize: 14
+    },
+    priceWarningIcon: {
+      width: 16,
+      height: 16,
+      flexShrink: 0
+    },
+    priceWarningContainer: {
+      display: 'flex',
+      alignItems: 'center',
+      flexShrink: 1,
+      marginTop: 2
+    },
+    usdcCurrentPrice: {
+      display: 'inline-block',
+      color: colors.invariant.text,
+      ...typography.body2
     },
     checkboxLabel: {
       color: colors.invariant.textGrey,
@@ -241,21 +276,16 @@ const useStyles = makeStyles()(theme => {
     subheaderWrapper: {
       justifyContent: 'space-between',
       alignItems: 'center',
-      minHeight: 36
+      minHeight: 36,
+      rowGap: 16
     },
     priceRangeContainer: {
+      display: 'flex',
       flexDirection: 'column',
-      width: 'auto',
-      height: 43,
       alignItems: 'flex-start',
-      justifyContent: 'space-between'
-    },
-    currentPriceContainer: {
-      flexDirection: 'column',
-      width: 'auto',
-      height: 43,
-      alignItems: 'flex-start',
-      justifyContent: 'flex-end'
+      minHeight: 87,
+      flexWrap: 'nowrap',
+      flexShrink: 1
     },
     rangeConcentration: {
       display: 'flex',
@@ -277,6 +307,17 @@ const useStyles = makeStyles()(theme => {
         minWidth: 82,
         textAlign: 'center'
       }
+    },
+    suggestedPriceTooltipText: {
+      color: colors.invariant.text,
+      ...typography.caption2,
+      fontWeight: 200
+    },
+    boldedText: {
+      fontWeight: 800
+    },
+    tooltipContainer: {
+      maxWidth: 512
     }
   }
 })

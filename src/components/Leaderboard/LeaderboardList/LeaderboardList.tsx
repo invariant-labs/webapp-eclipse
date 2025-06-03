@@ -1,9 +1,9 @@
 import React, { useMemo } from 'react'
 import { Box, Grid, Skeleton } from '@mui/material'
 import { useStyles } from './style'
-import PurpleWaves from '@static/png/purple_waves.png'
-import GreenWaves from '@static/png/green_waves.png'
-import { PaginationList } from '@common/Pagination/Pagination'
+import PurpleWaves from '@static/png/purple_waves.webp'
+import GreenWaves from '@static/png/green_waves.webp'
+import { InputPagination } from '@common/Pagination/InputPagination/InputPagination'
 import NotFoundPlaceholder from '@components/Stats/NotFoundPlaceholder/NotFoundPlaceholder'
 import { Status } from '@store/reducers/solanaWallet'
 import { CurrentUser, ILpEntry, ISwapEntry, ITotalEntry } from '@store/reducers/leaderboard'
@@ -15,7 +15,6 @@ import { Keypair, PublicKey } from '@solana/web3.js'
 import { LeaderBoardType, NetworkType } from '@store/consts/static'
 import { VariantType } from 'notistack'
 import { EmptyRow } from './EmptyRow/EmptyRow'
-import { TableBoundsLabel } from '@common/TableBoundsLabel/TableBoundsLabel'
 
 interface LeaderboardListProps {
   copyAddressHandler: (message: string, variant: VariantType) => void
@@ -348,14 +347,18 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({
       </Grid>
 
       {totalPages > 0 && (
-        <TableBoundsLabel lowerBound={lowerBound} totalItems={totalItems} upperBound={upperBound}>
-          <PaginationList
-            pages={totalPages}
-            defaultPage={currentPage}
-            handleChangePage={handlePageChange}
-            variant='center'
-          />
-        </TableBoundsLabel>
+        <InputPagination
+          pages={totalPages}
+          defaultPage={currentPage}
+          handleChangePage={handlePageChange}
+          variant='center'
+          pagesNumeration={{
+            lowerBound: lowerBound,
+            totalItems: totalItems,
+            upperBound: upperBound
+          }}
+          borderTop
+        />
       )}
       {renderWaves('bottom', GreenWaves)}
     </div>

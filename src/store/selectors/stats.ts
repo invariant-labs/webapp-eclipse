@@ -12,20 +12,30 @@ export const {
   volume24,
   tvl24,
   fees24,
+  volume,
+  fees,
+  tvl,
   tokensData,
   poolsData,
   isLoading,
-  lastTimestamp
+  lastTimestamp,
+  lastInterval,
+  currentInterval
 } = keySelectors(store, [
   'volumePlot',
   'liquidityPlot',
   'volume24',
   'tvl24',
   'fees24',
+  'volume',
+  'fees',
+  'tvl',
   'tokensData',
   'poolsData',
   'isLoading',
-  'lastTimestamp'
+  'lastTimestamp',
+  'lastInterval',
+  'currentInterval'
 ])
 
 export interface ExtendedPoolStatsData extends PoolStatsData {
@@ -63,11 +73,17 @@ export const statsSelectors = {
   volume24,
   tvl24,
   fees24,
+  volume,
+  fees,
+  tvl,
+  lastTimestamp,
+  lastInterval,
   tokensData,
   poolsData,
   poolsStatsWithTokensDetails,
   tokensStatsWithTokensDetails,
-  isLoading
+  isLoading,
+  currentInterval
 }
 
 export default statsSelectors

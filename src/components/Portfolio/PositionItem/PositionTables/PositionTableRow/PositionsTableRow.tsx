@@ -1,4 +1,4 @@
-import { Grid, TableRow, TableCell, Typography, useMediaQuery, Box, Skeleton } from '@mui/material'
+import { Grid, TableCell, Typography, useMediaQuery, Box, Skeleton } from '@mui/material'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { MinMaxChart } from '../../components/MinMaxChart/MinMaxChart'
 import { colors, theme } from '@static/theme'
@@ -40,6 +40,8 @@ interface IPositionsTableRow extends IPositionItem {
   handleLockPosition: (index: number) => void
   handleClosePosition: (index: number) => void
   handleClaimFee: (index: number, isLocked: boolean) => void
+  createNewPosition: () => void
+  shouldDisable: boolean
 }
 
 export const PositionTableRow: React.FC<IPositionsTableRow> = ({
@@ -63,10 +65,12 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
   tokenYLiq,
   network,
   loading,
-  unclaimedFeesInUSD = { value: 0, loading: false },
+  unclaimedFeesInUSD = { value: 0, loading: false, isClaimAvailable: false },
   handleClaimFee,
   handleLockPosition,
-  handleClosePosition
+  handleClosePosition,
+  createNewPosition,
+  shouldDisable
 }) => {
   const { classes, cx } = useStyles()
   const { classes: skeletonClasses } = useSkeletonStyle()
@@ -77,7 +81,6 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
   const airdropIconRef = useRef<any>(null)
   const isXs = useMediaQuery(theme.breakpoints.down('xs'))
   const isDesktop = useMediaQuery(theme.breakpoints.up('lg'))
-
   const [isLockPositionModalOpen, setIsLockPositionModalOpen] = useState(false)
 
   useEffect(() => {
@@ -294,7 +297,6 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
     if (isItemLoading('actions')) {
       return <Skeleton variant='rectangular' className={skeletonClasses.skeletonRect32x32} />
     }
-
     return (
       <Button
         scheme='green'
@@ -308,7 +310,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
   }, [loading])
 
   const promotedIconContent = useMemo(() => {
-    if (isPromoted && isActive) {
+    if (isPromoted && isActive && !positionSingleData?.isLocked) {
       return (
         <>
           <PromotedPoolPopover
@@ -339,7 +341,13 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
 
     return (
       <TooltipHover
-        title={<PositionStatusTooltip isActive={isActive} isPromoted={isPromoted} />}
+        title={
+          <PositionStatusTooltip
+            isActive={isActive}
+            isPromoted={isPromoted}
+            isLocked={positionSingleData?.isLocked ?? false}
+          />
+        }
         placement='top'
         increasePadding>
         <div style={{ display: 'flex', justifyContent: 'center' }}>
@@ -381,7 +389,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
   const { success, inProgress } = useSelector(lockerState)
 
   return (
-    <TableRow>
+    <>
       <LockLiquidityModal
         open={isLockPositionModalOpen}
         onClose={() => setIsLockPositionModalOpen(false)}
@@ -398,11 +406,12 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
         inProgress={inProgress}
       />
       <PositionViewActionPopover
+        shouldDisable={shouldDisable}
         anchorEl={anchorEl}
         handleClose={handleClose}
         open={isActionPopoverOpen}
         isLocked={positionSingleData?.isLocked ?? false}
-        unclaimedFeesInUSD={unclaimedFeesInUSD.value}
+        unclaimedFeesInUSD={unclaimedFeesInUSD}
         claimFee={() =>
           handleClaimFee(
             positionSingleData?.positionIndex ?? 0,
@@ -411,6 +420,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
         }
         closePosition={() => handleClosePosition(positionSingleData?.positionIndex ?? 0)}
         onLockPosition={() => setIsLockPositionModalOpen(true)}
+        createPosition={createNewPosition}
       />
       <TableCell className={`${classes.pairNameCell} ${classes.cellBase}`}>
         {pairNameContent}
@@ -436,6 +446,6 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
       <TableCell className={`${classes.cellBase} ${classes.actionCell} action-button`}>
         {actionsFragment}
       </TableCell>
-    </TableRow>
+    </>
   )
 }

@@ -9,20 +9,15 @@ import { BN } from '@coral-xyz/anchor'
 import { printBN } from '@utils/utils'
 import { LEADERBOARD_DECIMAL } from '@store/consts/static'
 import { BlurOverlay } from '../YourProgress/BlurOverlay'
-import {
-  allDomainsIcon,
-  celestialMammothIcon,
-  checkIcon,
-  edasIcon,
-  ensofiIcon,
-  infoIcon,
-  navLeftIcon,
-  navRightIcon,
-  nucleusIcon,
-  turboTapIcon
-} from '@static/icons'
-import cryptara from '@static/png/cryptara.png'
+import { checkIcon, infoIcon, navLeftIcon, navRightIcon } from '@static/icons'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
+import cryptara from '@static/png/exposure/cryptara.webp'
+import celestialMammothIcon from '@static/png/exposure/celestialMammoth.webp'
+import edasIcon from '@static/png/exposure/edas.webp'
+import turboTapIcon from '@static/png/exposure/turboTap.webp'
+import ensofiIcon from '@static/png/exposure/ensofi.webp'
+import allDomainsIcon from '@static/png/exposure/allDomains.webp'
+import nucleusIcon from '@static/png/exposure/nucleus.webp'
 
 interface EcosystemExposureI {
   isLoading: boolean
@@ -226,7 +221,6 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
       tasks: TURBOTAP_TASKS,
       completedAll: TURBOTAP_TASKS.every(task => task.completed)
     },
-
     {
       id: 'Nucleus',
       link: 'https://app.nucleusearn.io/dashboard',
@@ -234,7 +228,6 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
       tasks: NUCLEUS_TASKS,
       completedAll: NUCLEUS_TASKS.every(task => task.completed)
     },
-
     {
       id: 'CelestialMammoth',
       link: 'https://linktr.ee/celestialmmammoth',
@@ -242,7 +235,6 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
       tasks: CELESTIAL_TASKS,
       completedAll: CELESTIAL_TASKS.every(task => task.completed)
     },
-
     {
       id: 'Cryptara Conquest',
       link: 'https://x.com/CryptaraConq',
@@ -302,6 +294,18 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
     )
   }
 
+  const PrevArrow = ({ className, style, onClick }: any) => (
+    <div className={className} style={style} onClick={onClick}>
+      <img src={navLeftIcon} alt='prev' />
+    </div>
+  )
+
+  const NextArrow = ({ className, style, onClick }: any) => (
+    <div className={className} style={style} onClick={onClick}>
+      <img src={navRightIcon} alt='next' />
+    </div>
+  )
+
   return (
     <Grid className={classes.mainWrapper}>
       <Grid sx={{ position: 'relative' }} className={classes.boxWrapper}>
@@ -329,45 +333,47 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
             className={classes.slider}
             slidesToShow={isSm ? 3 : 4}
             infinite={false}
-            prevArrow={<img src={navLeftIcon} alt='prev' />}
-            nextArrow={<img src={navRightIcon} alt='next' />}>
+            prevArrow={<PrevArrow />}
+            nextArrow={<NextArrow />}>
             {projects.map(tasks => (
-              <TooltipHover
-                key={tasks.id}
-                placement='bottom'
-                title={
-                  <Grid className={classes.exposureWrapper}>
-                    <ExposureTooltipTitle
-                      img={tasks.img}
-                      tasks={tasks.tasks}
-                      id={tasks.id}
-                      link={tasks.link}
-                    />
-                  </Grid>
-                }
-                gradient
-                increasePadding>
-                <Grid
-                  sx={{
-                    position: 'relative',
-                    width: 64,
-                    height: 64
-                  }}>
-                  <img
-                    style={{
-                      opacity: !tasks.completedAll ? 0.4 : 1,
+              <React.Fragment key={tasks.id}>
+                <TooltipHover
+                  key={tasks.id}
+                  placement='bottom'
+                  title={
+                    <Grid className={classes.exposureWrapper}>
+                      <ExposureTooltipTitle
+                        img={tasks.img}
+                        tasks={tasks.tasks}
+                        id={tasks.id}
+                        link={tasks.link}
+                      />
+                    </Grid>
+                  }
+                  gradient
+                  increasePadding>
+                  <Grid
+                    sx={{
+                      position: 'relative',
                       width: 64,
-                      height: 64,
-                      borderRadius: '6px'
-                    }}
-                    src={tasks.img}
-                    alt={tasks.id}
-                  />
-                  {tasks.completedAll && (
-                    <img src={checkIcon} alt='check icon' className={classes.checkIcon} />
-                  )}
-                </Grid>
-              </TooltipHover>
+                      height: 64
+                    }}>
+                    <img
+                      style={{
+                        opacity: !tasks.completedAll ? 0.4 : 1,
+                        width: 64,
+                        height: 64,
+                        borderRadius: '6px'
+                      }}
+                      src={tasks.img}
+                      alt={tasks.id}
+                    />
+                    {tasks.completedAll && (
+                      <img src={checkIcon} alt='check icon' className={classes.checkIcon} />
+                    )}
+                  </Grid>
+                </TooltipHover>
+              </React.Fragment>
             ))}
           </Slider>
         </Grid>

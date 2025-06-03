@@ -351,8 +351,7 @@ export const BRICK_MAIN: Token = {
   address: new PublicKey('3Q5RQRTKCH4RWGFVFht1RtM1fx3SSxNGAk1sTuVank6w'),
   decimals: 9,
   name: 'Brick',
-  logoURI:
-    'https://beige-random-platypus-427.mypinata.cloud/ipfs/QmQqSjag5q4nQTDcAnqkGrxp5Y2DzBqWB4L6FMM38cszbm',
+  logoURI: 'https://ipfs.io/ipfs/QmQqSjag5q4nQTDcAnqkGrxp5Y2DzBqWB4L6FMM38cszbm',
   coingeckoId: ''
 }
 
@@ -382,8 +381,7 @@ export const DOGW_MAIN: Token = {
   address: new PublicKey('Ev6go111sv39uMrAQeWsatFWgSYdfENuQGtBmr5QRwbJ'),
   decimals: 9,
   name: 'dog wif meat',
-  logoURI:
-    'https://lime-peculiar-eel-621.mypinata.cloud/ipfs/QmVYxFNgSnVFXrbaxTh7Pz6iQ9AJU8e7BLBMcyWiE476mU',
+  logoURI: 'https://ipfs.io/ipfs/QmVYxFNgSnVFXrbaxTh7Pz6iQ9AJU8e7BLBMcyWiE476mU',
   coingeckoId: ''
 }
 
@@ -491,6 +489,17 @@ export const ES_MAIN: Token = {
   coingeckoId: 'eclipse-3'
 }
 
+export const TUSD_MAIN: Token = {
+  tokenProgram: TOKEN_2022_PROGRAM_ID,
+  symbol: 'tUSD',
+  address: new PublicKey('27Kkn8PWJbKJsRZrxbsYDdedpUQKnJ5vNfserCxNEJ3R'),
+  decimals: 6,
+  name: 'Turbo USD',
+  logoURI:
+    'https://raw.githubusercontent.com/hyperlane-xyz/hyperlane-registry/85fc184f345916356f0d1ad73fb89ea2f15b95d7/deployments/warp_routes/tUSD/logo.svg',
+  coingeckoId: ''
+}
+
 const DEFAULT_PUBLICKEY = new PublicKey(0)
 const MAX_U64 = new BN('18446744073709551615')
 
@@ -593,6 +602,16 @@ export const autoSwapPools = [
       address: new PublicKey('HG7iQMk29cgs74ZhSwrnye3C6SLQwKnfsbXqJVRi1x8H'),
       feeIndex: 6
     }
+  },
+  {
+    pair: {
+      tokenX: new PublicKey('AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE'),
+      tokenY: new PublicKey('27Kkn8PWJbKJsRZrxbsYDdedpUQKnJ5vNfserCxNEJ3R')
+    },
+    swapPool: {
+      address: new PublicKey('1Zxv7bYYzMuK8eey85ZSowa24S8B7QNfDx3GQpKQ4Bf'),
+      feeIndex: 0
+    }
   }
 ]
 export const promotedTiers = [
@@ -620,6 +639,11 @@ export const promotedTiers = [
     tokenX: BITZ_MAIN.address,
     tokenY: WETH_MAIN.address,
     index: 6
+  },
+  {
+    tokenX: USDC_MAIN.address,
+    tokenY: TUSD_MAIN.address,
+    index: 0
   }
 ]
 
@@ -633,7 +657,9 @@ export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
     USDT_MAIN.address,
     BITZ_MAIN.address,
     ES_MAIN.address,
-    TIA_MAIN.address
+    TIA_MAIN.address,
+    LAIKA_MAIN.address,
+    TUSD_MAIN.address
   ],
   Testnet: [USDC_TEST.address, BTC_TEST.address, WETH_TEST.address],
   Local: []
@@ -705,8 +731,9 @@ export const SIGNING_SNACKBAR_CONFIG: Omit<ISnackbar, 'open'> = {
 }
 
 export const ADDRESSES_TO_REVERT_TOKEN_PAIRS: string[] = [
-  USDT_MAIN.address.toString(),
   USDC_MAIN.address.toString(),
+  USDT_MAIN.address.toString(),
+  TUSD_MAIN.address.toString(),
   WETH_MAIN.address.toString(),
   TETH_MAIN.address.toString(),
   SOL_MAIN.address.toString(),
@@ -776,7 +803,10 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
       SOLAR: SOLAR_MAIN.address.toString(),
       KYSOL_MAIN: KYSOL_MAIN.address.toString(),
       EZSOL_MAIN: EZSOL_MAIN.address.toString(),
-      ES: ES_MAIN.address.toString()
+      ES: ES_MAIN.address.toString(),
+      KYSOL: KYSOL_MAIN.address.toString(),
+      EZSOL: EZSOL_MAIN.address.toString(),
+      TUSD: TUSD_MAIN.address.toString()
     }
   }
 }
@@ -812,6 +842,8 @@ export const enum SortTypePoolList {
   NAME_DESC,
   FEE_ASC,
   FEE_DESC,
+  FEE_24_ASC,
+  FEE_24_DESC,
   VOLUME_ASC,
   VOLUME_DESC,
   TVL_ASC,
@@ -875,6 +907,11 @@ export const getPopularPools = (network: NetworkType) => {
           fee: '0.09'
         },
         {
+          tokenX: '64mggk2nXg6vHC1qCdsZdEFzd5QGN4id54Vbho4PswCF',
+          tokenY: 'So11111111111111111111111111111111111111112',
+          fee: '1'
+        },
+        {
           tokenX: USDC_MAIN.address.toString(),
           tokenY: SOL_MAIN.address.toString(),
           fee: '0.09'
@@ -885,9 +922,14 @@ export const getPopularPools = (network: NetworkType) => {
           fee: '0.09'
         },
         {
-          tokenX: '64mggk2nXg6vHC1qCdsZdEFzd5QGN4id54Vbho4PswCF',
-          tokenY: 'So11111111111111111111111111111111111111112',
-          fee: '1'
+          tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
+          tokenY: 'BeRUj3h7BqkbdfFU7FBNYbodgf8GCHodzKvF9aVjNNfL',
+          fee: '0.09'
+        },
+        {
+          tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
+          tokenY: '27Kkn8PWJbKJsRZrxbsYDdedpUQKnJ5vNfserCxNEJ3R',
+          fee: '0.01'
         },
         {
           tokenX: TETH_MAIN.address.toString(),
@@ -931,4 +973,89 @@ export const PRICE_API_URL = 'https://api.invariant.app/price'
 
 export enum AutoswapCustomError {
   FetchError = 0
+}
+
+export enum ErrorCodeExtractionKeys {
+  ErrorNumber = 'Error Number:',
+  Custom = 'Custom":',
+  ApprovalDenied = 'Approval Denied',
+  UndefinedOnSplit = "Cannot read properties of undefined (reading 'split')",
+  RightBracket = '}',
+  Dot = '.'
+}
+
+const SLIPPAGE_ERROR_MESSAGE = 'Price changed – increase slippage or retry'
+
+export const ERROR_CODE_TO_MESSAGE: Record<number, string> = {
+  0x1778: SLIPPAGE_ERROR_MESSAGE,
+  0x1773: SLIPPAGE_ERROR_MESSAGE,
+  0x1795: SLIPPAGE_ERROR_MESSAGE,
+  0x1796: SLIPPAGE_ERROR_MESSAGE,
+  0x1775: SLIPPAGE_ERROR_MESSAGE,
+  0x1785: SLIPPAGE_ERROR_MESSAGE
+}
+
+export const COMMON_ERROR_MESSAGE: string = 'Failed to send. Please try again'
+export const APPROVAL_DENIED_MESSAGE: string = 'Transaction approval rejected'
+
+export const ECLIPSE_MAINNET_GENESIS_HASH = 'EAQLJCV2mh23BsK2P9oYpV5CHVLDNHTxYss3URrNmg3s'
+export const SOLANA_MAINNET_GENESIS_HASH = '5eykt4UsFv8P8NJdTREpY1vzqKqZKvdpKuc147dw2N9d'
+
+export enum Intervals {
+  Daily = '24H',
+  Weekly = '1W',
+  Monthly = '1M'
+  // Yearly = 'yearly' Don't show year in UI
+}
+
+export const MONTH_NAMES = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December'
+]
+
+export const chartPlaceholder = {
+  tickmaps: [
+    { x: 2.33021324081296e-7, y: 0, index: -221810 },
+    { x: 0.9686056247049151, y: 0, index: -69400 },
+    { x: 0.9695746662960968, y: 6188.340066945488, index: -69390 },
+    { x: 0.9881717681706338, y: 6188.340066945488, index: -69200 },
+    { x: 0.9891603846976637, y: 20119.790531945488, index: -69190 },
+    { x: 0.9911405860036346, y: 20119.790531945488, index: -69170 },
+    { x: 0.9921321727081341, y: 28142.450909473402, index: -69160 },
+    { x: 0.9931247514617308, y: 28142.450909473402, index: -69150 },
+    { x: 0.9941183232608597, y: 30289.879997489374, index: -69140 },
+    { x: 0.9951128890397407, y: 30289.879997489374, index: -69130 },
+    { x: 0.9961084498595902, y: 38407.97691696376, index: -69120 },
+    { x: 0.9971050066563205, y: 40591.04743422989, index: -69110 },
+    { x: 0.9981025604929676, y: 57249.16422040085, index: -69100 },
+    { x: 1.0011012140019244, y: 57249.16422040085, index: -69070 },
+    { x: 1.002102765825214, y: 55066.09370313472, index: -69060 },
+    { x: 1.0031053196378097, y: 46947.99678366034, index: -69050 },
+    { x: 1.00410887650822, y: 44800.567695644364, index: -69040 },
+    { x: 1.0071255750875803, y: 44800.567695644364, index: -69010 },
+    { x: 1.00813315394147, y: 36777.90731811645, index: -69000 },
+    { x: 1.0091417408922565, y: 22846.45685311645, index: -68990 },
+    { x: 1.011161942873156, y: 22846.45685311645, index: -68970 },
+    { x: 1.0121735599903756, y: 6188.340066945488, index: -68960 },
+    { x: 1.0254170502871547, y: 6188.340066945488, index: -68830 },
+    { x: 1.0264429288718113, y: 0, index: -68820 },
+    { x: 1.0274698338137271, y: 0, index: -68810 },
+    { x: 4291452183844.2334, y: 0, index: 221810 }
+  ],
+  midPrice: { x: 1, index: -69090 },
+  leftRange: { index: -69160, x: 0.9921321727081341 },
+  rightRange: { index: -69000, x: 1.00813315394147 },
+  plotMin: 0.988931976461467,
+  plotMax: 1.0113333501881372,
+  tickSpacing: 10
 }

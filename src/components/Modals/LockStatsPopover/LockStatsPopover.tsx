@@ -1,26 +1,20 @@
 import useStyles from './style'
-import { Popover, Typography, LinearProgress, Box } from '@mui/material'
+import { Typography, LinearProgress, Box, useMediaQuery } from '@mui/material'
 import { ResponsivePie } from '@nivo/pie'
-import { colors, typography } from '@static/theme'
+import { colors, theme, typography } from '@static/theme'
 import { formatNumberWithSuffix } from '@utils/utils'
 import { useState, useEffect, useMemo } from 'react'
 
 export interface ILockStatsPopover {
-  open: boolean
   lockedX: number
   lockedY: number
   liquidityX: number
   liquidityY: number
   symbolX: string
   symbolY: string
-  anchorEl: HTMLElement | null
-  onClose: () => void
 }
 
 export const LockStatsPopover = ({
-  open,
-  onClose,
-  anchorEl,
   lockedX,
   lockedY,
   liquidityX,
@@ -29,6 +23,7 @@ export const LockStatsPopover = ({
   symbolY
 }: ILockStatsPopover) => {
   const { classes } = useStyles()
+  const isSm = useMediaQuery(theme.breakpoints.down('sm'))
   const [animationTriggered, setAnimationTriggered] = useState(false)
   const percentagesAndValues = useMemo(() => {
     const totalLocked = lockedX + lockedY
@@ -91,7 +86,7 @@ export const LockStatsPopover = ({
   }, [percentagesAndValues, symbolX, symbolY])
 
   useEffect(() => {
-    if (open && !animationTriggered) {
+    if (!animationTriggered) {
       const ANIM_TIME = 500
 
       const timer = setTimeout(() => {
@@ -100,9 +95,7 @@ export const LockStatsPopover = ({
 
       return () => clearTimeout(timer)
     }
-  }, [open])
-
-  if (!anchorEl) return null
+  }, [])
 
   const progressStyles = {
     height: 3,
@@ -116,108 +109,102 @@ export const LockStatsPopover = ({
     }
   }
 
-  return (
-    <Popover
-      open={open}
-      anchorEl={anchorEl}
-      classes={{
-        paper: classes.paper,
-        root: classes.popover
-      }}
-      onClose={onClose}
-      anchorOrigin={{
-        vertical: 'bottom',
-        horizontal: 'center'
-      }}
-      disableRestoreFocus
-      slotProps={{
-        paper: {
-          onMouseLeave: onClose
-        }
-      }}
-      transformOrigin={{
-        vertical: 'top',
-        horizontal: 'center'
-      }}
-      marginThreshold={16}>
-      <div className={classes.backgroundContainer}>
-        <div className={classes.statsContainer}>
-          <div className={classes.leftWrapper}>
-            <div className={classes.leftInnerWrapper}>
-              <Typography className={classes.chartTitle}>Lock Liquidity Distribution</Typography>
+  const tokenXAmount = useMemo(() => {
+    if (percentagesAndValues.xStandardVal < 0.01) {
+      return '<$0.01'
+    }
+    if (percentagesAndValues.xStandardVal < 1) {
+      return '<$1'
+    }
+    return '$' + formatNumberWithSuffix(percentagesAndValues.xStandardVal)
+  }, [percentagesAndValues.xStandardVal])
 
-              <Typography
-                className={classes.description}
-                style={{
-                  flex: 1,
-                  display: 'flex'
-                }}>
-                Percentage breakdown of total locked liquidity between token pair in the pool.
-              </Typography>
-              <div style={{ width: 300, height: 130, overflow: 'visible' }}>
-                <ResponsivePie
-                  data={data.filter(d => d.value > 0)}
-                  colors={[colors.invariant.pink, colors.invariant.green]}
-                  margin={{ top: 20, right: 80, bottom: 20, left: 80 }}
-                  startAngle={-45}
-                  endAngle={315}
-                  borderWidth={1}
-                  borderColor='white'
-                  enableArcLabels={false}
-                  enableArcLinkLabels={true}
-                  arcLinkLabelsTextColor='#ffffff'
-                  arcLinkLabelsThickness={1}
-                  arcLinkLabelsColor={{ from: 'color' }}
-                  arcLinkLabelsOffset={3}
-                  arcLinkLabelsDiagonalLength={0}
-                  arcLinkLabelsStraightLength={0}
-                  arcLinkLabelsSkipAngle={1}
-                  arcLinkLabel={d => `${d.label} (${d.value}%)`}
-                  theme={{
-                    labels: {
-                      text: {
-                        fontFamily: 'Mukta',
-                        ...typography.body2
-                      }
+  const tokenYAmount = useMemo(() => {
+    if (percentagesAndValues.yStandardVal < 0.01) {
+      return '<$0.01'
+    }
+    if (percentagesAndValues.yStandardVal < 1) {
+      return '<$1'
+    }
+    return '$' + formatNumberWithSuffix(percentagesAndValues.yStandardVal)
+  }, [percentagesAndValues.yStandardVal])
+
+  return (
+    <div className={classes.backgroundContainer}>
+      <div className={classes.statsContainer}>
+        <div className={classes.leftWrapper}>
+          <div className={classes.leftInnerWrapper}>
+            <Typography className={classes.chartTitle}>Lock Liquidity Distribution</Typography>
+
+            <Typography
+              className={classes.description}
+              style={{
+                flex: 1,
+                display: 'flex'
+              }}>
+              Percentage breakdown of total locked liquidity between token pair in the pool.
+            </Typography>
+            <div style={{ width: 300, height: 130, overflow: 'visible' }}>
+              <ResponsivePie
+                data={data.filter(d => d.value > 0)}
+                colors={[colors.invariant.pink, colors.invariant.green]}
+                margin={{ top: 20, right: 80, bottom: 20, left: 80 }}
+                startAngle={-45}
+                endAngle={315}
+                borderWidth={1}
+                borderColor='white'
+                enableArcLabels={false}
+                enableArcLinkLabels={true}
+                arcLinkLabelsTextColor='#ffffff'
+                arcLinkLabelsThickness={1}
+                arcLinkLabelsColor={{ from: 'color' }}
+                arcLinkLabelsOffset={3}
+                arcLinkLabelsDiagonalLength={0}
+                arcLinkLabelsStraightLength={0}
+                arcLinkLabelsSkipAngle={1}
+                arcLinkLabel={d => `${d.label} (${d.value}%)`}
+                theme={{
+                  labels: {
+                    text: {
+                      fontFamily: 'Mukta',
+                      ...typography.body2
                     }
-                  }}
-                />
-              </div>
+                  }
+                }}
+              />
             </div>
           </div>
+        </div>
 
-          <Box className={classes.separator} />
+        <Box className={classes.separator} />
 
-          <div className={classes.rightWrapper}>
-            <Typography
-              className={classes.chartTitle}
-              style={{ width: 'fit-content', alignSelf: 'center' }}>
-              Positions Liquidity Share
-            </Typography>
-            <Typography className={classes.description}>
-              Represents the ratio of locked liquidity to the total TVL in the pool.
-            </Typography>
-            <div className={classes.chartsWrapper}>
-              <div className={classes.chartWrapper}>
-                <Typography style={{ textWrap: 'nowrap', width: '300px' }}>
-                  {symbolX}:{' '}
-                  <span style={{ color: colors.invariant.pink }}>
-                    ${formatNumberWithSuffix(percentagesAndValues.xStandardVal)}{' '}
-                  </span>
-                  of
-                  <span style={{ color: colors.invariant.pink }}>
-                    {' '}
-                    ${formatNumberWithSuffix(liquidityX)}
-                  </span>{' '}
-                  <span style={{ color: colors.invariant.textGrey }}>
-                    (
-                    {percentagesAndValues.xStandard >= '0.01' ||
-                    percentagesAndValues.xLocked === '0.0'
-                      ? +percentagesAndValues.xStandard
-                      : '<0.01'}
-                    %)
-                  </span>
-                </Typography>
+        <div className={classes.rightWrapper}>
+          <Typography
+            className={classes.chartTitle}
+            style={{ width: 'fit-content', alignSelf: 'center' }}>
+            Positions Liquidity Share
+          </Typography>
+          <Typography className={classes.description}>
+            Represents the ratio of locked liquidity to the total TVL in the pool.
+          </Typography>
+          <div className={classes.chartsWrapper}>
+            <div className={classes.chartWrapper}>
+              <Typography style={{ textWrap: 'nowrap', width: '300px' }}>
+                {symbolX}: <span style={{ color: colors.invariant.pink }}>{tokenXAmount}</span> of
+                <span style={{ color: colors.invariant.pink }}>
+                  {' '}
+                  ${formatNumberWithSuffix(liquidityX)}
+                </span>{' '}
+                <span style={{ color: colors.invariant.textGrey }}>
+                  (
+                  {percentagesAndValues.xStandard >= '0.01' ||
+                  percentagesAndValues.xLocked === '0.0'
+                    ? +percentagesAndValues.xStandard
+                    : '<0.01'}
+                  %)
+                </span>
+              </Typography>
+              {!isSm && (
                 <Box className={classes.barWrapper}>
                   <LinearProgress
                     variant='determinate'
@@ -239,28 +226,25 @@ export const LockStatsPopover = ({
                     }}
                   />
                 </Box>
-              </div>
+              )}
+            </div>
 
-              <div className={classes.chartWrapper}>
-                <Typography style={{ textWrap: 'nowrap', width: '300px' }}>
-                  {symbolY}:{' '}
-                  <span style={{ color: colors.invariant.green }}>
-                    ${formatNumberWithSuffix(percentagesAndValues.yStandardVal)}{' '}
-                  </span>
-                  of{' '}
-                  <span style={{ color: colors.invariant.green }}>
-                    ${formatNumberWithSuffix(liquidityY)}
-                  </span>{' '}
-                  <span style={{ color: colors.invariant.textGrey }}>
-                    (
-                    {percentagesAndValues.yStandard >= '0.01' ||
-                    percentagesAndValues.yLocked == '0.0'
-                      ? +percentagesAndValues.yStandard
-                      : '<0.01'}
-                    %)
-                  </span>
-                </Typography>
+            <div className={classes.chartWrapper}>
+              <Typography style={{ textWrap: 'nowrap', width: '300px' }}>
+                {symbolY}: <span style={{ color: colors.invariant.green }}>{tokenYAmount}</span> of{' '}
+                <span style={{ color: colors.invariant.green }}>
+                  ${formatNumberWithSuffix(liquidityY)}
+                </span>{' '}
+                <span style={{ color: colors.invariant.textGrey }}>
+                  (
+                  {percentagesAndValues.yStandard >= '0.01' || percentagesAndValues.yLocked == '0.0'
+                    ? +percentagesAndValues.yStandard
+                    : '<0.01'}
+                  %)
+                </span>
+              </Typography>
 
+              {!isSm && (
                 <Box className={classes.barWrapper}>
                   <LinearProgress
                     variant='determinate'
@@ -283,16 +267,16 @@ export const LockStatsPopover = ({
                     }}
                   />
                 </Box>
-              </div>
+              )}
             </div>
-            <Typography className={classes.description}>
-              A higher locked liquidity share helps stabilize prices, reduces volatility, and
-              minimizes slippage for swaps.
-            </Typography>
           </div>
+          <Typography className={classes.description}>
+            A higher locked liquidity share helps stabilize prices, reduces volatility, and
+            minimizes slippage for swaps.
+          </Typography>
         </div>
       </div>
-    </Popover>
+    </div>
   )
 }
 

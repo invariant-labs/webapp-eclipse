@@ -11,7 +11,6 @@ import {
 } from '@invariant-labs/sdk-eclipse'
 import { PoolStructure, Tick } from '@invariant-labs/sdk-eclipse/src/market'
 import {
-  calculateTickDelta,
   DECIMAL,
   parseLiquidityOnTicks,
   simulateSwap,
@@ -101,7 +100,12 @@ import {
   MAX_CROSSES_IN_SINGLE_TX_WITH_LUTS,
   ES_MAIN,
   BITZ_MAIN,
-  PRICE_API_URL
+  PRICE_API_URL,
+  Intervals,
+  ERROR_CODE_TO_MESSAGE,
+  COMMON_ERROR_MESSAGE,
+  ErrorCodeExtractionKeys,
+  TUSD_MAIN
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
@@ -118,6 +122,7 @@ import {
 import { sqrt } from '@invariant-labs/sdk-eclipse/lib/math'
 import { Metaplex } from '@metaplex-foundation/js'
 import { apyToApr } from './uiUtils'
+import { alignTickToSpacing } from '@invariant-labs/sdk-eclipse/src/tick'
 
 export const transformBN = (amount: BN): string => {
   return (amount.div(new BN(1e2)).toNumber() / 1e4).toString()
@@ -946,7 +951,8 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
         [SOLAR_MAIN.address.toString()]: SOLAR_MAIN,
         [KYSOL_MAIN.address.toString()]: KYSOL_MAIN,
         [EZSOL_MAIN.address.toString()]: EZSOL_MAIN,
-        [ES_MAIN.address.toString()]: ES_MAIN
+        [ES_MAIN.address.toString()]: ES_MAIN,
+        [TUSD_MAIN.address.toString()]: TUSD_MAIN
       }
     case NetworkType.Devnet:
       return {
@@ -1435,7 +1441,6 @@ export const handleSimulateWithHop = async (
     simulations[best][1].swapHopOne.status === SimulationStatus.Ok &&
     simulations[best][1].swapHopTwo.status === SimulationStatus.Ok
   ) {
-    console.log(simulations[best][1], routeCandidates[simulations[best][0]])
     return {
       simulation: simulations[best][1],
       route: routeCandidates[simulations[best][0]],
@@ -1481,14 +1486,18 @@ export const getPoolsFromAddresses = async (
       addresses
     )) as Array<RawPoolStructure | null>
 
-    return pools
-      .filter(pool => !!pool)
-      .map((pool, index) => {
-        return {
+    const parsedPools: Array<PoolWithAddress> = []
+
+    pools.map((pool, index) => {
+      if (pool) {
+        parsedPools.push({
           ...parsePool(pool),
           address: addresses[index]
-        }
-      }) as PoolWithAddress[]
+        })
+      }
+    })
+
+    return parsedPools
   } catch (e: unknown) {
     const error = ensureError(e)
     console.log(error)
@@ -1612,6 +1621,25 @@ export const trimLeadingZeros = (amount: string): string => {
   return `${amountParts[0]}.${trimmed}`
 }
 
+export const calculateTickDelta = (
+  tickSpacing: number,
+  minimumRange: number,
+  concentration: number
+) => {
+  const targetValue = 1 / (concentration * CONCENTRATION_FACTOR)
+
+  const base = 1.0001
+  const inner = 1 - targetValue
+  const powered = Math.pow(inner, 4)
+  const tickDiff = -Math.log(powered) / Math.log(base)
+
+  const parsedTickDelta = tickDiff / tickSpacing - minimumRange / 2
+
+  const tickDelta = Math.round(parsedTickDelta + 1)
+
+  return tickDelta
+}
+
 export const calculateConcentrationRange = (
   tickSpacing: number,
   concentration: number,
@@ -1621,10 +1649,12 @@ export const calculateConcentrationRange = (
 ) => {
   const tickDelta = calculateTickDelta(tickSpacing, minimumRange, concentration)
 
-  const parsedTickDelta = Math.abs(tickDelta) === 0 ? 0 : Math.abs(tickDelta) - 1
-
-  const lowerTick = currentTick - (minimumRange / 2 + parsedTickDelta) * tickSpacing
-  const upperTick = currentTick + (minimumRange / 2 + parsedTickDelta) * tickSpacing
+  const lowerTick =
+    tickDelta === 1
+      ? currentTick - alignTickToSpacing((tickDelta * tickSpacing) / 2, tickSpacing)
+      : currentTick - alignTickToSpacing((tickDelta * tickSpacing) / 2, tickSpacing) + tickSpacing
+  const upperTick =
+    currentTick + alignTickToSpacing((tickDelta * tickSpacing) / 2, tickSpacing) + tickSpacing
 
   return {
     leftRange: isXToY ? lowerTick : upperTick,
@@ -1828,7 +1858,17 @@ export const initialXtoY = (tokenXAddress?: string | null, tokenYAddress?: strin
   const tokenXIndex = ADDRESSES_TO_REVERT_TOKEN_PAIRS.findIndex(token => token === tokenXAddress)
   const tokenYIndex = ADDRESSES_TO_REVERT_TOKEN_PAIRS.findIndex(token => token === tokenYAddress)
 
-  return !(tokenXIndex < tokenYIndex)
+  if (tokenXIndex !== -1 && tokenYIndex !== -1) {
+    if (tokenXIndex < tokenYIndex) {
+      return false
+    } else {
+      return true
+    }
+  } else if (tokenXIndex > tokenYIndex) {
+    return false
+  } else {
+    return true
+  }
 }
 
 export const parseFeeToPathFee = (fee: BN): string => {
@@ -2046,6 +2086,18 @@ export const getFullSnap = async (name: string): Promise<FullSnap> => {
 
   return data
 }
+
+export const getIntervalsFullSnap = async (
+  name: string,
+  interval: Intervals
+): Promise<FullSnap> => {
+  const parsedInterval =
+    interval === Intervals.Daily ? 'daily' : interval === Intervals.Weekly ? 'weekly' : 'monthly'
+  const { data } = await axios.get<FullSnap>(
+    `https://stats.invariant.app/eclipse/intervals/eclipse-${name}?interval=${parsedInterval}`
+  )
+  return data
+}
 export const isValidPublicKey = (keyString?: string | null) => {
   try {
     if (!keyString) {
@@ -2078,11 +2130,11 @@ export const trimDecimalZeros = (numStr: string): string => {
   return trimmedDecimal ? `${trimmedInteger || '0'}.${trimmedDecimal}` : trimmedInteger || '0'
 }
 
-const poolsToRecalculateAPY = [
-  'HRgVv1pyBLXdsAddq4ubSqo8xdQWRrYbvmXqEDtectce', // USDC_ETH 0.09%
-  '86vPh8ctgeQnnn8qPADy5BkzrqoH5XjMCWvkd4tYhhmM', //SOL_ETH 0.09%
-  'E2B7KUFwjxrsy9cC17hmadPsxWHD1NufZXTyrtuz8YxC', // USDC_SOL 0.09%
-  'HG7iQMk29cgs74ZhSwrnye3C6SLQwKnfsbXqJVRi1x8H' // ETH-BITZ 1%
+const poolsToRecalculateAPY: string[] = [
+  // 'HRgVv1pyBLXdsAddq4ubSqo8xdQWRrYbvmXqEDtectce', // USDC_ETH 0.09%
+  // '86vPh8ctgeQnnn8qPADy5BkzrqoH5XjMCWvkd4tYhhmM', //SOL_ETH 0.09%
+  // 'E2B7KUFwjxrsy9cC17hmadPsxWHD1NufZXTyrtuz8YxC', // USDC_SOL 0.09%
+  // 'HG7iQMk29cgs74ZhSwrnye3C6SLQwKnfsbXqJVRi1x8H' // ETH-BITZ 1%
 ]
 
 export const calculateAPYAndAPR = (
@@ -2332,4 +2384,32 @@ export const calculatePercentageRatio = (
     tokenXPercentage,
     tokenYPercentage: 100 - tokenXPercentage
   }
+}
+
+export const extractErrorCode = (error: Error): number => {
+  const errorCode = error.message
+    .split(ErrorCodeExtractionKeys.ErrorNumber)[1]
+    .split(ErrorCodeExtractionKeys.Dot)[0]
+    .trim()
+  return Number(errorCode)
+}
+
+export const extractRuntimeErrorCode = (error: Omit<Error, 'name'>): number => {
+  const errorCode = error.message
+    .split(ErrorCodeExtractionKeys.Custom)[1]
+    .split(ErrorCodeExtractionKeys.RightBracket)[0]
+    .trim()
+  return Number(errorCode)
+}
+
+// may better to use regex
+export const ensureApprovalDenied = (error: Error): boolean => {
+  return (
+    error.message.includes(ErrorCodeExtractionKeys.ApprovalDenied) ||
+    error.message.includes(ErrorCodeExtractionKeys.UndefinedOnSplit)
+  )
+}
+
+export const mapErrorCodeToMessage = (errorNumber: number): string => {
+  return ERROR_CODE_TO_MESSAGE[errorNumber] || COMMON_ERROR_MESSAGE
 }

@@ -19,8 +19,8 @@ interface ITokensDetailsSnackbar extends TokensDetailsProps {
 
 const arrow = (
   <svg width='24' height='17' viewBox='0 0 22 19' fill='none' xmlns='http://www.w3.org/2000/svg'>
-    <path d='M21 8.64062H0' stroke='#ffffff' stroke-width='1.2' />
-    <path d='M15 5.14057L22 8.64057L15 12.1406' stroke='#ffffff' stroke-width='1.2' />
+    <path d='M21 8.64062H0' stroke='#ffffff' strokeWidth='1.2' />
+    <path d='M15 5.14057L22 8.64057L15 12.1406' stroke='#ffffff' strokeWidth='1.2' />
   </svg>
 )
 
@@ -30,6 +30,8 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
   tokenYAmount,
   tokenXIcon,
   tokenYIcon,
+  tokenXSymbol,
+  tokenYSymbol,
   earnedPoints,
   handleDismiss,
   tokenXAmountAutoSwap,
@@ -107,10 +109,18 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
             </Grid>
             <StyledText>{title}</StyledText>
             <StyledText color={colors.invariant.green}>{tokenXAmount}</StyledText>
-            <img src={tokenXIcon} className={classes.tokenIcon} />
+            {tokenXIcon === '/unknownToken.svg' ? (
+              <StyledText>{tokenXSymbol}</StyledText>
+            ) : (
+              <img src={tokenXIcon} className={classes.tokenIcon} />
+            )}
             {ikonType === 'swap' ? arrow : <StyledText>+</StyledText>}
             <StyledText color={colors.invariant.green}>{tokenYAmount}</StyledText>
-            <img src={tokenYIcon} className={classes.tokenIcon} />
+            {tokenYIcon === '/unknownToken.svg' ? (
+              <StyledText>{tokenYSymbol}</StyledText>
+            ) : (
+              <img src={tokenYIcon} className={classes.tokenIcon} />
+            )}
           </Grid>
 
           {earnedPoints && (

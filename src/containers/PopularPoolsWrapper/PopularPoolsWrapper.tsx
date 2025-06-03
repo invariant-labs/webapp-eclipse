@@ -6,7 +6,7 @@ import { unknownTokenIcon } from '@static/icons'
 import { actions } from '@store/reducers/stats'
 import { Grid } from '@mui/material'
 import { network } from '@store/selectors/solanaConnection'
-import { getPopularPools } from '@store/consts/static'
+import { getPopularPools, Intervals } from '@store/consts/static'
 import { PublicKey } from '@solana/web3.js'
 import { getNetworkTokensList } from '@utils/utils'
 
@@ -104,7 +104,7 @@ export const PopularPoolsWrapper: React.FC = () => {
   }, [list])
 
   useEffect(() => {
-    dispatch(actions.getCurrentStats())
+    dispatch(actions.getCurrentIntervalStats({ interval: Intervals.Daily }))
   }, [])
 
   return (

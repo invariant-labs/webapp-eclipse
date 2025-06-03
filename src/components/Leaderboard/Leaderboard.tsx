@@ -16,7 +16,6 @@ import { TopScorers } from './TopScorers/TopScorers'
 import { Switcher } from './Switcher/Switcher'
 import LeaderboardList from './LeaderboardList/LeaderboardList'
 import { InfoComponent } from './InfoComponent/InfoComponent'
-import { Faq } from './Faq/Faq'
 import { Claim } from './Claim/Claim'
 import {
   CurrentContentPointsEntry,
@@ -32,6 +31,8 @@ import { Status } from '@store/reducers/solanaWallet'
 import { PublicKey } from '@solana/web3.js'
 import { EcosystemExposure } from './EcosystemExposure/EcosystemExposure'
 import { ECBanner } from '@common/ECBanner/ECBanner'
+import { Faq } from '@common/Faq/Faq'
+import { faqData } from './faq'
 
 interface LeaderboardProps {
   userContentPoints: CurrentContentPointsEntry[] | null
@@ -217,7 +218,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
           </>
         )}
 
-        {alignment === PointsPageContent.FAQ && <Faq />}
+        {alignment === PointsPageContent.FAQ && <Faq faqData={faqData} />}
         {alignment === PointsPageContent.Claim && (
           <Claim
             currentUser={userStats}

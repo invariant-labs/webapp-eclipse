@@ -18,7 +18,7 @@ import {
 } from '@mui/material'
 import { theme } from '@static/theme'
 import { NetworkType, OverviewSwitcher } from '@store/consts/static'
-import { ROUTES } from '@utils/utils'
+import { addressToTicker, initialXtoY, parseFeeToPathFee, ROUTES } from '@utils/utils'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useStyles } from './style'
@@ -36,6 +36,7 @@ import { ECBanner } from '@common/ECBanner/ECBanner'
 import { refreshIcon } from '@static/icons'
 import { PositionListSwitcher } from './PositionListSwitcher/PositionListSwitcher'
 import { LiquidityPools } from '@store/reducers/positions'
+import { unblurContent } from '@utils/uiUtils'
 
 interface IProps {
   initialPage: number
@@ -61,6 +62,7 @@ interface IProps {
   handleCloseBanner: () => void
   isHiding: boolean
   showBanner: boolean
+  shouldDisable: boolean
   positionListAlignment: LiquidityPools
   setPositionListAlignment: (val: LiquidityPools) => void
 }
@@ -70,6 +72,7 @@ const Portfolio: React.FC<IProps> = ({
   showBanner,
   handleCloseBanner,
   isHiding,
+  shouldDisable,
   handleSnackbar,
   data,
   onAddPositionClick,
@@ -89,6 +92,7 @@ const Portfolio: React.FC<IProps> = ({
   setPositionListAlignment
 }) => {
   const { classes, cx } = useStyles()
+
   const navigate = useNavigate()
   const [selectedFilters, setSelectedFilters] = useState<ISearchToken[]>([])
   const isLg = useMediaQuery('@media (max-width: 1360px)')
@@ -229,8 +233,24 @@ const Portfolio: React.FC<IProps> = ({
     })
   }, [currentData, selectedFilters])
 
-  const [allowPropagation, setAllowPropagation] = useState(true)
+  const createNewPosition = (element: IPositionItem) => {
+    const address1 = addressToTicker(currentNetwork, element.tokenXName)
+    const address2 = addressToTicker(currentNetwork, element.poolData.tokenY.toString())
+    const parsedFee = parseFeeToPathFee(element.poolData.fee)
+    const isXtoY = initialXtoY(
+      element.poolData.tokenX.toString(),
+      element.poolData.tokenY.toString()
+    )
 
+    const tokenA = isXtoY ? address1 : address2
+    const tokenB = isXtoY ? address2 : address1
+
+    unblurContent()
+
+    navigate(ROUTES.getNewPositionRoute(tokenA, tokenB, parsedFee))
+  }
+
+  const [allowPropagation, setAllowPropagation] = useState(true)
   const renderContent = () => {
     if (showNoConnected) {
       return <NoConnected {...noConnectedBlockerProps} />
@@ -241,11 +261,13 @@ const Portfolio: React.FC<IProps> = ({
         <PositionsTable
           positions={filteredData}
           isLoading={loading}
+          shouldDisable={shouldDisable}
           noInitialPositions={noInitialPositions}
           onAddPositionClick={onAddPositionClick}
           handleLockPosition={handleLockPosition}
           handleClosePosition={handleClosePosition}
           handleClaimFee={handleClaimFee}
+          createNewPosition={createNewPosition}
         />
       )
     } else if (isLg && loading) {
@@ -279,12 +301,16 @@ const Portfolio: React.FC<IProps> = ({
         key={element.id}
         className={classes.itemLink}>
         <PositionItemMobile
+          shouldDisable={shouldDisable}
           key={index}
           {...element}
           setAllowPropagation={setAllowPropagation}
           handleLockPosition={handleLockPosition}
           handleClosePosition={handleClosePosition}
           handleClaimFee={handleClaimFee}
+          createNewPosition={() => {
+            createNewPosition(element)
+          }}
         />
       </Grid>
     ))
