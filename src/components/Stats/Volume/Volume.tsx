@@ -6,7 +6,7 @@ import { useStyles } from './style'
 import { TimeData } from '@store/reducers/stats'
 import { Grid, Typography, useMediaQuery } from '@mui/material'
 import { Box } from '@mui/system'
-import { formatNumberWithoutSuffix, formatNumberWithSuffix, trimZeros } from '@utils/utils'
+import { formatNumberWithoutSuffix, trimZeros } from '@utils/utils'
 import {
   getLimitingTimestamp,
   formatLargeNumber,
@@ -122,7 +122,7 @@ const Volume: React.FC<StatsInterface> = ({ volume, data, className, isLoading, 
               <Grid className={classes.tooltip}>
                 <Typography className={classes.tooltipDate}>{date}</Typography>
                 <Typography className={classes.tooltipValue}>
-                  ${formatNumberWithSuffix(data.value)}
+                  ${formatNumberWithoutSuffix(data.value)}
                 </Typography>
               </Grid>
             )
