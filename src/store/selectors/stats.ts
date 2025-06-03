@@ -18,6 +18,7 @@ export const {
   tokensData,
   poolsData,
   isLoading,
+  lastSnapTimestamp,
   lastTimestamp,
   lastInterval,
   currentInterval
@@ -33,6 +34,7 @@ export const {
   'tokensData',
   'poolsData',
   'isLoading',
+  'lastSnapTimestamp',
   'lastTimestamp',
   'lastInterval',
   'currentInterval'

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 import { ResponsiveLine } from '@nivo/line'
 import { linearGradientDef } from '@nivo/core'
 import { colors, typography } from '@static/theme'
@@ -10,7 +10,6 @@ import {
   formatLargeNumber,
   formatPlotDataLabels,
   getLabelDate,
-  getLimitingTimestamp,
   mapIntervalToPrecision
 } from '@utils/uiUtils'
 import useIsMobile from '@store/hooks/isMobile'
@@ -21,6 +20,7 @@ interface LiquidityInterface {
   className?: string
   isLoading: boolean
   interval: IntervalsKeys
+  lastStatsTimestamp: number
 }
 
 const Liquidity: React.FC<LiquidityInterface> = ({
@@ -28,22 +28,14 @@ const Liquidity: React.FC<LiquidityInterface> = ({
   data,
   className,
   isLoading,
-  interval
+  interval,
+  lastStatsTimestamp
 }) => {
   const { classes, cx } = useStyles()
 
   liquidityVolume = liquidityVolume ?? 0
 
   const isMobile = useIsMobile()
-  const latestTimestamp = useMemo(
-    () =>
-      Math.max(
-        ...data
-          .map(d => d.timestamp)
-          .concat(interval !== IntervalsKeys.Daily ? getLimitingTimestamp() : 0)
-      ),
-    [data, interval]
-  )
 
   return (
     <Grid className={cx(classes.container, className)}>
@@ -176,7 +168,11 @@ const Liquidity: React.FC<LiquidityInterface> = ({
           fill={[{ match: '*', id: 'gradient' }]}
           crosshairType='bottom'
           tooltip={({ point }) => {
-            const date = getLabelDate(interval, (point.data.x as Date).getTime(), latestTimestamp)
+            const date = getLabelDate(
+              interval,
+              (point.data.x as Date).getTime(),
+              lastStatsTimestamp
+            )
 
             return (
               <Grid className={classes.tooltip}>
