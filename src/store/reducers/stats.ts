@@ -82,7 +82,7 @@ export const defaultState: IStatsStore = {
   poolsData: [],
   isLoading: false,
   lastTimestamp: 0,
-  lastInterval: null
+  lastInterval: localStorage.getItem('INVARIANT_INTERVAL') as Intervals | Intervals.Daily
 }
 
 export const statsSliceName = 'stats'

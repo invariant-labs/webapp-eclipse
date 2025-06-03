@@ -16,10 +16,13 @@ const Intervals: React.FC<IntervalsProps> = ({ interval, setInterval }) => {
     if (!newInterval) return
     if (newInterval === '1W') {
       setInterval(IntervalsKeys.Weekly)
+      localStorage.setItem('INVARIANT_INTERVAL', IntervalsKeys.Weekly)
     } else if (newInterval === '1M') {
       setInterval(IntervalsKeys.Monthly)
+      localStorage.setItem('INVARIANT_INTERVAL', IntervalsKeys.Monthly)
     } else {
       setInterval(IntervalsKeys.Daily)
+      localStorage.setItem('INVARIANT_INTERVAL', IntervalsKeys.Daily)
     }
   }
 
