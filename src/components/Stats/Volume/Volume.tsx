@@ -110,7 +110,7 @@ const Volume: React.FC<StatsInterface> = ({ volume, data, className, isLoading, 
           defs={[
             linearGradientDef('gradient', [
               { offset: 0, color: '#EF84F5' },
-              { offset: 100, color: '#9C3EBD', opacity: 0.7 }
+              { offset: 100, color: '#9C3EBD', opacity: 0.8 }
             ])
           ]}
           fill={[{ match: '*', id: 'gradient' }]}

@@ -308,8 +308,10 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     setTokenBIndex(tokenBIndexFromPath)
     setPositionTokens(tokenAIndexFromPath, tokenBIndexFromPath, feeTierIndexFromPath)
 
-    setIsLoaded(true)
-  }, [tokens, initialTokenFrom, initialTokenTo, initialFee])
+    if (tokenAIndexFromPath !== null && tokenBIndexFromPath !== null) {
+      setIsLoaded(true)
+    }
+  }, [tokens.length, initialTokenFrom, initialTokenTo])
 
   const [wasRunTokenA, setWasRunTokenA] = useState(false)
   const [wasRunTokenB, setWasRunTokenB] = useState(false)
