@@ -16,7 +16,7 @@ import {
   trimZeros,
   validConcentrationMidPriceTick
 } from '@utils/utils'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import useStyles from './style'
 import { PositionOpeningMethod } from '@store/consts/types'
 import ConcentrationSlider from '../ConcentrationSlider/ConcentrationSlider'
@@ -323,6 +323,62 @@ export const PoolInit: React.FC<IPoolInit> = ({
     [midPriceInput, isXtoY, xDecimal, yDecimal]
   )
 
+  const increaseValueLeft = useCallback(() => {
+    const newLeft = isXtoY
+      ? Math.max(getMinTick(tickSpacing), leftRange - tickSpacing)
+      : Math.min(getMaxTick(tickSpacing), leftRange + tickSpacing)
+    changeRangeHandler(newLeft, rightRange)
+  }, [leftRange, rightRange, isXtoY, tickSpacing])
+
+  const decreaseValueLeft = useCallback(() => {
+    const newRight = isXtoY
+      ? Math.min(getMaxTick(tickSpacing), rightRange + tickSpacing)
+      : Math.max(getMinTick(tickSpacing), rightRange - tickSpacing)
+    changeRangeHandler(leftRange, newRight)
+  }, [leftRange, rightRange, isXtoY, tickSpacing])
+
+  const onBlurLeft = useCallback(() => {
+    const newLeft = isXtoY
+      ? Math.min(
+          rightRange - tickSpacing,
+          nearestTickIndex(+leftInput, tickSpacing, isXtoY, xDecimal, yDecimal)
+        )
+      : Math.max(
+          rightRange + tickSpacing,
+          nearestTickIndex(+leftInput, tickSpacing, isXtoY, xDecimal, yDecimal)
+        )
+
+    changeRangeHandler(newLeft, rightRange)
+  }, [leftInput, rightInput, leftRange, rightRange, isXtoY, xDecimal, yDecimal, tickSpacing])
+
+  const decreaseValueRight = useCallback(() => {
+    const newRight = isXtoY
+      ? Math.max(rightRange - tickSpacing, leftRange + tickSpacing)
+      : Math.min(rightRange + tickSpacing, leftRange - tickSpacing)
+    changeRangeHandler(leftRange, newRight)
+  }, [leftRange, rightRange, isXtoY, tickSpacing])
+
+  const increaseValueRight = useCallback(() => {
+    const newRight = isXtoY
+      ? Math.min(getMaxTick(tickSpacing), rightRange + tickSpacing)
+      : Math.max(getMinTick(tickSpacing), rightRange - tickSpacing)
+    changeRangeHandler(leftRange, newRight)
+  }, [leftRange, rightRange, isXtoY, tickSpacing])
+
+  const onBlurRight = useCallback(() => {
+    const newRight = isXtoY
+      ? Math.max(
+          leftRange + tickSpacing,
+          nearestTickIndex(+rightInput, tickSpacing, isXtoY, xDecimal, yDecimal)
+        )
+      : Math.min(
+          leftRange - tickSpacing,
+          nearestTickIndex(+rightInput, tickSpacing, isXtoY, xDecimal, yDecimal)
+        )
+
+    changeRangeHandler(leftRange, newRight)
+  }, [leftInput, rightInput, leftRange, rightRange, isXtoY, xDecimal, yDecimal, tickSpacing])
+
   return (
     <Grid container className={classes.wrapper}>
       <Grid className={classes.topInnerWrapper}>
@@ -398,30 +454,9 @@ export const PoolInit: React.FC<IPoolInit> = ({
             tokenToSymbol={tokenBSymbol}
             currentValue={leftInputRounded}
             setValue={onLeftInputChange}
-            decreaseValue={() => {
-              const newLeft = isXtoY
-                ? Math.max(minTick, leftRange - tickSpacing)
-                : Math.min(maxTick, leftRange + tickSpacing)
-              changeRangeHandler(newLeft, rightRange)
-            }}
-            increaseValue={() => {
-              const newLeft = isXtoY
-                ? Math.min(rightRange - tickSpacing, leftRange + tickSpacing)
-                : Math.max(rightRange + tickSpacing, leftRange - tickSpacing)
-              changeRangeHandler(newLeft, rightRange)
-            }}
-            onBlur={() => {
-              const newLeft = isXtoY
-                ? Math.min(
-                    rightRange - tickSpacing,
-                    nearestTickIndex(+leftInput, tickSpacing, isXtoY, xDecimal, yDecimal)
-                  )
-                : Math.max(
-                    rightRange + tickSpacing,
-                    nearestTickIndex(+leftInput, tickSpacing, isXtoY, xDecimal, yDecimal)
-                  )
-              changeRangeHandler(newLeft, rightRange)
-            }}
+            decreaseValue={decreaseValueLeft}
+            increaseValue={increaseValueLeft}
+            onBlur={onBlurLeft}
             diffLabel='Min - Current'
             percentDiff={((+leftInput - price) / price) * 100}
           />
@@ -433,31 +468,9 @@ export const PoolInit: React.FC<IPoolInit> = ({
             tokenToSymbol={tokenBSymbol}
             currentValue={rightInputRounded}
             setValue={onRightInputChange}
-            decreaseValue={() => {
-              const newRight = isXtoY
-                ? Math.max(rightRange - tickSpacing, leftRange + tickSpacing)
-                : Math.min(rightRange + tickSpacing, leftRange - tickSpacing)
-              changeRangeHandler(leftRange, newRight)
-            }}
-            increaseValue={() => {
-              const newRight = isXtoY
-                ? Math.min(maxTick, rightRange + tickSpacing)
-                : Math.max(minTick, rightRange - tickSpacing)
-              changeRangeHandler(leftRange, newRight)
-            }}
-            onBlur={() => {
-              const newRight = isXtoY
-                ? Math.max(
-                    leftRange + tickSpacing,
-                    nearestTickIndex(+rightInput, tickSpacing, isXtoY, xDecimal, yDecimal)
-                  )
-                : Math.min(
-                    leftRange - tickSpacing,
-                    nearestTickIndex(+rightInput, tickSpacing, isXtoY, xDecimal, yDecimal)
-                  )
-
-              changeRangeHandler(leftRange, newRight)
-            }}
+            decreaseValue={decreaseValueRight}
+            increaseValue={increaseValueRight}
+            onBlur={onBlurRight}
             diffLabel='Max - Current'
             percentDiff={((+rightInput - price) / price) * 100}
           />
