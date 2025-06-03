@@ -4,8 +4,8 @@ import {
   calcPriceByTickIndex,
   calcTicksAmountInRange,
   calculateConcentration,
-  formatNumbers,
   formatNumberWithoutSuffix,
+  formatNumberWithSuffix,
   numberToString,
   spacingMultiplicityGte,
   truncateString
@@ -19,7 +19,6 @@ import { boostPointsBoldIcon } from '@static/icons'
 import { RangeIndicator } from './RangeIndicator/RangeIndicator'
 import { ILiquidityToken } from '@store/consts/types'
 import { colors } from '@static/theme'
-import { percentageThresholds } from '@store/consts/static'
 
 export interface ISinglePositionPlot {
   data: PlotTickData[]
@@ -384,7 +383,7 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
                     color: minPercentage < 0 ? colors.invariant.Error : colors.invariant.green
                   }}>
                   {minPercentage > 0 && '+'}
-                  {formatNumbers(percentageThresholds)(minPercentage.toString())}%
+                  {formatNumberWithSuffix(minPercentage.toString())}%
                 </Typography>
               </Box>
             }
@@ -402,7 +401,7 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
                     color: maxPercentage < 0 ? colors.invariant.Error : colors.invariant.green
                   }}>
                   {maxPercentage > 0 && '+'}
-                  {formatNumbers(percentageThresholds)(maxPercentage.toString())}%
+                  {formatNumberWithSuffix(maxPercentage.toString())}%
                 </Typography>
               </Box>
             }

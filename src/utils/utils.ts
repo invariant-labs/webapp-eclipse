@@ -802,7 +802,7 @@ export const formatNumberWithSuffix = (
     formattedNumber =
       beforeDot.slice(0, -FormatConfig.KDecimals) + (noDecimals ? '' : formattedDecimals) + 'K'
   } else if (afterDot && countLeadingZeros(afterDot) <= decimalsAfterDot) {
-    const roundedNumber = numberAsNumber
+    const roundedNumber = absNumberAsNumber
       .toFixed(countLeadingZeros(afterDot) + decimalsAfterDot + 1)
       .slice(0, -1)
 
