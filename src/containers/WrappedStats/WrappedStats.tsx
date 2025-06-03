@@ -4,16 +4,14 @@ import useStyles from './styles'
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
 import {
-  fees24,
   isLoading,
   lastInterval,
   liquidityPlot,
   poolsStatsWithTokensDetails,
   tokensStatsWithTokensDetails,
-  tvl24,
   volume,
+  fees,
   tvl,
-  volume24,
   volumePlot,
   lastSnapTimestamp
 } from '@store/selectors/stats'
@@ -46,10 +44,8 @@ export const WrappedStats: React.FC = () => {
   const tokensList = useSelector(tokensStatsWithTokensDetails)
   const volumeInterval = useSelector(volume)
   const tvlInterval = useSelector(tvl)
+  const feesInterval = useSelector(fees)
   const lastStatsTimestamp = useSelector(lastSnapTimestamp)
-  const volume24h = useSelector(volume24)
-  const tvl24h = useSelector(tvl24)
-  const fees24h = useSelector(fees24)
   const volumePlotData = useSelector(volumePlot)
   const liquidityPlotData = useSelector(liquidityPlot)
   const isLoadingStats = useSelector(isLoading)
@@ -178,14 +174,14 @@ export const WrappedStats: React.FC = () => {
           </Grid>
           <Grid className={classes.row}>
             <VolumeBar
-              volume={volume24h.value}
-              percentVolume={volume24h.change}
-              tvlVolume={tvl24h.value}
-              percentTvl={tvl24h.change}
-              feesVolume={fees24h.value}
-              percentFees={fees24h.change}
+              volume={volumeInterval.value}
+              percentVolume={volumeInterval.change}
+              tvlVolume={tvlInterval.value}
+              percentTvl={tvlInterval.change}
+              feesVolume={feesInterval.value}
+              percentFees={feesInterval.change}
               isLoading={isLoadingStats}
-              interval={IntervalsKeys.Daily}
+              interval={interval}
             />
           </Grid>
           <Grid className={classes.rowContainer}>
