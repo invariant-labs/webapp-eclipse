@@ -148,6 +148,18 @@ const Card: React.FC<ICard> = ({
             }
             backgroundColor={colors.invariant.newDark}
             innerClassName={classes.container}>
+            <img
+              src={ESToken ? cardESTop : cardBackgroundTop}
+              alt=''
+              className={classes.backgroundImage}
+              style={{ top: 0, zIndex: -1 }}
+            />
+            <img
+              src={ESToken ? cardESBottom : cardBackgroundBottom}
+              alt=''
+              className={classes.backgroundImage}
+              style={{ bottom: 0, zIndex: -1 }}
+            />
             <Grid container className={classes.cardWrapper}>
               <Grid container className={classes.iconsWrapper}>
                 <Box className={classes.iconContainer}>
