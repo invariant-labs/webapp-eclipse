@@ -305,21 +305,3 @@ export const getLabelDate = (
 
   return `${day < 10 ? '0' : ''}${day} ${monthName}`
 }
-
-export function getLimitingTimestamp(): number {
-  const now = new Date()
-
-  const currentYear = now.getUTCFullYear()
-  const currentMonth = now.getUTCMonth()
-  const currentDate = now.getUTCDate()
-
-  // Cron job runs every day at 11:30 UTC, give it 30mins to finish
-  const todayCronTime = new Date(Date.UTC(currentYear, currentMonth, currentDate, 12, 0, 0, 0))
-
-  if (now >= todayCronTime) {
-    return Date.now()
-  }
-
-  const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000)
-  return yesterday.getTime()
-}
