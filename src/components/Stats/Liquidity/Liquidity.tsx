@@ -5,7 +5,7 @@ import { colors, typography } from '@static/theme'
 import { useStyles } from './style'
 import { TimeData } from '@store/reducers/stats'
 import { Grid, Typography } from '@mui/material'
-import { formatNumberWithSuffix, trimZeros } from '@utils/utils'
+import { formatNumberWithoutSuffix, trimZeros } from '@utils/utils'
 import {
   formatLargeNumber,
   formatPlotDataLabels,
@@ -53,7 +53,7 @@ const Liquidity: React.FC<LiquidityInterface> = ({
         </Grid>
         <Grid className={classes.volumePercentHeader}>
           <Typography className={classes.volumeLiquidityHeader}>
-            ${formatNumberWithSuffix(isLoading ? Math.random() * 10000 : liquidityVolume)}
+            ${formatNumberWithoutSuffix(isLoading ? Math.random() * 10000 : liquidityVolume)}
           </Typography>
         </Grid>
       </Grid>
@@ -182,7 +182,7 @@ const Liquidity: React.FC<LiquidityInterface> = ({
               <Grid className={classes.tooltip}>
                 <Typography className={classes.tooltipDate}>{date}</Typography>
                 <Typography className={classes.tooltipValue}>
-                  ${formatNumberWithSuffix(point.data.y as number)}
+                  ${formatNumberWithoutSuffix(point.data.y as number)}
                 </Typography>
               </Grid>
             )
