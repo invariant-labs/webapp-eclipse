@@ -587,7 +587,7 @@ export const NewPosition: React.FC<INewPosition> = ({
     if (positionOpeningMethod === 'range') {
       onChangeRange(leftRange, rightRange)
     }
-  }, [midPrice.index, leftRange, rightRange, currentPriceSqrt])
+  }, [midPrice.index, leftRange, rightRange, currentPriceSqrt.toString()])
 
   const handleClickSettings = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget)
