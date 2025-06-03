@@ -156,7 +156,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     }
 
     setInitReset(true)
-  }, [poolIndex])
+  }, [poolIndex, minimumSliderIndex])
 
   useEffect(() => {
     isMountedRef.current = true

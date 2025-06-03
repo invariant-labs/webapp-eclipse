@@ -50,6 +50,7 @@ export interface IStatsStore {
   lastSnapTimestamp: number
   lastTimestamp: number
   lastInterval: Intervals | null
+  currentInterval: Intervals | null
 }
 
 export const defaultState: IStatsStore = {
@@ -84,7 +85,8 @@ export const defaultState: IStatsStore = {
   isLoading: false,
   lastTimestamp: 0,
   lastSnapTimestamp: 0,
-  lastInterval: null
+  lastInterval: null,
+  currentInterval: null
 }
 
 export const statsSliceName = 'stats'
@@ -99,8 +101,13 @@ const statsSlice = createSlice({
       state = {
         ...action.payload,
         isLoading: false,
-        lastTimestamp: +Date.now()
+        lastTimestamp: +Date.now(),
+        currentInterval: state.currentInterval
       }
+      return state
+    },
+    setCurrentInterval(state, action: PayloadAction<{ interval: Intervals }>) {
+      state.currentInterval = action.payload.interval
       return state
     },
     getCurrentStats(state) {

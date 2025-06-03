@@ -6,8 +6,8 @@ import { useStyles } from './style'
 import { TimeData } from '@store/reducers/stats'
 import { Grid, Typography, useMediaQuery } from '@mui/material'
 import { Box } from '@mui/system'
-import { formatNumberWithSuffix, trimZeros } from '@utils/utils'
 import { formatLargeNumber, formatPlotDataLabels, getLabelDate } from '@utils/uiUtils'
+import { formatNumberWithoutSuffix, trimZeros } from '@utils/utils'
 import useIsMobile from '@store/hooks/isMobile'
 import { Intervals as IntervalsKeys } from '@store/consts/static'
 
@@ -53,7 +53,7 @@ const Volume: React.FC<StatsInterface> = ({
         </Grid>
         <div className={classes.volumePercentContainer}>
           <Typography className={classes.volumePercentHeader}>
-            ${formatNumberWithSuffix(isLoading ? Math.random() * 10000 : volume)}
+            ${formatNumberWithoutSuffix(isLoading ? Math.random() * 10000 : volume)}
           </Typography>
         </div>
       </Box>
@@ -116,7 +116,7 @@ const Volume: React.FC<StatsInterface> = ({
               <Grid className={classes.tooltip}>
                 <Typography className={classes.tooltipDate}>{date}</Typography>
                 <Typography className={classes.tooltipValue}>
-                  ${formatNumberWithSuffix(data.value)}
+                  ${formatNumberWithoutSuffix(data.value)}
                 </Typography>
               </Grid>
             )
