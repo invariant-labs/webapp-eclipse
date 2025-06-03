@@ -6,7 +6,6 @@ import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
 import {
   fees24,
   isLoading,
-  lastInterval,
   liquidityPlot,
   poolsStatsWithTokensDetails,
   tokensStatsWithTokensDetails,
@@ -14,7 +13,8 @@ import {
   volume,
   tvl,
   volume24,
-  volumePlot
+  volumePlot,
+  currentInterval
 } from '@store/selectors/stats'
 import { network } from '@store/selectors/solanaConnection'
 import { actions } from '@store/reducers/stats'
@@ -55,20 +55,18 @@ export const WrappedStats: React.FC = () => {
   const currentNetwork = useSelector(network)
   const promotedPools = useSelector(getPromotedPools)
 
-  const lastFetchedInterval = useSelector(lastInterval)
-  const [interval, setInterval] = useState<IntervalsKeys>(
-    (lastFetchedInterval as IntervalsKeys) || IntervalsKeys.Daily
-  )
+  const lastUsedInterval = useSelector(currentInterval)
+  const [interval, setInterval] = useState<IntervalsKeys>(lastUsedInterval || IntervalsKeys.Daily)
   const [searchTokensValue, setSearchTokensValue] = useState<ISearchToken[]>([])
   const [searchPoolsValue, setSearchPoolsValue] = useState<ISearchToken[]>([])
 
   useEffect(() => {
-    dispatch(actions.getCurrentIntervalStats({ interval }))
     dispatch(leaderboardActions.getLeaderboardConfig())
   }, [])
 
   useEffect(() => {
     dispatch(actions.getCurrentIntervalStats({ interval }))
+    dispatch(actions.setCurrentInterval({ interval }))
   }, [interval])
 
   const filteredTokenList = useMemo(() => {

@@ -49,6 +49,7 @@ export interface IStatsStore {
   isLoading: boolean
   lastTimestamp: number
   lastInterval: Intervals | null
+  currentInterval: Intervals | null
 }
 
 export const defaultState: IStatsStore = {
@@ -82,7 +83,8 @@ export const defaultState: IStatsStore = {
   poolsData: [],
   isLoading: false,
   lastTimestamp: 0,
-  lastInterval: localStorage.getItem('INVARIANT_INTERVAL') as Intervals | Intervals.Daily
+  lastInterval: null,
+  currentInterval: (localStorage.getItem('INVARIANT_INTERVAL') as Intervals) ?? null
 }
 
 export const statsSliceName = 'stats'
@@ -97,8 +99,13 @@ const statsSlice = createSlice({
       state = {
         ...action.payload,
         isLoading: false,
-        lastTimestamp: +Date.now()
+        lastTimestamp: +Date.now(),
+        currentInterval: state.currentInterval
       }
+      return state
+    },
+    setCurrentInterval(state, action: PayloadAction<{ interval: Intervals }>) {
+      state.currentInterval = action.payload.interval
       return state
     },
     getCurrentStats(state) {
