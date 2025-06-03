@@ -84,7 +84,7 @@ export const defaultState: IStatsStore = {
   isLoading: false,
   lastTimestamp: 0,
   lastInterval: null,
-  currentInterval: (localStorage.getItem('INVARIANT_INTERVAL') as Intervals) ?? null
+  currentInterval: null
 }
 
 export const statsSliceName = 'stats'
