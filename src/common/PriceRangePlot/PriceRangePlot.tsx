@@ -317,11 +317,9 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
 
   const highlightLayer = ({ innerWidth, innerHeight }) => {
     const unitLen = innerWidth / (plotMax - plotMin)
-    const rawWidth = ((rightRange?.x ?? 0) - (leftRange?.x ?? 0)) * unitLen
-    const width = Math.max(0, rawWidth)
 
     return (
-      <svg width='100%' height='100%' pointerEvents={'none'}>
+      <svg width='100%' height='100%' pointerEvents='none'>
         <defs>
           <linearGradient id='gradient1' x1='0%' y1='20%' x2='0%' y2='100%'>
             <stop offset='0%' style={{ stopColor: `rgba(46, 224, 154, 0)` }} />
@@ -329,9 +327,9 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
           </linearGradient>
         </defs>
         <rect
-          x={(leftRange?.x - plotMin) * unitLen > 0 ? (leftRange?.x - plotMin) * unitLen : 0}
+          x={(leftRange?.x - plotMin) * unitLen}
           y={0}
-          width={width}
+          width={(rightRange?.x - leftRange?.x) * unitLen}
           height={innerHeight}
           fill='url(#gradient1)'
         />

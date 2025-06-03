@@ -69,7 +69,7 @@ export const WrappedPoolList: React.FC = () => {
   useEffect(() => {
     dispatch(
       actions.getCurrentIntervalStats({
-        interval: (lastFetchedInterval as Intervals) || Intervals.Daily
+        interval: Intervals.Daily
       })
     )
     dispatch(leaderboardActions.getLeaderboardConfig())

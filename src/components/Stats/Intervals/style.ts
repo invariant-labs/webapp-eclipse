@@ -31,8 +31,7 @@ const useStyles = makeStyles<StyleProps>()((theme, { interval }) => {
       flexDirection: 'column',
       alignItems: 'center',
       gap: '24px',
-      width: '100%',
-      marginTop: '24px'
+      width: '100%'
     },
     switchWrapper: {
       display: 'flex',
