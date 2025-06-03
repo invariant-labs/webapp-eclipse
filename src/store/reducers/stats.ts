@@ -47,6 +47,7 @@ export interface IStatsStore {
   tokensData: TokenStatsData[]
   poolsData: PoolStatsData[]
   isLoading: boolean
+  lastSnapTimestamp: number
   lastTimestamp: number
   lastInterval: Intervals | null
 }
@@ -82,6 +83,7 @@ export const defaultState: IStatsStore = {
   poolsData: [],
   isLoading: false,
   lastTimestamp: 0,
+  lastSnapTimestamp: 0,
   lastInterval: null
 }
 

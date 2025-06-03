@@ -14,7 +14,8 @@ import {
   volume,
   tvl,
   volume24,
-  volumePlot
+  volumePlot,
+  lastSnapTimestamp
 } from '@store/selectors/stats'
 import { network } from '@store/selectors/solanaConnection'
 import { actions } from '@store/reducers/stats'
@@ -45,7 +46,7 @@ export const WrappedStats: React.FC = () => {
   const tokensList = useSelector(tokensStatsWithTokensDetails)
   const volumeInterval = useSelector(volume)
   const tvlInterval = useSelector(tvl)
-
+  const lastStatsTimestamp = useSelector(lastSnapTimestamp)
   const volume24h = useSelector(volume24)
   const tvl24h = useSelector(tvl24)
   const fees24h = useSelector(fees24)
@@ -154,6 +155,7 @@ export const WrappedStats: React.FC = () => {
                   className={classes.plot}
                   isLoading={isLoadingStats}
                   interval={interval}
+                  lastStatsTimestamp={lastStatsTimestamp}
                 />
                 {
                   <Separator
@@ -169,6 +171,7 @@ export const WrappedStats: React.FC = () => {
                   className={classes.plot}
                   isLoading={isLoadingStats}
                   interval={interval}
+                  lastStatsTimestamp={lastStatsTimestamp}
                 />
               </Box>
             </>

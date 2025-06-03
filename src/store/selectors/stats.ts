@@ -18,6 +18,7 @@ export const {
   tokensData,
   poolsData,
   isLoading,
+  lastSnapTimestamp,
   lastTimestamp,
   lastInterval
 } = keySelectors(store, [
@@ -32,6 +33,7 @@ export const {
   'tokensData',
   'poolsData',
   'isLoading',
+  'lastSnapTimestamp',
   'lastTimestamp',
   'lastInterval'
 ])
