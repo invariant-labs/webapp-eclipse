@@ -102,7 +102,7 @@ export const PoolInit: React.FC<IPoolInit> = ({
   const [rightInputRounded, setRightInputRounded] = useState((+rightInput).toFixed(12))
 
   const [midPriceInput, setMidPriceInput] = useState(
-    calcPriceBySqrtPrice(midPriceSqrtPrice, isXtoY, xDecimal, yDecimal).toFixed(8)
+    validateMidPriceInput(suggestedPrice.toString())
   )
 
   const handleUpdateConcentrationFromURL = (concentrationValue: number) => {
@@ -265,7 +265,7 @@ export const PoolInit: React.FC<IPoolInit> = ({
     }
   }, [midPriceInput, concentrationArray, midPriceIndex])
 
-  const validateMidPriceInput = (midPriceInput: string) => {
+  function validateMidPriceInput(midPriceInput: string) {
     if (positionOpeningMethod === 'concentration') {
       const validatedMidPrice = validConcentrationMidPrice(midPriceInput)
 
@@ -349,17 +349,32 @@ export const PoolInit: React.FC<IPoolInit> = ({
             bestFeeIndex !== -1 && suggestedPrice ? (
               <Box className={classes.tooltipContainer}>
                 <span className={classes.suggestedPriceTooltipText}>
-                  <p>
-                    Set the initial pool price based on the price from the most liquid existing
-                    market,{' '}
-                    <span className={classes.boldedText}>
-                      {tokenASymbol}/{tokenBSymbol}{' '}
-                      {Number(
-                        printBN(ALL_FEE_TIERS_DATA[bestFeeIndex].tier.fee, DECIMAL - 2)
-                      ).toFixed(2)}
-                      %{' '}
-                    </span>
-                  </p>
+                  {midPriceInput?.toString() ===
+                  validateMidPriceInput(suggestedPrice.toString()) ? (
+                    <p>
+                      Initial pool price applied based on the price from the most liquid existing
+                      market,{' '}
+                      <span className={classes.boldedText}>
+                        {tokenASymbol}/{tokenBSymbol}{' '}
+                        {Number(
+                          printBN(ALL_FEE_TIERS_DATA[bestFeeIndex].tier.fee, DECIMAL - 2)
+                        ).toFixed(2)}
+                        %{' '}
+                      </span>
+                    </p>
+                  ) : (
+                    <p>
+                      Set the initial pool price based on the price from the most liquid existing
+                      market,{' '}
+                      <span className={classes.boldedText}>
+                        {tokenASymbol}/{tokenBSymbol}{' '}
+                        {Number(
+                          printBN(ALL_FEE_TIERS_DATA[bestFeeIndex].tier.fee, DECIMAL - 2)
+                        ).toFixed(2)}
+                        %{' '}
+                      </span>
+                    </p>
+                  )}
                 </span>
               </Box>
             ) : (
