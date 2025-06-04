@@ -69,7 +69,9 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
     ? isConnected && !estimatedPointsPerDay.isZero()
       ? '<0.01'
       : 0
-    : formatNumberWithSuffix(printBN(estimatedPointsPerDay, LEADERBOARD_DECIMAL), false, 1)
+    : formatNumberWithSuffix(printBN(estimatedPointsPerDay, LEADERBOARD_DECIMAL), {
+        decimalsAfterDot: 1
+      })
 
   const estimatedPointsForScaleFormat = useMemo(() => {
     const minPoints = isLessThanMinimal(estimatedScalePoints.min)

@@ -2,7 +2,15 @@ import { FEE_TIERS, toDecimal } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
 import { ISnackbar } from '@store/reducers/snackbars'
-import { Chain, PrefixConfig, Reward, Token, TokenPriceData, WalletType } from './types'
+import {
+  Chain,
+  FormatNumberThreshold,
+  PrefixConfig,
+  Reward,
+  Token,
+  TokenPriceData,
+  WalletType
+} from './types'
 import { MAINNET_TOKENS } from '@invariant-labs/sdk-eclipse/lib/network'
 import { cat1Icon, cat2Icon, dog1Icon, dog2Icon } from '@static/icons'
 import { TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token'
@@ -741,6 +749,17 @@ export const FormatConfig = {
   KDecimals: 3,
   DecimalsAfterDot: 2
 }
+
+export const AlternativeFormatConfig = {
+  B: 1000000000,
+  M: 1000000,
+  K: 10000,
+  BDecimals: 9,
+  MDecimals: 6,
+  KDecimals: 3,
+  DecimalsAfterDot: 2
+}
+
 export enum PositionTokenBlock {
   None,
   A,
@@ -1035,3 +1054,62 @@ export const chartPlaceholder = {
   plotMax: 1.0113333501881372,
   tickSpacing: 10
 }
+
+export const defaultThresholds: FormatNumberThreshold[] = [
+  {
+    value: 10,
+    decimals: 4
+  },
+  {
+    value: 1000,
+    decimals: 2
+  },
+  {
+    value: 10000,
+    decimals: 2
+  },
+  {
+    value: 1000000,
+    decimals: 2,
+    divider: 1000
+  },
+  {
+    value: 1000000000,
+    decimals: 2,
+    divider: 1000000
+  },
+  {
+    value: Infinity,
+    decimals: 2,
+    divider: 1000000000
+  }
+]
+
+export const thresholdsWithTokenDecimal = (decimals: number): FormatNumberThreshold[] => [
+  {
+    value: 10,
+    decimals
+  },
+  {
+    value: 10000,
+    decimals: 6
+  },
+  {
+    value: 100000,
+    decimals: 4
+  },
+  {
+    value: 1000000,
+    decimals: 3
+  },
+  {
+    value: 1000000000,
+    decimals: 2,
+    divider: 1000000
+  },
+  {
+    value: Infinity,
+    decimals: 2,
+    divider: 1000000000
+  }
+]
