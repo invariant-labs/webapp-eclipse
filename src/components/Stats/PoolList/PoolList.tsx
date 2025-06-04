@@ -104,7 +104,7 @@ const PoolList: React.FC<PoolListInterface> = ({
   const filteredTokenY = filteredTokens[1] ?? ''
 
   const [page, setPage] = React.useState(1)
-  const [sortType, setSortType] = React.useState(SortTypePoolList.VOLUME_DESC)
+  const [sortType, setSortType] = React.useState(SortTypePoolList.FEE_24_DESC)
 
   const sortedData = useMemo(() => {
     if (isLoading) {
