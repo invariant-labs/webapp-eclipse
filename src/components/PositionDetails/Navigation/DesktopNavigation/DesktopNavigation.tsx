@@ -10,18 +10,27 @@ type Props = {
   position: INavigatePosition | null
   direction: 'left' | 'right'
   onClick: () => void
+  onHover: () => void
+  openTooltip?: boolean
   disabled?: boolean
 }
 
-export const DesktopNavigation = ({ position, direction, onClick, disabled }: Props) => {
+export const DesktopNavigation = ({
+  position,
+  direction,
+  onClick,
+  onHover,
+  openTooltip,
+  disabled
+}: Props) => {
   const { classes } = useStyles({ direction, disabled })
-
   return (
-    <Box className={classes.wrapper}>
+    <Box className={classes.wrapper} onMouseEnter={onHover}>
       <TooltipHover
         allowEnterTooltip={!disabled}
         title={
-          position && (
+          position &&
+          openTooltip && (
             <Box display='flex' flexDirection='column' alignItems='center' width={129}>
               <Typography color={colors.invariant.textGrey} style={typography.body2} mb={'4px'}>
                 Next position

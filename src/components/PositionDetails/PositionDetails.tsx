@@ -150,6 +150,7 @@ const PositionDetails: React.FC<IProps> = ({
   const [xToY, setXToY] = useState<boolean>(
     initialXtoY(tokenXAddress.toString(), tokenYAddress.toString())
   )
+  const [lastNavigationTooltip, setLastNavigationTooltip] = useState<'left' | 'right' | null>(null)
 
   const [isLockPositionModalOpen, setIsLockPositionModalOpen] = useState(false)
 
@@ -307,6 +308,8 @@ const PositionDetails: React.FC<IProps> = ({
                 navigate(ROUTES.getPositionRoute(previousPosition.id))
               }}
               disabled={!previousPosition}
+              openTooltip={lastNavigationTooltip === 'left'}
+              onHover={() => setLastNavigationTooltip('left')}
             />
           </Box>
         </Fade>
@@ -464,6 +467,8 @@ const PositionDetails: React.FC<IProps> = ({
                 navigate(ROUTES.getPositionRoute(nextPosition.id))
               }}
               disabled={!nextPosition}
+              openTooltip={lastNavigationTooltip === 'right'}
+              onHover={() => setLastNavigationTooltip('right')}
             />
           </Box>
         </Fade>
