@@ -31,6 +31,7 @@ import { mapIntervalToString, shortenAddress } from '@utils/uiUtils'
 import LockStatsPopover from '@components/Modals/LockStatsPopover/LockStatsPopover'
 import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
 import { BN } from '@coral-xyz/anchor'
+
 interface IProps {
   TVL?: number
   volume?: number
@@ -206,6 +207,11 @@ const PoolListItem: React.FC<IProps> = ({
       setShowInfo(false)
     }
   }, [isSmd])
+
+  useEffect(() => {
+    setShowInfo(false)
+  }, [itemNumber])
+
   //HOTFIX
   const { convertedApy, convertedApr } = calculateAPYAndAPR(apy, poolAddress, volume, fee, TVL)
   const ActionsButtons = (
