@@ -104,7 +104,9 @@ import {
   ERROR_CODE_TO_MESSAGE,
   COMMON_ERROR_MESSAGE,
   ErrorCodeExtractionKeys,
-  TUSD_MAIN
+  TUSD_MAIN,
+  AlternativeFormatConfig,
+  defaultThresholds
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
@@ -114,7 +116,6 @@ import {
   IncentiveRewardData,
   IPriceData,
   PoolSnapshot,
-  PrefixConfig,
   Token,
   TokenPriceData
 } from '@store/consts/types'
@@ -235,74 +236,6 @@ export const removeTickerPrefix = (ticker: string, prefix: string[] = ['x', '$']
   }
   return ticker
 }
-
-const defaultPrefixConfig: PrefixConfig = {
-  B: 1000000000,
-  M: 1000000,
-  K: 10000
-}
-
-export const showPrefix = (nr: number, config: PrefixConfig = defaultPrefixConfig): string => {
-  const abs = Math.abs(nr)
-
-  if (typeof config.B !== 'undefined' && abs >= config.B) {
-    return 'B'
-  }
-
-  if (typeof config.M !== 'undefined' && abs >= config.M) {
-    return 'M'
-  }
-
-  if (typeof config.K !== 'undefined' && abs >= config.K) {
-    return 'K'
-  }
-
-  return ''
-}
-
-export const defaultThresholds: FormatNumberThreshold[] = [
-  {
-    value: 10,
-    decimals: 4
-  },
-  {
-    value: 1000,
-    decimals: 2
-  },
-  {
-    value: 10000,
-    decimals: 1
-  },
-  {
-    value: 1000000,
-    decimals: 2,
-    divider: 1000
-  },
-  {
-    value: 1000000000,
-    decimals: 2,
-    divider: 1000000
-  },
-  {
-    value: Infinity,
-    decimals: 2,
-    divider: 1000000000
-  }
-]
-
-export const formatNumbers =
-  (thresholds: FormatNumberThreshold[] = defaultThresholds) =>
-  (value: string) => {
-    const num = Number(value)
-    const abs = Math.abs(num)
-    const threshold = thresholds.sort((a, b) => a.value - b.value).find(thr => abs < thr.value)
-
-    const formatted = threshold
-      ? (abs / (threshold.divider ?? 1)).toFixed(threshold.decimals)
-      : value
-
-    return num < 0 && threshold ? '-' + formatted : formatted
-  }
 
 export const sqrtPriceToPrice = (sqrtPrice: BN) => {
   const price = sqrtPrice.mul(sqrtPrice)
@@ -751,11 +684,41 @@ export const printSubNumber = (amount: number): string => {
     .join('')
 }
 
+interface FormatNumberWithSuffixConfig {
+  noDecimals?: boolean
+  decimalsAfterDot?: number
+  alternativeConfig?: boolean
+  noSubNumbers?: boolean
+}
+
+export const getThresholdsDecimals = (
+  number: number | bigint | string,
+  thresholds: FormatNumberThreshold[] = defaultThresholds
+): number => {
+  const numberAsNumber = Number(number)
+  const found = thresholds.find(threshold => numberAsNumber < threshold.value)
+
+  return found?.decimals ?? 2
+}
 export const formatNumberWithSuffix = (
   number: number | bigint | string,
-  noDecimals?: boolean,
-  decimalsAfterDot: number = 3
+  config?: FormatNumberWithSuffixConfig
 ): string => {
+  const {
+    noDecimals,
+    decimalsAfterDot,
+    alternativeConfig,
+    noSubNumbers
+  }: Required<FormatNumberWithSuffixConfig> = {
+    noDecimals: false,
+    decimalsAfterDot: 3,
+    alternativeConfig: false,
+    noSubNumbers: false,
+    ...config
+  }
+
+  const formatConfig = alternativeConfig ? AlternativeFormatConfig : FormatConfig
+
   const numberAsNumber = Number(number)
   const isNegative = numberAsNumber < 0
   const absNumberAsNumber = Math.abs(numberAsNumber)
@@ -770,37 +733,41 @@ export const formatNumberWithSuffix = (
 
   let formattedNumber
 
-  if (Math.abs(numberAsNumber) >= FormatConfig.B) {
+  if (Math.abs(numberAsNumber) >= formatConfig.B) {
     const formattedDecimals = noDecimals
       ? ''
-      : (FormatConfig.DecimalsAfterDot ? '.' : '') +
-        (beforeDot.slice(-FormatConfig.BDecimals) + (afterDot ? afterDot : '')).slice(
+      : '.' +
+        (beforeDot.slice(-formatConfig.BDecimals) + (afterDot ? afterDot : '')).slice(
           0,
-          FormatConfig.DecimalsAfterDot
+          formatConfig.DecimalsAfterDot
         )
 
     formattedNumber =
-      beforeDot.slice(0, -FormatConfig.BDecimals) + (noDecimals ? '' : formattedDecimals) + 'B'
-  } else if (Math.abs(numberAsNumber) >= FormatConfig.M) {
+      beforeDot.slice(0, -formatConfig.BDecimals) + (noDecimals ? '' : formattedDecimals) + 'B'
+  } else if (Math.abs(numberAsNumber) >= formatConfig.M) {
     const formattedDecimals = noDecimals
       ? ''
-      : (FormatConfig.DecimalsAfterDot ? '.' : '') +
-        (beforeDot.slice(-FormatConfig.MDecimals) + (afterDot ? afterDot : '')).slice(
+      : '.' +
+        (beforeDot.slice(-formatConfig.MDecimals) + (afterDot ? afterDot : '')).slice(
           0,
-          FormatConfig.DecimalsAfterDot
+          formatConfig.DecimalsAfterDot
         )
     formattedNumber =
-      beforeDot.slice(0, -FormatConfig.MDecimals) + (noDecimals ? '' : formattedDecimals) + 'M'
-  } else if (Math.abs(numberAsNumber) >= FormatConfig.K) {
+      beforeDot.slice(0, -formatConfig.MDecimals) + (noDecimals ? '' : formattedDecimals) + 'M'
+  } else if (Math.abs(numberAsNumber) >= formatConfig.K) {
     const formattedDecimals = noDecimals
       ? ''
-      : (FormatConfig.DecimalsAfterDot ? '.' : '') +
-        (beforeDot.slice(-FormatConfig.KDecimals) + (afterDot ? afterDot : '')).slice(
+      : '.' +
+        (beforeDot.slice(-formatConfig.KDecimals) + (afterDot ? afterDot : '')).slice(
           0,
-          FormatConfig.DecimalsAfterDot
+          formatConfig.DecimalsAfterDot
         )
     formattedNumber =
-      beforeDot.slice(0, -FormatConfig.KDecimals) + (noDecimals ? '' : formattedDecimals) + 'K'
+      beforeDot.slice(0, -formatConfig.KDecimals) + (noDecimals ? '' : formattedDecimals) + 'K'
+  } else if (afterDot && noSubNumbers) {
+    const roundedNumber = absNumberAsNumber.toFixed(decimalsAfterDot + 1).slice(0, -1)
+
+    formattedNumber = trimZeros(roundedNumber)
   } else if (afterDot && countLeadingZeros(afterDot) <= decimalsAfterDot) {
     const roundedNumber = absNumberAsNumber
       .toFixed(countLeadingZeros(afterDot) + decimalsAfterDot + 1)
@@ -815,7 +782,9 @@ export const formatNumberWithSuffix = (
         ? String(parseInt(afterDot)).slice(0, decimalsAfterDot)
         : afterDot
 
-    if (parsedAfterDot) {
+    if (noSubNumbers && afterDot) {
+      formattedNumber = beforeDot + '.' + afterDot
+    } else if (parsedAfterDot && afterDot) {
       formattedNumber =
         beforeDot +
         '.' +
@@ -1914,35 +1883,6 @@ export const getPositionsAddressesFromRange = async (
     data.map(({ positionAddress }) => positionAddress)
   )
 }
-
-export const thresholdsWithTokenDecimal = (decimals: number): FormatNumberThreshold[] => [
-  {
-    value: 10,
-    decimals
-  },
-  {
-    value: 10000,
-    decimals: 6
-  },
-  {
-    value: 100000,
-    decimals: 4
-  },
-  {
-    value: 1000000,
-    decimals: 3
-  },
-  {
-    value: 1000000000,
-    decimals: 2,
-    divider: 1000000
-  },
-  {
-    value: Infinity,
-    decimals: 2,
-    divider: 1000000000
-  }
-]
 
 export const getMockedTokenPrice = (symbol: string, network: NetworkType): TokenPriceData => {
   const sufix = network === NetworkType.Devnet ? '_DEV' : '_TEST'

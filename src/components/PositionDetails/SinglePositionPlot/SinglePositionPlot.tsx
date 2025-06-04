@@ -383,7 +383,12 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
                     color: minPercentage < 0 ? colors.invariant.Error : colors.invariant.green
                   }}>
                   {minPercentage > 0 && '+'}
-                  {formatNumberWithSuffix(minPercentage.toString())}%
+                  {formatNumberWithSuffix(minPercentage.toString(), {
+                    decimalsAfterDot: 2,
+                    noSubNumbers: true,
+                    alternativeConfig: true
+                  })}
+                  %
                 </Typography>
               </Box>
             }
@@ -401,7 +406,12 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
                     color: maxPercentage < 0 ? colors.invariant.Error : colors.invariant.green
                   }}>
                   {maxPercentage > 0 && '+'}
-                  {formatNumberWithSuffix(maxPercentage.toString())}%
+                  {formatNumberWithSuffix(maxPercentage.toString(), {
+                    decimalsAfterDot: 2,
+                    noSubNumbers: true,
+                    alternativeConfig: true
+                  })}
+                  %
                 </Typography>
               </Box>
             }

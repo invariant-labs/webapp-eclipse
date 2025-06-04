@@ -749,6 +749,17 @@ export const FormatConfig = {
   KDecimals: 3,
   DecimalsAfterDot: 2
 }
+
+export const AlternativeFormatConfig = {
+  B: 1000000000,
+  M: 1000000,
+  K: 10000,
+  BDecimals: 9,
+  MDecimals: 6,
+  KDecimals: 3,
+  DecimalsAfterDot: 2
+}
+
 export enum PositionTokenBlock {
   None,
   A,
@@ -1044,10 +1055,10 @@ export const chartPlaceholder = {
   tickSpacing: 10
 }
 
-export const percentageThresholds: FormatNumberThreshold[] = [
+export const defaultThresholds: FormatNumberThreshold[] = [
   {
     value: 10,
-    decimals: 2
+    decimals: 4
   },
   {
     value: 1000,
@@ -1061,6 +1072,35 @@ export const percentageThresholds: FormatNumberThreshold[] = [
     value: 1000000,
     decimals: 2,
     divider: 1000
+  },
+  {
+    value: 1000000000,
+    decimals: 2,
+    divider: 1000000
+  },
+  {
+    value: Infinity,
+    decimals: 2,
+    divider: 1000000000
+  }
+]
+
+export const thresholdsWithTokenDecimal = (decimals: number): FormatNumberThreshold[] => [
+  {
+    value: 10,
+    decimals
+  },
+  {
+    value: 10000,
+    decimals: 6
+  },
+  {
+    value: 100000,
+    decimals: 4
+  },
+  {
+    value: 1000000,
+    decimals: 3
   },
   {
     value: 1000000000,
