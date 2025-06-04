@@ -659,7 +659,7 @@ export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
     USDT_MAIN.address,
     BITZ_MAIN.address,
     LAIKA_MAIN.address,
-    TIA_MAIN.address
+    TUSD_MAIN.address
   ],
   Testnet: [USDC_TEST.address, BTC_TEST.address, WETH_TEST.address],
   Local: []
@@ -989,9 +989,9 @@ export const ECLIPSE_MAINNET_GENESIS_HASH = 'EAQLJCV2mh23BsK2P9oYpV5CHVLDNHTxYss
 export const SOLANA_MAINNET_GENESIS_HASH = '5eykt4UsFv8P8NJdTREpY1vzqKqZKvdpKuc147dw2N9d'
 
 export enum Intervals {
-  Daily = 'daily',
-  Weekly = 'weekly',
-  Monthly = 'monthly'
+  Daily = '24H',
+  Weekly = '1W',
+  Monthly = '1M'
   // Yearly = 'yearly' Don't show year in UI
 }
 

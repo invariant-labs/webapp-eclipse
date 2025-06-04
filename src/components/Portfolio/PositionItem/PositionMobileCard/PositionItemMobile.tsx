@@ -51,7 +51,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
   tokenXLiq,
   tokenYLiq,
   network,
-  unclaimedFeesInUSD = { value: 0, loading: false },
+  unclaimedFeesInUSD = { value: 0, loading: false, isClaimAvailable: false },
   handleLockPosition,
   handleClosePosition,
   handleClaimFee,
@@ -142,7 +142,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
     setAllowPropagation(!isLockPositionModalOpen)
   }, [isLockPositionModalOpen])
   const promotedIconFragment = useMemo(() => {
-    if (isPromoted && isActive) {
+    if (isPromoted && isActive && !positionSingleData?.isLocked) {
       return (
         <>
           <PromotedPoolPopover
@@ -171,7 +171,10 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
 
     return (
       <>
-        <InactivePoolsPopover isActive={isActive} isPromoted={isPromoted}>
+        <InactivePoolsPopover
+          isActive={isActive}
+          isPromoted={isPromoted}
+          isLocked={positionSingleData?.isLocked ?? false}>
           <div
             className={classes.actionButton}
             onClick={() => {
@@ -437,7 +440,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
         handleClose={handleClose}
         open={isActionPopoverOpen}
         isLocked={positionSingleData?.isLocked ?? false}
-        unclaimedFeesInUSD={unclaimedFeesInUSD.value}
+        unclaimedFeesInUSD={unclaimedFeesInUSD}
         claimFee={() =>
           handleClaimFee(
             positionSingleData?.positionIndex ?? 0,

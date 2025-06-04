@@ -275,7 +275,7 @@ export interface IPositionItem {
   isLocked: boolean
   poolData: PoolWithAddressAndIndex
   liquidity: BN
-  unclaimedFeesInUSD: { value: number; loading: boolean }
+  unclaimedFeesInUSD: { value: number; loading: boolean; isClaimAvailable: boolean }
 }
 
 export interface ILiquidityToken {

@@ -126,7 +126,6 @@ export const SelectWalletModal: React.FC<ISelectWalletModal> = ({
                 className={classes.mobileWallet}
                 onClick={async () => {
                   if (detectedWallet === WalletType.NIGHTLY) {
-                    console.log('test')
                     handleNightlySelector()
                   } else {
                     handleConnectStaticWallet(detectedWallet)
