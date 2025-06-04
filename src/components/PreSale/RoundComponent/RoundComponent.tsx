@@ -57,17 +57,17 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
 
 
 
-  const renderPriceWithSkeleton = (amount: BN, decimals: number, width = "80px", isLoading = isLoadingSaleStats) => {
+  const renderPriceWithSkeleton = (amount: BN, decimals: number, width = "80px", isLoading = isLoadingSaleStats, round = roundNumber) => {
     if (isLoading) {
       return <Skeleton variant="text" width={width} height={24} />
     }
 
     if (priceFormat === 'usdc-to-token') {
-      const currentTierPrice = roundNumber >= 0 ?
-        [TIER1, TIER2, TIER3, TIER4][Math.min(roundNumber - 1, 3)] : 0;
+      const currentTierPrice = round >= 0 ?
+        [TIER1, TIER2, TIER3, TIER4][Math.min(round - 1, 3)] : 0;
       return <>1$ = {printBNandTrimZeros(currentTierPrice, decimals)} INVT</>
     } else {
-      return <>1 INVT = {printBNandTrimZeros(amount, decimals, 3)}$</>
+      return <>1 INVT = {printBNandTrimZeros(amount, decimals, 5)}$</>
     }
   }
 
@@ -159,7 +159,7 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
             <Box className={classes.infoRow}>
               <Typography className={classes.infoLabel}>Next ratio: </Typography>
               <Typography className={classes.nextPrice}>
-                {renderPriceWithSkeleton(nextPrice, mintDecimals, "160px", isLoadingSaleStats)}
+                {renderPriceWithSkeleton(nextPrice, mintDecimals, "160px", isLoadingSaleStats, roundNumber + 1)}
               </Typography>
             </Box>
             <Box className={classes.divider} />

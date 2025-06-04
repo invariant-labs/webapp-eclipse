@@ -425,9 +425,10 @@ export const PreSaleWrapper = () => {
               steps={stepLabels}
             />
             <Box className={classes.roundComponentContainer}>
+
               <RoundComponent
                 isActive={isActive}
-                saleDidNotStart={false}
+                saleDidNotStart={saleDidNotStart}
                 targetAmount={targetAmount}
                 amountDeposited={currentAmount}
                 amountNeeded={amountNeeded}
