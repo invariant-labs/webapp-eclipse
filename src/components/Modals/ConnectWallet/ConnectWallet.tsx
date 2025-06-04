@@ -44,7 +44,7 @@ export const ConnectWallet: React.FC<IConnectWalletModal> = ({
           <img src={copyAddressIcon} className={classes.icon} alt='Copy address icon' />
           <Typography className={classes.name}>Copy address</Typography>
         </Grid>
-        {(isMobile || isSm) && (
+        {!(isMobile || isSm) && (
           <Grid item className={classes.listItem} onClick={callChangeWallet}>
             <img src={walletIcon} className={classes.icon} alt='Change wallet icon' />
             <Typography className={classes.name}>Change wallet</Typography>
