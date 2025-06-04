@@ -2,7 +2,6 @@ import RangeInput from '@components/Inputs/RangeInput/RangeInput'
 import SimpleInput from '@components/Inputs/SimpleInput/SimpleInput'
 import { Box, Button, Grid, Typography } from '@mui/material'
 import {
-  calcPriceBySqrtPrice,
   calcPriceByTickIndex,
   calculateConcentration,
   calculateConcentrationRange,
@@ -69,7 +68,6 @@ export const PoolInit: React.FC<IPoolInit> = ({
   yDecimal,
   tickSpacing,
   midPriceIndex,
-  midPriceSqrtPrice,
   onChangeMidPrice,
   currentPairReversed,
   positionOpeningMethod,
