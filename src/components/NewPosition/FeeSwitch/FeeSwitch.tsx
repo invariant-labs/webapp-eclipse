@@ -1,4 +1,4 @@
-import React, { useState, useRef, useLayoutEffect } from 'react'
+import React, { useState, useRef, useLayoutEffect, useCallback } from 'react'
 import { Grid, Skeleton, Tab, Tabs, Typography } from '@mui/material'
 import { Box } from '@mui/material'
 import useStyles, { useSingleTabStyles, useTabsStyles } from './style'
@@ -57,6 +57,17 @@ export const FeeSwitch: React.FC<IFeeSwitch> = ({
     setIsBestTierHiddenOnRight(bestRect.right > containerRect.right)
   }
 
+  const getTvlValue = useCallback(
+    (tier: number) => {
+      const initialValue = feeTiersWithTvl[tier]
+        ? Math.round((feeTiersWithTvl[tier] / totalTvl) * 100)
+        : 0
+      const finalTvl = initialValue >= 1 ? `${initialValue}` : '<1'
+      return finalTvl
+    },
+    [feeTiersWithTvl]
+  )
+
   useLayoutEffect(() => {
     checkBestTierVisibility()
   }, [bestTierNode, feeTiers, promotedPoolTierIndex])
@@ -112,11 +123,7 @@ export const FeeSwitch: React.FC<IFeeSwitch> = ({
                         promotedPoolTierIndex === index ||
                         bestTierIndex === index
                     })}>
-                    TVL{' '}
-                    {feeTiersWithTvl[tier]
-                      ? Math.round((feeTiersWithTvl[tier] / totalTvl) * 100)
-                      : 0}
-                    %
+                    TVL {getTvlValue(tier)}%
                   </Typography>
                 )}
                 <Box>{showOnlyPercents ? `${tier}%` : `${tier}% fee`}</Box>
