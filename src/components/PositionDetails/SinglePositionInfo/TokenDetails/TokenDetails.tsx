@@ -1,12 +1,8 @@
 import { Box, Skeleton, Typography } from '@mui/material'
 import { useStyles } from './style'
-import {
-  formatNumbers,
-  formatNumberWithSuffix,
-  thresholdsWithTokenDecimal,
-  trimZeros
-} from '@utils/utils'
+import { formatNumberWithSuffix, getThresholdsDecimals } from '@utils/utils'
 import { TokenBadge } from '../TokenBadge/TokenBadge'
+import { thresholdsWithTokenDecimal } from '@store/consts/static'
 
 type Props = {
   icon: string
@@ -38,9 +34,14 @@ export const TokenDetails = ({ icon, ticker, amount, decimal, price, isLoading }
         <Skeleton variant='rounded' height={32} width={160} />
       ) : (
         <Typography className={classes.tokenAmount}>
-          {trimZeros(
-            formatNumbers(thresholdsWithTokenDecimal(decimal))(parsedTokenAmount.toString())
-          )}
+          {formatNumberWithSuffix(parsedTokenAmount, {
+            decimalsAfterDot: getThresholdsDecimals(
+              parsedTokenAmount,
+              thresholdsWithTokenDecimal(decimal)
+            ),
+            noSubNumbers: true,
+            alternativeConfig: true
+          })}
         </Typography>
       )}
     </Box>

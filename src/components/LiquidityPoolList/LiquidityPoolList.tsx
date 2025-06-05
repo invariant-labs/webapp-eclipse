@@ -99,7 +99,7 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
   interval
 }) => {
   const [page, setPage] = React.useState(1)
-  const [sortType, setSortType] = React.useState(SortTypePoolList.VOLUME_DESC)
+  const [sortType, setSortType] = React.useState(SortTypePoolList.FEE_24_DESC)
   const navigate = useNavigate()
   const [initialDataLength, setInitialDataLength] = useState(initialLength)
   const isCenterAligment = useMediaQuery(theme.breakpoints.down(1280))
