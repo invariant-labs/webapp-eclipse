@@ -23,6 +23,26 @@ export const SwapPointsPopover = ({
 
   return (
     <TooltipHover
+      componentsProps={{
+        tooltip: {
+          sx: {
+            '@media (max-width:671px)': {
+              maxWidth: '100vw'
+            }
+          }
+        },
+        popper: {
+          modifiers: [
+            {
+              name: 'preventOverflow',
+              options: {
+                boundary: 'viewport',
+                altAxis: true
+              }
+            }
+          ]
+        }
+      }}
       title={
         <div className={classes.backgroundContainer}>
           <div
