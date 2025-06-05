@@ -59,13 +59,15 @@ export const FeeSwitch: React.FC<IFeeSwitch> = ({
 
   const getTvlValue = useCallback(
     (tier: number) => {
-      const initialValue = feeTiersWithTvl[tier]
+      const percentage = feeTiersWithTvl[tier]
         ? Math.round((feeTiersWithTvl[tier] / totalTvl) * 100)
         : 0
-      const finalTvl = initialValue >= 1 ? `${initialValue}` : '<1'
-      return finalTvl
+
+      if (percentage < 1) return '<1'
+      if (percentage > 99) return '>99'
+      return `${percentage}`
     },
-    [feeTiersWithTvl]
+    [feeTiersWithTvl, totalTvl]
   )
 
   useLayoutEffect(() => {
