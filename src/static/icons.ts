@@ -66,6 +66,7 @@ import mainnetGlowIcon from './svg/mainnetGlow.svg'
 import testnetGlowIcon from './svg/testnetGlow.svg'
 import active2Icon from './svg/active2.svg'
 import solanaGlowIcon from './svg/solanaGlow.svg'
+import sonicGlowIcon from './svg/sonicGlow.svg'
 import eclipseGlowIcon from './svg/eclipseGlow.svg'
 import liquidityEmptyIcon from './svg/liqudity_empty.svg'
 import assetsEmptyIcon from './svg/assets_empty.svg'
@@ -170,6 +171,7 @@ export {
   testnetGlowIcon,
   active2Icon,
   solanaGlowIcon,
+  sonicGlowIcon,
   eclipseGlowIcon,
   liquidityEmptyIcon,
   assetsEmptyIcon,
@@ -210,7 +212,8 @@ export {
 
 export const chainIcons = {
   eclipseGlow: eclipseGlowIcon,
-  solanaGlow: solanaGlowIcon
+  solanaGlow: solanaGlowIcon,
+  sonicGlow: sonicGlowIcon
 }
 
 export const netowrkIcons = {
