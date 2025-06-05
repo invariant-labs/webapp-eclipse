@@ -8,7 +8,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       pointerEvents: 'none',
       marginTop: 2,
       [theme.breakpoints.down(671)]: {
-        width: '100%'
+        width: '100vw'
       }
     },
     rightWrapper: {
@@ -70,7 +70,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       gap: 8,
       flexDirection: 'column',
       [theme.breakpoints.down(671)]: {
-        width: 'fit-content'
+        width: '100%'
       }
     },
     errorText: {
@@ -85,7 +85,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       gap: 8,
       flexDirection: 'column',
       [theme.breakpoints.down(671)]: {
-        width: 'fit-content'
+        width: '100%'
       }
     },
     promotedSwapsContainer: {
@@ -96,7 +96,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       gap: 8,
       flexDirection: 'column',
       [theme.breakpoints.down(671)]: {
-        width: 'fit-content'
+        width: '100%'
       }
     }
   }

@@ -81,7 +81,8 @@ export const SwapPointsPopover = ({
           </div>
         </div>
       }
-      placement='bottom'>
+      placement='bottom'
+      maxWidth={519}>
       {children}
     </TooltipHover>
   )
