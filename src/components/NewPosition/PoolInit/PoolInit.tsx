@@ -2,6 +2,7 @@ import RangeInput from '@components/Inputs/RangeInput/RangeInput'
 import SimpleInput from '@components/Inputs/SimpleInput/SimpleInput'
 import { Box, Button, Grid, Typography } from '@mui/material'
 import {
+  calcPriceBySqrtPrice,
   calcPriceByTickIndex,
   calculateConcentration,
   calculateConcentrationRange,
@@ -74,6 +75,7 @@ export const PoolInit: React.FC<IPoolInit> = ({
   setConcentrationIndex,
   concentrationIndex,
   concentrationArray,
+  midPriceSqrtPrice,
   minimumSliderIndex,
   currentFeeIndex,
   suggestedPrice,
@@ -131,7 +133,7 @@ export const PoolInit: React.FC<IPoolInit> = ({
   }
 
   const [midPriceInput, setMidPriceInput] = useState(
-    validateMidPriceInput(suggestedPrice.toString() || '')
+    calcPriceBySqrtPrice(midPriceSqrtPrice, isXtoY, xDecimal, yDecimal).toFixed(8)
   )
 
   const handleUpdateConcentrationFromURL = (concentrationValue: number) => {
