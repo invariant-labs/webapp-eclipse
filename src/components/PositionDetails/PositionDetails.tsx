@@ -481,6 +481,8 @@ const PositionDetails: React.FC<IProps> = ({
             handleChangePage={handleChangePagination}
             variant='center'
             page={paginationData.currentPage}
+            onDecrease={() => setLastNavigationTooltip('left')}
+            onIncrease={() => setLastNavigationTooltip('right')}
           />
         </Box>
       </Fade>
