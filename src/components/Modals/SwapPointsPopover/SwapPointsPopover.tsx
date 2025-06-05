@@ -27,7 +27,9 @@ export const SwapPointsPopover = ({
         tooltip: {
           sx: {
             '@media (max-width:671px)': {
-              maxWidth: '100vw'
+              maxWidth: '100vw',
+              marginLeft: '8px',
+              marginRight: '8px'
             }
           }
         },
