@@ -1,9 +1,8 @@
 import React from 'react'
 import useStyles from './style'
-import { Grid, Popover, Typography, useMediaQuery } from '@mui/material'
+import { Grid, Popover, Typography } from '@mui/material'
 import { copyAddressIcon, disconnectIcon, walletIcon } from '@static/icons'
 import useIsMobile from '@store/hooks/isMobile'
-import { theme } from '@static/theme'
 
 export interface IConnectWalletModal {
   open: boolean
@@ -22,8 +21,7 @@ export const ConnectWallet: React.FC<IConnectWalletModal> = ({
   callChangeWallet = () => {}
 }) => {
   const { classes } = useStyles()
-  const isMobile = useIsMobile()
-  const isSm = useMediaQuery(theme.breakpoints.down('sm'))
+  const isMobile = useIsMobile(true)
 
   return (
     <Popover
@@ -44,7 +42,7 @@ export const ConnectWallet: React.FC<IConnectWalletModal> = ({
           <img src={copyAddressIcon} className={classes.icon} alt='Copy address icon' />
           <Typography className={classes.name}>Copy address</Typography>
         </Grid>
-        {!(isMobile || isSm) && (
+        {!isMobile && (
           <Grid item className={classes.listItem} onClick={callChangeWallet}>
             <img src={walletIcon} className={classes.icon} alt='Change wallet icon' />
             <Typography className={classes.name}>Change wallet</Typography>
