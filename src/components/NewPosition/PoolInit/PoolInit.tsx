@@ -100,7 +100,7 @@ export const PoolInit: React.FC<IPoolInit> = ({
   const [rightInputRounded, setRightInputRounded] = useState((+rightInput).toFixed(12))
 
   const [midPriceInput, setMidPriceInput] = useState(
-    validateMidPriceInput(suggestedPrice.toString())
+    validateMidPriceInput(suggestedPrice.toString() || '')
   )
 
   const handleUpdateConcentrationFromURL = (concentrationValue: number) => {
