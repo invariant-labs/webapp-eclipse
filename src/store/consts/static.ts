@@ -822,7 +822,7 @@ export const CHAINS = [
   },
   {
     name: Chain.Sonic,
-    address: 'https://sonic.invariant.app/exchange',
+    address: 'https://sonic.invariant.app',
     iconGlow: 'sonicGlow'
   }
   // { name: Chain.Vara, address: 'https://vara.invariant.app/exchange' },
