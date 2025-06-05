@@ -99,6 +99,37 @@ export const PoolInit: React.FC<IPoolInit> = ({
   const [leftInputRounded, setLeftInputRounded] = useState((+leftInput).toFixed(12))
   const [rightInputRounded, setRightInputRounded] = useState((+rightInput).toFixed(12))
 
+  const validateMidPriceInput = (midPriceInput: string) => {
+    if (positionOpeningMethod === 'concentration') {
+      const validatedMidPrice = validConcentrationMidPrice(midPriceInput)
+
+      const validatedPrice =
+        validatedMidPrice < MINIMAL_POOL_INIT_PRICE ? MINIMAL_POOL_INIT_PRICE : validatedMidPrice
+
+      return trimZeros(validatedPrice.toFixed(8))
+    } else {
+      const minPriceFromTick = isXtoY
+        ? calcPriceByTickIndex(minTick, isXtoY, xDecimal, yDecimal)
+        : calcPriceByTickIndex(maxTick, isXtoY, xDecimal, yDecimal)
+
+      const maxPriceFromTick = isXtoY
+        ? calcPriceByTickIndex(maxTick, isXtoY, xDecimal, yDecimal)
+        : calcPriceByTickIndex(minTick, isXtoY, xDecimal, yDecimal)
+
+      const minimalAllowedInput =
+        minPriceFromTick < MINIMAL_POOL_INIT_PRICE ? MINIMAL_POOL_INIT_PRICE : minPriceFromTick
+
+      const numericMidPriceInput = parseFloat(midPriceInput)
+
+      const validatedMidPrice = Math.min(
+        Math.max(numericMidPriceInput, minimalAllowedInput),
+        maxPriceFromTick
+      )
+
+      return trimZeros(validatedMidPrice.toFixed(8))
+    }
+  }
+
   const [midPriceInput, setMidPriceInput] = useState(
     validateMidPriceInput(suggestedPrice.toString() || '')
   )
@@ -262,37 +293,6 @@ export const PoolInit: React.FC<IPoolInit> = ({
       changeRangeHandler(leftRange, rightRange)
     }
   }, [midPriceInput, concentrationArray, midPriceIndex])
-
-  function validateMidPriceInput(midPriceInput: string) {
-    if (positionOpeningMethod === 'concentration') {
-      const validatedMidPrice = validConcentrationMidPrice(midPriceInput)
-
-      const validatedPrice =
-        validatedMidPrice < MINIMAL_POOL_INIT_PRICE ? MINIMAL_POOL_INIT_PRICE : validatedMidPrice
-
-      return trimZeros(validatedPrice.toFixed(8))
-    } else {
-      const minPriceFromTick = isXtoY
-        ? calcPriceByTickIndex(minTick, isXtoY, xDecimal, yDecimal)
-        : calcPriceByTickIndex(maxTick, isXtoY, xDecimal, yDecimal)
-
-      const maxPriceFromTick = isXtoY
-        ? calcPriceByTickIndex(maxTick, isXtoY, xDecimal, yDecimal)
-        : calcPriceByTickIndex(minTick, isXtoY, xDecimal, yDecimal)
-
-      const minimalAllowedInput =
-        minPriceFromTick < MINIMAL_POOL_INIT_PRICE ? MINIMAL_POOL_INIT_PRICE : minPriceFromTick
-
-      const numericMidPriceInput = parseFloat(midPriceInput)
-
-      const validatedMidPrice = Math.min(
-        Math.max(numericMidPriceInput, minimalAllowedInput),
-        maxPriceFromTick
-      )
-
-      return trimZeros(validatedMidPrice.toFixed(8))
-    }
-  }
 
   useEffect(() => {
     if (currentPairReversed !== null) {
