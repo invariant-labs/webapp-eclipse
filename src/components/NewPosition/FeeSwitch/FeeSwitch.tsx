@@ -57,8 +57,18 @@ export const FeeSwitch: React.FC<IFeeSwitch> = ({
     setIsBestTierHiddenOnRight(bestRect.right > containerRect.right)
   }
 
+  const doesPoolExist = useCallback(
+    (tier: number) => {
+      return Object.prototype.hasOwnProperty.call(feeTiersWithTvl, tier)
+    },
+    [feeTiersWithTvl]
+  )
+
   const getTvlValue = useCallback(
     (tier: number) => {
+      const poolExist = doesPoolExist(tier)
+      if (!poolExist || feeTiersWithTvl[tier] === 0) return '0'
+      if (Object.keys(feeTiersWithTvl).length === 1) return '100'
       const percentage = feeTiersWithTvl[tier]
         ? Math.round((feeTiersWithTvl[tier] / totalTvl) * 100)
         : 0
@@ -139,7 +149,7 @@ export const FeeSwitch: React.FC<IFeeSwitch> = ({
                         promotedPoolTierIndex === index ||
                         bestTierIndex === index
                     })}>
-                    {Object.prototype.hasOwnProperty.call(feeTiersWithTvl, tier)
+                    {doesPoolExist(tier)
                       ? `$${
                           +formatNumberWithSuffix(feeTiersWithTvl[tier], {
                             noDecimals: true,
