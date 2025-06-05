@@ -278,10 +278,13 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
 
   transactionDetailsHeader: {
+    width: 146,
     ...typography.caption2,
     whiteSpace: 'nowrap',
     pointerEvents: 'none',
-    color: colors.invariant.lightGrey
+    color: colors.invariant.lightGrey,
+    display: 'flex',
+    justifyContent: 'center'
   },
 
   exchangeRateWrapper: {
