@@ -25,7 +25,7 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     color: colors.white.main,
     display: 'grid',
     alignItems: 'center',
-    gridTemplateColumns: '30px auto 190px 120px 120px 140px 120px 150px',
+    gridTemplateColumns: '40px auto 190px 120px 120px 140px 120px 150px',
     padding: '20px 26px 14px 24px',
     whiteSpace: 'nowrap',
 

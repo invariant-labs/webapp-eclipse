@@ -4,40 +4,6 @@ import { makeStyles } from 'tss-react/mui'
 
 const useStyles = makeStyles()((theme: Theme) => {
   return {
-    popover: {
-      pointerEvents: 'none',
-      marginTop: 2,
-      [theme.breakpoints.down(671)]: {
-        width: '100%'
-      }
-    },
-    rightWrapper: {
-      width: '2px',
-      backgroundColor: colors.invariant.light,
-      alignSelf: 'stretch'
-    },
-    promotedPoolsWrapper: {
-      display: 'flex',
-      gap: '4px',
-      flexDirection: 'column',
-      padding: '4px'
-    },
-    paper: {
-      marginRight: '6px',
-      marginLeft: '8px',
-      background: 'transparent',
-      maxWidth: 519,
-      maxHeight: '100vh',
-      borderRadius: 16,
-      '&::-webkit-scrollbar': {
-        width: 6,
-        background: colors.invariant.component
-      },
-      '&::-webkit-scrollbar-thumb': {
-        background: colors.invariant.light,
-        borderRadius: 6
-      }
-    },
     backgroundContainer: {
       background: colors.invariant.component,
       maxWidth: 519,
@@ -70,7 +36,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       gap: 8,
       flexDirection: 'column',
       [theme.breakpoints.down(671)]: {
-        width: 'fit-content'
+        width: '100%'
       }
     },
     errorText: {
@@ -85,7 +51,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       gap: 8,
       flexDirection: 'column',
       [theme.breakpoints.down(671)]: {
-        width: 'fit-content'
+        width: '100%'
       }
     },
     promotedSwapsContainer: {
@@ -96,7 +62,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       gap: 8,
       flexDirection: 'column',
       [theme.breakpoints.down(671)]: {
-        width: 'fit-content'
+        width: '100%'
       }
     }
   }
