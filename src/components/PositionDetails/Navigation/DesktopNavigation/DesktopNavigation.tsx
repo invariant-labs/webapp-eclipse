@@ -5,32 +5,45 @@ import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { swapListIcon } from '@static/icons'
 import { ArrowIcon } from '@static/componentIcon/ArrowIcon'
 import { useStyles } from './style'
+import { useEffect, useRef, useState } from 'react'
 
 type Props = {
   position: INavigatePosition | null
   direction: 'left' | 'right'
   onClick: () => void
-  onHover: () => void
-  openTooltip?: boolean
   disabled?: boolean
 }
 
-export const DesktopNavigation = ({
-  position,
-  direction,
-  onClick,
-  onHover,
-  openTooltip,
-  disabled
-}: Props) => {
+export const DesktopNavigation = ({ position, direction, onClick, disabled }: Props) => {
   const { classes } = useStyles({ direction, disabled })
+  const [canOpenTooltip, setCanOpenTooltip] = useState(false)
+
+  const wrapperRef = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
+        setCanOpenTooltip(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
+
   return (
-    <Box className={classes.wrapper} onMouseEnter={onHover}>
+    <Box
+      ref={wrapperRef}
+      className={classes.wrapper}
+      onMouseEnter={() => setCanOpenTooltip(true)}
+      onMouseLeave={() => setCanOpenTooltip(false)}>
       <TooltipHover
         allowEnterTooltip={!disabled}
         title={
           position &&
-          openTooltip && (
+          canOpenTooltip && (
             <Box display='flex' flexDirection='column' alignItems='center' width={129}>
               <Typography color={colors.invariant.textGrey} style={typography.body2} mb={'4px'}>
                 Next position
