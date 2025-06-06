@@ -10,6 +10,13 @@ export const useStyles = makeStyles()(() => {
         backgroundColor: 'transparent'
       }
     },
+    popover: {
+      marginTop: 'max(calc(50vh - 350px), 0px)',
+      marginLeft: 'calc(50vw - 166px)',
+      [theme.breakpoints.down('sm')]: {
+        margin: 0
+      }
+    },
     tooltip: {
       width: 159,
       paddingTop: 4,
@@ -33,6 +40,9 @@ export const useStyles = makeStyles()(() => {
       '& h2': {
         ...typography.heading4,
         paddingBottom: 10
+      },
+      [theme.breakpoints.down('sm')]: {
+        width: '100%'
       }
     },
     closeModal: {
