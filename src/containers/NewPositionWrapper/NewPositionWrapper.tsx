@@ -692,7 +692,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     }
 
     return promotedPools.some(pool => pool.address === allPools[poolIndex].address.toString())
-  }, [promotedPools, poolIndex, allPools])
+  }, [promotedPools.length, poolIndex, allPools.length])
 
   const estimatedPointsPerDay: BN = useMemo(() => {
     const poolAddress = poolIndex !== null ? allPools[poolIndex]?.address.toString() : ''
@@ -712,7 +712,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     )
 
     return estimatedPoints as BN
-  }, [liquidity, poolIndex, isPromotedPool])
+  }, [liquidity.toString(), poolIndex, isPromotedPool])
 
   const estimatedPointsForScale = (
     currentConcentration: number,
