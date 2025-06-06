@@ -14,7 +14,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       display: 'flex',
       alignItems: 'center',
       [theme.breakpoints.down('sm')]: {
-        width: 300
+        width: 'auto'
       }
     },
     leftWrapper: {
