@@ -31,6 +31,7 @@ import { mapIntervalToString, shortenAddress } from '@utils/uiUtils'
 import LockStatsPopover from '@components/Modals/LockStatsPopover/LockStatsPopover'
 import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
 import { BN } from '@coral-xyz/anchor'
+import { CustomPopover } from '@common/Popover/CustomPopover'
 
 interface IProps {
   TVL?: number
@@ -234,9 +235,8 @@ const PoolListItem: React.FC<IProps> = ({
         <img width={28} src={newTabBtnIcon} alt={'Exchange'} />
       </button>
       {isLocked && (
-        <TooltipHover
-          maxWidth='none'
-          title={
+        <CustomPopover
+          content={
             <LockStatsPopover
               lockedX={tokenAData.locked}
               lockedY={tokenBData.locked}
@@ -245,13 +245,13 @@ const PoolListItem: React.FC<IProps> = ({
               liquidityX={tokenAData.liquidity}
               liquidityY={tokenBData.liquidity}
             />
-          }>
-          <button
-            onClick={(e: React.MouseEvent) => e.stopPropagation()}
-            className={classes.actionButton}>
+          }
+          centerOnScreen
+          increasePadding>
+          <button className={classes.actionButton}>
             <img width={28} src={lockIcon} alt={'Lock info'} />
           </button>
-        </TooltipHover>
+        </CustomPopover>
       )}
     </Box>
   )
