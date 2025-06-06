@@ -145,6 +145,7 @@ export const InputPagination: React.FC<IPaginationList> = ({
         <Box display='flex' alignItems='center' justifyContent='center' gap={1} width={240}>
           <Typography className={classes.labelText}> Go to</Typography>
           <input
+            enterKeyHint='done'
             ref={inputRef}
             className={classes.input}
             style={{ width: inputWidth }}
