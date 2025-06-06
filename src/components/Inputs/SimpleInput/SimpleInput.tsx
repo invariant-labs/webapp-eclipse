@@ -97,7 +97,11 @@ export const SimpleInput: React.FC<IProps> = ({
               onClick={() => {
                 setValue(formatterFunction(suggestedPrice.toString()))
               }}>
-              <p className={classes.suggestedPriceText}>Suggested price</p>
+              <p className={classes.suggestedPriceText}>
+                {value?.toString() === formatterFunction(suggestedPrice.toString())
+                  ? 'Existing price applied'
+                  : 'Use existing price'}
+              </p>
             </Button>
           </TooltipHover>
         ) : null
