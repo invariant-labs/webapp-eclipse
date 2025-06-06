@@ -165,6 +165,7 @@ export const InputPagination: React.FC<IPaginationList> = ({
                 inputRef.current?.blur()
 
                 handleInputChange(e.currentTarget.value)
+                ;(document.activeElement as HTMLElement)?.blur()
               }
             }}
           />
