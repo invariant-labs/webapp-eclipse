@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react'
 import useStyles from './style'
-import { Box, Button, Divider, Grid, Input, Tooltip, Typography } from '@mui/material'
+import { Box, Button, Divider, Grid, Input, Typography } from '@mui/material'
 import { goldenInfoIcon, infoIcon } from '@static/icons'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 
 interface Props {
   value: string
@@ -110,14 +111,14 @@ const DepositOption: React.FC<Props> = ({
             }}>
             <Box className={classes.singleOption}>
               <Box className={classes.singleOptionValue}>{tier.value}%</Box>
-              <Tooltip
+              <TooltipHover
+                top={-12}
                 title={
                   <Box className={classes.singleOptionTooltipContainer}>
                     <img src={goldenInfoIcon} alt='' className={classes.singleOptionTooltipIcon} />
                     <Box className={classes.singleOptionMessageContainer}>{tier.message}</Box>
                   </Box>
-                }
-                classes={{ tooltip: classes.tooltip }}>
+                }>
                 <Typography className={classes.singleItemLabel}>
                   {tier.label}
                   {tier.message !== '' ? (
@@ -128,7 +129,7 @@ const DepositOption: React.FC<Props> = ({
                     />
                   ) : null}
                 </Typography>
-              </Tooltip>
+              </TooltipHover>
             </Box>
           </Button>
         ))}
