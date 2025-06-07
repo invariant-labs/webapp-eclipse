@@ -90,7 +90,7 @@ export const SwapPointsPopover = ({
           <div
             className={isPairGivingPoints ? classes.promotedSwapsContainer : classes.halfContainer}>
             <Typography className={classes.standardText}>
-              Pairs currently distributing swap points:
+              Pairs (all fee tiers) currently distributing swap points:
             </Typography>
             <Box display={'flex'} gap={'4px'} flexDirection={'column'} padding={'4px'}>
               {promotedSwapPairs.map(item => (

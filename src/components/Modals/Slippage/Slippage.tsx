@@ -107,7 +107,7 @@ const Slippage: React.FC<Props> = ({
       <Popover
         open={open}
         onClose={handleClose}
-        classes={{ paper: classes.paper }}
+        classes={{ paper: classes.paper, root: classes.root }}
         anchorEl={anchorEl}
         anchorOrigin={{
           vertical: 'bottom',
