@@ -45,7 +45,6 @@ const useStyles = makeStyles()(() => {
       [theme.breakpoints.down('md')]: {
         marginTop: '32px'
       },
-      maxWidth: '90%',
       background: 'transparent',
       boxShadow: 'none',
       overflow: 'visible'

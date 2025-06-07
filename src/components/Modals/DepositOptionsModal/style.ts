@@ -11,14 +11,9 @@ export const useStyles = makeStyles()(() => {
       }
     },
     tooltip: {
-      width: 159,
-      paddingTop: 4,
-      paddingBottom: 4,
-      paddingLeft: 8,
-      paddingRight: 8,
-      color: '#EFD063',
-      ...typography.caption4,
-      lineHeight: '24px',
+      color: colors.invariant.warning,
+      ...typography.caption2,
+      lineHeight: '16px',
       background: colors.invariant.component,
       borderRadius: 8
     },
@@ -305,6 +300,8 @@ export const useStyles = makeStyles()(() => {
       marginTop: -8
     },
     singleOptionTooltipContainer: {
+      ...typography.caption2,
+      color: colors.invariant.warning,
       display: 'flex',
       alignItems: 'center',
       gap: 6,
