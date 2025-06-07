@@ -6,6 +6,9 @@ import { colors, theme } from '@static/theme'
 import cardBackgroundBottom from '@static/png/cardBackground1.png'
 import cardBackgroundTop from '@static/png/cardBackground2.png'
 import { airdropRainbowIcon, backIcon, unknownTokenIcon, warningIcon } from '@static/icons'
+import cardESTop from '@static/png/ESWavesTop.png'
+import cardESBottom from '@static/png/ESWavesBottom.png'
+import Horn from '@static/png/turboHorn.png'
 import { shortenAddress } from '@utils/uiUtils'
 import StatsLabel from './StatsLabel/StatsLabel'
 import {
@@ -124,9 +127,13 @@ const Card: React.FC<ICard> = ({
       document.removeEventListener('click', handleDocumentClickCapture, true)
     }
   }, [isPromotedPoolPopoverOpen])
-
+  const ESToken = useMemo(() => {
+    if (symbolFrom === 'ES' || symbolTo === 'ES') return true
+  }, [symbolFrom, symbolTo])
   return (
     <Grid className={classes.root}>
+      {ESToken && <img className={classes.horn} src={Horn} />}
+
       {isLoading ? (
         <Skeleton variant='rounded' animation='wave' className={classes.skeleton} />
       ) : (
@@ -134,16 +141,21 @@ const Card: React.FC<ICard> = ({
           <GradientBorder
             borderRadius={24}
             borderWidth={2}
+            borderColor={
+              ESToken
+                ? colors.invariant.esToken
+                : `linear-gradient(to bottom, ${colors.invariant.green}, ${colors.invariant.pink})`
+            }
             backgroundColor={colors.invariant.newDark}
             innerClassName={classes.container}>
             <img
-              src={cardBackgroundTop}
+              src={ESToken ? cardESTop : cardBackgroundTop}
               alt=''
               className={classes.backgroundImage}
               style={{ top: 0, zIndex: -1 }}
             />
             <img
-              src={cardBackgroundBottom}
+              src={ESToken ? cardESBottom : cardBackgroundBottom}
               alt=''
               className={classes.backgroundImage}
               style={{ bottom: 0, zIndex: -1 }}

@@ -488,6 +488,15 @@ export const KYSOL_MAIN: Token = {
   coingeckoId: ''
 }
 
+export const ES_MAIN: Token = {
+  symbol: 'ES',
+  address: new PublicKey('GnBAskb2SQjrLgpTjtgatz4hEugUsYV7XrWU1idV3oqW'),
+  decimals: 9,
+  name: 'Eclipse',
+  logoURI: 'https://assets.coingecko.com/coins/images/54958/standard/image_%2832%29.png?1742979704',
+  coingeckoId: 'eclipse-3'
+}
+
 export const TUSD_MAIN: Token = {
   tokenProgram: TOKEN_2022_PROGRAM_ID,
   symbol: 'tUSD',
@@ -655,6 +664,8 @@ export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
     SOL_MAIN.address,
     USDT_MAIN.address,
     BITZ_MAIN.address,
+    ES_MAIN.address,
+    TIA_MAIN.address,
     LAIKA_MAIN.address,
     TUSD_MAIN.address
   ],
@@ -809,6 +820,9 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
       TURBO_AI: TURBO_AI_MAIN.address.toString(),
       ORCA: ORCA_MAIN.address.toString(),
       SOLAR: SOLAR_MAIN.address.toString(),
+      KYSOL_MAIN: KYSOL_MAIN.address.toString(),
+      EZSOL_MAIN: EZSOL_MAIN.address.toString(),
+      ES: ES_MAIN.address.toString(),
       KYSOL: KYSOL_MAIN.address.toString(),
       EZSOL: EZSOL_MAIN.address.toString(),
       TUSD: TUSD_MAIN.address.toString()
@@ -907,8 +921,13 @@ export const getPopularPools = (network: NetworkType) => {
     case NetworkType.Mainnet:
       return [
         {
-          tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
-          tokenY: 'So11111111111111111111111111111111111111112',
+          tokenX: ES_MAIN.address.toString(),
+          tokenY: USDC_MAIN.address.toString(),
+          fee: '0.09'
+        },
+        {
+          tokenX: USDC_MAIN.address.toString(),
+          tokenY: WETH_MAIN.address.toString(),
           fee: '0.09'
         },
         {
@@ -917,8 +936,13 @@ export const getPopularPools = (network: NetworkType) => {
           fee: '1'
         },
         {
-          tokenX: 'BeRUj3h7BqkbdfFU7FBNYbodgf8GCHodzKvF9aVjNNfL',
-          tokenY: 'So11111111111111111111111111111111111111112',
+          tokenX: USDC_MAIN.address.toString(),
+          tokenY: SOL_MAIN.address.toString(),
+          fee: '0.09'
+        },
+        {
+          tokenX: SOL_MAIN.address.toString(),
+          tokenY: WETH_MAIN.address.toString(),
           fee: '0.09'
         },
         {
@@ -932,8 +956,8 @@ export const getPopularPools = (network: NetworkType) => {
           fee: '0.01'
         },
         {
-          tokenX: 'GU7NS9xCwgNPiAdJ69iusFrRfawjDDPjeMBovhV1d4kn',
-          tokenY: 'So11111111111111111111111111111111111111112',
+          tokenX: TETH_MAIN.address.toString(),
+          tokenY: WETH_MAIN.address.toString(),
           fee: '0.01'
         }
       ]
