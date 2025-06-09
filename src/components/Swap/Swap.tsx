@@ -1295,7 +1295,7 @@ export const Swap: React.FC<ISwap> = ({
               </TooltipHover>
             )}
             {priceImpact > 5 && oraclePriceDiffPercentage < 5 && (
-              <TooltipHover title='Your trade size might be too large'>
+              <TooltipHover title='Your trade size might be too large' top={100}>
                 <Box className={classes.unknownWarning}>
                   High price impact: {priceImpact < 0.01 ? '<0.01%' : `${priceImpact.toFixed(2)}%`}!
                   This swap will cause a significant price movement.
@@ -1304,7 +1304,8 @@ export const Swap: React.FC<ISwap> = ({
             )}
             {tokens[tokenFromIndex ?? '']?.isUnknown && (
               <TooltipHover
-                title={`${tokens[tokenFromIndex ?? ''].symbol} is unknown, make sure address is correct before trading`}>
+                title={`${tokens[tokenFromIndex ?? ''].symbol} is unknown, make sure address is correct before trading`}
+                top={100}>
                 <Box className={classes.unknownWarning}>
                   {tokens[tokenFromIndex ?? ''].symbol} is not verified
                 </Box>
@@ -1312,7 +1313,8 @@ export const Swap: React.FC<ISwap> = ({
             )}
             {tokens[tokenToIndex ?? '']?.isUnknown && (
               <TooltipHover
-                title={`${tokens[tokenToIndex ?? ''].symbol} is unknown, make sure address is correct before trading`}>
+                title={`${tokens[tokenToIndex ?? ''].symbol} is unknown, make sure address is correct before trading`}
+                top={100}>
                 <Box className={classes.unknownWarning}>
                   {tokens[tokenToIndex ?? ''].symbol} is not verified
                 </Box>
