@@ -982,7 +982,7 @@ export const Swap: React.FC<ISwap> = ({
   const oraclePriceDiffPercentage = useMemo(() => {
     if (!tokenFromPriceData || !tokenToPriceData) return 0
 
-    const tokenFromValue = tokenFromPriceData?.price * +amountFrom
+    const tokenFromValue = 123 * +amountFrom
     const tokenToValue = tokenToPriceData?.price * +amountTo
     if (tokenFromValue === 0 || tokenToValue === 0) return 0
     if (tokenToValue > tokenFromValue) return 0
@@ -1287,7 +1287,7 @@ export const Swap: React.FC<ISwap> = ({
             className={classes.unknownWarningContainer}
             style={{ height: IS_ERROR_LABEL_SHOW ? '34px' : '0px' }}>
             {oraclePriceDiffPercentage >= 5 && (
-              <TooltipHover title='This swap price my differ from market price'>
+              <TooltipHover title='This swap price my differ from market price' top={100}>
                 <Box className={classes.unknownWarning}>
                   Potential loss of {oraclePriceDiffPercentage.toFixed(2)}% based on USD value
                   difference.
