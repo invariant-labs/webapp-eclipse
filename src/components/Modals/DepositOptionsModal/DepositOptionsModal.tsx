@@ -8,11 +8,9 @@ import {
   Popover,
   ToggleButton,
   ToggleButtonGroup,
-  Typography,
-  useMediaQuery
+  Typography
 } from '@mui/material'
 import DepositOption from './DepositOption'
-import { theme } from '@static/theme'
 
 enum SettingsOptions {
   Basic = 'Basic',
@@ -145,7 +143,6 @@ const DepoSitOptionsModal: React.FC<Props> = ({
   open
 }) => {
   const { classes, cx } = useStyles()
-  const isSm = useMediaQuery(theme.breakpoints.down('sm'))
 
   const [alignment, setAlignment] = useState<SettingsOptions>(SettingsOptions.Basic)
 
@@ -317,12 +314,11 @@ const DepoSitOptionsModal: React.FC<Props> = ({
         onClose={handleClose}
         classes={{ paper: classes.paper, root: classes.root }}
         anchorOrigin={{
-          vertical: isSm ? 'top' : 'center',
+          vertical: 'top',
           horizontal: 'center'
         }}
-        anchorEl={document.body}
         transformOrigin={{
-          vertical: isSm ? 'top' : 'center',
+          vertical: 'top',
           horizontal: 'center'
         }}>
         <Grid container className={classes.detailsWrapper}>
