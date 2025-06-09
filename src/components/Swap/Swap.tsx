@@ -982,8 +982,8 @@ export const Swap: React.FC<ISwap> = ({
   const oraclePriceDiffPercentage = useMemo(() => {
     if (!tokenFromPriceData || !tokenToPriceData) return 0
 
-    const tokenFromValue = 123 * +amountFrom
-    const tokenToValue = tokenToPriceData?.price * +amountTo
+    const tokenFromValue = tokenFromPriceData.price * +amountFrom
+    const tokenToValue = tokenToPriceData.price * +amountTo
     if (tokenFromValue === 0 || tokenToValue === 0) return 0
     if (tokenToValue > tokenFromValue) return 0
 
