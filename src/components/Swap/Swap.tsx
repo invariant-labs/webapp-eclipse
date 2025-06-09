@@ -990,11 +990,14 @@ export const Swap: React.FC<ISwap> = ({
     return Math.abs((tokenFromValue - tokenToValue) / tokenFromValue) * 100
   }, [tokenFromPriceData, tokenToPriceData, amountFrom, amountTo])
 
-  const IS_ERROR_LABEL_SHOW =
-    priceImpact > 5 ||
-    tokens[tokenFromIndex ?? '']?.isUnknown ||
-    tokens[tokenToIndex ?? '']?.isUnknown ||
-    oraclePriceDiffPercentage >= 5
+  const IS_ERROR_LABEL_SHOW = useMemo(
+    () =>
+      priceImpact > 5 ||
+      tokens[tokenFromIndex ?? '']?.isUnknown ||
+      tokens[tokenToIndex ?? '']?.isUnknown ||
+      oraclePriceDiffPercentage >= 5,
+    [priceImpact, tokens, tokenFromIndex, tokenToIndex, oraclePriceDiffPercentage]
+  )
 
   return (
     <Grid container className={classes.swapWrapper} alignItems='center'>

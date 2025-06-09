@@ -886,7 +886,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     if (!tokenAPriceData || !tokenBPriceData) {
       return null
     }
-    return tokenAPriceData?.price / tokenBPriceData?.price || 0
+    return tokenAPriceData.price / tokenBPriceData.price
   }, [tokenAPriceData, tokenBPriceData, isXtoY])
 
   return (
