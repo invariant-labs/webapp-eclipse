@@ -239,24 +239,7 @@ const useStyles = makeStyles()(theme => {
 
       ...typography.caption2
     },
-    priceWarning: {
-      display: 'inline-block',
-      color: colors.invariant.Error,
-      ...typography.body2,
-      marginLeft: 4,
-      fontSize: 14
-    },
-    priceWarningIcon: {
-      width: 16,
-      height: 16,
-      flexShrink: 0
-    },
-    priceWarningContainer: {
-      display: 'flex',
-      alignItems: 'center',
-      flexShrink: 1,
-      marginTop: 2
-    },
+
     usdcCurrentPrice: {
       display: 'inline-block',
       color: colors.invariant.text,
@@ -307,17 +290,6 @@ const useStyles = makeStyles()(theme => {
         minWidth: 82,
         textAlign: 'center'
       }
-    },
-    suggestedPriceTooltipText: {
-      color: colors.invariant.text,
-      ...typography.caption2,
-      fontWeight: 200
-    },
-    boldedText: {
-      fontWeight: 800
-    },
-    tooltipContainer: {
-      maxWidth: 512
     }
   }
 })
