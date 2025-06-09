@@ -735,25 +735,25 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     if (invalidParameters) {
       return (
         <Box className={classes.errorWarning}>
-          <Tooltip
-            title={'Unable to perform autoswap and open a position'}
-            classes={{ tooltip: classes.tooltip }}>
-            <img
-              src={infoIcon}
-              alt=''
-              width='12px'
-              style={{ marginRight: '4px', marginBottom: '-1.5px' }}
-              className={classes.errorIcon}
-            />
-          </Tooltip>
-          Invalid parameters
+          <TooltipHover title={'Unable to perform autoswap and open a position'}>
+            <Box display='flex' alignItems='center'>
+              <img
+                src={infoIcon}
+                alt=''
+                width='12px'
+                style={{ marginRight: '4px', marginBottom: '-1.5px' }}
+                className={classes.errorIcon}
+              />
+              Invalid parameters
+            </Box>
+          </TooltipHover>
         </Box>
       )
     }
 
     return (
       <Box className={isPriceImpact ? classes.errorWarning : classes.unknownWarning}>
-        <Tooltip
+        <TooltipHover
           title={
             <>
               The price impact resulting from a swap that rebalances the token ratio before a
@@ -769,21 +769,24 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
                 ''
               )}
             </>
-          }
-          classes={{ tooltip: classes.tooltip }}>
-          <img
-            src={infoIcon}
-            alt=''
-            width='12px'
-            style={{ marginRight: '4px', marginBottom: '-1.5px' }}
-            className={isPriceImpact ? classes.errorIcon : classes.grayscaleIcon}
-          />
-        </Tooltip>
-        Price impact:{' '}
-        {simulation.swapSimulation!.priceImpact.gt(new BN(MINIMUM_PRICE_IMPACT))
-          ? Number(printBN(new BN(simulation.swapSimulation!.priceImpact), DECIMAL - 2)).toFixed(2)
-          : `<${Number(printBN(MINIMUM_PRICE_IMPACT, DECIMAL - 2)).toFixed(2)}`}
-        %
+          }>
+          <Box display='flex' alignItems='center'>
+            <img
+              src={infoIcon}
+              alt=''
+              width='12px'
+              style={{ marginRight: '4px', marginBottom: '-1.5px' }}
+              className={isPriceImpact ? classes.errorIcon : classes.grayscaleIcon}
+            />
+            Price impact:{' '}
+            {simulation.swapSimulation!.priceImpact.gt(new BN(MINIMUM_PRICE_IMPACT))
+              ? Number(
+                  printBN(new BN(simulation.swapSimulation!.priceImpact), DECIMAL - 2)
+                ).toFixed(2)
+              : `<${Number(printBN(MINIMUM_PRICE_IMPACT, DECIMAL - 2)).toFixed(2)}`}
+            %
+          </Box>
+        </TooltipHover>
       </Box>
     )
   }, [isSimulating, simulation, alignment, tokenACheckbox, tokenBCheckbox, throttle, isPriceImpact])

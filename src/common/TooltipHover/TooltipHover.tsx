@@ -34,9 +34,10 @@ export const TooltipHover = ({
   title,
   textAlign = 'left',
   maxWidth,
+  placement = 'top', // default placement
   ...props
 }: Props) => {
-  const { classes } = useStyles({ top, left, right, bottom, fullSpan, increasePadding, maxWidth })
+  const { classes } = useStyles({ fullSpan, increasePadding, maxWidth })
   const [open, setOpen] = useState(false)
   const [childrenHover, setChildrenHover] = useState(false)
   const [titleHover, setTitleHover] = useState(false)
@@ -46,6 +47,16 @@ export const TooltipHover = ({
   const isClosingOnScroll = useMediaQuery(theme.breakpoints.down(1200))
   const isMobile = useIsMobile()
 
+  const getOffsetFromPosition = (): [number, number] => {
+    if (top !== undefined) return [0, -(typeof top === 'number' ? top : parseInt(top))]
+    if (bottom !== undefined) return [0, typeof bottom === 'number' ? bottom : parseInt(bottom)]
+    if (left !== undefined) return [-(typeof left === 'number' ? left : parseInt(left)), 0]
+    if (right !== undefined) return [typeof right === 'number' ? right : parseInt(right), 0]
+    return [0, 0]
+  }
+
+  const offset = getOffsetFromPosition()
+
   useEffect(() => {
     const handleScroll = () => {
       setOpen(false)
@@ -54,14 +65,11 @@ export const TooltipHover = ({
     }
 
     window.addEventListener('scroll', handleScroll, true)
-    return () => {
-      window.removeEventListener('scroll', handleScroll, true)
-    }
+    return () => window.removeEventListener('scroll', handleScroll, true)
   }, [isClosingOnScroll])
 
   useEffect(() => {
     if (isMobile) return
-
     if (titleHover || childrenHover) {
       if (timeoutRef.current) clearTimeout(timeoutRef.current)
       if (!open) setOpen(true)
@@ -70,7 +78,6 @@ export const TooltipHover = ({
         setOpen(false)
       }, 100)
     }
-
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current)
     }
@@ -83,7 +90,6 @@ export const TooltipHover = ({
         setOpen(false)
       }, 2000)
     }
-
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current)
     }
@@ -99,8 +105,18 @@ export const TooltipHover = ({
 
   return (
     <Tooltip
+      placement={placement}
+      PopperProps={{
+        modifiers: [
+          {
+            name: 'offset',
+            options: {
+              offset
+            }
+          }
+        ]
+      }}
       classes={{ tooltip: gradient ? classes.tooltipGradient : classes.tooltipNoGradient }}
-      placement='top'
       TransitionComponent={TooltipTransition}
       enterTouchDelay={0}
       leaveTouchDelay={Number.MAX_SAFE_INTEGER}

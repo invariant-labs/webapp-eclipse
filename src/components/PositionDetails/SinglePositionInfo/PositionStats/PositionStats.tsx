@@ -17,6 +17,7 @@ type Props = {
   isLoading: boolean
   isPromotedLoading: boolean
   isLocked?: boolean
+  showPoolDetailsLoader?: boolean
 }
 
 export const PositionStats = ({
@@ -27,7 +28,8 @@ export const PositionStats = ({
   arePointsDistributed,
   isLoading,
   isPromotedLoading,
-  isLocked = false
+  isLocked = false,
+  showPoolDetailsLoader = false
 }: Props) => {
   const { classes, cx } = useStyles()
 
@@ -93,9 +95,13 @@ export const PositionStats = ({
         </Box>
         <Box className={cx(classes.statContainer, classes.statContainerHiglight)}>
           <Typography className={classes.statName}>Pool APY:</Typography>
-          <Typography className={cx(classes.statValue, classes.statValueHiglight)}>
-            {poolApy.toFixed(2)}%
-          </Typography>
+          {showPoolDetailsLoader ? (
+            <Skeleton height={17} width={36} variant='rounded' />
+          ) : (
+            <Typography className={cx(classes.statValue, classes.statValueHiglight)}>
+              {poolApy.toFixed(2)}%
+            </Typography>
+          )}
         </Box>
       </Box>
     </Box>
