@@ -26,6 +26,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       }
     },
     leftInnerWrapper: {
+      width: '100%',
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
@@ -75,6 +76,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       gap: 16
     },
     chartTitle: {
+      width: '100%',
       textAlign: 'center',
       ...typography.body1,
       color: colors.invariant.text
