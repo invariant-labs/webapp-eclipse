@@ -25,8 +25,17 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     whiteSpace: 'nowrap',
     height: 69,
     boxSizing: 'border-box',
+    [theme.breakpoints.down('md')]: {
+      gridTemplateColumns: '30% 17.5% auto 12% 60px',
+      padding: ' 14px 20px ',
+      height: 69,
+
+      '& p': {
+        ...typography.caption1
+      }
+    },
     [theme.breakpoints.down('sm')]: {
-      gridTemplateColumns: '30% 22.5% 32.5% 15%',
+      gridTemplateColumns: '21% 22.5% auto 22%',
       padding: '18px 8px',
       height: 69,
 

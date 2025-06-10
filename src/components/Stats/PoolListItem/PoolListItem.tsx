@@ -307,6 +307,40 @@ const PoolListItem: React.FC<IProps> = ({
               />
             </TooltipHover>
           </Grid>
+          <Box className={classes.row} justifyContent={'space-between'}>
+            <Typography>{fee}%</Typography>
+            {isPromoted && (
+              <PromotedPoolPopover apr={convertedApr} apy={convertedApy} points={points}>
+                <Box
+                  className={cx(classes.actionButton, classes.airdropIcon)}
+                  ref={airdropIconRef}
+                  onPointerEnter={() => {
+                    if (!isMobile) {
+                      setIsPromotedPoolPopoverOpen(true)
+                    }
+                  }}
+                  onPointerLeave={() => {
+                    if (!isMobile) {
+                      setIsPromotedPoolPopoverOpen(false)
+                    }
+                  }}
+                  onClick={() => {
+                    if (isMobile) {
+                      setIsPromotedPoolPopoverOpen(!isPromotedPoolPopoverOpen)
+                    }
+                  }}
+                  mr={3}>
+                  <img
+                    width={24}
+                    height={isSm ? 24 : 32}
+                    src={airdropRainbowIcon}
+                    alt={'Airdrop'}
+                  />
+                </Box>
+              </PromotedPoolPopover>
+            )}
+          </Box>
+
           {!isSmd && showAPY ? (
             <Grid className={classes.row} sx={{ justifyContent: 'space-between' }}>
               <Grid sx={{ display: 'flex', gap: '4px' }}>
@@ -317,39 +351,14 @@ const PoolListItem: React.FC<IProps> = ({
                   {`${convertedApr > 1000 ? '>1000%' : convertedApr === 0 ? '-' : Math.abs(convertedApr).toFixed(2) + '%'}`}
                 </Typography>
               </Grid>
-              {isPromoted && (
-                <PromotedPoolPopover apr={convertedApr} apy={convertedApy} points={points}>
-                  <Box
-                    className={cx(classes.actionButton, classes.airdropIcon)}
-                    ref={airdropIconRef}
-                    onPointerEnter={() => {
-                      if (!isMobile) {
-                        setIsPromotedPoolPopoverOpen(true)
-                      }
-                    }}
-                    onPointerLeave={() => {
-                      if (!isMobile) {
-                        setIsPromotedPoolPopoverOpen(false)
-                      }
-                    }}
-                    onClick={() => {
-                      if (isMobile) {
-                        setIsPromotedPoolPopoverOpen(!isPromotedPoolPopoverOpen)
-                      }
-                    }}
-                    mr={3}>
-                    <img width={24} height={32} src={airdropRainbowIcon} alt={'Airdrop'} />
-                  </Box>
-                </PromotedPoolPopover>
-              )}
             </Grid>
           ) : null}
-          <Typography>{fee}%</Typography>
+          <Typography>{`$${formatNumberWithSuffix(volume)}`}</Typography>
+          <Typography className={classes.selfEnd}>{`$${formatNumberWithSuffix(TVL)}`}</Typography>
           {!isSmd && (
             <Typography> ${formatNumberWithSuffix((fee * 0.01 * volume).toFixed(2))}</Typography>
           )}
-          <Typography>{`$${formatNumberWithSuffix(volume)}`}</Typography>
-          <Typography className={classes.selfEnd}>{`$${formatNumberWithSuffix(TVL)}`}</Typography>
+
           {isSmd && (
             <ArrowDropDownIcon preserveAspectRatio='none' className={classes.extendedRowIcon} />
           )}
@@ -404,7 +413,7 @@ const PoolListItem: React.FC<IProps> = ({
             <>
               <>
                 <Typography component='h5' className={classes.extendedRowTitle}>
-                  Fee ({intervalSuffix}){' '}
+                  Fees ({intervalSuffix}){' '}
                   <span className={classes.extendedRowContent}>
                     ${formatNumberWithSuffix((fee * 0.01 * volume).toFixed(2))}
                   </span>
@@ -462,10 +471,27 @@ const PoolListItem: React.FC<IProps> = ({
                 onSort?.(SortTypePoolList.NAME_ASC)
               }
             }}>
-            Name
+            Pool
             {sortType === SortTypePoolList.NAME_ASC ? (
               <ArrowDropUpIcon className={classes.icon} />
             ) : sortType === SortTypePoolList.NAME_DESC ? (
+              <ArrowDropDownIcon className={classes.icon} />
+            ) : null}
+          </Typography>
+
+          <Typography
+            style={{ cursor: 'pointer' }}
+            onClick={() => {
+              if (sortType === SortTypePoolList.FEE_ASC) {
+                onSort?.(SortTypePoolList.FEE_DESC)
+              } else {
+                onSort?.(SortTypePoolList.FEE_ASC)
+              }
+            }}>
+            Fee
+            {sortType === SortTypePoolList.FEE_ASC ? (
+              <ArrowDropUpIcon className={classes.icon} />
+            ) : sortType === SortTypePoolList.FEE_DESC ? (
               <ArrowDropDownIcon className={classes.icon} />
             ) : null}
           </Typography>
@@ -488,40 +514,6 @@ const PoolListItem: React.FC<IProps> = ({
               ) : null}
             </Typography>
           ) : null}
-          <Typography
-            style={{ cursor: 'pointer' }}
-            onClick={() => {
-              if (sortType === SortTypePoolList.FEE_ASC) {
-                onSort?.(SortTypePoolList.FEE_DESC)
-              } else {
-                onSort?.(SortTypePoolList.FEE_ASC)
-              }
-            }}>
-            Fee
-            {sortType === SortTypePoolList.FEE_ASC ? (
-              <ArrowDropUpIcon className={classes.icon} />
-            ) : sortType === SortTypePoolList.FEE_DESC ? (
-              <ArrowDropDownIcon className={classes.icon} />
-            ) : null}
-          </Typography>
-          {!isSmd && (
-            <Typography
-              style={{ cursor: 'pointer' }}
-              onClick={() => {
-                if (sortType === SortTypePoolList.FEE_24_DESC) {
-                  onSort?.(SortTypePoolList.FEE_24_ASC)
-                } else {
-                  onSort?.(SortTypePoolList.FEE_24_DESC)
-                }
-              }}>
-              Fee {intervalSuffix}
-              {sortType === SortTypePoolList.FEE_24_ASC ? (
-                <ArrowDropUpIcon className={classes.icon} />
-              ) : sortType === SortTypePoolList.FEE_24_DESC ? (
-                <ArrowDropDownIcon className={classes.icon} />
-              ) : null}
-            </Typography>
-          )}
           <Typography
             style={{ cursor: 'pointer' }}
             onClick={() => {
@@ -554,6 +546,24 @@ const PoolListItem: React.FC<IProps> = ({
               <ArrowDropDownIcon className={classes.icon} />
             ) : null}
           </Typography>
+          {!isSmd && (
+            <Typography
+              style={{ cursor: 'pointer' }}
+              onClick={() => {
+                if (sortType === SortTypePoolList.FEE_24_DESC) {
+                  onSort?.(SortTypePoolList.FEE_24_ASC)
+                } else {
+                  onSort?.(SortTypePoolList.FEE_24_DESC)
+                }
+              }}>
+              Fees {intervalSuffix}
+              {sortType === SortTypePoolList.FEE_24_ASC ? (
+                <ArrowDropUpIcon className={classes.icon} />
+              ) : sortType === SortTypePoolList.FEE_24_DESC ? (
+                <ArrowDropDownIcon className={classes.icon} />
+              ) : null}
+            </Typography>
+          )}
           {!isMd && <Typography align='right'>Action</Typography>}
         </Grid>
       )}
