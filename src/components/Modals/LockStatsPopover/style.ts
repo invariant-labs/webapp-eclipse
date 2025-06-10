@@ -21,8 +21,10 @@ const useStyles = makeStyles()((theme: Theme) => {
       display: 'flex',
       width: '38%',
       gap: '16px',
+      marginRight: '16px',
       [theme.breakpoints.down('sm')]: {
-        width: '100%'
+        width: '100%',
+        marginRight: 0
       }
     },
     leftInnerWrapper: {
