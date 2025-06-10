@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import useStyles from './styles'
-import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
+import { Grid, Typography } from '@mui/material'
 import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
 import {
   isLoading,
@@ -18,9 +18,6 @@ import {
 } from '@store/selectors/stats'
 import { network } from '@store/selectors/solanaConnection'
 import { actions } from '@store/reducers/stats'
-import Volume from '@components/Stats/Volume/Volume'
-import Liquidity from '@components/Stats/Liquidity/Liquidity'
-import VolumeBar from '@components/Stats/volumeBar/VolumeBar'
 import TokensList from '@components/Stats/TokensList/TokensList'
 import PoolList from '@components/Stats/PoolList/PoolList'
 import { unknownTokenIcon } from '@static/icons'
@@ -30,14 +27,10 @@ import { VariantType } from 'notistack'
 import { getPromotedPools } from '@store/selectors/leaderboard'
 import { FilterSearch, ISearchToken } from '@common/FilterSearch/FilterSearch'
 import { Intervals as IntervalsKeys } from '@store/consts/static'
-import { Separator } from '@common/Separator/Separator'
-import { colors, theme } from '@static/theme'
-import Intervals from '@components/Stats/Intervals/Intervals'
+import Overview from '@components/Stats/Overview/Overview'
 
 export const WrappedStats: React.FC = () => {
-  const { classes, cx } = useStyles()
-
-  const isSm = useMediaQuery(theme.breakpoints.down('sm'))
+  const { classes } = useStyles()
 
   const dispatch = useDispatch()
 
@@ -144,59 +137,17 @@ export const WrappedStats: React.FC = () => {
         </Grid>
       ) : (
         <>
-          <Box display='flex' justifyContent='space-between' alignItems='center' mb={4}>
-            <Typography className={classes.subheader}>Overview</Typography>
-            <Intervals
-              interval={lastUsedInterval ?? IntervalsKeys.Daily}
-              setInterval={updateInterval}
-            />
-          </Box>
-          <Grid
-            container
-            className={cx(classes.plotsRow, {
-              [classes.loadingOverlay]: isLoadingStats
-            })}>
-            <>
-              <Box display='flex' gap={'24px'} flexDirection={isSm ? 'column' : 'row'}>
-                <Volume
-                  volume={volumeInterval.value}
-                  data={volumePlotData}
-                  className={classes.plot}
-                  isLoading={isLoadingStats}
-                  lastStatsTimestamp={lastStatsTimestamp}
-                  interval={lastUsedInterval ?? IntervalsKeys.Daily}
-                />
-                {
-                  <Separator
-                    color={colors.invariant.light}
-                    margin={isSm ? '0 24px' : '24px 0'}
-                    width={1}
-                    isHorizontal={isSm}
-                  />
-                }
-                <Liquidity
-                  liquidityVolume={tvlInterval.value}
-                  data={liquidityPlotData}
-                  className={classes.plot}
-                  isLoading={isLoadingStats}
-                  lastStatsTimestamp={lastStatsTimestamp}
-                  interval={lastUsedInterval ?? IntervalsKeys.Daily}
-                />
-              </Box>
-            </>
-          </Grid>
-          <Grid className={classes.row}>
-            <VolumeBar
-              volume={volumeInterval.value}
-              percentVolume={volumeInterval.change}
-              tvlVolume={tvlInterval.value}
-              percentTvl={tvlInterval.change}
-              feesVolume={feesInterval.value}
-              percentFees={feesInterval.change}
-              isLoading={isLoadingStats}
-              interval={lastUsedInterval ?? IntervalsKeys.Daily}
-            />
-          </Grid>
+          <Overview
+            feesInterval={feesInterval}
+            isLoadingStats={isLoadingStats}
+            lastStatsTimestamp={lastStatsTimestamp}
+            lastUsedInterval={lastUsedInterval}
+            updateInterval={updateInterval}
+            volumeInterval={volumeInterval}
+            volumePlotData={volumePlotData}
+            liquidityPlotData={liquidityPlotData}
+            tvlInterval={tvlInterval}
+          />
           <Grid className={classes.rowContainer}>
             <Typography className={classes.subheader} mb={2}>
               Top pools

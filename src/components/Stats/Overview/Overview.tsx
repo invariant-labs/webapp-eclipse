@@ -1,0 +1,144 @@
+import { colors, theme } from '@static/theme'
+import { TimeData, Value24H } from '@store/reducers/stats'
+import { Intervals as IntervalsKeys } from '@store/consts/static'
+import { useStyles } from './style'
+import { Grid, Typography, Box, useMediaQuery } from '@mui/material'
+import Intervals from '../Intervals/Intervals'
+import { Separator } from '@common/Separator/Separator'
+import Volume from '../Volume/Volume'
+import Liquidity from '../Liquidity/Liquidity'
+import VolumeBar from '../volumeBar/VolumeBar'
+import { formatNumberWithoutSuffix } from '@utils/utils'
+
+interface IOverview {
+  lastUsedInterval: IntervalsKeys | null
+  updateInterval: (interval: IntervalsKeys) => void
+  volumeInterval: Value24H
+  volumePlotData: TimeData[]
+  isLoadingStats: boolean
+  lastStatsTimestamp: number
+  liquidityPlotData: TimeData[]
+  tvlInterval: Value24H
+  feesInterval: Value24H
+}
+
+const Overview: React.FC<IOverview> = ({
+  lastUsedInterval,
+  updateInterval,
+  volumeInterval,
+  volumePlotData,
+  isLoadingStats,
+  lastStatsTimestamp,
+  liquidityPlotData,
+  tvlInterval,
+  feesInterval
+}) => {
+  const { classes, cx } = useStyles()
+
+  const isSm = useMediaQuery(theme.breakpoints.down('sm'))
+  const isMd = useMediaQuery(theme.breakpoints.down('md'))
+  const cumulativeVolume = 123123123123 //Mocked
+  const cumulativeFee = 4324234 //Mocked
+  return (
+    <>
+      <Box display='flex' justifyContent='space-between' alignItems='center' mb={4}>
+        <Typography className={classes.subheader}>Overview</Typography>
+      </Box>
+      <Grid
+        container
+        className={cx(classes.plotsRow, {
+          [classes.loadingOverlay]: isLoadingStats
+        })}>
+        <>
+          <Box
+            display='flex'
+            alignItems='center'
+            gap={3}
+            flexDirection={isMd ? 'column-reverse' : 'row'}>
+            <Box
+              display='flex'
+              alignItems='center'
+              gap={1}
+              flexWrap={'wrap'}
+              flexShrink={1}
+              flexDirection={isMd ? 'column' : 'row'}
+              width={isSm ? '100%' : 'auto'}>
+              <Box
+                display='flex'
+                width={isSm ? '100%' : 'auto'}
+                alignItems='center'
+                gap={1}
+                justifyContent={isSm ? 'space-between' : 'flex-start'}>
+                <Typography className={classes.label}>Cumulative Volume:</Typography>
+
+                <Typography className={classes.value}>
+                  ${formatNumberWithoutSuffix(cumulativeVolume)}
+                </Typography>
+              </Box>
+              <Box
+                display='flex'
+                width={isSm ? '100%' : 'auto'}
+                alignItems='center'
+                gap={1}
+                justifyContent={isSm ? 'space-between' : 'flex-start'}>
+                <Typography className={classes.label}>Cumulative Fee:</Typography>
+
+                <Typography className={classes.value}>
+                  ${formatNumberWithoutSuffix(cumulativeFee)}
+                </Typography>
+              </Box>
+            </Box>
+            <Box display='flex' flexGrow={1} minWidth={'min-content'}>
+              <Intervals
+                interval={lastUsedInterval ?? IntervalsKeys.Daily}
+                setInterval={updateInterval}
+                dark
+              />
+            </Box>
+          </Box>
+          <Separator color={colors.invariant.light} margin={'24px 0'} width={1} isHorizontal />
+          <Box display='flex' gap={'24px'} flexDirection={isSm ? 'column' : 'row'}>
+            <Volume
+              volume={volumeInterval.value}
+              data={volumePlotData}
+              className={classes.plot}
+              isLoading={isLoadingStats}
+              lastStatsTimestamp={lastStatsTimestamp}
+              interval={lastUsedInterval ?? IntervalsKeys.Daily}
+            />
+
+            <Separator
+              color={colors.invariant.light}
+              margin={isSm ? '0 24px' : '0'}
+              width={1}
+              isHorizontal={isSm}
+            />
+
+            <Liquidity
+              liquidityVolume={tvlInterval.value}
+              data={liquidityPlotData}
+              className={classes.plot}
+              isLoading={isLoadingStats}
+              lastStatsTimestamp={lastStatsTimestamp}
+              interval={lastUsedInterval ?? IntervalsKeys.Daily}
+            />
+          </Box>
+        </>
+      </Grid>
+      <Grid className={classes.row}>
+        <VolumeBar
+          volume={volumeInterval.value}
+          percentVolume={volumeInterval.change}
+          tvlVolume={tvlInterval.value}
+          percentTvl={tvlInterval.change}
+          feesVolume={feesInterval.value}
+          percentFees={feesInterval.change}
+          isLoading={isLoadingStats}
+          interval={lastUsedInterval ?? IntervalsKeys.Daily}
+        />
+      </Grid>
+    </>
+  )
+}
+
+export default Overview

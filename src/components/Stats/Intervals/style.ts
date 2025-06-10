@@ -3,9 +3,10 @@ import { makeStyles } from 'tss-react/mui'
 
 interface StyleProps {
   interval: string
+  dark?: boolean
 }
 
-const useStyles = makeStyles<StyleProps>()((theme, { interval }) => {
+const useStyles = makeStyles<StyleProps>()((theme, { interval, dark }) => {
   const getMarkerPosition = (interval: string) => {
     switch (interval) {
       case '24H':
@@ -21,7 +22,7 @@ const useStyles = makeStyles<StyleProps>()((theme, { interval }) => {
 
   return {
     container: {
-      backgroundColor: colors.invariant.component,
+      backgroundColor: dark ? colors.invariant.newDark : colors.invariant.component,
       borderRadius: 8,
       boxSizing: 'border-box',
       marginLeft: 'auto'
@@ -44,7 +45,7 @@ const useStyles = makeStyles<StyleProps>()((theme, { interval }) => {
     switchPoolsContainer: {
       position: 'relative',
       width: 'fit-content',
-      backgroundColor: colors.invariant.component,
+      backgroundColor: dark ? colors.invariant.newDark : colors.invariant.component,
       borderRadius: 10,
       overflow: 'hidden',
       display: 'inline-flex',
