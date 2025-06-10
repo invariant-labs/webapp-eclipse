@@ -93,7 +93,7 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     '& p': {
       maxWidth: 'calc(100% - 80px);',
 
-      paddingRight: 12,
+      paddingRight: 4,
       overflow: 'hidden',
       whiteSpace: 'nowrap',
       textOverflow: 'ellipsis'

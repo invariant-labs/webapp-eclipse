@@ -11,8 +11,7 @@ import {
   lockIcon,
   newTabBtnIcon,
   plusIcon,
-  unknownTokenIcon,
-  warningIcon
+  unknownTokenIcon
 } from '@static/icons'
 import { Intervals, ITEMS_PER_PAGE, NetworkType, SortTypePoolList } from '@store/consts/static'
 import {
@@ -255,6 +254,7 @@ const PoolListItem: React.FC<IProps> = ({
       )}
     </Box>
   )
+
   return (
     <Grid className={classes.wrapper}>
       {displayType === 'token' ? (
@@ -274,24 +274,42 @@ const PoolListItem: React.FC<IProps> = ({
           }}>
           {!isMd ? <Typography>{tokenIndex}</Typography> : null}
           <Grid className={classes.imageContainer}>
-            <img
-              className={classes.tokenIcon}
-              src={tokenAData.icon}
-              alt='Token from'
-              onError={e => {
-                e.currentTarget.src = unknownTokenIcon
-              }}
-            />
-            {tokenAData.isUnknown && <img className={classes.warningIcon} src={warningIcon} />}
-            <img
-              className={classes.tokenIcon}
-              src={tokenBData.icon}
-              alt='Token to'
-              onError={e => {
-                e.currentTarget.src = unknownTokenIcon
-              }}
-            />
-            {tokenBData.isUnknown && <img className={classes.warningIcon} src={warningIcon} />}
+            {(tokenAData.icon === '/src/static/svg/unknownToken.svg' || tokenAData.isUnknown) &&
+            isSm ? (
+              <Typography paddingRight={20} margin={0} minWidth={23}>
+                {tokenAData.symbol}
+              </Typography>
+            ) : (
+              <img
+                className={classes.tokenIcon}
+                src={tokenAData.icon}
+                alt='Token from'
+                onError={e => {
+                  e.currentTarget.src = unknownTokenIcon
+                }}
+              />
+            )}
+            {!isSm &&
+              (tokenAData.icon === '/src/static/svg/unknownToken.svg' || tokenAData.isUnknown) &&
+              (tokenBData.icon === '/src/static/svg/unknownToken.svg' || tokenBData.isUnknown) &&
+              ' / '}
+
+            {(tokenBData.icon === '/src/static/svg/unknownToken.svg' || tokenBData.isUnknown) &&
+            isSm ? (
+              <Typography paddingRight={20} margin={0} minWidth={23}>
+                {tokenBData.symbol}
+              </Typography>
+            ) : (
+              <img
+                className={classes.tokenIcon}
+                src={tokenBData.icon}
+                alt='Token from'
+                onError={e => {
+                  e.currentTarget.src = unknownTokenIcon
+                }}
+              />
+            )}
+
             {!isSm && (
               <Typography>
                 {shortenAddress(tokenAData.symbol ?? '')}/{shortenAddress(tokenBData.symbol ?? '')}

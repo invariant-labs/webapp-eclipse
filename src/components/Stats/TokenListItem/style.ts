@@ -35,7 +35,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
       }
     },
     [theme.breakpoints.down('sm')]: {
-      gridTemplateColumns: '21% 22.5% auto 22%',
+      gridTemplateColumns: 'auto 22.5% max(25%, 90px) max(15%, 60px)',
       padding: '18px 8px',
       height: 69,
 

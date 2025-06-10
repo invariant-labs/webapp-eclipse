@@ -6,7 +6,7 @@ import { useStyles } from './style'
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import { formatNumberWithSuffix } from '@utils/utils'
 import { Intervals, ITEMS_PER_PAGE, NetworkType, SortTypeTokenList } from '@store/consts/static'
-import { newTabBtnIcon, unknownTokenIcon, warningIcon } from '@static/icons'
+import { newTabBtnIcon, unknownTokenIcon } from '@static/icons'
 import { mapIntervalToString, shortenAddress } from '@utils/uiUtils'
 import { VariantType } from 'notistack'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
@@ -45,7 +45,6 @@ const TokenListItem: React.FC<IProps> = ({
   sortType,
   onSort,
   address,
-  isUnknown,
   network,
   interval = Intervals.Daily,
   copyAddressHandler
@@ -84,6 +83,7 @@ const TokenListItem: React.FC<IProps> = ({
   }
   const shouldShowText = !isSm
   const intervalSuffix = mapIntervalToString(interval)
+  console.log(icon)
   return (
     <Grid className={classes.wrapper}>
       {displayType === 'tokens' ? (
@@ -98,15 +98,19 @@ const TokenListItem: React.FC<IProps> = ({
           }}>
           {!isMd && <Typography component='p'>{itemNumber}</Typography>}
           <Grid className={classes.tokenName}>
-            <img
-              className={classes.tokenIcon}
-              src={icon}
-              alt='Token icon'
-              onError={e => {
-                e.currentTarget.src = unknownTokenIcon
-              }}
-            />
-            {isUnknown && <img className={classes.warningIcon} src={warningIcon} />}
+            {icon === '/src/static/svg/unknownToken.svg' && isSm ? (
+              <Typography>{symbol}</Typography>
+            ) : (
+              <img
+                className={classes.tokenIcon}
+                src={icon}
+                alt='Token icon'
+                onError={e => {
+                  e.currentTarget.src = unknownTokenIcon
+                }}
+              />
+            )}
+
             {shouldShowText && (
               <Typography>
                 {isXs ? shortenAddress(symbol) : name.length < 25 ? name : name.slice(0, 40)}
