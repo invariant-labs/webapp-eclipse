@@ -1,9 +1,8 @@
-import React, { useEffect, useMemo } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import React, { useMemo } from 'react'
+import { useSelector } from 'react-redux'
 import PopularPools from '@components/PopularPools/PopularPools'
 import { isLoading, poolsStatsWithTokensDetails } from '@store/selectors/stats'
 import { unknownTokenIcon } from '@static/icons'
-import { actions } from '@store/reducers/stats'
 import { Grid } from '@mui/material'
 import { network } from '@store/selectors/solanaConnection'
 import { getPopularPools, Intervals } from '@store/consts/static'
@@ -30,9 +29,15 @@ export interface PopularPoolData {
   isUnknownTo?: boolean
 }
 
-export const PopularPoolsWrapper: React.FC = () => {
-  const dispatch = useDispatch()
+interface IPopularPoolsWrapper {
+  updateInterval: (interval: Intervals) => void
+  lastUsedInterval: Intervals | null
+}
 
+export const PopularPoolsWrapper: React.FC<IPopularPoolsWrapper> = ({
+  lastUsedInterval,
+  updateInterval
+}) => {
   const currentNetwork = useSelector(network)
   const isLoadingStats = useSelector(isLoading)
   const poolsList = useSelector(poolsStatsWithTokensDetails)
@@ -95,10 +100,6 @@ export const PopularPoolsWrapper: React.FC = () => {
     return list.some(pool => pool.apy !== 0)
   }, [list])
 
-  useEffect(() => {
-    dispatch(actions.getCurrentIntervalStats({ interval: Intervals.Daily }))
-  }, [])
-
   return (
     <Grid container>
       <PopularPools
@@ -106,6 +107,8 @@ export const PopularPoolsWrapper: React.FC = () => {
         isLoading={isLoadingStats}
         network={currentNetwork}
         showAPY={showAPY}
+        lastUsedInterval={lastUsedInterval}
+        updateInterval={updateInterval}
       />
     </Grid>
   )

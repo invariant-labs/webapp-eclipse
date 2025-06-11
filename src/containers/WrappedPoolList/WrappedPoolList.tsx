@@ -8,7 +8,6 @@ import { unknownTokenIcon } from '@static/icons'
 import { VariantType } from 'notistack'
 import { actions as snackbarActions } from '@store/reducers/snackbars'
 import { network } from '@store/selectors/solanaConnection'
-import { actions } from '@store/reducers/stats'
 import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import LiquidityPoolList from '@components/LiquidityPoolList/LiquidityPoolList'
 import { getPromotedPools } from '@store/selectors/leaderboard'
@@ -67,11 +66,6 @@ export const WrappedPoolList: React.FC = () => {
   }
 
   useEffect(() => {
-    dispatch(
-      actions.getCurrentIntervalStats({
-        interval: Intervals.Daily
-      })
-    )
     dispatch(leaderboardActions.getLeaderboardConfig())
   }, [])
 

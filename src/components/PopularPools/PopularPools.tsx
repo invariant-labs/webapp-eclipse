@@ -1,4 +1,4 @@
-import { Grid, Typography, useMediaQuery } from '@mui/material'
+import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import { useStyles } from './style'
 import { PopularPoolData } from '@containers/PopularPoolsWrapper/PopularPoolsWrapper'
 import Card from './Card/Card'
@@ -8,14 +8,26 @@ import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import { theme } from '@static/theme'
 import { useMemo } from 'react'
+import Intervals from '@components/Stats/Intervals/Intervals'
+import { Intervals as IntervalsKeys } from '@store/consts/static'
+
 export interface IPopularPools {
   pools: PopularPoolData[]
   isLoading: boolean
   network: NetworkType
   showAPY: boolean
+  updateInterval: (interval: IntervalsKeys) => void
+  lastUsedInterval: IntervalsKeys | null
 }
 
-const PopularPools: React.FC<IPopularPools> = ({ pools, isLoading, network, showAPY }) => {
+const PopularPools: React.FC<IPopularPools> = ({
+  pools,
+  isLoading,
+  network,
+  showAPY,
+  updateInterval,
+  lastUsedInterval
+}) => {
   const isLgDown = useMediaQuery(theme.breakpoints.down('lg'))
   const isMdDown = useMediaQuery(theme.breakpoints.down('md'))
   const isSmDown = useMediaQuery('@media (max-width:700px)')
@@ -31,9 +43,13 @@ const PopularPools: React.FC<IPopularPools> = ({ pools, isLoading, network, show
 
   return (
     <Grid container mb={6}>
-      <Typography className={classes.title} mb={3}>
-        Popular pools
-      </Typography>
+      <Box display='flex' alignItems='center' justifyContent='space-between' width='100%' mb={3}>
+        <Typography className={classes.title}>Popular pools</Typography>
+        <Intervals
+          interval={lastUsedInterval ?? IntervalsKeys.Daily}
+          setInterval={updateInterval}
+        />
+      </Box>
       <div className={classes.cardsContainer}>
         <Slider
           dots={isLgDown}
