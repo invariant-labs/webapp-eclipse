@@ -1287,15 +1287,15 @@ export const Swap: React.FC<ISwap> = ({
             className={classes.unknownWarningContainer}
             style={{ height: IS_ERROR_LABEL_SHOW ? '34px' : '0px' }}>
             {oraclePriceDiffPercentage >= 5 && (
-              <TooltipHover title='This swap price my differ from market price' top={100}>
+              <TooltipHover title='This swap price my differ from market price' top={100} fullSpan>
                 <Box className={classes.unknownWarning}>
-                  Potential loss of {oraclePriceDiffPercentage.toFixed(2)}% based on USD value
+                  Potential loss resulting from a {oraclePriceDiffPercentage.toFixed(2)}% price
                   difference.
                 </Box>
               </TooltipHover>
             )}
             {priceImpact > 5 && oraclePriceDiffPercentage < 5 && (
-              <TooltipHover title='Your trade size might be too large' top={100}>
+              <TooltipHover title='Your trade size might be too large' top={100} fullSpan>
                 <Box className={classes.unknownWarning}>
                   High price impact: {priceImpact < 0.01 ? '<0.01%' : `${priceImpact.toFixed(2)}%`}!
                   This swap will cause a significant price movement.
@@ -1305,7 +1305,8 @@ export const Swap: React.FC<ISwap> = ({
             {tokens[tokenFromIndex ?? '']?.isUnknown && (
               <TooltipHover
                 title={`${tokens[tokenFromIndex ?? ''].symbol} is unknown, make sure address is correct before trading`}
-                top={100}>
+                top={100}
+                fullSpan>
                 <Box className={classes.unknownWarning}>
                   {tokens[tokenFromIndex ?? ''].symbol} is not verified
                 </Box>
@@ -1314,7 +1315,8 @@ export const Swap: React.FC<ISwap> = ({
             {tokens[tokenToIndex ?? '']?.isUnknown && (
               <TooltipHover
                 title={`${tokens[tokenToIndex ?? ''].symbol} is unknown, make sure address is correct before trading`}
-                top={100}>
+                top={100}
+                fullSpan>
                 <Box className={classes.unknownWarning}>
                   {tokens[tokenToIndex ?? ''].symbol} is not verified
                 </Box>

@@ -13,7 +13,8 @@ const useStyles = makeStyles()(() => {
     priceWarningIcon: {
       width: 16,
       height: 16,
-      flexShrink: 0
+      flexShrink: 0,
+      marginBottom: 2
     },
     priceWarningContainer: {
       display: 'flex',

@@ -1,7 +1,7 @@
 import useStyles from './style'
 import { Box, Typography } from '@mui/material'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
-import { printBN } from '@utils/utils'
+import { formatNumberWithSuffix, printBN } from '@utils/utils'
 import { ALL_FEE_TIERS_DATA } from '@store/consts/static'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { warning3 } from '@static/icons'
@@ -44,7 +44,7 @@ export const PriceWarning: React.FC<IPriceWarning> = ({
                 <Box className={classes.tooltipContainer}>
                   <span className={classes.suggestedPriceTooltipText}>
                     <p>
-                      The price on the{' '}
+                      The price in the{' '}
                       <span className={classes.boldedText}>
                         {tokenASymbol}/{tokenBSymbol}{' '}
                         {Number(
@@ -52,29 +52,23 @@ export const PriceWarning: React.FC<IPriceWarning> = ({
                         ).toFixed(2)}
                         %
                       </span>{' '}
-                      pool differs significantly (over{' '}
-                      <span className={classes.boldedText}>
-                        {oracleDiffPercentage.toFixed(2)}%{' '}
-                      </span>
-                      ) from market price
+                      pool differs significantly (by over{' '}
+                      <span className={classes.boldedText}>{oracleDiffPercentage.toFixed(2)}%</span>
+                      ) from the current market price.
                     </p>
                     <p>
                       Please ensure you're opening your position within the correct price range.
-                      Opening a position with an incorrect range on this pool can result in a{' '}
-                      <span className={classes.boldedText}>loss of value</span> — essentially, it's
-                      like selling your tokens below the current market price or buying them above
-                      it.
+                      Opening a position in an incorrect range on this pool can result in a{' '}
+                      <span className={classes.boldedText}>loss of value</span> — essentially, it’s
+                      like selling your tokens below the market price or buying them above it.
                     </p>
                     <p>
-                      As an alternative, consider using the{' '}
+                      As an alternative, consider opening your position in pools closer to the
+                      market price of{' '}
                       <span className={classes.boldedText}>
-                        {tokenASymbol}/{tokenBSymbol}{' '}
-                        {Number(
-                          printBN(ALL_FEE_TIERS_DATA[bestFeeIndex].tier.fee, DECIMAL - 2)
-                        ).toFixed(2)}
-                        %{' '}
+                        {formatNumberWithSuffix(oraclePrice)}
                       </span>
-                      pool, which is the most liquid market.
+                      .
                     </p>
                   </span>
                 </Box>
