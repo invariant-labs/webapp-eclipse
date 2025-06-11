@@ -58,7 +58,7 @@ const Overview: React.FC<IOverview> = ({
             <Box
               display='flex'
               alignItems='center'
-              gap={1}
+              gap={isMd ? 1 : 6}
               flexWrap={'wrap'}
               flexShrink={1}
               flexDirection={isMd ? 'column' : 'row'}
@@ -88,11 +88,16 @@ const Overview: React.FC<IOverview> = ({
                 </Typography>
               </Box>
             </Box>
-            <Box display='flex' flexGrow={1} minWidth={'min-content'}>
+            <Box
+              display='flex'
+              flexGrow={1}
+              minWidth={'min-content'}
+              width={isSm ? '100%' : 'auto'}>
               <Intervals
                 interval={lastUsedInterval ?? IntervalsKeys.Daily}
                 setInterval={updateInterval}
                 dark
+                fullWidth={isSm}
               />
             </Box>
           </Box>

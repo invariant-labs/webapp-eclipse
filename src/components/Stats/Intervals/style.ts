@@ -4,9 +4,10 @@ import { makeStyles } from 'tss-react/mui'
 interface StyleProps {
   interval: string
   dark?: boolean
+  fullWidth?: boolean
 }
 
-const useStyles = makeStyles<StyleProps>()((theme, { interval, dark }) => {
+const useStyles = makeStyles<StyleProps>()((theme, { interval, dark, fullWidth }) => {
   const getMarkerPosition = (interval: string) => {
     switch (interval) {
       case '24H':
@@ -25,6 +26,7 @@ const useStyles = makeStyles<StyleProps>()((theme, { interval, dark }) => {
       backgroundColor: dark ? colors.invariant.newDark : colors.invariant.component,
       borderRadius: 8,
       boxSizing: 'border-box',
+      width: fullWidth ? '100%' : 'auto',
       marginLeft: 'auto'
     },
     mainWrapper: {
@@ -51,11 +53,8 @@ const useStyles = makeStyles<StyleProps>()((theme, { interval, dark }) => {
       display: 'inline-flex',
       height: 32,
 
-      [theme.breakpoints.down('md')]: {
-        width: '95%'
-      },
       [theme.breakpoints.down('sm')]: {
-        height: 36,
+        height: 32,
         width: '100%'
       }
     },

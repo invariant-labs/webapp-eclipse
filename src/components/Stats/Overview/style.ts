@@ -47,10 +47,18 @@ export const useStyles = makeStyles()(() => ({
   },
   label: {
     ...typography.body3,
-    color: colors.invariant.textGrey
+    color: colors.invariant.textGrey,
+
+    [theme.breakpoints.down('sm')]: {
+      ...typography.body2
+    }
   },
   value: {
     ...typography.heading4,
-    color: colors.invariant.text
+    color: colors.invariant.text,
+
+    [theme.breakpoints.down('sm')]: {
+      ...typography.body1
+    }
   }
 }))

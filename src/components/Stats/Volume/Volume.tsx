@@ -6,7 +6,12 @@ import { TimeData } from '@store/reducers/stats'
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import { formatNumberWithoutSuffix, trimZeros } from '@utils/utils'
 import { Intervals as IntervalsKeys } from '@store/consts/static'
-import { formatLargeNumber, formatPlotDataLabels, getLabelDate } from '@utils/uiUtils'
+import {
+  formatLargeNumber,
+  formatPlotDataLabels,
+  getLabelDate,
+  mapIntervalToString
+} from '@utils/uiUtils'
 import { useState, useRef, useEffect, useCallback } from 'react'
 
 interface StatsInterface {
@@ -34,6 +39,8 @@ const Volume: React.FC<StatsInterface> = ({
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const chartContainerRef = useRef<HTMLDivElement>(null)
   const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+
+  const intervalSuffix = mapIntervalToString(interval)
 
   volume = volume ?? 0
 
@@ -216,7 +223,7 @@ const Volume: React.FC<StatsInterface> = ({
     <Grid className={cx(classes.container, className)}>
       <Box className={classes.volumeContainer}>
         <Grid container justifyContent={'space-between'} alignItems='center'>
-          <Typography className={classes.volumeHeader}>Volume</Typography>
+          <Typography className={classes.volumeHeader}>Volume {intervalSuffix}</Typography>
         </Grid>
         <div className={classes.volumePercentContainer}>
           <Typography className={classes.volumePercentHeader}>
