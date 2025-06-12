@@ -182,7 +182,8 @@ export function* getPoolStats(
       })
     )
   } catch (e: unknown) {
-    console.log(e)
+    const error = ensureError(e)
+    console.log(error)
   }
 }
 

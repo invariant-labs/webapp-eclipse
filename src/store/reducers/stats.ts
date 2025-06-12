@@ -156,8 +156,6 @@ const statsSlice = createSlice({
       )
 
       if (existingPoolIndex === -1) {
-        console.log(poolData.poolAddress.toString())
-        console.log(poolData)
         state.poolsData.push(poolData)
       }
 
