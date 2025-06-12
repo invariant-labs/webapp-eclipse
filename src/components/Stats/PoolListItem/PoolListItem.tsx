@@ -344,7 +344,7 @@ const PoolListItem: React.FC<IProps> = ({
               )}
             </Grid>
           ) : null}
-          <Typography>{fee}%</Typography>
+          {fee && typeof fee === 'number' && <Typography>{fee}%</Typography>}
           {!isSmd && (
             <Typography> ${formatNumberWithSuffix((fee * 0.01 * volume).toFixed(2))}</Typography>
           )}
