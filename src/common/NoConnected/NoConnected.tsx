@@ -1,9 +1,11 @@
 import { Button, Grid, Typography } from '@mui/material'
 import { noConnectedIcon } from '@static/icons'
 import { useStyles } from './style'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
 import { ROUTES } from '@utils/utils'
+import { useDispatch } from 'react-redux'
+import { actions } from '@store/reducers/navigation'
 
 export interface INoConnected {
   onConnect: () => void
@@ -13,9 +15,10 @@ export interface INoConnected {
 
 export const NoConnected: React.FC<INoConnected> = ({ onConnect, title, descCustomText }) => {
   const { classes, cx } = useStyles()
-
+  const dispatch = useDispatch()
+  const params = useParams()
+  console.log(params)
   const navigate = useNavigate()
-
   return (
     <>
       <Grid className={cx(classes.blur, 'blurLayer')} />

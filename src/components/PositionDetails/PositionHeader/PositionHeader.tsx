@@ -1,7 +1,7 @@
 import { Box, Typography, useMediaQuery } from '@mui/material'
 import { useStyles } from './style'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
-import { airdropRainbowIcon, backArrowIcon, newTabIcon } from '@static/icons'
+import { airdropRainbowIcon, backIcon, newTabIcon } from '@static/icons'
 import { theme } from '@static/theme'
 import MarketIdLabel from '@components/NewPosition/MarketIdLabel/MarketIdLabel'
 import { VariantType } from 'notistack'
@@ -190,7 +190,7 @@ export const PositionHeader = ({
     <Box className={classes.headerContainer}>
       <Box className={classes.navigation}>
         <Box className={cx(classes.wrapper, classes.backContainer)} onClick={() => onGoBackClick()}>
-          <img src={backArrowIcon} alt='Back arrow' />
+          <img src={backIcon} alt='Back arrow' />
           <Typography className={classes.backText}>Back to portfolio</Typography>
         </Box>
         {isMdDown && (
