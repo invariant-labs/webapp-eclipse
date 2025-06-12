@@ -13,8 +13,10 @@ import { LockButton } from './LockButton'
 import { Button } from '@common/Button/Button'
 import { INavigatePosition } from '@store/consts/types'
 import { MobileNavigation } from '../Navigation/MobileNavigation/MobileNavigation'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { ReverseTokensIcon } from '@static/componentIcon/ReverseTokensIcon'
+import { actions } from '@store/reducers/navigation'
+import { useDispatch } from 'react-redux'
 
 type Props = {
   tokenA: {
@@ -76,7 +78,8 @@ export const PositionHeader = ({
   const [refresherTime, setRefresherTime] = useState(REFRESHER_INTERVAL)
 
   const navigate = useNavigate()
-
+  const location = useLocation()
+  const dispatch = useDispatch()
   useEffect(() => {
     const timeout = setTimeout(() => {
       if (refresherTime > 0) {
@@ -191,7 +194,7 @@ export const PositionHeader = ({
       <Box className={classes.navigation}>
         <Box className={cx(classes.wrapper, classes.backContainer)} onClick={() => onGoBackClick()}>
           <img src={backIcon} alt='Back arrow' />
-          <Typography className={classes.backText}>Back to portfolio</Typography>
+          <Typography className={classes.backText}>Back</Typography>
         </Box>
         {isMdDown && (
           <Box className={classes.navigationSide}>
@@ -205,6 +208,7 @@ export const PositionHeader = ({
               direction='left'
               onClick={() => {
                 if (previousPosition) {
+                  dispatch(actions.setNavigation({ address: location.pathname }))
                   navigate(ROUTES.getPositionRoute(previousPosition.id))
                 }
               }}
@@ -214,6 +218,7 @@ export const PositionHeader = ({
               direction='right'
               onClick={() => {
                 if (nextPosition) {
+                  dispatch(actions.setNavigation({ address: location.pathname }))
                   navigate(ROUTES.getPositionRoute(nextPosition.id))
                 }
               }}
@@ -228,6 +233,7 @@ export const PositionHeader = ({
             direction='left'
             onClick={() => {
               if (previousPosition) {
+                dispatch(actions.setNavigation({ address: location.pathname }))
                 navigate(ROUTES.getPositionRoute(previousPosition.id))
               }
             }}
@@ -237,6 +243,7 @@ export const PositionHeader = ({
             direction='right'
             onClick={() => {
               if (nextPosition) {
+                dispatch(actions.setNavigation({ address: location.pathname }))
                 navigate(ROUTES.getPositionRoute(nextPosition.id))
               }
             }}

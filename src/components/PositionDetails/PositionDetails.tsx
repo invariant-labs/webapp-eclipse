@@ -15,7 +15,7 @@ import {
 import { PlotTickData } from '@store/reducers/positions'
 import { VariantType } from 'notistack'
 import { useEffect, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useStyles } from './style'
 import { ILiquidityToken, INavigatePosition, TokenPriceData } from '@store/consts/types'
 import {
@@ -39,6 +39,8 @@ import { theme } from '@static/theme'
 import { eyeYellowIcon } from '@static/icons'
 import { DesktopNavigation } from './Navigation/DesktopNavigation/DesktopNavigation'
 import { PaginationList } from '@common/Pagination/Pagination/Pagination'
+import { useDispatch } from 'react-redux'
+import { actions } from '@store/reducers/navigation'
 
 interface IProps {
   tokenXAddress: PublicKey
@@ -157,7 +159,8 @@ const PositionDetails: React.FC<IProps> = ({
 
   const [showPreviewInfo, setShowPreviewInfo] = useState(false)
   const [connectWalletDelay, setConnectWalletDelay] = useState(false)
-
+  const location = useLocation()
+  const dispatch = useDispatch()
   const isActive = midPrice.x >= min && midPrice.x <= max
 
   useEffect(() => {
@@ -304,6 +307,7 @@ const PositionDetails: React.FC<IProps> = ({
               direction='left'
               onClick={() => {
                 if (!previousPosition) return
+                dispatch(actions.setNavigation({ address: location.pathname }))
                 navigate(ROUTES.getPositionRoute(previousPosition.id))
               }}
               disabled={!previousPosition}
@@ -380,6 +384,7 @@ const PositionDetails: React.FC<IProps> = ({
               const tokenA = isXtoY ? address1 : address2
               const tokenB = isXtoY ? address2 : address1
 
+              dispatch(actions.setNavigation({ address: location.pathname }))
               navigate(ROUTES.getNewPositionRoute(tokenA, tokenB, parsedFee))
             }}
             onRefreshClick={() => onRefresh()}
@@ -461,6 +466,7 @@ const PositionDetails: React.FC<IProps> = ({
               direction='right'
               onClick={() => {
                 if (!nextPosition) return
+                dispatch(actions.setNavigation({ address: location.pathname }))
                 navigate(ROUTES.getPositionRoute(nextPosition.id))
               }}
               disabled={!nextPosition}

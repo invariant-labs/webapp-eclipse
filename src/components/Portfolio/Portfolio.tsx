@@ -20,7 +20,7 @@ import { theme } from '@static/theme'
 import { NetworkType, OverviewSwitcher } from '@store/consts/static'
 import { addressToTicker, initialXtoY, parseFeeToPathFee, ROUTES } from '@utils/utils'
 import { useEffect, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useStyles } from './style'
 
 import { SwapToken } from '@store/selectors/solanaWallet'
@@ -36,6 +36,8 @@ import { refreshIcon } from '@static/icons'
 import { PositionListSwitcher } from './PositionListSwitcher/PositionListSwitcher'
 import { LiquidityPools } from '@store/reducers/positions'
 import { unblurContent } from '@utils/uiUtils'
+import { useDispatch } from 'react-redux'
+import { actions } from '@store/reducers/navigation'
 
 interface IProps {
   initialPage: number
@@ -87,6 +89,8 @@ const Portfolio: React.FC<IProps> = ({
   const { classes, cx } = useStyles()
 
   const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const location = useLocation()
   const [selectedFilters, setSelectedFilters] = useState<ISearchToken[]>([])
   const isLg = useMediaQuery('@media (max-width: 1360px)')
   const isDownLg = useMediaQuery(theme.breakpoints.down('lg'))
@@ -240,6 +244,7 @@ const Portfolio: React.FC<IProps> = ({
 
     unblurContent()
 
+    dispatch(actions.setNavigation({ address: location.pathname }))
     navigate(ROUTES.getNewPositionRoute(tokenA, tokenB, parsedFee))
   }
 
@@ -288,6 +293,7 @@ const Portfolio: React.FC<IProps> = ({
       <Grid
         onClick={() => {
           if (allowPropagation) {
+            dispatch(actions.setNavigation({ address: location.pathname }))
             navigate(ROUTES.getPositionRoute(element.id))
           }
         }}

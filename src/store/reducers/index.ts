@@ -17,6 +17,7 @@ import { RPC } from '@utils/web3/connection'
 import { reducer as creatorReducer, creatorSliceName } from './creator'
 import { reducer as lockerReducer, lockerSliceName } from './locker'
 import { reducer as leaderboardReducer, leaderboardSliceName } from './leaderboard'
+import { reducer as navigationReducer, navigationSliceName } from './navigation'
 
 const transformNetwork = createTransform(
   (inboundState: any, _key) => {
@@ -82,7 +83,8 @@ const combinedReducers = combineReducers({
   [statsSliceName]: statsReducer,
   [leaderboardSliceName]: leaderboardReducer,
   [creatorSliceName]: creatorReducer,
-  [lockerSliceName]: lockerReducer
+  [lockerSliceName]: lockerReducer,
+  [navigationSliceName]: navigationReducer
 })
 
 export default combinedReducers

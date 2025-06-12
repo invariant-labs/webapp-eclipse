@@ -7,26 +7,16 @@ export interface INavigation {
 }
 
 export interface INavigationState {
-  address: Routes
+  address: string
 }
 
-const Routes = {
-  exchange: ROUTES.EXCHANGE,
-  liquidity: ROUTES.LIQUIDITY,
-  portfolio: ROUTES.PORTFOLIO,
-  points: ROUTES.POINTS,
-  statistics: ROUTES.STATISTICS
-} as const
-
-type Routes = (typeof Routes)[keyof typeof Routes]
-
 export interface SetNavigationPayload {
-  address: Routes
+  address: string
 }
 
 const defaultStatus: INavigation = {
   navigationState: {
-    address: Routes.exchange
+    address: ROUTES.ROOT
   }
 }
 
