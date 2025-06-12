@@ -233,7 +233,6 @@ export const PositionHeader = ({
             direction='left'
             onClick={() => {
               if (previousPosition) {
-                dispatch(actions.setNavigation({ address: location.pathname }))
                 navigate(ROUTES.getPositionRoute(previousPosition.id))
               }
             }}
@@ -243,7 +242,6 @@ export const PositionHeader = ({
             direction='right'
             onClick={() => {
               if (nextPosition) {
-                dispatch(actions.setNavigation({ address: location.pathname }))
                 navigate(ROUTES.getPositionRoute(nextPosition.id))
               }
             }}

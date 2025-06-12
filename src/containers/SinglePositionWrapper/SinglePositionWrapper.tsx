@@ -167,7 +167,6 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     if (targetIdx < 0 || targetIdx >= data.length) return
 
     const navigateToData = data[targetIdx]
-    dispatch(navigationActions.setNavigation({ address: location.pathname }))
     navigate(ROUTES.getPositionRoute(navigateToData.id))
   }
 
@@ -473,10 +472,8 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         dispatch(connectionActions.setTimeoutError(false))
 
         if (nextPosition) {
-          dispatch(navigationActions.setNavigation({ address: location.pathname }))
           navigate(ROUTES.getPositionRoute(nextPosition.id))
         } else if (previousPosition) {
-          dispatch(navigationActions.setNavigation({ address: location.pathname }))
           navigate(ROUTES.getPositionRoute(previousPosition.id))
         } else {
           navigate(ROUTES.PORTFOLIO)
@@ -541,10 +538,12 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       return 0
     }
   }
+  const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
+
   const points24 = calculatePoints24()
-  const handleBack = () => {
+  const handleBack = (isConnected: boolean) => {
     const path = locationHistory === ROUTES.ROOT ? ROUTES.PORTFOLIO : locationHistory
-    const isConnected = walletStatus === Status.Initialized
+    console.log(path)
 
     navigate(isConnected ? path : ROUTES.LIQUIDITY)
   }
@@ -643,7 +642,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         inProgress={inProgress}
         ethBalance={ethBalance}
         poolDetails={poolDetails}
-        onGoBackClick={() => handleBack()}
+        onGoBackClick={() => handleBack(isConnected)}
         showPoolDetailsLoader={isLoadingStats}
         isPromoted={isPromoted}
         points24={points24}

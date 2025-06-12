@@ -307,7 +307,6 @@ const PositionDetails: React.FC<IProps> = ({
               direction='left'
               onClick={() => {
                 if (!previousPosition) return
-                dispatch(actions.setNavigation({ address: location.pathname }))
                 navigate(ROUTES.getPositionRoute(previousPosition.id))
               }}
               disabled={!previousPosition}
@@ -466,7 +465,6 @@ const PositionDetails: React.FC<IProps> = ({
               direction='right'
               onClick={() => {
                 if (!nextPosition) return
-                dispatch(actions.setNavigation({ address: location.pathname }))
                 navigate(ROUTES.getPositionRoute(nextPosition.id))
               }}
               disabled={!nextPosition}
