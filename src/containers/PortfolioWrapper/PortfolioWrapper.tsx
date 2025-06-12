@@ -27,7 +27,14 @@ import {
   prices,
   shouldDisable
 } from '@store/selectors/positions'
-import { address, balanceLoading, status, swapTokens, balance } from '@store/selectors/solanaWallet'
+import {
+  address,
+  balanceLoading,
+  status,
+  swapTokens,
+  balance,
+  overviewSwitch
+} from '@store/selectors/solanaWallet'
 import { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
@@ -61,6 +68,7 @@ const PortfolioWrapper = () => {
   const ethBalance = useSelector(balance)
   const disabledButton = useSelector(shouldDisable)
   const positionListAlignment = useSelector(positionListSwitcher)
+  const overviewSelectedTab = useSelector(overviewSwitch)
 
   const navigate = useNavigate()
   const dispatch = useDispatch()
@@ -373,6 +381,8 @@ const PortfolioWrapper = () => {
       setPositionListAlignment={(positionType: LiquidityPools) =>
         dispatch(actions.setPositionListSwitcher(positionType))
       }
+      overviewSelectedTab={overviewSelectedTab}
+      handleOverviewSwitch={option => dispatch(walletActions.setOverviewSwitch(option))}
     />
   ) : (
     <Grid className={classes.emptyContainer}>
