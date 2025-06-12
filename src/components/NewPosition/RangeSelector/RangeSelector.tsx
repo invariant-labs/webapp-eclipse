@@ -504,12 +504,6 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     autoZoomHandler(leftRange, rightRange, true)
   }, [tokenASymbol, tokenBSymbol])
 
-  const diffPercentage = useMemo(() => {
-    return Math.abs((suggestedPrice - midPrice.x) / midPrice.x) * 100
-  }, [suggestedPrice, midPrice.x])
-
-  const showPriceWarning = useMemo(() => diffPercentage > 10, [diffPercentage])
-
   const oracleDiffPercentage = useMemo(() => {
     if (oraclePrice === null || midPrice.x === 0) {
       return 0
@@ -518,6 +512,15 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
   }, [oraclePrice, midPrice.x])
 
   const oraclePriceWarning = useMemo(() => oracleDiffPercentage > 10, [oracleDiffPercentage])
+
+  const diffPercentage = useMemo(() => {
+    return Math.abs((suggestedPrice - midPrice.x) / midPrice.x) * 100
+  }, [suggestedPrice, midPrice.x])
+
+  const showPriceWarning = useMemo(
+    () => (diffPercentage > 10 && !oraclePrice) || (diffPercentage > 10 && oraclePriceWarning),
+    [diffPercentage, oraclePriceWarning, oraclePrice]
+  )
 
   return (
     <Grid container className={classes.wrapper}>
