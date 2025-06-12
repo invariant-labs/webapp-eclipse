@@ -543,7 +543,10 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   const points24 = calculatePoints24()
   const handleBack = (isConnected: boolean) => {
     const path = locationHistory === ROUTES.ROOT ? ROUTES.PORTFOLIO : locationHistory
-    navigate(isConnected ? path : ROUTES.LIQUIDITY)
+    const isNavigatingFromNewPosition = path === location.pathname
+    navigate(
+      isConnected ? (isNavigatingFromNewPosition ? ROUTES.PORTFOLIO : path) : ROUTES.LIQUIDITY
+    )
   }
   if (position) {
     return (
