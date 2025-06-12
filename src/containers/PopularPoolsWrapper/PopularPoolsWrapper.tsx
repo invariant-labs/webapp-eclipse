@@ -171,8 +171,8 @@ export const PopularPoolsWrapper: React.FC<IPopularPoolsWrapper> = ({
     poolsToRefetch.forEach(pool => {
       const refechedPool = poolsData.find(
         item =>
-          ((item.tokenX.toString() === pool.tokenX && item.tokenY.toString() === pool.tokenY) ||
-            (item.tokenX.toString() === pool.tokenY && item.tokenY.toString() === pool.tokenX)) &&
+          item.tokenX.toString() === pool.tokenX &&
+          item.tokenY.toString() === pool.tokenY &&
           item.fee.eq(new BN(parsePathFeeToFeeString((+pool.fee * 100).toString())))
       )
 
@@ -194,7 +194,7 @@ export const PopularPoolsWrapper: React.FC<IPopularPoolsWrapper> = ({
     <Grid container>
       <PopularPools
         pools={list}
-        isLoading={isLoadingStats}
+        isLoading={isLoadingStats || list.some(pool => !pool.poolAddress)}
         network={currentNetwork}
         showAPY={showAPY}
         lastUsedInterval={lastUsedInterval}
