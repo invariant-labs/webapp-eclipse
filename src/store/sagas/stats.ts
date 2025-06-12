@@ -2,8 +2,14 @@ import { actions } from '@store/reducers/stats'
 import { all, call, put, select, spawn, takeLatest } from 'typed-redux-saga'
 import { network, rpcAddress } from '@store/selectors/solanaConnection'
 import { PublicKey } from '@solana/web3.js'
-import { handleRpcError } from './connection'
-import { ensureError, getIntervalsFullSnap } from '@utils/utils'
+import { getConnection, handleRpcError } from './connection'
+import {
+  ensureError,
+  getIntervalsFullSnap,
+  getTokenPrice,
+  parseFeeToPathFee,
+  printBN
+} from '@utils/utils'
 import { lastInterval, lastTimestamp } from '@store/selectors/stats'
 import { Intervals, STATS_CACHE_TIME } from '@store/consts/static'
 import { PayloadAction } from '@reduxjs/toolkit'
@@ -12,7 +18,8 @@ import { getWallet } from './wallet'
 import { getMarketProgram } from '@utils/web3/programs/amm'
 import { BN } from '@coral-xyz/anchor'
 import { PoolWithAddress } from '@store/reducers/pools'
-import { arithmeticalAvg, dailyFactorPool } from '@invariant-labs/sdk-eclipse/lib/utils'
+import { arithmeticalAvg, dailyFactorPool, DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
+import { token } from '@metaplex-foundation/js'
 
 // export function* getStats(): Generator {
 //   try {
@@ -117,51 +124,71 @@ export function* getPoolStats(
   const rpc = yield* select(rpcAddress)
   const wallet = yield* call(getWallet)
   const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
+  const connection = yield* call(getConnection)
   try {
     const { volumeX: currentVolumeX, volumeY: currentVolumeY } = yield* call(
-      marketProgram.getVolume,
+      [marketProgram, marketProgram.getVolume],
       pair,
       pool
     )
 
-    const currentSqrtPrice = pool.sqrtPrice
-    const price = currentSqrtPrice.mul(currentSqrtPrice).div(PRICE_DENOMINATOR)
+    const reserve = yield* call(
+      [connection, connection.getMultipleParsedAccounts],
+      [pool.tokenXReserve, pool.tokenYReserve]
+    )
 
-    const currentVolumeXBN = new BN(currentVolumeX)
+    const tokenXPrice = yield* call(getTokenPrice, pair.tokenX.toString(), networkType)
+    const tokenYPrice = yield* call(getTokenPrice, pair.tokenY.toString(), networkType)
 
-    const currentVolumeYBN = new BN(currentVolumeY)
-    console.log(currentVolumeX.toString())
-    console.log(currentVolumeY.toString())
-    const denominatedVolumeY = new BN(currentVolumeYBN).mul(PRICE_DENOMINATOR).div(price)
+    let volumeX = new BN(0)
+    let volumeY = new BN(0)
 
-    const volume = Math.abs(currentVolumeXBN.add(denominatedVolumeY).toNumber())
+    if (tokenXPrice) {
+      volumeX = new BN(tokenXPrice).mul(currentVolumeX)
+    }
+    if (tokenYPrice) {
+      volumeY = new BN(tokenYPrice).mul(currentVolumeY)
+    }
+    const volume = +volumeX.add(volumeY).toString()
 
-    const denominatedLpY = PRICE_DENOMINATOR.div(price)
+    // @ts-ignore
+    const tokenXLiquidity = reserve.value[0]?.data?.parsed?.info?.tokenAmount?.amount
+    // @ts-ignore
+    const tokenYLiquidity = reserve.value[1]?.data?.parsed?.info?.tokenAmount?.amount
 
-    const currentXamount = denominatedLpY
-    const previousXAmount = new BN(0)
-    const avgTvl = previousXAmount.eqn(0)
-      ? currentXamount
-      : arithmeticalAvg(currentXamount, previousXAmount)
+    // @ts-ignore
+    const tokenXAmount = reserve.value[0]?.data?.parsed?.info?.tokenAmount?.uiAmount
+    // @ts-ignore
+    const tokenYAmount = reserve.value[1]?.data?.parsed?.info?.tokenAmount?.uiAmount
+
+    let tokenXTvl = 0
+    let tokenYtvl = 0
+    if (tokenXPrice && tokenXAmount) {
+      tokenXTvl = tokenXPrice * tokenXAmount
+    }
+    if (tokenYPrice && tokenYAmount) {
+      tokenYtvl = tokenYPrice * tokenYAmount
+    }
+    const tvl = tokenXTvl + tokenYtvl
 
     const feeTier = { fee: pool.fee, tickSpacing: pool.tickSpacing }
-    const dailyFactor = dailyFactorPool(avgTvl, volume, feeTier)
+    const dailyFactor = dailyFactorPool(new BN(tokenXLiquidity), volume, feeTier)
 
-    const APY = (Math.pow(dailyFactor + 1, 365) - 1) * 100
+    const apy = (Math.pow(dailyFactor + 1, 365) - 1) * 100
 
     yield* put(
       actions.setPoolStatsData({
-        apy: APY,
-        fee: pool.fee,
+        apy,
+        fee: +printBN(pool.fee, DECIMAL - 2).toString(),
         poolAddress: pool.address,
         volume24: volume,
         tokenX: pair.tokenX,
         tokenY: pair.tokenY,
-        liquidityX: 0,
-        liquidityY: 0,
+        liquidityX: tokenXLiquidity,
+        liquidityY: tokenYLiquidity,
         lockedX: 0,
         lockedY: 0,
-        tvl: avgTvl
+        tvl: tvl
       })
     )
   } catch (e: unknown) {

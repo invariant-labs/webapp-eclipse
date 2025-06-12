@@ -73,7 +73,7 @@ export const PopularPoolsWrapper: React.FC<IPopularPoolsWrapper> = ({
         tickSpacing: 10
       }))
     }
-
+    console.log('test')
     popularPools.map(pool => {
       const poolData = poolsList.find(
         item =>
@@ -111,7 +111,7 @@ export const PopularPoolsWrapper: React.FC<IPopularPoolsWrapper> = ({
     })
 
     return data
-  }, [poolsList])
+  }, [poolsList.length])
 
   const showAPY = useMemo(() => {
     return list.some(pool => pool.apy !== 0)
