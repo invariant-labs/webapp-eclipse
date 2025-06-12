@@ -163,7 +163,10 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
 
   const handleChangePagination = (currentIndex: number) => {
     const data = position?.isLocked ? lockedNavigationData : navigationData
-    const navigateToData = data[currentIndex - 1]
+    const targetIdx = currentIndex - 1
+    if (targetIdx < 0 || targetIdx >= data.length) return
+
+    const navigateToData = data[targetIdx]
     dispatch(navigationActions.setNavigation({ address: location.pathname }))
     navigate(ROUTES.getPositionRoute(navigateToData.id))
   }
@@ -541,7 +544,9 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   const points24 = calculatePoints24()
   const handleBack = () => {
     const path = locationHistory === ROUTES.ROOT ? ROUTES.PORTFOLIO : locationHistory
-    navigate(path)
+    const isConnected = walletStatus === Status.Initialized
+
+    navigate(isConnected ? path : ROUTES.LIQUIDITY)
   }
   if (position) {
     return (
