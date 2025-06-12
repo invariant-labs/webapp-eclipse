@@ -73,7 +73,7 @@ export const PopularPoolsWrapper: React.FC<IPopularPoolsWrapper> = ({
         tickSpacing: 10
       }))
     }
-    console.log('test')
+
     popularPools.map(pool => {
       const poolData = poolsList.find(
         item =>
@@ -104,8 +104,23 @@ export const PopularPoolsWrapper: React.FC<IPopularPoolsWrapper> = ({
         })
       } else {
         data.push({
-          addressFrom: pool.tokenX,
-          addressTo: pool.tokenY
+          symbolFrom: '-',
+          symbolTo: '-',
+          iconFrom: unknownTokenIcon,
+          iconTo: unknownTokenIcon,
+          volume: 0,
+          TVL: 0,
+          fee: 0,
+          addressFrom: pool.tokenX.toString(),
+          addressTo: pool.tokenY.toString(),
+          apy: 0,
+          apyData: {
+            fees: 0,
+            accumulatedFarmsSingleTick: 0,
+            accumulatedFarmsAvg: 0
+          },
+          isUnknownFrom: false,
+          isUnknownTo: false
         })
       }
     })
