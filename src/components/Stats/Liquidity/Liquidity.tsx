@@ -10,7 +10,8 @@ import {
   formatLargeNumber,
   formatPlotDataLabels,
   getLabelDate,
-  mapIntervalToPrecision
+  mapIntervalToPrecision,
+  mapIntervalToString
 } from '@utils/uiUtils'
 import useIsMobile from '@store/hooks/isMobile'
 import { Intervals as IntervalsKeys } from '@store/consts/static'
@@ -33,6 +34,8 @@ const Liquidity: React.FC<LiquidityInterface> = ({
 }) => {
   const { classes, cx } = useStyles()
 
+  const intervalSuffix = mapIntervalToString(interval)
+
   liquidityVolume = liquidityVolume ?? 0
 
   const isMobile = useIsMobile()
@@ -41,7 +44,7 @@ const Liquidity: React.FC<LiquidityInterface> = ({
     <Grid className={cx(classes.container, className)}>
       <Grid className={classes.liquidityContainer}>
         <Grid container justifyContent={'space-between'} alignItems='center'>
-          <Typography className={classes.liquidityHeader}>Liquidity</Typography>
+          <Typography className={classes.liquidityHeader}>Liquidity {intervalSuffix}</Typography>
         </Grid>
         <Grid className={classes.volumePercentHeader}>
           <Typography className={classes.volumeLiquidityHeader}>
