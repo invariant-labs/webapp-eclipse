@@ -44,6 +44,7 @@ import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import { actions as actionsStats } from '@store/reducers/stats'
 import { actions as lockerActions } from '@store/reducers/locker'
 import { actions as snackbarActions } from '@store/reducers/snackbars'
+import { actions as navigationActions } from '@store/reducers/navigation'
 import { Grid, useMediaQuery } from '@mui/material'
 import { theme } from '@static/theme'
 import useStyles from './styles'
@@ -356,6 +357,7 @@ const PortfolioWrapper = () => {
       setLastPage={setLastPage}
       handleRefresh={handleRefresh}
       onAddPositionClick={() => {
+        dispatch(navigationActions.setNavigation({ address: location.pathname }))
         navigate(ROUTES.NEW_POSITION)
       }}
       currentNetwork={currentNetwork}

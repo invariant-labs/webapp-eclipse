@@ -4,7 +4,7 @@ import { useStyles } from './style'
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import {
   airdropRainbowIcon,
   horizontalSwapIcon,
@@ -31,6 +31,8 @@ import LockStatsPopover from '@components/Modals/LockStatsPopover/LockStatsPopov
 import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
 import { BN } from '@coral-xyz/anchor'
 import { CustomPopover } from '@common/Popover/CustomPopover'
+import { useDispatch } from 'react-redux'
+import { actions } from '@store/reducers/navigation'
 
 interface IProps {
   TVL?: number
@@ -110,7 +112,8 @@ const PoolListItem: React.FC<IProps> = ({
   const airdropIconRef = useRef<HTMLDivElement>(null)
   const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
   const intervalSuffix = mapIntervalToString(interval)
-
+  const dispatch = useDispatch()
+  const location = useLocation()
   const isMobile = useMediaQuery(theme.breakpoints.down('lg'))
 
   const isXtoY = initialXtoY(addressFrom ?? '', addressTo ?? '')
@@ -155,6 +158,7 @@ const PoolListItem: React.FC<IProps> = ({
     const tokenA = addressToTicker(network, tokenAData.address ?? '')
     const tokenB = addressToTicker(network, tokenBData.address ?? '')
 
+    dispatch(actions.setNavigation({ address: location.pathname }))
     navigate(
       ROUTES.getNewPositionRoute(
         tokenA,
