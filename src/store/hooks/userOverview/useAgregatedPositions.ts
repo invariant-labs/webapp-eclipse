@@ -53,7 +53,8 @@ const calculateTokenValue = (
 const createPositionEntry = (
   position: TokenPosition,
   isTokenX: boolean,
-  value: number
+  value: number,
+  isPriceWarning: boolean
 ): TokenPositionEntry => {
   const token = isTokenX ? position.tokenX : position.tokenY
 
@@ -63,7 +64,7 @@ const createPositionEntry = (
     name: token.name,
     logo: token.logoURI,
     positionId: position.id,
-    isPriceWarning: false
+    isPriceWarning: isPriceWarning
   }
 }
 
@@ -85,7 +86,15 @@ const updateOrCreatePosition = (
     return positions
   }
 
-  return [...positions, createPositionEntry(position, isTokenX, value)]
+  return [
+    ...positions,
+    createPositionEntry(
+      position,
+      isTokenX,
+      value,
+      !prices?.[token.assetAddress.toString()] && +amountBN.toString() > 0
+    )
+  ]
 }
 
 export const useAgregatedPositions = (

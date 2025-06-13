@@ -12,7 +12,7 @@ import {
 } from '@store/consts/static'
 import { InputPagination } from '@common/Pagination/InputPagination/InputPagination'
 import { VariantType } from 'notistack'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 export interface PoolListInterface {
   initialLength: number
@@ -55,6 +55,8 @@ import { ROUTES } from '@utils/utils'
 import { colors, theme } from '@static/theme'
 import { ISearchToken } from '@common/FilterSearch/FilterSearch'
 import { shortenAddress } from '@utils/uiUtils'
+import { actions } from '@store/reducers/navigation'
+import { useDispatch } from 'react-redux'
 
 const ITEMS_PER_PAGE = 10
 
@@ -173,7 +175,8 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
   useEffect(() => {
     setPage(1)
   }, [data, pages])
-
+  const dispatch = useDispatch()
+  const location = useLocation()
   return (
     <Grid
       container
@@ -247,14 +250,15 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
             desc={initialDataLength < 3 ? '' : 'You can create it yourself!'}
             desc2={initialDataLength < 5 ? '' : 'Or try adjusting your search criteria!'}
             buttonName='Create Pool'
-            onAction={() =>
+            onAction={() => {
+              dispatch(actions.setNavigation({ address: location.pathname }))
               navigate(
                 ROUTES.getNewPositionRoute(filteredTokenX.address, filteredTokenY.address, '0_10'),
                 {
                   state: { referer: 'stats' }
                 }
               )
-            }
+            }}
             withButton={true}
             withImg={initialDataLength > 3}
           />

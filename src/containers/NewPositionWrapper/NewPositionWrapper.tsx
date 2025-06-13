@@ -59,6 +59,7 @@ import { PoolStructure } from '@invariant-labs/sdk-eclipse/lib/market'
 import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import { actions as statsActions } from '@store/reducers/stats'
 import { isLoading, poolsStatsWithTokensDetails } from '@store/selectors/stats'
+import { address } from '@store/selectors/navigation'
 
 export interface IProps {
   initialTokenFrom: string
@@ -78,6 +79,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   const dispatch = useDispatch()
   const connection = getCurrentSolanaConnection()
   const ethBalance = useSelector(balance)
+  const locationHistory = useSelector(address)
   const tokens = useSelector(poolTokens)
   const walletStatus = useSelector(status)
   const allPools = useSelector(poolsArraySortedByFees)
@@ -171,6 +173,11 @@ export const NewPositionWrapper: React.FC<IProps> = ({
 
   const canNavigate = connection !== null && !isPathTokensLoading && !block
 
+  const handleBack = () => {
+    const path = locationHistory === ROUTES.ROOT ? ROUTES.PORTFOLIO : locationHistory
+    navigate(path)
+  }
+
   useEffect(() => {
     if (canNavigate) {
       const tokenAIndex = tokens.findIndex(token => token.address.toString() === initialTokenFrom)
@@ -240,7 +247,9 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   useEffect(() => {
     const path = constructNavigationPath()
     if (path) {
-      urlUpdateTimeoutRef.current = setTimeout(() => navigate(path), 500)
+      urlUpdateTimeoutRef.current = setTimeout(() => {
+        navigate(path)
+      }, 500)
     }
   }, [tokens, canNavigate])
 
@@ -1147,7 +1156,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       feeTiersWithTvl={feeTiersWithTvl}
       totalTvl={totalTvl}
       isLoadingStats={isLoadingStats}
-      autoSwapPoolData={!!autoSwapPoolData ? (autoSwapPoolData ?? null) : null}
+      autoSwapPoolData={autoSwapPoolData ?? null}
       autoSwapTickmap={autoSwapTickMap}
       autoSwapTicks={autoSwapTicks}
       initialMaxPriceImpact={initialMaxPriceImpact}
@@ -1159,6 +1168,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       onMaxSlippageToleranceCreatePositionChange={onMaxSlippageToleranceCreatePositionChange}
       initialMaxSlippageToleranceCreatePosition={initialMaxSlippageToleranceCreatePosition}
       suggestedPrice={suggestedPrice}
+      handleBack={handleBack}
       oraclePrice={oraclePrice}
     />
   )

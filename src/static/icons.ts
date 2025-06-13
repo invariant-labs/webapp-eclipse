@@ -89,7 +89,6 @@ import handleMaxIcon from '@static/svg/narrowChartMaxHandle.svg'
 import handleMinIcon from '@static/svg/narrowChartMinHandle.svg'
 import zoomInIcon from '@static/svg/zoom-in-icon.svg'
 import zoomOutIcon from '@static/svg/zoom-out-icon.svg'
-import backArrowIcon from '@static/svg/back-arrow.svg'
 import lockIcon2 from '@static/svg/lock.svg'
 import boostPointsBoldIcon from '@static/svg/boostPointsBold.svg'
 import eyeYellowIcon from './svg/eyeYellow.svg'
@@ -195,7 +194,6 @@ export {
   handleMinIcon,
   zoomInIcon,
   zoomOutIcon,
-  backArrowIcon,
   lockIcon2,
   boostPointsBoldIcon,
   eyeYellowIcon,
