@@ -498,6 +498,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     display: 'flex',
     flexDirection: 'column',
     [theme.breakpoints.down('sm')]: {
+      marginTop: 12,
       flexDirection: 'column-reverse'
     }
   },
