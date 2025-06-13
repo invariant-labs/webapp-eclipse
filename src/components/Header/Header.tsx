@@ -52,7 +52,6 @@ export const Header: React.FC<IHeader> = ({
 }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
-
   const isSmDown = useMediaQuery(theme.breakpoints.down('sm'))
 
   const routes = [

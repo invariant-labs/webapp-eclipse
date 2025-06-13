@@ -15,7 +15,8 @@ export const {
   status,
   ethBalanceLoading,
   tokenBalanceLoading,
-  thankYouModalShown
+  thankYouModalShown,
+  overviewSwitch
 } = keySelectors(store, [
   'address',
   'balance',
@@ -23,7 +24,8 @@ export const {
   'status',
   'ethBalanceLoading',
   'tokenBalanceLoading',
-  'thankYouModalShown'
+  'thankYouModalShown',
+  'overviewSwitch'
 ])
 
 export const balanceLoading = createSelector(
@@ -135,6 +137,7 @@ export const solanaWalletSelectors = {
   tokenAccount,
   ethBalanceLoading,
   tokenBalanceLoading,
-  thankYouModalShown
+  thankYouModalShown,
+  overviewSwitch
 }
 export default solanaWalletSelectors
