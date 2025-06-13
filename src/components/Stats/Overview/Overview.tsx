@@ -53,11 +53,7 @@ const Overview: React.FC<IOverview> = ({
           [classes.loadingOverlay]: isLoadingStats
         })}>
         <>
-          <Box
-            display='flex'
-            alignItems='center'
-            gap={3}
-            flexDirection={isMd ? 'column-reverse' : 'row'}>
+          <Box display='flex' alignItems='center' gap={3} flexDirection={isMd ? 'column' : 'row'}>
             <Box
               display='flex'
               alignItems='center'
@@ -91,6 +87,17 @@ const Overview: React.FC<IOverview> = ({
                 </Typography>
               </Box>
             </Box>
+
+            {isMd && (
+              <Box width={'100%'}>
+                <Separator
+                  color={colors.invariant.light}
+                  width={1}
+                  isHorizontal
+                  margin={isSm ? '0 24px' : '0'}
+                />
+              </Box>
+            )}
             <Box
               display='flex'
               flexGrow={1}
@@ -104,8 +111,14 @@ const Overview: React.FC<IOverview> = ({
               />
             </Box>
           </Box>
-          <Separator color={colors.invariant.light} margin={'24px 0'} width={1} isHorizontal />
-          <Box display='flex' gap={'24px'} flexDirection={isSm ? 'column' : 'row'}>
+          {!isMd && (
+            <Separator color={colors.invariant.light} margin={'24px 0'} width={1} isHorizontal />
+          )}
+          <Box
+            display='flex'
+            gap={'24px'}
+            flexDirection={isSm ? 'column' : 'row'}
+            mt={isMd ? '24px' : 0}>
             <Volume
               volume={volumeInterval.value}
               data={volumePlotData}
