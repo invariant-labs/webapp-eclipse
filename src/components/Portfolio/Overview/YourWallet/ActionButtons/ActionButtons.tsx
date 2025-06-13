@@ -4,9 +4,11 @@ import { horizontalSwapIcon, newTabBtnIcon, plusIcon } from '@static/icons'
 import { NetworkType, USDC_MAIN, USDC_TEST, WETH_MAIN, WETH_TEST } from '@store/consts/static'
 import { StrategyConfig, WalletToken } from '@store/types/userOverview'
 import { addressToTicker, ROUTES } from '@utils/utils'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useStyles } from './styles'
 import { useMemo } from 'react'
+import { useDispatch } from 'react-redux'
+import { actions } from '@store/reducers/navigation'
 import { theme } from '@static/theme'
 
 interface IActionButtons {
@@ -17,6 +19,9 @@ interface IActionButtons {
 
 export const ActionButtons = ({ pool, strategy, currentNetwork }: IActionButtons) => {
   const navigate = useNavigate()
+  const location = useLocation()
+  const dispatch = useDispatch()
+
   const { classes } = useStyles()
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
 
@@ -41,7 +46,7 @@ export const ActionButtons = ({ pool, strategy, currentNetwork }: IActionButtons
           onClick={() => {
             const sourceToken = addressToTicker(currentNetwork, strategy.tokenAddressA)
             const targetToken =
-              (strategy.tokenAddressB ?? sourceToken === 'ETH')
+              strategy.tokenAddressB ?? sourceToken === 'ETH'
                 ? currentNetwork === NetworkType.Mainnet
                   ? USDC_MAIN.address
                   : USDC_TEST.address
@@ -49,6 +54,7 @@ export const ActionButtons = ({ pool, strategy, currentNetwork }: IActionButtons
                   ? WETH_MAIN.address
                   : WETH_TEST.address
 
+            dispatch(actions.setNavigation({ address: location.pathname }))
             navigate(
               ROUTES.getNewPositionRoute(
                 sourceToken,
