@@ -14,7 +14,9 @@ import {
   lastSnapTimestamp,
   volumePlot,
   currentInterval,
-  lastInterval
+  lastInterval,
+  cumulativeVolume,
+  cumulativeFees
 } from '@store/selectors/stats'
 import { network } from '@store/selectors/solanaConnection'
 import { actions } from '@store/reducers/stats'
@@ -45,6 +47,8 @@ export const WrappedStats: React.FC = () => {
   const isLoadingStats = useSelector(isLoading)
   const currentNetwork = useSelector(network)
   const promotedPools = useSelector(getPromotedPools)
+  const cumulativeVolumeData = useSelector(cumulativeVolume)
+  const cumulativeFeesData = useSelector(cumulativeFees)
 
   const lastUsedInterval = useSelector(currentInterval)
   const lastFetchedInterval = useSelector(lastInterval)
@@ -147,6 +151,8 @@ export const WrappedStats: React.FC = () => {
             volumePlotData={volumePlotData}
             liquidityPlotData={liquidityPlotData}
             tvlInterval={tvlInterval}
+            cumulativeVolume={cumulativeVolumeData}
+            cumulativeFees={cumulativeFeesData}
           />
           <Grid className={classes.rowContainer}>
             <Typography className={classes.subheader} mb={2}>

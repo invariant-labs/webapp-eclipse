@@ -1,5 +1,5 @@
 import { colors, theme } from '@static/theme'
-import { TimeData, Value24H } from '@store/reducers/stats'
+import { CumulativeValue, TimeData, Value24H } from '@store/reducers/stats'
 import { Intervals as IntervalsKeys } from '@store/consts/static'
 import { useStyles } from './style'
 import { Grid, Typography, Box, useMediaQuery } from '@mui/material'
@@ -20,6 +20,8 @@ interface IOverview {
   liquidityPlotData: TimeData[]
   tvlInterval: Value24H
   feesInterval: Value24H
+  cumulativeVolume: CumulativeValue
+  cumulativeFees: CumulativeValue
 }
 
 const Overview: React.FC<IOverview> = ({
@@ -31,14 +33,15 @@ const Overview: React.FC<IOverview> = ({
   lastStatsTimestamp,
   liquidityPlotData,
   tvlInterval,
-  feesInterval
+  feesInterval,
+  cumulativeVolume,
+  cumulativeFees
 }) => {
   const { classes, cx } = useStyles()
 
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
-  const cumulativeVolume = 123123123123 //Mocked
-  const cumulativeFee = 4324234 //Mocked
+
   return (
     <>
       <Box display='flex' justifyContent='space-between' alignItems='center' mb={4}>
@@ -72,7 +75,7 @@ const Overview: React.FC<IOverview> = ({
                 <Typography className={classes.label}>Cumulative Volume:</Typography>
 
                 <Typography className={classes.value}>
-                  ${formatNumberWithoutSuffix(cumulativeVolume)}
+                  ${formatNumberWithoutSuffix(cumulativeVolume.value)}
                 </Typography>
               </Box>
               <Box
@@ -84,7 +87,7 @@ const Overview: React.FC<IOverview> = ({
                 <Typography className={classes.label}>Cumulative Fee:</Typography>
 
                 <Typography className={classes.value}>
-                  ${formatNumberWithoutSuffix(cumulativeFee)}
+                  ${formatNumberWithoutSuffix(cumulativeFees.value)}
                 </Typography>
               </Box>
             </Box>
