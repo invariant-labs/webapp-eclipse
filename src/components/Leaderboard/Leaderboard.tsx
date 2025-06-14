@@ -71,6 +71,7 @@ interface LeaderboardProps {
   isLoadingLeaderboardList: boolean
   hasTETHPosition: boolean
   contentProgramDates: { start: string; end: string }
+  isLoadingDebounced: boolean
 }
 
 export const Leaderboard: React.FC<LeaderboardProps> = ({
@@ -102,7 +103,8 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
   userAddress,
   isLoadingLeaderboardList,
   hasTETHPosition,
-  contentProgramDates
+  contentProgramDates,
+  isLoadingDebounced
 }) => {
   const { classes } = useStyles()
 
@@ -164,7 +166,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
             userContentPoints={userContentPoints}
             userStats={userStats.total}
             estimated24hPoints={estimated24hPoints}
-            isLoadingList={isLoadingList || isLoadingLeaderboardList}
+            isLoadingList={isLoadingDebounced}
             totalItems={totalItems}
             isConnected={isConnected}
             contentProgramDates={contentProgramDates}

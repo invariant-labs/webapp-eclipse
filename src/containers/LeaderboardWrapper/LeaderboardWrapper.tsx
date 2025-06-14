@@ -68,6 +68,22 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = () => {
   const [showWarningBanner, setShowWarningBanner] = React.useState(true)
   const [selectedOption, setSelectedOption] = useState<LeaderBoardType>('Total')
 
+  const [isLoadingDebounced, setIsLoadingDebounced] = useState(true)
+
+  useEffect(() => {
+    let timeout: NodeJS.Timeout
+
+    if (isLoadingList || isLoadingLeaderboardList) {
+      setIsLoadingDebounced(true)
+    } else {
+      timeout = setTimeout(() => {
+        setIsLoadingDebounced(false)
+      }, 400)
+    }
+
+    return () => clearTimeout(timeout)
+  }, [isLoadingList, isLoadingLeaderboardList])
+
   useEffect(() => {
     if (selectedOption === 'Liquidity') {
       handlePageChange(Math.min(currentPage, Math.ceil(totalItemsObject.lp / itemsPerPage)))
@@ -77,6 +93,7 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = () => {
       handlePageChange(currentPage)
     }
   }, [selectedOption])
+
   const isDelayWarning = useMemo(() => {
     if (!lastSnapTimestamp) return false
     const snapTime = hexToDate(lastSnapTimestamp)
@@ -168,7 +185,6 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = () => {
     }
   }, [dispatch, isConnected, userAddress])
   useEffect(() => {
-    dispatch(actions.getLeaderboardData({ page: 1, itemsPerPage }))
     dispatch(actions.getLeaderboardConfig())
     dispatch(statsActions.getCurrentIntervalStats({ interval: Intervals.Daily }))
 
@@ -234,6 +250,7 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = () => {
       walletStatus={walletStatus}
       isLoadingLeaderboardList={isLoadingLeaderboardList}
       contentProgramDates={contentProgramDates}
+      isLoadingDebounced={isLoadingDebounced}
     />
   )
 }
