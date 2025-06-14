@@ -1,0 +1,27 @@
+import React from 'react'
+import useStyles from './styles'
+import { Box, Grid, Typography } from '@mui/material'
+import LiquidityStaking from '@components/Stake/Stake'
+import { Link } from 'react-router-dom'
+import LaunchIcon from '@mui/icons-material/Launch'
+
+export const WrappedStake: React.FC = () => {
+  const { classes } = useStyles()
+
+  return (
+    <Grid container className={classes.wrapper}>
+      <Box display='flex' flexDirection='column' alignItems='center' gap={'12px'}>
+        <Typography className={classes.header}>Liquidity staking</Typography>
+        <Box className={classes.subheaderDescription}>
+          Earn more with sBITZ.
+          <Link to='' target='_blank' className={classes.learnMoreLink}>
+            <span> Learn more</span> <LaunchIcon classes={{ root: classes.clipboardIcon }} />
+          </Link>
+        </Box>
+      </Box>
+      <LiquidityStaking />
+    </Grid>
+  )
+}
+
+export default WrappedStake

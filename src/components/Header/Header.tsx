@@ -60,6 +60,7 @@ export const Header: React.FC<IHeader> = ({
     'portfolio',
     ...(typeOfNetwork === NetworkType.Testnet ? ['creator'] : []),
     ...(typeOfNetwork === NetworkType.Mainnet ? ['points'] : []),
+    'stake',
     'statistics'
   ]
 
