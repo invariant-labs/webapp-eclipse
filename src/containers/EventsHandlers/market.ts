@@ -17,6 +17,7 @@ import { useLocation } from 'react-router-dom'
 import { autoSwapPools } from '@store/consts/static'
 import { FEE_TIERS } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { parsePool } from '@invariant-labs/sdk-eclipse/lib/market'
+import { tokensData } from '@store/selectors/stats'
 
 const MarketEvents = () => {
   const dispatch = useDispatch()
@@ -27,6 +28,8 @@ const MarketEvents = () => {
   const { tokenFrom, tokenTo } = useSelector(swap)
   const networkStatus = useSelector(status)
   const allPools = useSelector(poolsArraySortedByFees)
+  const tokenDetails = useSelector(tokensData)
+  const unknownAdresses = tokenDetails.map(item => item.address.toString())
   const newPositionPoolIndex = useSelector(currentPoolIndex)
   const [subscribedTwoHopSwapPools, _setSubscribedTwoHopSwapPools] = useState<Set<PublicKey>>(
     new Set()
@@ -46,15 +49,24 @@ const MarketEvents = () => {
     }
     const connectEvents = () => {
       let tokens = getNetworkTokensList(networkType)
+      const currentListUnkown: PublicKey[] =
+        unknownAdresses !== null
+          ? unknownAdresses
+              .filter((address: string) => !tokens[address])
+              .map((address: string) => new PublicKey(address))
+          : []
 
       const currentListStr = localStorage.getItem(`CUSTOM_TOKENS_${networkType}`)
-      const currentList: PublicKey[] =
+      const currentListBefore: PublicKey[] =
         currentListStr !== null
           ? JSON.parse(currentListStr)
               .filter((address: string) => !tokens[address])
               .map((address: string) => new PublicKey(address))
           : []
-
+      const currentList: PublicKey[] = [
+        ...currentListBefore,
+        ...currentListUnkown.filter(pk => !currentListBefore.some(existing => existing.equals(pk)))
+      ]
       const lastTokenFrom = localStorage.getItem(`INVARIANT_LAST_TOKEN_FROM_${networkType}`)
       const lastTokenTo = localStorage.getItem(`INVARIANT_LAST_TOKEN_FROM_${networkType}`)
 
@@ -73,7 +85,6 @@ const MarketEvents = () => {
       ) {
         currentList.push(new PublicKey(lastTokenTo))
       }
-
       getFullNewTokensData(currentList, connection)
         .then(data => {
           tokens = {
@@ -87,7 +98,7 @@ const MarketEvents = () => {
     }
 
     connectEvents()
-  }, [dispatch, networkStatus])
+  }, [dispatch, networkStatus, unknownAdresses])
 
   // New position pool subscription
   useEffect(() => {
