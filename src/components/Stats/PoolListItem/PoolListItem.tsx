@@ -4,15 +4,14 @@ import { useStyles } from './style'
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import {
   airdropRainbowIcon,
   horizontalSwapIcon,
   lockIcon,
   newTabBtnIcon,
   plusIcon,
-  unknownTokenIcon,
-  warningIcon
+  unknownTokenIcon
 } from '@static/icons'
 import { Intervals, ITEMS_PER_PAGE, NetworkType, SortTypePoolList } from '@store/consts/static'
 import {
@@ -32,6 +31,8 @@ import LockStatsPopover from '@components/Modals/LockStatsPopover/LockStatsPopov
 import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
 import { BN } from '@coral-xyz/anchor'
 import { CustomPopover } from '@common/Popover/CustomPopover'
+import { useDispatch } from 'react-redux'
+import { actions } from '@store/reducers/navigation'
 
 interface IProps {
   TVL?: number
@@ -111,7 +112,8 @@ const PoolListItem: React.FC<IProps> = ({
   const airdropIconRef = useRef<HTMLDivElement>(null)
   const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
   const intervalSuffix = mapIntervalToString(interval)
-
+  const dispatch = useDispatch()
+  const location = useLocation()
   const isMobile = useMediaQuery(theme.breakpoints.down('lg'))
 
   const isXtoY = initialXtoY(addressFrom ?? '', addressTo ?? '')
@@ -156,6 +158,7 @@ const PoolListItem: React.FC<IProps> = ({
     const tokenA = addressToTicker(network, tokenAData.address ?? '')
     const tokenB = addressToTicker(network, tokenBData.address ?? '')
 
+    dispatch(actions.setNavigation({ address: location.pathname }))
     navigate(
       ROUTES.getNewPositionRoute(
         tokenA,
@@ -255,6 +258,7 @@ const PoolListItem: React.FC<IProps> = ({
       )}
     </Box>
   )
+
   return (
     <Grid className={classes.wrapper}>
       {displayType === 'token' ? (
@@ -274,24 +278,42 @@ const PoolListItem: React.FC<IProps> = ({
           }}>
           {!isMd ? <Typography>{tokenIndex}</Typography> : null}
           <Grid className={classes.imageContainer}>
-            <img
-              className={classes.tokenIcon}
-              src={tokenAData.icon}
-              alt='Token from'
-              onError={e => {
-                e.currentTarget.src = unknownTokenIcon
-              }}
-            />
-            {tokenAData.isUnknown && <img className={classes.warningIcon} src={warningIcon} />}
-            <img
-              className={classes.tokenIcon}
-              src={tokenBData.icon}
-              alt='Token to'
-              onError={e => {
-                e.currentTarget.src = unknownTokenIcon
-              }}
-            />
-            {tokenBData.isUnknown && <img className={classes.warningIcon} src={warningIcon} />}
+            {(tokenAData.icon === '/src/static/svg/unknownToken.svg' || tokenAData.isUnknown) &&
+            isSm ? (
+              <Typography paddingRight={20} margin={0} minWidth={23}>
+                {tokenAData.symbol}
+              </Typography>
+            ) : (
+              <img
+                className={classes.tokenIcon}
+                src={tokenAData.icon}
+                alt='Token from'
+                onError={e => {
+                  e.currentTarget.src = unknownTokenIcon
+                }}
+              />
+            )}
+            {!isSm &&
+              (tokenAData.icon === '/src/static/svg/unknownToken.svg' || tokenAData.isUnknown) &&
+              (tokenBData.icon === '/src/static/svg/unknownToken.svg' || tokenBData.isUnknown) &&
+              ' / '}
+
+            {(tokenBData.icon === '/src/static/svg/unknownToken.svg' || tokenBData.isUnknown) &&
+            isSm ? (
+              <Typography paddingRight={20} margin={0} minWidth={23}>
+                {tokenBData.symbol}
+              </Typography>
+            ) : (
+              <img
+                className={classes.tokenIcon}
+                src={tokenBData.icon}
+                alt='Token from'
+                onError={e => {
+                  e.currentTarget.src = unknownTokenIcon
+                }}
+              />
+            )}
+
             {!isSm && (
               <Typography>
                 {shortenAddress(tokenAData.symbol ?? '')}/{shortenAddress(tokenBData.symbol ?? '')}
@@ -307,6 +329,40 @@ const PoolListItem: React.FC<IProps> = ({
               />
             </TooltipHover>
           </Grid>
+          <Box className={classes.row} justifyContent={'space-between'}>
+            {fee && typeof fee === 'number' && <Typography>{fee}%</Typography>}
+            {isPromoted && (
+              <PromotedPoolPopover apr={convertedApr} apy={convertedApy} points={points}>
+                <Box
+                  className={cx(classes.actionButton, classes.airdropIcon)}
+                  ref={airdropIconRef}
+                  onPointerEnter={() => {
+                    if (!isMobile) {
+                      setIsPromotedPoolPopoverOpen(true)
+                    }
+                  }}
+                  onPointerLeave={() => {
+                    if (!isMobile) {
+                      setIsPromotedPoolPopoverOpen(false)
+                    }
+                  }}
+                  onClick={() => {
+                    if (isMobile) {
+                      setIsPromotedPoolPopoverOpen(!isPromotedPoolPopoverOpen)
+                    }
+                  }}
+                  mr={3}>
+                  <img
+                    width={24}
+                    height={isSm ? 24 : 32}
+                    src={airdropRainbowIcon}
+                    alt={'Airdrop'}
+                  />
+                </Box>
+              </PromotedPoolPopover>
+            )}
+          </Box>
+
           {!isSmd && showAPY ? (
             <Grid className={classes.row} sx={{ justifyContent: 'space-between' }}>
               <Grid sx={{ display: 'flex', gap: '4px' }}>
@@ -317,39 +373,14 @@ const PoolListItem: React.FC<IProps> = ({
                   {`${convertedApr > 1000 ? '>1000%' : convertedApr === 0 ? '-' : Math.abs(convertedApr).toFixed(2) + '%'}`}
                 </Typography>
               </Grid>
-              {isPromoted && (
-                <PromotedPoolPopover apr={convertedApr} apy={convertedApy} points={points}>
-                  <Box
-                    className={cx(classes.actionButton, classes.airdropIcon)}
-                    ref={airdropIconRef}
-                    onPointerEnter={() => {
-                      if (!isMobile) {
-                        setIsPromotedPoolPopoverOpen(true)
-                      }
-                    }}
-                    onPointerLeave={() => {
-                      if (!isMobile) {
-                        setIsPromotedPoolPopoverOpen(false)
-                      }
-                    }}
-                    onClick={() => {
-                      if (isMobile) {
-                        setIsPromotedPoolPopoverOpen(!isPromotedPoolPopoverOpen)
-                      }
-                    }}
-                    mr={3}>
-                    <img width={24} height={32} src={airdropRainbowIcon} alt={'Airdrop'} />
-                  </Box>
-                </PromotedPoolPopover>
-              )}
             </Grid>
           ) : null}
-          {fee && typeof fee === 'number' && <Typography>{fee}%</Typography>}
+          <Typography>{`$${formatNumberWithSuffix(volume)}`}</Typography>
+          <Typography className={classes.selfEnd}>{`$${formatNumberWithSuffix(TVL)}`}</Typography>
           {!isSmd && (
             <Typography> ${formatNumberWithSuffix((fee * 0.01 * volume).toFixed(2))}</Typography>
           )}
-          <Typography>{`$${formatNumberWithSuffix(volume)}`}</Typography>
-          <Typography className={classes.selfEnd}>{`$${formatNumberWithSuffix(TVL)}`}</Typography>
+
           {isSmd && (
             <ArrowDropDownIcon preserveAspectRatio='none' className={classes.extendedRowIcon} />
           )}
@@ -404,7 +435,7 @@ const PoolListItem: React.FC<IProps> = ({
             <>
               <>
                 <Typography component='h5' className={classes.extendedRowTitle}>
-                  Fee ({intervalSuffix}){' '}
+                  Fees ({intervalSuffix}){' '}
                   <span className={classes.extendedRowContent}>
                     ${formatNumberWithSuffix((fee * 0.01 * volume).toFixed(2))}
                   </span>
@@ -462,10 +493,27 @@ const PoolListItem: React.FC<IProps> = ({
                 onSort?.(SortTypePoolList.NAME_ASC)
               }
             }}>
-            Name
+            Pool
             {sortType === SortTypePoolList.NAME_ASC ? (
               <ArrowDropUpIcon className={classes.icon} />
             ) : sortType === SortTypePoolList.NAME_DESC ? (
+              <ArrowDropDownIcon className={classes.icon} />
+            ) : null}
+          </Typography>
+
+          <Typography
+            style={{ cursor: 'pointer' }}
+            onClick={() => {
+              if (sortType === SortTypePoolList.FEE_ASC) {
+                onSort?.(SortTypePoolList.FEE_DESC)
+              } else {
+                onSort?.(SortTypePoolList.FEE_ASC)
+              }
+            }}>
+            Fee
+            {sortType === SortTypePoolList.FEE_ASC ? (
+              <ArrowDropUpIcon className={classes.icon} />
+            ) : sortType === SortTypePoolList.FEE_DESC ? (
               <ArrowDropDownIcon className={classes.icon} />
             ) : null}
           </Typography>
@@ -488,40 +536,6 @@ const PoolListItem: React.FC<IProps> = ({
               ) : null}
             </Typography>
           ) : null}
-          <Typography
-            style={{ cursor: 'pointer' }}
-            onClick={() => {
-              if (sortType === SortTypePoolList.FEE_ASC) {
-                onSort?.(SortTypePoolList.FEE_DESC)
-              } else {
-                onSort?.(SortTypePoolList.FEE_ASC)
-              }
-            }}>
-            Fee
-            {sortType === SortTypePoolList.FEE_ASC ? (
-              <ArrowDropUpIcon className={classes.icon} />
-            ) : sortType === SortTypePoolList.FEE_DESC ? (
-              <ArrowDropDownIcon className={classes.icon} />
-            ) : null}
-          </Typography>
-          {!isSmd && (
-            <Typography
-              style={{ cursor: 'pointer' }}
-              onClick={() => {
-                if (sortType === SortTypePoolList.FEE_24_DESC) {
-                  onSort?.(SortTypePoolList.FEE_24_ASC)
-                } else {
-                  onSort?.(SortTypePoolList.FEE_24_DESC)
-                }
-              }}>
-              Fee {intervalSuffix}
-              {sortType === SortTypePoolList.FEE_24_ASC ? (
-                <ArrowDropUpIcon className={classes.icon} />
-              ) : sortType === SortTypePoolList.FEE_24_DESC ? (
-                <ArrowDropDownIcon className={classes.icon} />
-              ) : null}
-            </Typography>
-          )}
           <Typography
             style={{ cursor: 'pointer' }}
             onClick={() => {
@@ -554,6 +568,24 @@ const PoolListItem: React.FC<IProps> = ({
               <ArrowDropDownIcon className={classes.icon} />
             ) : null}
           </Typography>
+          {!isSmd && (
+            <Typography
+              style={{ cursor: 'pointer' }}
+              onClick={() => {
+                if (sortType === SortTypePoolList.FEE_24_DESC) {
+                  onSort?.(SortTypePoolList.FEE_24_ASC)
+                } else {
+                  onSort?.(SortTypePoolList.FEE_24_DESC)
+                }
+              }}>
+              Fees {intervalSuffix}
+              {sortType === SortTypePoolList.FEE_24_ASC ? (
+                <ArrowDropUpIcon className={classes.icon} />
+              ) : sortType === SortTypePoolList.FEE_24_DESC ? (
+                <ArrowDropDownIcon className={classes.icon} />
+              ) : null}
+            </Typography>
+          )}
           {!isMd && <Typography align='right'>Action</Typography>}
         </Grid>
       )}

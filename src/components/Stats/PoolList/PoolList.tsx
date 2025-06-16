@@ -16,11 +16,13 @@ import { VariantType } from 'notistack'
 import { Keypair } from '@solana/web3.js'
 import { BN } from '@coral-xyz/anchor'
 import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { ROUTES } from '@utils/utils'
 import { colors, theme } from '@static/theme'
 import { ISearchToken } from '@common/FilterSearch/FilterSearch'
 import { shortenAddress } from '@utils/uiUtils'
+import { actions } from '@store/reducers/navigation'
+import { useDispatch } from 'react-redux'
 
 export interface PoolListInterface {
   initialLength: number
@@ -97,7 +99,8 @@ const PoolList: React.FC<PoolListInterface> = ({
   interval = Intervals.Daily
 }) => {
   const navigate = useNavigate()
-
+  const location = useLocation()
+  const dispatch = useDispatch()
   const [initialDataLength, setInitialDataLength] = useState(initialLength)
   const { classes, cx } = useStyles()
   const filteredTokenX = filteredTokens[0] ?? ''
@@ -248,14 +251,15 @@ const PoolList: React.FC<PoolListInterface> = ({
             mainTitle={`The ${shortenAddress(filteredTokenX.symbol ?? '')}/${shortenAddress(filteredTokenY.symbol ?? '')} pool was not found...`}
             desc={initialDataLength < 3 ? '' : 'You can create it yourself!'}
             desc2={initialDataLength < 5 ? '' : 'Or try adjusting your search criteria!'}
-            onAction={() =>
+            onAction={() => {
+              dispatch(actions.setNavigation({ address: location.pathname }))
               navigate(
                 ROUTES.getNewPositionRoute(filteredTokenX.address, filteredTokenY.address, '0_10'),
                 {
                   state: { referer: 'stats' }
                 }
               )
-            }
+            }}
             buttonName='Create Pool'
             withButton={true}
             withImg={initialDataLength > 3}
