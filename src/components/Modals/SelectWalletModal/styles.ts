@@ -2,29 +2,20 @@ import { colors, theme, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles<{ isMobile: boolean }>()((_theme, { isMobile }) => ({
-  modalContainer: {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    pointerEvents: 'none',
-    zIndex: 1300,
-    paddingTop: '25%'
-  },
   popoverRoot: {
     position: 'fixed',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    overflow: 'auto'
+    overflowY: 'auto'
   },
   paper: {
     position: 'relative',
     width: isMobile ? 298 : '520px',
+    [theme.breakpoints.down('sm')]: {
+      margin: isMobile ? '16px' : 0,
+      maxWidth: isMobile ? 'auto' : '100%'
+    },
     margin: '16px',
     background: 'transparent',
     boxShadow: 'none',
@@ -40,7 +31,8 @@ export const useStyles = makeStyles<{ isMobile: boolean }>()((_theme, { isMobile
     padding: '20px 24px',
     boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.5)',
     [theme.breakpoints.down('sm')]: {
-      padding: '16px 20px'
+      padding: '16px 20px',
+      borderRadius: isMobile ? 24 : 0
     }
   },
   buttonWrapper: {
@@ -68,7 +60,12 @@ export const useStyles = makeStyles<{ isMobile: boolean }>()((_theme, { isMobile
     width: '100%'
   },
   buttonList: {
-    marginTop: 12
+    marginTop: 12,
+    [theme.breakpoints.down('sm')]: {
+      display: 'grid',
+      gridTemplateColumns: '1fr 1fr',
+      gap: 8
+    }
   },
   modalFooter: {
     display: 'flex',
@@ -107,7 +104,10 @@ export const useStyles = makeStyles<{ isMobile: boolean }>()((_theme, { isMobile
     width: '100%',
     height: 0,
     background: colors.invariant.light,
-    margin: '24px 0'
+    margin: '24px 0',
+    [theme.breakpoints.down('sm')]: {
+      margin: '12px 0'
+    }
   },
   topCloseButton: {
     pointerEvents: 'auto',
@@ -136,11 +136,13 @@ export const useStyles = makeStyles<{ isMobile: boolean }>()((_theme, { isMobile
         color: colors.invariant.lightGrey
       }
     },
-    '&:first-of-type': {
-      marginBottom: '4px'
-    },
-    '&:not(:first-of-type)': {
-      margin: '4px 0'
+    [theme.breakpoints.up('sm')]: {
+      '&:first-of-type': {
+        marginBottom: '4px'
+      },
+      '&:not(:first-of-type)': {
+        margin: '4px 0'
+      }
     }
   },
 
@@ -165,7 +167,10 @@ export const useStyles = makeStyles<{ isMobile: boolean }>()((_theme, { isMobile
 
     justifyContent: 'center',
     img: {
-      marginRight: '12px'
+      marginRight: '12px',
+      [theme.breakpoints.down('sm')]: {
+        marginRight: 0
+      }
     },
     [theme.breakpoints.down('sm')]: {
       ...typography.body3
@@ -174,7 +179,10 @@ export const useStyles = makeStyles<{ isMobile: boolean }>()((_theme, { isMobile
   buttonContainer: {
     width: 150,
     display: 'flex',
-    justifyContent: 'flex-start'
+    justifyContent: 'flex-start',
+    [theme.breakpoints.down('sm')]: {
+      justifyContent: 'center'
+    }
   },
   mobileSubtitle: {
     ...typography.body2,
@@ -192,6 +200,22 @@ export const useStyles = makeStyles<{ isMobile: boolean }>()((_theme, { isMobile
     height: 48,
     gap: 12,
     ...typography.body2
+  },
+  walletSelector: {
+    textTransform: 'capitalize',
+    fontSize: '24px',
+    textAlign: 'center',
+    fontWeight: 400,
+    display: 'flex',
+    alignItems: 'center',
+
+    justifyContent: 'center',
+    img: {
+      marginRight: '12px'
+    },
+    [theme.breakpoints.down('sm')]: {
+      ...typography.body3
+    }
   }
 }))
 
