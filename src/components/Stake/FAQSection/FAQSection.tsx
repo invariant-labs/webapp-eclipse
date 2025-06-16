@@ -1,7 +1,6 @@
 import { Faq } from '@common/Faq/Faq'
 import { Box, Typography } from '@mui/material'
 import { colors, typography } from '@static/theme'
-import React from 'react'
 
 
 const faqData = [
