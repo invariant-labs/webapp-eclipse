@@ -22,6 +22,7 @@ import { ISinglePositionData } from '@components/Portfolio/Overview/Overview/Ove
 import { IPositionItem } from '@store/consts/types'
 import { InactivePoolsPopover } from '../components/InactivePoolsPopover/InactivePoolsPopover'
 import { MinMaxChart } from '../components/MinMaxChart/MinMaxChart'
+import { ReactFitty } from 'react-fitty'
 
 interface IPositionItemMobile extends IPositionItem {
   setAllowPropagation: React.Dispatch<React.SetStateAction<boolean>>
@@ -453,7 +454,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
       />
       <Grid container item className={classes.mdTop}>
         <Grid container item className={classes.iconsAndNames}>
-          <Box display='flex' alignItems={'center'}>
+          <Box display='flex' alignItems={'center'} flex='1'>
             <Grid container item className={classes.icons}>
               <img
                 className={classes.tokenIcon}
@@ -477,9 +478,11 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
                 alt={xToY ? tokenYName : tokenXName}
               />
             </Grid>
-            <Typography className={classes.names}>
-              {xToY ? tokenXName : tokenYName} - {xToY ? tokenYName : tokenXName}
-            </Typography>
+            <Box className={classes.tickersContainer}>
+              <Typography className={classes.names} component={ReactFitty} maxSize={28}>
+                {xToY ? tokenXName : tokenYName} - {xToY ? tokenYName : tokenXName}
+              </Typography>
+            </Box>
           </Box>
 
           <Box ref={airdropIconRef} className={classes.actionButtonContainer}>
