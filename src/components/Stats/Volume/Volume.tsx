@@ -46,6 +46,9 @@ const Volume: React.FC<StatsInterface> = ({
 
   const isXsDown = useMediaQuery(theme.breakpoints.down('xs'))
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
+  const isMdUp = useMediaQuery(theme.breakpoints.up('md'))
+  const isLgDown = useMediaQuery(theme.breakpoints.down('lg'))
+  const isTablet = isMdUp && isLgDown
 
   const hideTooltip = useCallback((immediate = false) => {
     if (hideTimeoutRef.current) {
@@ -249,7 +252,9 @@ const Volume: React.FC<StatsInterface> = ({
             tickPadding: 10,
             tickRotation: 0,
             format: time =>
-              isLoading ? '' : formatPlotDataLabels(time, data.length, interval, isMobile)
+              isLoading
+                ? ''
+                : formatPlotDataLabels(time, data.length, interval, isMobile || isTablet)
           }}
           axisLeft={{
             tickSize: 0,

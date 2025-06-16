@@ -17,7 +17,7 @@ export const useStyles = makeStyles()(() => ({
 
     [theme.breakpoints.down('sm')]: {
       flexDirection: 'column',
-      padding: '12px 8px'
+      padding: '24px 8px'
     }
   },
   loadingOverlay: {
@@ -38,7 +38,7 @@ export const useStyles = makeStyles()(() => ({
   plot: {
     width: 605,
 
-    [theme.breakpoints.down('sm')]: {
+    [theme.breakpoints.down('md')]: {
       width: '100%'
     }
   },
@@ -49,7 +49,7 @@ export const useStyles = makeStyles()(() => ({
     ...typography.body3,
     color: colors.invariant.textGrey,
 
-    [theme.breakpoints.down('sm')]: {
+    [theme.breakpoints.down('md')]: {
       ...typography.body2
     }
   },
@@ -57,7 +57,7 @@ export const useStyles = makeStyles()(() => ({
     ...typography.heading4,
     color: colors.invariant.text,
 
-    [theme.breakpoints.down('sm')]: {
+    [theme.breakpoints.down('md')]: {
       ...typography.body1
     }
   }

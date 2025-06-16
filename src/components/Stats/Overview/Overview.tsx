@@ -61,13 +61,13 @@ const Overview: React.FC<IOverview> = ({
               flexWrap={'wrap'}
               flexShrink={1}
               flexDirection={isMd ? 'column' : 'row'}
-              width={isSm ? '100%' : 'auto'}>
+              width={isMd ? '100%' : 'auto'}>
               <Box
                 display='flex'
-                width={isSm ? '100%' : 'auto'}
+                width={isMd ? '100%' : 'auto'}
                 alignItems='center'
                 gap={1}
-                justifyContent={isSm ? 'space-between' : 'flex-start'}>
+                justifyContent={isMd ? 'space-between' : 'flex-start'}>
                 <Typography className={classes.label}>Cumulative Volume:</Typography>
 
                 <Typography className={classes.value}>
@@ -76,10 +76,10 @@ const Overview: React.FC<IOverview> = ({
               </Box>
               <Box
                 display='flex'
-                width={isSm ? '100%' : 'auto'}
+                width={isMd ? '100%' : 'auto'}
                 alignItems='center'
                 gap={1}
-                justifyContent={isSm ? 'space-between' : 'flex-start'}>
+                justifyContent={isMd ? 'space-between' : 'flex-start'}>
                 <Typography className={classes.label}>Cumulative Fee:</Typography>
 
                 <Typography className={classes.value}>
@@ -94,7 +94,7 @@ const Overview: React.FC<IOverview> = ({
                   color={colors.invariant.light}
                   width={1}
                   isHorizontal
-                  margin={isSm ? '0 24px' : '0'}
+                  margin={isMd ? '0 24px' : '0'}
                 />
               </Box>
             )}
@@ -117,7 +117,7 @@ const Overview: React.FC<IOverview> = ({
           <Box
             display='flex'
             gap={'24px'}
-            flexDirection={isSm ? 'column' : 'row'}
+            flexDirection={isMd ? 'column' : 'row'}
             mt={isMd ? '24px' : 0}>
             <Volume
               volume={volumeInterval.value}
@@ -130,9 +130,9 @@ const Overview: React.FC<IOverview> = ({
 
             <Separator
               color={colors.invariant.light}
-              margin={isSm ? '0 24px' : '0'}
+              margin={isMd ? '0 24px' : '0'}
               width={1}
-              isHorizontal={isSm}
+              isHorizontal={isMd}
             />
 
             <Liquidity

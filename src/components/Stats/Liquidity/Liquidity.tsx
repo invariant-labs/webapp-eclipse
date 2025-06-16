@@ -1,10 +1,10 @@
 import React from 'react'
 import { ResponsiveLine } from '@nivo/line'
 import { linearGradientDef } from '@nivo/core'
-import { colors, typography } from '@static/theme'
+import { colors, theme, typography } from '@static/theme'
 import { useStyles } from './style'
 import { TimeData } from '@store/reducers/stats'
-import { Grid, Typography } from '@mui/material'
+import { Grid, Typography, useMediaQuery } from '@mui/material'
 import { formatNumberWithoutSuffix, trimZeros } from '@utils/utils'
 import {
   formatLargeNumber,
@@ -13,7 +13,6 @@ import {
   mapIntervalToPrecision,
   mapIntervalToString
 } from '@utils/uiUtils'
-import useIsMobile from '@store/hooks/isMobile'
 import { Intervals as IntervalsKeys } from '@store/consts/static'
 interface LiquidityInterface {
   liquidityVolume: number | null
@@ -38,7 +37,11 @@ const Liquidity: React.FC<LiquidityInterface> = ({
 
   liquidityVolume = liquidityVolume ?? 0
 
-  const isMobile = useIsMobile()
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
+  const isMdUp = useMediaQuery(theme.breakpoints.up('md'))
+  const isLgDown = useMediaQuery(theme.breakpoints.down('lg'))
+
+  const isTablet = isMdUp && isLgDown
 
   return (
     <Grid className={cx(classes.container, className)}>
@@ -112,7 +115,9 @@ const Liquidity: React.FC<LiquidityInterface> = ({
             tickPadding: 10,
             tickRotation: 0,
             format: time =>
-              isLoading ? '' : formatPlotDataLabels(time, data.length, interval, isMobile),
+              isLoading
+                ? ''
+                : formatPlotDataLabels(time, data.length, interval, isMobile || isTablet),
             tickValues: isLoading ? [] : mapIntervalToPrecision(interval)
           }}
           axisLeft={{
