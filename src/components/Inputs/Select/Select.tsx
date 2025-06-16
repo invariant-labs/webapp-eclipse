@@ -24,7 +24,7 @@ export interface ISelectModal {
   onHideUnknownTokensChange: (val: boolean) => void
   hiddenUnknownTokens: boolean
   network: NetworkType
-  hideSelect: boolean
+  hideSelect?: boolean
 }
 
 export const Select: React.FC<ISelectModal> = ({
@@ -42,7 +42,7 @@ export const Select: React.FC<ISelectModal> = ({
   onHideUnknownTokensChange,
   hiddenUnknownTokens,
   network,
-  hideSelect
+  hideSelect = false
 }) => {
   const { classes, cx } = useStyles({ hideSelect })
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
