@@ -56,7 +56,8 @@ import { colors, theme } from '@static/theme'
 import { ISearchToken } from '@common/FilterSearch/FilterSearch'
 import { shortenAddress } from '@utils/uiUtils'
 import { actions } from '@store/reducers/navigation'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { liquiditySearch } from '@store/selectors/navigation'
 
 const ITEMS_PER_PAGE = 10
 
@@ -100,8 +101,11 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
   filteredTokens,
   interval
 }) => {
-  const [page, setPage] = React.useState(1)
-  const [sortType, setSortType] = React.useState(SortTypePoolList.FEE_24_DESC)
+  const searchParam = useSelector(liquiditySearch)
+  const [page, setPage] = React.useState(searchParam.pageNumber)
+  const [sortType, setSortType] = React.useState(searchParam.sortType)
+  const dispatch = useDispatch()
+  const location = useLocation()
   const navigate = useNavigate()
   const [initialDataLength, setInitialDataLength] = useState(initialLength)
   const isCenterAligment = useMediaQuery(theme.breakpoints.down(1280))
@@ -109,6 +113,10 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
   const filteredTokenX = filteredTokens[0] ?? ''
   const filteredTokenY = filteredTokens[1] ?? ''
   const { classes, cx } = useStyles()
+  useEffect(() => {
+    dispatch(actions.setSearch({ section: 'liquidityPool', type: 'sortType', sortType }))
+  }, [sortType])
+
   const sortedData = useMemo(() => {
     if (isLoading) {
       return generateMockData()
@@ -175,8 +183,7 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
   useEffect(() => {
     setPage(1)
   }, [data, pages])
-  const dispatch = useDispatch()
-  const location = useLocation()
+
   return (
     <Grid
       container

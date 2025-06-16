@@ -26,6 +26,7 @@ import PoolList from '@components/Stats/PoolList/PoolList'
 import { unknownTokenIcon } from '@static/icons'
 import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import { actions as snackbarActions } from '@store/reducers/snackbars'
+import { actions as navigationActions } from '@store/reducers/navigation'
 import { VariantType } from 'notistack'
 import { getPromotedPools } from '@store/selectors/leaderboard'
 import { FilterSearch, ISearchToken } from '@common/FilterSearch/FilterSearch'
@@ -33,6 +34,7 @@ import { Intervals as IntervalsKeys } from '@store/consts/static'
 import { Separator } from '@common/Separator/Separator'
 import { colors, theme } from '@static/theme'
 import Intervals from '@components/Stats/Intervals/Intervals'
+import { poolSearch, tokenSearch } from '@store/selectors/navigation'
 
 export const WrappedStats: React.FC = () => {
   const { classes, cx } = useStyles()
@@ -52,11 +54,36 @@ export const WrappedStats: React.FC = () => {
   const isLoadingStats = useSelector(isLoading)
   const currentNetwork = useSelector(network)
   const promotedPools = useSelector(getPromotedPools)
+  const searchParamsPool = useSelector(poolSearch)
+  const searchParamsToken = useSelector(tokenSearch)
 
   const lastUsedInterval = useSelector(currentInterval)
   const lastFetchedInterval = useSelector(lastInterval)
-  const [searchTokensValue, setSearchTokensValue] = useState<ISearchToken[]>([])
-  const [searchPoolsValue, setSearchPoolsValue] = useState<ISearchToken[]>([])
+  const [searchTokensValue, setSearchTokensValue] = useState<ISearchToken[]>(
+    searchParamsToken.filteredTokens
+  )
+
+  const [searchPoolsValue, setSearchPoolsValue] = useState<ISearchToken[]>(
+    searchParamsPool.filteredTokens
+  )
+  useEffect(() => {
+    dispatch(
+      navigationActions.setSearch({
+        section: 'statsPool',
+        type: 'filteredTokens',
+        filteredTokens: searchPoolsValue
+      })
+    )
+  }, [searchPoolsValue])
+  useEffect(() => {
+    dispatch(
+      navigationActions.setSearch({
+        section: 'statsTokens',
+        type: 'filteredTokens',
+        filteredTokens: searchTokensValue
+      })
+    )
+  }, [searchTokensValue])
 
   useEffect(() => {
     dispatch(leaderboardActions.getLeaderboardConfig())

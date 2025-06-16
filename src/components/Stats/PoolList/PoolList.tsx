@@ -22,7 +22,8 @@ import { colors, theme } from '@static/theme'
 import { ISearchToken } from '@common/FilterSearch/FilterSearch'
 import { shortenAddress } from '@utils/uiUtils'
 import { actions } from '@store/reducers/navigation'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { poolSearch } from '@store/selectors/navigation'
 
 export interface PoolListInterface {
   initialLength: number
@@ -101,13 +102,19 @@ const PoolList: React.FC<PoolListInterface> = ({
   const navigate = useNavigate()
   const location = useLocation()
   const dispatch = useDispatch()
+  const searchParam = useSelector(poolSearch)
+
   const [initialDataLength, setInitialDataLength] = useState(initialLength)
   const { classes, cx } = useStyles()
   const filteredTokenX = filteredTokens[0] ?? ''
   const filteredTokenY = filteredTokens[1] ?? ''
 
-  const [page, setPage] = React.useState(1)
-  const [sortType, setSortType] = React.useState(SortTypePoolList.FEE_24_DESC)
+  const [page, setPage] = React.useState(searchParam.pageNumber)
+  const [sortType, setSortType] = React.useState(searchParam.sortType)
+
+  useEffect(() => {
+    dispatch(actions.setSearch({ section: 'statsPool', type: 'sortType', sortType }))
+  }, [sortType])
 
   const sortedData = useMemo(() => {
     if (isLoading) {

@@ -10,12 +10,14 @@ import { actions as snackbarActions } from '@store/reducers/snackbars'
 import { network } from '@store/selectors/solanaConnection'
 import { actions } from '@store/reducers/stats'
 import { actions as leaderboardActions } from '@store/reducers/leaderboard'
+import { actions as navigationActions } from '@store/reducers/navigation'
 import LiquidityPoolList from '@components/LiquidityPoolList/LiquidityPoolList'
 import { getPromotedPools } from '@store/selectors/leaderboard'
 
 import { FilterSearch, ISearchToken } from '@common/FilterSearch/FilterSearch'
 import { theme } from '@static/theme'
 import { Intervals } from '@store/consts/static'
+import { liquiditySearch } from '@store/selectors/navigation'
 
 export const WrappedPoolList: React.FC = () => {
   const dispatch = useDispatch()
@@ -24,11 +26,22 @@ export const WrappedPoolList: React.FC = () => {
   const networkType = useSelector(network)
   const promotedPools = useSelector(getPromotedPools)
   const currentNetwork = useSelector(network)
+  const searchParams = useSelector(liquiditySearch)
+  const selectedFiltersGlobal = searchParams.filteredTokens
   const isLoadingStats = useSelector(isLoading)
   const isXs = useMediaQuery(theme.breakpoints.down('sm'))
 
   const { classes } = useStyles({ isXs })
-  const [selectedFilters, setSelectedFilters] = useState<ISearchToken[]>([])
+  const [selectedFilters, setSelectedFilters] = useState<ISearchToken[]>(selectedFiltersGlobal)
+  useEffect(() => {
+    dispatch(
+      navigationActions.setSearch({
+        section: 'liquidityPool',
+        type: 'filteredTokens',
+        filteredTokens: selectedFilters
+      })
+    )
+  }, [selectedFilters])
   const lastFetchedInterval = useSelector(lastInterval)
 
   const filteredPoolsList = useMemo(() => {

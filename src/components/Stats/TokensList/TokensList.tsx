@@ -16,6 +16,9 @@ import { InputPagination } from '@common/Pagination/InputPagination/InputPaginat
 import NotFoundPlaceholder from '../NotFoundPlaceholder/NotFoundPlaceholder'
 import { VariantType } from 'notistack'
 import { Keypair } from '@solana/web3.js'
+import { useDispatch, useSelector } from 'react-redux'
+import { tokenSearch } from '@store/selectors/navigation'
+import { actions } from '@store/reducers/navigation'
 
 export interface ITokensListData {
   icon: string
@@ -62,8 +65,14 @@ const TokensList: React.FC<ITokensList> = ({
 }) => {
   const [initialDataLength, setInitialDataLength] = useState(initialLength)
   const { classes, cx } = useStyles()
-  const [page, setPage] = useState(1)
-  const [sortType, setSortType] = React.useState(SortTypeTokenList.VOLUME_DESC)
+  const dispatch = useDispatch()
+  const searchParams = useSelector(tokenSearch)
+  const [page, setPage] = useState(searchParams.pageNumber)
+  const [sortType, setSortType] = React.useState(searchParams.sortType)
+
+  useEffect(() => {
+    dispatch(actions.setSearch({ section: 'statsTokens', type: 'sortType', sortType }))
+  }, [sortType])
 
   const isXsDown = useMediaQuery(theme.breakpoints.down('xs'))
 
