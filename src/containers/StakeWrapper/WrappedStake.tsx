@@ -4,9 +4,14 @@ import { Box, Grid, Typography } from '@mui/material'
 import LiquidityStaking from '@components/Stake/Stake'
 import { Link } from 'react-router-dom'
 import LaunchIcon from '@mui/icons-material/Launch'
+import { useSelector } from 'react-redux'
+import { status, swapTokensDict } from '@store/selectors/solanaWallet'
 
 export const WrappedStake: React.FC = () => {
   const { classes } = useStyles()
+
+  const walletStatus = useSelector(status)
+  const tokens = useSelector(swapTokensDict)
 
   return (
     <Grid container className={classes.wrapper}>
@@ -19,7 +24,7 @@ export const WrappedStake: React.FC = () => {
           </Link>
         </Box>
       </Box>
-      <LiquidityStaking />
+      <LiquidityStaking walletStatus={walletStatus} tokens={tokens} />
     </Grid>
   )
 }

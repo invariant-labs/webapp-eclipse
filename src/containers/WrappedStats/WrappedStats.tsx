@@ -68,7 +68,7 @@ export const WrappedStats: React.FC = () => {
   }, [lastUsedInterval, lastFetchedInterval])
 
   useEffect(() => {
-    if (!!lastUsedInterval) return
+    if (lastUsedInterval) return
     dispatch(actions.getCurrentIntervalStats({ interval: IntervalsKeys.Daily }))
     dispatch(actions.setCurrentInterval({ interval: IntervalsKeys.Daily }))
   }, [lastUsedInterval])

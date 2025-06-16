@@ -5,7 +5,6 @@ import Slippage from '@components/Modals/Slippage/Slippage'
 import Refresher from '@common/Refresher/Refresher'
 import { BN } from '@coral-xyz/anchor'
 import { Box, Button, Grid, Typography } from '@mui/material'
-
 import {
   DEFAULT_TOKEN_DECIMAL,
   NetworkType,
@@ -983,6 +982,11 @@ export const Swap: React.FC<ISwap> = ({
     lockAnimation ||
     (getStateMessage() === 'Loading' &&
       (inputRef === inputTarget.FROM || inputRef === inputTarget.DEFAULT))
+  console.log(
+    tokenFromIndex !== null && !!tokens[tokenFromIndex]
+      ? printBN(tokens[tokenFromIndex].balance, tokens[tokenFromIndex].decimals)
+      : '- -'
+  )
 
   return (
     <Grid container className={classes.swapWrapper} alignItems='center'>
