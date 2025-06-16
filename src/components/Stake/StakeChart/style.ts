@@ -4,25 +4,39 @@ import { colors, typography } from '@static/theme'
 
 export const useStyles = makeStyles()((theme: Theme) => ({
   chartContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    maxWidth: '100%',
     width: '100%',
-    marginTop: '72px',
-    backgroundColor: colors.invariant.component,
-    padding: '24px',
-    borderRadius: '24px'
+    marginTop: theme.spacing(3),
+    background: colors.invariant.component,
+    borderRadius: 24,
+    padding: '24px 0px',
+    [theme.breakpoints.down('md')]: {
+      width: '100%',
+      padding: '20px 0px'
+    },
+    [theme.breakpoints.down('sm')]: {
+      padding: '16px 0px',
+      borderRadius: 16
+    }
   },
   stakeText: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    flexDirection: 'column',
     color: colors.invariant.text,
     fontWeight: 600,
     fontSize: 16,
     textAlign: 'center',
     marginBottom: theme.spacing(2),
-    flexWrap: 'wrap',
-    gap: theme.spacing(1)
+    gap: theme.spacing(1),
+    [theme.breakpoints.down('sm')]: {
+      fontSize: 14,
+      gap: theme.spacing(0.5)
+    }
   },
-
   inputField: {
     '& .MuiOutlinedInput-root': {
       '& fieldset': {
@@ -36,25 +50,41 @@ export const useStyles = makeStyles()((theme: Theme) => ({
         borderColor: colors.invariant.green
       }
     },
-    maxWidth: '100px'
+    maxWidth: '100px',
+    [theme.breakpoints.down('sm')]: {
+      maxWidth: '80px'
+    }
   },
   inputProps: {
     textAlign: 'center',
     color: colors.invariant.green,
     fontWeight: 600,
-    padding: '4px 8px',
-    width: '70px'
+    padding: '4px 6px',
+    maxHeight: '32px',
+    minWidth: '70px',
+    [theme.breakpoints.down('sm')]: {
+      padding: '2px 4px',
+      maxHeight: '28px',
+      minWidth: '60px'
+    }
   },
   chartBox: {
-    height: 350,
-    width: '100%'
+    height: 400,
+    width: '100%',
+    [theme.breakpoints.down('sm')]: {
+      height: 300
+    }
   },
   legendContainer: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: theme.spacing(2),
-    gap: theme.spacing(3)
+    gap: theme.spacing(3),
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column',
+      gap: theme.spacing(1)
+    }
   },
   legendItem: {
     display: 'flex',
@@ -85,17 +115,45 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: theme.spacing(2),
-    gap: theme.spacing(4)
+    gap: theme.spacing(4),
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column',
+      gap: theme.spacing(1)
+    }
   },
   bitzValue: {
     color: colors.invariant.green,
-    fontWeight: 600,
-    fontSize: '14px'
+    ...typography.body1,
+    [theme.breakpoints.down('sm')]: {
+      fontSize: '0.875rem'
+    }
   },
   sBitzValue: {
     color: colors.invariant.pink,
-    fontWeight: 600,
-    fontSize: '14px'
+    ...typography.body1,
+    [theme.breakpoints.down('sm')]: {
+      fontSize: '0.875rem'
+    }
+  },
+  tooltip: {
+    background: colors.invariant.component,
+    border: `1px solid ${colors.invariant.lightGrey}`,
+    borderRadius: 5,
+    width: 120,
+    padding: 8,
+    [theme.breakpoints.down('sm')]: {
+      width: 100,
+      padding: 6
+    }
+  },
+  tooltipDate: {
+    ...typography.caption2,
+    color: colors.white.main,
+    textAlign: 'center'
+  },
+  tooltipValue: {
+    ...typography.caption1,
+    textAlign: 'center'
   }
 }))
 

@@ -11,13 +11,21 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     background: colors.invariant.component,
     borderRadius: 24,
     padding: '24px 16px',
+    [theme.breakpoints.down('md')]: {
+      width: '100%',
+      padding: '20px 12px'
+    },
     [theme.breakpoints.down('sm')]: {
-      padding: '0 8px'
+      padding: '16px 8px',
+      borderRadius: 16
     }
   },
   title: {
     color: colors.invariant.text,
-    ...typography.heading4
+    ...typography.heading4,
+    [theme.breakpoints.down('sm')]: {
+      fontSize: '1.25rem'
+    }
   },
   amountInput: {
     position: 'relative',
@@ -26,7 +34,11 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   swapButton: {
     marginTop: 24,
     width: '100%',
-    height: 48
+    height: 48,
+    [theme.breakpoints.down('sm')]: {
+      marginTop: 16,
+      height: 44
+    }
   },
   ButtonSwapActive: {
     transition: 'filter 0.3s linear',

@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ResponsiveLine } from '@nivo/line';
-import { Box, Typography, TextField } from '@mui/material';
-import { colors } from '@static/theme';
+import { Box, Typography, TextField, Grid, useMediaQuery } from '@mui/material';
+import { colors, theme } from '@static/theme';
 import { useStyles } from './style';
-
+import { linearGradientDef } from '@nivo/core';
+import BITZ from '@static/png/BITZ.png'
+import sBITZ from '@static/png/sBITZ.png'
 type PointData = {
     x: string;
     y: number;
@@ -42,6 +44,15 @@ export const StakeChart: React.FC<StakeChartProps> = ({
         }
     };
 
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+    const isTablet = useMediaQuery(theme.breakpoints.down('md'));
+
+    const getTickFrequency = useCallback(() => {
+        if (isMobile) return 8;
+        if (isTablet) return 4;
+        return 2;
+    }, [isMobile, isTablet]);
+
     useEffect(() => {
         setInputValue(stakedAmount.toString());
     }, [stakedAmount]);
@@ -59,47 +70,52 @@ export const StakeChart: React.FC<StakeChartProps> = ({
         }
     ];
 
+
+
     const CustomValueLayer = ({ xScale, yScale }) => {
         if (!bitzData.length || !sBitzData.length) return null;
 
         const lastBitzPoint = bitzData[bitzData.length - 1];
         const lastSBitzPoint = sBitzData[sBitzData.length - 1];
 
-        const xPosition = xScale(lastBitzPoint.x);
+        const pointValues = [
+            {
+                y: lastBitzPoint.y,
+                yPosition: yScale(lastBitzPoint.y),
+                color: colors.invariant.green
+            },
+            {
+                y: lastSBitzPoint.y,
+                yPosition: yScale(lastSBitzPoint.y),
+                color: colors.invariant.pink
+            }
+        ];
 
-        const bitzYPosition = yScale(lastBitzPoint.y);
-        const sBitzYPosition = yScale(lastSBitzPoint.y);
+        const xPosition = isMobile
+            ? xScale.range()[1] - 5
+            : xScale(lastBitzPoint.x);
+
+        const textAnchor = isMobile ? "end" : "middle";
 
         return (
             <g>
-                <text
-                    x={xPosition}
-                    y={bitzYPosition - 10}
-                    textAnchor="middle"
-                    dominantBaseline="middle"
-                    style={{
-                        fontSize: 12,
-                        fontWeight: 'bold',
-                        fill: colors.invariant.green
-                    }}
-                >
-                    {lastBitzPoint.y.toFixed(2)}
-                </text>
-
-                {/* sBITZ value */}
-                <text
-                    x={xPosition}
-                    y={sBitzYPosition - 10}
-                    textAnchor="middle"
-                    dominantBaseline="middle"
-                    style={{
-                        fontSize: 12,
-                        fontWeight: 'bold',
-                        fill: colors.invariant.pink
-                    }}
-                >
-                    {lastSBitzPoint.y.toFixed(2)}
-                </text>
+                {pointValues.map((point, index) => (
+                    <text
+                        key={index}
+                        x={xPosition + (isMobile ? 5 : 0)}
+                        y={point.yPosition - (index === 0 || !isMobile ? 10 : 0)}
+                        textAnchor={textAnchor}
+                        dominantBaseline="middle"
+                        style={{
+                            fontSize: 12,
+                            fontWeight: 'bold',
+                            fill: point.color,
+                            filter: isMobile ? 'drop-shadow(0px 0px 2px rgba(0,0,0,0.5))' : 'none'
+                        }}
+                    >
+                        {point.y.toFixed(2)}
+                    </text>
+                ))}
             </g>
         );
     };
@@ -107,36 +123,67 @@ export const StakeChart: React.FC<StakeChartProps> = ({
     return (
         <Box className={classes.chartContainer}>
             <Box className={classes.stakeText}>
-                <Typography component="span">
-                    Staking
-                </Typography>
-                <TextField
-                    value={inputValue}
-                    onChange={handleInputChange}
-                    variant="outlined"
-                    type='number'
-                    size="small"
-                    inputProps={{
-                        className: classes.inputProps
-                    }}
-                    className={classes.inputField}
-                />
-                <Typography component="span" sx={{ color: colors.invariant.text }}>
-                    with BITZ in the last year would have earned you an extra
-                </Typography>
-                <Typography component="span" sx={{ color: colors.invariant.green }}>
-                    {earnedAmount} SOL (${earnedAmountUsd})
-                </Typography>
+
+                <Box sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    flexDirection: isMobile ? 'column' : 'row',
+                    textAlign: isMobile ? 'center' : 'left'
+                }}>
+                    <Typography>
+                        Staking
+                    </Typography>
+                    <TextField
+                        value={inputValue}
+                        onChange={handleInputChange}
+                        variant="outlined"
+                        type='number'
+                        size="small"
+                        InputProps={{
+                            className: classes.inputProps,
+                            startAdornment: (
+                                <Box component="span" sx={{ display: 'flex', alignItems: 'center', marginRight: 2, paddingLeft: '4px' }}>
+                                    <img src={BITZ} alt="BITZ" style={{ height: '16px', minWidth: '16px' }} />
+                                </Box>
+                            ),
+                        }}
+                        className={classes.inputField}
+                    />
+                    <Typography sx={{ color: colors.invariant.text }}>
+                        with BITZ in the last year would have
+                    </Typography>
+                </Box>
+                <Box sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    flexDirection: isMobile ? 'column' : 'row',
+                    textAlign: isMobile ? 'center' : 'left'
+                }}>
+                    <Typography sx={{ color: colors.invariant.text }}>
+                        earned you an extra
+                    </Typography>
+                    <Typography sx={{ color: colors.invariant.green }}>
+                        {earnedAmount} BITZ  (${earnedAmountUsd})
+                    </Typography>
+                </Box>
             </Box>
 
             <Box className={classes.chartBox}>
                 <ResponsiveLine
                     data={data}
-                    margin={{ top: 20, right: 20, bottom: 50, left: 60 }}
+
+                    margin={{
+                        top: 20,
+                        right: isMobile ? 10 : 20,
+                        bottom: 50,
+                        left: isMobile ? 40 : 60
+                    }}
                     xScale={{ type: 'point' }}
                     yScale={{
                         type: 'linear',
-                        min: 'auto',
+                        min: 0,
                         max: 'auto',
                         stacked: false
                     }}
@@ -145,29 +192,36 @@ export const StakeChart: React.FC<StakeChartProps> = ({
                     axisBottom={{
                         tickSize: 5,
                         tickPadding: 5,
-                        tickRotation: 0,
+                        tickRotation: isMobile ? -45 : 0,
                         legend: '',
-                        legendOffset: 36
+                        legendOffset: 36,
+                        tickValues: bitzData.filter((_, i) => i % getTickFrequency() === 0).map(d => d.x)
+
                     }}
                     axisLeft={{
                         tickSize: 5,
                         tickPadding: 5,
                         tickRotation: 0,
-                        legend: 'BITZ',
-                        legendOffset: -40
+                        legend: isMobile ? '' : 'BITZ',
+                        legendOffset: -40,
+                        tickValues: 6,
                     }}
                     colors={({ color }) => color}
                     pointSize={0}
                     useMesh={true}
                     enableSlices="x"
+                    enableArea={true}
+                    isInteractive
+                    areaBlendMode="normal"
+                    areaBaselineValue={0}
                     gridXValues={[]}
                     enableGridX={false}
                     enableGridY={true}
-                    lineWidth={1.5}
+                    enableCrosshair
+                    lineWidth={1}
+                    gridYValues={6}
+                    areaOpacity={0.4}
                     legends={[]}
-                    enableArea={true}
-                    areaOpacity={0.15}
-                    areaBaselineValue={0}
                     layers={[
                         'grid',
                         'markers',
@@ -178,51 +232,31 @@ export const StakeChart: React.FC<StakeChartProps> = ({
                         'slices',
                         'mesh',
                         'legends',
+                        'crosshair',
                         CustomValueLayer
                     ]}
                     defs={[
-                        {
-                            id: 'gradientGreen',
-                            type: 'linearGradient',
-                            colors: [
-                                { offset: 0, color: colors.invariant.green, opacity: 0.9 },
-                                { offset: 60, color: colors.invariant.green, opacity: 0 }
-                            ]
-                        },
-                        {
-                            id: 'gradientPink',
-                            type: 'linearGradient',
-                            colors: [
-                                { offset: 0, color: colors.invariant.pink, opacity: 0.9 },
-                                { offset: 60, color: colors.invariant.pink, opacity: 0 }
-                            ]
-                        }
+                        linearGradientDef('gradientPink', [
+                            { offset: 0, color: colors.invariant.pink },
+                            { offset: 100, color: colors.invariant.pink, opacity: 0 }
+                        ]),
+                        linearGradientDef('gradientGreen', [
+                            { offset: 0, color: colors.invariant.green },
+                            { offset: 100, color: colors.invariant.green, opacity: 0 }
+                        ])
+
                     ]}
+
                     fill={[
                         { match: { id: 'BITZ' }, id: 'gradientGreen' },
                         { match: { id: 'sBITZ' }, id: 'gradientPink' }
                     ]}
                     theme={{
-                        grid: {
-                            line: {
-                                stroke: colors.invariant.light,
-                                strokeWidth: 1
-                            }
-                        },
-                        crosshair: {
-                            line: {
-                                stroke: '#b0b0b0',
-                                strokeWidth: 1,
-                                strokeOpacity: 0.5
-                            }
-                        },
+
                         axis: {
                             ticks: {
-                                text: {
-                                    fontSize: '12px',
-                                    fontFamily: 'inherit',
-                                    fill: colors.invariant.textGrey
-                                }
+                                line: { stroke: colors.invariant.component },
+                                text: { fill: '#A9B6BF' }
                             },
                             legend: {
                                 text: {
@@ -231,31 +265,61 @@ export const StakeChart: React.FC<StakeChartProps> = ({
                                     fill: colors.invariant.textGrey
                                 }
                             }
-                        }
+                        },
+                        crosshair: {
+                            line: {
+                                stroke: colors.invariant.lightGrey,
+                                strokeWidth: 1,
+                                strokeDasharray: 'solid'
+                            }
+                        },
+                        grid: { line: { stroke: colors.invariant.light } }
                     }}
+                    sliceTooltip={({ slice }) => {
+                        return (
+                            <Grid className={classes.tooltip}>
+                                {slice.points.length > 0 && (
+                                    <>
+                                        <Typography className={classes.tooltipDate}>
+                                            {slice.points[0].data.xFormatted}
+                                        </Typography>
+                                        {slice.points.map(point => (
+                                            <Typography
+                                                key={point.id}
+                                                className={classes.tooltipValue}
+                                                sx={{ color: `${point.serieColor}` }}
+                                            >
+                                                {point.data.yFormatted} {point.serieId}
+                                            </Typography>
+                                        ))}
+                                    </>
+                                )}
+                            </Grid>
+                        );
+                    }}
+
                 />
             </Box>
 
-            <Box className={classes.legendContainer}>
-                <Box className={classes.legendItem}>
-                    <Box className={`${classes.legendDot} ${classes.greenDot}`} />
-                    <Typography className={classes.greenText}>BITZ</Typography>
-                </Box>
-                <Box className={classes.legendItem}>
-                    <Box className={`${classes.legendDot} ${classes.pinkDot}`} />
-                    <Typography className={classes.pinkText}>sBITZ</Typography>
-                </Box>
-            </Box>
-            <Box className={classes.valuesContainer}>
+            <Box className={classes.valuesContainer} sx={{
+                flexDirection: isMobile ? 'column' : 'row',
+                gap: isMobile ? 1 : 4
+            }}>
                 {bitzData.length > 0 && (
-                    <Typography className={classes.bitzValue}>
-                        BITZ: {bitzData[bitzData.length - 1].y.toFixed(2)}
-                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <img src={BITZ} alt="BITZ Logo" />
+                        <Typography className={classes.bitzValue}>
+                            Staked BITZ: {bitzData[bitzData.length - 1].y.toFixed(2)}
+                        </Typography>
+                    </Box>
                 )}
                 {sBitzData.length > 0 && (
-                    <Typography className={classes.sBitzValue}>
-                        sBITZ: {sBitzData[sBitzData.length - 1].y.toFixed(2)}
-                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <img src={sBITZ} alt="sBITZ Logo" />
+                        <Typography className={classes.sBitzValue}>
+                            Holding sBITZ: {sBitzData[sBitzData.length - 1].y.toFixed(2)}
+                        </Typography>
+                    </Box>
                 )}
             </Box>
         </Box >
