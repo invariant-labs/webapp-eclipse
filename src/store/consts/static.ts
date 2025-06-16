@@ -400,7 +400,7 @@ export const TETH_MAIN: Token = {
   decimals: 9,
   name: 'Turbo ETH',
   logoURI:
-    'https://raw.githubusercontent.com/hyperlane-xyz/hyperlane-registry/06833c4417faafd198ef8cf904612c721e5d96db/deployments/warp_routes/tETH/logo.svg',
+    'https://www.geckoterminal.com/_next/image?url=https%3A%2F%2Fcoin-images.coingecko.com%2Fcoins%2Fimages%2F52492%2Flarge%2FtETH.png%3F1733441914&w=256&q=100',
   coingeckoId: 'turbo-eth'
 }
 
