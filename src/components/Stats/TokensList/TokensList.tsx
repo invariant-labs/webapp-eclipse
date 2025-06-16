@@ -67,7 +67,7 @@ const TokensList: React.FC<ITokensList> = ({
   const { classes, cx } = useStyles()
   const dispatch = useDispatch()
   const searchParams = useSelector(tokenSearch)
-  const [page, setPage] = useState(searchParams.pageNumber)
+  const page = searchParams.pageNumber
   const [sortType, setSortType] = React.useState(searchParams.sortType)
 
   useEffect(() => {
@@ -116,8 +116,14 @@ const TokensList: React.FC<ITokensList> = ({
     setInitialDataLength(initialLength)
   }, [initialLength])
 
-  const handleChangePagination = (page: number): void => {
-    setPage(page)
+  const handleChangePagination = (newPage: number) => {
+    dispatch(
+      actions.setSearch({
+        section: 'statsTokens',
+        type: 'pageNumber',
+        pageNumber: newPage
+      })
+    )
   }
 
   const getEmptyRowsCount = () => {
@@ -150,10 +156,6 @@ const TokensList: React.FC<ITokensList> = ({
     () => (initialDataLength > ITEMS_PER_PAGE ? (isCenterAligment ? 176 : 90) : 69),
     [initialDataLength, isCenterAligment]
   )
-
-  useEffect(() => {
-    setPage(1)
-  }, [data, pages])
 
   return (
     <Grid
@@ -215,7 +217,7 @@ const TokensList: React.FC<ITokensList> = ({
           {pages > 0 && (
             <InputPagination
               pages={pages}
-              defaultPage={1}
+              defaultPage={page}
               handleChangePage={handleChangePagination}
               variant='center'
               page={page}

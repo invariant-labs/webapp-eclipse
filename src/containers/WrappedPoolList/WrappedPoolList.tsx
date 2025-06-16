@@ -1,6 +1,6 @@
 import { Box, Typography, useMediaQuery } from '@mui/material'
 import { isLoading, lastInterval, poolsStatsWithTokensDetails } from '@store/selectors/stats'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import useStyles from './styles'
@@ -27,21 +27,29 @@ export const WrappedPoolList: React.FC = () => {
   const promotedPools = useSelector(getPromotedPools)
   const currentNetwork = useSelector(network)
   const searchParams = useSelector(liquiditySearch)
-  const selectedFiltersGlobal = searchParams.filteredTokens
   const isLoadingStats = useSelector(isLoading)
   const isXs = useMediaQuery(theme.breakpoints.down('sm'))
 
   const { classes } = useStyles({ isXs })
-  const [selectedFilters, setSelectedFilters] = useState<ISearchToken[]>(selectedFiltersGlobal)
-  useEffect(() => {
+
+  const selectedFilters = searchParams.filteredTokens
+  const setSelectedFilters = (tokens: ISearchToken[]) => {
     dispatch(
       navigationActions.setSearch({
         section: 'liquidityPool',
         type: 'filteredTokens',
-        filteredTokens: selectedFilters
+        filteredTokens: tokens
       })
     )
-  }, [selectedFilters])
+    dispatch(
+      navigationActions.setSearch({
+        section: 'liquidityPool',
+        type: 'pageNumber',
+        pageNumber: 1
+      })
+    )
+  }
+
   const lastFetchedInterval = useSelector(lastInterval)
 
   const filteredPoolsList = useMemo(() => {

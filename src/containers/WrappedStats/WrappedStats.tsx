@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import useStyles from './styles'
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
@@ -59,31 +59,43 @@ export const WrappedStats: React.FC = () => {
 
   const lastUsedInterval = useSelector(currentInterval)
   const lastFetchedInterval = useSelector(lastInterval)
-  const [searchTokensValue, setSearchTokensValue] = useState<ISearchToken[]>(
-    searchParamsToken.filteredTokens
-  )
 
-  const [searchPoolsValue, setSearchPoolsValue] = useState<ISearchToken[]>(
-    searchParamsPool.filteredTokens
-  )
-  useEffect(() => {
-    dispatch(
-      navigationActions.setSearch({
-        section: 'statsPool',
-        type: 'filteredTokens',
-        filteredTokens: searchPoolsValue
-      })
-    )
-  }, [searchPoolsValue])
-  useEffect(() => {
+  const searchTokensValue = searchParamsToken.filteredTokens
+
+  const setSearchTokensValue = (tokens: ISearchToken[]) => {
     dispatch(
       navigationActions.setSearch({
         section: 'statsTokens',
         type: 'filteredTokens',
-        filteredTokens: searchTokensValue
+        filteredTokens: tokens
       })
     )
-  }, [searchTokensValue])
+    dispatch(
+      navigationActions.setSearch({
+        section: 'statsTokens',
+        type: 'pageNumber',
+        pageNumber: 1
+      })
+    )
+  }
+
+  const searchPoolsValue = searchParamsPool.filteredTokens
+  const setSearchPoolsValue = (tokens: ISearchToken[]) => {
+    dispatch(
+      navigationActions.setSearch({
+        section: 'statsPool',
+        type: 'filteredTokens',
+        filteredTokens: tokens
+      })
+    )
+    dispatch(
+      navigationActions.setSearch({
+        section: 'statsPool',
+        type: 'pageNumber',
+        pageNumber: 1
+      })
+    )
+  }
 
   useEffect(() => {
     dispatch(leaderboardActions.getLeaderboardConfig())
@@ -95,7 +107,7 @@ export const WrappedStats: React.FC = () => {
   }, [lastUsedInterval, lastFetchedInterval])
 
   useEffect(() => {
-    if (!!lastUsedInterval) return
+    if (lastUsedInterval) return
     dispatch(actions.getCurrentIntervalStats({ interval: IntervalsKeys.Daily }))
     dispatch(actions.setCurrentInterval({ interval: IntervalsKeys.Daily }))
   }, [lastUsedInterval])

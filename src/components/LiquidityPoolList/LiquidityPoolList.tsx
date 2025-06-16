@@ -102,8 +102,9 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
   interval
 }) => {
   const searchParam = useSelector(liquiditySearch)
-  const [page, setPage] = React.useState(searchParam.pageNumber)
+  const page = searchParam.pageNumber
   const [sortType, setSortType] = React.useState(searchParam.sortType)
+
   const dispatch = useDispatch()
   const location = useLocation()
   const navigate = useNavigate()
@@ -160,7 +161,15 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
     setInitialDataLength(initialLength)
   }, [initialLength])
 
-  const handleChangePagination = (currentPage: number) => setPage(currentPage)
+  const handleChangePagination = (newPage: number) => {
+    dispatch(
+      actions.setSearch({
+        section: 'liquidityPool',
+        type: 'pageNumber',
+        pageNumber: newPage
+      })
+    )
+  }
 
   const paginator = (currentPage: number) => {
     const page = currentPage || 1
@@ -179,10 +188,6 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
 
     return Math.max(rowNumber - displayedItems, 0)
   }
-
-  useEffect(() => {
-    setPage(1)
-  }, [data, pages])
 
   return (
     <Grid
@@ -280,7 +285,7 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
           <InputPagination
             borderTop={false}
             pages={pages}
-            defaultPage={1}
+            defaultPage={page}
             handleChangePage={handleChangePagination}
             variant='center'
             page={page}
