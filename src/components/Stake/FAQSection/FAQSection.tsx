@@ -49,7 +49,7 @@ For example, if 1 sBITZ equals 1 BITZ at the start, it might be worth 1.05 BITZ 
 
 export const FAQSection = () => {
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 2, padding: 2 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 2, padding: 2, marginTop: '32px' }}>
             <Typography sx={{ ...typography.heading1, color: colors.invariant.text, textAlign: 'center' }}>
                 Frequently Asked Questions
             </Typography>
