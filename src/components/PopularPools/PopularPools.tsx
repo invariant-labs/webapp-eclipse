@@ -67,7 +67,7 @@ const PopularPools: React.FC<IPopularPools> = ({
           rows={1}>
           {pools.map(pool => {
             return (
-              pool?.poolAddress && (
+              (isLoading || (!isLoading && pool?.poolAddress)) && (
                 <Card
                   key={pool.addressFrom + pool.addressTo}
                   poolAddress={pool.poolAddress}

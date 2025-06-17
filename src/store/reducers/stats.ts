@@ -94,19 +94,6 @@ const statsSlice = createSlice({
   name: statsSliceName,
   initialState: defaultState,
   reducers: {
-    // setCurrentStats(
-    //   state,
-    //   action: PayloadAction<Omit<IStatsStore, 'isLoading'> & { lastInterval: Intervals }>
-    // ) {
-
-    //   state = {
-    //     ...action.payload,
-    //     isLoading: false,
-    //     lastTimestamp: +Date.now(),
-    //     currentInterval: state.currentInterval
-    //   }
-    //   return state
-    // },
     setCurrentStats(
       state,
       action: PayloadAction<Omit<IStatsStore, 'isLoading'> & { lastInterval: Intervals }>
