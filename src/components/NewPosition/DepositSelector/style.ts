@@ -36,8 +36,8 @@ export const useStyles = makeStyles()(theme => {
       gap: 0
     },
     autoText: {
-      marginRight: 3,
-      flex: '0 0 auto'
+      textDecorationLine: 'underline',
+      textDecorationStyle: 'dotted'
     },
     infoTooltip: {
       marginLeft: 6,
@@ -229,7 +229,7 @@ export const useStyles = makeStyles()(theme => {
         }
       },
       letterSpacing: '-0.03em',
-      width: 60,
+      width: 50,
       height: 26,
       padding: 0,
       [theme.breakpoints.down('sm')]: {
@@ -259,7 +259,7 @@ export const useStyles = makeStyles()(theme => {
       }
     },
     skeleton: {
-      width: 128,
+      width: 112,
       height: 28,
       borderRadius: 9,
       backgroundColor: colors.invariant.light
@@ -367,6 +367,11 @@ export const useStyles = makeStyles()(theme => {
       position: 'absolute',
       top: 'calc(50% - 10px)',
       left: 'calc(50% - 10px)'
+    },
+    priceImapactText: {
+      textDecorationLine: 'underline',
+      textDecorationStyle: 'dotted',
+      cursor: 'default'
     }
   }
 })
