@@ -98,15 +98,8 @@ const statsSlice = createSlice({
       state,
       action: PayloadAction<Omit<IStatsStore, 'isLoading'> & { lastInterval: Intervals }>
     ) {
-      const payload = {
-        ...action.payload,
-        poolsData: action.payload.poolsData.filter(
-          pool => pool.poolAddress.toString() !== 'HG7iQMk29cgs74ZhSwrnye3C6SLQwKnfsbXqJVRi1x8H'
-        )
-      }
-
       state = {
-        ...payload,
+        ...action.payload,
         isLoading: false,
         lastTimestamp: +Date.now(),
         currentInterval: state.currentInterval
