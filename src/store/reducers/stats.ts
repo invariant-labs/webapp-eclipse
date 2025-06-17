@@ -1,9 +1,7 @@
-import { Pair } from '@invariant-labs/sdk-eclipse'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { PublicKey } from '@solana/web3.js'
 import { Intervals } from '@store/consts/static'
 import { PayloadType } from '@store/consts/types'
-import { PoolWithAddress } from './pools'
 
 export interface TimeData {
   timestamp: number
@@ -143,21 +141,6 @@ const statsSlice = createSlice({
     },
     setLoadingStats(state, action: PayloadAction<boolean>) {
       state.isLoading = action.payload
-
-      return state
-    },
-    getPoolStatsData(state, _action: PayloadAction<{ pair: Pair; pool: PoolWithAddress }>) {
-      return state
-    },
-    setPoolStatsData(state, action: PayloadAction<PoolStatsData>) {
-      const poolData = action.payload
-      const existingPoolIndex = state.poolsData.findIndex(pool =>
-        pool.poolAddress.equals(poolData.poolAddress)
-      )
-
-      if (existingPoolIndex === -1) {
-        state.poolsData.push(poolData)
-      }
 
       return state
     }

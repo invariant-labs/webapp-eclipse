@@ -65,28 +65,32 @@ const PopularPools: React.FC<IPopularPools> = ({
           dotsClass={`slick-dots ${classes.dots}`}
           appendDots={dots => <ul>{dots}</ul>}
           rows={1}>
-          {pools.map(pool => (
-            <Card
-              key={pool.addressFrom + pool.addressTo}
-              poolAddress={pool.poolAddress}
-              addressFrom={pool.addressFrom}
-              addressTo={pool.addressTo}
-              iconFrom={pool.iconFrom}
-              iconTo={pool.iconTo}
-              volume={pool.volume}
-              TVL={pool.TVL}
-              fee={pool.fee}
-              symbolFrom={pool.symbolFrom}
-              symbolTo={pool.symbolTo}
-              apy={pool.apy}
-              apyData={pool.apyData}
-              isUnknownFrom={pool.isUnknownFrom}
-              isUnknownTo={pool.isUnknownTo}
-              isLoading={isLoading}
-              network={network}
-              showAPY={showAPY}
-            />
-          ))}
+          {pools.map(pool => {
+            return (
+              pool?.poolAddress && (
+                <Card
+                  key={pool.addressFrom + pool.addressTo}
+                  poolAddress={pool.poolAddress}
+                  addressFrom={pool.addressFrom}
+                  addressTo={pool.addressTo}
+                  iconFrom={pool.iconFrom}
+                  iconTo={pool.iconTo}
+                  volume={pool.volume}
+                  TVL={pool.TVL}
+                  fee={pool.fee}
+                  symbolFrom={pool.symbolFrom}
+                  symbolTo={pool.symbolTo}
+                  apy={pool.apy}
+                  apyData={pool.apyData}
+                  isUnknownFrom={pool.isUnknownFrom}
+                  isUnknownTo={pool.isUnknownTo}
+                  isLoading={isLoading}
+                  network={network}
+                  showAPY={showAPY}
+                />
+              )
+            )
+          })}
         </Slider>
       </div>
     </Grid>

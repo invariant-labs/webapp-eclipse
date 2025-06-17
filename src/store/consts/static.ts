@@ -909,38 +909,32 @@ export const getPopularPools = (network: NetworkType) => {
         {
           tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE', // USDC
           tokenY: 'So11111111111111111111111111111111111111112', // ETH
-          fee: '0.09',
-          tickSpacing: 10
+          fee: '0.09'
         },
         {
           tokenX: '64mggk2nXg6vHC1qCdsZdEFzd5QGN4id54Vbho4PswCF', // BITZ
           tokenY: 'So11111111111111111111111111111111111111112', // ETH
-          fee: '1',
-          tickSpacing: 100
+          fee: '1'
         },
         {
           tokenX: 'BeRUj3h7BqkbdfFU7FBNYbodgf8GCHodzKvF9aVjNNfL', // SOL
           tokenY: 'So11111111111111111111111111111111111111112', // ETH
-          fee: '0.09',
-          tickSpacing: 10
+          fee: '0.09'
         },
         {
           tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE', // USDC
           tokenY: 'BeRUj3h7BqkbdfFU7FBNYbodgf8GCHodzKvF9aVjNNfL', // SOL
-          fee: '0.09',
-          tickSpacing: 10
+          fee: '0.09'
         },
         {
           tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE', // USDC
           tokenY: '27Kkn8PWJbKJsRZrxbsYDdedpUQKnJ5vNfserCxNEJ3R', // tUSD
-          fee: '0.01',
-          tickSpacing: 1
+          fee: '0.01'
         },
         {
           tokenX: 'GU7NS9xCwgNPiAdJ69iusFrRfawjDDPjeMBovhV1d4kn', // tETH
           tokenY: 'So11111111111111111111111111111111111111112', // ETH
-          fee: '0.01',
-          tickSpacing: 1
+          fee: '0.01'
         }
       ]
     default:
