@@ -178,8 +178,8 @@ export const StakeChart: React.FC<StakeChartProps> = ({
                         }}
                     >
                         into Liquid Staking
-                        <Box component="span" sx={{ display: 'flex', alignItems: 'center', mx: 0.5 }}>
-                            <img src={sBITZ} alt="sBITZ" style={{ height: '16px', minWidth: '16px' }} />
+                        <Box component="span" sx={{ display: 'flex', alignItems: 'center', mx: 1 }}>
+                            <img src={sBITZ} alt="sBITZ" style={{ height: '20px', minWidth: '20px' }} />
                         </Box>
                         over the next month
                     </Typography>
