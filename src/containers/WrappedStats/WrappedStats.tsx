@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import useStyles from './styles'
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
@@ -26,6 +26,7 @@ import PoolList from '@components/Stats/PoolList/PoolList'
 import { unknownTokenIcon } from '@static/icons'
 import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import { actions as snackbarActions } from '@store/reducers/snackbars'
+import { actions as navigationActions } from '@store/reducers/navigation'
 import { VariantType } from 'notistack'
 import { getPromotedPools } from '@store/selectors/leaderboard'
 import { FilterSearch, ISearchToken } from '@common/FilterSearch/FilterSearch'
@@ -33,6 +34,7 @@ import { Intervals as IntervalsKeys } from '@store/consts/static'
 import { Separator } from '@common/Separator/Separator'
 import { colors, theme } from '@static/theme'
 import Intervals from '@components/Stats/Intervals/Intervals'
+import { poolSearch, tokenSearch } from '@store/selectors/navigation'
 
 export const WrappedStats: React.FC = () => {
   const { classes, cx } = useStyles()
@@ -52,11 +54,48 @@ export const WrappedStats: React.FC = () => {
   const isLoadingStats = useSelector(isLoading)
   const currentNetwork = useSelector(network)
   const promotedPools = useSelector(getPromotedPools)
+  const searchParamsPool = useSelector(poolSearch)
+  const searchParamsToken = useSelector(tokenSearch)
 
   const lastUsedInterval = useSelector(currentInterval)
   const lastFetchedInterval = useSelector(lastInterval)
-  const [searchTokensValue, setSearchTokensValue] = useState<ISearchToken[]>([])
-  const [searchPoolsValue, setSearchPoolsValue] = useState<ISearchToken[]>([])
+
+  const searchTokensValue = searchParamsToken.filteredTokens
+
+  const setSearchTokensValue = (tokens: ISearchToken[]) => {
+    dispatch(
+      navigationActions.setSearch({
+        section: 'statsTokens',
+        type: 'filteredTokens',
+        filteredTokens: tokens
+      })
+    )
+    dispatch(
+      navigationActions.setSearch({
+        section: 'statsTokens',
+        type: 'pageNumber',
+        pageNumber: 1
+      })
+    )
+  }
+
+  const searchPoolsValue = searchParamsPool.filteredTokens
+  const setSearchPoolsValue = (tokens: ISearchToken[]) => {
+    dispatch(
+      navigationActions.setSearch({
+        section: 'statsPool',
+        type: 'filteredTokens',
+        filteredTokens: tokens
+      })
+    )
+    dispatch(
+      navigationActions.setSearch({
+        section: 'statsPool',
+        type: 'pageNumber',
+        pageNumber: 1
+      })
+    )
+  }
 
   useEffect(() => {
     dispatch(leaderboardActions.getLeaderboardConfig())
@@ -68,7 +107,7 @@ export const WrappedStats: React.FC = () => {
   }, [lastUsedInterval, lastFetchedInterval])
 
   useEffect(() => {
-    if (!!lastUsedInterval) return
+    if (lastUsedInterval) return
     dispatch(actions.getCurrentIntervalStats({ interval: IntervalsKeys.Daily }))
     dispatch(actions.setCurrentInterval({ interval: IntervalsKeys.Daily }))
   }, [lastUsedInterval])
