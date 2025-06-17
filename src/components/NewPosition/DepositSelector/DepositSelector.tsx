@@ -10,8 +10,7 @@ import {
   ToggleButton,
   ToggleButtonGroup,
   Tooltip,
-  Typography,
-  useMediaQuery
+  Typography
 } from '@mui/material'
 import {
   ALL_FEE_TIERS_DATA,
@@ -58,7 +57,6 @@ import {
   toDecimal
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import DepoSitOptionsModal from '@components/Modals/DepositOptionsModal/DepositOptionsModal'
-import { theme } from '@static/theme'
 import loadingAnimation from '@static/gif/loading.gif'
 
 export interface InputState {
@@ -222,9 +220,6 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   updateLiquidity
 }) => {
   const { classes, cx } = useStyles()
-  const breakpoint630Down = useMediaQuery(theme.breakpoints.down(630))
-  const brekpoint1270to1350 = useMediaQuery(theme.breakpoints.between(1270, 1350))
-  const breakpointMdTo1000 = useMediaQuery(theme.breakpoints.between('md', 1000))
   const { value: valueA } = tokenAInputState
   const { value: valueB } = tokenBInputState
   const [priceImpact, setPriceImpact] = useState<string>(initialMaxPriceImpact)
