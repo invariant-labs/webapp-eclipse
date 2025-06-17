@@ -16,6 +16,9 @@ import { InputPagination } from '@common/Pagination/InputPagination/InputPaginat
 import NotFoundPlaceholder from '../NotFoundPlaceholder/NotFoundPlaceholder'
 import { VariantType } from 'notistack'
 import { Keypair } from '@solana/web3.js'
+import { useDispatch, useSelector } from 'react-redux'
+import { tokenSearch } from '@store/selectors/navigation'
+import { actions } from '@store/reducers/navigation'
 
 export interface ITokensListData {
   icon: string
@@ -62,8 +65,14 @@ const TokensList: React.FC<ITokensList> = ({
 }) => {
   const [initialDataLength, setInitialDataLength] = useState(initialLength)
   const { classes, cx } = useStyles()
-  const [page, setPage] = useState(1)
-  const [sortType, setSortType] = React.useState(SortTypeTokenList.VOLUME_DESC)
+  const dispatch = useDispatch()
+  const searchParams = useSelector(tokenSearch)
+  const page = searchParams.pageNumber
+  const [sortType, setSortType] = React.useState(searchParams.sortType)
+
+  useEffect(() => {
+    dispatch(actions.setSearch({ section: 'statsTokens', type: 'sortType', sortType }))
+  }, [sortType])
 
   const isXsDown = useMediaQuery(theme.breakpoints.down('xs'))
 
@@ -107,8 +116,14 @@ const TokensList: React.FC<ITokensList> = ({
     setInitialDataLength(initialLength)
   }, [initialLength])
 
-  const handleChangePagination = (page: number): void => {
-    setPage(page)
+  const handleChangePagination = (newPage: number) => {
+    dispatch(
+      actions.setSearch({
+        section: 'statsTokens',
+        type: 'pageNumber',
+        pageNumber: newPage
+      })
+    )
   }
 
   const getEmptyRowsCount = () => {
@@ -141,10 +156,6 @@ const TokensList: React.FC<ITokensList> = ({
     () => (initialDataLength > ITEMS_PER_PAGE ? (isCenterAligment ? 176 : 90) : 69),
     [initialDataLength, isCenterAligment]
   )
-
-  useEffect(() => {
-    setPage(1)
-  }, [data, pages])
 
   return (
     <Grid
@@ -206,7 +217,7 @@ const TokensList: React.FC<ITokensList> = ({
           {pages > 0 && (
             <InputPagination
               pages={pages}
-              defaultPage={1}
+              defaultPage={page}
               handleChangePage={handleChangePagination}
               variant='center'
               page={page}
