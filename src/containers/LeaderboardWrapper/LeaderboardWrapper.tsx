@@ -226,7 +226,6 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = () => {
       copyAddressHandler={copyAddressHandler}
       currentNetwork={currentNetwork}
       estimated24hPoints={estimated24hPoints}
-      isLoadingList={isLoadingList}
       isDelayWarning={isDelayWarning}
       lastSnapTimestamp={lastSnapTimestamp}
       leaderboardType={leaderboardType}
