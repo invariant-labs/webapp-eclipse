@@ -27,14 +27,20 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     justifyContent: 'center',
     flexDirection: 'column',
     color: colors.invariant.text,
-    fontWeight: 600,
-    fontSize: 16,
     textAlign: 'center',
+    ...typography.body3,
+    padding: theme.spacing(0, 2),
     marginBottom: theme.spacing(2),
     gap: theme.spacing(1),
+    maxWidth: '100%',
+    wordBreak: 'break-word',
+    [theme.breakpoints.down('md')]: {
+      gap: theme.spacing(0.75)
+    },
     [theme.breakpoints.down('sm')]: {
       fontSize: 14,
-      gap: theme.spacing(0.5)
+      gap: theme.spacing(0.5),
+      padding: theme.spacing(0, 1)
     }
   },
   inputField: {
@@ -62,10 +68,13 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     padding: '4px 6px',
     maxHeight: '32px',
     minWidth: '70px',
+    '& .MuiInputAdornment-root': {
+      marginRight: '16px' // Add more spacing after the logo
+    },
     [theme.breakpoints.down('sm')]: {
       padding: '2px 4px',
       maxHeight: '28px',
-      minWidth: '60px'
+      minWidth: '90px'
     }
   },
   chartBox: {
@@ -123,16 +132,16 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
   bitzValue: {
     color: colors.invariant.green,
-    ...typography.body1,
+    ...typography.heading4,
     [theme.breakpoints.down('sm')]: {
-      fontSize: '0.875rem'
+      ...typography.body1
     }
   },
   sBitzValue: {
     color: colors.invariant.pink,
-    ...typography.body1,
+    ...typography.heading4,
     [theme.breakpoints.down('sm')]: {
-      fontSize: '0.875rem'
+      ...typography.body1
     }
   },
   tooltip: {
@@ -142,7 +151,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     width: 120,
     padding: 8,
     [theme.breakpoints.down('sm')]: {
-      width: 100,
+      width: 120,
       padding: 6
     }
   },

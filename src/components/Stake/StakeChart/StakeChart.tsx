@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { ResponsiveLine } from '@nivo/line';
 import { Box, Typography, TextField, Grid, useMediaQuery } from '@mui/material';
-import { colors, theme } from '@static/theme';
+import { colors, theme, typography } from '@static/theme';
 import { useStyles } from './style';
 import { linearGradientDef } from '@nivo/core';
 import BITZ from '@static/png/BITZ.png'
@@ -24,7 +24,7 @@ interface StakeChartProps {
 export const StakeChart: React.FC<StakeChartProps> = ({
     stakedAmount,
     earnedAmount,
-    earnedAmountUsd,
+    // earnedAmountUsd,
     bitzData,
     sBitzData,
     onStakedAmountChange,
@@ -107,7 +107,7 @@ export const StakeChart: React.FC<StakeChartProps> = ({
                         textAnchor={textAnchor}
                         dominantBaseline="middle"
                         style={{
-                            fontSize: 12,
+                            fontSize: 14,
                             fontWeight: 'bold',
                             fill: point.color,
                             filter: isMobile ? 'drop-shadow(0px 0px 2px rgba(0,0,0,0.5))' : 'none'
@@ -123,49 +123,96 @@ export const StakeChart: React.FC<StakeChartProps> = ({
     return (
         <Box className={classes.chartContainer}>
             <Box className={classes.stakeText}>
-
                 <Box sx={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '8px',
-                    flexDirection: isMobile ? 'column' : 'row',
-                    textAlign: isMobile ? 'center' : 'left'
+                    justifyContent: 'center',
+                    gap: theme.spacing(1),
+                    flexWrap: 'wrap',
+                    width: '100%'
                 }}>
-                    <Typography>
-                        Staking
+                    <Typography
+                        variant="h4"
+                        component="span"
+                        sx={{
+                            ...typography.heading4,
+                            color: colors.invariant.text,
+                            whiteSpace: 'nowrap'
+                        }}
+                    >
+                        Depositing
                     </Typography>
+
                     <TextField
                         value={inputValue}
                         onChange={handleInputChange}
                         variant="outlined"
-                        type='number'
+                        type="number"
                         size="small"
                         InputProps={{
                             className: classes.inputProps,
                             startAdornment: (
-                                <Box component="span" sx={{ display: 'flex', alignItems: 'center', marginRight: 2, paddingLeft: '4px' }}>
+                                <Box component="span" sx={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    paddingLeft: '4px',
+                                    paddingRight: '8px'
+                                }}>
                                     <img src={BITZ} alt="BITZ" style={{ height: '16px', minWidth: '16px' }} />
                                 </Box>
                             ),
                         }}
                         className={classes.inputField}
                     />
-                    <Typography sx={{ color: colors.invariant.text }}>
-                        with BITZ in the last year would have
+
+                    <Typography
+                        variant="h4"
+                        component="span"
+                        sx={{
+                            color: colors.invariant.text,
+                            ...typography.heading4,
+                            display: 'flex',
+                            alignItems: 'center',
+                            flexWrap: 'wrap',
+                            justifyContent: 'center'
+                        }}
+                    >
+                        into Liquid Staking
+                        <Box component="span" sx={{ display: 'flex', alignItems: 'center', mx: 0.5 }}>
+                            <img src={sBITZ} alt="sBITZ" style={{ height: '16px', minWidth: '16px' }} />
+                        </Box>
+                        over the next month
                     </Typography>
                 </Box>
+
                 <Box sx={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '8px',
-                    flexDirection: isMobile ? 'column' : 'row',
-                    textAlign: isMobile ? 'center' : 'left'
+                    justifyContent: 'center',
+                    textAlign: 'center',
+                    width: '100%',
+                    mt: theme.spacing(1)
                 }}>
-                    <Typography sx={{ color: colors.invariant.text }}>
-                        earned you an extra
-                    </Typography>
-                    <Typography sx={{ color: colors.invariant.green }}>
-                        {earnedAmount} BITZ  (${earnedAmountUsd})
+                    <Typography sx={{
+                        color: colors.invariant.text,
+                        ...typography.heading4,
+                        display: 'flex',
+                        alignItems: 'center',
+                        flexWrap: 'wrap',
+                        justifyContent: 'center'
+                    }}>
+                        will earn you an extra
+                        <Typography
+                            component="span"
+                            sx={{
+                                color: colors.invariant.green,
+                                mx: 0.75,
+                                ...typography.heading4
+                            }}
+                        >
+                            {earnedAmount} BITZ
+                        </Typography>
+                        compared to staking BITZ directly
                     </Typography>
                 </Box>
             </Box>
@@ -192,8 +239,8 @@ export const StakeChart: React.FC<StakeChartProps> = ({
                     axisBottom={{
                         tickSize: 5,
                         tickPadding: 5,
-                        tickRotation: isMobile ? -45 : 0,
                         legend: '',
+
                         legendOffset: 36,
                         tickValues: bitzData.filter((_, i) => i % getTickFrequency() === 0).map(d => d.x)
 
@@ -256,11 +303,11 @@ export const StakeChart: React.FC<StakeChartProps> = ({
                         axis: {
                             ticks: {
                                 line: { stroke: colors.invariant.component },
-                                text: { fill: '#A9B6BF' }
+                                text: { fill: '#A9B6BF', fontSize: 13 }
                             },
                             legend: {
                                 text: {
-                                    fontSize: '12px',
+                                    fontSize: '13px',
                                     fontFamily: 'inherit',
                                     fill: colors.invariant.textGrey
                                 }
@@ -284,13 +331,26 @@ export const StakeChart: React.FC<StakeChartProps> = ({
                                             {slice.points[0].data.xFormatted}
                                         </Typography>
                                         {slice.points.map(point => (
-                                            <Typography
+                                            <Box
                                                 key={point.id}
-                                                className={classes.tooltipValue}
-                                                sx={{ color: `${point.serieColor}` }}
+                                                sx={{
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '4px'
+                                                }}
                                             >
-                                                {point.data.yFormatted} {point.serieId}
-                                            </Typography>
+                                                <img
+                                                    src={point.serieId === 'BITZ' ? BITZ : sBITZ}
+                                                    alt={point.serieId.toString() ?? 'Token'}
+                                                    style={{ height: '16px', width: '16px' }}
+                                                />
+                                                <Typography
+                                                    className={classes.tooltipValue}
+                                                    sx={{ color: `${point.serieColor}` }}
+                                                >
+                                                    {point.data.yFormatted} {point.serieId}
+                                                </Typography>
+                                            </Box>
                                         ))}
                                     </>
                                 )}
@@ -309,7 +369,7 @@ export const StakeChart: React.FC<StakeChartProps> = ({
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <img src={BITZ} alt="BITZ Logo" />
                         <Typography className={classes.bitzValue}>
-                            Staked BITZ: {bitzData[bitzData.length - 1].y.toFixed(2)}
+                            Staked: {bitzData[bitzData.length - 1].y.toFixed(2)} BITZ
                         </Typography>
                     </Box>
                 )}
@@ -317,7 +377,7 @@ export const StakeChart: React.FC<StakeChartProps> = ({
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <img src={sBITZ} alt="sBITZ Logo" />
                         <Typography className={classes.sBitzValue}>
-                            Holding sBITZ: {sBitzData[sBitzData.length - 1].y.toFixed(2)}
+                            Holding: {sBitzData[sBitzData.length - 1].y.toFixed(2)} sBITZ
                         </Typography>
                     </Box>
                 )}
