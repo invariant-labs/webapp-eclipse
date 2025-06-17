@@ -1,10 +1,10 @@
 import React from 'react'
 import { ResponsiveLine } from '@nivo/line'
 import { linearGradientDef } from '@nivo/core'
-import { colors, typography } from '@static/theme'
+import { colors, theme, typography } from '@static/theme'
 import { useStyles } from './style'
 import { TimeData } from '@store/reducers/stats'
-import { Grid, Typography } from '@mui/material'
+import { Grid, Typography, useMediaQuery } from '@mui/material'
 import { formatNumberWithoutSuffix, trimZeros } from '@utils/utils'
 import {
   formatLargeNumber,
@@ -12,8 +12,8 @@ import {
   getLabelDate,
   mapIntervalToPrecision
 } from '@utils/uiUtils'
-import useIsMobile from '@store/hooks/isMobile'
 import { Intervals as IntervalsKeys } from '@store/consts/static'
+
 interface LiquidityInterface {
   liquidityVolume: number | null
   data: TimeData[]
@@ -35,7 +35,7 @@ const Liquidity: React.FC<LiquidityInterface> = ({
 
   liquidityVolume = liquidityVolume ?? 0
 
-  const isMobile = useIsMobile()
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
 
   return (
     <Grid className={cx(classes.container, className)}>
@@ -174,8 +174,30 @@ const Liquidity: React.FC<LiquidityInterface> = ({
               lastStatsTimestamp
             )
 
+            const pointIndex = point.index
+
+            const totalPoints = data.length
+            const relativePosition = pointIndex / (totalPoints - 1)
+
+            let transformStyle
+
+            if (relativePosition < 0.1) {
+              transformStyle = 'translateX(40%)'
+            } else if (relativePosition > 0.85) {
+              transformStyle = 'translateX(-40%)'
+            }
+
             return (
-              <Grid className={classes.tooltip}>
+              <Grid
+                className={classes.tooltip}
+                style={
+                  relativePosition < 0.1 || (relativePosition > 0.85 && isMobile)
+                    ? {
+                        transform: transformStyle,
+                        position: 'relative'
+                      }
+                    : {}
+                }>
                 <Typography className={classes.tooltipDate}>{date}</Typography>
                 <Typography className={classes.tooltipValue}>
                   ${formatNumberWithoutSuffix(point.data.y as number)}
