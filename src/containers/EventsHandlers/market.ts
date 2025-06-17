@@ -10,14 +10,15 @@ import { IWallet, MAINNET_POOL_WHITELIST } from '@invariant-labs/sdk-eclipse'
 import { PublicKey } from '@solana/web3.js'
 import { getMarketProgramSync } from '@utils/web3/programs/amm'
 import { getCurrentSolanaConnection } from '@utils/web3/connection'
-import { getFullNewTokensData, getNetworkTokensList, ROUTES } from '@utils/utils'
+import { getMarketNewTokensData, getNetworkTokensList, ROUTES } from '@utils/utils'
 import { getEclipseWallet } from '@utils/web3/wallet'
 import { currentPoolIndex } from '@store/selectors/positions'
 import { useLocation } from 'react-router-dom'
-import { autoSwapPools } from '@store/consts/static'
+import { autoSwapPools, TOKEN_FETCH_DELAY } from '@store/consts/static'
 import { FEE_TIERS } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { parsePool } from '@invariant-labs/sdk-eclipse/lib/market'
 import { tokensData } from '@store/selectors/stats'
+import { Token, TokenSerialized } from '@store/consts/types'
 
 const MarketEvents = () => {
   const dispatch = useDispatch()
@@ -68,7 +69,7 @@ const MarketEvents = () => {
         ...currentListUnkown.filter(pk => !currentListBefore.some(existing => existing.equals(pk)))
       ]
       const lastTokenFrom = localStorage.getItem(`INVARIANT_LAST_TOKEN_FROM_${networkType}`)
-      const lastTokenTo = localStorage.getItem(`INVARIANT_LAST_TOKEN_FROM_${networkType}`)
+      const lastTokenTo = localStorage.getItem(`INVARIANT_LAST_TOKEN_TO_${networkType}`)
 
       if (
         lastTokenFrom !== null &&
@@ -85,16 +86,65 @@ const MarketEvents = () => {
       ) {
         currentList.push(new PublicKey(lastTokenTo))
       }
-      getFullNewTokensData(currentList, connection)
-        .then(data => {
-          tokens = {
-            ...tokens,
-            ...data
-          }
-        })
-        .finally(() => {
-          dispatch(actions.addTokens(tokens))
-        })
+      const lastTokenFetchAmountStr = localStorage.getItem(
+        `INVARIANT_LAST_TOKEN_AMOUNT_${networkType}`
+      )
+      const lastTokenFetchAmount =
+        lastTokenFetchAmountStr !== null ? JSON.parse(lastTokenFetchAmountStr) : null
+
+      const fetchedTokensStr = localStorage.getItem(`INVARIANT_CACHED_METADATA_${networkType}`)
+      const fetchedTokens: Record<string, TokenSerialized> =
+        fetchedTokensStr !== null
+          ? (JSON.parse(fetchedTokensStr) as Record<string, TokenSerialized>)
+          : {}
+
+      const shouldFetchTokens =
+        lastTokenFetchAmount === null ||
+        currentList.length > (lastTokenFetchAmount?.amount || 0) ||
+        (lastTokenFetchAmount !== null &&
+          Number(lastTokenFetchAmount.lastTimestamp) + TOKEN_FETCH_DELAY <= Date.now())
+
+      if (shouldFetchTokens && currentList.length > 0) {
+        getMarketNewTokensData(currentList, connection)
+          .then(data => {
+            tokens = {
+              ...tokens,
+              ...data
+            }
+            localStorage.setItem(`INVARIANT_CACHED_METADATA_${networkType}`, JSON.stringify(data))
+            localStorage.setItem(
+              `INVARIANT_LAST_TOKEN_AMOUNT_${networkType}`,
+              JSON.stringify({
+                amount: currentList.length,
+                lastTimestamp: Date.now()
+              })
+            )
+          })
+          .finally(() => {
+            dispatch(actions.addTokens(tokens))
+          })
+      } else {
+        const parsedData: Token[] = Object.values(fetchedTokens).map(serialized => ({
+          ...serialized,
+          address: new PublicKey(serialized.address),
+          tokenProgram: new PublicKey(serialized.tokenProgram ?? '')
+        }))
+
+        const parsedTokensMap: Record<string, Token> = parsedData.reduce(
+          (map, token) => {
+            map[token.address.toString()] = token
+            return map
+          },
+          {} as Record<string, Token>
+        )
+
+        console.log(parsedData)
+        tokens = {
+          ...tokens,
+          ...parsedTokensMap
+        }
+        dispatch(actions.addTokens(tokens))
+      }
     }
 
     connectEvents()

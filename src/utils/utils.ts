@@ -20,7 +20,8 @@ import { BN } from '@coral-xyz/anchor'
 import {
   getMint,
   TOKEN_2022_PROGRAM_ID,
-  getTokenMetadata as fetchMetaData
+  getTokenMetadata as fetchMetaData,
+  unpackMint
 } from '@solana/spl-token'
 import { Connection, PublicKey } from '@solana/web3.js'
 import {
@@ -2371,4 +2372,80 @@ export const ensureApprovalDenied = (error: Error): boolean => {
 
 export const mapErrorCodeToMessage = (errorNumber: number): string => {
   return ERROR_CODE_TO_MESSAGE[errorNumber] || COMMON_ERROR_MESSAGE
+}
+
+export const getMarketNewTokensData = async (
+  addresses: PublicKey[],
+  connection: Connection,
+  concurrencyLimit: number = 20
+): Promise<Record<string, Token>> => {
+  const umi = createUmi(connection.rpcEndpoint)
+  const tokens: Record<string, Token> = {}
+  const promiseChains: Promise<void>[] = new Array(concurrencyLimit).fill(
+    Promise.resolve<void>(undefined)
+  )
+  const data = await getTokenDecimalsAndProgramID(connection, addresses)
+  let nextIndex = 0
+  const enqueue = (task: () => Promise<void>): Promise<void> => {
+    const slot = nextIndex
+    nextIndex = (nextIndex + 1) % concurrencyLimit
+    const resultPromise = promiseChains[slot].then(task)
+    promiseChains[slot] = resultPromise.catch(() => {})
+    return resultPromise
+  }
+
+  await Promise.all(
+    data.map(data =>
+      enqueue(async () => {
+        const token = await getTokenMetadata(
+          connection,
+          data.address.toString(),
+          data.decimals,
+          data.programId,
+          umi
+        )
+
+        tokens[data.address.toString()] = token
+      })
+    )
+  )
+
+  await Promise.all(promiseChains)
+
+  return tokens
+}
+
+export const getTokenDecimalsAndProgramID = async (
+  connection: Connection,
+  tokens: PublicKey[],
+  BATCH_SIZE: number = 80
+): Promise<ITokenDecimalAndProgramID[]> => {
+  const data: ITokenDecimalAndProgramID[] = []
+
+  const pubkeys = tokens.map(t => new PublicKey(t))
+
+  for (let i = 0; i < pubkeys.length; i += BATCH_SIZE) {
+    const batch = pubkeys.slice(i, i + BATCH_SIZE)
+    const accounts = await connection.getMultipleAccountsInfo(batch)
+
+    for (let j = 0; j < batch.length; j++) {
+      const info = accounts[j]
+      if (!info) continue
+
+      const unpacked = unpackMint(batch[j], info, info.owner)
+
+      data.push({
+        address: batch[j],
+        decimals: unpacked.decimals,
+        programId: info.owner
+      })
+    }
+  }
+
+  return data
+}
+export interface ITokenDecimalAndProgramID {
+  address: PublicKey
+  decimals: number
+  programId: PublicKey
 }
