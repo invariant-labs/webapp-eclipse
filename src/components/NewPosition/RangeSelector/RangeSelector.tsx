@@ -511,7 +511,10 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     return Math.abs((oraclePrice - midPrice.x) / midPrice.x) * 100
   }, [oraclePrice, midPrice.x])
 
-  const oraclePriceWarning = useMemo(() => oracleDiffPercentage > 10, [oracleDiffPercentage])
+  const oraclePriceWarning = useMemo(
+    () => oraclePrice !== 0 && oracleDiffPercentage > 10,
+    [oracleDiffPercentage]
+  )
 
   const diffPercentage = useMemo(() => {
     return Math.abs((suggestedPrice - midPrice.x) / midPrice.x) * 100
