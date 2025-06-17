@@ -11,7 +11,7 @@ export const useStyles = makeStyles<{ isMobile: boolean }>()((_theme, { isMobile
   },
   paper: {
     position: 'relative',
-
+    alignContent: 'center',
     width: isMobile ? 298 : '520px',
     [theme.breakpoints.down('sm')]: {
       margin: isMobile ? '16px' : 0,
@@ -22,9 +22,13 @@ export const useStyles = makeStyles<{ isMobile: boolean }>()((_theme, { isMobile
     margin: '16px',
     background: 'transparent',
     boxShadow: 'none',
-    overflow: 'hidden'
+    overflow: 'visible'
   },
   root: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+
     background: `
         radial-gradient(49.85% 49.85% at 50% 100%, rgba(46, 224, 154, 0.25) 0%, rgba(46, 224, 154, 0) 75%),
         radial-gradient(50.2% 50.2% at 50% 0%, rgba(239, 132, 245, 0.25) 0%, rgba(239, 132, 245, 0) 75%),
@@ -34,9 +38,7 @@ export const useStyles = makeStyles<{ isMobile: boolean }>()((_theme, { isMobile
     padding: '20px 24px',
     boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.5)',
     [theme.breakpoints.down('sm')]: {
-      padding: '16px 20px',
-      borderRadius: isMobile ? 24 : 0,
-      height: isMobile ? 'auto' : '100vh'
+      padding: '16px 20px'
     }
   },
   buttonWrapper: {
