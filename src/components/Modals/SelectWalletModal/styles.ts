@@ -11,15 +11,18 @@ export const useStyles = makeStyles<{ isMobile: boolean }>()((_theme, { isMobile
   },
   paper: {
     position: 'relative',
+
     width: isMobile ? 298 : '520px',
     [theme.breakpoints.down('sm')]: {
       margin: isMobile ? '16px' : 0,
-      maxWidth: isMobile ? 'auto' : '100%'
+      maxWidth: isMobile ? 'auto' : '100%',
+      maxHeight: isMobile ? 'auto' : '100%',
+      height: isMobile ? 'auto' : '100%'
     },
     margin: '16px',
     background: 'transparent',
     boxShadow: 'none',
-    overflow: 'visible'
+    overflow: 'hidden'
   },
   root: {
     background: `
@@ -32,7 +35,8 @@ export const useStyles = makeStyles<{ isMobile: boolean }>()((_theme, { isMobile
     boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.5)',
     [theme.breakpoints.down('sm')]: {
       padding: '16px 20px',
-      borderRadius: isMobile ? 24 : 0
+      borderRadius: isMobile ? 24 : 0,
+      height: isMobile ? 'auto' : '100vh'
     }
   },
   buttonWrapper: {
