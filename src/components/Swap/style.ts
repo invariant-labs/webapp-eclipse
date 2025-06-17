@@ -242,12 +242,10 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     flexFlow: 'row',
     flexWrap: 'wrap',
     marginTop: 12,
-    marginBottom: 12,
     cursor: 'default',
     filter: 'brightness(0.9)',
     width: '100%',
     [theme.breakpoints.down('sm')]: {
-      flexDirection: 'column-reverse',
       gap: 4
     },
     zIndex: 1
@@ -495,6 +493,24 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
   relative: {
     position: 'relative'
+  },
+  mobileChangeWrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    [theme.breakpoints.down('sm')]: {
+      marginTop: 12,
+      flexDirection: 'column-reverse'
+    }
+  },
+  mobileChangeRatioWrapper: {
+    display: 'flex',
+    width: '100%',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column-reverse',
+      gap: 4
+    }
   }
 }))
 

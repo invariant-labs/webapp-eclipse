@@ -6,7 +6,7 @@ import { useStyles } from './style'
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import { formatNumberWithSuffix } from '@utils/utils'
 import { Intervals, ITEMS_PER_PAGE, NetworkType, SortTypeTokenList } from '@store/consts/static'
-import { newTabBtnIcon, unknownTokenIcon, warningIcon } from '@static/icons'
+import { newTabBtnIcon, unknownTokenIcon } from '@static/icons'
 import { mapIntervalToString, shortenAddress } from '@utils/uiUtils'
 import { VariantType } from 'notistack'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
@@ -45,7 +45,6 @@ const TokenListItem: React.FC<IProps> = ({
   sortType,
   onSort,
   address,
-  isUnknown,
   network,
   interval = Intervals.Daily,
   copyAddressHandler
@@ -54,6 +53,7 @@ const TokenListItem: React.FC<IProps> = ({
   // const isNegative = priceChange < 0
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
   const isXs = useMediaQuery(theme.breakpoints.down('xs'))
+  const isMd = useMediaQuery(theme.breakpoints.down('md'))
 
   const networkUrl = useMemo(() => {
     switch (network) {
@@ -95,17 +95,21 @@ const TokenListItem: React.FC<IProps> = ({
                 ? `1px solid ${colors.invariant.light}`
                 : `2px solid ${colors.invariant.light}`
           }}>
-          {!isXs && !isSm && <Typography component='p'>{itemNumber}</Typography>}
+          {!isMd && <Typography component='p'>{itemNumber}</Typography>}
           <Grid className={classes.tokenName}>
-            <img
-              className={classes.tokenIcon}
-              src={icon}
-              alt='Token icon'
-              onError={e => {
-                e.currentTarget.src = unknownTokenIcon
-              }}
-            />
-            {isUnknown && <img className={classes.warningIcon} src={warningIcon} />}
+            {icon === '/src/static/svg/unknownToken.svg' && isSm ? (
+              <Typography>{symbol}</Typography>
+            ) : (
+              <img
+                className={classes.tokenIcon}
+                src={icon}
+                alt='Token icon'
+                onError={e => {
+                  e.currentTarget.src = unknownTokenIcon
+                }}
+              />
+            )}
+
             {shouldShowText && (
               <Typography>
                 {isXs ? shortenAddress(symbol) : name.length < 25 ? name : name.slice(0, 40)}
@@ -158,7 +162,7 @@ const TokenListItem: React.FC<IProps> = ({
                 : `px solid ${colors.invariant.light}`
           }}
           classes={{ container: classes.container, root: classes.header }}>
-          {!isXs && !isSm && (
+          {!isMd && (
             <Typography style={{ lineHeight: '12px' }}>
               N<sup>o</sup>
             </Typography>
@@ -172,7 +176,7 @@ const TokenListItem: React.FC<IProps> = ({
                 onSort?.(SortTypeTokenList.NAME_ASC)
               }
             }}>
-            Name
+            Token
             {sortType === SortTypeTokenList.NAME_ASC ? (
               <ArrowDropUpIcon className={classes.icon} />
             ) : sortType === SortTypeTokenList.NAME_DESC ? (
