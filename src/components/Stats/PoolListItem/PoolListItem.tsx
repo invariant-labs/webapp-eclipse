@@ -268,7 +268,7 @@ const PoolListItem: React.FC<IProps> = ({
           }}
           container
           classes={{
-            container: cx(classes.container, { [classes.containerNoAPY]: !showAPY })
+            container: classes.container
           }}
           sx={{
             borderBottom:
@@ -478,7 +478,7 @@ const PoolListItem: React.FC<IProps> = ({
           classes={{
             root: classes.header
           }}
-          className={cx(classes.container, { [classes.containerNoAPY]: !showAPY })}>
+          className={classes.container}>
           {!isMd && (
             <Typography style={{ lineHeight: '11px' }}>
               N<sup>o</sup>

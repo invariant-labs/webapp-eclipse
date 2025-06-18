@@ -70,20 +70,6 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     }
   },
 
-  containerNoAPY: {
-    gridTemplateColumns: '30px auto 120px 120px 140px 120px 150px',
-
-    [theme.breakpoints.down(1160)]: {
-      gridTemplateColumns: 'auto 100px 80px 120px'
-    },
-
-    [theme.breakpoints.down('md')]: {
-      gridTemplateColumns: 'auto 100px 140px 80px 24px'
-    },
-
-    cursor: 'pointer'
-  },
-
   imageContainer: {
     display: 'flex',
     alignItems: 'center',
