@@ -43,7 +43,7 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
   const [isRotating, setIsRotating] = useState(false)
 
   const [progress, setProgress] = useState<ProgressState>('none')
-  const [throttle, setThrottle] = useState<boolean>(false)
+  const [_throttle, setThrottle] = useState<boolean>(false)
   const timeoutRef = useRef<number>(0)
 
   useEffect(() => {
