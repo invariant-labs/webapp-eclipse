@@ -106,7 +106,8 @@ import {
   ErrorCodeExtractionKeys,
   TUSD_MAIN,
   AlternativeFormatConfig,
-  defaultThresholds
+  defaultThresholds,
+  SBITZ_MAIN
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
@@ -919,7 +920,8 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
         [SOLAR_MAIN.address.toString()]: SOLAR_MAIN,
         [KYSOL_MAIN.address.toString()]: KYSOL_MAIN,
         [EZSOL_MAIN.address.toString()]: EZSOL_MAIN,
-        [TUSD_MAIN.address.toString()]: TUSD_MAIN
+        [TUSD_MAIN.address.toString()]: TUSD_MAIN,
+        [SBITZ_MAIN.address.toString()]: SBITZ_MAIN
       }
     case NetworkType.Devnet:
       return {
