@@ -19,6 +19,7 @@ const useStyles = makeStyles()(() => {
     },
     greenLabel: {
       color: colors.invariant.green,
+      marginInline: 4,
       ...typography.caption1
     },
     itemWrapper: {
@@ -32,6 +33,11 @@ const useStyles = makeStyles()(() => {
       fontWeight: 700,
       fontSize: '16px',
       lineHeight: '24px'
+    },
+    apyLabel: {
+      cursor: 'default',
+      display: 'flex',
+      alignItems: 'center'
     }
   }
 })

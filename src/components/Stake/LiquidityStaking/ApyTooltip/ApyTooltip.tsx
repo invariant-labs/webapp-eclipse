@@ -3,6 +3,7 @@ import { Box, Typography } from '@mui/material'
 import useStyles from './style'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { SwapToken } from '@store/selectors/solanaWallet'
+import { infoIcon } from '@static/icons'
 
 export interface IApyTooltip {
   tokenFrom: SwapToken
@@ -47,10 +48,10 @@ export const ApyTooltip: React.FC<IApyTooltip> = ({
         </Box>
       }
       increasePadding>
-      <Typography>
+      <Typography className={classes.apyLabel}>
         <span className={classes.crossedText}> {apyStaked}% APY </span>
-
         <span className={classes.greenLabel}>{apyStaked + apyCompound}% APY</span>
+        <img src={infoIcon} height={12} />
       </Typography>
     </TooltipHover>
   )
