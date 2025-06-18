@@ -50,7 +50,7 @@ interface ITokenBalance {
 interface IFilterSearch {
   networkType: NetworkType
   selectedFilters: ISearchToken[]
-  setSelectedFilters: React.Dispatch<React.SetStateAction<ISearchToken[]>>
+  setSelectedFilters: (tokens: ISearchToken[]) => void
   filtersAmount: number
   bp?: Breakpoint
   loading?: boolean
@@ -182,7 +182,8 @@ export const FilterSearch: React.FC<IFilterSearch> = memo(
 
     const handleRemoveToken = useCallback(
       (tokenToRemove: ISearchToken) => {
-        setSelectedFilters(prev => prev.filter(token => token.address !== tokenToRemove.address))
+        const result = selectedFilters.filter(token => token.address !== tokenToRemove.address)
+        setSelectedFilters(result)
       },
       [setSelectedFilters]
     )

@@ -1300,103 +1300,139 @@ export const Swap: React.FC<ISwap> = ({
               </TooltipHover>
             )}
           </Box>
-          <Box className={classes.transactionDetails}>
-            <Box className={classes.transactionDetailsInner}>
-              <button
-                onClick={
-                  tokenFromIndex !== null &&
-                  tokenToIndex !== null &&
-                  hasShowRateMessage() &&
-                  amountFrom !== '' &&
-                  amountTo !== ''
-                    ? handleOpenTransactionDetails
-                    : undefined
-                }
-                className={cx(
-                  tokenFromIndex !== null &&
-                    tokenToIndex !== null &&
-                    hasShowRateMessage() &&
-                    amountFrom !== '' &&
-                    amountTo !== ''
-                    ? classes.HiddenTransactionButton
-                    : classes.transactionDetailDisabled,
-                  classes.transactionDetailsButton
-                )}>
-                <Grid className={classes.transactionDetailsWrapper}>
-                  <Typography className={classes.transactionDetailsHeader}>
-                    {detailsOpen && canShowDetails ? 'Hide' : 'Show'} transaction details
-                  </Typography>
-                </Grid>
-              </button>
-              {tokenFromIndex !== null &&
-                tokenToIndex !== null &&
-                tokenFromIndex !== tokenToIndex && (
-                  <TooltipHover title='Refresh'>
-                    <Grid container className={classes.tooltipRefresh}>
-                      <Refresher
-                        currentIndex={refresherTime}
-                        maxIndex={REFRESHER_INTERVAL}
-                        onClick={handleRefresh}
-                      />
+          <Box className={classes.mobileChangeWrapper}>
+            <Box className={classes.transactionDetails}>
+              <Box className={classes.mobileChangeRatioWrapper}>
+                <Box className={classes.transactionDetailsInner}>
+                  <button
+                    onClick={
+                      tokenFromIndex !== null &&
+                      tokenToIndex !== null &&
+                      hasShowRateMessage() &&
+                      amountFrom !== '' &&
+                      amountTo !== ''
+                        ? handleOpenTransactionDetails
+                        : undefined
+                    }
+                    className={cx(
+                      tokenFromIndex !== null &&
+                        tokenToIndex !== null &&
+                        hasShowRateMessage() &&
+                        amountFrom !== '' &&
+                        amountTo !== ''
+                        ? classes.HiddenTransactionButton
+                        : classes.transactionDetailDisabled,
+                      classes.transactionDetailsButton
+                    )}>
+                    <Grid className={classes.transactionDetailsWrapper}>
+                      <Typography className={classes.transactionDetailsHeader}>
+                        {detailsOpen && canShowDetails ? 'Hide' : 'Show'} transaction details
+                      </Typography>
                     </Grid>
-                  </TooltipHover>
-                )}
-            </Box>
-            {canShowDetails ? (
-              <Box
-                className={cx(
-                  classes.exchangeRateWrapper,
-                  (isFirstPairGivingPoints || isSecondPairGivingPoints) && classes.darkBackground
-                )}>
-                <ExchangeRate
-                  onClick={() => setRateReversed(!rateReversed)}
-                  tokenFromSymbol={tokens[rateReversed ? tokenToIndex : tokenFromIndex].symbol}
-                  tokenToSymbol={tokens[rateReversed ? tokenFromIndex : tokenToIndex].symbol}
-                  amount={rateReversed ? 1 / swapRate : swapRate}
-                  tokenToDecimals={tokens[rateReversed ? tokenFromIndex : tokenToIndex].decimals}
-                  loading={getStateMessage() === 'Loading' || rateLoading || addBlur}
-                />
+                  </button>
+                  {tokenFromIndex !== null &&
+                    tokenToIndex !== null &&
+                    tokenFromIndex !== tokenToIndex && (
+                      <TooltipHover title='Refresh'>
+                        <Grid container className={classes.tooltipRefresh}>
+                          <Refresher
+                            currentIndex={refresherTime}
+                            maxIndex={REFRESHER_INTERVAL}
+                            onClick={handleRefresh}
+                          />
+                        </Grid>
+                      </TooltipHover>
+                    )}
+                </Box>
+                {canShowDetails ? (
+                  <Box
+                    className={cx(
+                      classes.exchangeRateWrapper,
+                      (isFirstPairGivingPoints || isSecondPairGivingPoints) &&
+                        classes.darkBackground
+                    )}>
+                    <ExchangeRate
+                      onClick={() => setRateReversed(!rateReversed)}
+                      tokenFromSymbol={tokens[rateReversed ? tokenToIndex : tokenFromIndex].symbol}
+                      tokenToSymbol={tokens[rateReversed ? tokenFromIndex : tokenToIndex].symbol}
+                      amount={rateReversed ? 1 / swapRate : swapRate}
+                      tokenToDecimals={
+                        tokens[rateReversed ? tokenFromIndex : tokenToIndex].decimals
+                      }
+                      loading={getStateMessage() === 'Loading' || rateLoading || addBlur}
+                    />
+                  </Box>
+                ) : null}
               </Box>
-            ) : null}
-          </Box>
-          <TransactionDetailsBox
-            open={detailsOpen && canShowDetails}
-            exchangeRate={{
-              val: rateReversed ? 1 / swapRate : swapRate,
-              symbol: canShowDetails
-                ? tokens[rateReversed ? tokenFromIndex : tokenToIndex].symbol
-                : '',
-              decimal: canShowDetails
-                ? tokens[rateReversed ? tokenFromIndex : tokenToIndex].decimals
-                : 0
-            }}
-            slippage={+slippTolerance}
-            priceImpact={priceImpact}
-            isLoadingRate={getStateMessage() === 'Loading' || addBlur}
-            simulationPath={simulationPath}
-          />
-          <TokensInfo
-            tokenFrom={tokenFromIndex !== null ? tokens[tokenFromIndex] : null}
-            tokenTo={tokenToIndex !== null ? tokens[tokenToIndex] : null}
-            tokenToPrice={tokenToPriceData?.price}
-            tokenFromPrice={tokenFromPriceData?.price}
-            copyTokenAddressHandler={copyTokenAddressHandler}
-            network={network}
-            isPairGivingPoints={isFirstPairGivingPoints || isSecondPairGivingPoints}
-          />
-          {walletStatus !== Status.Initialized && getStateMessage() !== 'Loading' ? (
-            <ChangeWalletButton
-              height={48}
-              name='Connect wallet'
-              onConnect={onConnectWallet}
-              connected={false}
-              onDisconnect={onDisconnectWallet}
-              isSwap={true}
-            />
-          ) : getStateMessage() === 'Insufficient ETH' ? (
-            <TooltipHover
-              title='More ETH is required to cover the transaction fee. Obtain more ETH to complete this transaction.'
-              top={-45}>
+              <TransactionDetailsBox
+                open={detailsOpen && canShowDetails}
+                exchangeRate={{
+                  val: rateReversed ? 1 / swapRate : swapRate,
+                  symbol: canShowDetails
+                    ? tokens[rateReversed ? tokenFromIndex : tokenToIndex].symbol
+                    : '',
+                  decimal: canShowDetails
+                    ? tokens[rateReversed ? tokenFromIndex : tokenToIndex].decimals
+                    : 0
+                }}
+                slippage={+slippTolerance}
+                priceImpact={priceImpact}
+                isLoadingRate={getStateMessage() === 'Loading' || addBlur}
+                simulationPath={simulationPath}
+              />
+              <TokensInfo
+                tokenFrom={tokenFromIndex !== null ? tokens[tokenFromIndex] : null}
+                tokenTo={tokenToIndex !== null ? tokens[tokenToIndex] : null}
+                tokenToPrice={tokenToPriceData?.price}
+                tokenFromPrice={tokenFromPriceData?.price}
+                copyTokenAddressHandler={copyTokenAddressHandler}
+                network={network}
+                isPairGivingPoints={isFirstPairGivingPoints || isSecondPairGivingPoints}
+              />
+            </Box>
+            {walletStatus !== Status.Initialized && getStateMessage() !== 'Loading' ? (
+              <ChangeWalletButton
+                height={48}
+                name='Connect wallet'
+                onConnect={onConnectWallet}
+                connected={false}
+                onDisconnect={onDisconnectWallet}
+                isSwap={true}
+              />
+            ) : getStateMessage() === 'Insufficient ETH' ? (
+              <TooltipHover
+                title='More ETH is required to cover the transaction fee. Obtain more ETH to complete this transaction.'
+                top={-45}>
+                <AnimatedButton
+                  content={getStateMessage()}
+                  className={
+                    getStateMessage() === 'Connect a wallet'
+                      ? `${classes.swapButton}`
+                      : getStateMessage() === 'Exchange' && progress === 'none'
+                        ? `${classes.swapButton} ${classes.ButtonSwapActive}`
+                        : classes.swapButton
+                  }
+                  disabled={getStateMessage() !== 'Exchange' || progress !== 'none'}
+                  onClick={() => {
+                    if (tokenFromIndex === null || tokenToIndex === null) return
+
+                    onSwap(
+                      fromFee(new BN(Number(+slippTolerance * 1000))),
+                      simulateResult.estimatedPriceAfterSwap,
+                      simulationPath.tokenFrom?.assetAddress ?? PublicKey.default,
+                      simulationPath.tokenBetween?.assetAddress ?? null,
+                      simulationPath.tokenTo?.assetAddress ?? PublicKey.default,
+                      simulationPath.firstPair,
+                      simulationPath.secondPair,
+                      convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals),
+                      convertBalanceToBN(amountTo, tokens[tokenToIndex].decimals),
+                      inputRef === inputTarget.FROM
+                    )
+                  }}
+                  progress={progress}
+                />
+              </TooltipHover>
+            ) : (
               <AnimatedButton
                 content={getStateMessage()}
                 className={
@@ -1411,6 +1447,14 @@ export const Swap: React.FC<ISwap> = ({
                   if (tokenFromIndex === null || tokenToIndex === null) return
 
                   onSwap(
+                    // fromFee(new BN(Number(+slippTolerance * 1000))),
+                    // simulateResult.estimatedPriceAfterSwap,
+                    // tokens[tokenFromIndex].assetAddress,
+                    // tokens[tokenToIndex].assetAddress,
+                    // simulateResult.poolIndex,
+                    // convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals),
+                    // convertBalanceToBN(amountTo, tokens[tokenToIndex].decimals),
+                    // inputRef === inputTarget.FROM
                     fromFee(new BN(Number(+slippTolerance * 1000))),
                     simulateResult.estimatedPriceAfterSwap,
                     simulationPath.tokenFrom?.assetAddress ?? PublicKey.default,
@@ -1425,45 +1469,8 @@ export const Swap: React.FC<ISwap> = ({
                 }}
                 progress={progress}
               />
-            </TooltipHover>
-          ) : (
-            <AnimatedButton
-              content={getStateMessage()}
-              className={
-                getStateMessage() === 'Connect a wallet'
-                  ? `${classes.swapButton}`
-                  : getStateMessage() === 'Exchange' && progress === 'none'
-                    ? `${classes.swapButton} ${classes.ButtonSwapActive}`
-                    : classes.swapButton
-              }
-              disabled={getStateMessage() !== 'Exchange' || progress !== 'none'}
-              onClick={() => {
-                if (tokenFromIndex === null || tokenToIndex === null) return
-
-                onSwap(
-                  // fromFee(new BN(Number(+slippTolerance * 1000))),
-                  // simulateResult.estimatedPriceAfterSwap,
-                  // tokens[tokenFromIndex].assetAddress,
-                  // tokens[tokenToIndex].assetAddress,
-                  // simulateResult.poolIndex,
-                  // convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals),
-                  // convertBalanceToBN(amountTo, tokens[tokenToIndex].decimals),
-                  // inputRef === inputTarget.FROM
-                  fromFee(new BN(Number(+slippTolerance * 1000))),
-                  simulateResult.estimatedPriceAfterSwap,
-                  simulationPath.tokenFrom?.assetAddress ?? PublicKey.default,
-                  simulationPath.tokenBetween?.assetAddress ?? null,
-                  simulationPath.tokenTo?.assetAddress ?? PublicKey.default,
-                  simulationPath.firstPair,
-                  simulationPath.secondPair,
-                  convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals),
-                  convertBalanceToBN(amountTo, tokens[tokenToIndex].decimals),
-                  inputRef === inputTarget.FROM
-                )
-              }}
-              progress={progress}
-            />
-          )}
+            )}
+          </Box>
           <AnimatedWaves
             wavePosition={'bottom'}
             isAnimating={isFirstPairGivingPoints || isSecondPairGivingPoints}

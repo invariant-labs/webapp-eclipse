@@ -83,7 +83,6 @@ const TokenListItem: React.FC<IProps> = ({
   }
   const shouldShowText = !isSm
   const intervalSuffix = mapIntervalToString(interval)
-  console.log(icon)
   return (
     <Grid className={classes.wrapper}>
       {displayType === 'tokens' ? (

@@ -130,7 +130,7 @@ const Card: React.FC<ICard> = ({
 
   return (
     <Grid className={classes.root}>
-      {isLoading ? (
+      {isLoading || !poolAddress?.toString() ? (
         <Skeleton variant='rounded' animation='wave' className={classes.skeleton} />
       ) : (
         <Grid>
