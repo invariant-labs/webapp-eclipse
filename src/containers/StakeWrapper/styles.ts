@@ -8,7 +8,7 @@ export const useStyles = makeStyles()(() => ({
     flexDirection: 'column',
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'flex-start'
+    justifyContent: 'center'
   },
   header: {
     ...typography.heading1,
