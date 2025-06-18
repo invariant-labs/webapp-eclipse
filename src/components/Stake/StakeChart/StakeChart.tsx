@@ -153,6 +153,17 @@ export const StakeChart: React.FC<StakeChartProps> = ({
                             inputMode: 'decimal',
                             pattern: '[0-9]*.?[0-9]*',
                             min: 0,
+                            onKeyDown: (e) => {
+                                if (
+                                    !/[0-9]|\./.test(e.key) &&
+                                    !['Backspace', 'Delete', 'Tab', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)
+                                ) {
+                                    e.preventDefault();
+                                }
+                                if (e.key === '.' && inputValue.includes('.')) {
+                                    e.preventDefault();
+                                }
+                            }
                         }}
                         InputProps={{
                             className: classes.inputProps,
