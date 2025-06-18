@@ -4,6 +4,7 @@ import { PayloadType } from '../consts/types'
 import { BN } from '@coral-xyz/anchor'
 export interface StakeLiquidityPayload {
   amount: BN
+  createStakedATA: boolean
 }
 
 export interface ISBitz {}

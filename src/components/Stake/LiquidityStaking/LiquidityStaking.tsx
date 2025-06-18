@@ -52,7 +52,7 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
         : tokens[sBITZ_MAIN.address.toString()],
     [switchTab, tokens]
   )
-  console.log(tokens[sBITZ_MAIN.address.toString()])
+
   const handleSwitchTokens = () => {
     setIsRotating(true)
 
