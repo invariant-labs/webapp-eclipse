@@ -1,19 +1,37 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { PayloadType } from '../consts/types'
+import { BN } from '@coral-xyz/anchor'
 
-export interface ISBitz {}
+export interface StakeLiquidityPayload {
+  amount: BN
+}
 
-const defaultStatus: ISBitz = {}
+export interface ISBitz {
+  inProgress: boolean
+  success: boolean
+}
+
+const defaultStatus: ISBitz = {
+  inProgress: false,
+  success: false
+}
 export const sBitzSliceName = 'sBitz'
 
 const sBitzSlice = createSlice({
   name: sBitzSliceName,
   initialState: defaultStatus,
   reducers: {
-    stake(state, _action: PayloadAction<{}>) {
+    stake(state, _action: PayloadAction<StakeLiquidityPayload>) {
+      state.inProgress = true
       return state
     },
     unStake(state, _action: PayloadAction<{}>) {
+      return state
+    },
+    setProgressState(state, action: PayloadAction<{ inProgress: boolean; success: boolean }>) {
+      state.inProgress = action.payload.inProgress
+      state.success = action.payload.success
+
       return state
     }
   }

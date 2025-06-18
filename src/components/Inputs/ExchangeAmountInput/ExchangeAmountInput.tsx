@@ -50,6 +50,7 @@ interface IProps {
   isPairGivingPoints?: boolean
   actionButtons?: ActionButton[]
   hideSelect?: boolean
+  notRoundIcon?: boolean
 }
 
 export const ExchangeAmountInput: React.FC<IProps> = ({
@@ -80,7 +81,8 @@ export const ExchangeAmountInput: React.FC<IProps> = ({
   hiddenUnknownTokens = false,
   network = NetworkType.Mainnet,
   isPairGivingPoints = false,
-  hideSelect = false
+  hideSelect = false,
+  notRoundIcon = false
 }) => {
   const hideBalance = balance === '- -' || !balance || hideBalances
   const { classes, cx } = useStyles()
@@ -170,6 +172,7 @@ export const ExchangeAmountInput: React.FC<IProps> = ({
           hiddenUnknownTokens={hiddenUnknownTokens}
           network={network}
           hideSelect={hideSelect}
+          notRoundIcon={notRoundIcon}
         />
         {showBlur ? (
           <div className={classes.blur}></div>
