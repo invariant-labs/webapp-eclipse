@@ -1,9 +1,8 @@
 import { Box, Grid, Typography } from '@mui/material'
 import useStyles from './style'
 import Switcher from './Switcher/Switcher'
-import { useMemo, useState } from 'react'
-import { BITZ_MAIN } from '@store/consts/static'
-import sBITZIcon from '@static/png/sBITZ.png'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { BITZ_MAIN, sBITZ_MAIN } from '@store/consts/static'
 import ExchangeAmountInput from '@components/Inputs/ExchangeAmountInput/ExchangeAmountInput'
 import { Status } from '@store/reducers/solanaWallet'
 import { SwapToken } from '@store/selectors/solanaWallet'
@@ -11,19 +10,29 @@ import SwapSeparator from './SwapSeparator/SwapSeparator'
 import { Separator } from '@common/Separator/Separator'
 import { colors } from '@static/theme'
 import TransactionDetails from './TransactionDetails/TransactionDetails'
-import { printBN } from '@utils/utils'
+import { convertBalanceToBN, printBN } from '@utils/utils'
 import ApyTooltip from './ApyTooltip/ApyTooltip'
 import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
-import AnimatedButton from '@common/AnimatedButton/AnimatedButton'
+import AnimatedButton, { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 import { StakeSwitch } from '@store/consts/types'
+import { StakeLiquidityPayload } from '@store/reducers/sBitz'
 
 export interface ILiquidityStaking {
   walletStatus: Status
   tokens: Record<string, SwapToken>
+  handleStake: (props: StakeLiquidityPayload) => void
+  inProgress: boolean
+  success: boolean
 }
 
-export const LiquidityStaking: React.FC<ILiquidityStaking> = ({ walletStatus, tokens }) => {
+export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
+  walletStatus,
+  tokens,
+  handleStake,
+  inProgress,
+  success
+}) => {
   const { classes } = useStyles()
 
   const [switchTab, setSwitchTab] = useState<StakeSwitch>(StakeSwitch.Stake)
@@ -33,18 +42,63 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({ walletStatus, to
 
   const [isRotating, setIsRotating] = useState(false)
 
-  const sBitzMocked: SwapToken = {
-    ...tokens['AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE'],
-    logoURI: sBITZIcon,
-    symbol: 'sBITZ(USDC)'
+  const [progress, setProgress] = useState<ProgressState>('none')
+  const [_throttle, setThrottle] = useState<boolean>(false)
+  const timeoutRef = useRef<number>(0)
+
+  useEffect(() => {
+    let timeoutId1: NodeJS.Timeout
+    let timeoutId2: NodeJS.Timeout
+
+    if (!inProgress && progress === 'progress') {
+      setProgress(success ? 'approvedWithSuccess' : 'approvedWithFail')
+
+      timeoutId1 = setTimeout(() => {
+        setProgress(success ? 'success' : 'failed')
+      }, 1000)
+
+      timeoutId2 = setTimeout(() => {
+        setProgress('none')
+      }, 3000)
+    }
+
+    return () => {
+      clearTimeout(timeoutId1)
+      clearTimeout(timeoutId2)
+    }
+  }, [success, inProgress])
+
+  const setSimulateAmount = async () => {}
+  const simulateWithTimeout = () => {
+    setThrottle(true)
+
+    clearTimeout(timeoutRef.current)
+    const timeout = setTimeout(() => {
+      setSimulateAmount().finally(() => {
+        setThrottle(false)
+      })
+    }, 500)
+    timeoutRef.current = timeout as unknown as number
   }
 
+  useEffect(() => {
+    if (progress === 'none' && !(amountFrom === '' && amountTo === '')) {
+      simulateWithTimeout()
+    }
+  }, [progress])
+
   const tokenFrom: SwapToken = useMemo(
-    () => (switchTab === StakeSwitch.Stake ? tokens[BITZ_MAIN.address.toString()] : sBitzMocked),
+    () =>
+      switchTab === StakeSwitch.Stake
+        ? tokens[BITZ_MAIN.address.toString()]
+        : tokens[sBITZ_MAIN.address.toString()],
     [switchTab, tokens]
   )
   const tokenTo: SwapToken = useMemo(
-    () => (switchTab === StakeSwitch.Unstake ? tokens[BITZ_MAIN.address.toString()] : sBitzMocked),
+    () =>
+      switchTab === StakeSwitch.Unstake
+        ? tokens[BITZ_MAIN.address.toString()]
+        : tokens[sBITZ_MAIN.address.toString()],
     [switchTab, tokens]
   )
 
@@ -84,13 +138,12 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({ walletStatus, to
 
   const getStateMessage = () => {
     if (switchTab === StakeSwitch.Stake) {
-      return `Stake ${amountFrom} ${tokenFrom.symbol}`
+      return `Stake ${amountFrom} ${tokenFrom?.symbol}`
     } else {
-      return `Unstake ${amountFrom} ${tokenFrom.symbol}`
+      return `Unstake ${amountFrom} ${tokenFrom?.symbol}`
     }
   }
 
-  const progress = 'none'
   return (
     <Grid container className={classes.wrapper}>
       <Switcher switchTab={switchTab} setSwitchTab={setSwitchTab} setIsRotating={setIsRotating} />
@@ -99,8 +152,8 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({ walletStatus, to
       </Box>
       <ExchangeAmountInput
         value={amountFrom}
-        balance={printBN(tokenFrom.balance, tokenFrom.decimals)}
-        decimal={tokenFrom.decimals}
+        balance={printBN(tokenFrom?.balance || new BN(0), tokenFrom?.decimals)}
+        decimal={tokenFrom?.decimals}
         className={classes.amountInput}
         setValue={value => {
           if (value.match(/^\d*\.?\d*$/)) {
@@ -141,6 +194,7 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({ walletStatus, to
           //   (inputRef === inputTarget.TO || inputRef === inputTarget.DEFAULT))
         }
         hideSelect
+        notRoundIcon
       />
       <SwapSeparator
         onClick={handleSwitchTokens}
@@ -153,8 +207,8 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({ walletStatus, to
       </Box>
       <ExchangeAmountInput
         value={amountTo}
-        balance={printBN(tokenTo.balance, tokenTo.decimals)}
-        decimal={tokenTo.decimals}
+        balance={printBN(tokenTo?.balance || new BN(0), tokenTo?.decimals)}
+        decimal={tokenTo?.decimals}
         className={classes.amountInput}
         setValue={value => {
           if (value.match(/^\d*\.?\d*$/)) {
@@ -195,6 +249,7 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({ walletStatus, to
           //   (inputRef === inputTarget.TO || inputRef === inputTarget.DEFAULT))
         }
         hideSelect
+        notRoundIcon
       />
       <Separator isHorizontal width={1} color={colors.invariant.light} margin='16px 0' />
       <TransactionDetails />
@@ -207,8 +262,16 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({ walletStatus, to
               ? `${classes.swapButton} ${classes.ButtonSwapActive}`
               : classes.swapButton
         }
-        disabled={getStateMessage() !== 'Exchange' || progress !== 'none'}
-        onClick={() => {}}
+        disabled={progress !== 'none'}
+        onClick={() => {
+          setProgress('progress')
+
+          if (switchTab === StakeSwitch.Stake) {
+            handleStake({
+              amount: convertBalanceToBN(amountFrom, tokenFrom.decimals)
+            })
+          }
+        }}
         progress={progress}
       />
     </Grid>

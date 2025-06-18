@@ -4,16 +4,26 @@ import { Box, Grid, Typography } from '@mui/material'
 import LiquidityStaking from '@components/Stake/Stake'
 import { Link } from 'react-router-dom'
 import LaunchIcon from '@mui/icons-material/Launch'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { status, swapTokensDict } from '@store/selectors/solanaWallet'
+import { StakeLiquidityPayload } from '@store/reducers/sBitz'
+import { actions } from '@store/reducers/sBitz'
+import { inProgress, success as successState } from '@store/selectors/stake'
 import { LiquidityStakingOverview } from '@components/LiquidityStakingOverview/LiquidityStakingOverview'
 
 export const WrappedStake: React.FC = () => {
   const { classes } = useStyles()
+  const dispatch = useDispatch()
 
   const walletStatus = useSelector(status)
   const tokens = useSelector(swapTokensDict)
 
+  const progress = useSelector(inProgress)
+  const success = useSelector(successState)
+
+  const handleStake = (props: StakeLiquidityPayload) => {
+    dispatch(actions.stake(props))
+  }
   return (
     <Grid container className={classes.wrapper}>
       <Box display='flex' flexDirection='column' alignItems='center' gap={'12px'}>
@@ -32,7 +42,13 @@ export const WrappedStake: React.FC = () => {
         holders={23573}
         yieldValue={'300.5'}
       />
-      <LiquidityStaking walletStatus={walletStatus} tokens={tokens} />
+      <LiquidityStaking
+        walletStatus={walletStatus}
+        tokens={tokens}
+        handleStake={handleStake}
+        inProgress={progress}
+        success={success}
+      />
     </Grid>
   )
 }
