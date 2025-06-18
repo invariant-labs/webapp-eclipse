@@ -149,6 +149,11 @@ export const StakeChart: React.FC<StakeChartProps> = ({
                         variant="outlined"
                         type="number"
                         size="small"
+                        inputProps={{
+                            inputMode: 'decimal',
+                            pattern: '[0-9]*.?[0-9]*',
+                            min: 0,
+                        }}
                         InputProps={{
                             className: classes.inputProps,
                             startAdornment: (
@@ -348,7 +353,7 @@ export const StakeChart: React.FC<StakeChartProps> = ({
                                                     className={classes.tooltipValue}
                                                     sx={{ color: `${point.serieColor}` }}
                                                 >
-                                                    {point.data.yFormatted} {point.serieId}
+                                                    {point.serieId === 'BITZ' ? 'Staked' : 'Holding'}: {point.data.yFormatted} BITZ
                                                 </Typography>
                                             </Box>
                                         ))}
@@ -377,7 +382,7 @@ export const StakeChart: React.FC<StakeChartProps> = ({
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <img src={sBITZ} alt="sBITZ Logo" />
                         <Typography className={classes.sBitzValue}>
-                            Holding: {sBitzData[sBitzData.length - 1].y.toFixed(2)} sBITZ
+                            Holding: {sBitzData[sBitzData.length - 1].y.toFixed(2)} BITZ
                         </Typography>
                     </Box>
                 )}

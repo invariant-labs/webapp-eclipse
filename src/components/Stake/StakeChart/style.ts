@@ -148,10 +148,10 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     background: colors.invariant.component,
     border: `1px solid ${colors.invariant.lightGrey}`,
     borderRadius: 5,
-    width: 120,
+    width: 160,
     padding: 8,
     [theme.breakpoints.down('sm')]: {
-      width: 120,
+      width: 160,
       padding: 6
     }
   },
