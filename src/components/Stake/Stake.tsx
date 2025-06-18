@@ -4,6 +4,7 @@ import LiquidityStaking from './LiquidityStaking/LiquidityStaking'
 import { Status } from '@store/reducers/solanaWallet'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { StakeLiquidityPayload } from '@store/reducers/sBitz'
+import { FAQSection } from './FAQSection/FAQSection'
 
 export interface IStake {
   walletStatus: Status
@@ -34,6 +35,7 @@ export const Stake: React.FC<IStake> = ({
         inProgress={inProgress}
         success={success}
       />
+      <FAQSection />
     </Grid>
   )
 }
