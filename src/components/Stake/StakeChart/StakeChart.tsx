@@ -175,8 +175,15 @@ export const StakeChart: React.FC<StakeChartProps> = ({
                                 }
 
                                 e.preventDefault();
+                            },
+                            onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+                                const value = parseFloat(e.target.value);
+                                if (!isNaN(value) && value > 10000) {
+                                    e.target.value = '10000';
+                                }
                             }
                         }}
+
                         InputProps={{
                             className: classes.inputProps,
                             startAdornment: (
