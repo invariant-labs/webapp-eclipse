@@ -12,7 +12,7 @@ import {
 } from '@store/consts/static'
 import { InputPagination } from '@common/Pagination/InputPagination/InputPagination'
 import { VariantType } from 'notistack'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 export interface PoolListInterface {
   initialLength: number
@@ -55,6 +55,9 @@ import { ROUTES } from '@utils/utils'
 import { colors, theme } from '@static/theme'
 import { ISearchToken } from '@common/FilterSearch/FilterSearch'
 import { shortenAddress } from '@utils/uiUtils'
+import { actions } from '@store/reducers/navigation'
+import { useDispatch, useSelector } from 'react-redux'
+import { liquiditySearch } from '@store/selectors/navigation'
 
 const ITEMS_PER_PAGE = 10
 
@@ -98,8 +101,12 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
   filteredTokens,
   interval
 }) => {
-  const [page, setPage] = React.useState(1)
-  const [sortType, setSortType] = React.useState(SortTypePoolList.FEE_24_DESC)
+  const searchParam = useSelector(liquiditySearch)
+  const page = searchParam.pageNumber
+  const [sortType, setSortType] = React.useState(searchParam.sortType)
+
+  const dispatch = useDispatch()
+  const location = useLocation()
   const navigate = useNavigate()
   const [initialDataLength, setInitialDataLength] = useState(initialLength)
   const isCenterAligment = useMediaQuery(theme.breakpoints.down(1280))
@@ -107,6 +114,10 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
   const filteredTokenX = filteredTokens[0] ?? ''
   const filteredTokenY = filteredTokens[1] ?? ''
   const { classes, cx } = useStyles()
+  useEffect(() => {
+    dispatch(actions.setSearch({ section: 'liquidityPool', type: 'sortType', sortType }))
+  }, [sortType])
+
   const sortedData = useMemo(() => {
     if (isLoading) {
       return generateMockData()
@@ -150,7 +161,15 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
     setInitialDataLength(initialLength)
   }, [initialLength])
 
-  const handleChangePagination = (currentPage: number) => setPage(currentPage)
+  const handleChangePagination = (newPage: number) => {
+    dispatch(
+      actions.setSearch({
+        section: 'liquidityPool',
+        type: 'pageNumber',
+        pageNumber: newPage
+      })
+    )
+  }
 
   const paginator = (currentPage: number) => {
     const page = currentPage || 1
@@ -169,10 +188,6 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
 
     return Math.max(rowNumber - displayedItems, 0)
   }
-
-  useEffect(() => {
-    setPage(1)
-  }, [data, pages])
 
   return (
     <Grid
@@ -247,14 +262,15 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
             desc={initialDataLength < 3 ? '' : 'You can create it yourself!'}
             desc2={initialDataLength < 5 ? '' : 'Or try adjusting your search criteria!'}
             buttonName='Create Pool'
-            onAction={() =>
+            onAction={() => {
+              dispatch(actions.setNavigation({ address: location.pathname }))
               navigate(
                 ROUTES.getNewPositionRoute(filteredTokenX.address, filteredTokenY.address, '0_10'),
                 {
                   state: { referer: 'stats' }
                 }
               )
-            }
+            }}
             withButton={true}
             withImg={initialDataLength > 3}
           />
@@ -269,7 +285,7 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
           <InputPagination
             borderTop={false}
             pages={pages}
-            defaultPage={1}
+            defaultPage={page}
             handleChangePage={handleChangePagination}
             variant='center'
             page={page}

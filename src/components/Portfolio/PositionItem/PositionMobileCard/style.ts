@@ -93,15 +93,17 @@ export const useMobileStyles = makeStyles()((theme: Theme) => ({
     },
     transition: '300ms'
   },
+  tickersContainer: {
+    flex: 1,
+    display: 'flex',
+    alignItems: 'center'
+  },
   names: {
-    textOverflow: 'ellipsis',
-    overflow: 'hidden',
     ...typography.heading2,
     color: colors.invariant.text,
     lineHeight: '40px',
     textAlign: 'left',
     whiteSpace: 'nowrap',
-    width: 180,
     [theme.breakpoints.down('xl')]: {
       ...typography.heading2
     },
