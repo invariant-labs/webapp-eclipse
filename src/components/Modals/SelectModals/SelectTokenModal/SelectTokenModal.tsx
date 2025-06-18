@@ -197,8 +197,8 @@ export const SelectTokenModal: React.FC<ISelectTokenModal> = memo(
 
     const commonTokensList = useMemo(
       () =>
-        commonTokens.map(assetAddress =>
-          tokensWithIndexes.find(token => token.assetAddress.equals(assetAddress))
+        commonTokens.map(
+          assetAddress => tokensWithIndexes.find(token => token.assetAddress.equals(assetAddress))!
         ),
       [tokensWithIndexes, commonTokens]
     )
@@ -328,7 +328,7 @@ export const SelectTokenModal: React.FC<ISelectTokenModal> = memo(
                 {commonTokensList.map(token => (
                   <Box
                     className={classes.commonTokenItem}
-                    key={token.symbol}
+                    key={token?.symbol}
                     onClick={() => {
                       onSelect(token.index)
                       setValue('')

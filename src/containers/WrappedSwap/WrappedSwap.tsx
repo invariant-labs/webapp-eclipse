@@ -356,8 +356,6 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const swapAccounts = useSelector(accounts)
   const swapIsLoading = useSelector(isLoading)
 
-  console.log(commonTokensForNetworks[networkType].map(a => a.toString()))
-
   return (
     <Swap
       isFetchingNewPool={isFetchingNewPool}
