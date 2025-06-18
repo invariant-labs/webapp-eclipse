@@ -9,14 +9,28 @@ export interface IStake {
   walletStatus: Status
   tokens: Record<string, SwapToken>
   handleStake: (props: StakeLiquidityPayload) => void
+  inProgress: boolean
+  success: boolean
 }
 
-export const Stake: React.FC<IStake> = ({ walletStatus, tokens, handleStake }) => {
+export const Stake: React.FC<IStake> = ({
+  walletStatus,
+  tokens,
+  handleStake,
+  inProgress,
+  success
+}) => {
   const { classes } = useStyles()
 
   return (
     <Grid container className={classes.wrapper} alignItems='center'>
-      <LiquidityStaking walletStatus={walletStatus} tokens={tokens} handleStake={handleStake} />
+      <LiquidityStaking
+        walletStatus={walletStatus}
+        tokens={tokens}
+        handleStake={handleStake}
+        inProgress={inProgress}
+        success={success}
+      />
     </Grid>
   )
 }

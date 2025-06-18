@@ -4,19 +4,19 @@ import { all, call, put, select, spawn, takeLatest } from 'typed-redux-saga'
 import { network, rpcAddress } from '@store/selectors/solanaConnection'
 import { getWallet } from './wallet'
 import { getStakingProgram } from '@utils/web3/programs/amm'
-import { computeUnitsInstruction, IWallet } from '@invariant-labs/sdk-eclipse'
+import { IWallet } from '@invariant-labs/sdk-eclipse'
 import { actions as connectionActions } from '@store/reducers/solanaConnection'
 import { actions as RPCAction, RpcStatus } from '@store/reducers/solanaConnection'
 import {
   APPROVAL_DENIED_MESSAGE,
   BITZ_MAIN,
   COMMON_ERROR_MESSAGE,
+  ErrorCodeExtractionKeys,
   sBITZ_MAIN,
   SIGNING_SNACKBAR_CONFIG,
   TIMEOUT_ERROR_MESSAGE
 } from '@store/consts/static'
 import {
-  Keypair,
   sendAndConfirmRawTransaction,
   SendTransactionError,
   Transaction,
@@ -30,11 +30,14 @@ import {
   ensureError,
   extractErrorCode,
   extractRuntimeErrorCode,
-  mapErrorCodeToMessage
+  formatNumberWithoutSuffix,
+  mapErrorCodeToMessage,
+  printBN
 } from '@utils/utils'
 import { closeSnackbar } from 'notistack'
-import { getAssociatedTokenAddressSync, TOKEN_2022_PROGRAM_ID } from '@solana/spl-token'
+import { getAssociatedTokenAddressSync, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { accounts } from '@store/selectors/solanaWallet'
+import { BN } from '@coral-xyz/anchor'
 
 export function* handleStake(action: PayloadAction<StakeLiquidityPayload>) {
   const loaderStaking = createLoaderKey()
@@ -49,9 +52,6 @@ export function* handleStake(action: PayloadAction<StakeLiquidityPayload>) {
   const connection = yield* call(getConnection)
   const stakingProgram = yield* call(getStakingProgram, networkType, rpc, wallet as IWallet)
 
-  console.log(bitzAmount.toString())
-  console.log(stakingProgram)
-
   try {
     yield put(
       snackbarsActions.add({
@@ -62,13 +62,11 @@ export function* handleStake(action: PayloadAction<StakeLiquidityPayload>) {
       })
     )
 
-    const setCuIx = computeUnitsInstruction(1_700_000, wallet.publicKey)
-
     const ata = getAssociatedTokenAddressSync(
       BITZ_MAIN.address,
       wallet.publicKey,
       false,
-      TOKEN_2022_PROGRAM_ID
+      TOKEN_PROGRAM_ID
     )
 
     const stakeIx = yield* call([stakingProgram, stakingProgram.stakeIx], {
@@ -79,7 +77,7 @@ export function* handleStake(action: PayloadAction<StakeLiquidityPayload>) {
     })
     console.log(!walletAccounts[ata.toString()])
 
-    const tx = new Transaction().add(setCuIx).add(...stakeIx)
+    const tx = new Transaction().add(...stakeIx)
 
     const { blockhash, lastValidBlockHeight } = yield* call([
       connection,
@@ -91,11 +89,8 @@ export function* handleStake(action: PayloadAction<StakeLiquidityPayload>) {
 
     yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
 
-    console.log(stakeIx)
-
     const signedTx = (yield* call([wallet, wallet.signTransaction], tx)) as Transaction
 
-    console.log(signedTx)
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
 
@@ -103,103 +98,119 @@ export function* handleStake(action: PayloadAction<StakeLiquidityPayload>) {
     txid = yield* call(sendAndConfirmRawTransaction, connection, signedTx.serialize(), {
       skipPreflight: false
     })
-    console.log(txid)
-
-    const stakePda = yield* call([stakingProgram, stakingProgram.getStake], BITZ_MAIN.address)
-    console.log(stakePda)
 
     if (!txid.length) {
-      // yield put(action.setSwapSuccess(false))
+      yield put(actions.setProgressState({ inProgress: false, success: false }))
 
       closeSnackbar(loaderStaking)
       yield put(snackbarsActions.remove(loaderStaking))
-
-      return yield put(
-        snackbarsActions.add({
-          message: 'ETH wrapping failed. Please try again',
-          variant: 'error',
-          persist: false,
-          txid: txid
-        })
-      )
     } else {
+      console.log(`Transaction sent: ${txid}`)
       const txDetails = yield* call([connection, connection.getParsedTransaction], txid, {
         maxSupportedTransactionVersion: 0
       })
       console.log(txDetails)
-      // if (txDetails) {
-      //   if (txDetails.meta?.err) {
-      //     if (txDetails.meta.logMessages) {
-      //       const errorLog = txDetails.meta.logMessages.find(log =>
-      //         log.includes(ErrorCodeExtractionKeys.ErrorNumber)
-      //       )
-      //       const errorCode = errorLog
-      //         ?.split(ErrorCodeExtractionKeys.ErrorNumber)[1]
-      //         .split(ErrorCodeExtractionKeys.Dot)[0]
-      //         .trim()
-      //       const message = mapErrorCodeToMessage(Number(errorCode))
-      //       // yield put(swapActions.setSwapSuccess(false))
 
-      //       closeSnackbar(loaderStaking)
-      //       yield put(snackbarsActions.remove(loaderStaking))
-      //       closeSnackbar(loaderSigningTx)
-      //       yield put(snackbarsActions.remove(loaderSigningTx))
+      if (txDetails) {
+        if (txDetails.meta?.err) {
+          if (txDetails.meta.logMessages) {
+            console.log(txDetails.meta.logMessages)
+            const errorLog = txDetails.meta.logMessages.find(log =>
+              log.includes(ErrorCodeExtractionKeys.ErrorNumber)
+            )
+            const errorCode = errorLog
+              ?.split(ErrorCodeExtractionKeys.ErrorNumber)[1]
+              .split(ErrorCodeExtractionKeys.Dot)[0]
+              .trim()
+            const message = mapErrorCodeToMessage(Number(errorCode))
+            // yield put(swapActions.setSwapSuccess(false))
 
-      //       yield put(
-      //         snackbarsActions.add({
-      //           message,
-      //           variant: 'error',
-      //           persist: false
-      //         })
-      //       )
-      //       return
-      //     }
-      //   }
+            closeSnackbar(loaderStaking)
+            yield put(snackbarsActions.remove(loaderStaking))
+            closeSnackbar(loaderSigningTx)
+            yield put(snackbarsActions.remove(loaderSigningTx))
 
-      //   yield put(
-      //     snackbarsActions.add({
-      //       message: 'BITZ staked successfully',
-      //       variant: 'success',
-      //       persist: false,
-      //       txid
-      //     })
-      //   )
+            yield put(
+              snackbarsActions.add({
+                message,
+                variant: 'error',
+                persist: false
+              })
+            )
+            return
+          }
+        }
 
-      //   const meta = txDetails.meta
-      //   if (meta?.preTokenBalances && meta.postTokenBalances) {
-      //     // yield put(
-      //     //   snackbarsActions.add({
-      //     //     tokensDetails: {
-      //     //       ikonType: 'swap',
-      //     //       tokenXAmount: formatNumberWithoutSuffix(printBN(amountIn, tokenIn.decimals)),
-      //     //       tokenYAmount: formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals)),
-      //     //       tokenXIcon: tokenIn.logoURI,
-      //     //       tokenYIcon: tokenOut.logoURI,
-      //     //       tokenXSymbol: tokenIn.symbol ?? tokenIn.address.toString(),
-      //     //       tokenYSymbol: tokenOut.symbol ?? tokenOut.address.toString(),
-      //     //       earnedPoints: points.eqn(0)
-      //     //         ? undefined
-      //     //         : formatNumberWithoutSuffix(printBN(points, LEADERBOARD_DECIMAL))
-      //     //     },
-      //     //     persist: false
-      //     //   })
-      //     // )
-      //   }
-      // } else {
-      //   yield put(
-      //     snackbarsActions.add({
-      //       message: 'BITZ staked successfully',
-      //       variant: 'success',
-      //       persist: false,
-      //       txid
-      //     })
-      //   )
-      // }
+        yield put(
+          snackbarsActions.add({
+            message: 'BITZ staked successfully',
+            variant: 'success',
+            persist: false,
+            txid
+          })
+        )
+
+        const meta = txDetails.meta
+        console.log(meta)
+        if (meta?.preTokenBalances && meta.postTokenBalances) {
+          const accountXPredicate = entry =>
+            entry.mint === BITZ_MAIN.address.toString() &&
+            entry.owner === wallet.publicKey.toString()
+          const accountYPredicate = entry =>
+            entry.mint === sBITZ_MAIN.address.toString() &&
+            entry.owner === wallet.publicKey.toString()
+
+          const preAccountX = meta.preTokenBalances.find(accountXPredicate)
+          const postAccountX = meta.postTokenBalances.find(accountXPredicate)
+          const preAccountY = meta.preTokenBalances.find(accountYPredicate)
+          const postAccountY = meta.postTokenBalances.find(accountYPredicate)
+
+          if (preAccountX && postAccountX && preAccountY && postAccountY) {
+            const preAmountX = preAccountX.uiTokenAmount.amount
+            const preAmountY = preAccountY.uiTokenAmount.amount
+            const postAmountX = postAccountX.uiTokenAmount.amount
+            const postAmountY = postAccountY.uiTokenAmount.amount
+
+            const amountX = new BN(preAmountX).sub(new BN(postAmountX))
+            const amountY = new BN(postAmountY).sub(new BN(preAmountY))
+
+            try {
+              yield put(
+                snackbarsActions.add({
+                  tokensDetails: {
+                    ikonType: 'stake',
+                    tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, BITZ_MAIN.decimals)),
+                    tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, sBITZ_MAIN.decimals)),
+                    tokenXIcon: BITZ_MAIN.logoURI,
+                    tokenYIcon: sBITZ_MAIN.logoURI,
+                    tokenXSymbol: BITZ_MAIN.symbol ?? BITZ_MAIN.address.toString(),
+                    tokenYSymbol: sBITZ_MAIN.symbol ?? sBITZ_MAIN.address.toString()
+                  },
+                  persist: false
+                })
+              )
+            } catch {}
+          }
+        }
+      } else {
+        yield put(
+          snackbarsActions.add({
+            message: 'BITZ staked successfully',
+            variant: 'success',
+            persist: false,
+            txid
+          })
+        )
+      }
     }
+
+    yield put(actions.setProgressState({ inProgress: false, success: true }))
 
     closeSnackbar(loaderStaking)
     yield put(snackbarsActions.remove(loaderStaking))
   } catch (e: unknown) {
+    yield put(actions.setProgressState({ inProgress: false, success: false }))
+
     const error = ensureError(e)
     console.log(error)
 

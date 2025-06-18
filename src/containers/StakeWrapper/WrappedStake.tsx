@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { status, swapTokensDict } from '@store/selectors/solanaWallet'
 import { StakeLiquidityPayload } from '@store/reducers/sBitz'
 import { actions } from '@store/reducers/sBitz'
+import { inProgress, success as successState } from '@store/selectors/stake'
 
 export const WrappedStake: React.FC = () => {
   const { classes } = useStyles()
@@ -15,6 +16,9 @@ export const WrappedStake: React.FC = () => {
 
   const walletStatus = useSelector(status)
   const tokens = useSelector(swapTokensDict)
+
+  const progress = useSelector(inProgress)
+  const success = useSelector(successState)
 
   const handleStake = (props: StakeLiquidityPayload) => {
     dispatch(actions.stake(props))
@@ -30,7 +34,13 @@ export const WrappedStake: React.FC = () => {
           </Link>
         </Box>
       </Box>
-      <LiquidityStaking walletStatus={walletStatus} tokens={tokens} handleStake={handleStake} />
+      <LiquidityStaking
+        walletStatus={walletStatus}
+        tokens={tokens}
+        handleStake={handleStake}
+        inProgress={progress}
+        success={success}
+      />
     </Grid>
   )
 }
