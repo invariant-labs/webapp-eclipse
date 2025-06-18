@@ -171,7 +171,7 @@ export const formatPlotDataLabels = (
   time: number,
   entries: number,
   interval: Intervals,
-  isMobile: boolean = false
+  reduceLabels: boolean = false
 ): string => {
   const date = new Date(time)
   const day = date.getDate()
@@ -184,7 +184,7 @@ export const formatPlotDataLabels = (
     }
     case Intervals.Daily: {
       const dayMod =
-        Math.floor(time / (1000 * 60 * 60 * 24)) % (entries >= 8 ? (isMobile ? 4 : 2) : 1)
+        Math.floor(time / (1000 * 60 * 60 * 24)) % (entries >= 8 ? (reduceLabels ? 4 : 2) : 1)
       return dayMod === 0 ? `${day < 10 ? '0' : ''}${day}/${month < 10 ? '0' : ''}${month}` : ''
     }
     case Intervals.Weekly: {
@@ -194,7 +194,7 @@ export const formatPlotDataLabels = (
       weekStart.setDate(date.getDate() + mondayOffset)
 
       const weekNumber = Math.floor(weekStart.getTime() / (1000 * 60 * 60 * 24 * 7))
-      const weekMod = weekNumber % (entries >= 8 ? (isMobile ? 4 : 2) : 1)
+      const weekMod = weekNumber % (entries >= 8 ? (reduceLabels ? 4 : 2) : 1)
 
       if (weekMod !== 0) return ''
 
