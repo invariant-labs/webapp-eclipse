@@ -154,6 +154,10 @@ export const StakeChart: React.FC<StakeChartProps> = ({
                             pattern: '[0-9]*.?[0-9]*',
                             min: 0,
                             onKeyDown: (e) => {
+                                if ((e.ctrlKey || e.metaKey) && e.key === 'a') {
+                                    return;
+                                }
+
                                 if (
                                     !/[0-9]|\./.test(e.key) &&
                                     !['Backspace', 'Delete', 'Tab', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)
