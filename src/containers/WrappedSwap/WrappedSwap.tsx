@@ -87,7 +87,7 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const rpc = useSelector(rpcAddress)
   const wallet = getEclipseWallet()
   const market = getMarketProgramSync(networkType, rpc, wallet as IWallet)
-
+  console.log(tokensDict)
   useEffect(() => {
     dispatch(leaderboardActions.getLeaderboardConfig())
   }, [])
@@ -128,8 +128,8 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const lastTokenFrom =
     initialTokenFrom && tickerToAddress(networkType, initialTokenFrom)
       ? tickerToAddress(networkType, initialTokenFrom)
-      : localStorage.getItem(`INVARIANT_LAST_TOKEN_FROM_${networkType}`) ??
-        WETH_MAIN.address.toString()
+      : (localStorage.getItem(`INVARIANT_LAST_TOKEN_FROM_${networkType}`) ??
+        WETH_MAIN.address.toString())
 
   const lastTokenTo =
     initialTokenTo && tickerToAddress(networkType, initialTokenTo)

@@ -51,6 +51,10 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
         return withdrawIcon
       case 'claim':
         return circleDolarIcon
+      case 'stake':
+        return snackbarSwapIcon
+      case 'unstake':
+        return snackbarSwapIcon
       default:
         return ''
     }
@@ -66,6 +70,10 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
         return 'Withdrawn'
       case 'claim':
         return 'Claimed'
+      case 'stake':
+        return 'Staked'
+      case 'unstake':
+        return 'Unstaked'
       default:
         return ''
     }

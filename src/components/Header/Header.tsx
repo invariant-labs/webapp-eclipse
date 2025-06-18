@@ -60,6 +60,7 @@ export const Header: React.FC<IHeader> = ({
     'portfolio',
     ...(typeOfNetwork === NetworkType.Testnet ? ['creator'] : []),
     ...(typeOfNetwork === NetworkType.Mainnet ? ['points'] : []),
+    'stake',
     'statistics'
   ]
 
@@ -67,7 +68,7 @@ export const Header: React.FC<IHeader> = ({
     liquidity: [/^liquidity\/*/],
     exchange: [/^exchange\/*/],
     portfolio: [/^portfolio\/*/, /^newPosition\/*/, /^position\/*/],
-
+    stake: [/^stake\/*/],
     ...(typeOfNetwork === NetworkType.Mainnet ? { leaderboard: [/^points\/*/] } : {}),
     ...(typeOfNetwork === NetworkType.Testnet ? { creator: [/^creator\/*/] } : {})
   }

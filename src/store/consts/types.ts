@@ -297,3 +297,8 @@ export interface INavigatePosition {
   fee: number
   id: string
 }
+
+export enum StakeSwitch {
+  Stake = 'Stake',
+  Unstake = 'Unstake'
+}

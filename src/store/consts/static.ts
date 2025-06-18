@@ -14,7 +14,8 @@ import {
 import { MAINNET_TOKENS } from '@invariant-labs/sdk-eclipse/lib/network'
 import { cat1Icon, cat2Icon, dog1Icon, dog2Icon } from '@static/icons'
 import { TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token'
-
+import sBitzIcon from '@static/png/sBitz.png'
+import BitzIcon from '@static/png/bitz.png'
 import rewardsArray from '@store/consts/rewards/rewardsArray.json'
 
 export enum NetworkType {
@@ -172,8 +173,17 @@ export const BITZ_MAIN: Token = {
   address: new PublicKey('64mggk2nXg6vHC1qCdsZdEFzd5QGN4id54Vbho4PswCF'),
   decimals: 11,
   name: 'BITZ',
-  logoURI:
-    'https://www.geckoterminal.com/_next/image?url=https%3A%2F%2Fassets.geckoterminal.com%2Fpwhn8c5e9mxmannjvxi4yllnwk1d&w=64&q=75',
+  logoURI: BitzIcon,
+  coingeckoId: ''
+}
+
+export const sBITZ_MAIN: Token = {
+  tokenProgram: new PublicKey('BiTZjpfDvVfBi6H6jP1wXT7jV9Qx22LBRyJHR3wprsb1'),
+  symbol: 'sBITZ',
+  address: new PublicKey('sBTZcSwRZhRq3JcjFh1xwxgCxmsN7MreyU3Zx8dA8uF'),
+  decimals: 11,
+  name: 'sBITZ',
+  logoURI: sBitzIcon,
   coingeckoId: ''
 }
 
@@ -655,6 +665,7 @@ export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
     SOL_MAIN.address,
     USDT_MAIN.address,
     BITZ_MAIN.address,
+    sBITZ_MAIN.address,
     LAIKA_MAIN.address,
     TUSD_MAIN.address
   ],
@@ -737,7 +748,8 @@ export const ADDRESSES_TO_REVERT_TOKEN_PAIRS: string[] = [
   KYSOL_MAIN.address.toString(),
   EZSOL_MAIN.address.toString(),
   TIA_MAIN.address.toString(),
-  BITZ_MAIN.address.toString()
+  BITZ_MAIN.address.toString(),
+  sBITZ_MAIN.address.toString()
 ]
 
 export const FormatConfig = {
@@ -796,6 +808,7 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
       WIF: DOGWIFHAT_MAIN.address.toString(),
       LAIKA: LAIKA_MAIN.address.toString(),
       BITZ: BITZ_MAIN.address.toString(),
+      sBITZ_MAIN: sBITZ_MAIN.address.toString(),
       MOON: MOON_MAIN.address.toString(),
       GSVM: GSVM_MAIN.address.toString(),
       DARKMOON: DARKMOON_MAIN.address.toString(),

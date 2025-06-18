@@ -3,8 +3,10 @@ import { PublicKey } from '@solana/web3.js'
 import { NetworkType } from '@store/consts/static'
 import { getSolanaConnection, networkTypetoProgramNetwork } from '../connection'
 import { Locker } from '@invariant-labs/locker-eclipse-sdk'
+import { LiquidityStaking } from '@invariant-labs/sbitz'
 let _market: Market
 let _locker: Locker
+let _staking: LiquidityStaking
 
 export const getCurrentMarketProgram = (): Market => {
   return _market
@@ -62,4 +64,19 @@ export const getLockerProgram = (
 
   _locker = Locker.build(net, solWallet, getSolanaConnection(rpcAddress))
   return _locker
+}
+
+export const getStakingProgram = (
+  network: NetworkType,
+  rpcAddress: string,
+  solWallet: IWallet
+): LiquidityStaking => {
+  if (_staking) {
+    return _staking
+  }
+
+  const net = networkTypetoProgramNetwork(network)
+
+  _staking = LiquidityStaking.build(net, solWallet, getSolanaConnection(rpcAddress))
+  return _staking
 }
