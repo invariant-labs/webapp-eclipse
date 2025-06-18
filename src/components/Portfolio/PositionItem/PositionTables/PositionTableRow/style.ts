@@ -13,9 +13,9 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
 
   pairNameCell: {
-    width: '25%',
+    width: '27%',
     textAlign: 'left',
-    padding: '14px 41px 14px 22px !important'
+    padding: '14px 22px 14px 22px !important'
   },
   airdropIcon: {
     flexShrink: '0',
@@ -90,9 +90,8 @@ export const useStyles = makeStyles()((theme: Theme) => ({
 
   iconsAndNames: {
     flexWrap: 'nowrap',
-    width: 'fit-content',
-    display: 'flex',
-    alignItems: 'center'
+    width: '100%',
+    display: 'flex'
   },
 
   tokenIcon: {
@@ -150,15 +149,18 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     }
   },
 
+  tickersContainer: {
+    width: 'fit-content',
+    display: 'flex',
+    alignItems: 'center'
+  },
+
   names: {
-    textOverflow: 'ellipsis',
-    overflow: 'hidden',
     ...typography.heading2,
     color: colors.invariant.text,
     lineHeight: '40px',
     textAlign: 'left',
     whiteSpace: 'nowrap',
-    width: 180,
     [theme.breakpoints.down('xl')]: {
       ...typography.heading2
     },

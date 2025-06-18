@@ -330,7 +330,7 @@ const PoolListItem: React.FC<IProps> = ({
             </TooltipHover>
           </Grid>
           <Box className={classes.row} justifyContent={'space-between'}>
-            <Typography>{fee}%</Typography>
+            {fee && typeof fee === 'number' && <Typography>{fee}%</Typography>}
             {isPromoted && (
               <PromotedPoolPopover apr={convertedApr} apy={convertedApy} points={points}>
                 <Box
