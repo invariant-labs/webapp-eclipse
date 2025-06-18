@@ -106,7 +106,8 @@ import {
   ErrorCodeExtractionKeys,
   TUSD_MAIN,
   AlternativeFormatConfig,
-  defaultThresholds
+  defaultThresholds,
+  sBITZ_MAIN
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
@@ -894,6 +895,7 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
         [USDT_MAIN.address.toString()]: USDT_MAIN,
         [SOL_MAIN.address.toString()]: SOL_MAIN,
         [BITZ_MAIN.address.toString()]: BITZ_MAIN,
+        [sBITZ_MAIN.address.toString()]: sBITZ_MAIN,
         [DOGWIFHAT_MAIN.address.toString()]: DOGWIFHAT_MAIN,
         [LAIKA_MAIN.address.toString()]: LAIKA_MAIN,
         [MOON_MAIN.address.toString()]: MOON_MAIN,

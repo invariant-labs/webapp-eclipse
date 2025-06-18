@@ -25,6 +25,7 @@ export interface ISelectModal {
   hiddenUnknownTokens: boolean
   network: NetworkType
   hideSelect?: boolean
+  notRoundIcon?: boolean
 }
 
 export const Select: React.FC<ISelectModal> = ({
@@ -42,9 +43,10 @@ export const Select: React.FC<ISelectModal> = ({
   onHideUnknownTokensChange,
   hiddenUnknownTokens,
   network,
-  hideSelect = false
+  hideSelect = false,
+  notRoundIcon = false
 }) => {
-  const { classes, cx } = useStyles({ hideSelect })
+  const { classes, cx } = useStyles({ hideSelect, notRoundIcon })
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
   const [open, setOpen] = React.useState<boolean>(false)
 

@@ -1,6 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { PayloadType } from '../consts/types'
 
+import { BN } from '@coral-xyz/anchor'
+export interface StakeLiquidityPayload {
+  amount: BN
+}
+
 export interface ISBitz {}
 
 const defaultStatus: ISBitz = {}
@@ -10,7 +15,7 @@ const sBitzSlice = createSlice({
   name: sBitzSliceName,
   initialState: defaultStatus,
   reducers: {
-    stake(state, _action: PayloadAction<{}>) {
+    stake(state, _action: PayloadAction<StakeLiquidityPayload>) {
       return state
     },
     unStake(state, _action: PayloadAction<{}>) {

@@ -30,19 +30,19 @@ export const ApyTooltip: React.FC<IApyTooltip> = ({
           gap={'4px'}
           flexDirection='column'>
           <Box className={classes.itemWrapper}>
-            <img src={tokenFrom.logoURI} width={16} height={16} />
+            <img src={tokenFrom?.logoURI} width={16} height={16} />
             <Typography className={classes.tooltipText}>{apyStaked} APY (Stake) </Typography>
           </Box>
           <Typography className={classes.plus}>+</Typography>
           <Box className={classes.itemWrapper}>
-            <img src={tokenTo.logoURI} width={16} height={16} />
+            <img src={tokenTo?.logoURI} width={16} height={16} />
             <Typography className={classes.greenTooltipText}>
               {apyCompound}% (10s Compound){' '}
             </Typography>
           </Box>
           <Typography className={classes.plus}>+</Typography>
           <Box className={classes.itemWrapper}>
-            <img src={tokenTo.logoURI} width={16} height={16} />
+            <img src={tokenTo?.logoURI} width={16} height={16} />
             <Typography className={classes.greenTooltipText}>Pool APY/DeFi </Typography>
           </Box>
         </Box>

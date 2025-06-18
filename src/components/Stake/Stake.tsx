@@ -3,18 +3,20 @@ import useStyles from './style'
 import LiquidityStaking from './LiquidityStaking/LiquidityStaking'
 import { Status } from '@store/reducers/solanaWallet'
 import { SwapToken } from '@store/selectors/solanaWallet'
+import { StakeLiquidityPayload } from '@store/reducers/sBitz'
 
 export interface IStake {
   walletStatus: Status
   tokens: Record<string, SwapToken>
+  handleStake: (props: StakeLiquidityPayload) => void
 }
 
-export const Stake: React.FC<IStake> = ({ walletStatus, tokens }) => {
+export const Stake: React.FC<IStake> = ({ walletStatus, tokens, handleStake }) => {
   const { classes } = useStyles()
 
   return (
     <Grid container className={classes.wrapper} alignItems='center'>
-      <LiquidityStaking walletStatus={walletStatus} tokens={tokens} />
+      <LiquidityStaking walletStatus={walletStatus} tokens={tokens} handleStake={handleStake} />
     </Grid>
   )
 }
