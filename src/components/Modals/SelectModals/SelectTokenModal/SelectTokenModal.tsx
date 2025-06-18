@@ -197,8 +197,8 @@ export const SelectTokenModal: React.FC<ISelectTokenModal> = memo(
 
     const commonTokensList = useMemo(
       () =>
-        tokensWithIndexes.filter(
-          ({ assetAddress }) => commonTokens.findIndex(key => key.equals(assetAddress)) !== -1
+        commonTokens.map(
+          assetAddress => tokensWithIndexes.find(token => token.assetAddress.equals(assetAddress))!
         ),
       [tokensWithIndexes, commonTokens]
     )
@@ -278,6 +278,7 @@ export const SelectTokenModal: React.FC<ISelectTokenModal> = memo(
           return '?cluster=testnet'
       }
     }, [network])
+
     return (
       <>
         <Popover
@@ -327,7 +328,7 @@ export const SelectTokenModal: React.FC<ISelectTokenModal> = memo(
                 {commonTokensList.map(token => (
                   <Box
                     className={classes.commonTokenItem}
-                    key={token.symbol}
+                    key={token?.symbol}
                     onClick={() => {
                       if (!onSelect) return
                       onSelect(token.index)

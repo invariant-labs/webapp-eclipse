@@ -499,6 +499,17 @@ export const TUSD_MAIN: Token = {
   coingeckoId: ''
 }
 
+export const SBITZ_MAIN: Token = {
+  tokenProgram: TOKEN_2022_PROGRAM_ID,
+  symbol: 'sBITZ',
+  address: new PublicKey('sBTZcSwRZhRq3JcjFh1xwxgCxmsN7MreyU3Zx8dA8uF'),
+  decimals: 11,
+  name: 'Staked BITZ',
+  logoURI:
+    'https://statics.eclipsescan.xyz/cdn/imgs/s60?ref=68747470733a2f2f65636c697073652e696e76617269616e742e6170702f734269747a2e706e67',
+  coingeckoId: ''
+}
+
 const DEFAULT_PUBLICKEY = new PublicKey(0)
 const MAX_U64 = new BN('18446744073709551615')
 
@@ -652,10 +663,10 @@ export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
     WETH_MAIN.address,
     TETH_MAIN.address,
     USDC_MAIN.address,
-    SOL_MAIN.address,
     USDT_MAIN.address,
+    SOL_MAIN.address,
     BITZ_MAIN.address,
-    LAIKA_MAIN.address,
+    SBITZ_MAIN.address,
     TUSD_MAIN.address
   ],
   Testnet: [USDC_TEST.address, BTC_TEST.address, WETH_TEST.address],
@@ -811,7 +822,8 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
       SOLAR: SOLAR_MAIN.address.toString(),
       KYSOL: KYSOL_MAIN.address.toString(),
       EZSOL: EZSOL_MAIN.address.toString(),
-      TUSD: TUSD_MAIN.address.toString()
+      TUSD: TUSD_MAIN.address.toString(),
+      sBITZ: SBITZ_MAIN.address.toString()
     }
   }
 }
