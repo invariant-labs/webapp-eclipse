@@ -9,6 +9,7 @@ export interface IStake {
   walletStatus: Status
   tokens: Record<string, SwapToken>
   handleStake: (props: StakeLiquidityPayload) => void
+  handleUnstake: (props: StakeLiquidityPayload) => void
   inProgress: boolean
   success: boolean
 }
@@ -17,6 +18,7 @@ export const Stake: React.FC<IStake> = ({
   walletStatus,
   tokens,
   handleStake,
+  handleUnstake,
   inProgress,
   success
 }) => {
@@ -28,6 +30,7 @@ export const Stake: React.FC<IStake> = ({
         walletStatus={walletStatus}
         tokens={tokens}
         handleStake={handleStake}
+        handleUnstake={handleUnstake}
         inProgress={inProgress}
         success={success}
       />

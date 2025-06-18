@@ -35,7 +35,11 @@ import {
   printBN
 } from '@utils/utils'
 import { closeSnackbar } from 'notistack'
-import { getAssociatedTokenAddressSync, TOKEN_PROGRAM_ID } from '@solana/spl-token'
+import {
+  getAssociatedTokenAddressSync,
+  TOKEN_2022_PROGRAM_ID,
+  TOKEN_PROGRAM_ID
+} from '@solana/spl-token'
 import { accounts } from '@store/selectors/solanaWallet'
 import { BN } from '@coral-xyz/anchor'
 
@@ -75,7 +79,6 @@ export function* handleStake(action: PayloadAction<StakeLiquidityPayload>) {
       stakedMint: sBITZ_MAIN.address,
       createStakedATA: !walletAccounts[ata.toString()]
     })
-    console.log(!walletAccounts[ata.toString()])
 
     const tx = new Transaction().add(...stakeIx)
 
@@ -109,12 +112,10 @@ export function* handleStake(action: PayloadAction<StakeLiquidityPayload>) {
       const txDetails = yield* call([connection, connection.getParsedTransaction], txid, {
         maxSupportedTransactionVersion: 0
       })
-      console.log(txDetails)
 
       if (txDetails) {
         if (txDetails.meta?.err) {
           if (txDetails.meta.logMessages) {
-            console.log(txDetails.meta.logMessages)
             const errorLog = txDetails.meta.logMessages.find(log =>
               log.includes(ErrorCodeExtractionKeys.ErrorNumber)
             )
@@ -123,7 +124,8 @@ export function* handleStake(action: PayloadAction<StakeLiquidityPayload>) {
               .split(ErrorCodeExtractionKeys.Dot)[0]
               .trim()
             const message = mapErrorCodeToMessage(Number(errorCode))
-            // yield put(swapActions.setSwapSuccess(false))
+
+            yield put(actions.setProgressState({ inProgress: false, success: false }))
 
             closeSnackbar(loaderStaking)
             yield put(snackbarsActions.remove(loaderStaking))
@@ -151,7 +153,7 @@ export function* handleStake(action: PayloadAction<StakeLiquidityPayload>) {
         )
 
         const meta = txDetails.meta
-        console.log(meta)
+
         if (meta?.preTokenBalances && meta.postTokenBalances) {
           const accountXPredicate = entry =>
             entry.mint === BITZ_MAIN.address.toString() &&
@@ -234,10 +236,235 @@ export function* handleStake(action: PayloadAction<StakeLiquidityPayload>) {
       }
     }
 
-    // yield put(swapActions.setSwapSuccess(false))
+    yield put(actions.setProgressState({ inProgress: false, success: false }))
 
     closeSnackbar(loaderStaking)
     yield put(snackbarsActions.remove(loaderStaking))
+    closeSnackbar(loaderSigningTx)
+    yield put(snackbarsActions.remove(loaderSigningTx))
+
+    if (error instanceof TransactionExpiredTimeoutError) {
+      yield put(
+        snackbarsActions.add({
+          message: TIMEOUT_ERROR_MESSAGE,
+          variant: 'info',
+          persist: true,
+          txid: error.signature
+        })
+      )
+      yield put(connectionActions.setTimeoutError(true))
+      yield put(RPCAction.setRpcStatus(RpcStatus.Error))
+    } else {
+      yield put(
+        snackbarsActions.add({
+          message: msg,
+          variant: 'error',
+          persist: false
+        })
+      )
+    }
+
+    yield* call(handleRpcError, error.message)
+  }
+}
+
+export function* handleUnstake(action: PayloadAction<StakeLiquidityPayload>) {
+  const loaderUnstaking = createLoaderKey()
+  const loaderSigningTx = createLoaderKey()
+
+  const { amount: sbitzAmount } = action.payload
+
+  const networkType = yield* select(network)
+  const rpc = yield* select(rpcAddress)
+  const walletAccounts = yield* select(accounts)
+  const wallet = yield* call(getWallet)
+  const connection = yield* call(getConnection)
+  const stakingProgram = yield* call(getStakingProgram, networkType, rpc, wallet as IWallet)
+
+  try {
+    yield put(
+      snackbarsActions.add({
+        message: 'Unstaking sBITZ...',
+        variant: 'pending',
+        persist: true,
+        key: loaderUnstaking
+      })
+    )
+
+    const ata = getAssociatedTokenAddressSync(
+      sBITZ_MAIN.address,
+      wallet.publicKey,
+      false,
+      TOKEN_2022_PROGRAM_ID
+    )
+
+    const unstakeIx = yield* call([stakingProgram, stakingProgram.unstakeIx], {
+      amount: sbitzAmount,
+      mint: BITZ_MAIN.address,
+      stakedMint: sBITZ_MAIN.address,
+      createStakedATA: !walletAccounts[ata.toString()]
+    })
+
+    const tx = new Transaction().add(...unstakeIx)
+
+    const { blockhash, lastValidBlockHeight } = yield* call([
+      connection,
+      connection.getLatestBlockhash
+    ])
+    tx.recentBlockhash = blockhash
+    tx.lastValidBlockHeight = lastValidBlockHeight
+    tx.feePayer = wallet.publicKey
+
+    yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
+
+    const signedTx = (yield* call([wallet, wallet.signTransaction], tx)) as Transaction
+
+    closeSnackbar(loaderSigningTx)
+    yield put(snackbarsActions.remove(loaderSigningTx))
+
+    let txid: string
+    txid = yield* call(sendAndConfirmRawTransaction, connection, signedTx.serialize(), {
+      skipPreflight: false
+    })
+
+    if (!txid.length) {
+      yield put(actions.setProgressState({ inProgress: false, success: false }))
+
+      closeSnackbar(loaderUnstaking)
+      yield put(snackbarsActions.remove(loaderUnstaking))
+    } else {
+      console.log(`Transaction sent: ${txid}`)
+      const txDetails = yield* call([connection, connection.getParsedTransaction], txid, {
+        maxSupportedTransactionVersion: 0
+      })
+
+      if (txDetails) {
+        if (txDetails.meta?.err) {
+          if (txDetails.meta.logMessages) {
+            const errorLog = txDetails.meta.logMessages.find(log =>
+              log.includes(ErrorCodeExtractionKeys.ErrorNumber)
+            )
+            const errorCode = errorLog
+              ?.split(ErrorCodeExtractionKeys.ErrorNumber)[1]
+              .split(ErrorCodeExtractionKeys.Dot)[0]
+              .trim()
+            const message = mapErrorCodeToMessage(Number(errorCode))
+
+            yield put(actions.setProgressState({ inProgress: false, success: false }))
+
+            closeSnackbar(loaderUnstaking)
+            yield put(snackbarsActions.remove(loaderUnstaking))
+            closeSnackbar(loaderSigningTx)
+            yield put(snackbarsActions.remove(loaderSigningTx))
+
+            yield put(
+              snackbarsActions.add({
+                message,
+                variant: 'error',
+                persist: false
+              })
+            )
+            return
+          }
+        }
+
+        yield put(
+          snackbarsActions.add({
+            message: 'sBITZ unstaked successfully',
+            variant: 'success',
+            persist: false,
+            txid
+          })
+        )
+
+        const meta = txDetails.meta
+
+        if (meta?.preTokenBalances && meta.postTokenBalances) {
+          const accountXPredicate = entry =>
+            entry.mint === BITZ_MAIN.address.toString() &&
+            entry.owner === wallet.publicKey.toString()
+          const accountYPredicate = entry =>
+            entry.mint === sBITZ_MAIN.address.toString() &&
+            entry.owner === wallet.publicKey.toString()
+
+          const preAccountX = meta.preTokenBalances.find(accountXPredicate)
+          const postAccountX = meta.postTokenBalances.find(accountXPredicate)
+          const preAccountY = meta.preTokenBalances.find(accountYPredicate)
+          const postAccountY = meta.postTokenBalances.find(accountYPredicate)
+
+          if (preAccountX && postAccountX && preAccountY && postAccountY) {
+            const preAmountX = preAccountX.uiTokenAmount.amount
+            const preAmountY = preAccountY.uiTokenAmount.amount
+            const postAmountX = postAccountX.uiTokenAmount.amount
+            const postAmountY = postAccountY.uiTokenAmount.amount
+
+            const amountX = new BN(preAmountX).sub(new BN(postAmountX))
+            const amountY = new BN(postAmountY).sub(new BN(preAmountY))
+
+            try {
+              yield put(
+                snackbarsActions.add({
+                  tokensDetails: {
+                    ikonType: 'unstake',
+                    tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, sBITZ_MAIN.decimals)),
+                    tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, BITZ_MAIN.decimals)),
+                    tokenXIcon: sBITZ_MAIN.logoURI,
+                    tokenYIcon: BITZ_MAIN.logoURI,
+                    tokenXSymbol: sBITZ_MAIN.symbol ?? sBITZ_MAIN.address.toString(),
+                    tokenYSymbol: BITZ_MAIN.symbol ?? BITZ_MAIN.address.toString()
+                  },
+                  persist: false
+                })
+              )
+            } catch {}
+          }
+        }
+      } else {
+        yield put(
+          snackbarsActions.add({
+            message: 'sBITZ unstaked successfully',
+            variant: 'success',
+            persist: false,
+            txid
+          })
+        )
+      }
+    }
+
+    yield put(actions.setProgressState({ inProgress: false, success: true }))
+
+    closeSnackbar(loaderUnstaking)
+    yield put(snackbarsActions.remove(loaderUnstaking))
+  } catch (e: unknown) {
+    yield put(actions.setProgressState({ inProgress: false, success: false }))
+
+    const error = ensureError(e)
+    console.log(error)
+
+    let msg: string = ''
+    if (error instanceof SendTransactionError) {
+      const err = error.transactionError
+      try {
+        const errorCode = extractRuntimeErrorCode(err)
+        msg = mapErrorCodeToMessage(errorCode)
+      } catch {
+        const errorCode = extractErrorCode(error)
+        msg = mapErrorCodeToMessage(errorCode)
+      }
+    } else {
+      try {
+        const errorCode = extractErrorCode(error)
+        msg = mapErrorCodeToMessage(errorCode)
+      } catch (e: unknown) {
+        const error = ensureError(e)
+        msg = ensureApprovalDenied(error) ? APPROVAL_DENIED_MESSAGE : COMMON_ERROR_MESSAGE
+      }
+    }
+
+    yield put(actions.setProgressState({ inProgress: false, success: false }))
+
+    closeSnackbar(loaderUnstaking)
+    yield put(snackbarsActions.remove(loaderUnstaking))
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
 
@@ -270,6 +497,10 @@ export function* stakeHandler(): Generator {
   yield* takeLatest(actions.stake, handleStake)
 }
 
+export function* unstakeHandler(): Generator {
+  yield* takeLatest(actions.unstake, handleUnstake)
+}
+
 export function* stakeSaga(): Generator {
-  yield all([stakeHandler].map(spawn))
+  yield all([stakeHandler, unstakeHandler].map(spawn))
 }
