@@ -23,6 +23,10 @@ export const WrappedStake: React.FC = () => {
   const handleStake = (props: StakeLiquidityPayload) => {
     dispatch(actions.stake(props))
   }
+
+  const handleUnstake = (props: StakeLiquidityPayload) => {
+    dispatch(actions.unstake(props))
+  }
   return (
     <Grid container className={classes.wrapper}>
       <Box display='flex' flexDirection='column' alignItems='center' gap={'12px'}>
@@ -38,6 +42,7 @@ export const WrappedStake: React.FC = () => {
         walletStatus={walletStatus}
         tokens={tokens}
         handleStake={handleStake}
+        handleUnstake={handleUnstake}
         inProgress={progress}
         success={success}
       />

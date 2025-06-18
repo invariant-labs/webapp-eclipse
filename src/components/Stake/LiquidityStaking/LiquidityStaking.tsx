@@ -1,7 +1,7 @@
 import { Box, Grid, Typography } from '@mui/material'
 import useStyles from './style'
 import Switcher from './Switcher/Switcher'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { BITZ_MAIN, sBITZ_MAIN } from '@store/consts/static'
 import ExchangeAmountInput from '@components/Inputs/ExchangeAmountInput/ExchangeAmountInput'
 import { Status } from '@store/reducers/solanaWallet'
@@ -22,6 +22,7 @@ export interface ILiquidityStaking {
   walletStatus: Status
   tokens: Record<string, SwapToken>
   handleStake: (props: StakeLiquidityPayload) => void
+  handleUnstake: (props: StakeLiquidityPayload) => void
   inProgress: boolean
   success: boolean
 }
@@ -30,6 +31,7 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
   walletStatus,
   tokens,
   handleStake,
+  handleUnstake,
   inProgress,
   success
 }) => {
@@ -43,8 +45,6 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
   const [isRotating, setIsRotating] = useState(false)
 
   const [progress, setProgress] = useState<ProgressState>('none')
-  const [_throttle, setThrottle] = useState<boolean>(false)
-  const timeoutRef = useRef<number>(0)
 
   useEffect(() => {
     let timeoutId1: NodeJS.Timeout
@@ -67,25 +67,6 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
       clearTimeout(timeoutId2)
     }
   }, [success, inProgress])
-
-  const setSimulateAmount = async () => {}
-  const simulateWithTimeout = () => {
-    setThrottle(true)
-
-    clearTimeout(timeoutRef.current)
-    const timeout = setTimeout(() => {
-      setSimulateAmount().finally(() => {
-        setThrottle(false)
-      })
-    }, 500)
-    timeoutRef.current = timeout as unknown as number
-  }
-
-  useEffect(() => {
-    if (progress === 'none' && !(amountFrom === '' && amountTo === '')) {
-      simulateWithTimeout()
-    }
-  }, [progress])
 
   const tokenFrom: SwapToken = useMemo(
     () =>
@@ -240,7 +221,8 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
         tokenPrice={12}
         priceLoading={false}
         isBalanceLoading={false}
-        showMaxButton={true}
+        showMaxButton={false}
+        disabled
         showBlur={
           false
           // (inputRef === inputTarget.TO && addBlur) ||
@@ -268,6 +250,10 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
 
           if (switchTab === StakeSwitch.Stake) {
             handleStake({
+              amount: convertBalanceToBN(amountFrom, tokenFrom.decimals)
+            })
+          } else {
+            handleUnstake({
               amount: convertBalanceToBN(amountFrom, tokenFrom.decimals)
             })
           }

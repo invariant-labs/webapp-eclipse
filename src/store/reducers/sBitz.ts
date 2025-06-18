@@ -25,7 +25,8 @@ const sBitzSlice = createSlice({
       state.inProgress = true
       return state
     },
-    unStake(state, _action: PayloadAction<{}>) {
+    unstake(state, _action: PayloadAction<StakeLiquidityPayload>) {
+      state.inProgress = true
       return state
     },
     setProgressState(state, action: PayloadAction<{ inProgress: boolean; success: boolean }>) {
