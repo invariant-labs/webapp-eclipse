@@ -69,7 +69,14 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     maxHeight: '32px',
     minWidth: '70px',
     '& .MuiInputAdornment-root': {
-      marginRight: '16px' // Add more spacing after the logo
+      marginRight: '16px'
+    },
+    '& input[type=number]': {
+      '-moz-appearance': 'textfield',
+      '&::-webkit-outer-spin-button, &::-webkit-inner-spin-button': {
+        '-webkit-appearance': 'none',
+        margin: 0
+      }
     },
     [theme.breakpoints.down('sm')]: {
       padding: '2px 4px',

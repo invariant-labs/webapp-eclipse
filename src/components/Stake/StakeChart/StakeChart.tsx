@@ -6,6 +6,8 @@ import { useStyles } from './style';
 import { linearGradientDef } from '@nivo/core';
 import BITZ from '@static/png/BITZ.png'
 import sBITZ from '@static/png/sBITZ.png'
+
+
 type PointData = {
     x: string;
     y: number;
@@ -153,20 +155,26 @@ export const StakeChart: React.FC<StakeChartProps> = ({
                             inputMode: 'decimal',
                             pattern: '[0-9]*.?[0-9]*',
                             min: 0,
+                            max: 10000,
                             onKeyDown: (e) => {
-                                if ((e.ctrlKey || e.metaKey) && e.key === 'a') {
+                                if (e.ctrlKey || e.metaKey) {
                                     return;
                                 }
 
-                                if (
-                                    !/[0-9]|\./.test(e.key) &&
-                                    !['Backspace', 'Delete', 'Tab', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)
-                                ) {
-                                    e.preventDefault();
+                                const allowedKeys = ['Backspace', 'Delete', 'Tab', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'];
+                                if (allowedKeys.includes(e.key)) {
+                                    return;
                                 }
-                                if (e.key === '.' && inputValue.includes('.')) {
-                                    e.preventDefault();
+
+                                if (/[0-9]/.test(e.key)) {
+                                    return;
                                 }
+
+                                if (e.key === '.' && !inputValue.includes('.')) {
+                                    return;
+                                }
+
+                                e.preventDefault();
                             }
                         }}
                         InputProps={{
