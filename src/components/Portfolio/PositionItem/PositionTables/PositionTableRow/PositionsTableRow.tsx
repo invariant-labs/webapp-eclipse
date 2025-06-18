@@ -22,6 +22,7 @@ import { IPositionItem } from '@store/consts/types'
 import { useStyles } from './style'
 import { useSkeletonStyle } from '../skeletons/skeletons'
 import { ILiquidityToken } from '@store/consts/types'
+import { ReactFitty } from 'react-fitty'
 
 interface ILoadingStates {
   pairName?: boolean
@@ -150,9 +151,11 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
           />
         </Grid>
 
-        <Typography className={classes.names}>
-          {xToY ? tokenXName : tokenYName} - {xToY ? tokenYName : tokenXName}
-        </Typography>
+        <Box className={classes.tickersContainer}>
+          <Typography className={classes.names} component={ReactFitty} maxSize={28}>
+            {xToY ? tokenXName : tokenYName} - {xToY ? tokenYName : tokenXName}
+          </Typography>
+        </Box>
       </Grid>
     )
   }, [loading, xToY, tokenXIcon, tokenYIcon, tokenXName, tokenYName])

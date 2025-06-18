@@ -55,6 +55,9 @@ export const useStyles = makeStyles()(() => ({
     alignItems: 'center',
     gap: 8
   },
+  tickerWrapper: {
+    flex: 1
+  },
   navigationWrapper: {
     display: 'flex',
     alignItems: 'center',
@@ -91,6 +94,11 @@ export const useStyles = makeStyles()(() => ({
       }
     }
   },
+  tickersContainer: {
+    flex: 1,
+    display: 'flex',
+    alignItems: 'center'
+  },
   tickerContainer: {
     color: colors.white.main,
     ...typography.heading3,
@@ -116,7 +124,8 @@ export const useStyles = makeStyles()(() => ({
   },
 
   airdropIcon: {
-    height: 24
+    height: 24,
+    marginRight: 8
   },
   airdropIconInActive: {
     filter: 'grayscale(100%)'
