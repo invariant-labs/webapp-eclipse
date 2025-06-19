@@ -35,9 +35,7 @@ import { poolSearch, tokenSearch } from '@store/selectors/navigation'
 
 export const WrappedStats: React.FC = () => {
   const { classes } = useStyles()
-
   const dispatch = useDispatch()
-
   const poolsList = useSelector(poolsStatsWithTokensDetails)
   const tokensList = useSelector(tokensStatsWithTokensDetails)
   const volumeInterval = useSelector(volume)

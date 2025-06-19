@@ -960,7 +960,8 @@ export type LeaderBoardType = 'Liquidity' | 'Swap' | 'Total'
 
 export const BANNER_STORAGE_KEY = 'invariant-warning-banner'
 export const BANNER_HIDE_DURATION = 1000 * 60 * 60 * 1 // 1 hour
-export const SNAP_TIME_DELAY = 60 * 14 // IN MINUTES (14 hours)
+export const SNAP_TIME_DELAY = 60 * 4 // IN MINUTES (4 hours)
+export const TOKEN_FETCH_DELAY = 60 * 1000 * 60 * 24
 
 export enum OverviewSwitcher {
   Overview = 'Overview',
