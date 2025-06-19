@@ -115,7 +115,7 @@ export const Stake: React.FC<IStake> = ({
           <Typography style={{ ...typography.heading4, color: colors.invariant.text, textAlign: 'left', marginBottom: '20px' }}>
             Your stats
           </Typography>
-          <YourStakeProgress processedTokens={filteredTokens} isProcesing={isBalanceLoading || isProcesing} isConnected={isConnected} />
+          <YourStakeProgress processedTokens={filteredTokens} isProcesing={isBalanceLoading || isProcesing || filteredTokens.length <= 0} isConnected={isConnected} />
         </Box>
       )}
       <FAQSection />
