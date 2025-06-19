@@ -9,6 +9,7 @@ import { status, swapTokensDict } from '@store/selectors/solanaWallet'
 import { StakeLiquidityPayload } from '@store/reducers/sBitz'
 import { actions } from '@store/reducers/sBitz'
 import { inProgress, success as successState } from '@store/selectors/stake'
+import { LiquidityStakingOverview } from '@components/LiquidityStakingOverview/LiquidityStakingOverview'
 
 export const WrappedStake: React.FC = () => {
   const { classes } = useStyles()
@@ -38,6 +39,13 @@ export const WrappedStake: React.FC = () => {
           </Link>
         </Box>
       </Box>
+      <LiquidityStakingOverview
+        sBitzAmount={155732}
+        sBitzValue={334721300}
+        compoundTime={10}
+        holders={23573}
+        yieldValue={'300.5'}
+      />
       <LiquidityStaking
         walletStatus={walletStatus}
         tokens={tokens}
