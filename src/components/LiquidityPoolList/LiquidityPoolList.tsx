@@ -193,6 +193,24 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
     return Math.max(rowNumber - displayedItems, 0)
   }
 
+  const favouriteEmptyPlaceholderMainTitle = useMemo(() => {
+    if (filteredTokenX && filteredTokenY) {
+      return `You don't have any favourite ${shortenAddress(filteredTokenX.symbol ?? '')}/${shortenAddress(
+        filteredTokenY.symbol ?? ''
+      )} pools yet...`
+    }
+
+    if (filteredTokenX && !filteredTokenY) {
+      return `You don't have any favourite ${shortenAddress(filteredTokenX.symbol ?? '')} pools yet...`
+    }
+
+    if (!filteredTokenX && filteredTokenY) {
+      return `You don't have any favourite ${shortenAddress(filteredTokenY.symbol ?? '')} pools yet...`
+    }
+
+    return `You don't have any favourite pools yet...`
+  }, [filteredTokenX, filteredTokenY])
+
   return (
     <Grid
       container
@@ -265,7 +283,7 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
             <EmptyPlaceholder
               height={initialDataLength < ITEMS_PER_PAGE ? initialDataLength * 69 : 688}
               newVersion
-              mainTitle={`You don't have any favourite pools yet...`}
+              mainTitle={favouriteEmptyPlaceholderMainTitle}
               desc={'You can add them by clicking the star icon next to the pool!'}
               withButton={false}
             />

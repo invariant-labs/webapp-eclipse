@@ -59,7 +59,11 @@ export const useStyles = makeStyles<{ isXs: boolean }>()((theme: Theme, { isXs }
 
   headerContainer: {
     display: 'flex',
-    gap: 14
+    gap: 14,
+
+    [theme.breakpoints.down('sm')]: {
+      width: '100%'
+    }
   },
 
   showFavouritesButton: {
@@ -79,6 +83,11 @@ export const useStyles = makeStyles<{ isXs: boolean }>()((theme: Theme, { isXs }
 
     '& .MuiTouchRipple-root .MuiTouchRipple-child': {
       backgroundColor: colors.invariant.lightGrey
+    },
+
+    [theme.breakpoints.down('md')]: {
+      minWidth: 40,
+      width: 40
     }
   },
 

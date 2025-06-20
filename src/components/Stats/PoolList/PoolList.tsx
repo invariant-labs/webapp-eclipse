@@ -57,6 +57,8 @@ export interface PoolListInterface {
   showAPY: boolean
   filteredTokens: ISearchToken[]
   interval: Intervals
+  switchFavouritePool: (poolAddress: string) => void
+  showFavourites: boolean
 }
 
 const tokens = [BTC_TEST, USDC_TEST, WETH_TEST]
@@ -97,7 +99,9 @@ const PoolList: React.FC<PoolListInterface> = ({
   showAPY,
   initialLength,
   filteredTokens,
-  interval = Intervals.Daily
+  interval = Intervals.Daily,
+  switchFavouritePool,
+  showFavourites
 }) => {
   const navigate = useNavigate()
   const location = useLocation()
@@ -236,6 +240,8 @@ const PoolList: React.FC<PoolListInterface> = ({
               points={new BN(element.pointsPerSecond, 'hex').muln(24).muln(60).muln(60)}
               isPromoted={element.isPromoted}
               interval={interval}
+              isFavourite={element.isFavourite}
+              switchFavouritePool={switchFavouritePool}
             />
           ))}
           {getEmptyRowsCount() > 0 &&
@@ -254,25 +260,39 @@ const PoolList: React.FC<PoolListInterface> = ({
         </>
       ) : (
         <Grid container className={classes.emptyContainer}>
-          <EmptyPlaceholder
-            newVersion
-            height={initialDataLength < ITEMS_PER_PAGE ? initialDataLength * 69 : 688}
-            mainTitle={`The ${shortenAddress(filteredTokenX.symbol ?? '')}/${shortenAddress(filteredTokenY.symbol ?? '')} pool was not found...`}
-            desc={initialDataLength < 3 ? '' : 'You can create it yourself!'}
-            desc2={initialDataLength < 5 ? '' : 'Or try adjusting your search criteria!'}
-            onAction={() => {
-              dispatch(actions.setNavigation({ address: location.pathname }))
-              navigate(
-                ROUTES.getNewPositionRoute(filteredTokenX.address, filteredTokenY.address, '0_10'),
-                {
-                  state: { referer: 'stats' }
-                }
-              )
-            }}
-            buttonName='Create Pool'
-            withButton={true}
-            withImg={initialDataLength > 3}
-          />
+          {showFavourites ? (
+            <EmptyPlaceholder
+              height={initialDataLength < ITEMS_PER_PAGE ? initialDataLength * 69 : 688}
+              newVersion
+              mainTitle={`You don't have any favourite pools yet...`}
+              desc={'You can add them by clicking the star icon next to the pool!'}
+              withButton={false}
+            />
+          ) : (
+            <EmptyPlaceholder
+              newVersion
+              height={initialDataLength < ITEMS_PER_PAGE ? initialDataLength * 69 : 688}
+              mainTitle={`The ${shortenAddress(filteredTokenX.symbol ?? '')}/${shortenAddress(filteredTokenY.symbol ?? '')} pool was not found...`}
+              desc={initialDataLength < 3 ? '' : 'You can create it yourself!'}
+              desc2={initialDataLength < 5 ? '' : 'Or try adjusting your search criteria!'}
+              onAction={() => {
+                dispatch(actions.setNavigation({ address: location.pathname }))
+                navigate(
+                  ROUTES.getNewPositionRoute(
+                    filteredTokenX.address,
+                    filteredTokenY.address,
+                    '0_10'
+                  ),
+                  {
+                    state: { referer: 'stats' }
+                  }
+                )
+              }}
+              buttonName='Create Pool'
+              withButton={true}
+              withImg={initialDataLength > 3}
+            />
+          )}
         </Grid>
       )}
       <Grid

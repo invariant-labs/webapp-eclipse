@@ -16,7 +16,10 @@ import { getPromotedPools } from '@store/selectors/leaderboard'
 import { FilterSearch, ISearchToken } from '@common/FilterSearch/FilterSearch'
 import { theme } from '@static/theme'
 import { Intervals } from '@store/consts/static'
-import { liquiditySearch } from '@store/selectors/navigation'
+import {
+  liquiditySearch,
+  showFavourites as showFavouritesSelector
+} from '@store/selectors/navigation'
 
 export const WrappedPoolList: React.FC = () => {
   const dispatch = useDispatch()
@@ -28,6 +31,7 @@ export const WrappedPoolList: React.FC = () => {
   const searchParams = useSelector(liquiditySearch)
   const isLoadingStats = useSelector(isLoading)
   const isXs = useMediaQuery(theme.breakpoints.down('sm'))
+  const isMd = useMediaQuery(theme.breakpoints.down('md'))
 
   const { classes } = useStyles({ isXs })
 
@@ -56,7 +60,11 @@ export const WrappedPoolList: React.FC = () => {
       JSON.parse(localStorage.getItem(`INVARIANT_FAVOURITE_POOLS_Eclipse_${networkType}`) || '[]')
     )
   )
-  const [showFavourites, setShowFavourites] = useState(false)
+  const showFavourites = useSelector(showFavouritesSelector)
+
+  const setShowFavourites = (show: boolean) => {
+    dispatch(navigationActions.setShowFavourites(show))
+  }
 
   useEffect(() => {
     localStorage.setItem(
@@ -135,9 +143,20 @@ export const WrappedPoolList: React.FC = () => {
         <Box className={classes.headerContainer}>
           <Button
             className={classes.showFavouritesButton}
-            onClick={() => setShowFavourites(!showFavourites)}>
+            onClick={() => {
+              setShowFavourites(!showFavourites)
+              dispatch(
+                navigationActions.setSearch({
+                  section: 'liquidityPool',
+                  type: 'pageNumber',
+                  pageNumber: 1
+                })
+              )
+            }}>
             <img src={showFavourites ? starFill : star} />
-            <Typography className={classes.showFavouritesText}>Show favourites</Typography>
+            {!isMd && (
+              <Typography className={classes.showFavouritesText}>Show favourites</Typography>
+            )}
           </Button>
 
           <FilterSearch

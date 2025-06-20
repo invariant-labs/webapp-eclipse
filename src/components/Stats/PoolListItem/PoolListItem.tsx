@@ -291,10 +291,12 @@ const PoolListItem: React.FC<IProps> = ({
             <img
               className={classes.favouriteButton}
               src={isFavourite ? starFill : star}
-              onClick={() => {
+              onClick={e => {
                 if (poolAddress && switchFavouritePool) {
                   switchFavouritePool(poolAddress)
                 }
+
+                e.stopPropagation()
               }}
             />
           </Box>
@@ -462,6 +464,7 @@ const PoolListItem: React.FC<IProps> = ({
                   </span>
                 </Typography>
                 <Typography>{''}</Typography>
+                <Typography>{''}</Typography>
                 <Typography component='h5' className={classes.extendedRowTitle}>
                   APY{' '}
                   <span className={classes.extendedRowContent}>
@@ -487,6 +490,7 @@ const PoolListItem: React.FC<IProps> = ({
                     {shortenAddress(tokenAData.symbol ?? '')}/
                     {shortenAddress(tokenBData.symbol ?? '')}
                   </Typography>
+                  <Typography>{''}</Typography>
                   {ActionsButtons}
                 </>
               )}
