@@ -49,6 +49,7 @@ import AnimatedWaves from './AnimatedWaves/AnimatedWaves'
 import { EstimatedPointsLabel } from './EstimatedPointsLabel/EstimatedPointsLabel'
 import { useNavigate } from 'react-router-dom'
 import { FetcherRecords, Pair, SimulationTwoHopResult } from '@invariant-labs/sdk-eclipse'
+import TradingViewChart from './TV'
 
 export interface Pools {
   tokenX: PublicKey
@@ -986,6 +987,11 @@ export const Swap: React.FC<ISwap> = ({
 
   return (
     <Grid container className={classes.swapWrapper} alignItems='center'>
+      <TradingViewChart
+        network='eclipse'
+        poolAddress='44w4HrojzxKwxEb3bmjRNcJ4irFhUGBUjrCYecYhPvqq'
+        timeframe='hour'
+      />
       {wrappedETHAccountExist && (
         <Box className={classes.unwrapContainer}>
           You have wrapped ETH.{' '}
