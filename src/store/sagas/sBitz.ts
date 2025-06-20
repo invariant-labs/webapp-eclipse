@@ -500,8 +500,6 @@ export function* handleGetStakedAmountAndBalance(): Generator<
   { stakedAmount: BN; stakedTokenSupply: BN } | null,
   any
 > {
-  yield put(actions.setLoading({ type: 'stakeStats', value: true }))
-
   const networkType = yield* select(network)
   const rpc = yield* select(rpcAddress)
   const wallet = yield* call(getWallet)
