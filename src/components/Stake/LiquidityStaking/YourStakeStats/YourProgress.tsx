@@ -40,7 +40,7 @@ export const YourStakeProgress: React.FC<YourProgressProps> = ({
               <ProgressItem
                 isConnected={isConnected}
                 bgImage={top}
-                label={<Box sx={{ display: 'flex', gap: 1 }}><img src={sBITZ} width={20} height={20} /><Typography>sBITZ</Typography></Box>}
+                label={<Box className={classes.boxLabel}><img src={sBITZ} width={20} height={20} /><Typography>sBITZ</Typography></Box>}
                 tooltip={
                   <>
                     sBITZ
@@ -58,7 +58,7 @@ export const YourStakeProgress: React.FC<YourProgressProps> = ({
                     Yield
                   </>
                 }
-                label={<Box sx={{ display: 'flex', gap: 1 }}><img src={sBITZ} width={20} height={20} /><Typography>sBITZ 24H Yield</Typography></Box>}
+                label={<Box className={classes.boxLabel}><img src={sBITZ} width={20} height={20} /><Typography>sBITZ 24H Yield</Typography></Box>}
                 value={
                   0
                 }
@@ -76,7 +76,7 @@ export const YourStakeProgress: React.FC<YourProgressProps> = ({
                     BITZ
                   </>
                 }
-                label={<Box sx={{ display: 'flex', gap: 1 }}><Typography>Backed by</Typography> <img src={BITZ} width={20} height={20} /> <Typography>BITZ</Typography></Box>}
+                label={<Box className={classes.boxLabel}><Typography>Backed by</Typography> <img src={BITZ} width={20} height={20} /> <Typography>BITZ</Typography></Box>}
                 isLoading={isLoading}
                 value={formatNumberWithoutSuffix(printBN(processedTokens.backedByBITZ.amount, sBITZ_MAIN.decimals) || '0')}
               />

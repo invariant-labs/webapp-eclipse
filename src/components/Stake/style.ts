@@ -1,8 +1,7 @@
-import { Theme } from '@mui/material'
 import { colors, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
-export const useStyles = makeStyles()((_theme: Theme) => ({
+export const useStyles = makeStyles()(() => ({
   wrapper: {
     marginTop: 24,
     maxWidth: '100%',
@@ -87,6 +86,12 @@ export const useStyles = makeStyles()((_theme: Theme) => ({
     transition: 'all 0.3s ease',
     zIndex: 1
   },
+  switchPoolsMarkerStake: {
+    left: 0
+  },
+  switchPoolsMarkerStats: {
+    left: '50%'
+  },
   disabledSwitchButton: {
     color: `${colors.invariant.textGrey} !important`
   },
@@ -106,6 +111,12 @@ export const useStyles = makeStyles()((_theme: Theme) => ({
   filtersContainerOverview: {
     marginTop: '32px',
     maxWidth: '240px'
+  },
+  selectedToggleButton: {
+    fontWeight: 700
+  },
+  unselectedToggleButton: {
+    fontWeight: 400
   }
 }))
 

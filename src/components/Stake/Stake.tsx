@@ -147,10 +147,10 @@ export const Stake: React.FC<IStake> = ({
       <Grid className={classes.filtersContainerOverview}>
         <Box className={classes.switchPoolsContainerOverview}>
           <Box
-            className={classes.switchPoolsMarker}
-            sx={{
-              left: stakeChartTab === StakeChartSwitcher.Stake ? 0 : '50%'
-            }}
+            className={`${classes.switchPoolsMarker} ${stakeChartTab === StakeChartSwitcher.Stake
+              ? classes.switchPoolsMarkerStake
+              : classes.switchPoolsMarkerStats
+              }`}
           />
 
           <ToggleButtonGroup
@@ -161,20 +161,20 @@ export const Stake: React.FC<IStake> = ({
             <ToggleButton
               value={StakeChartSwitcher.Stake}
               disableRipple
-              className={classes.switchPoolsButtonOverview}
-              style={{
-                fontWeight: stakeChartTab === StakeChartSwitcher.Stake ? 700 : 400
-              }}>
+              className={`${classes.switchPoolsButtonOverview} ${stakeChartTab === StakeChartSwitcher.Stake
+                ? classes.selectedToggleButton
+                : classes.unselectedToggleButton
+                }`}>
               Stake
             </ToggleButton>
             <ToggleButton
               value={StakeChartSwitcher.Stats}
               disableRipple
-              className={classes.switchPoolsButtonOverview}
-              classes={{ disabled: classes.disabledSwitchButton }}
-              style={{
-                fontWeight: stakeChartTab === StakeChartSwitcher.Stats ? 700 : 400
-              }}>
+              className={`${classes.switchPoolsButtonOverview} ${stakeChartTab === StakeChartSwitcher.Stats
+                ? classes.selectedToggleButton
+                : classes.unselectedToggleButton
+                }`}
+              classes={{ disabled: classes.disabledSwitchButton }}>
               Stats
             </ToggleButton>
           </ToggleButtonGroup>

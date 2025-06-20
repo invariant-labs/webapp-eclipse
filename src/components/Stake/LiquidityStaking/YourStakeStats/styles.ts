@@ -68,6 +68,10 @@ const useStyles = makeStyles<{ bgImage?: string }>()((_theme, { bgImage }) => {
         display: 'none'
       }
     },
+    boxLabel: {
+      display: 'flex',
+      gap: 1
+    },
     blurOverlay: {
       width: '100%',
       height: '100%',

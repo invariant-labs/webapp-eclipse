@@ -69,10 +69,7 @@ const sBitzSlice = createSlice({
       state.loadingStates.stakeOperation = action.payload.inProgress
       return state
     },
-    setLoading(state, action: PayloadAction<{ type: keyof LoadingStates; value: boolean }>) {
-      state.loadingStates[action.payload.type] = action.payload.value
-      return state
-    },
+
     getStakedAmountAndBalance(state) {
       state.loadingStates.stakeStats = true
       return state
