@@ -8,9 +8,18 @@ import bot from '@static/png/trapezeMobileBottom.png'
 import mid from '@static/png/boxMobileMiddle.png'
 import BITZ from '@static/png/bitz.png'
 import sBITZ from '@static/png/sBitz.png'
-import { ProcessedToken } from '@store/hooks/userOverview/useProcessedToken'
+import { BN } from '@coral-xyz/anchor'
+import { BITZ_MAIN, sBITZ_MAIN } from '@store/consts/static'
+import { formatNumberWithoutSuffix, printBN } from '@utils/utils'
 interface YourProgressProps {
-  processedTokens: ProcessedToken[]
+  processedTokens: {
+    sBITZ: BN
+    backedByBITZ: {
+      tokenAddress?: string
+      amount: BN
+      tokenPrice?: number
+    }
+  },
   isLoading?: boolean
   isConnected: boolean
 }
@@ -39,7 +48,7 @@ export const YourStakeProgress: React.FC<YourProgressProps> = ({
                   </>
                 }
                 isLoading={isLoading}
-                value={processedTokens.find(token => token.symbol === 'sBITZ')?.amount.toFixed(4) || 0}
+                value={formatNumberWithoutSuffix(printBN(processedTokens.sBITZ, sBITZ_MAIN.decimals))}
               />
               <ProgressItem
                 bgImage={mid}
@@ -70,7 +79,7 @@ export const YourStakeProgress: React.FC<YourProgressProps> = ({
                 }
                 label={<Box sx={{ display: 'flex', gap: 1 }}><Typography>Backed by</Typography> <img src={BITZ} width={20} height={20} /> <Typography>BITZ</Typography></Box>}
                 isLoading={isLoading}
-                value={processedTokens.find(token => token.symbol === 'BITZ')?.amount.toFixed(4) || 0}
+                value={formatNumberWithoutSuffix(printBN(processedTokens.backedByBITZ.amount, sBITZ_MAIN.decimals) || '0')}
               />
               <ProgressItem
                 isConnected={isConnected}
@@ -82,8 +91,10 @@ export const YourStakeProgress: React.FC<YourProgressProps> = ({
                 }
                 isLoading={isLoading}
                 label='Value'
-                value={`$${processedTokens.find(token => token.symbol === 'BITZ')?.value.toFixed(4) || 0}`}
-
+                value={`$${formatNumberWithoutSuffix(+printBN(
+                  processedTokens.backedByBITZ.amount,
+                  BITZ_MAIN.decimals
+                ) * (processedTokens.backedByBITZ.tokenPrice || 0))}`}
               />
             </Grid>
           </Grid>

@@ -2,17 +2,20 @@ import { Box, Grid, ToggleButton, ToggleButtonGroup, Typography } from '@mui/mat
 import useStyles from './style'
 import LiquidityStaking from './LiquidityStaking/LiquidityStaking'
 import { Status } from '@store/reducers/solanaWallet'
-import { balanceLoading, SwapToken, swapTokens } from '@store/selectors/solanaWallet'
-import { StakeLiquidityPayload } from '@store/reducers/sBitz'
-import { FAQSection } from './FAQSection/FAQSection'
-import { YourStakeProgress } from './LiquidityStaking/YourStakeStats/YourProgress'
+import { SwapToken, swapTokens } from '@store/selectors/solanaWallet'
+import { actions, StakeLiquidityPayload } from '@store/reducers/sBitz'
+import {
+  backedByBITZ,
+  stakeStatsLoading,
+  backedByBITZLoading
+} from '@store/selectors/stake'; import { FAQSection } from './FAQSection/FAQSection'
 import { colors, typography } from '@static/theme'
-import { useSelector } from 'react-redux'
-import { network } from '@store/selectors/solanaConnection'
+import { useDispatch, useSelector } from 'react-redux'
 
-import { useProcessedTokens } from '@store/hooks/userOverview/useProcessedToken'
 import { useEffect, useMemo, useState } from 'react'
-import { BITZ_MAIN, sBITZ_MAIN } from '@store/consts/static'
+import { sBITZ_MAIN } from '@store/consts/static'
+import { BN } from '@coral-xyz/anchor'
+import { YourStakeProgress } from './LiquidityStaking/YourStakeStats/YourProgress'
 export interface IStake {
   walletStatus: Status
   tokens: Record<string, SwapToken>
@@ -38,37 +41,31 @@ export const Stake: React.FC<IStake> = ({
   success
 }) => {
   const tokensList = useSelector(swapTokens)
-  const isBalanceLoading = useSelector(balanceLoading)
-  const currentNetwork = useSelector(network)
-
-
-  const { processedTokens, isProcesing } = useProcessedTokens(
-    tokensList,
-    isBalanceLoading,
-    currentNetwork
-  )
+  const dispatch = useDispatch()
 
   const filteredTokens = useMemo(() => {
-    return processedTokens.filter(item => item.decimal > 0 && (item.symbol === sBITZ_MAIN.symbol || item.symbol === BITZ_MAIN.symbol))
-  }, [processedTokens])
-  const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
-  const [stakeChartTab, setStakeChartTab] = useState(StakeChartSwitcher.Stats)
-  const actualLoadingState = isBalanceLoading || isProcesing;
+    return tokensList.filter(item => item.decimals > 0 && (item.symbol === sBITZ_MAIN.symbol))
+  }, [tokensList])
 
-  const [isDataLoading, setIsDataLoading] = useState(actualLoadingState);
+  const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
+
+  const backedBitzData = useSelector(backedByBITZ)
+  const statsLoading = useSelector(stakeStatsLoading)
+  const backedByBITZDataLoading = useSelector(backedByBITZLoading)
+
+  const isDataLoading = statsLoading || backedByBITZDataLoading
+  const [stakeChartTab, setStakeChartTab] = useState(StakeChartSwitcher.Stats)
+
 
   useEffect(() => {
-    if (actualLoadingState) {
-      setIsDataLoading(true);
-    } else {
-      const timer = setTimeout(() => {
-        setIsDataLoading(false);
-      }, 500);
+    dispatch(actions.getStakedAmountAndBalance())
+    const sBitzToken = filteredTokens.find(token => token.symbol === sBITZ_MAIN.symbol)
+    dispatch(actions.getBackedByBITZ({
+      tokenAddress: sBitzToken?.assetAddress.toString(),
+      amount: new BN(sBitzToken?.balance || 0)
+    }))
 
-      return () => clearTimeout(timer);
-    }
-  }, [actualLoadingState]);
-
+  }, [filteredTokens, dispatch, isConnected])
 
   const handleToggleChange = (
     _event: React.MouseEvent<HTMLElement>,
@@ -78,7 +75,9 @@ export const Stake: React.FC<IStake> = ({
     setStakeChartTab(newValue)
   }
   const { classes } = useStyles()
-
+  useEffect(() => {
+    console.log(stakeStatsLoading, 'loading stake')
+  }, [stakeStatsLoading])
   return (
     <Grid container className={classes.wrapper} alignItems='center'>
       <LiquidityStaking
@@ -98,6 +97,7 @@ export const Stake: React.FC<IStake> = ({
               left: stakeChartTab === StakeChartSwitcher.Stake ? 0 : '50%'
             }}
           />
+
           <ToggleButtonGroup
             value={stakeChartTab}
             exclusive
@@ -132,9 +132,11 @@ export const Stake: React.FC<IStake> = ({
           <Typography style={{ ...typography.heading4, color: colors.invariant.text, textAlign: 'left', marginBottom: '20px' }}>
             Your stats
           </Typography>
-
           <YourStakeProgress
-            processedTokens={filteredTokens}
+            processedTokens={{
+              sBITZ: new BN(filteredTokens.find(token => token.symbol === sBITZ_MAIN.symbol)?.balance || 0),
+              backedByBITZ: backedBitzData || { tokenAddress: undefined, amount: new BN(0), tokenPrice: 0 },
+            }}
             isLoading={isDataLoading}
             isConnected={isConnected}
           />
