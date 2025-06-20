@@ -990,15 +990,26 @@ export const Swap: React.FC<ISwap> = ({
     return Math.abs((tokenFromValue - tokenToValue) / tokenFromValue) * 100
   }, [tokenFromPriceData, tokenToPriceData, amountFrom, amountTo])
 
-  const IS_ERROR_LABEL_SHOW = useMemo(
-    () =>
-      priceImpact > 5 ||
+  const showBlur =
+    (inputRef === inputTarget.FROM && addBlur) ||
+    lockAnimation ||
+    (getStateMessage() === 'Loading' &&
+      (inputRef === inputTarget.FROM || inputRef === inputTarget.DEFAULT)) ||
+    (inputRef === inputTarget.TO && addBlur) ||
+    lockAnimation ||
+    (getStateMessage() === 'Loading' &&
+      (inputRef === inputTarget.TO || inputRef === inputTarget.DEFAULT))
+
+  const IS_ERROR_LABEL_SHOW =
+    (priceImpact > 5 ||
       tokens[tokenFromIndex ?? '']?.isUnknown ||
       tokens[tokenToIndex ?? '']?.isUnknown ||
-      oraclePriceDiffPercentage >= 5,
-    [priceImpact, tokens, tokenFromIndex, tokenToIndex, oraclePriceDiffPercentage]
-  )
+      oraclePriceDiffPercentage >= 10) &&
+    !priceToLoading &&
+    !priceFromLoading &&
+    !showBlur
 
+  console.log(showBlur)
   return (
     <Grid container className={classes.swapWrapper} alignItems='center'>
       {wrappedETHAccountExist && (
@@ -1286,22 +1297,33 @@ export const Swap: React.FC<ISwap> = ({
           <Box
             className={classes.unknownWarningContainer}
             style={{ height: IS_ERROR_LABEL_SHOW ? '34px' : '0px' }}>
-            {oraclePriceDiffPercentage >= 5 && (
-              <TooltipHover title='This swap price my differ from market price' top={100} fullSpan>
-                <Box className={classes.unknownWarning}>
-                  Potential loss resulting from a {oraclePriceDiffPercentage.toFixed(2)}% price
-                  difference.
-                </Box>
-              </TooltipHover>
-            )}
-            {priceImpact > 5 && oraclePriceDiffPercentage < 5 && (
-              <TooltipHover title='Your trade size might be too large' top={100} fullSpan>
-                <Box className={classes.unknownWarning}>
-                  High price impact: {priceImpact < 0.01 ? '<0.01%' : `${priceImpact.toFixed(2)}%`}!
-                  This swap will cause a significant price movement.
-                </Box>
-              </TooltipHover>
-            )}
+            {oraclePriceDiffPercentage >= 10 &&
+              !priceToLoading &&
+              !priceFromLoading &&
+              !showBlur && (
+                <TooltipHover
+                  title='This swap price my differ from market price'
+                  top={100}
+                  fullSpan>
+                  <Box className={classes.unknownWarning}>
+                    Potential loss resulting from a {oraclePriceDiffPercentage.toFixed(2)}% price
+                    difference.
+                  </Box>
+                </TooltipHover>
+              )}
+            {priceImpact > 5 &&
+              oraclePriceDiffPercentage < 10 &&
+              !priceToLoading &&
+              !priceFromLoading &&
+              !showBlur && (
+                <TooltipHover title='Your trade size might be too large' top={100} fullSpan>
+                  <Box className={classes.unknownWarning}>
+                    High price impact:{' '}
+                    {priceImpact < 0.01 ? '<0.01%' : `${priceImpact.toFixed(2)}%`}! This swap will
+                    cause a significant price movement.
+                  </Box>
+                </TooltipHover>
+              )}
             {tokens[tokenFromIndex ?? '']?.isUnknown && (
               <TooltipHover
                 title={`${tokens[tokenFromIndex ?? ''].symbol} is unknown, make sure address is correct before trading`}

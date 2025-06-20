@@ -66,7 +66,7 @@ export const PriceWarning: React.FC<IPriceWarning> = ({
                       As an alternative, consider opening your position in pools closer to the
                       market price of{' '}
                       <span className={classes.boldedText}>
-                        {formatNumberWithSuffix(oraclePrice)}
+                        {formatNumberWithSuffix(oraclePrice)} {`${tokenASymbol}/${tokenBSymbol}`}
                       </span>
                       .
                     </p>
