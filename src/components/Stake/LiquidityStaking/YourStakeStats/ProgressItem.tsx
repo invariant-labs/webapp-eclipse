@@ -45,12 +45,6 @@ export const ProgressItem: React.FC<IProgressItemProps> = ({
         <Skeleton variant='rounded' animation='wave' className={classes.blur} />
       ) : isMobile && withButton ? (
         <Box className={classes.withButtonWrapper}>
-          <Box sx={{ visibility: 'hidden' }}>
-            <Button scheme='green' height={24} borderRadius={8}>
-              More
-            </Button>
-          </Box>
-
           <Typography className={classes.headerBigText} textAlign='center'>
             {value}
           </Typography>

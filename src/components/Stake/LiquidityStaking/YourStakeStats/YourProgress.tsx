@@ -17,7 +17,7 @@ interface YourProgressProps {
     backedByBITZ: {
       tokenAddress?: string
       amount: BN
-      tokenPrice?: number
+      price?: number
     }
   },
   isLoading?: boolean
@@ -34,7 +34,6 @@ export const YourStakeProgress: React.FC<YourProgressProps> = ({
     <Grid className={classes.mainWrapper}>
       <Grid className={classes.boxWrapper}>
         {<BlurOverlay isConnected={isConnected} />}
-
         <Grid className={classes.section}>
           <Grid className={classes.pointsContainer}>
             <Grid className={classes.pointsColumn}>
@@ -94,7 +93,7 @@ export const YourStakeProgress: React.FC<YourProgressProps> = ({
                 value={`$${formatNumberWithoutSuffix(+printBN(
                   processedTokens.backedByBITZ.amount,
                   BITZ_MAIN.decimals
-                ) * (processedTokens.backedByBITZ.tokenPrice || 0))}`}
+                ) * (processedTokens.backedByBITZ.price || 0))}`}
               />
             </Grid>
           </Grid>

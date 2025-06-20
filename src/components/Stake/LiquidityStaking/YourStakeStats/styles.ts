@@ -68,6 +68,17 @@ const useStyles = makeStyles<{ bgImage?: string }>()((_theme, { bgImage }) => {
         display: 'none'
       }
     },
+    blurOverlay: {
+      width: '100%',
+      height: '100%',
+      position: 'absolute',
+      transform: 'translate(-50%,-50%)',
+      top: '50%',
+      left: '50%',
+      backdropFilter: 'blur(2px)',
+      zIndex: '2',
+      padding: 4
+    },
     boxWrapper: {
       position: 'relative',
       gap: '8px',

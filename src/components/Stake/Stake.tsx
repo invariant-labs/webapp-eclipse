@@ -5,17 +5,20 @@ import { Status } from '@store/reducers/solanaWallet'
 import { SwapToken, swapTokens } from '@store/selectors/solanaWallet'
 import { actions, StakeLiquidityPayload } from '@store/reducers/sBitz'
 import {
-  backedByBITZ,
   stakeStatsLoading,
-  backedByBITZLoading
+  backedByBITZLoading,
+  stakedData
 } from '@store/selectors/stake'; import { FAQSection } from './FAQSection/FAQSection'
 import { colors, typography } from '@static/theme'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { useEffect, useMemo, useState } from 'react'
-import { sBITZ_MAIN } from '@store/consts/static'
+import { BITZ_MAIN, sBITZ_MAIN } from '@store/consts/static'
 import { BN } from '@coral-xyz/anchor'
 import { YourStakeProgress } from './LiquidityStaking/YourStakeStats/YourProgress'
+import { network } from '@store/selectors/solanaConnection'
+import { getTokenPrice } from '@utils/utils'
+import { calculateTokensForWithdraw } from '@invariant-labs/sbitz'
 export interface IStake {
   walletStatus: Status
   tokens: Record<string, SwapToken>
@@ -41,6 +44,7 @@ export const Stake: React.FC<IStake> = ({
   success
 }) => {
   const tokensList = useSelector(swapTokens)
+  const stakedBitzData = useSelector(stakedData)
   const dispatch = useDispatch()
   const [isLoadingDebounced, setIsLoadingDebounced] = useState(true)
   const filteredTokens = useMemo(() => {
@@ -48,25 +52,42 @@ export const Stake: React.FC<IStake> = ({
   }, [tokensList])
 
   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
-
-  const backedBitzData = useSelector(backedByBITZ)
+  const [backedByBITZData, setBackedByBITZData] = useState<{ amount: BN, price: number } | null>(null)
+  const currentNetwork = useSelector(network);
   const statsLoading = useSelector(stakeStatsLoading)
   const backedByBITZDataLoading = useSelector(backedByBITZLoading)
 
-  const isDataLoading = statsLoading || backedByBITZDataLoading
+  const isDataLoading = useMemo(() => {
+    return statsLoading || backedByBITZDataLoading;
+  }, [statsLoading, backedByBITZDataLoading]);
+
   const [stakeChartTab, setStakeChartTab] = useState(StakeChartSwitcher.Stats)
 
 
   useEffect(() => {
     dispatch(actions.getStakedAmountAndBalance())
-    const sBitzToken = filteredTokens.find(token => token.symbol === sBITZ_MAIN.symbol)
-    dispatch(actions.getBackedByBITZ({
-      tokenAddress: sBitzToken?.assetAddress.toString(),
-      amount: new BN(sBitzToken?.balance || 0)
-    }))
-
   }, [filteredTokens, dispatch, isConnected])
 
+  useEffect(() => {
+    if (stakedBitzData.stakedTokenSupply === null || stakedBitzData.stakedAmount === null) {
+      return
+    }
+    const bitzToken = filteredTokens.find(token => token.symbol === sBITZ_MAIN.symbol)
+    const backedByBITZ = calculateTokensForWithdraw(
+      stakedBitzData.stakedTokenSupply,
+      stakedBitzData.stakedAmount,
+      bitzToken?.balance || new BN(0),
+    )
+    const fetchPriceData = async () => {
+      const tokenPrice = await getTokenPrice(BITZ_MAIN.address.toString(), currentNetwork)
+      setBackedByBITZData({
+        amount: backedByBITZ,
+        price: tokenPrice || 0
+      })
+    }
+
+    fetchPriceData()
+  }, [currentNetwork, stakedBitzData, filteredTokens, dispatch, isConnected])
 
 
   useEffect(() => {
@@ -150,7 +171,7 @@ export const Stake: React.FC<IStake> = ({
           <YourStakeProgress
             processedTokens={{
               sBITZ: new BN(filteredTokens.find(token => token.symbol === sBITZ_MAIN.symbol)?.balance || 0),
-              backedByBITZ: backedBitzData || { tokenAddress: undefined, amount: new BN(0), tokenPrice: 0 },
+              backedByBITZ: backedByBITZData ?? { amount: new BN(0), price: 0 },
             }}
             isLoading={isLoadingDebounced}
             isConnected={isConnected}

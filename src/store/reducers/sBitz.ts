@@ -22,8 +22,10 @@ export interface ISBitz {
   inProgress: boolean
   success: boolean
   loadingStates: LoadingStates
-  stakedAmount: BN | null
-  stakedTokenSupply: BN | null
+  stakedData: {
+    stakedAmount: BN | null
+    stakedTokenSupply: BN | null
+  }
   backedByBITZ: {
     tokenAddress: string
     amount: BN
@@ -40,8 +42,10 @@ const defaultStatus: ISBitz = {
     backedByBITZ: false,
     stakeOperation: false
   },
-  stakedAmount: null,
-  stakedTokenSupply: null,
+  stakedData: {
+    stakedAmount: null,
+    stakedTokenSupply: null
+  },
   backedByBITZ: null,
   error: null
 }
@@ -80,8 +84,10 @@ const sBitzSlice = createSlice({
       state,
       action: PayloadAction<{ stakedAmount: BN; stakedTokenSupply: BN }>
     ) {
-      state.stakedAmount = action.payload.stakedAmount
-      state.stakedTokenSupply = action.payload.stakedTokenSupply
+      state.stakedData = {
+        stakedAmount: action.payload.stakedAmount,
+        stakedTokenSupply: action.payload.stakedTokenSupply
+      }
       state.error = null
       state.loadingStates.stakeStats = false
       return state

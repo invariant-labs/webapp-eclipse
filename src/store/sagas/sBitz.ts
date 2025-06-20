@@ -1,5 +1,5 @@
 import { PayloadAction } from '@reduxjs/toolkit'
-import { actions, GetBackedByBITZPayload, StakeLiquidityPayload } from '@store/reducers/sBitz'
+import { actions, StakeLiquidityPayload } from '@store/reducers/sBitz'
 import { all, call, put, select, spawn, takeLatest } from 'typed-redux-saga'
 import { network, rpcAddress } from '@store/selectors/solanaConnection'
 import { getWallet } from './wallet'
@@ -31,7 +31,6 @@ import {
   extractErrorCode,
   extractRuntimeErrorCode,
   formatNumberWithoutSuffix,
-  getTokenPrice,
   mapErrorCodeToMessage,
   printBN
 } from '@utils/utils'
@@ -43,7 +42,6 @@ import {
 } from '@solana/spl-token'
 import { accounts } from '@store/selectors/solanaWallet'
 import { BN } from '@coral-xyz/anchor'
-import { calculateTokensForWithdraw } from '@invariant-labs/sbitz'
 
 export function* handleStake(action: PayloadAction<StakeLiquidityPayload>) {
   const loaderStaking = createLoaderKey()
@@ -520,55 +518,7 @@ export function* handleGetStakedAmountAndBalance(): Generator<
     return { stakedAmount, stakedTokenSupply }
   } catch (error: any) {
     console.error('Failed to get staked amount and balance:', error)
-    yield put(actions.setStakedAmountAndBalanceError(error.toString()))
     return null
-  }
-}
-
-export function* handleGetBackedByBITZ(action: PayloadAction<GetBackedByBITZPayload>) {
-  try {
-    yield put(actions.setLoading({ type: 'backedByBITZ', value: true }))
-
-    const { amount, tokenAddress } = action.payload
-    const networkType = yield* select(network)
-
-    let stakedData = yield* select(state => ({
-      stakedAmount: state.sBitz.stakedAmount,
-      stakedTokenSupply: state.sBitz.stakedTokenSupply
-    }))
-
-    if (!stakedData.stakedAmount || !stakedData.stakedTokenSupply) {
-      const result = yield* call(handleGetStakedAmountAndBalance)
-
-      if (!result?.stakedAmount || !result?.stakedTokenSupply) {
-        yield put(actions.setBackedByBITZ(null))
-        return
-      }
-
-      stakedData = result
-    }
-
-    const backedByBITZ = calculateTokensForWithdraw(
-      stakedData.stakedTokenSupply,
-      stakedData.stakedAmount,
-      amount
-    )
-
-    let tokenPrice: number | undefined = undefined
-    if (tokenAddress) {
-      tokenPrice = yield* call(getTokenPrice, tokenAddress, networkType)
-    }
-
-    yield put(
-      actions.setBackedByBITZ({
-        tokenAddress: tokenAddress || '',
-        amount: backedByBITZ,
-        tokenPrice
-      })
-    )
-  } catch (error: any) {
-    console.error('Failed to calculate backed by BITZ amount:', error)
-    yield put(actions.setBackedByBITZError(error.toString()))
   }
 }
 
@@ -584,12 +534,6 @@ export function* stakedAmountAndBalanceHandler(): Generator {
   yield* takeLatest(actions.getStakedAmountAndBalance, handleGetStakedAmountAndBalance)
 }
 
-export function* getBackedByBITZHandler(): Generator {
-  yield* takeLatest(actions.getBackedByBITZ, handleGetBackedByBITZ)
-}
-
 export function* stakeSaga(): Generator {
-  yield all(
-    [stakeHandler, unstakeHandler, stakedAmountAndBalanceHandler, getBackedByBITZHandler].map(spawn)
-  )
+  yield all([stakeHandler, unstakeHandler, stakedAmountAndBalanceHandler].map(spawn))
 }
