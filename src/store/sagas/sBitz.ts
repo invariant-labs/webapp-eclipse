@@ -16,6 +16,7 @@ import {
   SIGNING_SNACKBAR_CONFIG,
   TIMEOUT_ERROR_MESSAGE
 } from '@store/consts/static'
+
 import {
   sendAndConfirmRawTransaction,
   SendTransactionError,
@@ -518,6 +519,9 @@ export function* handleGetStakedAmountAndBalance() {
   }
 }
 
+export function* handleGenerateStakeGraph(): Generator {
+  computeBitzSbitzRewards
+}
 export function* stakeHandler(): Generator {
   yield* takeLatest(actions.stake, handleStake)
 }

@@ -15,8 +15,8 @@ import { BITZ_MAIN, sBITZ_MAIN } from '@store/consts/static'
 import { BN } from '@coral-xyz/anchor'
 import { YourStakeProgress } from './LiquidityStaking/YourStakeStats/YourProgress'
 import { network } from '@store/selectors/solanaConnection'
-import { getTokenPrice } from '@utils/utils'
-import { calculateTokensForWithdraw } from '@invariant-labs/sbitz'
+import { getTokenPrice, printBN } from '@utils/utils'
+import { calculateTokensForWithdraw, computeBitzSbitzRewards } from '@invariant-labs/sbitz'
 import { StakeChart } from './StakeChart/StakeChart'
 export interface IStake {
   walletStatus: Status
@@ -55,9 +55,13 @@ export const Stake: React.FC<IStake> = ({
   const currentNetwork = useSelector(network);
   const statsLoading = useSelector(stakeStatsLoading)
   const initialLoadCompleted = useRef(false)
-
+  const [chartData, setChartData] = useState<{ bitzData: { x: string, y: number }[], sBitzData: { x: string, y: number }[], earnedAmount: number }>({
+    bitzData: [],
+    sBitzData: [],
+    earnedAmount: 0,
+  })
   const [stakeChartTab, setStakeChartTab] = useState(StakeChartSwitcher.Stats)
-
+  const [stakedAmount, setStakedAmount] = useState(100)
 
   const processedTokens = useMemo(() => {
     return {
@@ -134,35 +138,25 @@ export const Stake: React.FC<IStake> = ({
   const { classes } = useStyles()
 
 
-  const generateMockChartData = () => {
-    const days = Array.from({ length: 31 }, (_, i) => i + 1)
-
-    const bitzStartValue = 100
-    const sBitzStartValue = 100
-
-    const bitzGrowthRate = 0.02  // 2% daily growth
-    const sBitzGrowthRate = 0.04 // 4% daily growth
-
-    const bitzData = days.map(day => ({
-      x: `Day ${day}`,
-      y: Number((bitzStartValue * Math.pow(1 + bitzGrowthRate, day - 1)).toFixed(2))
+  useEffect(() => {
+    const { bitzPredictedYield, sbitzPredictedYield }: { sbitzPredictedYield: number[], bitzPredictedYield: number[] } = computeBitzSbitzRewards(stakedAmount, +printBN(stakedBitzData.stakedTokenSupply, sBITZ_MAIN.decimals))
+    const bitzData = bitzPredictedYield.map((value, index) => ({
+      x: `Day ${index + 1}`,
+      y: value
     }))
-
-    const sBitzData = days.map(day => ({
-      x: `Day ${day}`,
-      y: Number((sBitzStartValue * Math.pow(1 + sBitzGrowthRate, day - 1)).toFixed(2))
+    const sBitzData = sbitzPredictedYield.map((value, index) => ({
+      x: `Day ${index + 1}`,
+      y: value
     }))
-
-    return {
+    setChartData({
       bitzData,
       sBitzData,
-      stakedAmount: 100,
-      earnedAmount: Number((sBitzData[sBitzData.length - 1].y - bitzData[bitzData.length - 1].y).toFixed(2)),
-      earnedAmountUsd: Number(((sBitzData[sBitzData.length - 1].y - bitzData[bitzData.length - 1].y) * 25).toFixed(2)) // Assuming $25 per SOL
-    }
-  }
+      earnedAmount: sBitzData[sBitzData.length - 1]?.y - bitzData[sBitzData.length - 1]?.y
+    })
+  }, [stakedBitzData, stakedAmount])
 
-  const mockData = generateMockChartData()
+
+
 
 
   return (
@@ -232,17 +226,20 @@ export const Stake: React.FC<IStake> = ({
             Your stake
           </Typography>
           <StakeChart
-            stakedAmount={mockData.stakedAmount}
-            earnedAmount={mockData.earnedAmount}
-            earnedAmountUsd={mockData.earnedAmountUsd}
-            bitzData={mockData.bitzData}
-            sBitzData={mockData.sBitzData}
+            onStakedAmountChange={setStakedAmount}
+            stakedAmount={stakedAmount}
+            earnedAmount={chartData.earnedAmount}
+            earnedAmountUsd={0}
+            bitzData={chartData.bitzData}
+            sBitzData={chartData.sBitzData}
           />
         </Box>
       )}
       <FAQSection />
     </Grid>
   )
+
 }
+
 
 export default Stake
