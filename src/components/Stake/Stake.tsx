@@ -132,8 +132,6 @@ export const Stake: React.FC<IStake> = ({
           <Typography style={{ ...typography.heading4, color: colors.invariant.text, textAlign: 'left', marginBottom: '20px' }}>
             Your stats
           </Typography>
-          {JSON.stringify(filteredTokens.length)}-
-          {JSON.stringify(processedTokens.length)}
 
           <YourStakeProgress
             processedTokens={filteredTokens}
