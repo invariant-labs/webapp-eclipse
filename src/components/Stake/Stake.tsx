@@ -8,7 +8,6 @@ import {
   stakeStatsLoading,
   stakedData
 } from '@store/selectors/stake'; import { FAQSection } from './FAQSection/FAQSection'
-import { colors, typography } from '@static/theme'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { useEffect, useMemo, useState } from 'react'
@@ -66,8 +65,16 @@ export const Stake: React.FC<IStake> = ({
   }, [filteredTokens, backedByBITZData]);
 
   useEffect(() => {
-    dispatch(actions.getStakedAmountAndBalance())
-  }, [filteredTokens, dispatch, isConnected])
+    const shouldFetchData = isConnected && !inProgress
+
+    if (shouldFetchData) {
+      const timerId = setTimeout(() => {
+        dispatch(actions.getStakedAmountAndBalance())
+      }, 300)
+
+      return () => clearTimeout(timerId)
+    }
+  }, [isConnected, inProgress, dispatch])
 
   useEffect(() => {
     if (stakedBitzData.stakedTokenSupply === null || stakedBitzData.stakedAmount === null) {
