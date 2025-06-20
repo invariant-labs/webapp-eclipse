@@ -91,41 +91,6 @@ const sBitzSlice = createSlice({
       state.error = null
       state.loadingStates.stakeStats = false
       return state
-    },
-    setStakedAmountAndBalanceError(state, action: PayloadAction<string>) {
-      state.error = action.payload
-      state.loadingStates.stakeStats = false
-      return state
-    },
-    getBackedByBITZ(state, _action: PayloadAction<GetBackedByBITZPayload>) {
-      state.error = null
-      state.loadingStates.backedByBITZ = true
-      if (!state.backedByBITZ) {
-        state.backedByBITZ = {
-          tokenAddress: '',
-          amount: new BN(0),
-          tokenPrice: undefined
-        }
-      }
-      return state
-    },
-    setBackedByBITZ(
-      state,
-      action: PayloadAction<{
-        tokenAddress: string
-        amount: BN
-        tokenPrice?: number
-      } | null>
-    ) {
-      state.backedByBITZ = action.payload
-      state.loadingStates.backedByBITZ = false
-      state.error = null
-      return state
-    },
-    setBackedByBITZError(state, action: PayloadAction<string>) {
-      state.error = action.payload
-      state.loadingStates.backedByBITZ = false
-      return state
     }
   }
 })

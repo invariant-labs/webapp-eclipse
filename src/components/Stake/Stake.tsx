@@ -6,7 +6,6 @@ import { SwapToken, swapTokens } from '@store/selectors/solanaWallet'
 import { actions, StakeLiquidityPayload } from '@store/reducers/sBitz'
 import {
   stakeStatsLoading,
-  backedByBITZLoading,
   stakedData
 } from '@store/selectors/stake'; import { FAQSection } from './FAQSection/FAQSection'
 import { colors, typography } from '@static/theme'
@@ -55,11 +54,6 @@ export const Stake: React.FC<IStake> = ({
   const [backedByBITZData, setBackedByBITZData] = useState<{ amount: BN, price: number } | null>(null)
   const currentNetwork = useSelector(network);
   const statsLoading = useSelector(stakeStatsLoading)
-  const backedByBITZDataLoading = useSelector(backedByBITZLoading)
-
-  const isDataLoading = useMemo(() => {
-    return statsLoading || backedByBITZDataLoading;
-  }, [statsLoading, backedByBITZDataLoading]);
 
   const [stakeChartTab, setStakeChartTab] = useState(StakeChartSwitcher.Stats)
 
@@ -93,7 +87,7 @@ export const Stake: React.FC<IStake> = ({
   useEffect(() => {
     let timeout: NodeJS.Timeout
 
-    if (isDataLoading) {
+    if (statsLoading) {
       setIsLoadingDebounced(true)
     } else {
       timeout = setTimeout(() => {
@@ -102,7 +96,7 @@ export const Stake: React.FC<IStake> = ({
     }
 
     return () => clearTimeout(timeout)
-  }, [isDataLoading])
+  }, [statsLoading])
 
   const handleToggleChange = (
     _event: React.MouseEvent<HTMLElement>,
