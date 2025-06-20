@@ -280,7 +280,6 @@ export function* handleUnstake(action: PayloadAction<StakeLiquidityPayload>) {
   const wallet = yield* call(getWallet)
   const connection = yield* call(getConnection)
   const stakingProgram = yield* call(getStakingProgram, networkType, rpc, wallet as IWallet)
-  stakingProgram.getStakedAmountAndStakedTokenSupply
   try {
     yield put(
       snackbarsActions.add({
@@ -493,11 +492,7 @@ export function* handleUnstake(action: PayloadAction<StakeLiquidityPayload>) {
   }
 }
 
-export function* handleGetStakedAmountAndBalance(): Generator<
-  any,
-  { stakedAmount: BN; stakedTokenSupply: BN } | null,
-  any
-> {
+export function* handleGetStakedAmountAndBalance() {
   const networkType = yield* select(network)
   const rpc = yield* select(rpcAddress)
   const wallet = yield* call(getWallet)

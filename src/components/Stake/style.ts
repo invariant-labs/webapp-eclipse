@@ -90,6 +90,19 @@ export const useStyles = makeStyles()((_theme: Theme) => ({
   disabledSwitchButton: {
     color: `${colors.invariant.textGrey} !important`
   },
+  statsContainer: {
+    width: '100%',
+    marginTop: '20px',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center'
+  },
+  statsTitle: {
+    ...typography.heading4,
+    color: colors.invariant.text,
+    textAlign: 'left',
+    marginBottom: '20px'
+  },
   filtersContainerOverview: {
     marginTop: '32px',
     maxWidth: '240px'

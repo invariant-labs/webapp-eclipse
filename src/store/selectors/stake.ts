@@ -8,6 +8,7 @@ const selectLoadingStates = (state: AnyProps) => store(state).loadingStates
 export const { inProgress, success, error, stakedData } = keySelectors(store, [
   'inProgress',
   'success',
+  'error',
   'stakedData'
 ])
 

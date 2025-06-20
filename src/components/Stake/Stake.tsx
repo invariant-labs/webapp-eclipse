@@ -58,6 +58,13 @@ export const Stake: React.FC<IStake> = ({
   const [stakeChartTab, setStakeChartTab] = useState(StakeChartSwitcher.Stats)
 
 
+  const processedTokens = useMemo(() => {
+    return {
+      sBITZ: new BN(filteredTokens.find(token => token.symbol === sBITZ_MAIN.symbol)?.balance || 0),
+      backedByBITZ: backedByBITZData ?? { amount: new BN(0), price: 0 },
+    };
+  }, [filteredTokens, backedByBITZData]);
+
   useEffect(() => {
     dispatch(actions.getStakedAmountAndBalance())
   }, [filteredTokens, dispatch, isConnected])
@@ -105,6 +112,7 @@ export const Stake: React.FC<IStake> = ({
     if (newValue === null) return
     setStakeChartTab(newValue)
   }
+
   const { classes } = useStyles()
 
 
@@ -158,15 +166,12 @@ export const Stake: React.FC<IStake> = ({
 
       {stakeChartTab === StakeChartSwitcher.Stats && (
 
-        <Box sx={{ width: '100%', marginTop: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <Typography style={{ ...typography.heading4, color: colors.invariant.text, textAlign: 'left', marginBottom: '20px' }}>
+        <Box className={classes.statsContainer}>
+          <Typography className={classes.statsTitle}>
             Your stats
           </Typography>
           <YourStakeProgress
-            processedTokens={{
-              sBITZ: new BN(filteredTokens.find(token => token.symbol === sBITZ_MAIN.symbol)?.balance || 0),
-              backedByBITZ: backedByBITZData ?? { amount: new BN(0), price: 0 },
-            }}
+            processedTokens={processedTokens}
             isLoading={isLoadingDebounced}
             isConnected={isConnected}
           />

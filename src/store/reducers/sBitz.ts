@@ -31,7 +31,6 @@ export interface ISBitz {
     amount: BN
     tokenPrice?: number
   } | null
-  error: string | null
 }
 
 const defaultStatus: ISBitz = {
@@ -46,8 +45,7 @@ const defaultStatus: ISBitz = {
     stakedAmount: null,
     stakedTokenSupply: null
   },
-  backedByBITZ: null,
-  error: null
+  backedByBITZ: null
 }
 export const sBitzSliceName = 'sBitz'
 
@@ -76,7 +74,6 @@ const sBitzSlice = createSlice({
       return state
     },
     getStakedAmountAndBalance(state) {
-      state.error = null
       state.loadingStates.stakeStats = true
       return state
     },
@@ -88,7 +85,6 @@ const sBitzSlice = createSlice({
         stakedAmount: action.payload.stakedAmount,
         stakedTokenSupply: action.payload.stakedTokenSupply
       }
-      state.error = null
       state.loadingStates.stakeStats = false
       return state
     }
