@@ -17,6 +17,7 @@ import { YourStakeProgress } from './LiquidityStaking/YourStakeStats/YourProgres
 import { network } from '@store/selectors/solanaConnection'
 import { getTokenPrice } from '@utils/utils'
 import { calculateTokensForWithdraw } from '@invariant-labs/sbitz'
+import { StakeChart } from './StakeChart/StakeChart'
 export interface IStake {
   walletStatus: Status
   tokens: Record<string, SwapToken>
@@ -133,6 +134,37 @@ export const Stake: React.FC<IStake> = ({
   const { classes } = useStyles()
 
 
+  const generateMockChartData = () => {
+    const days = Array.from({ length: 31 }, (_, i) => i + 1)
+
+    const bitzStartValue = 100
+    const sBitzStartValue = 100
+
+    const bitzGrowthRate = 0.02  // 2% daily growth
+    const sBitzGrowthRate = 0.04 // 4% daily growth
+
+    const bitzData = days.map(day => ({
+      x: `Day ${day}`,
+      y: Number((bitzStartValue * Math.pow(1 + bitzGrowthRate, day - 1)).toFixed(2))
+    }))
+
+    const sBitzData = days.map(day => ({
+      x: `Day ${day}`,
+      y: Number((sBitzStartValue * Math.pow(1 + sBitzGrowthRate, day - 1)).toFixed(2))
+    }))
+
+    return {
+      bitzData,
+      sBitzData,
+      stakedAmount: 100,
+      earnedAmount: Number((sBitzData[sBitzData.length - 1].y - bitzData[bitzData.length - 1].y).toFixed(2)),
+      earnedAmountUsd: Number(((sBitzData[sBitzData.length - 1].y - bitzData[bitzData.length - 1].y) * 25).toFixed(2)) // Assuming $25 per SOL
+    }
+  }
+
+  const mockData = generateMockChartData()
+
+
   return (
     <Grid container className={classes.wrapper} alignItems='center'>
       <LiquidityStaking
@@ -191,6 +223,20 @@ export const Stake: React.FC<IStake> = ({
             processedTokens={processedTokens}
             isLoading={isLoadingDebounced}
             isConnected={isConnected}
+          />
+        </Box>
+      )}
+      {stakeChartTab === StakeChartSwitcher.Stake && (
+        <Box className={classes.statsContainer}>
+          <Typography className={classes.statsTitle}>
+            Your stake
+          </Typography>
+          <StakeChart
+            stakedAmount={mockData.stakedAmount}
+            earnedAmount={mockData.earnedAmount}
+            earnedAmountUsd={mockData.earnedAmountUsd}
+            bitzData={mockData.bitzData}
+            sBitzData={mockData.sBitzData}
           />
         </Box>
       )}
