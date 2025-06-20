@@ -519,9 +519,6 @@ export function* handleGetStakedAmountAndBalance() {
   }
 }
 
-export function* handleGenerateStakeGraph(): Generator {
-  computeBitzSbitzRewards
-}
 export function* stakeHandler(): Generator {
   yield* takeLatest(actions.stake, handleStake)
 }
