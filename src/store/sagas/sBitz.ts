@@ -513,6 +513,8 @@ export function* handleGetStakedAmountAndBalance() {
     return { stakedAmount, stakedTokenSupply }
   } catch (error: any) {
     console.error('Failed to get staked amount and balance:', error)
+    yield put(actions.setLoading({ type: 'stakeStats', value: false }))
+
     return null
   }
 }
