@@ -42,7 +42,7 @@ export const Stake: React.FC<IStake> = ({
 }) => {
   const tokensList = useSelector(swapTokens)
   const dispatch = useDispatch()
-
+  const [isLoadingDebounced, setIsLoadingDebounced] = useState(true)
   const filteredTokens = useMemo(() => {
     return tokensList.filter(item => item.decimals > 0 && (item.symbol === sBITZ_MAIN.symbol))
   }, [tokensList])
@@ -67,6 +67,22 @@ export const Stake: React.FC<IStake> = ({
 
   }, [filteredTokens, dispatch, isConnected])
 
+
+
+  useEffect(() => {
+    let timeout: NodeJS.Timeout
+
+    if (isDataLoading) {
+      setIsLoadingDebounced(true)
+    } else {
+      timeout = setTimeout(() => {
+        setIsLoadingDebounced(false)
+      }, 400)
+    }
+
+    return () => clearTimeout(timeout)
+  }, [isDataLoading])
+
   const handleToggleChange = (
     _event: React.MouseEvent<HTMLElement>,
     newValue: StakeChartSwitcher
@@ -75,9 +91,8 @@ export const Stake: React.FC<IStake> = ({
     setStakeChartTab(newValue)
   }
   const { classes } = useStyles()
-  useEffect(() => {
-    console.log(stakeStatsLoading, 'loading stake')
-  }, [stakeStatsLoading])
+
+
   return (
     <Grid container className={classes.wrapper} alignItems='center'>
       <LiquidityStaking
@@ -137,7 +152,7 @@ export const Stake: React.FC<IStake> = ({
               sBITZ: new BN(filteredTokens.find(token => token.symbol === sBITZ_MAIN.symbol)?.balance || 0),
               backedByBITZ: backedBitzData || { tokenAddress: undefined, amount: new BN(0), tokenPrice: 0 },
             }}
-            isLoading={isDataLoading}
+            isLoading={isLoadingDebounced}
             isConnected={isConnected}
           />
         </Box>
