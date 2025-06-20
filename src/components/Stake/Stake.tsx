@@ -51,6 +51,8 @@ export const Stake: React.FC<IStake> = ({
   const filteredTokens = useMemo(() => {
     return processedTokens.filter(item => item.decimal > 0 && (item.symbol === sBITZ_MAIN.symbol || item.symbol === BITZ_MAIN.symbol))
   }, [processedTokens])
+  const hasRelevantTokens = filteredTokens.length > 0
+
   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
   const [stakeChartTab, setStakeChartTab] = useState(StakeChartSwitcher.Stats)
   const handleToggleChange = (
@@ -115,7 +117,8 @@ export const Stake: React.FC<IStake> = ({
           <Typography style={{ ...typography.heading4, color: colors.invariant.text, textAlign: 'left', marginBottom: '20px' }}>
             Your stats
           </Typography>
-          <YourStakeProgress processedTokens={filteredTokens} isProcesing={isBalanceLoading || isProcesing || filteredTokens.length <= 0} isConnected={isConnected} />
+          <YourStakeProgress processedTokens={filteredTokens} isProcesing={isBalanceLoading || isProcesing || !hasRelevantTokens}
+            isConnected={isConnected} />
         </Box>
       )}
       <FAQSection />

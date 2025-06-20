@@ -9,7 +9,7 @@ import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 
 interface IProgressItemProps {
   onModalOpen?: (open: boolean) => void
-  label: string
+  label: string | React.ReactNode
   bgImage: string
   value: string | number
   tooltip?: React.ReactNode
