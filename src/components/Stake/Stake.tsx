@@ -10,7 +10,7 @@ import {
 } from '@store/selectors/stake'; import { FAQSection } from './FAQSection/FAQSection'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { BITZ_MAIN, sBITZ_MAIN } from '@store/consts/static'
 import { BN } from '@coral-xyz/anchor'
 import { YourStakeProgress } from './LiquidityStaking/YourStakeStats/YourProgress'
@@ -53,6 +53,7 @@ export const Stake: React.FC<IStake> = ({
   const [backedByBITZData, setBackedByBITZData] = useState<{ amount: BN, price: number } | null>(null)
   const currentNetwork = useSelector(network);
   const statsLoading = useSelector(stakeStatsLoading)
+  const initialLoadCompleted = useRef(false)
 
   const [stakeChartTab, setStakeChartTab] = useState(StakeChartSwitcher.Stats)
 
@@ -63,11 +64,12 @@ export const Stake: React.FC<IStake> = ({
       backedByBITZ: backedByBITZData ?? { amount: new BN(0), price: 0 },
     };
   }, [filteredTokens, backedByBITZData]);
-
   useEffect(() => {
     const shouldFetchData = isConnected && !inProgress
 
     if (shouldFetchData) {
+      setIsLoadingDebounced(true)
+
       const timerId = setTimeout(() => {
         dispatch(actions.getStakedAmountAndBalance())
       }, 300)
@@ -76,10 +78,32 @@ export const Stake: React.FC<IStake> = ({
     }
   }, [isConnected, inProgress, dispatch])
 
+
+  useEffect(() => {
+    if (statsLoading) {
+      setIsLoadingDebounced(true)
+      return
+    }
+
+    if (stakedBitzData.stakedAmount !== null && stakedBitzData.stakedTokenSupply !== null) {
+      const timer = setTimeout(() => {
+        initialLoadCompleted.current = true
+        setIsLoadingDebounced(false)
+      }, 500)
+
+      return () => clearTimeout(timer)
+    }
+  }, [statsLoading, stakedBitzData])
+
+
   useEffect(() => {
     if (stakedBitzData.stakedTokenSupply === null || stakedBitzData.stakedAmount === null) {
       return
     }
+    if (!initialLoadCompleted.current) {
+      setIsLoadingDebounced(true)
+    }
+
     const bitzToken = filteredTokens.find(token => token.symbol === sBITZ_MAIN.symbol)
     const backedByBITZ = calculateTokensForWithdraw(
       stakedBitzData.stakedTokenSupply,
@@ -97,20 +121,6 @@ export const Stake: React.FC<IStake> = ({
     fetchPriceData()
   }, [currentNetwork, stakedBitzData, filteredTokens, dispatch, isConnected])
 
-
-  useEffect(() => {
-    let timeout: NodeJS.Timeout
-
-    if (statsLoading) {
-      setIsLoadingDebounced(true)
-    } else {
-      timeout = setTimeout(() => {
-        setIsLoadingDebounced(false)
-      }, 400)
-    }
-
-    return () => clearTimeout(timeout)
-  }, [statsLoading])
 
   const handleToggleChange = (
     _event: React.MouseEvent<HTMLElement>,
