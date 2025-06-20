@@ -989,7 +989,7 @@ export const Swap: React.FC<ISwap> = ({
     <Grid container className={classes.swapWrapper} alignItems='center'>
       <TradingViewChart
         network='eclipse'
-        poolAddress='44w4HrojzxKwxEb3bmjRNcJ4irFhUGBUjrCYecYhPvqq'
+        poolAddress='2qbbDqTtcFQL8tL5BpEuxozGPRjBfmJG6oYcvYnGzULE'
         timeframe='hour'
       />
       {wrappedETHAccountExist && (

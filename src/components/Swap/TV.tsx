@@ -54,7 +54,10 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({
     fetchData()
       .then(data => {
         const sorted = data.sort((a, b) => a.time - b.time)
-        seriesRef.current?.setData(sorted)
+        const deduped = sorted.filter(
+          (candle, idx) => idx === 0 || candle.time > sorted[idx - 1].time
+        )
+        seriesRef.current?.setData(deduped)
         chart.timeScale().fitContent()
       })
       .catch(console.error)
