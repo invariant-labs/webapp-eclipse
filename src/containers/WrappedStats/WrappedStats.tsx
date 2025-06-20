@@ -44,7 +44,6 @@ export const WrappedStats: React.FC = () => {
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
 
   const dispatch = useDispatch()
-
   const poolsList = useSelector(poolsStatsWithTokensDetails)
   const tokensList = useSelector(tokensStatsWithTokensDetails)
   const volumeInterval = useSelector(volume)
