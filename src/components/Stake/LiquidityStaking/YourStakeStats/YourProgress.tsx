@@ -11,13 +11,13 @@ import sBITZ from '@static/png/sBitz.png'
 import { ProcessedToken } from '@store/hooks/userOverview/useProcessedToken'
 interface YourProgressProps {
   processedTokens: ProcessedToken[]
-  isProcesing?: boolean
+  isLoading?: boolean
   isConnected: boolean
 }
 
 export const YourStakeProgress: React.FC<YourProgressProps> = ({
   processedTokens,
-  isProcesing,
+  isLoading,
   isConnected
 }) => {
   const { classes } = useStyles({})
@@ -38,13 +38,13 @@ export const YourStakeProgress: React.FC<YourProgressProps> = ({
                     sBITZ
                   </>
                 }
-                isLoading={isProcesing}
+                isLoading={isLoading}
                 value={processedTokens.find(token => token.symbol === 'sBITZ')?.amount.toFixed(4) || 0}
               />
               <ProgressItem
                 bgImage={mid}
                 isConnected={isConnected}
-                isLoading={isProcesing}
+                isLoading={isLoading}
                 tooltip={
                   <>
                     Yield
@@ -69,7 +69,7 @@ export const YourStakeProgress: React.FC<YourProgressProps> = ({
                   </>
                 }
                 label={<Box sx={{ display: 'flex', gap: 1 }}><Typography>Backed by</Typography> <img src={BITZ} width={20} height={20} /> <Typography>BITZ</Typography></Box>}
-                isLoading={isProcesing}
+                isLoading={isLoading}
                 value={processedTokens.find(token => token.symbol === 'BITZ')?.amount.toFixed(4) || 0}
               />
               <ProgressItem
@@ -80,7 +80,7 @@ export const YourStakeProgress: React.FC<YourProgressProps> = ({
                     Value
                   </>
                 }
-                isLoading={isProcesing}
+                isLoading={isLoading}
                 label='Value'
                 value={`$${processedTokens.find(token => token.symbol === 'BITZ')?.value.toFixed(4) || 0}`}
 
