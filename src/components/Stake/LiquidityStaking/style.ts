@@ -19,6 +19,19 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     color: colors.invariant.text,
     ...typography.heading4
   },
+  amountOutInput: {
+    position: 'relative',
+    background: colors.invariant.newDark,
+    '& input': {
+      pointerEvents: 'none',
+      userSelect: 'text',
+      backgroundColor: 'transparent',
+      color: 'inherit',
+      opacity: 1,
+      caretColor: 'transparent',
+      cursor: 'not-allowed'
+    }
+  },
   amountInput: {
     position: 'relative',
     background: colors.invariant.newDark
