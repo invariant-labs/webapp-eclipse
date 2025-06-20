@@ -180,7 +180,12 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
 
   return (
     <Grid container className={classes.wrapper}>
-      <Switcher switchTab={switchTab} setSwitchTab={setSwitchTab} setIsRotating={setIsRotating} />
+      <Switcher
+        switchTab={switchTab}
+        setSwitchTab={setSwitchTab}
+        isRotating={isRotating}
+        setIsRotating={setIsRotating}
+      />
       <Box mt='32px' mb={'16px'} display='flex' justifyContent='space-between' alignItems='center'>
         <Typography className={classes.title}>Stake</Typography>
       </Box>

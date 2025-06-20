@@ -22,14 +22,11 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   amountOutInput: {
     position: 'relative',
     background: colors.invariant.newDark,
-    '& input': {
-      pointerEvents: 'none',
+    '& .MuiInputBase-input': {
       userSelect: 'text',
-      backgroundColor: 'transparent',
-      color: 'inherit',
-      opacity: 1,
       caretColor: 'transparent',
-      cursor: 'not-allowed'
+      opacity: 1,
+      cursor: 'default'
     }
   },
   amountInput: {

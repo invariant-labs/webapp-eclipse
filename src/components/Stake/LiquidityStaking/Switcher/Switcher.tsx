@@ -10,10 +10,11 @@ import { StakeSwitch } from '@store/consts/types'
 interface ISwitcher {
   switchTab: string
   setSwitchTab: (newSwitch: StakeSwitch) => void
+  isRotating: boolean
   setIsRotating: (isRotating: boolean) => void
 }
 
-const Switcher: React.FC<ISwitcher> = ({ switchTab, setSwitchTab, setIsRotating }) => {
+const Switcher: React.FC<ISwitcher> = ({ switchTab, setSwitchTab, isRotating, setIsRotating }) => {
   const { classes } = useStyles({ switchTab })
 
   const handleIntervalChange = (_: any, newTab: string) => {
@@ -37,7 +38,8 @@ const Switcher: React.FC<ISwitcher> = ({ switchTab, setSwitchTab, setIsRotating 
           value={switchTab}
           exclusive
           onChange={handleIntervalChange}
-          className={classes.switchButtonsGroup}>
+          className={classes.switchButtonsGroup}
+          disabled={isRotating}>
           <ToggleButton
             value={StakeSwitch.Stake}
             disableRipple
