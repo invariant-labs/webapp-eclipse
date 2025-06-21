@@ -8,6 +8,7 @@ import {
   stakeStatsLoading,
   stakedData
 } from '@store/selectors/stake'; import { FAQSection } from './FAQSection/FAQSection'
+import { NetworkType } from '@store/consts/static'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -25,6 +26,9 @@ export interface IStake {
   handleUnstake: (props: StakeLiquidityPayload) => void
   inProgress: boolean
   success: boolean
+  onConnectWallet: () => void
+  onDisconnectWallet: () => void
+  networkType: NetworkType
 }
 
 
@@ -40,7 +44,10 @@ export const Stake: React.FC<IStake> = ({
   handleStake,
   handleUnstake,
   inProgress,
-  success
+  success,
+  onConnectWallet,
+  onDisconnectWallet,
+  networkType
 }) => {
   const tokensList = useSelector(swapTokens)
   const stakedBitzData = useSelector(stakedData)
@@ -181,6 +188,9 @@ export const Stake: React.FC<IStake> = ({
         handleUnstake={handleUnstake}
         inProgress={inProgress}
         success={success}
+        onConnectWallet={onConnectWallet}
+        onDisconnectWallet={onDisconnectWallet}
+        networkType={networkType}
       />
 
       <Grid className={classes.filtersContainerOverview}>
