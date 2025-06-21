@@ -18,6 +18,7 @@ import {
 } from '@store/consts/static'
 
 import {
+  PublicKey,
   sendAndConfirmRawTransaction,
   SendTransactionError,
   Transaction,
@@ -497,6 +498,8 @@ export function* handleGetStakedAmountAndBalance() {
   const networkType = yield* select(network)
   const rpc = yield* select(rpcAddress)
   const wallet = yield* call(getWallet)
+  const connection = yield* call(getConnection)
+
   const stakingProgram = yield* call(getStakingProgram, networkType, rpc, wallet as IWallet)
   try {
     const { stakedAmount, stakedTokenSupply } = yield* call([
@@ -504,17 +507,29 @@ export function* handleGetStakedAmountAndBalance() {
       stakingProgram.getStakedAmountAndStakedTokenSupply
     ])
 
+    const bitzAccountAmountInfo = yield* call(
+      [connection, connection.getTokenAccountBalance],
+      new PublicKey('7rkHt2NULbkz9rhEeH9nJxLuFgCzSsmcYiDpXjMTfBtF')
+    )
+
     yield put(
       actions.setStakedAmountAndBalance({
         stakedAmount,
-        stakedTokenSupply
+        stakedTokenSupply,
+        sBitzTotalBalance: bitzAccountAmountInfo.value.amount
       })
     )
 
     return { stakedAmount, stakedTokenSupply }
   } catch (error: any) {
     console.error('Failed to get staked amount and balance:', error)
-    yield put(actions.setStakedAmountAndBalance({ stakedAmount: null, stakedTokenSupply: null }))
+    yield put(
+      actions.setStakedAmountAndBalance({
+        stakedAmount: null,
+        stakedTokenSupply: null,
+        sBitzTotalBalance: null
+      })
+    )
     return null
   }
 }

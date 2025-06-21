@@ -63,6 +63,10 @@ export const Stake: React.FC<IStake> = ({
   const [stakeChartTab, setStakeChartTab] = useState(StakeChartSwitcher.Stats)
   const [stakedAmount, setStakedAmount] = useState(100)
 
+  const isFirstMount = useRef(true);
+  const prevInProgressRef = useRef(inProgress);
+
+
   const processedTokens = useMemo(() => {
     return {
       sBITZ: new BN(filteredTokens.find(token => token.symbol === sBITZ_MAIN.symbol)?.balance || 0),
@@ -70,20 +74,29 @@ export const Stake: React.FC<IStake> = ({
     };
   }, [filteredTokens, backedByBITZData]);
   useEffect(() => {
-    const shouldFetchData = isConnected && !inProgress
+    setIsLoadingDebounced(true);
+    dispatch(actions.getStakedAmountAndBalance());
+  }, [dispatch]);
 
-    if (shouldFetchData) {
-      setIsLoadingDebounced(true)
+  useEffect(() => {
+    if (isFirstMount.current) {
+      isFirstMount.current = false;
+      return;
+    }
+
+    const operationJustCompleted = prevInProgressRef.current && !inProgress;
+    prevInProgressRef.current = inProgress;
+
+    if (!inProgress && (operationJustCompleted || isConnected)) {
+      setIsLoadingDebounced(true);
 
       const timerId = setTimeout(() => {
-        dispatch(actions.getStakedAmountAndBalance())
-      }, 300)
+        dispatch(actions.getStakedAmountAndBalance());
+      }, 300);
 
-      return () => clearTimeout(timerId)
+      return () => clearTimeout(timerId);
     }
-  }, [isConnected, inProgress, dispatch])
-
-
+  }, [isConnected, inProgress, dispatch]);
   useEffect(() => {
     if (statsLoading) {
       setIsLoadingDebounced(true)
@@ -116,6 +129,7 @@ export const Stake: React.FC<IStake> = ({
       bitzToken?.balance || new BN(0),
     )
     const fetchPriceData = async () => {
+
       const tokenPrice = await getTokenPrice(BITZ_MAIN.address.toString(), currentNetwork)
       setBackedByBITZData({
         amount: backedByBITZ,
@@ -139,7 +153,8 @@ export const Stake: React.FC<IStake> = ({
 
 
   useEffect(() => {
-    const { bitzPredictedYield, sbitzPredictedYield }: { sbitzPredictedYield: number[], bitzPredictedYield: number[] } = computeBitzSbitzRewards(stakedAmount, +printBN(stakedBitzData.stakedTokenSupply, sBITZ_MAIN.decimals))
+    const { bitzPredictedYield, sbitzPredictedYield }: { sbitzPredictedYield: number[], bitzPredictedYield: number[] } = computeBitzSbitzRewards(stakedAmount, +printBN(stakedBitzData.sBitzTotalBalance, sBITZ_MAIN.decimals))
+
     const bitzData = bitzPredictedYield.map((value, index) => ({
       x: `Day ${index + 1}`,
       y: value
