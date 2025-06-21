@@ -5,6 +5,7 @@ import { Status } from '@store/reducers/solanaWallet'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { StakeLiquidityPayload } from '@store/reducers/sBitz'
 import { FAQSection } from './FAQSection/FAQSection'
+import { NetworkType } from '@store/consts/static'
 
 export interface IStake {
   walletStatus: Status
@@ -13,6 +14,9 @@ export interface IStake {
   handleUnstake: (props: StakeLiquidityPayload) => void
   inProgress: boolean
   success: boolean
+  onConnectWallet: () => void
+  onDisconnectWallet: () => void
+  networkType: NetworkType
 }
 
 export const Stake: React.FC<IStake> = ({
@@ -21,7 +25,10 @@ export const Stake: React.FC<IStake> = ({
   handleStake,
   handleUnstake,
   inProgress,
-  success
+  success,
+  onConnectWallet,
+  onDisconnectWallet,
+  networkType
 }) => {
   const { classes } = useStyles()
 
@@ -34,6 +41,9 @@ export const Stake: React.FC<IStake> = ({
         handleUnstake={handleUnstake}
         inProgress={inProgress}
         success={success}
+        onConnectWallet={onConnectWallet}
+        onDisconnectWallet={onDisconnectWallet}
+        networkType={networkType}
       />
       <FAQSection />
     </Grid>

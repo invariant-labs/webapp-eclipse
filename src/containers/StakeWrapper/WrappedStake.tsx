@@ -8,11 +8,14 @@ import { useDispatch, useSelector } from 'react-redux'
 import { status, swapTokensDict } from '@store/selectors/solanaWallet'
 import { StakeLiquidityPayload } from '@store/reducers/sBitz'
 import { actions } from '@store/reducers/sBitz'
+import { actions as walletActions } from '@store/reducers/solanaWallet'
 import { inProgress, success as successState } from '@store/selectors/stake'
+import { network } from '@store/selectors/solanaConnection'
 
 export const WrappedStake: React.FC = () => {
   const { classes } = useStyles()
   const dispatch = useDispatch()
+  const networkType = useSelector(network)
 
   const walletStatus = useSelector(status)
   const tokens = useSelector(swapTokensDict)
@@ -45,6 +48,13 @@ export const WrappedStake: React.FC = () => {
         handleUnstake={handleUnstake}
         inProgress={progress}
         success={success}
+        onConnectWallet={() => {
+          dispatch(walletActions.connect(false))
+        }}
+        onDisconnectWallet={() => {
+          dispatch(walletActions.disconnect())
+        }}
+        networkType={networkType}
       />
     </Grid>
   )
