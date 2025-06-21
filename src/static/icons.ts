@@ -101,6 +101,8 @@ import withdrawIcon from './svg/withdrawIcon.svg'
 import centerToRangeIcon from './svg/centerToRange.svg'
 import warning3 from './svg/warning3.svg'
 import connectWalletIcon from './svg/connectWalletIcon.svg'
+import star from './svg/star.svg'
+import starFill from './svg/star-fill.svg'
 
 export {
   logoTitleIcon,
@@ -205,7 +207,9 @@ export {
   withdrawIcon,
   centerToRangeIcon,
   warning3,
-  connectWalletIcon
+  connectWalletIcon,
+  star,
+  starFill
 }
 
 export const chainIcons = {
