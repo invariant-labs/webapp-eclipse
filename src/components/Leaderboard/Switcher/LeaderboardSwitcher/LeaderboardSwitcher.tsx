@@ -57,8 +57,8 @@ const LeaderboardSwitcher: React.FC<LeaderboardListProps> = ({
               {availableOptions.findIndex(item => item === selectedOption)! - 1 < 0
                 ? availableOptions[availableOptions.length - 1]
                 : availableOptions[
-                    availableOptions.findIndex(item => item === selectedOption)! - 1
-                  ]}
+                availableOptions.findIndex(item => item === selectedOption)! - 1
+                ]}
             </Typography>
           </Box>
           <Typography className={classes.mobileTypeSwitcherTitle}>{selectedOption}</Typography>
@@ -75,11 +75,11 @@ const LeaderboardSwitcher: React.FC<LeaderboardListProps> = ({
             }>
             <Typography className={classes.mobileTypeSwitcherSubtitle}>
               {availableOptions.findIndex(item => item === selectedOption)! + 1 ===
-              availableOptions.length
+                availableOptions.length
                 ? availableOptions[0]
                 : availableOptions[
-                    availableOptions.findIndex(item => item === selectedOption)! + 1
-                  ]}
+                availableOptions.findIndex(item => item === selectedOption)! + 1
+                ]}
             </Typography>
             <img src={arrowRightIcon} alt='' style={{ cursor: 'pointer' }} />
           </Box>

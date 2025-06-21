@@ -4,7 +4,7 @@ import { SwapToken } from '@store/selectors/solanaWallet'
 import { printBN, getTokenPrice, ensureError } from '@utils/utils'
 import { useEffect, useState } from 'react'
 
-interface ProcessedToken {
+export interface ProcessedToken {
   id: PublicKey
   symbol: string
   icon: string
