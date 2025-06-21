@@ -172,8 +172,6 @@ export const Stake: React.FC<IStake> = ({
 
 
 
-
-
   return (
     <Grid container className={classes.wrapper} alignItems='center'>
       <LiquidityStaking
