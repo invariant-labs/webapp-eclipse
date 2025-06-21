@@ -178,11 +178,11 @@ export const BITZ_MAIN: Token = {
 }
 
 export const sBITZ_MAIN: Token = {
-  tokenProgram: new PublicKey('BiTZjpfDvVfBi6H6jP1wXT7jV9Qx22LBRyJHR3wprsb1'),
+  tokenProgram: TOKEN_2022_PROGRAM_ID,
   symbol: 'sBITZ',
   address: new PublicKey('sBTZcSwRZhRq3JcjFh1xwxgCxmsN7MreyU3Zx8dA8uF'),
   decimals: 11,
-  name: 'sBITZ',
+  name: 'Staked BITZ',
   logoURI: sBitzIcon,
   coingeckoId: ''
 }
@@ -666,7 +666,6 @@ export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
     USDT_MAIN.address,
     BITZ_MAIN.address,
     sBITZ_MAIN.address,
-    LAIKA_MAIN.address,
     TUSD_MAIN.address
   ],
   Testnet: [USDC_TEST.address, BTC_TEST.address, WETH_TEST.address],
