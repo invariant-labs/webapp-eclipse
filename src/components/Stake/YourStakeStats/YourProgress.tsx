@@ -10,7 +10,7 @@ import BITZ from '@static/png/bitz.png'
 import sBITZ from '@static/png/sBitz.png'
 import { BN } from '@coral-xyz/anchor'
 import { BITZ_MAIN, sBITZ_MAIN } from '@store/consts/static'
-import { formatNumberWithoutSuffix, formatNumberWithSuffix, printBN } from '@utils/utils'
+import { formatNumberWithSuffix, printBN } from '@utils/utils'
 interface YourProgressProps {
   processedTokens: {
     sBITZ: BN
