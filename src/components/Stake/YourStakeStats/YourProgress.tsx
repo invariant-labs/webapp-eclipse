@@ -10,7 +10,7 @@ import BITZ from '@static/png/bitz.png'
 import sBITZ from '@static/png/sBitz.png'
 import { BN } from '@coral-xyz/anchor'
 import { BITZ_MAIN, sBITZ_MAIN } from '@store/consts/static'
-import { formatNumberWithoutSuffix, printBN } from '@utils/utils'
+import { formatNumberWithoutSuffix, formatNumberWithSuffix, printBN } from '@utils/utils'
 interface YourProgressProps {
   processedTokens: {
     sBITZ: BN
@@ -47,7 +47,7 @@ export const YourStakeProgress: React.FC<YourProgressProps> = ({
                   </>
                 }
                 isLoading={isLoading}
-                value={formatNumberWithoutSuffix(printBN(processedTokens.sBITZ, sBITZ_MAIN.decimals))}
+                value={formatNumberWithSuffix(printBN(processedTokens.sBITZ, sBITZ_MAIN.decimals), { decimalsAfterDot: 4 })}
               />
               <ProgressItem
                 bgImage={mid}
@@ -78,7 +78,7 @@ export const YourStakeProgress: React.FC<YourProgressProps> = ({
                 }
                 label={<Box className={classes.boxLabel}><Typography>Backed by</Typography> <img src={BITZ} width={20} height={20} /> <Typography>BITZ</Typography></Box>}
                 isLoading={isLoading}
-                value={formatNumberWithoutSuffix(printBN(processedTokens.backedByBITZ.amount, sBITZ_MAIN.decimals) || '0')}
+                value={formatNumberWithSuffix(printBN(processedTokens.backedByBITZ.amount, sBITZ_MAIN.decimals) || '0', { decimalsAfterDot: 4 })}
               />
               <ProgressItem
                 isConnected={isConnected}
@@ -90,10 +90,10 @@ export const YourStakeProgress: React.FC<YourProgressProps> = ({
                 }
                 isLoading={isLoading}
                 label='Value'
-                value={`$${formatNumberWithoutSuffix(+printBN(
+                value={`$${formatNumberWithSuffix(+printBN(
                   processedTokens.backedByBITZ.amount,
                   BITZ_MAIN.decimals
-                ) * (processedTokens.backedByBITZ.price || 0))}`}
+                ) * (processedTokens.backedByBITZ.price || 0), { decimalsAfterDot: 4 })}`}
               />
             </Grid>
           </Grid>
