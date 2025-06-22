@@ -14,11 +14,13 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { BITZ_MAIN, sBITZ_MAIN } from '@store/consts/static'
 import { BN } from '@coral-xyz/anchor'
-import { YourStakeProgress } from './LiquidityStaking/YourStakeStats/YourProgress'
+import { YourStakeProgress } from './YourStakeStats/YourProgress'
 import { network } from '@store/selectors/solanaConnection'
 import { getTokenPrice, printBN } from '@utils/utils'
 import { calculateTokensForWithdraw, computeBitzSbitzRewards } from '@invariant-labs/sbitz'
 import { StakeChart } from './StakeChart/StakeChart'
+import { OverallStats } from './OverallStats/OverallStats'
+import { StakedStats } from './StakedStats/StakedStats'
 export interface IStake {
   walletStatus: Status
   tokens: Record<string, SwapToken>
@@ -241,6 +243,8 @@ export const Stake: React.FC<IStake> = ({
             isLoading={isLoadingDebounced}
             isConnected={isConnected}
           />
+          <OverallStats />
+          <StakedStats />
         </Box>
       )}
       {stakeChartTab === StakeChartSwitcher.Stake && (

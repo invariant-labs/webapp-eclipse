@@ -100,6 +100,7 @@ export const useStyles = makeStyles()(() => ({
     marginTop: '20px',
     display: 'flex',
     flexDirection: 'column',
+    justifyContent: 'center',
     alignItems: 'center'
   },
   statsTitle: {
