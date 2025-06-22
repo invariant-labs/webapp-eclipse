@@ -66,7 +66,7 @@ export const StakedStats = () => {
                     </Box>
 
                     <Box className={classes.pieChartSection}>
-                        <ResponsivePieChart isLoading={false} data={[{ label: 'sBITZ', value: 61 }, { label: 'BITZ', value: 39 }]} chartColors={['#00D9FF', '#32EC51']} />
+                        <ResponsivePieChart isLoading={false} data={[{ label: 'sBITZ', value: 61 }, { label: 'BITZ', value: 39 }]} chartColors={['#00D9FF', '#32EC51']} tooltipPrefix='' />
                     </Box>
                 </Box>
             </Box>
