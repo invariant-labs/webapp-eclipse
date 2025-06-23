@@ -73,6 +73,7 @@ export const useStyles = makeStyles<{ isXs: boolean }>()((theme: Theme, { isXs }
     borderRadius: 9,
     display: 'flex',
     alignItems: 'center',
+    textAlign: 'right',
     gap: 8,
     textTransform: 'none',
     width: 155,
