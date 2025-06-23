@@ -23,7 +23,7 @@ import {
   getTokenMetadata as fetchMetaData,
   unpackMint
 } from '@solana/spl-token'
-import { Connection, PublicKey } from '@solana/web3.js'
+import { Connection, ParsedInnerInstruction, ParsedInstruction, PublicKey } from '@solana/web3.js'
 import {
   Market,
   Tickmap,
@@ -2448,4 +2448,49 @@ export interface ITokenDecimalAndProgramID {
   address: PublicKey
   decimals: number
   programId: PublicKey
+}
+
+type InstructionAmounts = {
+  amountIn: number
+  amountBetween?: number
+  amountOut: number
+}
+
+export enum TokenType {
+  TokenIn,
+  TokenBetween,
+  TokenOut
+}
+
+export const getAmountFromInstruction = (
+  innerInstruction: ParsedInnerInstruction,
+  marketProgramAuthority: string,
+  token: string,
+  type: TokenType
+): InstructionAmounts => {
+  console.log(innerInstruction)
+
+  let instruction: ParsedInstruction | undefined
+
+  if (innerInstruction.instructions.length === 2) {
+    instruction = innerInstruction.instructions.find(ix =>
+      type === TokenType.TokenIn
+        ? (ix as ParsedInstruction).parsed.info.authority !== marketProgramAuthority
+        : (ix as ParsedInstruction).parsed.info.authority === marketProgramAuthority
+    ) as ParsedInstruction | undefined
+  } else {
+    instruction = innerInstruction.instructions.find(ix =>
+      token === WRAPPED_ETH_ADDRESS
+        ? (ix as ParsedInstruction).parsed.info.mint === undefined
+        : (ix as ParsedInstruction).parsed.info.mint === token
+    ) as ParsedInstruction | undefined
+  }
+
+  if (!instruction) {
+    instruction = innerInstruction.instructions[
+      type === TokenType.TokenIn ? 0 : innerInstruction.instructions.length - 1
+    ] as ParsedInstruction
+  }
+
+  return instruction?.parsed.info.amount || instruction?.parsed.info.tokenAmount.amount
 }
