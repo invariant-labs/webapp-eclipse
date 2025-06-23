@@ -76,10 +76,14 @@ export const useStyles = makeStyles()(() => ({
     alignItems: 'center',
     minHeight: '200px',
     [theme.breakpoints.down('lg')]: {
-      flex: '0 0 180px',
+      flex: '0 0 160px',
       marginTop: '20px'
     },
     [theme.breakpoints.down('md')]: {
+      flex: '0 0 140px',
+      marginTop: '16px'
+    },
+    [theme.breakpoints.down('sm')]: {
       flex: 'none',
       width: '100%',
       height: '180px',
@@ -101,6 +105,9 @@ export const useStyles = makeStyles()(() => ({
     alignItems: 'stretch',
     gap: '24px',
     [theme.breakpoints.down('md')]: {
+      gap: '16px'
+    },
+    [theme.breakpoints.down('sm')]: {
       flexDirection: 'column',
       alignItems: 'center'
     }
@@ -113,6 +120,10 @@ export const useStyles = makeStyles()(() => ({
     gap: '24px',
     minHeight: '200px',
     [theme.breakpoints.down('md')]: {
+      gap: '16px',
+      minHeight: '180px'
+    },
+    [theme.breakpoints.down('sm')]: {
       minHeight: 'auto'
     }
   },
@@ -134,7 +145,13 @@ export const useStyles = makeStyles()(() => ({
     display: 'flex',
     gap: '48px',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    [theme.breakpoints.down('md')]: {
+      gap: '32px'
+    },
+    [theme.breakpoints.down('sm')]: {
+      gap: '24px'
+    }
   },
   tokenTextContainer: {
     color: colors.invariant.text,
