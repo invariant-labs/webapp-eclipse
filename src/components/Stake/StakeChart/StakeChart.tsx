@@ -18,7 +18,6 @@ type PointData = {
 interface StakeChartProps {
     stakedAmount: number;
     earnedAmount: number;
-    earnedAmountUsd: number;
     bitzData: PointData[];
     sBitzData: PointData[];
     onStakedAmountChange?: (amount: number) => void;
@@ -27,7 +26,6 @@ interface StakeChartProps {
 export const StakeChart: React.FC<StakeChartProps> = ({
     stakedAmount,
     earnedAmount,
-    // earnedAmountUsd,
     bitzData,
     sBitzData,
     onStakedAmountChange,
