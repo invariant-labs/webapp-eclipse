@@ -8,7 +8,7 @@ import React from 'react'
 interface FaqProps {
   faqData: {
     question: string
-    answer: string
+    answer: string | React.ReactNode
   }[]
 }
 
@@ -31,10 +31,14 @@ export const Faq: React.FC<FaqProps> = ({ faqData }) => {
               </Typography>
             </AccordionSummary>
             <AccordionDetails className={classes.item}>
-              <Typography
-                dangerouslySetInnerHTML={{ __html: item.answer }}
-                sx={{ zIndex: 5, position: 'relative' }}
-              />
+              {typeof item.answer === 'string' ? (
+                <Typography
+                  dangerouslySetInnerHTML={{ __html: item.answer }}
+                  sx={{ zIndex: 5, position: 'relative' }}
+                />
+              ) : (
+                item.answer
+              )}
             </AccordionDetails>
           </Accordion>
           {index !== faqData.length - 1 && <div className={classes.separator} />}
