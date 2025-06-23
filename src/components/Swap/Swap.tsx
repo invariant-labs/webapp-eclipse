@@ -908,6 +908,7 @@ export const Swap: React.FC<ISwap> = ({
     amountTo !== ''
 
   const handleRefresh = async () => {
+    setErrorVisible(false)
     onRefresh(tokenFromIndex, tokenToIndex)
     setRefresherTime(REFRESHER_INTERVAL)
   }
