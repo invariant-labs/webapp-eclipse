@@ -10,6 +10,7 @@ export const showFavourites = (s: AnyProps) => store(s).navigationState.showFavo
 export const liquiditySearch = (s: AnyProps) => store(s).navigationState.liquidityPool
 export const poolSearch = (s: AnyProps) => store(s).navigationState.statsPool
 export const tokenSearch = (s: AnyProps) => store(s).navigationState.statsTokens
+export const portfolioSearch = (s: AnyProps) => store(s).navigationState.portfolioTokens
 
 export const navigationSelectors = {
   navigationState,
@@ -17,7 +18,8 @@ export const navigationSelectors = {
   showFavourites,
   liquiditySearch,
   poolSearch,
-  tokenSearch
+  tokenSearch,
+  portfolioSearch
 }
 
 export default navigationSelectors
