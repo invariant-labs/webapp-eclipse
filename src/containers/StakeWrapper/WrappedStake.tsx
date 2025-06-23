@@ -192,6 +192,15 @@ export const WrappedStake: React.FC = () => {
     })
   }, [stakedBitzData, stakedAmount])
 
+  const estimated24Yield = useMemo(() => {
+    const { sbitzPredictedYield } = computeBitzSbitzRewards(
+      +printBN(processedTokens.sBITZ, sBITZ_MAIN.decimals),
+      +printBN(stakedBitzData.sBitzTotalBalance, sBITZ_MAIN.decimals),
+      1
+    )
+    return sbitzPredictedYield[0] || 0
+  }, [processedTokens])
+
   return (
     <Grid container className={classes.wrapper}>
       <Box display='flex' flexDirection='column' alignItems='center' gap={'12px'}>
@@ -275,6 +284,7 @@ export const WrappedStake: React.FC = () => {
             processedTokens={processedTokens}
             isLoading={isLoadingDebounced}
             isConnected={isConnected}
+            yield24={estimated24Yield}
           />
           <OverallStats />
           <StakedStats />

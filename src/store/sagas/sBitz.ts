@@ -74,12 +74,16 @@ export function* handleStake(action: PayloadAction<StakeLiquidityPayload>) {
       TOKEN_PROGRAM_ID
     )
 
-    const stakeIx = yield* call([stakingProgram, stakingProgram.stakeIx], {
-      amount: bitzAmount,
-      mint: BITZ_MAIN.address,
-      stakedMint: sBITZ_MAIN.address,
-      createStakedATA: !walletAccounts[ata.toString()]
-    })
+    const stakeIx = yield* call(
+      [stakingProgram, stakingProgram.stakeIx],
+      {
+        amount: bitzAmount,
+        mint: BITZ_MAIN.address,
+        stakedMint: sBITZ_MAIN.address,
+        createStakedATA: !walletAccounts[ata.toString()]
+      },
+      wallet.publicKey
+    )
 
     const tx = new Transaction().add(...stakeIx)
 
@@ -98,8 +102,7 @@ export function* handleStake(action: PayloadAction<StakeLiquidityPayload>) {
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
 
-    let txid: string
-    txid = yield* call(sendAndConfirmRawTransaction, connection, signedTx.serialize(), {
+    const txid = yield* call(sendAndConfirmRawTransaction, connection, signedTx.serialize(), {
       skipPreflight: false
     })
 
@@ -297,12 +300,16 @@ export function* handleUnstake(action: PayloadAction<StakeLiquidityPayload>) {
       TOKEN_2022_PROGRAM_ID
     )
 
-    const unstakeIx = yield* call([stakingProgram, stakingProgram.unstakeIx], {
-      amount: sbitzAmount,
-      mint: BITZ_MAIN.address,
-      stakedMint: sBITZ_MAIN.address,
-      createStakedATA: !walletAccounts[ata.toString()]
-    })
+    const unstakeIx = yield* call(
+      [stakingProgram, stakingProgram.unstakeIx],
+      {
+        amount: sbitzAmount,
+        mint: BITZ_MAIN.address,
+        stakedMint: sBITZ_MAIN.address,
+        createStakedATA: !walletAccounts[ata.toString()]
+      },
+      wallet.publicKey
+    )
 
     const tx = new Transaction().add(...unstakeIx)
 
@@ -321,8 +328,7 @@ export function* handleUnstake(action: PayloadAction<StakeLiquidityPayload>) {
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
 
-    let txid: string
-    txid = yield* call(sendAndConfirmRawTransaction, connection, signedTx.serialize(), {
+    const txid = yield* call(sendAndConfirmRawTransaction, connection, signedTx.serialize(), {
       skipPreflight: false
     })
 
@@ -379,10 +385,10 @@ export function* handleUnstake(action: PayloadAction<StakeLiquidityPayload>) {
 
         if (meta?.preTokenBalances && meta.postTokenBalances) {
           const accountXPredicate = entry =>
-            entry.mint === BITZ_MAIN.address.toString() &&
+            entry.mint === sBITZ_MAIN.address.toString() &&
             entry.owner === wallet.publicKey.toString()
           const accountYPredicate = entry =>
-            entry.mint === sBITZ_MAIN.address.toString() &&
+            entry.mint === BITZ_MAIN.address.toString() &&
             entry.owner === wallet.publicKey.toString()
 
           const preAccountX = meta.preTokenBalances.find(accountXPredicate)
