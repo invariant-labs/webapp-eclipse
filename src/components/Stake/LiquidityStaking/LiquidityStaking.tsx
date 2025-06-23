@@ -154,30 +154,29 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
   }
 
   useEffect(() => {
-    const newAmountToBN = calculateOtherTokenAmount(amountFrom)
-    const newAmountTo = printBN(newAmountToBN, TOKEN_DECIMALS)
-    setAmountTo(newAmountTo)
+    setAmountTo('0')
+    setAmountFrom('0')
   }, [currentStakeTab])
 
-  const handleActionButtons = (
-    action: 'max' | 'half',
-    tokenAddress: PublicKey,
-    isAmountFrom: boolean
-  ) => {
+  const handleActionButtons = (action: 'max' | 'half', tokenAddress: PublicKey) => {
     if (action === 'max') {
       const value = tokens[tokenAddress.toString()]?.balance || new BN(0)
-      if (isAmountFrom) {
-        setAmountFrom(printBN(value, tokens[tokenAddress.toString()]?.decimals || 6))
+      const valueString = printBN(value, TOKEN_DECIMALS)
+      setAmountFrom(valueString)
+      if (Number(valueString) === 0) {
+        setAmountTo('0')
       } else {
-        setAmountTo(printBN(value, tokens[tokenAddress.toString()]?.decimals || 6))
+        setAmountTo(printBN(calculateOtherTokenAmount(valueString), TOKEN_DECIMALS))
       }
     } else if (action === 'half') {
       const balance = tokens[tokenAddress.toString()]?.balance || new BN(0)
       const value = balance.div(new BN(2)) || new BN(0)
-      if (isAmountFrom) {
-        setAmountFrom(printBN(value, tokens[tokenAddress.toString()]?.decimals || 6))
+      const valueString = printBN(value, TOKEN_DECIMALS)
+      setAmountFrom(valueString)
+      if (Number(valueString) === 0) {
+        setAmountTo('0')
       } else {
-        setAmountTo(printBN(value, tokens[tokenAddress.toString()]?.decimals || 6))
+        setAmountTo(printBN(calculateOtherTokenAmount(valueString), TOKEN_DECIMALS))
       }
     }
   }
@@ -222,23 +221,27 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
         setValue={value => {
           if (value.match(/^\d*\.?\d*$/)) {
             setAmountFrom(value)
-            setAmountTo(printBN(calculateOtherTokenAmount(value), TOKEN_DECIMALS))
+            if (!value || Number(value) === 0) {
+              setAmountTo('0')
+            } else {
+              setAmountTo(printBN(calculateOtherTokenAmount(value), TOKEN_DECIMALS))
+            }
           }
         }}
-        placeholder={`0.${'0'.repeat(TOKEN_DECIMALS)}`}
+        placeholder={`0`}
         actionButtons={[
           {
             label: 'Max',
             variant: 'max',
             onClick: () => {
-              handleActionButtons('max', tokenFrom.assetAddress, true)
+              handleActionButtons('max', tokenFrom.assetAddress)
             }
           },
           {
             label: '50%',
             variant: 'half',
             onClick: () => {
-              handleActionButtons('half', tokenFrom.assetAddress, true)
+              handleActionButtons('half', tokenFrom.assetAddress)
             }
           }
         ]}
@@ -246,7 +249,6 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
         current={tokenFrom}
         hideBalances={walletStatus !== Status.Initialized}
         commonTokens={[]}
-        limit={1e14}
         tokenPrice={tokenFromPriceData?.price}
         priceLoading={priceFromLoading}
         isBalanceLoading={false}
@@ -275,13 +277,12 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
         decimal={tokenTo?.decimals}
         className={classes.amountOutInput}
         setValue={() => {}}
-        placeholder={`0.${'0'.repeat(TOKEN_DECIMALS)}`}
+        placeholder={`0`}
         actionButtons={[]}
         tokens={[]}
         current={tokenTo}
         hideBalances={walletStatus !== Status.Initialized}
         commonTokens={[]}
-        limit={1e14}
         tokenPrice={tokenToPriceData?.price}
         priceLoading={priceToLoading}
         isBalanceLoading={false}
@@ -296,6 +297,7 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
         tokenFromTicker={tokenFrom.symbol}
         tokenToTicker={tokenTo.symbol}
         tokenToAmount={printBN(calculateOtherTokenAmount('1'), TOKEN_DECIMALS)}
+        stakedDataLoading={stakeDataLoading}
       />
       {walletStatus !== Status.Initialized ? (
         <ChangeWalletButton

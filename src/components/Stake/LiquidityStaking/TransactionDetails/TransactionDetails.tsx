@@ -1,18 +1,20 @@
 import React from 'react'
 import { Box } from '@mui/system'
-import { Typography } from '@mui/material'
+import { Skeleton, Typography } from '@mui/material'
 import useStyles from './style'
 
 interface ITransactionDetails {
   tokenFromTicker: string
   tokenToTicker: string
   tokenToAmount: string
+  stakedDataLoading: boolean
 }
 
 const TransactionDetails: React.FC<ITransactionDetails> = ({
   tokenFromTicker,
   tokenToTicker,
-  tokenToAmount
+  tokenToAmount,
+  stakedDataLoading
 }) => {
   const { classes } = useStyles()
 
@@ -21,7 +23,13 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
       <Box display='flex' justifyContent='space-between' alignItems='center'>
         <Typography className={classes.label}>Exchange rate</Typography>
         <Typography className={classes.value}>
-          1 {tokenFromTicker} = {tokenToAmount} {tokenToTicker}
+          {stakedDataLoading ? (
+            <Skeleton width={125} height={24} />
+          ) : (
+            <>
+              1 {tokenFromTicker} = {Number(tokenToAmount).toFixed(4)} {tokenToTicker}
+            </>
+          )}
         </Typography>
       </Box>
       <Box display='flex' justifyContent='space-between' alignItems='center' mt='16px'>
