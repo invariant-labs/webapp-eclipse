@@ -101,6 +101,8 @@ import withdrawIcon from './svg/withdrawIcon.svg'
 import centerToRangeIcon from './svg/centerToRange.svg'
 import warning3 from './svg/warning3.svg'
 import connectWalletIcon from './svg/connectWalletIcon.svg'
+import star from './svg/star.svg'
+import starFill from './svg/star-fill.svg'
 import swapArrowIcon from './svg/swapArrow.svg'
 
 export {
@@ -207,6 +209,8 @@ export {
   centerToRangeIcon,
   warning3,
   connectWalletIcon,
+  star,
+  starFill,
   swapArrowIcon
 }
 

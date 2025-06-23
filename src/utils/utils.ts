@@ -17,7 +17,12 @@ import {
   SimulationStatus
 } from '@invariant-labs/sdk-eclipse/src/utils'
 import { BN } from '@coral-xyz/anchor'
-import { getMint, Mint } from '@solana/spl-token'
+import {
+  getMint,
+  TOKEN_2022_PROGRAM_ID,
+  getTokenMetadata as fetchMetaData,
+  unpackMint
+} from '@solana/spl-token'
 import { Connection, PublicKey } from '@solana/web3.js'
 import {
   Market,
@@ -121,9 +126,12 @@ import {
   TokenPriceData
 } from '@store/consts/types'
 import { sqrt } from '@invariant-labs/sdk-eclipse/lib/math'
-import { Metaplex } from '@metaplex-foundation/js'
 import { apyToApr } from './uiUtils'
 import { alignTickToSpacing } from '@invariant-labs/sdk-eclipse/src/tick'
+import { fetchDigitalAsset } from '@metaplex-foundation/mpl-token-metadata'
+import { publicKey } from '@metaplex-foundation/umi-public-keys'
+import { createUmi } from '@metaplex-foundation/umi-bundle-defaults'
+import { Umi } from '@metaplex-foundation/umi'
 
 export const transformBN = (amount: BN): string => {
   return (amount.div(new BN(1e2)).toNumber() / 1e4).toString()
@@ -1689,32 +1697,43 @@ export const getTokenProgramId = async (
 
 export const getFullNewTokensData = async (
   addresses: PublicKey[],
-  connection: Connection
+  connection: Connection,
+  concurrencyLimit: number = 20
 ): Promise<Record<string, Token>> => {
-  const promises: Promise<[PublicKey, Mint]>[] = addresses.map(async address => {
-    const programId = await getTokenProgramId(connection, address)
-
-    return [programId, await getMint(connection, address, undefined, programId)] as [
-      PublicKey,
-      Mint
-    ]
-  })
-
+  const umi = createUmi(connection.rpcEndpoint)
   const tokens: Record<string, Token> = {}
-
-  const results = await Promise.allSettled(promises)
-
-  for (const [index, result] of results.entries()) {
-    const [programId, decimals] =
-      result.status === 'fulfilled' ? [result.value[0], result.value[1].decimals] : [undefined, 6]
-
-    tokens[addresses[index].toString()] = await getTokenMetadata(
-      connection,
-      addresses[index].toString(),
-      decimals,
-      programId
-    )
+  const promiseChains: Promise<void>[] = new Array(concurrencyLimit).fill(
+    Promise.resolve<void>(undefined)
+  )
+  let nextIndex = 0
+  const enqueue = (task: () => Promise<void>): Promise<void> => {
+    const slot = nextIndex
+    nextIndex = (nextIndex + 1) % concurrencyLimit
+    const resultPromise = promiseChains[slot].then(task)
+    promiseChains[slot] = resultPromise.catch(() => {})
+    return resultPromise
   }
+
+  await Promise.all(
+    addresses.map(address =>
+      enqueue(async () => {
+        const programId = await getTokenProgramId(connection, address)
+        const mint = await getMint(connection, address, undefined, programId)
+
+        const token = await getTokenMetadata(
+          connection,
+          address.toString(),
+          mint.decimals,
+          programId,
+          umi
+        )
+
+        tokens[address.toString()] = token
+      })
+    )
+  )
+
+  await Promise.all(promiseChains)
 
   return tokens
 }
@@ -1733,31 +1752,35 @@ export async function getTokenMetadata(
   connection: Connection,
   address: string,
   decimals: number,
-  tokenProgram?: PublicKey
+  tokenProgram?: PublicKey,
+  umiInstance?: Umi
 ): Promise<Token> {
   const mintAddress = new PublicKey(address)
+  let metadata
 
   try {
-    const metaplex = new Metaplex(connection)
-
-    const nft = await metaplex.nfts().findByMint({ mintAddress })
-
-    const irisTokenData = await axios.get<any>(nft.uri).then(res => res.data)
+    if (tokenProgram?.toString() === TOKEN_2022_PROGRAM_ID.toString()) {
+      metadata = await fetchMetaData(connection, mintAddress, undefined, tokenProgram)
+    } else {
+      const umi = umiInstance ?? createUmi(connection.rpcEndpoint)
+      const metaplexMetadata = await fetchDigitalAsset(umi, publicKey(address))
+      metadata = metaplexMetadata.metadata
+    }
+    const irisTokenData = await axios.get<any>(metadata.uri).then(res => res.data)
 
     return {
       tokenProgram,
       address: mintAddress,
       decimals,
       symbol:
-        nft?.symbol || irisTokenData?.symbol || `${address.slice(0, 2)}...${address.slice(-4)}`,
-      name: nft?.name || irisTokenData?.name || address,
-      logoURI: nft?.json?.image || irisTokenData?.image || '/unknownToken.svg',
+        metadata?.symbol ||
+        irisTokenData?.symbol ||
+        `${address.slice(0, 2)}...${address.slice(-4)}`,
+      name: metadata?.name || irisTokenData?.name || address,
+      logoURI: irisTokenData?.image || '/unknownToken.svg',
       isUnknown: true
     }
-  } catch (e: unknown) {
-    const error = ensureError(e)
-    console.log(error)
-
+  } catch {
     return {
       tokenProgram,
       address: mintAddress,
@@ -1782,7 +1805,6 @@ export const getNewTokenOrThrow = async (
   console.log(info)
 
   const tokenData = await getTokenMetadata(connection, address, info.decimals, programId)
-
   return {
     [address.toString()]: tokenData
   }
@@ -2353,4 +2375,80 @@ export const ensureApprovalDenied = (error: Error): boolean => {
 
 export const mapErrorCodeToMessage = (errorNumber: number): string => {
   return ERROR_CODE_TO_MESSAGE[errorNumber] || COMMON_ERROR_MESSAGE
+}
+
+export const getMarketNewTokensData = async (
+  addresses: PublicKey[],
+  connection: Connection,
+  concurrencyLimit: number = 20
+): Promise<Record<string, Token>> => {
+  const umi = createUmi(connection.rpcEndpoint)
+  const tokens: Record<string, Token> = {}
+  const promiseChains: Promise<void>[] = new Array(concurrencyLimit).fill(
+    Promise.resolve<void>(undefined)
+  )
+  const data = await getTokenDecimalsAndProgramID(connection, addresses)
+  let nextIndex = 0
+  const enqueue = (task: () => Promise<void>): Promise<void> => {
+    const slot = nextIndex
+    nextIndex = (nextIndex + 1) % concurrencyLimit
+    const resultPromise = promiseChains[slot].then(task)
+    promiseChains[slot] = resultPromise.catch(() => {})
+    return resultPromise
+  }
+
+  await Promise.all(
+    data.map(data =>
+      enqueue(async () => {
+        const token = await getTokenMetadata(
+          connection,
+          data.address.toString(),
+          data.decimals,
+          data.programId,
+          umi
+        )
+
+        tokens[data.address.toString()] = token
+      })
+    )
+  )
+
+  await Promise.all(promiseChains)
+
+  return tokens
+}
+
+export const getTokenDecimalsAndProgramID = async (
+  connection: Connection,
+  tokens: PublicKey[],
+  BATCH_SIZE: number = 80
+): Promise<ITokenDecimalAndProgramID[]> => {
+  const data: ITokenDecimalAndProgramID[] = []
+
+  const pubkeys = tokens.map(t => new PublicKey(t))
+
+  for (let i = 0; i < pubkeys.length; i += BATCH_SIZE) {
+    const batch = pubkeys.slice(i, i + BATCH_SIZE)
+    const accounts = await connection.getMultipleAccountsInfo(batch)
+
+    for (let j = 0; j < batch.length; j++) {
+      const info = accounts[j]
+      if (!info) continue
+
+      const unpacked = unpackMint(batch[j], info, info.owner)
+
+      data.push({
+        address: batch[j],
+        decimals: unpacked.decimals,
+        programId: info.owner
+      })
+    }
+  }
+
+  return data
+}
+export interface ITokenDecimalAndProgramID {
+  address: PublicKey
+  decimals: number
+  programId: PublicKey
 }

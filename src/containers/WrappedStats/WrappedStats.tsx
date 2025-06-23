@@ -1,7 +1,7 @@
-import React, { useEffect, useMemo } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import useStyles from './styles'
-import { Grid, Typography } from '@mui/material'
+import { Box, Button, Grid, Typography, useMediaQuery } from '@mui/material'
 import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
 import {
   isLoading,
@@ -22,7 +22,7 @@ import { network } from '@store/selectors/solanaConnection'
 import { actions } from '@store/reducers/stats'
 import TokensList from '@components/Stats/TokensList/TokensList'
 import PoolList from '@components/Stats/PoolList/PoolList'
-import { unknownTokenIcon } from '@static/icons'
+import { star, starFill, unknownTokenIcon } from '@static/icons'
 import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import { actions as snackbarActions } from '@store/reducers/snackbars'
 import { actions as navigationActions } from '@store/reducers/navigation'
@@ -31,13 +31,19 @@ import { getPromotedPools } from '@store/selectors/leaderboard'
 import { FilterSearch, ISearchToken } from '@common/FilterSearch/FilterSearch'
 import { Intervals as IntervalsKeys } from '@store/consts/static'
 import Overview from '@components/Stats/Overview/Overview'
-import { poolSearch, tokenSearch } from '@store/selectors/navigation'
+import {
+  poolSearch,
+  tokenSearch,
+  showFavourites as showFavouritesSelector
+} from '@store/selectors/navigation'
+import { theme } from '@static/theme'
 
 export const WrappedStats: React.FC = () => {
   const { classes } = useStyles()
 
-  const dispatch = useDispatch()
+  const isMd = useMediaQuery(theme.breakpoints.down('md'))
 
+  const dispatch = useDispatch()
   const poolsList = useSelector(poolsStatsWithTokensDetails)
   const tokensList = useSelector(tokensStatsWithTokensDetails)
   const volumeInterval = useSelector(volume)
@@ -56,6 +62,38 @@ export const WrappedStats: React.FC = () => {
 
   const lastUsedInterval = useSelector(currentInterval)
   const lastFetchedInterval = useSelector(lastInterval)
+
+  const [favouritePools, setFavouritePools] = useState<Set<string>>(
+    new Set(
+      JSON.parse(
+        localStorage.getItem(`INVARIANT_FAVOURITE_POOLS_Eclipse_${currentNetwork}`) || '[]'
+      )
+    )
+  )
+  const showFavourites = useSelector(showFavouritesSelector)
+
+  const setShowFavourites = (show: boolean) => {
+    dispatch(navigationActions.setShowFavourites(show))
+  }
+
+  useEffect(() => {
+    localStorage.setItem(
+      `INVARIANT_FAVOURITE_POOLS_Eclipse_${currentNetwork}`,
+      JSON.stringify([...favouritePools])
+    )
+  }, [favouritePools])
+
+  const switchFavouritePool = (poolAddress: string) => {
+    if (favouritePools.has(poolAddress)) {
+      const updatedFavouritePools = new Set(favouritePools)
+      updatedFavouritePools.delete(poolAddress)
+      setFavouritePools(updatedFavouritePools)
+    } else {
+      const updatedFavouritePools = new Set(favouritePools)
+      updatedFavouritePools.add(poolAddress)
+      setFavouritePools(updatedFavouritePools)
+    }
+  }
 
   const searchTokensValue = searchParamsToken.filteredTokens
 
@@ -138,7 +176,16 @@ export const WrappedStats: React.FC = () => {
   }, [tokensList, searchTokensValue])
 
   const filteredPoolsList = useMemo(() => {
-    return poolsList.filter(poolData => {
+    const poolsListWithFavourites = poolsList.map(poolData => ({
+      ...poolData,
+      isFavourite: favouritePools.has(poolData.poolAddress.toString())
+    }))
+
+    return poolsListWithFavourites.filter(poolData => {
+      if (showFavourites) {
+        if (!poolData.isFavourite) return false
+      }
+
       const isTokenXSelected = searchPoolsValue.some(
         token => token.address.toString() === poolData.tokenX.toString()
       )
@@ -156,7 +203,7 @@ export const WrappedStats: React.FC = () => {
 
       return true
     })
-  }, [isLoadingStats, poolsList, searchPoolsValue])
+  }, [isLoadingStats, poolsList, searchPoolsValue, favouritePools, showFavourites])
 
   const showAPY = useMemo(() => {
     return filteredPoolsList.some(pool => pool.apy !== 0)
@@ -197,12 +244,31 @@ export const WrappedStats: React.FC = () => {
             <Typography className={classes.subheader} mb={2}>
               Top pools
             </Typography>
-            <FilterSearch
-              networkType={currentNetwork}
-              setSelectedFilters={setSearchPoolsValue}
-              selectedFilters={searchPoolsValue}
-              filtersAmount={2}
-            />
+            <Box className={classes.headerContainer}>
+              <Button
+                className={classes.showFavouritesButton}
+                onClick={() => {
+                  setShowFavourites(!showFavourites)
+                  dispatch(
+                    navigationActions.setSearch({
+                      section: 'statsPool',
+                      type: 'pageNumber',
+                      pageNumber: 1
+                    })
+                  )
+                }}>
+                <img src={showFavourites ? starFill : star} />
+                {!isMd && (
+                  <Typography className={classes.showFavouritesText}>Show favourites</Typography>
+                )}
+              </Button>
+              <FilterSearch
+                networkType={currentNetwork}
+                setSelectedFilters={setSearchPoolsValue}
+                selectedFilters={searchPoolsValue}
+                filtersAmount={2}
+              />
+            </Box>
           </Grid>
           <Grid container className={classes.row}>
             <PoolList
@@ -237,13 +303,16 @@ export const WrappedStats: React.FC = () => {
                     ?.pointsPerSecond || '0',
                 isPromoted: promotedPools.some(
                   pool => pool.address === poolData.poolAddress.toString()
-                )
+                ),
+                isFavourite: poolData.isFavourite
               }))}
               network={currentNetwork}
               copyAddressHandler={copyAddressHandler}
               isLoading={isLoadingStats}
               showAPY={showAPY}
               filteredTokens={searchPoolsValue}
+              switchFavouritePool={switchFavouritePool}
+              showFavourites={showFavourites}
             />
           </Grid>
           <Grid className={classes.rowContainer}>
