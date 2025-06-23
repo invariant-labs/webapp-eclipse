@@ -579,6 +579,7 @@ export const Swap: React.FC<ISwap> = ({
         ])
 
         updateSimulation(simulateValue, simulateWithHopValue)
+        setAddBlur(false)
         setSimulateResult(simulateValue)
         setSimulateWithHopResult(simulateWithHopValue)
       } else if (inputRef === inputTarget.TO) {
@@ -604,6 +605,7 @@ export const Swap: React.FC<ISwap> = ({
         ])
 
         updateSimulation(simulateValue, simulateWithHopValue)
+        setAddBlur(false)
         setSimulateResult(simulateValue)
         setSimulateWithHopResult(simulateWithHopValue)
       }
@@ -1000,16 +1002,20 @@ export const Swap: React.FC<ISwap> = ({
     (getStateMessage() === 'Loading' &&
       (inputRef === inputTarget.TO || inputRef === inputTarget.DEFAULT))
 
-  const IS_ERROR_LABEL_SHOW =
-    (priceImpact > 5 ||
-      tokens[tokenFromIndex ?? '']?.isUnknown ||
-      tokens[tokenToIndex ?? '']?.isUnknown ||
-      oraclePriceDiffPercentage >= 10) &&
-    !priceToLoading &&
-    !priceFromLoading &&
-    !showBlur
+  const [errorVisible, setErrorVisible] = useState(false)
 
-  console.log(showBlur)
+  useEffect(() => {
+    const shouldShow =
+      (priceImpact > 5 ||
+        tokens[tokenFromIndex ?? '']?.isUnknown ||
+        tokens[tokenToIndex ?? '']?.isUnknown ||
+        oraclePriceDiffPercentage >= 10) &&
+      !priceToLoading &&
+      !priceFromLoading &&
+      !showBlur
+    const id = setTimeout(() => setErrorVisible(shouldShow), 150)
+    return () => clearTimeout(id)
+  }, [priceImpact, tokens, oraclePriceDiffPercentage, showBlur, priceToLoading, priceFromLoading])
   return (
     <Grid container className={classes.swapWrapper} alignItems='center'>
       {wrappedETHAccountExist && (
@@ -1296,34 +1302,23 @@ export const Swap: React.FC<ISwap> = ({
           </Box>
           <Box
             className={classes.unknownWarningContainer}
-            style={{ height: IS_ERROR_LABEL_SHOW ? '34px' : '0px' }}>
-            {oraclePriceDiffPercentage >= 10 &&
-              !priceToLoading &&
-              !priceFromLoading &&
-              !showBlur && (
-                <TooltipHover
-                  title='This swap price my differ from market price'
-                  top={100}
-                  fullSpan>
-                  <Box className={classes.unknownWarning}>
-                    Potential loss resulting from a {oraclePriceDiffPercentage.toFixed(2)}% price
-                    difference.
-                  </Box>
-                </TooltipHover>
-              )}
-            {priceImpact > 5 &&
-              oraclePriceDiffPercentage < 10 &&
-              !priceToLoading &&
-              !priceFromLoading &&
-              !showBlur && (
-                <TooltipHover title='Your trade size might be too large' top={100} fullSpan>
-                  <Box className={classes.unknownWarning}>
-                    High price impact:{' '}
-                    {priceImpact < 0.01 ? '<0.01%' : `${priceImpact.toFixed(2)}%`}! This swap will
-                    cause a significant price movement.
-                  </Box>
-                </TooltipHover>
-              )}
+            style={{ height: errorVisible ? '34px' : '0px' }}>
+            {oraclePriceDiffPercentage >= 10 && errorVisible && (
+              <TooltipHover title='This swap price my differ from market price' top={100} fullSpan>
+                <Box className={classes.unknownWarning}>
+                  Potential loss resulting from a {oraclePriceDiffPercentage.toFixed(2)}% price
+                  difference.
+                </Box>
+              </TooltipHover>
+            )}
+            {priceImpact > 5 && oraclePriceDiffPercentage < 10 && errorVisible && (
+              <TooltipHover title='Your trade size might be too large' top={100} fullSpan>
+                <Box className={classes.unknownWarning}>
+                  High price impact: {priceImpact < 0.01 ? '<0.01%' : `${priceImpact.toFixed(2)}%`}!
+                  This swap will cause a significant price movement.
+                </Box>
+              </TooltipHover>
+            )}
             {tokens[tokenFromIndex ?? '']?.isUnknown && (
               <TooltipHover
                 title={`${tokens[tokenFromIndex ?? ''].symbol} is unknown, make sure address is correct before trading`}

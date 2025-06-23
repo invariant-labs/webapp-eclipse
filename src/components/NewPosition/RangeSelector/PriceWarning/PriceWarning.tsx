@@ -123,7 +123,7 @@ export const PriceWarning: React.FC<IPriceWarning> = ({
                     <p>
                       As an alternative, consider using the{' '}
                       <span className={classes.boldedText}>
-                        {tokenASymbol}/{tokenBSymbol}{' '}
+                        {tokenBSymbol}/{tokenASymbol}{' '}
                         {Number(
                           printBN(ALL_FEE_TIERS_DATA[bestFeeIndex].tier.fee, DECIMAL - 2)
                         ).toFixed(2)}
