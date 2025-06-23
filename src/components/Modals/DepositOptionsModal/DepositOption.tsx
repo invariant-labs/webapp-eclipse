@@ -1,17 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react'
 import useStyles from './style'
-import {
-  Box,
-  Button,
-  Divider,
-  Grid,
-  Input,
-  Typography,
-  useMediaQuery,
-  useTheme
-} from '@mui/material'
+import { Box, Button, Divider, Grid, Input, Typography, useMediaQuery } from '@mui/material'
 import { goldenInfoIcon, infoIcon } from '@static/icons'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
+import { theme } from '@static/theme'
 
 interface Props {
   value: string
@@ -43,7 +35,6 @@ const DepositOption: React.FC<Props> = ({
   divider
 }) => {
   const { classes, cx } = useStyles()
-  const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const inputRef = useRef<HTMLInputElement>(null)
   const [temp, setTemp] = useState<string>(valueIndex === -1 ? value : '')
