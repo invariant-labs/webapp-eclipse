@@ -40,6 +40,7 @@ export const OverallStats = () => {
                 { timestamp: 1750603221, value: 24.32 },
                 { timestamp: 1850603221, value: 34.32 }
               ]}
+              color={'#00D9FF'}
             />
           </Box>
         </Box>
@@ -71,6 +72,7 @@ export const OverallStats = () => {
                 { timestamp: 1750603221, value: 24.32 },
                 { timestamp: 1850603221, value: 34.32 }
               ]}
+              color={colors.invariant.green}
             />
           </Box>
         </Box>

@@ -1,6 +1,6 @@
 import { Box, Typography, useMediaQuery } from '@mui/material'
 import { colors, theme } from '@static/theme'
-import sBITZ from '@static/png/sBitz.png'
+// import sBITZ from '@static/png/sBitz.png'
 import TVLChart from '../OverallStats/Charts/sBITZTVLChart/TVLChart'
 import { Intervals } from '@store/consts/static'
 import { Separator } from '@common/Separator/Separator'
@@ -80,7 +80,7 @@ export const StakedStats = () => {
               <Typography className={classes.statsValue}>$2,472,938.34</Typography>
             </Box>
             <Box className={classes.iconContainer}>
-              <img src={sBITZ} alt='sBITZ' className={classes.tokenIcon} />
+              {/* <img src={sBITZ} alt='sBITZ' className={classes.tokenIcon} /> */}
             </Box>
           </Box>
           <Box className={classes.chartContainer}>
