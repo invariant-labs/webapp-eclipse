@@ -155,7 +155,9 @@ export const WrappedPoolList: React.FC = () => {
             }}>
             <img src={showFavourites ? starFill : star} />
             {!isMd && (
-              <Typography className={classes.showFavouritesText}>Show favourites</Typography>
+              <Typography className={classes.showFavouritesText}>
+                {!showFavourites ? 'Show' : 'Hide'} favourites
+              </Typography>
             )}
           </Button>
 
