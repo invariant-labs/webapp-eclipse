@@ -13,7 +13,8 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     padding: '24px 16px',
     [theme.breakpoints.down('sm')]: {
       padding: '0 8px'
-    }
+    },
+    marginTop: 24
   },
   title: {
     color: colors.invariant.text,

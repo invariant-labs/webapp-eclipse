@@ -22,15 +22,13 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
     <Box className={classes.wrapper}>
       <Box display='flex' justifyContent='space-between' alignItems='center'>
         <Typography className={classes.label}>Exchange rate</Typography>
-        <Typography className={classes.value}>
-          {stakedDataLoading ? (
-            <Skeleton width={125} height={24} />
-          ) : (
-            <>
-              1 {tokenFromTicker} = {Number(tokenToAmount).toFixed(4)} {tokenToTicker}
-            </>
-          )}
-        </Typography>
+        {stakedDataLoading ? (
+          <Skeleton width={125} height={24} />
+        ) : (
+          <Typography className={classes.value}>
+            1 {tokenFromTicker} = {Number(tokenToAmount).toFixed(4)} {tokenToTicker}
+          </Typography>
+        )}
       </Box>
       <Box display='flex' justifyContent='space-between' alignItems='center' mt='16px'>
         <Typography className={classes.label}>Fees</Typography>

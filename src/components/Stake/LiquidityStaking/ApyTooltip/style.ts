@@ -44,7 +44,8 @@ const useStyles = makeStyles()(() => {
     apyLabel: {
       cursor: 'default',
       display: 'flex',
-      alignItems: 'center'
+      alignItems: 'center',
+      height: 24
     }
   }
 })

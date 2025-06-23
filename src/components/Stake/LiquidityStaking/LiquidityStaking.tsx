@@ -264,12 +264,14 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
       />
       <Box mb={'16px'} display='flex' justifyContent='space-between' alignItems='center'>
         <Typography className={classes.title}>You receive</Typography>
-        <ApyTooltip
-          tokenFrom={tokenFrom}
-          tokenTo={tokenTo}
-          sBitzApyApr={sBitzApyApr}
-          sBitzApyAprLoading={sBitzApyAprLoading}
-        />
+        {currentStakeTab === StakeSwitch.Stake && (
+          <ApyTooltip
+            tokenFrom={tokenFrom}
+            tokenTo={tokenTo}
+            sBitzApyApr={sBitzApyApr}
+            sBitzApyAprLoading={sBitzApyAprLoading}
+          />
+        )}
       </Box>
       <ExchangeAmountInput
         value={amountTo}
