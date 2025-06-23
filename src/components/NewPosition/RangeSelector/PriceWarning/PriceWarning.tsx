@@ -66,7 +66,7 @@ export const PriceWarning: React.FC<IPriceWarning> = ({
                       As an alternative, consider opening your position in pools closer to the
                       market price of{' '}
                       <span className={classes.boldedText}>
-                        {formatNumberWithSuffix(oraclePrice)} {`${tokenASymbol}/${tokenBSymbol}`}
+                        {formatNumberWithSuffix(oraclePrice)} {`${tokenBSymbol}/${tokenASymbol}`}
                       </span>
                       .
                     </p>
@@ -123,7 +123,7 @@ export const PriceWarning: React.FC<IPriceWarning> = ({
                     <p>
                       As an alternative, consider using the{' '}
                       <span className={classes.boldedText}>
-                        {tokenBSymbol}/{tokenASymbol}{' '}
+                        {tokenASymbol}/{tokenBSymbol}{' '}
                         {Number(
                           printBN(ALL_FEE_TIERS_DATA[bestFeeIndex].tier.fee, DECIMAL - 2)
                         ).toFixed(2)}
