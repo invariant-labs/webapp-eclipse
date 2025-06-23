@@ -25,6 +25,7 @@ import { BN } from '@coral-xyz/anchor'
 import { calculateTokensForWithdraw, computeBitzSbitzRewards } from '@invariant-labs/sbitz'
 import { sBITZ_MAIN, BITZ_MAIN } from '@store/consts/static'
 import { getTokenPrice, printBN } from '@utils/utils'
+import { HowItWorks } from '@components/Stake/HowItWorks/HowItWorks'
 
 export const WrappedStake: React.FC = () => {
   const { classes } = useStyles()
@@ -262,6 +263,7 @@ export const WrappedStake: React.FC = () => {
             isConnected={isConnected}
             yield24={estimated24Yield}
           />
+          <HowItWorks />
           <OverallStats />
           <StakedStats />
         </Box>
