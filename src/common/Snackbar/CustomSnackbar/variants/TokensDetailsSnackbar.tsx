@@ -108,10 +108,24 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
               position='relative'
               display='flex'
               alignItems='center'
-              width={ikonType === 'swap' || ikonType === 'claim' ? 18 : 22}>
+              width={
+                ikonType === 'swap' ||
+                ikonType === 'unstake' ||
+                ikonType === 'stake' ||
+                ikonType === 'claim'
+                  ? 18
+                  : 22
+              }>
               <img
                 src={icon}
-                height={ikonType === 'swap' || ikonType === 'claim' ? 15 : 18}
+                height={
+                  ikonType === 'swap' ||
+                  ikonType === 'claim' ||
+                  ikonType === 'unstake' ||
+                  ikonType === 'stake'
+                    ? 15
+                    : 18
+                }
                 style={{ marginBottom: '2px' }}
               />
             </Grid>
@@ -122,7 +136,11 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
             ) : (
               <img src={tokenXIcon} className={classes.tokenIcon} />
             )}
-            {ikonType === 'swap' ? arrow : <StyledText>+</StyledText>}
+            {ikonType === 'swap' || ikonType === 'unstake' || ikonType === 'stake' ? (
+              arrow
+            ) : (
+              <StyledText>+</StyledText>
+            )}
             <StyledText color={colors.invariant.green}>{tokenYAmount}</StyledText>
             {tokenYIcon === '/unknownToken.svg' ? (
               <StyledText>{tokenYSymbol}</StyledText>
