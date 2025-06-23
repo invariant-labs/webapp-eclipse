@@ -195,7 +195,7 @@ export const WrappedStake: React.FC = () => {
   const estimated24Yield = useMemo(() => {
     const { sbitzPredictedYield } = computeBitzSbitzRewards(
       +printBN(processedTokens.sBITZ, sBITZ_MAIN.decimals),
-      +printBN(stakedBitzData.sBitzTotalBalance, sBITZ_MAIN.decimals),
+      +printBN(stakedBitzData.bitzTotalBalance, sBITZ_MAIN.decimals),
       1
     )
     return sbitzPredictedYield[0] || 0
