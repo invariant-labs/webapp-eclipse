@@ -3,7 +3,7 @@ import { Box, Fade, Grid, Typography } from '@mui/material'
 import { colors } from '@static/theme'
 import { useStyles } from './style'
 
-const ResponsivePieChart = ({ data, chartColors, isLoading = true }) => {
+const ResponsivePieChart = ({ data, chartColors, isLoading = true, tooltipPrefix = '$' }) => {
   const { classes } = useStyles()
   const total = data?.reduce((sum, item) => sum + item.value, 0) || 0
   const loadingData = [{ id: 'loading', value: 1, label: '' }]
@@ -50,7 +50,7 @@ const ResponsivePieChart = ({ data, chartColors, isLoading = true }) => {
                     {datum.label}
                   </Typography>
                   <Typography>
-                    ${datum.value.toLocaleString()} ({percentage}%)
+                    {tooltipPrefix}{datum.value.toLocaleString()} ({percentage}%)
                   </Typography>
                 </Grid>
               )
