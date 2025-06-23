@@ -763,15 +763,13 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             </>
           }>
           <Box display='flex' alignItems='center'>
-            <span className={classes.priceImapactText}>
-              Price impact:{' '}
-              {simulation.swapSimulation!.priceImpact.gt(new BN(MINIMUM_PRICE_IMPACT))
-                ? Number(
-                    printBN(new BN(simulation.swapSimulation!.priceImpact), DECIMAL - 2)
-                  ).toFixed(2)
-                : `<${Number(printBN(MINIMUM_PRICE_IMPACT, DECIMAL - 2)).toFixed(2)}`}
-              %
-            </span>
+            Price impact:{' '}
+            {simulation.swapSimulation!.priceImpact.gt(new BN(MINIMUM_PRICE_IMPACT))
+              ? Number(
+                  printBN(new BN(simulation.swapSimulation!.priceImpact), DECIMAL - 2)
+                ).toFixed(2)
+              : `<${Number(printBN(MINIMUM_PRICE_IMPACT, DECIMAL - 2)).toFixed(2)}`}
+            %
           </Box>
         </TooltipHover>
       </Box>

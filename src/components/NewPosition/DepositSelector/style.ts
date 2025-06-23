@@ -367,11 +367,6 @@ export const useStyles = makeStyles()(theme => {
       position: 'absolute',
       top: 'calc(50% - 10px)',
       left: 'calc(50% - 10px)'
-    },
-    priceImapactText: {
-      textDecorationLine: 'underline',
-      textDecorationStyle: 'dotted',
-      cursor: 'default'
     }
   }
 })
