@@ -99,8 +99,7 @@ export function* handleStake(action: PayloadAction<StakeLiquidityPayload>) {
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
 
-    let txid: string
-    txid = yield* call(sendAndConfirmRawTransaction, connection, signedTx.serialize(), {
+    const txid = yield* call(sendAndConfirmRawTransaction, connection, signedTx.serialize(), {
       skipPreflight: false
     })
 
@@ -323,8 +322,7 @@ export function* handleUnstake(action: PayloadAction<StakeLiquidityPayload>) {
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
 
-    let txid: string
-    txid = yield* call(sendAndConfirmRawTransaction, connection, signedTx.serialize(), {
+    const txid = yield* call(sendAndConfirmRawTransaction, connection, signedTx.serialize(), {
       skipPreflight: false
     })
 
@@ -382,10 +380,10 @@ export function* handleUnstake(action: PayloadAction<StakeLiquidityPayload>) {
 
         if (meta?.preTokenBalances && meta.postTokenBalances) {
           const accountXPredicate = entry =>
-            entry.mint === BITZ_MAIN.address.toString() &&
+            entry.mint === sBITZ_MAIN.address.toString() &&
             entry.owner === wallet.publicKey.toString()
           const accountYPredicate = entry =>
-            entry.mint === sBITZ_MAIN.address.toString() &&
+            entry.mint === BITZ_MAIN.address.toString() &&
             entry.owner === wallet.publicKey.toString()
 
           const preAccountX = meta.preTokenBalances.find(accountXPredicate)
@@ -399,7 +397,7 @@ export function* handleUnstake(action: PayloadAction<StakeLiquidityPayload>) {
             const postAmountX = postAccountX.uiTokenAmount.amount
             const postAmountY = postAccountY.uiTokenAmount.amount
 
-            const amountX = new BN(preAmountX).sub(new BN(postAmountX))
+            const amountX = new BN(postAmountX).sub(new BN(preAmountX))
             const amountY = new BN(postAmountY).sub(new BN(preAmountY))
 
             try {
