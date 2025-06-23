@@ -75,12 +75,16 @@ export function* handleStake(action: PayloadAction<StakeLiquidityPayload>) {
       TOKEN_PROGRAM_ID
     )
 
-    const stakeIx = yield* call([stakingProgram, stakingProgram.stakeIx], {
-      amount: bitzAmount,
-      mint: BITZ_MAIN.address,
-      stakedMint: sBITZ_MAIN.address,
-      createStakedATA: !walletAccounts[ata.toString()]
-    })
+    const stakeIx = yield* call(
+      [stakingProgram, stakingProgram.stakeIx],
+      {
+        amount: bitzAmount,
+        mint: BITZ_MAIN.address,
+        stakedMint: sBITZ_MAIN.address,
+        createStakedATA: !walletAccounts[ata.toString()]
+      },
+      wallet.publicKey
+    )
 
     const tx = new Transaction().add(...stakeIx)
 
@@ -298,12 +302,16 @@ export function* handleUnstake(action: PayloadAction<StakeLiquidityPayload>) {
       TOKEN_2022_PROGRAM_ID
     )
 
-    const unstakeIx = yield* call([stakingProgram, stakingProgram.unstakeIx], {
-      amount: sbitzAmount,
-      mint: BITZ_MAIN.address,
-      stakedMint: sBITZ_MAIN.address,
-      createStakedATA: !walletAccounts[ata.toString()]
-    })
+    const unstakeIx = yield* call(
+      [stakingProgram, stakingProgram.unstakeIx],
+      {
+        amount: sbitzAmount,
+        mint: BITZ_MAIN.address,
+        stakedMint: sBITZ_MAIN.address,
+        createStakedATA: !walletAccounts[ata.toString()]
+      },
+      wallet.publicKey
+    )
 
     const tx = new Transaction().add(...unstakeIx)
 
@@ -397,7 +405,7 @@ export function* handleUnstake(action: PayloadAction<StakeLiquidityPayload>) {
             const postAmountX = postAccountX.uiTokenAmount.amount
             const postAmountY = postAccountY.uiTokenAmount.amount
 
-            const amountX = new BN(postAmountX).sub(new BN(preAmountX))
+            const amountX = new BN(preAmountX).sub(new BN(postAmountX))
             const amountY = new BN(postAmountY).sub(new BN(preAmountY))
 
             try {

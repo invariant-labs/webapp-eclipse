@@ -79,7 +79,6 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
     }
   }, [ikonType])
 
-  console.log(icon)
   return (
     <>
       <Box
