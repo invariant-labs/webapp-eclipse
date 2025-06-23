@@ -1,7 +1,7 @@
 import { Box, Grid, Typography } from '@mui/material'
 import useStyles from './style'
 import Switcher from './Switcher/Switcher'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { BITZ_MAIN, NetworkType, sBITZ_MAIN } from '@store/consts/static'
 import ExchangeAmountInput from '@components/Inputs/ExchangeAmountInput/ExchangeAmountInput'
 import { Status } from '@store/reducers/solanaWallet'
@@ -18,7 +18,8 @@ import AnimatedButton, { ProgressState } from '@common/AnimatedButton/AnimatedBu
 import { StakeSwitch, TokenPriceData } from '@store/consts/types'
 import { StakeLiquidityPayload } from '@store/reducers/sBitz'
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
-
+import { TOKEN_DECIMALS } from '@invariant-labs/sbitz/lib/consts'
+import { calculateTokensForWithdraw, calculateTokensToMint } from '@invariant-labs/sbitz'
 export interface ILiquidityStaking {
   walletStatus: Status
   tokens: Record<string, SwapToken>
@@ -29,6 +30,13 @@ export interface ILiquidityStaking {
   onConnectWallet: () => void
   onDisconnectWallet: () => void
   networkType: NetworkType
+  sBitzApyApr: { apy: number | null; apr: number | null }
+  sBitzApyAprLoading: boolean
+  stakedTokenSupply: BN
+  stakedAmount: BN
+  stakeDataLoading: boolean
+  changeStakeTab: (tab: StakeSwitch) => void
+  currentStakeTab: StakeSwitch
 }
 
 export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
@@ -40,11 +48,16 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
   success,
   onConnectWallet,
   onDisconnectWallet,
-  networkType
+  networkType,
+  sBitzApyApr,
+  sBitzApyAprLoading,
+  stakedTokenSupply,
+  stakedAmount,
+  stakeDataLoading,
+  changeStakeTab,
+  currentStakeTab
 }) => {
   const { classes } = useStyles()
-
-  const [switchTab, setSwitchTab] = useState<StakeSwitch>(StakeSwitch.Stake)
 
   const [amountFrom, setAmountFrom] = useState<string>('')
   const [amountTo, setAmountTo] = useState<string>('')
@@ -55,17 +68,17 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
 
   const tokenFrom: SwapToken = useMemo(
     () =>
-      switchTab === StakeSwitch.Stake
+      currentStakeTab === StakeSwitch.Stake
         ? tokens[BITZ_MAIN.address.toString()]
         : tokens[sBITZ_MAIN.address.toString()],
-    [switchTab, tokens]
+    [currentStakeTab, tokens]
   )
   const tokenTo: SwapToken = useMemo(
     () =>
-      switchTab === StakeSwitch.Unstake
+      currentStakeTab === StakeSwitch.Unstake
         ? tokens[BITZ_MAIN.address.toString()]
         : tokens[sBITZ_MAIN.address.toString()],
-    [switchTab, tokens]
+    [currentStakeTab, tokens]
   )
 
   const [tokenFromPriceData, setTokenFromPriceData] = useState<TokenPriceData | undefined>(
@@ -134,18 +147,17 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
 
   const handleSwitchTokens = () => {
     setIsRotating(true)
+    const nextTab = currentStakeTab === StakeSwitch.Stake ? StakeSwitch.Unstake : StakeSwitch.Stake
+    changeStakeTab(nextTab)
 
-    if (switchTab === StakeSwitch.Stake) {
-      setAmountFrom(amountTo)
-      setAmountTo(amountFrom)
-      setSwitchTab(StakeSwitch.Unstake)
-    } else {
-      setAmountFrom(amountTo)
-      setAmountTo(amountFrom)
-      setSwitchTab(StakeSwitch.Stake)
-    }
     setTimeout(() => setIsRotating(false), 500)
   }
+
+  useEffect(() => {
+    const newAmountToBN = calculateOtherTokenAmount(amountFrom)
+    const newAmountTo = printBN(newAmountToBN, TOKEN_DECIMALS)
+    setAmountTo(newAmountTo)
+  }, [currentStakeTab])
 
   const handleActionButtons = (
     action: 'max' | 'half',
@@ -171,18 +183,31 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
   }
 
   const getStateMessage = () => {
-    if (switchTab === StakeSwitch.Stake) {
+    if (currentStakeTab === StakeSwitch.Stake) {
       return `Stake`
     } else {
       return `Unstake`
     }
   }
 
+  const calculateOtherTokenAmount = useCallback(
+    (value: string, isStake?: boolean) => {
+      if (stakeDataLoading || !stakedAmount || !stakedTokenSupply) return new BN(0)
+      const isStakeAction = isStake ?? tokenFrom.assetAddress.equals(BITZ_MAIN.address)
+      const amount = convertBalanceToBN(value, TOKEN_DECIMALS)
+      if (isStakeAction) {
+        return calculateTokensToMint(stakedTokenSupply, stakedAmount, amount)
+      } else {
+        return calculateTokensForWithdraw(stakedTokenSupply, stakedAmount, amount)
+      }
+    },
+    [stakeDataLoading, stakedAmount, stakedTokenSupply, tokenFrom, tokenTo]
+  )
   return (
     <Grid container className={classes.wrapper}>
       <Switcher
-        switchTab={switchTab}
-        setSwitchTab={setSwitchTab}
+        switchTab={currentStakeTab}
+        setSwitchTab={changeStakeTab}
         isRotating={isRotating}
         setIsRotating={setIsRotating}
       />
@@ -197,9 +222,10 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
         setValue={value => {
           if (value.match(/^\d*\.?\d*$/)) {
             setAmountFrom(value)
+            setAmountTo(printBN(calculateOtherTokenAmount(value), TOKEN_DECIMALS))
           }
         }}
-        placeholder={`0.${'0'.repeat(6)}`}
+        placeholder={`0.${'0'.repeat(TOKEN_DECIMALS)}`}
         actionButtons={[
           {
             label: 'Max',
@@ -225,52 +251,32 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
         priceLoading={priceFromLoading}
         isBalanceLoading={false}
         showMaxButton={true}
-        showBlur={
-          false
-          // (inputRef === inputTarget.TO && addBlur) ||
-          // lockAnimation ||
-          // (getStateMessage() === 'Loading' &&
-          //   (inputRef === inputTarget.TO || inputRef === inputTarget.DEFAULT))
-        }
+        showBlur={stakeDataLoading}
         hideSelect
         notRoundIcon
       />
       <SwapSeparator
         onClick={handleSwitchTokens}
-        rotateRight={switchTab === StakeSwitch.Stake}
+        rotateRight={currentStakeTab === StakeSwitch.Stake}
         isRotating={isRotating}
       />
       <Box mb={'16px'} display='flex' justifyContent='space-between' alignItems='center'>
         <Typography className={classes.title}>You receive</Typography>
-        <ApyTooltip tokenFrom={tokenFrom} tokenTo={tokenTo} apyStaked={803} apyCompound={2213} />
+        <ApyTooltip
+          tokenFrom={tokenFrom}
+          tokenTo={tokenTo}
+          sBitzApyApr={sBitzApyApr}
+          sBitzApyAprLoading={sBitzApyAprLoading}
+        />
       </Box>
       <ExchangeAmountInput
         value={amountTo}
         balance={printBN(tokenTo?.balance || new BN(0), tokenTo?.decimals)}
         decimal={tokenTo?.decimals}
         className={classes.amountOutInput}
-        setValue={value => {
-          if (value.match(/^\d*\.?\d*$/)) {
-            setAmountTo(value)
-          }
-        }}
-        placeholder={`0.${'0'.repeat(6)}`}
-        actionButtons={[
-          {
-            label: 'Max',
-            variant: 'max',
-            onClick: () => {
-              handleActionButtons('max', tokenTo.assetAddress, false)
-            }
-          },
-          {
-            label: '50%',
-            variant: 'half',
-            onClick: () => {
-              handleActionButtons('half', tokenTo.assetAddress, false)
-            }
-          }
-        ]}
+        setValue={() => {}}
+        placeholder={`0.${'0'.repeat(TOKEN_DECIMALS)}`}
+        actionButtons={[]}
         tokens={[]}
         current={tokenTo}
         hideBalances={walletStatus !== Status.Initialized}
@@ -281,18 +287,16 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
         isBalanceLoading={false}
         showMaxButton={false}
         disabled
-        showBlur={
-          false
-          // (inputRef === inputTarget.TO && addBlur) ||
-          // lockAnimation ||
-          // (getStateMessage() === 'Loading' &&
-          //   (inputRef === inputTarget.TO || inputRef === inputTarget.DEFAULT))
-        }
+        showBlur={stakeDataLoading}
         hideSelect
         notRoundIcon
       />
       <Separator isHorizontal width={1} color={colors.invariant.light} margin='16px 0' />
-      <TransactionDetails />
+      <TransactionDetails
+        tokenFromTicker={tokenFrom.symbol}
+        tokenToTicker={tokenTo.symbol}
+        tokenToAmount={printBN(calculateOtherTokenAmount('1'), TOKEN_DECIMALS)}
+      />
       {walletStatus !== Status.Initialized ? (
         <ChangeWalletButton
           margin={'24px 0 0 0'}
@@ -315,7 +319,7 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
           onClick={() => {
             setProgress('progress')
 
-            if (switchTab === StakeSwitch.Stake) {
+            if (currentStakeTab === StakeSwitch.Stake) {
               handleStake({
                 amount: convertBalanceToBN(amountFrom, tokenFrom.decimals)
               })

@@ -16,9 +16,7 @@ import {
   SIGNING_SNACKBAR_CONFIG,
   TIMEOUT_ERROR_MESSAGE
 } from '@store/consts/static'
-
 import {
-  PublicKey,
   sendAndConfirmRawTransaction,
   SendTransactionError,
   Transaction,
@@ -44,6 +42,7 @@ import {
 } from '@solana/spl-token'
 import { accounts } from '@store/selectors/solanaWallet'
 import { BN } from '@coral-xyz/anchor'
+import { calculateAprApy } from '@invariant-labs/sbitz'
 
 export function* handleStake(action: PayloadAction<StakeLiquidityPayload>) {
   const loaderStaking = createLoaderKey()
@@ -110,7 +109,6 @@ export function* handleStake(action: PayloadAction<StakeLiquidityPayload>) {
       closeSnackbar(loaderStaking)
       yield put(snackbarsActions.remove(loaderStaking))
     } else {
-      console.log(`Transaction sent: ${txid}`)
       const txDetails = yield* call([connection, connection.getParsedTransaction], txid, {
         maxSupportedTransactionVersion: 0
       })
@@ -334,7 +332,6 @@ export function* handleUnstake(action: PayloadAction<StakeLiquidityPayload>) {
       closeSnackbar(loaderUnstaking)
       yield put(snackbarsActions.remove(loaderUnstaking))
     } else {
-      console.log(`Transaction sent: ${txid}`)
       const txDetails = yield* call([connection, connection.getParsedTransaction], txid, {
         maxSupportedTransactionVersion: 0
       })
@@ -507,30 +504,55 @@ export function* handleGetStakedAmountAndBalance() {
       stakingProgram.getStakedAmountAndStakedTokenSupply
     ])
 
-    const bitzAccountAmountInfo = yield* call(
-      [connection, connection.getTokenAccountBalance],
-      new PublicKey('7rkHt2NULbkz9rhEeH9nJxLuFgCzSsmcYiDpXjMTfBtF')
-    )
+    const [boost] = stakingProgram.getBoostAddressAndBump(BITZ_MAIN.address)
+    const ata = getAssociatedTokenAddressSync(BITZ_MAIN.address, boost, true)
+    const bitzAccountAmountInfo = yield* call([connection, connection.getTokenAccountBalance], ata)
 
     yield put(
       actions.setStakedAmountAndBalance({
         stakedAmount,
         stakedTokenSupply,
-        sBitzTotalBalance: bitzAccountAmountInfo.value.amount
+        bitzTotalBalance: bitzAccountAmountInfo.value.amount
       })
     )
-
-    return { stakedAmount, stakedTokenSupply }
   } catch (error: any) {
     console.error('Failed to get staked amount and balance:', error)
     yield put(
       actions.setStakedAmountAndBalance({
         stakedAmount: null,
         stakedTokenSupply: null,
-        sBitzTotalBalance: null
+        bitzTotalBalance: null
       })
     )
-    return null
+  }
+}
+
+export function* handleGetApyAndApr() {
+  const networkType = yield* select(network)
+  const rpc = yield* select(rpcAddress)
+  const wallet = yield* call(getWallet)
+  const connection = yield* call(getConnection)
+
+  const stakingProgram = yield* call(getStakingProgram, networkType, rpc, wallet as IWallet)
+  const [boost] = stakingProgram.getBoostAddressAndBump(BITZ_MAIN.address)
+  const [authority] = stakingProgram.getAuthorityAddressAndBump()
+  const [stake] = stakingProgram.getStakeAddressAndBump(boost, authority)
+  try {
+    const { apy, apr } = yield* call(calculateAprApy, connection, stake, boost)
+    yield put(
+      actions.setApyAndApr({
+        apy,
+        apr
+      })
+    )
+  } catch (error: any) {
+    console.error('Failed to get apy and apr:', error)
+    yield put(
+      actions.setApyAndApr({
+        apy: null,
+        apr: null
+      })
+    )
   }
 }
 
@@ -542,10 +564,16 @@ export function* unstakeHandler(): Generator {
   yield* takeLatest(actions.unstake, handleUnstake)
 }
 
+export function* getApyAndAprHandler(): Generator {
+  yield* takeLatest(actions.getApyAndApr, handleGetApyAndApr)
+}
+
 export function* stakedAmountAndBalanceHandler(): Generator {
   yield* takeLatest(actions.getStakedAmountAndBalance, handleGetStakedAmountAndBalance)
 }
 
 export function* stakeSaga(): Generator {
-  yield all([stakeHandler, unstakeHandler, stakedAmountAndBalanceHandler].map(spawn))
+  yield all(
+    [stakeHandler, unstakeHandler, stakedAmountAndBalanceHandler, getApyAndAprHandler].map(spawn)
+  )
 }

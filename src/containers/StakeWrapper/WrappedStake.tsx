@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import useStyles from './styles'
 import { Box, Grid, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
-import LiquidityStaking, { StakeChartSwitcher } from '@components/Stake/Stake'
 import { Link } from 'react-router-dom'
 import LaunchIcon from '@mui/icons-material/Launch'
 import { useDispatch, useSelector } from 'react-redux'
@@ -9,7 +8,15 @@ import { status, swapTokens, swapTokensDict } from '@store/selectors/solanaWalle
 import { StakeLiquidityPayload } from '@store/reducers/sBitz'
 import { actions } from '@store/reducers/sBitz'
 import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
-import { inProgress, stakedData, stakeStatsLoading, success as successState } from '@store/selectors/stake'
+import {
+  inProgress,
+  stakedData,
+  stakeDataLoading,
+  success as successState,
+  apyAndApr,
+  stakeApyAndAprLoading,
+  stakeTab
+} from '@store/selectors/sBitz'
 import { network } from '@store/selectors/solanaConnection'
 import { FAQSection } from '@components/Stake/FAQSection/FAQSection'
 import { OverallStats } from '@components/Stake/OverallStats/OverallStats'
@@ -20,7 +27,13 @@ import { BN } from '@coral-xyz/anchor'
 import { calculateTokensForWithdraw, computeBitzSbitzRewards } from '@invariant-labs/sbitz'
 import { sBITZ_MAIN, BITZ_MAIN } from '@store/consts/static'
 import { getTokenPrice, printBN } from '@utils/utils'
+import LiquidityStaking from '@components/Stake/LiquidityStaking/LiquidityStaking'
+import { StakeSwitch } from '@store/consts/types'
 
+export enum StakeChartSwitcher {
+  Stake = 'Stake',
+  Stats = 'Stats'
+}
 export const WrappedStake: React.FC = () => {
   const { classes } = useStyles()
   const dispatch = useDispatch()
@@ -31,6 +44,8 @@ export const WrappedStake: React.FC = () => {
 
   const progress = useSelector(inProgress)
   const success = useSelector(successState)
+  const sBitzApyApr = useSelector(apyAndApr)
+  const sBitzApyAprLoading = useSelector(stakeApyAndAprLoading)
 
   const handleStake = (props: StakeLiquidityPayload) => {
     dispatch(actions.stake(props))
@@ -44,59 +59,68 @@ export const WrappedStake: React.FC = () => {
   const stakedBitzData = useSelector(stakedData)
   const [isLoadingDebounced, setIsLoadingDebounced] = useState(true)
   const filteredTokens = useMemo(() => {
-    return tokensList.filter(item => item.decimals > 0 && (item.symbol === sBITZ_MAIN.symbol))
+    return tokensList.filter(item => item.decimals > 0 && item.symbol === sBITZ_MAIN.symbol)
   }, [tokensList])
 
   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
-  const [backedByBITZData, setBackedByBITZData] = useState<{ amount: BN, price: number } | null>(null)
-  const currentNetwork = useSelector(network);
-  const statsLoading = useSelector(stakeStatsLoading)
+  const [backedByBITZData, setBackedByBITZData] = useState<{ amount: BN; price: number } | null>(
+    null
+  )
+  const currentNetwork = useSelector(network)
+  const stakeLoading = useSelector(stakeDataLoading)
+  const currentStakeTab = useSelector(stakeTab)
+
   const initialLoadCompleted = useRef(false)
-  const [chartData, setChartData] = useState<{ bitzData: { x: string, y: number }[], sBitzData: { x: string, y: number }[], earnedAmount: number }>({
+  const [chartData, setChartData] = useState<{
+    bitzData: { x: string; y: number }[]
+    sBitzData: { x: string; y: number }[]
+    earnedAmount: number
+  }>({
     bitzData: [],
     sBitzData: [],
-    earnedAmount: 0,
+    earnedAmount: 0
   })
   const [stakeChartTab, setStakeChartTab] = useState(StakeChartSwitcher.Stats)
   const [stakedAmount, setStakedAmount] = useState(100)
 
-  const isFirstMount = useRef(true);
-  const prevInProgressRef = useRef<boolean>(false);
-
+  const isFirstMount = useRef(true)
+  const prevInProgressRef = useRef<boolean>(false)
 
   const processedTokens = useMemo(() => {
     return {
       sBITZ: new BN(filteredTokens.find(token => token.symbol === sBITZ_MAIN.symbol)?.balance || 0),
-      backedByBITZ: backedByBITZData ?? { amount: new BN(0), price: 0 },
-    };
-  }, [filteredTokens, backedByBITZData]);
+      backedByBITZ: backedByBITZData ?? { amount: new BN(0), price: 0 }
+    }
+  }, [filteredTokens, backedByBITZData])
+
   useEffect(() => {
-    setIsLoadingDebounced(true);
-    dispatch(actions.getStakedAmountAndBalance());
-  }, [dispatch]);
+    setIsLoadingDebounced(true)
+    dispatch(actions.getStakedAmountAndBalance())
+    dispatch(actions.getApyAndApr())
+  }, [dispatch])
 
   useEffect(() => {
     if (isFirstMount.current) {
-      isFirstMount.current = false;
-      return;
+      isFirstMount.current = false
+      return
     }
 
-
-    const operationJustCompleted = prevInProgressRef.current === true && !progress;
-    prevInProgressRef.current = progress;
+    const operationJustCompleted = prevInProgressRef.current === true && !progress
+    prevInProgressRef.current = progress
 
     if (!progress && (operationJustCompleted || isConnected)) {
-      setIsLoadingDebounced(true);
+      setIsLoadingDebounced(true)
 
       const timerId = setTimeout(() => {
-        dispatch(actions.getStakedAmountAndBalance());
-      }, 300);
+        dispatch(actions.getStakedAmountAndBalance())
+        dispatch(actions.getApyAndApr())
+      }, 300)
 
-      return () => clearTimeout(timerId);
+      return () => clearTimeout(timerId)
     }
-  }, [isConnected, progress, dispatch]);
+  }, [isConnected, progress, dispatch])
   useEffect(() => {
-    if (statsLoading) {
+    if (stakeLoading) {
       setIsLoadingDebounced(true)
       return
     }
@@ -109,8 +133,7 @@ export const WrappedStake: React.FC = () => {
 
       return () => clearTimeout(timer)
     }
-  }, [statsLoading, stakedBitzData])
-
+  }, [stakeLoading, stakedBitzData])
 
   useEffect(() => {
     if (stakedBitzData.stakedTokenSupply === null || stakedBitzData.stakedAmount === null) {
@@ -124,10 +147,9 @@ export const WrappedStake: React.FC = () => {
     const backedByBITZ = calculateTokensForWithdraw(
       stakedBitzData.stakedTokenSupply,
       stakedBitzData.stakedAmount,
-      bitzToken?.balance || new BN(0),
+      bitzToken?.balance || new BN(0)
     )
     const fetchPriceData = async () => {
-
       const tokenPrice = await getTokenPrice(BITZ_MAIN.address.toString(), currentNetwork)
       setBackedByBITZData({
         amount: backedByBITZ,
@@ -138,7 +160,6 @@ export const WrappedStake: React.FC = () => {
     fetchPriceData()
   }, [currentNetwork, stakedBitzData, filteredTokens, dispatch, isConnected])
 
-
   const handleToggleChange = (
     _event: React.MouseEvent<HTMLElement>,
     newValue: StakeChartSwitcher
@@ -147,10 +168,14 @@ export const WrappedStake: React.FC = () => {
     setStakeChartTab(newValue)
   }
 
-
-
   useEffect(() => {
-    const { bitzPredictedYield, sbitzPredictedYield }: { sbitzPredictedYield: number[], bitzPredictedYield: number[] } = computeBitzSbitzRewards(stakedAmount, +printBN(stakedBitzData.sBitzTotalBalance, sBITZ_MAIN.decimals))
+    const {
+      bitzPredictedYield,
+      sbitzPredictedYield
+    }: { sbitzPredictedYield: number[]; bitzPredictedYield: number[] } = computeBitzSbitzRewards(
+      stakedAmount,
+      +printBN(stakedBitzData.bitzTotalBalance, sBITZ_MAIN.decimals)
+    )
 
     const bitzData = bitzPredictedYield.map((value, index) => ({
       x: `Day ${index + 1}`,
@@ -166,8 +191,6 @@ export const WrappedStake: React.FC = () => {
       earnedAmount: sBitzData[sBitzData.length - 1]?.y - bitzData[sBitzData.length - 1]?.y
     })
   }, [stakedBitzData, stakedAmount])
-
-
 
   return (
     <Grid container className={classes.wrapper}>
@@ -194,15 +217,25 @@ export const WrappedStake: React.FC = () => {
           dispatch(walletActions.disconnect())
         }}
         networkType={networkType}
+        sBitzApyApr={sBitzApyApr}
+        sBitzApyAprLoading={sBitzApyAprLoading}
+        stakedTokenSupply={stakedBitzData.stakedTokenSupply}
+        stakedAmount={stakedBitzData.stakedAmount}
+        stakeDataLoading={stakeLoading}
+        changeStakeTab={(tab: StakeSwitch) => {
+          dispatch(actions.setStakeTab({ tab }))
+        }}
+        currentStakeTab={currentStakeTab}
       />
 
       <Grid className={classes.filtersContainerOverview}>
         <Box className={classes.switchPoolsContainerOverview}>
           <Box
-            className={`${classes.switchPoolsMarker} ${stakeChartTab === StakeChartSwitcher.Stake
-              ? classes.switchPoolsMarkerStake
-              : classes.switchPoolsMarkerStats
-              }`}
+            className={`${classes.switchPoolsMarker} ${
+              stakeChartTab === StakeChartSwitcher.Stake
+                ? classes.switchPoolsMarkerStake
+                : classes.switchPoolsMarkerStats
+            }`}
           />
 
           <ToggleButtonGroup
@@ -213,19 +246,21 @@ export const WrappedStake: React.FC = () => {
             <ToggleButton
               value={StakeChartSwitcher.Stake}
               disableRipple
-              className={`${classes.switchPoolsButtonOverview} ${stakeChartTab === StakeChartSwitcher.Stake
-                ? classes.selectedToggleButton
-                : classes.unselectedToggleButton
-                }`}>
+              className={`${classes.switchPoolsButtonOverview} ${
+                stakeChartTab === StakeChartSwitcher.Stake
+                  ? classes.selectedToggleButton
+                  : classes.unselectedToggleButton
+              }`}>
               Stake
             </ToggleButton>
             <ToggleButton
               value={StakeChartSwitcher.Stats}
               disableRipple
-              className={`${classes.switchPoolsButtonOverview} ${stakeChartTab === StakeChartSwitcher.Stats
-                ? classes.selectedToggleButton
-                : classes.unselectedToggleButton
-                }`}
+              className={`${classes.switchPoolsButtonOverview} ${
+                stakeChartTab === StakeChartSwitcher.Stats
+                  ? classes.selectedToggleButton
+                  : classes.unselectedToggleButton
+              }`}
               classes={{ disabled: classes.disabledSwitchButton }}>
               Stats
             </ToggleButton>
@@ -234,11 +269,8 @@ export const WrappedStake: React.FC = () => {
       </Grid>
 
       {stakeChartTab === StakeChartSwitcher.Stats && (
-
         <Box className={classes.statsContainer}>
-          <Typography className={classes.statsTitle}>
-            Your stats
-          </Typography>
+          <Typography className={classes.statsTitle}>Your stats</Typography>
           <YourStakeProgress
             processedTokens={processedTokens}
             isLoading={isLoadingDebounced}
@@ -250,9 +282,7 @@ export const WrappedStake: React.FC = () => {
       )}
       {stakeChartTab === StakeChartSwitcher.Stake && (
         <Box className={classes.statsContainer}>
-          <Typography className={classes.statsTitle}>
-            Your stake
-          </Typography>
+          <Typography className={classes.statsTitle}>Your stake</Typography>
           <StakeChart
             onStakedAmountChange={setStakedAmount}
             stakedAmount={stakedAmount}
