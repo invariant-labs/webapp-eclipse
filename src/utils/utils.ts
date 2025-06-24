@@ -132,6 +132,7 @@ import { fetchDigitalAsset } from '@metaplex-foundation/mpl-token-metadata'
 import { publicKey } from '@metaplex-foundation/umi-public-keys'
 import { createUmi } from '@metaplex-foundation/umi-bundle-defaults'
 import { Umi } from '@metaplex-foundation/umi'
+import { StakingStatsResponse } from '@store/reducers/sbitz-stats'
 
 export const transformBN = (amount: BN): string => {
   return (amount.div(new BN(1e2)).toNumber() / 1e4).toString()
@@ -2057,6 +2058,12 @@ export const getIntervalsFullSnap = async (
     interval === Intervals.Daily ? 'daily' : interval === Intervals.Weekly ? 'weekly' : 'monthly'
   const { data } = await axios.get<FullSnap>(
     `https://stats.invariant.app/eclipse/intervals/eclipse-${name}?interval=${parsedInterval}`
+  )
+  return data
+}
+export const fetchStackedBitzStats = async (): Promise<StakingStatsResponse> => {
+  const { data } = await axios.get<StakingStatsResponse>(
+    `https://stats.invariant.app/eclipse/sbitz/eclipse-mainnet`
   )
   return data
 }

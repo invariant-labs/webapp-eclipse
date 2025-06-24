@@ -14,15 +14,15 @@ interface StatsInterface {
   className?: string
   isLoading: boolean
   interval: IntervalsKeys
-  lastStatsTimestamp: number
+  //   lastStatsTimestamp: number
 }
 
 const TVLChart: React.FC<StatsInterface> = ({
   data,
   className,
   isLoading,
-  interval,
-  lastStatsTimestamp
+  interval
+  //   lastStatsTimestamp
 }) => {
   const { classes, cx } = useStyles()
   const [hoveredBar, setHoveredBar] = useState<any>(null)
@@ -187,7 +187,7 @@ const TVLChart: React.FC<StatsInterface> = ({
     if (!hoveredBar) return null
 
     const timestamp = hoveredBar.timestamp || hoveredBar.indexValue
-    const date = getLabelDate(interval, timestamp, lastStatsTimestamp)
+    const date = getLabelDate(interval, timestamp, timestamp)
 
     return (
       <div
