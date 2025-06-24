@@ -68,9 +68,9 @@ export const StakeChart: React.FC<StakeChartProps> = ({
 }) => {
   const { classes } = useStyles()
   const [inputValue, setInputValue] = useState(stakedAmount.toString())
-  console.log(sBitzData)
-  console.log(bitzData)
+
   const isLoading = !sBitzData.length || !bitzData.length
+
   const mockData = useMemo(
     () => ({
       bitzData: generateMockBitzData(),
@@ -473,7 +473,7 @@ export const StakeChart: React.FC<StakeChartProps> = ({
           <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <img src={BITZ} alt='BITZ Logo' style={{ width: '20px', height: '20px' }} />
             {isLoading ? (
-              <Skeleton variant='rounded' width={200} sx={{ marginInline: 1 }} />
+              <Skeleton variant='rounded' height={24} width={200} sx={{ marginInline: 1 }} />
             ) : (
               <Typography className={classes.bitzValue}>
                 Staking Rewards:{' '}
@@ -486,7 +486,7 @@ export const StakeChart: React.FC<StakeChartProps> = ({
           <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <img src={sBITZ} alt='sBITZ Logo' style={{ width: '20px', height: '20px' }} />
             {isLoading ? (
-              <Skeleton variant='rounded' width={200} sx={{ marginInline: 1 }} />
+              <Skeleton variant='rounded' width={200} height={24} sx={{ marginInline: 1 }} />
             ) : (
               <Typography className={classes.sBitzValue}>
                 Holding Rewards:{' '}
