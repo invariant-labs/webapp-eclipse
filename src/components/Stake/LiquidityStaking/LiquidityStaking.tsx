@@ -254,6 +254,7 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
         showBlur={stakeDataLoading}
         hideSelect
         notRoundIcon
+        limit={1e14}
       />
       <SwapSeparator
         onClick={handleSwitchTokens}

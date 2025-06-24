@@ -7,6 +7,8 @@ import {
   closeIcon,
   depositIcon,
   snackbarSwapIcon,
+  stakeIcon,
+  unstakeIcon,
   withdrawIcon
 } from '@static/icons'
 import { colors } from '@static/theme'
@@ -52,9 +54,9 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
       case 'claim':
         return circleDolarIcon
       case 'stake':
-        return snackbarSwapIcon
+        return stakeIcon
       case 'unstake':
-        return snackbarSwapIcon
+        return unstakeIcon
       default:
         return ''
     }
@@ -71,9 +73,9 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
       case 'claim':
         return 'Claimed'
       case 'stake':
-        return 'Staked'
+        return 'Staked:'
       case 'unstake':
-        return 'Unstaked'
+        return 'Unstaked:'
       default:
         return ''
     }
@@ -136,8 +138,10 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
             ) : (
               <img src={tokenXIcon} className={classes.tokenIcon} />
             )}
-            {ikonType === 'swap' || ikonType === 'unstake' || ikonType === 'stake' ? (
+            {ikonType === 'swap' ? (
               arrow
+            ) : ikonType === 'unstake' || ikonType === 'stake' ? (
+              <StyledText>for</StyledText>
             ) : (
               <StyledText>+</StyledText>
             )}

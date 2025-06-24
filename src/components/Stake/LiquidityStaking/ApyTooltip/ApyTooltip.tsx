@@ -22,7 +22,7 @@ export const ApyTooltip: React.FC<IApyTooltip> = ({
   const additionalApy = useMemo(() => {
     const { apr, apy } = sBitzApyApr
     if (!apr || !apy) return 0
-    return (apy - apr).toFixed(3)
+    return (apy - apr).toFixed(2)
   }, [sBitzApyApr])
 
   if (stakeDataLoading) {
@@ -35,7 +35,7 @@ export const ApyTooltip: React.FC<IApyTooltip> = ({
           <Box className={classes.itemWrapper}>
             <img src={tokenFrom?.logoURI} width={16} height={16} />
             <Typography className={classes.tooltipText}>
-              {sBitzApyApr.apr?.toFixed(3) ?? 0}% APR (Stake){' '}
+              {sBitzApyApr.apr?.toFixed(2) ?? 0}% APR (Stake){' '}
             </Typography>
           </Box>
           <Typography className={classes.plus}>+</Typography>
@@ -54,8 +54,8 @@ export const ApyTooltip: React.FC<IApyTooltip> = ({
       }
       increasePadding>
       <Typography className={classes.apyLabel}>
-        <span className={classes.crossedText}> {sBitzApyApr.apr?.toFixed(3) ?? 0}% APR </span>
-        <span className={classes.greenLabel}>{sBitzApyApr.apy?.toFixed(3) ?? 0}% APY</span>
+        <span className={classes.crossedText}> {sBitzApyApr.apr?.toFixed(2) ?? 0}% APR </span>
+        <span className={classes.greenLabel}>{sBitzApyApr.apy?.toFixed(2) ?? 0}% APY</span>
         <img src={infoIcon} height={12} />
       </Typography>
     </TooltipHover>
