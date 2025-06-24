@@ -548,8 +548,6 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     )
   }
 
-  console.log(locationHistory)
-
   if (position) {
     return (
       <PositionDetails
