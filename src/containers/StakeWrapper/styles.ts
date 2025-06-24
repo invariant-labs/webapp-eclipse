@@ -120,7 +120,7 @@ export const useStyles = makeStyles()(() => ({
   },
   statsContainer: {
     width: '100%',
-    marginTop: '20px',
+    marginTop: '72px',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
