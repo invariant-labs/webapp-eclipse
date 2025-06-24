@@ -68,9 +68,17 @@ const Overview: React.FC<IOverview> = ({
                 alignItems='center'
                 gap={1}
                 justifyContent={isMd ? 'space-between' : 'flex-start'}>
-                <Typography className={classes.label}>Cumulative Volume:</Typography>
+                <Typography
+                  className={cx(classes.label, {
+                    [classes.addZIndex]: cumulativeVolume.value !== 0
+                  })}>
+                  Cumulative Volume:
+                </Typography>
 
-                <Typography className={classes.value}>
+                <Typography
+                  className={cx(classes.value, {
+                    [classes.addZIndex]: cumulativeVolume.value !== 0
+                  })}>
                   ${formatNumberWithoutSuffix(cumulativeVolume.value)}
                 </Typography>
               </Box>
@@ -80,9 +88,17 @@ const Overview: React.FC<IOverview> = ({
                 alignItems='center'
                 gap={1}
                 justifyContent={isMd ? 'space-between' : 'flex-start'}>
-                <Typography className={classes.label}>Cumulative Fee:</Typography>
+                <Typography
+                  className={cx(classes.label, {
+                    [classes.addZIndex]: cumulativeFees.value !== 0
+                  })}>
+                  Cumulative Fee:
+                </Typography>
 
-                <Typography className={classes.value}>
+                <Typography
+                  className={cx(classes.value, {
+                    [classes.addZIndex]: cumulativeFees.value !== 0
+                  })}>
                   ${formatNumberWithoutSuffix(cumulativeFees.value)}
                 </Typography>
               </Box>

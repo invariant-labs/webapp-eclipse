@@ -48,7 +48,6 @@ export const useStyles = makeStyles()(() => ({
   label: {
     ...typography.body3,
     color: colors.invariant.textGrey,
-    zIndex: 2,
 
     [theme.breakpoints.down('md')]: {
       ...typography.body2
@@ -57,10 +56,12 @@ export const useStyles = makeStyles()(() => ({
   value: {
     ...typography.heading4,
     color: colors.invariant.text,
-    zIndex: 2,
 
     [theme.breakpoints.down('md')]: {
       ...typography.body1
     }
+  },
+  addZIndex: {
+    zIndex: 2
   }
 }))
