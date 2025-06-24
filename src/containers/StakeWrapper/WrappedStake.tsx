@@ -37,6 +37,7 @@ import { BN } from '@coral-xyz/anchor'
 import { calculateTokensForWithdraw, computeBitzSbitzRewards } from '@invariant-labs/sbitz'
 import { sBITZ_MAIN, BITZ_MAIN } from '@store/consts/static'
 import { getTokenPrice, printBN } from '@utils/utils'
+import { HowItWorks } from '@components/Stake/HowItWorks/HowItWorks'
 
 export const WrappedStake: React.FC = () => {
   const { classes } = useStyles()
@@ -112,6 +113,16 @@ export const WrappedStake: React.FC = () => {
 
   useEffect(() => {
     dispatch(sbitzStatsActions.getCurrentStats())
+
+    const fetchPriceData = async () => {
+      const tokenPrice = await getTokenPrice(BITZ_MAIN.address.toString(), currentNetwork)
+      setBackedByBITZData({
+        amount: backedByBITZData?.amount,
+        price: tokenPrice || 0
+      })
+    }
+
+    fetchPriceData()
   }, [])
 
   useEffect(() => {
@@ -294,6 +305,8 @@ export const WrappedStake: React.FC = () => {
             isConnected={isConnected}
             yield24={estimated24Yield}
           />
+
+          <HowItWorks />
           <OverallStats
             isLoadingStats={isLoadingStats}
             bitzPlot={bitzPlot}
