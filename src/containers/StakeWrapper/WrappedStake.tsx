@@ -208,6 +208,17 @@ export const WrappedStake: React.FC = () => {
   }
 
   useEffect(() => {
+    console.log(
+      stakedAmount,
+      stakedBitzData,
+      stakedBitzData.stakedAmount,
+      stakedBitzData.bitzTotalBalance,
+      stakedBitzData.stakedTokenSupply
+    )
+    if (!stakedBitzData.stakedAmount || !stakedBitzData.bitzTotalBalance) {
+      return
+    }
+
     const {
       bitzPredictedYield,
       sbitzPredictedYield
