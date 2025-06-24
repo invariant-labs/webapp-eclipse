@@ -6,8 +6,6 @@ import { SwapToken } from '@store/selectors/solanaWallet'
 import { StakeLiquidityPayload } from '@store/reducers/sBitz'
 import { NetworkType } from '@store/consts/static'
 
-
-
 export interface IStake {
   walletStatus: Status
   tokens: Record<string, SwapToken>
@@ -20,12 +18,10 @@ export interface IStake {
   networkType: NetworkType
 }
 
-
 export enum StakeChartSwitcher {
   Stake = 'Stake',
   Stats = 'Stats'
 }
-
 
 export const Stake: React.FC<IStake> = ({
   walletStatus,
@@ -53,11 +49,8 @@ export const Stake: React.FC<IStake> = ({
         onDisconnectWallet={onDisconnectWallet}
         networkType={networkType}
       />
-
     </Grid>
   )
-
 }
-
 
 export default Stake

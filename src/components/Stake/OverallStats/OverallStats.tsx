@@ -54,7 +54,7 @@ export const OverallStats = ({
               isLoading={isLoadingStats}
               interval={Intervals.Daily}
               data={sbitzPlot}
-              color={'#00D9FF'}
+              color={colors.invariant.lightBlue}
             />
           </Box>
         </Box>

@@ -27,6 +27,7 @@ export const StakedStats = ({
   tvlPlot,
   sbitzTvl
 }: Props) => {
+  //   bitzStaked = '4912342300000000' // only for testing
   const { classes, cx } = useStyles()
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
 
@@ -63,7 +64,7 @@ export const StakedStats = ({
               <Box className={classes.tokenArcsSection}>
                 <Box className={classes.flexBoxWithGap}>
                   <Box className={classes.arcContainer}>
-                    <TokenArc color={'#00D9FF'} width={65} height={98} />
+                    <TokenArc color={colors.invariant.lightBlue} width={65} height={98} />
                     <Box className={`${classes.textContainer} ${classes.tokenTextContainer}`}>
                       <Typography className={classes.tokenName}>sBITZ</Typography>
                       <Typography className={classes.tokenPercentageBlue}>
@@ -72,7 +73,7 @@ export const StakedStats = ({
                     </Box>
                   </Box>
                   <Box className={classes.arcContainer}>
-                    <TokenArc color={'#32EC51'} width={65} height={98} />
+                    <TokenArc color={colors.invariant.green} width={65} height={98} />
                     <Box className={`${classes.textContainer} ${classes.tokenTextContainer}`}>
                       <Typography className={classes.tokenName}>BITZ</Typography>
                       <Typography className={classes.tokenPercentageGreen}>
@@ -106,7 +107,7 @@ export const StakedStats = ({
                     value: isNaN(+directStakePercentage) ? 0 : +directStakePercentage
                   }
                 ]}
-                chartColors={['#00D9FF', '#32EC51']}
+                chartColors={[colors.invariant.lightBlue, colors.invariant.green]}
                 tooltipPrefix=''
               />
             </Box>
