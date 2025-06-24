@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { PayloadType } from '../consts/types'
+import { PayloadType, StakeSwitch } from '../consts/types'
 import { BN } from '@coral-xyz/anchor'
 
 // Remove duplicate interface
@@ -13,8 +13,7 @@ export interface GetBackedByBITZPayload {
 }
 
 export interface LoadingStates {
-  stakeStats: boolean
-  backedByBITZ: boolean
+  stakeData: boolean
   stakeOperation: boolean
 }
 
@@ -25,30 +24,26 @@ export interface ISBitz {
   stakedData: {
     stakedAmount: BN | null
     stakedTokenSupply: BN | null
-    sBitzTotalBalance?: BN | null
+    bitzTotalBalance?: BN | null
   }
-  backedByBITZ: {
-    tokenAddress: string
-    amount: BN
-    tokenPrice?: number
-  } | null
+  stakeTab: StakeSwitch
 }
 
 const defaultStatus: ISBitz = {
   inProgress: false,
   success: false,
   loadingStates: {
-    stakeStats: false,
-    backedByBITZ: false,
+    stakeData: false,
     stakeOperation: false
   },
   stakedData: {
     stakedAmount: null,
-    sBitzTotalBalance: null,
+    bitzTotalBalance: null,
     stakedTokenSupply: null
   },
-  backedByBITZ: null
+  stakeTab: StakeSwitch.Stake
 }
+
 export const sBitzSliceName = 'sBitz'
 
 const sBitzSlice = createSlice({
@@ -73,19 +68,27 @@ const sBitzSlice = createSlice({
     },
 
     getStakedAmountAndBalance(state) {
-      state.loadingStates.stakeStats = true
+      state.loadingStates.stakeData = true
       return state
     },
     setStakedAmountAndBalance(
       state,
-      action: PayloadAction<{ stakedAmount: BN; stakedTokenSupply: BN; sBitzTotalBalance: BN }>
+      action: PayloadAction<{
+        stakedAmount: BN | null
+        stakedTokenSupply: BN | null
+        bitzTotalBalance: BN | null
+      }>
     ) {
       state.stakedData = {
         stakedAmount: action.payload.stakedAmount,
         stakedTokenSupply: action.payload.stakedTokenSupply,
-        sBitzTotalBalance: action.payload.sBitzTotalBalance
+        bitzTotalBalance: action.payload.bitzTotalBalance
       }
-      state.loadingStates.stakeStats = false
+      state.loadingStates.stakeData = false
+      return state
+    },
+    setStakeTab(state, action: PayloadAction<{ tab: StakeSwitch }>) {
+      state.stakeTab = action.payload.tab
       return state
     }
   }

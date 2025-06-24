@@ -95,6 +95,8 @@ import eyeYellowIcon from './svg/eyeYellow.svg'
 import closeYellowIcon from './svg/closeYellow.svg'
 import scrollArrowIcon from './svg/scrollArrow.svg'
 import snackbarSwapIcon from './svg/snackbarSwap.svg'
+import stakeIcon from './svg/stakeIcon.svg'
+import unstakeIcon from './svg/unstakeIcon.svg'
 import circleDolarIcon from './svg/circleDolar.svg'
 import depositIcon from './svg/depositIcon.svg'
 import withdrawIcon from './svg/withdrawIcon.svg'
@@ -205,6 +207,8 @@ export {
   scrollArrowIcon,
   goldenInfoIcon,
   snackbarSwapIcon,
+  stakeIcon,
+  unstakeIcon,
   circleDolarIcon,
   depositIcon,
   withdrawIcon,
