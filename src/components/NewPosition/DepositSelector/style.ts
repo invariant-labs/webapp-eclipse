@@ -35,10 +35,6 @@ export const useStyles = makeStyles()(theme => {
       justifyContent: 'center',
       gap: 0
     },
-    autoText: {
-      textDecorationLine: 'underline',
-      textDecorationStyle: 'dotted'
-    },
     infoTooltip: {
       marginLeft: 6,
       marginRight: 6,

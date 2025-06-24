@@ -636,7 +636,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
                   'AutoSwap allows you to create a position using any token ratio. Simply choose the amount you currently hold in your wallet, and it will be automatically swapped in the most optimal way.'
                 }
                 classes={{ tooltip: classes.tooltip }}>
-                <span className={classes.autoText}>Auto</span>
+                <Typography>Auto</Typography>
               </Tooltip>
             </ToggleButton>
           </ToggleButtonGroup>
