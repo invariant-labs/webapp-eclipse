@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import {
   airdropIcon,
   liquidityIcon,
+  lqStakingIcon,
   statsIcon,
   swapArrowsIcon,
   tokenCreatorIcon,
@@ -56,7 +57,17 @@ export const FooterNavbar = () => {
       icon: statsIcon,
       url: 'statistics',
       width: 30
-    }
+    },
+    ...(typeOfNetwork === NetworkType.Mainnet
+      ? [
+          {
+            label: 'Stake',
+            icon: lqStakingIcon,
+            url: 'stake',
+            width: 25
+          }
+        ]
+      : [])
   ]
 
   const location = useLocation()
@@ -75,7 +86,8 @@ export const FooterNavbar = () => {
     portfolio: [/^portfolio\/*/, /^newPosition\/*/, /^position\/*/],
 
     ...(typeOfNetwork === NetworkType.Mainnet ? { leaderboard: [/^points\/*/] } : {}),
-    ...(typeOfNetwork === NetworkType.Testnet ? { creator: [/^creator\/*/] } : {})
+    ...(typeOfNetwork === NetworkType.Testnet ? { creator: [/^creator\/*/] } : {}),
+    ...(typeOfNetwork === NetworkType.Mainnet ? { stake: [/^stake\/*/] } : {})
   }
 
   const [display, setDisplay] = useState(true)
