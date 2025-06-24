@@ -76,7 +76,7 @@ export const useStyles = makeStyles()(theme => {
       flexDirection: 'row',
       justifyContent: 'flex-end',
       alignItems: 'center',
-      gap: 4,
+      gap: 24,
       [theme.breakpoints.down('sm')]: {
         alignItems: 'center',
         justifyContent: 'center'
@@ -366,6 +366,10 @@ export const useStyles = makeStyles()(theme => {
       position: 'absolute',
       top: 'calc(50% - 10px)',
       left: 'calc(50% - 10px)'
+    },
+    switchDepositContainer: {
+      display: 'flex',
+      gap: 12
     }
   }
 })

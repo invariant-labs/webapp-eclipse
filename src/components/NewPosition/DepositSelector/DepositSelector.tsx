@@ -600,7 +600,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
 
   const renderSwitcher = useCallback(
     () => (
-      <>
+      <Box className={classes.switchDepositContainer}>
         <Box className={classes.switchDepositTypeContainer}>
           <Box
             className={classes.switchDepositTypeMarker}
@@ -662,7 +662,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             </Button>
           </div>
         </Tooltip>
-      </>
+      </Box>
     ),
     [isAutoSwapAvailable, alignment]
   )
