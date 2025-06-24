@@ -35,6 +35,9 @@ export const useStyles = makeStyles()(theme => {
       justifyContent: 'center',
       gap: 0
     },
+    autoText: {
+      ...typography.caption1
+    },
     infoTooltip: {
       marginLeft: 6,
       marginRight: 6,
