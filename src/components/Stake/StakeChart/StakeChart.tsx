@@ -204,7 +204,8 @@ export const StakeChart: React.FC<StakeChartProps> = ({
                     display: 'flex',
                     alignItems: 'center',
                     paddingLeft: '4px',
-                    paddingRight: '8px'
+                    paddingRight: '8px',
+                    marginRight: '4px'
                   }}>
                   <img src={BITZ} alt='BITZ' style={{ height: '16px', minWidth: '16px' }} />
                 </Box>
