@@ -145,7 +145,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     }
   },
   sBitzValue: {
-    color: colors.invariant.pink,
+    color: colors.invariant.lightBlue,
     ...typography.heading4,
     [theme.breakpoints.down('sm')]: {
       ...typography.body1

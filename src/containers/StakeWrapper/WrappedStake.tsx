@@ -57,7 +57,6 @@ export const WrappedStake: React.FC = () => {
   const supplyBitz = useSelector(bitzSupply)
   const sbitzTvlPlot = useSelector(sbitzTVLPlot)
   const sbitzTvl = useSelector(sBitzTVL)
-
   // Handlers for staking and unstaking
 
   const handleStake = (props: StakeLiquidityPayload) => {
@@ -69,6 +68,7 @@ export const WrappedStake: React.FC = () => {
   }
 
   const tokensList = useSelector(swapTokens)
+
   const stakedBitzData = useSelector(stakedData)
   const [isLoadingDebounced, setIsLoadingDebounced] = useState(true)
   const filteredTokens = useMemo(() => {
@@ -86,10 +86,12 @@ export const WrappedStake: React.FC = () => {
     bitzData: { x: string; y: number }[]
     sBitzData: { x: string; y: number }[]
     earnedAmount: number
+    earnedUsd: number
   }>({
     bitzData: [],
     sBitzData: [],
-    earnedAmount: 0
+    earnedAmount: 0,
+    earnedUsd: 0
   })
   const [stakeChartTab, setStakeChartTab] = useState(StakeChartSwitcher.Stats)
   const [stakedAmount, setStakedAmount] = useState(100)
@@ -197,10 +199,13 @@ export const WrappedStake: React.FC = () => {
       x: `Day ${index + 1}`,
       y: value
     }))
+    const earnedAmount = sBitzData[sBitzData.length - 1]?.y - bitzData[sBitzData.length - 1]?.y
+    const earnedUsd = earnedAmount * (backedByBITZData?.price || 0)
     setChartData({
       bitzData,
       sBitzData,
-      earnedAmount: sBitzData[sBitzData.length - 1]?.y - bitzData[sBitzData.length - 1]?.y
+      earnedAmount,
+      earnedUsd
     })
   }, [stakedBitzData, stakedAmount])
 
@@ -315,6 +320,7 @@ export const WrappedStake: React.FC = () => {
             earnedAmount={chartData.earnedAmount}
             bitzData={chartData.bitzData}
             sBitzData={chartData.sBitzData}
+            earnedUsd={chartData.earnedUsd}
           />
         </Box>
       )}
