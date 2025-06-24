@@ -31,6 +31,7 @@ import { sBITZ_MAIN, BITZ_MAIN } from '@store/consts/static'
 import { getTokenPrice, printBN } from '@utils/utils'
 import LiquidityStaking from '@components/Stake/LiquidityStaking/LiquidityStaking'
 import { StakeSwitch } from '@store/consts/types'
+import { HowItWorks } from '@components/Stake/HowItWorks/HowItWorks'
 
 export enum StakeChartSwitcher {
   Stake = 'Stake',
@@ -288,6 +289,7 @@ export const WrappedStake: React.FC = () => {
             isConnected={isConnected}
             yield24={estimated24Yield}
           />
+          <HowItWorks />
           <OverallStats />
           <StakedStats />
         </Box>
