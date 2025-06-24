@@ -2479,17 +2479,27 @@ export const getAmountFromInstruction = (
         : (ix as ParsedInstruction).parsed.info.authority === marketProgramAuthority
     ) as ParsedInstruction | undefined
   } else {
-    instruction = innerInstruction.instructions.find(ix =>
-      token === WRAPPED_ETH_ADDRESS
-        ? (ix as ParsedInstruction).parsed.info.mint === undefined
-        : (ix as ParsedInstruction).parsed.info.mint === token
+    instruction = innerInstruction.instructions.find(
+      ix => (ix as ParsedInstruction).parsed.info.mint === token
     ) as ParsedInstruction | undefined
-  }
 
-  if (!instruction) {
-    instruction = innerInstruction.instructions[
-      type === TokenType.TokenIn ? 0 : innerInstruction.instructions.length - 1
-    ] as ParsedInstruction
+    if (!instruction) {
+      let position = 0
+
+      switch (type) {
+        case TokenType.TokenIn:
+          position = 0
+          break
+        case TokenType.TokenBetween:
+          position = 1
+          break
+        case TokenType.TokenOut:
+          position = 2
+          break
+      }
+
+      instruction = innerInstruction.instructions[position] as ParsedInstruction | undefined
+    }
   }
 
   return instruction?.parsed.info.amount || instruction?.parsed.info.tokenAmount.amount

@@ -404,8 +404,10 @@ export function* handleSwapWithETH(): Generator {
             if (
               leaderboardConfig.swapPairs.some(
                 item =>
-                  new PublicKey(item.tokenX).equals(swapPool.tokenX) &&
-                  new PublicKey(item.tokenY).equals(swapPool.tokenY)
+                  (new PublicKey(item.tokenX).equals(swapPool.tokenX) &&
+                    new PublicKey(item.tokenY).equals(swapPool.tokenY)) ||
+                  (new PublicKey(item.tokenX).equals(swapPool.tokenY) &&
+                    new PublicKey(item.tokenY).equals(swapPool.tokenX))
               )
             ) {
               const feed = feeds[tokenFrom.toString()]
@@ -823,6 +825,9 @@ export function* handleTwoHopSwapWithETH(): Generator {
           const tokenIn = firstXtoY
             ? allTokens[firstPool.tokenX.toString()]
             : allTokens[firstPool.tokenY.toString()]
+          const tokenBetween = secondXtoY
+            ? allTokens[secondPool.tokenX.toString()]
+            : allTokens[secondPool.tokenY.toString()]
           const tokenOut = secondXtoY
             ? allTokens[secondPool.tokenY.toString()]
             : allTokens[secondPool.tokenX.toString()]
@@ -832,6 +837,12 @@ export function* handleTwoHopSwapWithETH(): Generator {
             marketProgram.programAuthority.address.toString(),
             tokenIn.address.toString(),
             TokenType.TokenIn
+          )
+          const amountBetween = getAmountFromInstruction(
+            meta.innerInstructions[0],
+            marketProgram.programAuthority.address.toString(),
+            tokenBetween.address.toString(),
+            TokenType.TokenBetween
           )
           const amountOut = getAmountFromInstruction(
             meta.innerInstructions[0],
@@ -846,8 +857,10 @@ export function* handleTwoHopSwapWithETH(): Generator {
             if (
               leaderboardConfig.swapPairs.some(
                 item =>
-                  new PublicKey(item.tokenX).equals(firstPool.tokenX) &&
-                  new PublicKey(item.tokenY).equals(firstPool.tokenY)
+                  (new PublicKey(item.tokenX).equals(firstPool.tokenX) &&
+                    new PublicKey(item.tokenY).equals(firstPool.tokenY)) ||
+                  (new PublicKey(item.tokenX).equals(firstPool.tokenY) &&
+                    new PublicKey(item.tokenY).equals(firstPool.tokenX))
               )
             ) {
               const feed = feeds[tokenFrom.toString()]
@@ -867,22 +880,13 @@ export function* handleTwoHopSwapWithETH(): Generator {
             if (
               leaderboardConfig.swapPairs.some(
                 item =>
-                  new PublicKey(item.tokenX).equals(secondPool.tokenX) &&
-                  new PublicKey(item.tokenY).equals(secondPool.tokenY)
+                  (new PublicKey(item.tokenX).equals(secondPool.tokenX) &&
+                    new PublicKey(item.tokenY).equals(secondPool.tokenY)) ||
+                  (new PublicKey(item.tokenX).equals(secondPool.tokenY) &&
+                    new PublicKey(item.tokenY).equals(secondPool.tokenX))
               )
             ) {
-              const tokenBetween = secondXtoY
-                ? allTokens[secondPool.tokenX.toString()]
-                : allTokens[secondPool.tokenY.toString()]
-
               const feed = feeds[tokenBetween.address.toString()]
-
-              const amountBetween = getAmountFromInstruction(
-                meta.innerInstructions[0],
-                marketProgram.programAuthority.address.toString(),
-                tokenBetween.address.toString(),
-                TokenType.TokenBetween
-              )
 
               if (feed && feed.price) {
                 points = points.add(
@@ -906,10 +910,15 @@ export function* handleTwoHopSwapWithETH(): Generator {
               tokensDetails: {
                 ikonType: 'swap',
                 tokenXAmount: formatNumberWithoutSuffix(printBN(amountIn, tokenIn.decimals)),
+                tokenBetweenAmount: formatNumberWithoutSuffix(
+                  printBN(amountBetween, tokenBetween.decimals)
+                ),
                 tokenYAmount: formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals)),
                 tokenXIcon: tokenIn.logoURI,
+                tokenBetweenIcon: tokenBetween.logoURI,
                 tokenYIcon: tokenOut.logoURI,
                 tokenXSymbol: tokenIn.symbol ?? tokenIn.address.toString(),
+                tokenBetweenSymbol: tokenBetween.symbol ?? tokenBetween.address.toString(),
                 tokenYSymbol: tokenOut.symbol ?? tokenOut.address.toString(),
                 earnedPoints: points.eqn(0)
                   ? undefined
@@ -1236,11 +1245,12 @@ export function* handleTwoHopSwap(): Generator {
         )
 
         const meta = txDetails.meta
-        console.log(meta)
         if (meta?.innerInstructions) {
           try {
             const tokenIn =
               allTokens[firstXtoY ? firstPool.tokenX.toString() : firstPool.tokenY.toString()]
+            const tokenBetween =
+              allTokens[secondXtoY ? firstPool.tokenX.toString() : firstPool.tokenY.toString()]
             const tokenOut =
               allTokens[secondXtoY ? secondPool.tokenY.toString() : secondPool.tokenX.toString()]
 
@@ -1249,6 +1259,12 @@ export function* handleTwoHopSwap(): Generator {
               marketProgram.programAuthority.address.toString(),
               tokenIn.address.toString(),
               TokenType.TokenIn
+            )
+            const amountBetween = getAmountFromInstruction(
+              meta.innerInstructions[0],
+              marketProgram.programAuthority.address.toString(),
+              tokenBetween.address.toString(),
+              TokenType.TokenBetween
             )
             const amountOut = getAmountFromInstruction(
               meta.innerInstructions[0],
@@ -1259,28 +1275,20 @@ export function* handleTwoHopSwap(): Generator {
 
             let points = new BN(0)
             try {
-              const tokenBetween =
-                allTokens[secondXtoY ? firstPool.tokenX.toString() : firstPool.tokenY.toString()]
-
-              const amountBetween = getAmountFromInstruction(
-                meta.innerInstructions[0],
-                marketProgram.programAuthority.address.toString(),
-                tokenBetween.address.toString(),
-                TokenType.TokenBetween
-              )
-
               if (
                 leaderboardConfig.swapPairs.some(
                   item =>
-                    new PublicKey(item.tokenX).equals(firstPool.tokenX) &&
-                    new PublicKey(item.tokenY).equals(firstPool.tokenY)
+                    (new PublicKey(item.tokenX).equals(firstPool.tokenX) &&
+                      new PublicKey(item.tokenY).equals(firstPool.tokenY)) ||
+                    (new PublicKey(item.tokenX).equals(firstPool.tokenY) &&
+                      new PublicKey(item.tokenY).equals(firstPool.tokenX))
                 )
               ) {
                 const feed = feeds[tokenFrom.toString()]
 
                 if (feed && feed.price) {
                   points = calculatePoints(
-                    amountIn,
+                    new BN(amountIn),
                     tokenIn.decimals,
                     firstPool.fee,
                     feed.price,
@@ -1293,16 +1301,18 @@ export function* handleTwoHopSwap(): Generator {
               if (
                 leaderboardConfig.swapPairs.some(
                   item =>
-                    new PublicKey(item.tokenX).equals(secondPool.tokenX) &&
-                    new PublicKey(item.tokenY).equals(secondPool.tokenY)
+                    (new PublicKey(item.tokenX).equals(secondPool.tokenX) &&
+                      new PublicKey(item.tokenY).equals(secondPool.tokenY)) ||
+                    (new PublicKey(item.tokenX).equals(secondPool.tokenY) &&
+                      new PublicKey(item.tokenY).equals(secondPool.tokenX))
                 )
               ) {
-                const feed = feeds[tokenBetween.toString()]
+                const feed = feeds[tokenBetween.address.toString()]
 
                 if (feed && feed.price) {
                   points = points.add(
                     calculatePoints(
-                      amountBetween,
+                      new BN(amountBetween),
                       tokenBetween.decimals,
                       secondPool.fee,
                       feed.price,
@@ -1321,10 +1331,15 @@ export function* handleTwoHopSwap(): Generator {
                 tokensDetails: {
                   ikonType: 'swap',
                   tokenXAmount: formatNumberWithoutSuffix(printBN(amountIn, tokenIn.decimals)),
+                  tokenBetweenAmount: formatNumberWithoutSuffix(
+                    printBN(amountBetween, tokenBetween.decimals)
+                  ),
                   tokenYAmount: formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals)),
                   tokenXIcon: tokenIn.logoURI,
+                  tokenBetweenIcon: tokenBetween.logoURI,
                   tokenYIcon: tokenOut.logoURI,
                   tokenXSymbol: tokenIn.symbol ?? tokenIn.address.toString(),
+                  tokenBetweenSymbol: tokenBetween.symbol ?? tokenBetween.address.toString(),
                   tokenYSymbol: tokenOut.symbol ?? tokenOut.address.toString(),
                   earnedPoints: points.eqn(0)
                     ? undefined
@@ -1677,15 +1692,17 @@ export function* handleSwap(): Generator {
               if (
                 leaderboardConfig.swapPairs.some(
                   item =>
-                    new PublicKey(item.tokenX).equals(swapPool.tokenX) &&
-                    new PublicKey(item.tokenY).equals(swapPool.tokenY)
+                    (new PublicKey(item.tokenX).equals(swapPool.tokenX) &&
+                      new PublicKey(item.tokenY).equals(swapPool.tokenY)) ||
+                    (new PublicKey(item.tokenX).equals(swapPool.tokenY) &&
+                      new PublicKey(item.tokenY).equals(swapPool.tokenX))
                 )
               ) {
                 const feed = feeds[tokenFrom.toString()]
 
                 if (feed && feed.price) {
                   points = calculatePoints(
-                    amountIn,
+                    new BN(amountIn),
                     tokenIn.decimals,
                     swapPool.fee,
                     feed.price,
