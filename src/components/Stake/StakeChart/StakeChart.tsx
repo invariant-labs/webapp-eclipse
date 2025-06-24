@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react'
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { ResponsiveLine } from '@nivo/line'
-import { Box, Typography, TextField, Grid, useMediaQuery } from '@mui/material'
+import { Box, Typography, TextField, Grid, useMediaQuery, Skeleton } from '@mui/material'
 import { colors, theme, typography } from '@static/theme'
 import { useStyles } from './style'
 import { linearGradientDef } from '@nivo/core'
@@ -22,6 +22,42 @@ interface StakeChartProps {
   onStakedAmountChange?: (amount: number) => void
 }
 
+const generateMockBitzData = (): PointData[] => {
+  const data: PointData[] = []
+  let cumulative = 0
+  const baseDaily = 0.91
+
+  for (let i = 1; i <= 31; i++) {
+    const daily = baseDaily * (1 + (i - 1) * 0.002) + Math.random() * 0.05 - 0.025
+    cumulative += daily
+
+    data.push({
+      x: `Day ${i}`,
+      y: Number(cumulative.toFixed(6))
+    })
+  }
+
+  return data
+}
+
+const generateMockSBitzData = (): PointData[] => {
+  const data: PointData[] = []
+  let cumulative = 0
+  const baseDaily = 0.909
+
+  for (let i = 1; i <= 31; i++) {
+    const daily = baseDaily + Math.random() * 0.02 - 0.01
+    cumulative += daily
+
+    data.push({
+      x: `Day ${i}`,
+      y: Number(cumulative.toFixed(6))
+    })
+  }
+
+  return data
+}
+
 export const StakeChart: React.FC<StakeChartProps> = ({
   stakedAmount,
   earnedAmount,
@@ -32,6 +68,19 @@ export const StakeChart: React.FC<StakeChartProps> = ({
 }) => {
   const { classes } = useStyles()
   const [inputValue, setInputValue] = useState(stakedAmount.toString())
+  console.log(sBitzData)
+  console.log(bitzData)
+  const isLoading = !sBitzData.length || !bitzData.length
+  const mockData = useMemo(
+    () => ({
+      bitzData: generateMockBitzData(),
+      sBitzData: generateMockSBitzData()
+    }),
+    []
+  )
+
+  const displayBitzData = isLoading ? mockData.bitzData : bitzData
+  const displaySBitzData = isLoading ? mockData.sBitzData : sBitzData
 
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
@@ -70,12 +119,12 @@ export const StakeChart: React.FC<StakeChartProps> = ({
     {
       id: 'BITZ',
       color: colors.invariant.green,
-      data: bitzData
+      data: displayBitzData
     },
     {
       id: 'sBITZ',
       color: colors.invariant.lightBlue,
-      data: sBitzData
+      data: displaySBitzData
     }
   ]
 
@@ -251,22 +300,32 @@ export const StakeChart: React.FC<StakeChartProps> = ({
               justifyContent: 'center'
             }}>
             will earn you an extra
-            <Typography
-              component='span'
-              sx={{
-                color: colors.invariant.green,
-                mx: 0.75,
-                ...typography.heading4
-              }}>
-              {formatNumberWithoutSuffix(earnedAmount)} BITZ{' '}
-              {earnedUsd !== 0 ? `($${formatNumberWithoutSuffix(earnedUsd)})` : ''}
-            </Typography>
+            {isLoading ? (
+              <Skeleton variant='rounded' sx={{ width: 200, marginInline: 1 }} />
+            ) : (
+              <Typography
+                component='span'
+                sx={{
+                  color: colors.invariant.green,
+                  mx: 0.75,
+                  ...typography.heading4
+                }}>
+                {formatNumberWithoutSuffix(earnedAmount)} BITZ{' '}
+                {earnedUsd !== 0 ? `($${formatNumberWithoutSuffix(earnedUsd)})` : ''}
+              </Typography>
+            )}
             compared to staking BITZ directly
           </Typography>
         </Box>
       </Box>
 
-      <Box className={classes.chartBox}>
+      <Box
+        className={classes.chartBox}
+        sx={{
+          position: 'relative',
+          filter: isLoading ? 'blur(2px)' : 'none',
+          transition: 'filter 0.3s ease-in-out'
+        }}>
         <ResponsiveLine
           data={data}
           margin={{
@@ -413,19 +472,27 @@ export const StakeChart: React.FC<StakeChartProps> = ({
         {bitzData.length > 0 && (
           <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <img src={BITZ} alt='BITZ Logo' style={{ width: '20px', height: '20px' }} />
-            <Typography className={classes.bitzValue}>
-              Staking Rewards: {formatNumberWithSuffix(bitzData[bitzData.length - 1].y.toFixed(2))}{' '}
-              BITZ
-            </Typography>
+            {isLoading ? (
+              <Skeleton variant='rounded' width={200} sx={{ marginInline: 1 }} />
+            ) : (
+              <Typography className={classes.bitzValue}>
+                Staking Rewards:{' '}
+                {formatNumberWithSuffix(bitzData[bitzData.length - 1].y.toFixed(2))} BITZ
+              </Typography>
+            )}
           </Box>
         )}
         {sBitzData.length > 0 && (
           <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <img src={sBITZ} alt='sBITZ Logo' style={{ width: '20px', height: '20px' }} />
-            <Typography className={classes.sBitzValue}>
-              Holding Rewards:{' '}
-              {formatNumberWithSuffix(sBitzData[sBitzData.length - 1].y.toFixed(2))} BITZ
-            </Typography>
+            {isLoading ? (
+              <Skeleton variant='rounded' width={200} sx={{ marginInline: 1 }} />
+            ) : (
+              <Typography className={classes.sBitzValue}>
+                Holding Rewards:{' '}
+                {formatNumberWithSuffix(sBitzData[sBitzData.length - 1].y.toFixed(2))} BITZ
+              </Typography>
+            )}
           </Box>
         )}
       </Box>
