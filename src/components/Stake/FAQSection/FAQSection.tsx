@@ -142,7 +142,6 @@ export const FAQSection = () => {
         flexDirection: 'column',
         justifyContent: 'center',
         gap: 2,
-        padding: 2,
         marginTop: '32px'
       }}>
       <Typography
