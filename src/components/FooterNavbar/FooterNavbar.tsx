@@ -20,6 +20,7 @@ export const FooterNavbar = () => {
   const typeOfNetwork = useSelector(network)
 
   const links = [
+    // stałe kafelki
     {
       label: 'Swap',
       icon: swapArrowsIcon,
@@ -39,35 +40,35 @@ export const FooterNavbar = () => {
       width: 26
     },
 
-    typeOfNetwork === NetworkType.Testnet
-      ? {
-          label: 'Creator',
-          icon: tokenCreatorIcon,
-          url: 'creator',
-          width: 33
-        }
-      : {
-          label: 'Points',
-          icon: airdropIcon,
-          url: 'points',
-          width: 26
-        },
-    {
-      label: 'Stats',
-      icon: statsIcon,
-      url: 'statistics',
-      width: 30
-    },
-    ...(typeOfNetwork === NetworkType.Mainnet
+    ...(typeOfNetwork === NetworkType.Testnet
       ? [
+          {
+            label: 'Creator',
+            icon: tokenCreatorIcon,
+            url: 'creator',
+            width: 33
+          }
+        ]
+      : [
+          {
+            label: 'Points',
+            icon: airdropIcon,
+            url: 'points',
+            width: 26
+          },
           {
             label: 'Stake',
             icon: lqStakingIcon,
             url: 'stake',
             width: 25
           }
-        ]
-      : [])
+        ]),
+    {
+      label: 'Stats',
+      icon: statsIcon,
+      url: 'statistics',
+      width: 30
+    }
   ]
 
   const location = useLocation()
