@@ -12,8 +12,9 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     borderRadius: 24,
     padding: '24px 16px',
     [theme.breakpoints.down('sm')]: {
-      padding: '0 8px'
-    }
+      padding: '12px 8px'
+    },
+    marginTop: 24
   },
   title: {
     color: colors.invariant.text,

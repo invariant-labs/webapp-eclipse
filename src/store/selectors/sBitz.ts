@@ -5,20 +5,22 @@ const store = (s: AnyProps) => s[sBitzSliceName] as ISBitz
 
 const selectLoadingStates = (state: AnyProps) => store(state).loadingStates
 
-export const { inProgress, success, stakedData } = keySelectors(store, [
+export const { inProgress, success, stakedData, stakeTab } = keySelectors(store, [
   'inProgress',
   'success',
-  'stakedData'
+  'stakedData',
+  'stakeTab'
 ])
 
-export const stakeStatsLoading = (state: AnyProps) => selectLoadingStates(state).stakeStats
+export const stakeDataLoading = (state: AnyProps) => selectLoadingStates(state).stakeData
 export const stakeOperationLoading = (state: AnyProps) => selectLoadingStates(state).stakeOperation
 
-export const solanaWalletSelectors = {
+export const sBitzSelectors = {
   inProgress,
   success,
-  stakeStatsLoading,
+  stakeDataLoading,
   stakeOperationLoading,
-  stakedData
+  stakedData,
+  stakeTab
 }
-export default solanaWalletSelectors
+export default sBitzSelectors

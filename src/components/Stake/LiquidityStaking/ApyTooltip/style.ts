@@ -3,6 +3,13 @@ import { makeStyles } from 'tss-react/mui'
 
 const useStyles = makeStyles()(() => {
   return {
+    tooltipWrapper: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 4,
+      flexDirection: 'column'
+    },
     tooltipText: {
       color: colors.invariant.textGrey,
       ...typography.caption2
@@ -37,7 +44,8 @@ const useStyles = makeStyles()(() => {
     apyLabel: {
       cursor: 'default',
       display: 'flex',
-      alignItems: 'center'
+      alignItems: 'center',
+      height: 24
     }
   }
 })
