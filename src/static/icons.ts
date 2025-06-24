@@ -104,8 +104,10 @@ import connectWalletIcon from './svg/connectWalletIcon.svg'
 import star from './svg/star.svg'
 import starFill from './svg/star-fill.svg'
 import swapArrowIcon from './svg/swapArrow.svg'
+import lqStakingIcon from './svg/lqStakingIcon.svg'
 
 export {
+  lqStakingIcon,
   logoTitleIcon,
   logoShortIcon,
   arrowIcon,

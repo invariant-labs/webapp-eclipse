@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import {
   airdropIcon,
   liquidityIcon,
+  lqStakingIcon,
   statsIcon,
   swapArrowsIcon,
   tokenCreatorIcon,
@@ -19,6 +20,7 @@ export const FooterNavbar = () => {
   const typeOfNetwork = useSelector(network)
 
   const links = [
+    // stałe kafelki
     {
       label: 'Swap',
       icon: swapArrowsIcon,
@@ -38,19 +40,29 @@ export const FooterNavbar = () => {
       width: 26
     },
 
-    typeOfNetwork === NetworkType.Testnet
-      ? {
-          label: 'Creator',
-          icon: tokenCreatorIcon,
-          url: 'creator',
-          width: 33
-        }
-      : {
-          label: 'Points',
-          icon: airdropIcon,
-          url: 'points',
-          width: 26
-        },
+    ...(typeOfNetwork === NetworkType.Testnet
+      ? [
+          {
+            label: 'Creator',
+            icon: tokenCreatorIcon,
+            url: 'creator',
+            width: 33
+          }
+        ]
+      : [
+          {
+            label: 'Points',
+            icon: airdropIcon,
+            url: 'points',
+            width: 26
+          },
+          {
+            label: 'Stake',
+            icon: lqStakingIcon,
+            url: 'stake',
+            width: 25
+          }
+        ]),
     {
       label: 'Stats',
       icon: statsIcon,
@@ -75,7 +87,8 @@ export const FooterNavbar = () => {
     portfolio: [/^portfolio\/*/, /^newPosition\/*/, /^position\/*/],
 
     ...(typeOfNetwork === NetworkType.Mainnet ? { leaderboard: [/^points\/*/] } : {}),
-    ...(typeOfNetwork === NetworkType.Testnet ? { creator: [/^creator\/*/] } : {})
+    ...(typeOfNetwork === NetworkType.Testnet ? { creator: [/^creator\/*/] } : {}),
+    ...(typeOfNetwork === NetworkType.Mainnet ? { stake: [/^stake\/*/] } : {})
   }
 
   const [display, setDisplay] = useState(true)
