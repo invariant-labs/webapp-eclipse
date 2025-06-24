@@ -55,6 +55,35 @@ const useStyles = makeStyles()(() => {
       '&:last-of-type': {
         padding: '0 0 0 1px'
       }
+    },
+    paper: {
+      background: 'transparent',
+      boxShadow: 'none'
+    },
+    root: {
+      background: colors.invariant.component,
+      borderRadius: 24,
+      display: 'flex',
+      flexDirection: 'column',
+      width: 150,
+      padding: '12px 24px',
+      justifyContent: 'center'
+    },
+    moreLink: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 11,
+      padding: '11px',
+
+      borderRadius: 18,
+      '&:hover': {
+        backgroundColor: colors.invariant.light
+      },
+      '& p': {
+        marginTop: 5,
+        ...typography.body2,
+        color: colors.invariant.text
+      }
     }
   }
 })
