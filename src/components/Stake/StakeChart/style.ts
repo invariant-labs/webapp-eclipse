@@ -10,13 +10,13 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     width: '100%',
     background: colors.invariant.component,
     borderRadius: 24,
-    padding: '24px 0px',
+    padding: '24px',
     [theme.breakpoints.down('md')]: {
       width: '100%',
-      padding: '20px 0px'
+      padding: '20px'
     },
     [theme.breakpoints.down('sm')]: {
-      padding: '16px 0px',
+      padding: '16px',
       borderRadius: 16
     }
   },
@@ -154,10 +154,8 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     background: colors.invariant.component,
     border: `1px solid ${colors.invariant.lightGrey}`,
     borderRadius: 5,
-    width: 160,
     padding: 8,
     [theme.breakpoints.down('sm')]: {
-      width: 160,
       padding: 6
     }
   },
