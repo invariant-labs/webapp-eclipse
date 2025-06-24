@@ -13,8 +13,6 @@ import {
   stakedData,
   stakeDataLoading,
   success as successState,
-  apyAndApr,
-  stakeApyAndAprLoading,
   stakeTab
 } from '@store/selectors/sBitz'
 import { network } from '@store/selectors/solanaConnection'
@@ -24,7 +22,11 @@ import { StakeChart } from '@components/Stake/StakeChart/StakeChart'
 import { StakedStats } from '@components/Stake/StakedStats/StakedStats'
 import { YourStakeProgress } from '@components/Stake/YourStakeStats/YourProgress'
 import { BN } from '@coral-xyz/anchor'
-import { calculateTokensForWithdraw, computeBitzSbitzRewards } from '@invariant-labs/sbitz'
+import {
+  calculateTokensForWithdraw,
+  computeBitzAprApy,
+  computeBitzSbitzRewards
+} from '@invariant-labs/sbitz'
 import { sBITZ_MAIN, BITZ_MAIN } from '@store/consts/static'
 import { getTokenPrice, printBN } from '@utils/utils'
 import LiquidityStaking from '@components/Stake/LiquidityStaking/LiquidityStaking'
@@ -44,8 +46,6 @@ export const WrappedStake: React.FC = () => {
 
   const progress = useSelector(inProgress)
   const success = useSelector(successState)
-  const sBitzApyApr = useSelector(apyAndApr)
-  const sBitzApyAprLoading = useSelector(stakeApyAndAprLoading)
 
   const handleStake = (props: StakeLiquidityPayload) => {
     dispatch(actions.stake(props))
@@ -96,7 +96,6 @@ export const WrappedStake: React.FC = () => {
   useEffect(() => {
     setIsLoadingDebounced(true)
     dispatch(actions.getStakedAmountAndBalance())
-    dispatch(actions.getApyAndApr())
   }, [dispatch])
 
   useEffect(() => {
@@ -113,7 +112,6 @@ export const WrappedStake: React.FC = () => {
 
       const timerId = setTimeout(() => {
         dispatch(actions.getStakedAmountAndBalance())
-        dispatch(actions.getApyAndApr())
       }, 300)
 
       return () => clearTimeout(timerId)
@@ -201,6 +199,11 @@ export const WrappedStake: React.FC = () => {
     return sbitzPredictedYield[0] || 0
   }, [processedTokens])
 
+  const sBitzApyApr = useMemo(() => {
+    if (!stakedBitzData.bitzTotalBalance) return { apr: 0, apy: 0 }
+    return computeBitzAprApy(+printBN(stakedBitzData.bitzTotalBalance, BITZ_MAIN.decimals))
+  }, [stakedBitzData])
+
   return (
     <Grid container className={classes.wrapper}>
       <Box display='flex' flexDirection='column' alignItems='center' gap={'12px'}>
@@ -227,7 +230,6 @@ export const WrappedStake: React.FC = () => {
         }}
         networkType={networkType}
         sBitzApyApr={sBitzApyApr}
-        sBitzApyAprLoading={sBitzApyAprLoading}
         stakedTokenSupply={stakedBitzData.stakedTokenSupply}
         stakedAmount={stakedBitzData.stakedAmount}
         stakeDataLoading={stakeLoading}

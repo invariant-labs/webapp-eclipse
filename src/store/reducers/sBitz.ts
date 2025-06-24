@@ -15,7 +15,6 @@ export interface GetBackedByBITZPayload {
 export interface LoadingStates {
   stakeData: boolean
   stakeOperation: boolean
-  apyAndApr: boolean
 }
 
 export interface ISBitz {
@@ -27,7 +26,6 @@ export interface ISBitz {
     stakedTokenSupply: BN | null
     bitzTotalBalance?: BN | null
   }
-  apyAndApr: { apy: number | null; apr: number | null }
   stakeTab: StakeSwitch
 }
 
@@ -36,17 +34,12 @@ const defaultStatus: ISBitz = {
   success: false,
   loadingStates: {
     stakeData: false,
-    stakeOperation: false,
-    apyAndApr: false
+    stakeOperation: false
   },
   stakedData: {
     stakedAmount: null,
     bitzTotalBalance: null,
     stakedTokenSupply: null
-  },
-  apyAndApr: {
-    apy: null,
-    apr: null
   },
   stakeTab: StakeSwitch.Stake
 }
@@ -92,15 +85,6 @@ const sBitzSlice = createSlice({
         bitzTotalBalance: action.payload.bitzTotalBalance
       }
       state.loadingStates.stakeData = false
-      return state
-    },
-    getApyAndApr(state) {
-      state.loadingStates.apyAndApr = true
-      return state
-    },
-    setApyAndApr(state, action: PayloadAction<{ apy: number | null; apr: number | null }>) {
-      state.apyAndApr = { apr: action.payload.apr, apy: action.payload.apy }
-      state.loadingStates.apyAndApr = false
       return state
     },
     setStakeTab(state, action: PayloadAction<{ tab: StakeSwitch }>) {

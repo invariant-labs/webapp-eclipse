@@ -30,8 +30,7 @@ export interface ILiquidityStaking {
   onConnectWallet: () => void
   onDisconnectWallet: () => void
   networkType: NetworkType
-  sBitzApyApr: { apy: number | null; apr: number | null }
-  sBitzApyAprLoading: boolean
+  sBitzApyApr: { apy: number; apr: number }
   stakedTokenSupply: BN
   stakedAmount: BN
   stakeDataLoading: boolean
@@ -50,7 +49,6 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
   onDisconnectWallet,
   networkType,
   sBitzApyApr,
-  sBitzApyAprLoading,
   stakedTokenSupply,
   stakedAmount,
   stakeDataLoading,
@@ -269,7 +267,7 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
             tokenFrom={tokenFrom}
             tokenTo={tokenTo}
             sBitzApyApr={sBitzApyApr}
-            sBitzApyAprLoading={sBitzApyAprLoading}
+            stakeDataLoading={stakeDataLoading}
           />
         )}
       </Box>

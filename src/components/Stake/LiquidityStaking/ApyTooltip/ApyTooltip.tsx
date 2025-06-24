@@ -9,14 +9,14 @@ export interface IApyTooltip {
   tokenFrom: SwapToken
   tokenTo: SwapToken
   sBitzApyApr: { apy: number | null; apr: number | null }
-  sBitzApyAprLoading: boolean
+  stakeDataLoading: boolean
 }
 
 export const ApyTooltip: React.FC<IApyTooltip> = ({
   tokenFrom,
   tokenTo,
   sBitzApyApr,
-  sBitzApyAprLoading
+  stakeDataLoading
 }) => {
   const { classes } = useStyles()
   const additionalApy = useMemo(() => {
@@ -25,7 +25,7 @@ export const ApyTooltip: React.FC<IApyTooltip> = ({
     return (apy - apr).toFixed(3)
   }, [sBitzApyApr])
 
-  if (sBitzApyAprLoading) {
+  if (stakeDataLoading) {
     return <Skeleton width={150} height={24} />
   }
   return (
@@ -35,7 +35,7 @@ export const ApyTooltip: React.FC<IApyTooltip> = ({
           <Box className={classes.itemWrapper}>
             <img src={tokenFrom?.logoURI} width={16} height={16} />
             <Typography className={classes.tooltipText}>
-              {sBitzApyApr.apy?.toFixed(3) ?? 0} APR (Stake){' '}
+              {sBitzApyApr.apr?.toFixed(3) ?? 0}% APR (Stake){' '}
             </Typography>
           </Box>
           <Typography className={classes.plus}>+</Typography>
