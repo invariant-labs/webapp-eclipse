@@ -8,7 +8,6 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     flexDirection: 'column',
     maxWidth: '100%',
     width: '100%',
-    marginTop: theme.spacing(3),
     background: colors.invariant.component,
     borderRadius: 24,
     padding: '24px 0px',

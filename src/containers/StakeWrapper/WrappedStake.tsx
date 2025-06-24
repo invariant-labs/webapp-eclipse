@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import useStyles from './styles'
-import { Box, Grid, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
+import { Box, Grid, Typography } from '@mui/material'
 import { Link } from 'react-router-dom'
 import LaunchIcon from '@mui/icons-material/Launch'
 import { useDispatch, useSelector } from 'react-redux'
@@ -46,10 +46,6 @@ import LiquidityStaking from '@components/Stake/LiquidityStaking/LiquidityStakin
 import { StakeSwitch } from '@store/consts/types'
 import { HowItWorks } from '@components/Stake/HowItWorks/HowItWorks'
 
-export enum StakeChartSwitcher {
-  Stake = 'Stake',
-  Stats = 'Stats'
-}
 export const WrappedStake: React.FC = () => {
   const { classes } = useStyles()
   const dispatch = useDispatch()
@@ -107,7 +103,6 @@ export const WrappedStake: React.FC = () => {
     earnedAmount: 0,
     earnedUsd: 0
   })
-  const [stakeChartTab, setStakeChartTab] = useState(StakeChartSwitcher.Stats)
   const [stakedAmount, setStakedAmount] = useState(100)
 
   const isFirstMount = useRef(true)
@@ -199,14 +194,6 @@ export const WrappedStake: React.FC = () => {
     fetchPriceData()
   }, [currentNetwork, stakedBitzData, filteredTokens, dispatch, isConnected])
 
-  const handleToggleChange = (
-    _event: React.MouseEvent<HTMLElement>,
-    newValue: StakeChartSwitcher
-  ) => {
-    if (newValue === null) return
-    setStakeChartTab(newValue)
-  }
-
   useEffect(() => {
     console.log(
       stakedAmount,
@@ -293,75 +280,14 @@ export const WrappedStake: React.FC = () => {
         currentStakeTab={currentStakeTab}
       />
 
-      <Grid className={classes.filtersContainerOverview}>
-        <Box className={classes.switchPoolsContainerOverview}>
-          <Box
-            className={`${classes.switchPoolsMarker} ${
-              stakeChartTab === StakeChartSwitcher.Stake
-                ? classes.switchPoolsMarkerStake
-                : classes.switchPoolsMarkerStats
-            }`}
-          />
-
-          <ToggleButtonGroup
-            value={stakeChartTab}
-            exclusive
-            onChange={handleToggleChange}
-            className={classes.switchPoolsButtonsGroupOverview}>
-            <ToggleButton
-              value={StakeChartSwitcher.Stake}
-              disableRipple
-              className={`${classes.switchPoolsButtonOverview} ${
-                stakeChartTab === StakeChartSwitcher.Stake
-                  ? classes.selectedToggleButton
-                  : classes.unselectedToggleButton
-              }`}>
-              Stake
-            </ToggleButton>
-            <ToggleButton
-              value={StakeChartSwitcher.Stats}
-              disableRipple
-              className={`${classes.switchPoolsButtonOverview} ${
-                stakeChartTab === StakeChartSwitcher.Stats
-                  ? classes.selectedToggleButton
-                  : classes.unselectedToggleButton
-              }`}
-              classes={{ disabled: classes.disabledSwitchButton }}>
-              Stats
-            </ToggleButton>
-          </ToggleButtonGroup>
-        </Box>
-      </Grid>
-
-      {stakeChartTab === StakeChartSwitcher.Stats && (
-        <Box className={classes.statsContainer}>
-          <Typography className={classes.statsTitle}>Your stats</Typography>
-          <YourStakeProgress
-            processedTokens={processedTokens}
-            isLoading={isLoadingDebounced}
-            isConnected={isConnected}
-            yield24={estimated24Yield}
-          />
-
-          <HowItWorks />
-          <OverallStats
-            isLoadingStats={isLoadingStats}
-            bitzPlot={bitzPlot}
-            sbitzPlot={sbitzPlot}
-            sbitzSupply={stakedBitzSupply}
-            bitzStaked={backedByBitz}
-          />
-          <StakedStats
-            isLoadingStats={isLoadingStats}
-            bitzStaked={backedByBitz}
-            bitzSupply={supplyBitz}
-            totalBitzStaked={totalBitz}
-            tvlPlot={sbitzTvlPlot}
-            sbitzTvl={sbitzTvl}
-          />
-        </Box>
-      )}
-      {stakeChartTab === StakeChartSwitcher.Stake && (
+      <Box className={classes.statsContainer}>
+        <Typography className={classes.statsTitle}>Your stats</Typography>
+        <YourStakeProgress
+          processedTokens={processedTokens}
+          isLoading={isLoadingDebounced}
+          isConnected={isConnected}
+          yield24={estimated24Yield}
+        />
         <Box className={classes.statsContainer}>
           <Typography className={classes.statsTitle}>Your stake</Typography>
           <StakeChart
@@ -373,7 +299,24 @@ export const WrappedStake: React.FC = () => {
             earnedUsd={chartData.earnedUsd}
           />
         </Box>
-      )}
+        <HowItWorks />
+        <OverallStats
+          isLoadingStats={isLoadingStats}
+          bitzPlot={bitzPlot}
+          sbitzPlot={sbitzPlot}
+          sbitzSupply={stakedBitzSupply}
+          bitzStaked={backedByBitz}
+        />
+        <StakedStats
+          isLoadingStats={isLoadingStats}
+          bitzStaked={backedByBitz}
+          bitzSupply={supplyBitz}
+          totalBitzStaked={totalBitz}
+          tvlPlot={sbitzTvlPlot}
+          sbitzTvl={sbitzTvl}
+        />
+      </Box>
+
       <FAQSection />
     </Grid>
   )
