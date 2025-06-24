@@ -201,7 +201,6 @@ export const WrappedStake: React.FC = () => {
       stakedAmount,
       +printBN(stakedBitzData.sBitzTotalBalance, sBITZ_MAIN.decimals)
     )
-
     const bitzData = bitzPredictedYield.map((value, index) => ({
       x: `Day ${index + 1}`,
       y: value
