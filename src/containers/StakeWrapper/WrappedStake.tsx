@@ -122,6 +122,7 @@ export const WrappedStake: React.FC = () => {
 
   useEffect(() => {
     dispatch(sbitzStatsActions.getCurrentStats())
+    dispatch(actions.getStakedAmountAndBalance())
 
     const fetchPriceData = async () => {
       const tokenPrice = await getTokenPrice(BITZ_MAIN.address.toString(), currentNetwork)
@@ -203,6 +204,7 @@ export const WrappedStake: React.FC = () => {
       stakedBitzData.stakedTokenSupply
     )
     if (!stakedBitzData.stakedAmount || !stakedBitzData.bitzTotalBalance) {
+      //   dispatch(actions.getStakedAmountAndBalance())
       return
     }
 
