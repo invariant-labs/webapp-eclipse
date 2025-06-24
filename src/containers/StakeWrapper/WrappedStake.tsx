@@ -7,14 +7,27 @@ import { useDispatch, useSelector } from 'react-redux'
 import { status, swapTokens, swapTokensDict } from '@store/selectors/solanaWallet'
 import { StakeLiquidityPayload } from '@store/reducers/sBitz'
 import { actions } from '@store/reducers/sBitz'
+import { actions as sbitzStatsActions } from '@store/reducers/sbitz-stats'
 import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
 import {
   inProgress,
   stakedData,
-  stakeDataLoading,
   success as successState,
+  stakeDataLoading,
   stakeTab
 } from '@store/selectors/sBitz'
+import {
+  bitzStaked,
+  bitzStakedPlot,
+  bitzSupply,
+  isLoading,
+  sbitzSupply,
+  sbitzSupplyPlot,
+  sBitzTVL,
+  sbitzTVLPlot,
+  totalBitzStaked
+} from '@store/selectors/sbitz-stats'
+
 import { network } from '@store/selectors/solanaConnection'
 import { FAQSection } from '@components/Stake/FAQSection/FAQSection'
 import { OverallStats } from '@components/Stake/OverallStats/OverallStats'
@@ -47,6 +60,16 @@ export const WrappedStake: React.FC = () => {
 
   const progress = useSelector(inProgress)
   const success = useSelector(successState)
+  const isLoadingStats = useSelector(isLoading)
+  const sbitzPlot = useSelector(sbitzSupplyPlot)
+  const bitzPlot = useSelector(bitzStakedPlot)
+  const stakedBitzSupply = useSelector(sbitzSupply)
+  const backedByBitz = useSelector(bitzStaked)
+  const totalBitz = useSelector(totalBitzStaked)
+  const supplyBitz = useSelector(bitzSupply)
+  const sbitzTvlPlot = useSelector(sbitzTVLPlot)
+  const sbitzTvl = useSelector(sBitzTVL)
+  // Handlers for staking and unstaking
 
   const handleStake = (props: StakeLiquidityPayload) => {
     dispatch(actions.stake(props))
@@ -57,6 +80,7 @@ export const WrappedStake: React.FC = () => {
   }
 
   const tokensList = useSelector(swapTokens)
+
   const stakedBitzData = useSelector(stakedData)
   const [isLoadingDebounced, setIsLoadingDebounced] = useState(true)
   const filteredTokens = useMemo(() => {
@@ -76,10 +100,12 @@ export const WrappedStake: React.FC = () => {
     bitzData: { x: string; y: number }[]
     sBitzData: { x: string; y: number }[]
     earnedAmount: number
+    earnedUsd: number
   }>({
     bitzData: [],
     sBitzData: [],
-    earnedAmount: 0
+    earnedAmount: 0,
+    earnedUsd: 0
   })
   const [stakeChartTab, setStakeChartTab] = useState(StakeChartSwitcher.Stats)
   const [stakedAmount, setStakedAmount] = useState(100)
@@ -98,6 +124,20 @@ export const WrappedStake: React.FC = () => {
     setIsLoadingDebounced(true)
     dispatch(actions.getStakedAmountAndBalance())
   }, [dispatch])
+
+  useEffect(() => {
+    dispatch(sbitzStatsActions.getCurrentStats())
+
+    const fetchPriceData = async () => {
+      const tokenPrice = await getTokenPrice(BITZ_MAIN.address.toString(), currentNetwork)
+      setBackedByBITZData({
+        amount: backedByBITZData?.amount,
+        price: tokenPrice || 0
+      })
+    }
+
+    fetchPriceData()
+  }, [])
 
   useEffect(() => {
     if (isFirstMount.current) {
@@ -168,6 +208,17 @@ export const WrappedStake: React.FC = () => {
   }
 
   useEffect(() => {
+    console.log(
+      stakedAmount,
+      stakedBitzData,
+      stakedBitzData.stakedAmount,
+      stakedBitzData.bitzTotalBalance,
+      stakedBitzData.stakedTokenSupply
+    )
+    if (!stakedBitzData.stakedAmount || !stakedBitzData.bitzTotalBalance) {
+      return
+    }
+
     const {
       bitzPredictedYield,
       sbitzPredictedYield
@@ -175,7 +226,6 @@ export const WrappedStake: React.FC = () => {
       stakedAmount,
       +printBN(stakedBitzData.bitzTotalBalance, sBITZ_MAIN.decimals)
     )
-
     const bitzData = bitzPredictedYield.map((value, index) => ({
       x: `Day ${index + 1}`,
       y: value
@@ -184,10 +234,13 @@ export const WrappedStake: React.FC = () => {
       x: `Day ${index + 1}`,
       y: value
     }))
+    const earnedAmount = sBitzData[sBitzData.length - 1]?.y - bitzData[sBitzData.length - 1]?.y
+    const earnedUsd = earnedAmount * (backedByBITZData?.price || 0)
     setChartData({
       bitzData,
       sBitzData,
-      earnedAmount: sBitzData[sBitzData.length - 1]?.y - bitzData[sBitzData.length - 1]?.y
+      earnedAmount,
+      earnedUsd
     })
   }, [stakedBitzData, stakedAmount])
 
@@ -289,9 +342,23 @@ export const WrappedStake: React.FC = () => {
             isConnected={isConnected}
             yield24={estimated24Yield}
           />
+
           <HowItWorks />
-          <OverallStats />
-          <StakedStats />
+          <OverallStats
+            isLoadingStats={isLoadingStats}
+            bitzPlot={bitzPlot}
+            sbitzPlot={sbitzPlot}
+            sbitzSupply={stakedBitzSupply}
+            bitzStaked={backedByBitz}
+          />
+          <StakedStats
+            isLoadingStats={isLoadingStats}
+            bitzStaked={backedByBitz}
+            bitzSupply={supplyBitz}
+            totalBitzStaked={totalBitz}
+            tvlPlot={sbitzTvlPlot}
+            sbitzTvl={sbitzTvl}
+          />
         </Box>
       )}
       {stakeChartTab === StakeChartSwitcher.Stake && (
@@ -303,6 +370,7 @@ export const WrappedStake: React.FC = () => {
             earnedAmount={chartData.earnedAmount}
             bitzData={chartData.bitzData}
             sBitzData={chartData.sBitzData}
+            earnedUsd={chartData.earnedUsd}
           />
         </Box>
       )}

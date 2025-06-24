@@ -9,6 +9,7 @@ import { formatNumberWithoutSuffix, trimZeros } from '@utils/utils'
 import {
   formatLargeNumber,
   formatPlotDataLabels,
+  getLabelDate,
   // getLabelDate,
   mapIntervalToPrecision
 } from '@utils/uiUtils'
@@ -19,7 +20,7 @@ interface LiquidityInterface {
   className?: string
   isLoading: boolean
   interval: IntervalsKeys
-  lastStatsTimestamp: number
+  //   lastStatsTimestamp: number
   color: string
 }
 
@@ -162,17 +163,17 @@ const SupplyChart: React.FC<LiquidityInterface> = ({
           fill={[{ match: '*', id: 'gradient' }]}
           crosshairType='bottom'
           tooltip={({ point }) => {
-            // const date = getLabelDate(
-            //     interval,
-            //     (point.data.x as Date).getTime(),
-            //     lastStatsTimestamp
-            // )
+            const date = getLabelDate(
+              interval,
+              (point.data.x as Date).getTime(),
+              (point.data.x as Date).getTime()
+            )
 
             return (
               <Grid className={classes.tooltip}>
-                <Typography className={classes.tooltipDate}>Day</Typography>
-                <Typography className={classes.tooltipValue}>
-                  ${formatNumberWithoutSuffix(point.data.y as number)}
+                <Typography className={classes.tooltipDate}>{date}</Typography>
+                <Typography className={classes.tooltipValue} style={{ color }}>
+                  {formatNumberWithoutSuffix(point.data.y as number)}
                 </Typography>
               </Grid>
             )
