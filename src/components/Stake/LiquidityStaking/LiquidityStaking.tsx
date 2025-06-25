@@ -2,7 +2,12 @@ import { Box, Grid, Typography } from '@mui/material'
 import useStyles from './style'
 import Switcher from './Switcher/Switcher'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { BITZ_MAIN, NetworkType, sBITZ_MAIN } from '@store/consts/static'
+import {
+  BITZ_MAIN,
+  NetworkType,
+  sBITZ_MAIN,
+  WETH_MIN_STAKE_UNSTAKE_LAMPORTS
+} from '@store/consts/static'
 import ExchangeAmountInput from '@components/Inputs/ExchangeAmountInput/ExchangeAmountInput'
 import { Status } from '@store/reducers/solanaWallet'
 import { SwapToken } from '@store/selectors/solanaWallet'
@@ -36,6 +41,12 @@ export interface ILiquidityStaking {
   stakeDataLoading: boolean
   changeStakeTab: (tab: StakeSwitch) => void
   currentStakeTab: StakeSwitch
+  ethBalance: BN
+  isBalanceLoading: boolean
+  stakeInput: string
+  unstakeInput: string
+  setStakeInput: (val: string) => void
+  setUnstakeInput: (val: string) => void
 }
 
 export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
@@ -53,11 +64,32 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
   stakedAmount,
   stakeDataLoading,
   changeStakeTab,
-  currentStakeTab
+  currentStakeTab,
+  ethBalance,
+  isBalanceLoading,
+  stakeInput,
+  unstakeInput,
+  setStakeInput,
+  setUnstakeInput
 }) => {
   const { classes } = useStyles()
 
-  const [amountFrom, setAmountFrom] = useState<string>('')
+  const amountFrom = useMemo(() => {
+    if (currentStakeTab === StakeSwitch.Stake) return stakeInput
+    return unstakeInput
+  }, [currentStakeTab, stakeInput, unstakeInput])
+
+  const setAmountFrom = useCallback(
+    (val: string) => {
+      if (currentStakeTab === StakeSwitch.Stake) {
+        setStakeInput(val)
+      } else {
+        setUnstakeInput(val)
+      }
+    },
+    [currentStakeTab]
+  )
+
   const [amountTo, setAmountTo] = useState<string>('')
 
   const [isRotating, setIsRotating] = useState(false)
@@ -151,35 +183,38 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
     setTimeout(() => setIsRotating(false), 500)
   }
 
-  useEffect(() => {
-    setAmountTo('0')
-    setAmountFrom('0')
-  }, [currentStakeTab])
-
   const handleActionButtons = (action: 'max' | 'half', tokenAddress: PublicKey) => {
     if (action === 'max') {
       const value = tokens[tokenAddress.toString()]?.balance || new BN(0)
       const valueString = printBN(value, TOKEN_DECIMALS)
       setAmountFrom(valueString)
-      if (Number(valueString) === 0) {
-        setAmountTo('0')
-      } else {
-        setAmountTo(printBN(calculateOtherTokenAmount(valueString), TOKEN_DECIMALS))
-      }
     } else if (action === 'half') {
       const balance = tokens[tokenAddress.toString()]?.balance || new BN(0)
       const value = balance.div(new BN(2)) || new BN(0)
       const valueString = printBN(value, TOKEN_DECIMALS)
       setAmountFrom(valueString)
-      if (Number(valueString) === 0) {
-        setAmountTo('0')
-      } else {
-        setAmountTo(printBN(calculateOtherTokenAmount(valueString), TOKEN_DECIMALS))
-      }
     }
   }
 
   const getStateMessage = () => {
+    if (isBalanceLoading || stakeDataLoading) {
+      return 'Loading...'
+    }
+    if (ethBalance.lt(WETH_MIN_STAKE_UNSTAKE_LAMPORTS)) {
+      return `Insufficient ETH`
+    }
+
+    if (progress !== 'none' || amountFrom === '' || Number(amountFrom) === 0)
+      return 'Enter token amount'
+
+    if (
+      tokenFrom &&
+      tokenFrom.balance &&
+      amountFrom.length > 0 &&
+      tokenFrom.balance.lt(new BN(convertBalanceToBN(amountFrom, TOKEN_DECIMALS)))
+    )
+      return `Not enough ${tokenFrom.symbol}`
+
     if (currentStakeTab === StakeSwitch.Stake) {
       return `Stake`
     } else {
@@ -200,6 +235,15 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
     },
     [stakeDataLoading, stakedAmount, stakedTokenSupply, tokenFrom, tokenTo]
   )
+
+  useEffect(() => {
+    if (!amountFrom || Number(amountFrom) === 0) {
+      setAmountTo('0')
+    } else {
+      setAmountTo(printBN(calculateOtherTokenAmount(amountFrom), TOKEN_DECIMALS))
+    }
+  }, [amountFrom])
+
   return (
     <Grid container className={classes.wrapper}>
       <Switcher
@@ -219,11 +263,6 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
         setValue={value => {
           if (value.match(/^\d*\.?\d*$/)) {
             setAmountFrom(value)
-            if (!value || Number(value) === 0) {
-              setAmountTo('0')
-            } else {
-              setAmountTo(printBN(calculateOtherTokenAmount(value), TOKEN_DECIMALS))
-            }
           }
         }}
         placeholder={`0`}
@@ -314,11 +353,11 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
         <AnimatedButton
           content={getStateMessage()}
           className={
-            amountFrom !== '0' && amountFrom !== '' && progress === 'none'
-              ? `${classes.swapButton} ${classes.ButtonSwapActive}`
-              : classes.swapButton
+            getStateMessage() !== 'Stake' && getStateMessage() !== 'Unstake'
+              ? classes.swapButton
+              : `${classes.swapButton} ${classes.ButtonSwapActive}`
           }
-          disabled={progress !== 'none' || amountFrom === '0' || amountFrom === ''}
+          disabled={getStateMessage() !== 'Stake' && getStateMessage() !== 'Unstake'}
           onClick={() => {
             setProgress('progress')
 

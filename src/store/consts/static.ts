@@ -709,6 +709,8 @@ export const WETH_CREATE_TOKEN_LAMPORTS_TEST = new BN(10100000)
 export const WETH_CLOSE_POSITION_LAMPORTS_MAIN = new BN(30000)
 export const WETH_CLOSE_POSITION_LAMPORTS_TEST = new BN(30000)
 
+export const WETH_MIN_STAKE_UNSTAKE_LAMPORTS = new BN(50)
+
 export const MINIMUM_PRICE_IMPACT = toDecimal(1, 4)
 
 export const getCreateTokenLamports = (network: NetworkType): BN => {
