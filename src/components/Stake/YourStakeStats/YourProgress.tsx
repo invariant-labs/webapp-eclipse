@@ -3,9 +3,6 @@ import React from 'react'
 import useStyles from './styles'
 import { ProgressItem } from './ProgressItem'
 import { BlurOverlay } from './BlurOverlay'
-import top from '@static/png/trapezeMobileTop.png'
-import bot from '@static/png/trapezeMobileBottom.png'
-import mid from '@static/png/boxMobileMiddle.png'
 import BITZ from '@static/png/bitz.png'
 import sBITZ from '@static/png/sBitz.png'
 import { BN } from '@coral-xyz/anchor'
@@ -28,7 +25,7 @@ export const YourStakeProgress: React.FC<YourProgressProps> = ({
   yield24,
   isConnected
 }) => {
-  const { classes } = useStyles({})
+  const { classes } = useStyles()
   return (
     <Grid className={classes.mainWrapper}>
       <Grid className={classes.boxWrapper}>
