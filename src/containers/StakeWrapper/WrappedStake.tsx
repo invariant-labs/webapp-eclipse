@@ -260,8 +260,8 @@ export const WrappedStake: React.FC = () => {
 
   return (
     <Grid container className={classes.wrapper}>
-      <Box display='flex' flexDirection='column' alignItems='center' gap={'12px'}>
-        <Typography className={classes.header}>Liquidity staking</Typography>
+      <Box className={classes.titleWrapper}>
+        <Typography component='h1'>Liquidity staking</Typography>
         <Box className={classes.subheaderDescription}>
           Earn more with sBITZ.
           <Link to='' target='_blank' className={classes.learnMoreLink}>
