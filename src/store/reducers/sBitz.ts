@@ -27,6 +27,8 @@ export interface ISBitz {
     bitzTotalBalance?: BN | null
   }
   stakeTab: StakeSwitch
+  stakeInputVal: string
+  unstakeInputVal: string
 }
 
 const defaultStatus: ISBitz = {
@@ -41,7 +43,9 @@ const defaultStatus: ISBitz = {
     bitzTotalBalance: null,
     stakedTokenSupply: null
   },
-  stakeTab: StakeSwitch.Stake
+  stakeTab: StakeSwitch.Stake,
+  stakeInputVal: '',
+  unstakeInputVal: ''
 }
 
 export const sBitzSliceName = 'sBitz'
@@ -89,6 +93,14 @@ const sBitzSlice = createSlice({
     },
     setStakeTab(state, action: PayloadAction<{ tab: StakeSwitch }>) {
       state.stakeTab = action.payload.tab
+      return state
+    },
+    setStakeInputVal(state, action: PayloadAction<{ val: string }>) {
+      state.stakeInputVal = action.payload.val
+      return state
+    },
+    setUnstakeInputVal(state, action: PayloadAction<{ val: string }>) {
+      state.unstakeInputVal = action.payload.val
       return state
     }
   }

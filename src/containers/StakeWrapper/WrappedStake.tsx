@@ -4,7 +4,13 @@ import { Box, Grid, Typography } from '@mui/material'
 import { Link } from 'react-router-dom'
 import LaunchIcon from '@mui/icons-material/Launch'
 import { useDispatch, useSelector } from 'react-redux'
-import { status, swapTokens, swapTokensDict } from '@store/selectors/solanaWallet'
+import {
+  balance,
+  balanceLoading,
+  status,
+  swapTokens,
+  swapTokensDict
+} from '@store/selectors/solanaWallet'
 import { StakeLiquidityPayload } from '@store/reducers/sBitz'
 import { actions } from '@store/reducers/sBitz'
 import { actions as sbitzStatsActions } from '@store/reducers/sbitz-stats'
@@ -14,7 +20,9 @@ import {
   stakedData,
   success as successState,
   stakeDataLoading,
-  stakeTab
+  stakeTab,
+  stakeInputVal,
+  unstakeInputVal
 } from '@store/selectors/sBitz'
 import {
   bitzStaked,
@@ -53,6 +61,10 @@ export const WrappedStake: React.FC = () => {
 
   const walletStatus = useSelector(status)
   const tokens = useSelector(swapTokensDict)
+  const ethBalance = useSelector(balance)
+  const isBalanceLoading = useSelector(balanceLoading)
+  const stakeInput = useSelector(stakeInputVal)
+  const unstakeInput = useSelector(unstakeInputVal)
 
   const progress = useSelector(inProgress)
   const success = useSelector(successState)
@@ -65,7 +77,6 @@ export const WrappedStake: React.FC = () => {
   const supplyBitz = useSelector(bitzSupply)
   const sbitzTvlPlot = useSelector(sbitzTVLPlot)
   const sbitzTvl = useSelector(sBitzTVL)
-  // Handlers for staking and unstaking
 
   const handleStake = (props: StakeLiquidityPayload) => {
     dispatch(actions.stake(props))
@@ -280,6 +291,16 @@ export const WrappedStake: React.FC = () => {
           dispatch(actions.setStakeTab({ tab }))
         }}
         currentStakeTab={currentStakeTab}
+        ethBalance={ethBalance}
+        isBalanceLoading={isBalanceLoading}
+        stakeInput={stakeInput}
+        unstakeInput={unstakeInput}
+        setStakeInput={(val: string) => {
+          dispatch(actions.setStakeInputVal({ val }))
+        }}
+        setUnstakeInput={(val: string) => {
+          dispatch(actions.setUnstakeInputVal({ val }))
+        }}
       />
 
       <Box className={classes.statsContainer}>
