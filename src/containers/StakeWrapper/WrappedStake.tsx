@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import useStyles from './styles'
-import { Box, Grid, Typography } from '@mui/material'
+import { Box, Grid, Typography, Button, useMediaQuery } from '@mui/material'
 import { Link } from 'react-router-dom'
 import LaunchIcon from '@mui/icons-material/Launch'
 import { useDispatch, useSelector } from 'react-redux'
@@ -15,6 +15,9 @@ import { StakeLiquidityPayload } from '@store/reducers/sBitz'
 import { actions } from '@store/reducers/sBitz'
 import { actions as sbitzStatsActions } from '@store/reducers/sbitz-stats'
 import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
+import EyeShow from '@static/svg/eye-show.svg'
+import EyeHide from '@static/svg/eye-off.svg'
+
 import {
   inProgress,
   stakedData,
@@ -53,11 +56,13 @@ import { getTokenPrice, printBN } from '@utils/utils'
 import LiquidityStaking from '@components/Stake/LiquidityStaking/LiquidityStaking'
 import { StakeSwitch } from '@store/consts/types'
 import { HowItWorks } from '@components/Stake/HowItWorks/HowItWorks'
+import { theme } from '@static/theme'
 
 export const WrappedStake: React.FC = () => {
   const { classes } = useStyles()
   const dispatch = useDispatch()
   const networkType = useSelector(network)
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'))
 
   const walletStatus = useSelector(status)
   const tokens = useSelector(swapTokensDict)
@@ -258,6 +263,12 @@ export const WrappedStake: React.FC = () => {
     return computeBitzAprApy(+printBN(stakedBitzData.bitzTotalBalance, BITZ_MAIN.decimals))
   }, [stakedBitzData])
 
+  const [isExpanded, setIsExpanded] = useState(false)
+
+  const toggleExpand = () => {
+    setIsExpanded(prev => !prev)
+  }
+
   return (
     <Grid container className={classes.wrapper}>
       <Box display='flex' flexDirection='column' alignItems='center' gap={'12px'}>
@@ -269,76 +280,98 @@ export const WrappedStake: React.FC = () => {
           </Link>
         </Box>
       </Box>
-      <LiquidityStaking
-        walletStatus={walletStatus}
-        tokens={tokens}
-        handleStake={handleStake}
-        handleUnstake={handleUnstake}
-        inProgress={progress}
-        success={success}
-        onConnectWallet={() => {
-          dispatch(walletActions.connect(false))
-        }}
-        onDisconnectWallet={() => {
-          dispatch(walletActions.disconnect())
-        }}
-        networkType={networkType}
-        sBitzApyApr={sBitzApyApr}
-        stakedTokenSupply={stakedBitzData.stakedTokenSupply}
-        stakedAmount={stakedBitzData.stakedAmount}
-        stakeDataLoading={stakeLoading}
-        changeStakeTab={(tab: StakeSwitch) => {
-          dispatch(actions.setStakeTab({ tab }))
-        }}
-        currentStakeTab={currentStakeTab}
-        ethBalance={ethBalance}
-        isBalanceLoading={isBalanceLoading}
-        stakeInput={stakeInput}
-        unstakeInput={unstakeInput}
-        setStakeInput={(val: string) => {
-          dispatch(actions.setStakeInputVal({ val }))
-        }}
-        setUnstakeInput={(val: string) => {
-          dispatch(actions.setUnstakeInputVal({ val }))
-        }}
-      />
+
+      <Box className={classes.animatedContainer}>
+        <Box
+          className={`${classes.liquidityStakingWrapper} ${isExpanded ? classes.liquidityStakingExpanded : ''}`}
+        >
+          <Box className={classes.liquidityStakingHeaderWrapper}>
+
+            <Button className={classes.statsExpanderButton} onClick={() => toggleExpand()}>
+              <p>
+                <img src={isExpanded ? EyeHide : EyeShow} width={20} height={20} />
+                Your Stats
+              </p>
+            </Button>
+          </Box>
+          <LiquidityStaking
+            walletStatus={walletStatus}
+            tokens={tokens}
+            handleStake={handleStake}
+            handleUnstake={handleUnstake}
+            inProgress={progress}
+            success={success}
+            onConnectWallet={() => {
+              dispatch(walletActions.connect(false))
+            }}
+            onDisconnectWallet={() => {
+              dispatch(walletActions.disconnect())
+            }}
+            networkType={networkType}
+            sBitzApyApr={sBitzApyApr}
+            stakedTokenSupply={stakedBitzData.stakedTokenSupply}
+            stakedAmount={stakedBitzData.stakedAmount}
+            stakeDataLoading={stakeLoading}
+            changeStakeTab={(tab: StakeSwitch) => {
+              dispatch(actions.setStakeTab({ tab }))
+            }}
+            currentStakeTab={currentStakeTab}
+            ethBalance={ethBalance}
+            isBalanceLoading={isBalanceLoading}
+            stakeInput={stakeInput}
+            unstakeInput={unstakeInput}
+            setStakeInput={(val: string) => {
+              dispatch(actions.setStakeInputVal({ val }))
+            }}
+            setUnstakeInput={(val: string) => {
+              dispatch(actions.setUnstakeInputVal({ val }))
+            }}
+          />
+
+        </Box>
+
+        <Box
+          className={`${classes.yourStatsWrapper} ${isExpanded ? classes.yourStatsVisible : ''}`}
+        >
+          {isExpanded && (
+            <YourStakeProgress
+              processedTokens={processedTokens}
+              isLoading={isLoadingDebounced}
+              isConnected={isConnected}
+              yield24={estimated24Yield}
+            />
+          )}
+        </Box>
+      </Box>
 
       <Box className={classes.statsContainer}>
-        <Typography className={classes.statsTitle}>Your stats</Typography>
-        <YourStakeProgress
-          processedTokens={processedTokens}
-          isLoading={isLoadingDebounced}
-          isConnected={isConnected}
-          yield24={estimated24Yield}
-        />
-        <Box className={classes.statsContainer}>
-          <Typography className={classes.statsTitle}>Your stake</Typography>
-          <StakeChart
-            onStakedAmountChange={setStakedAmount}
-            stakedAmount={stakedAmount}
-            earnedAmount={chartData.earnedAmount}
-            bitzData={chartData.bitzData}
-            sBitzData={chartData.sBitzData}
-            earnedUsd={chartData.earnedUsd}
-          />
-        </Box>
-        <HowItWorks />
-        <OverallStats
-          isLoadingStats={isLoadingStats}
-          bitzPlot={bitzPlot}
-          sbitzPlot={sbitzPlot}
-          sbitzSupply={stakedBitzSupply}
-          bitzStaked={backedByBitz}
-        />
-        <StakedStats
-          isLoadingStats={isLoadingStats}
-          bitzStaked={backedByBitz}
-          bitzSupply={supplyBitz}
-          totalBitzStaked={totalBitz}
-          tvlPlot={sbitzTvlPlot}
-          sbitzTvl={sbitzTvl}
+        <Typography className={classes.statsTitle}>Your stake</Typography>
+        <StakeChart
+          onStakedAmountChange={setStakedAmount}
+          stakedAmount={stakedAmount}
+          earnedAmount={chartData.earnedAmount}
+          bitzData={chartData.bitzData}
+          sBitzData={chartData.sBitzData}
+          earnedUsd={chartData.earnedUsd}
         />
       </Box>
+
+      <HowItWorks />
+      <OverallStats
+        isLoadingStats={isLoadingStats}
+        bitzPlot={bitzPlot}
+        sbitzPlot={sbitzPlot}
+        sbitzSupply={stakedBitzSupply}
+        bitzStaked={backedByBitz}
+      />
+      <StakedStats
+        isLoadingStats={isLoadingStats}
+        bitzStaked={backedByBitz}
+        bitzSupply={supplyBitz}
+        totalBitzStaked={totalBitz}
+        tvlPlot={sbitzTvlPlot}
+        sbitzTvl={sbitzTvl}
+      />
 
       <FAQSection />
     </Grid>

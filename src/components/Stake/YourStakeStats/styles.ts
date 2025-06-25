@@ -4,7 +4,10 @@ import { makeStyles } from 'tss-react/mui'
 const useStyles = makeStyles<{ bgImage?: string }>()((_theme, { bgImage }) => {
   return {
     mainWrapper: {
-      maxWidth: 605,
+      maxWidth: 305,
+      [theme.breakpoints.down('md')]: {
+        maxWidth: '100%'
+      },
       width: '100%',
       [theme.breakpoints.down('sm')]: {
         maxWidth: '100%'
@@ -28,15 +31,10 @@ const useStyles = makeStyles<{ bgImage?: string }>()((_theme, { bgImage }) => {
     },
     tooltipTitle: { '& p': { ...typography.body2, color: colors.invariant.textGrey } },
     pointsContainer: {
-      display: 'grid',
-      gridTemplateColumns: '1fr auto 1fr',
+      display: 'flex',
+      flexDirection: 'column',
       width: '100%',
-      gap: '24px',
-
-      [theme.breakpoints.down(500)]: {
-        display: 'flex',
-        flexDirection: 'column'
-      }
+      gap: '24px'
     },
     mobileWrapper: {
       display: 'flex',
@@ -46,17 +44,12 @@ const useStyles = makeStyles<{ bgImage?: string }>()((_theme, { bgImage }) => {
       display: 'flex',
       flexDirection: 'column',
       width: '100%',
-      [theme.breakpoints.up(500)]: {
-        '& > *:nth-of-type(odd)': {
-          borderBottom: `1px solid ${colors.invariant.light}`
-        },
-        '& > *:nth-of-type(even)': {
-          borderBottom: 'none'
-        }
-      },
-      [theme.breakpoints.down(500)]: {
-        gap: '24px',
-        borderBottom: 'none'
+      gap: '24px',
+      [theme.breakpoints.down('md')]: {
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        gridTemplateRows: 'auto auto',
+        gap: '16px'
       }
     },
     divider: {
@@ -93,7 +86,7 @@ const useStyles = makeStyles<{ bgImage?: string }>()((_theme, { bgImage }) => {
       flexDirection: 'column',
       borderRadius: '14px',
       width: '100%',
-      height: '239px',
+      height: 'auto',
       border: '1px solid #EF84F540',
       justifyContent: 'center',
       background: '#111931',

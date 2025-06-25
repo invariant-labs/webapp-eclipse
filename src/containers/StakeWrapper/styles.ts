@@ -1,4 +1,4 @@
-import { typography, colors } from '@static/theme'
+import { typography, colors, theme } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => ({
@@ -141,6 +141,108 @@ export const useStyles = makeStyles()(() => ({
   },
   unselectedToggleButton: {
     fontWeight: 400
+  },
+  animatedContainer: {
+    display: 'flex',
+    width: '100%',
+    position: 'relative',
+    justifyContent: 'center',
+    transition: 'all 0.3s ease-in-out',
+    marginTop: '32px',
+    [theme.breakpoints.down('md')]: {
+      flexDirection: 'column-reverse',
+      alignItems: 'center'
+    }
+  },
+  liquidityStakingWrapper: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'column',
+    transition: 'transform 0.4s ease-in-out, width 0.4s ease-in-out',
+    width: '100%',
+    maxWidth: '600px',
+    zIndex: 2,
+    [theme.breakpoints.down('md')]: {
+      transform: 'none !important',
+      width: '100% !important',
+      maxWidth: '100%'
+    }
+  },
+  liquidityStakingExpanded: {
+    transform: 'translateX(-280px)',
+    width: 'calc(50% - 8px)'
+  },
+  yourStatsWrapper: {
+    position: 'absolute',
+    right: 0,
+    width: 'calc(50% - 20px)',
+    maxWidth: '600px',
+    opacity: 0,
+    transform: 'translateX(100px)',
+    transition: 'opacity 0.5s ease-in-out, transform 0.5s ease-in-out, visibility 0.1s linear 0.5s',
+    pointerEvents: 'none',
+    zIndex: 1,
+    visibility: 'hidden',
+    [theme.breakpoints.down('md')]: {
+      position: 'relative',
+      right: 'auto',
+      width: '100%',
+      maxWidth: '100%',
+      marginBottom: '24px',
+      transform: 'none !important'
+    }
+  },
+  yourStatsVisible: {
+    opacity: 1,
+    transform: 'translateX(-20px)',
+    pointerEvents: 'auto',
+    visibility: 'visible',
+    transition: 'opacity 0.5s ease-in-out, transform 0.5s ease-in-out, visibility 0s linear'
+  },
+  expandButton: {
+    marginTop: '16px',
+    backgroundColor: colors.invariant.component,
+    color: colors.invariant.text,
+    '&:hover': {
+      backgroundColor: colors.invariant.light
+    },
+    ...typography.body2
+  },
+  statsExpanderButton: {
+    height: 27,
+    padding: '0px 8px',
+    borderRadius: 8,
+    backgroundColor: colors.invariant.component,
+    color: colors.invariant.textGrey,
+    fontSize: 14,
+    cursor: 'pointer',
+    userSelect: 'none',
+    display: 'flex',
+    alignItems: 'center',
+    textTransform: 'none',
+    transition: '300ms',
+
+    '&:hover': {
+      background: colors.invariant.light,
+      color: colors.invariant.text,
+      '@media (hover: none)': {
+        backgroundColor: colors.invariant.component,
+        color: colors.invariant.textGrey
+      }
+    },
+    p: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '8px'
+    }
+  },
+  liquidityStakingHeaderWrapper: {
+    maxWidth: '500px',
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'flex-end',
+    marginBottom: '16px'
   }
 }))
 
