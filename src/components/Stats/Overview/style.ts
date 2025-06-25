@@ -60,5 +60,8 @@ export const useStyles = makeStyles()(() => ({
     [theme.breakpoints.down('md')]: {
       ...typography.body1
     }
+  },
+  addZIndex: {
+    zIndex: 2
   }
 }))
