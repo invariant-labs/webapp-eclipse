@@ -468,7 +468,8 @@ export const StakeChart: React.FC<StakeChartProps> = ({
         className={classes.valuesContainer}
         sx={{
           flexDirection: isMobile ? 'column' : 'row',
-          gap: isMobile ? 1 : 4
+          gap: isMobile ? 1 : 4,
+          padding: '16px'
         }}>
         {bitzData.length > 0 && (
           <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>

@@ -10,7 +10,6 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     width: '100%',
     background: colors.invariant.component,
     borderRadius: 24,
-    padding: '24px',
     [theme.breakpoints.down('md')]: {
       width: '100%',
       padding: '20px'
@@ -28,11 +27,11 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     color: colors.invariant.text,
     textAlign: 'center',
     ...typography.body3,
-    padding: theme.spacing(0, 2),
     marginBottom: theme.spacing(2),
     gap: theme.spacing(1),
     maxWidth: '100%',
     wordBreak: 'break-word',
+    padding: '16px',
     [theme.breakpoints.down('md')]: {
       gap: theme.spacing(0.75)
     },
@@ -86,6 +85,8 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   chartBox: {
     height: 400,
     width: '100%',
+
+    marginLeft: -8,
     [theme.breakpoints.down('sm')]: {
       height: 300
     }
