@@ -12,20 +12,18 @@ import { BN } from '@coral-xyz/anchor'
 import { BITZ_MAIN, sBITZ_MAIN } from '@store/consts/static'
 import { formatNumberWithSuffix, printBN } from '@utils/utils'
 interface YourProgressProps {
-  processedTokens: {
-    sBITZ: BN
-    backedByBITZ: {
-      amount: BN
-      price?: number
-    }
-  }
+  sBitzBalance: BN
+  bitzToWithdraw: BN
+  bitzPrice: number
   yield24: number
   isLoading?: boolean
   isConnected: boolean
 }
 
 export const YourStakeProgress: React.FC<YourProgressProps> = ({
-  processedTokens,
+  sBitzBalance,
+  bitzToWithdraw,
+  bitzPrice,
   isLoading,
   yield24,
   isConnected
@@ -48,7 +46,7 @@ export const YourStakeProgress: React.FC<YourProgressProps> = ({
                   </Box>
                 }
                 isLoading={isLoading}
-                value={formatNumberWithSuffix(printBN(processedTokens.sBITZ, sBITZ_MAIN.decimals), {
+                value={formatNumberWithSuffix(printBN(sBitzBalance, sBITZ_MAIN.decimals), {
                   decimalsAfterDot: 4
                 })}
               />
@@ -84,10 +82,9 @@ export const YourStakeProgress: React.FC<YourProgressProps> = ({
                   </Box>
                 }
                 isLoading={isLoading}
-                value={formatNumberWithSuffix(
-                  printBN(processedTokens.backedByBITZ.amount, sBITZ_MAIN.decimals) || '0',
-                  { decimalsAfterDot: 4 }
-                )}
+                value={formatNumberWithSuffix(printBN(bitzToWithdraw, BITZ_MAIN.decimals), {
+                  decimalsAfterDot: 4
+                })}
               />
               <ProgressItem
                 isConnected={isConnected}
@@ -95,8 +92,7 @@ export const YourStakeProgress: React.FC<YourProgressProps> = ({
                 isLoading={isLoading}
                 label='Value'
                 value={`$${formatNumberWithSuffix(
-                  +printBN(processedTokens.backedByBITZ.amount, BITZ_MAIN.decimals) *
-                    (processedTokens.backedByBITZ.price || 0),
+                  +printBN(bitzToWithdraw, BITZ_MAIN.decimals) * bitzPrice,
                   { decimalsAfterDot: 2 }
                 )}`}
               />
