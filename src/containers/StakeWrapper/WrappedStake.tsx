@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import useStyles from './styles'
-import { Box, Grid, Typography } from '@mui/material'
+import { Box, Button, Grid, Typography } from '@mui/material'
 import { Link } from 'react-router-dom'
 import LaunchIcon from '@mui/icons-material/Launch'
 import { useDispatch, useSelector } from 'react-redux'
@@ -48,11 +48,13 @@ import {
   computeBitzAprApy,
   computeBitzSbitzRewards
 } from '@invariant-labs/sbitz'
-import { sBITZ_MAIN, BITZ_MAIN } from '@store/consts/static'
+import { sBITZ_MAIN, BITZ_MAIN, REFRESHER_INTERVAL } from '@store/consts/static'
 import { getTokenPrice, printBN } from '@utils/utils'
 import LiquidityStaking from '@components/Stake/LiquidityStaking/LiquidityStaking'
 import { StakeSwitch } from '@store/consts/types'
 import { HowItWorks } from '@components/Stake/HowItWorks/HowItWorks'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
+import { refreshIcon } from '@static/icons'
 
 export const WrappedStake: React.FC = () => {
   const { classes } = useStyles()
@@ -93,7 +95,7 @@ export const WrappedStake: React.FC = () => {
   })
 
   const [stakedAmount, setStakedAmount] = useState(100)
-
+  const [refresherTime, setRefresherTime] = useState<number>(REFRESHER_INTERVAL)
   const [bitzPrice, setBitzPrice] = useState(0)
 
   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
@@ -127,17 +129,39 @@ export const WrappedStake: React.FC = () => {
     return computeBitzAprApy(+printBN(stakedBitzData.bitzTotalBalance, BITZ_MAIN.decimals))
   }, [stakedBitzData])
 
+  const fetchPriceData = async () => {
+    const tokenPrice = await getTokenPrice(BITZ_MAIN.address.toString(), networkType)
+    setBitzPrice(tokenPrice ?? 0)
+  }
+
   useEffect(() => {
     dispatch(sbitzStatsActions.getCurrentStats())
     dispatch(actions.getStakedAmountAndBalance())
 
-    const fetchPriceData = async () => {
-      const tokenPrice = await getTokenPrice(BITZ_MAIN.address.toString(), networkType)
-      setBitzPrice(tokenPrice ?? 0)
-    }
-
     fetchPriceData()
   }, [dispatch])
+
+  const onRefresh = () => {
+    dispatch(walletActions.getBalance())
+    dispatch(actions.getStakedAmountAndBalance())
+  }
+
+  const handleRefresh = async () => {
+    onRefresh()
+    setRefresherTime(REFRESHER_INTERVAL)
+  }
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (refresherTime > 0) {
+        setRefresherTime(refresherTime - 1)
+      } else {
+        handleRefresh()
+      }
+    }, 1000)
+
+    return () => clearTimeout(timeout)
+  }, [refresherTime])
 
   useEffect(() => {
     if (!stakedBitzData.stakedAmount || !stakedBitzData.bitzTotalBalance) {
@@ -172,13 +196,25 @@ export const WrappedStake: React.FC = () => {
   return (
     <Grid container className={classes.wrapper}>
       <Box className={classes.titleWrapper}>
-        <Typography component='h1'>Liquidity staking</Typography>
-        <Box className={classes.subheaderDescription}>
-          Earn more with sBITZ.
-          <Link to='' target='_blank' className={classes.learnMoreLink}>
-            <span> Learn more</span> <LaunchIcon classes={{ root: classes.clipboardIcon }} />
-          </Link>
+        <Box className={classes.titleTextWrapper}>
+          <Typography component='h1'>Liquidity staking</Typography>
+          <Box className={classes.subheaderDescription}>
+            Earn more with sBITZ.
+            <Link to='' target='_blank' className={classes.learnMoreLink}>
+              <span> Learn more</span> <LaunchIcon classes={{ root: classes.clipboardIcon }} />
+            </Link>
+          </Box>
         </Box>
+        <TooltipHover title='Refresh'>
+          <Grid className={classes.refreshIconContainer}>
+            <Button
+              onClick={handleRefresh}
+              className={classes.refreshIconBtn}
+              disabled={isBalanceLoading || stakeLoading || isLoadingStats}>
+              <img src={refreshIcon} className={classes.refreshIcon} alt='Refresh' />
+            </Button>
+          </Grid>
+        </TooltipHover>
       </Box>
       <LiquidityStaking
         walletStatus={walletStatus}
