@@ -37,7 +37,6 @@ export const YourStakeProgress: React.FC<YourProgressProps> = ({
           <Grid className={classes.pointsColumn}>
             <ProgressItem
               isConnected={isConnected}
-              bgImage={top}
               label={
                 <Box className={classes.boxLabel}>
                   <img src={sBITZ} width={20} height={20} />
@@ -50,7 +49,6 @@ export const YourStakeProgress: React.FC<YourProgressProps> = ({
               })}
             />
             <ProgressItem
-              bgImage={mid}
               isConnected={isConnected}
               isLoading={isLoading}
               tooltip={<>Estimated BITZ rewards from holding sBITZ over the next 24 hours.</>}
@@ -67,7 +65,6 @@ export const YourStakeProgress: React.FC<YourProgressProps> = ({
             />
             <ProgressItem
               isConnected={isConnected}
-              bgImage={mid}
               tooltip={<>The underlying BITZ tokens backing your sBITZ holdings.</>}
               label={
                 <Box className={classes.boxLabel}>
@@ -83,7 +80,6 @@ export const YourStakeProgress: React.FC<YourProgressProps> = ({
             />
             <ProgressItem
               isConnected={isConnected}
-              bgImage={bot}
               isLoading={isLoading}
               label='Value'
               value={`$${formatNumberWithSuffix(

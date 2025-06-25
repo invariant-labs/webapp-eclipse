@@ -1,7 +1,7 @@
 import { colors, theme, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
-const useStyles = makeStyles<{ bgImage?: string }>()((_theme, { bgImage }) => {
+const useStyles = makeStyles()(_theme => {
   return {
     mainWrapper: {
       maxWidth: 305,
@@ -44,13 +44,7 @@ const useStyles = makeStyles<{ bgImage?: string }>()((_theme, { bgImage }) => {
       display: 'flex',
       flexDirection: 'column',
       width: '100%',
-      gap: '24px',
-      [theme.breakpoints.down('md')]: {
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
-        gridTemplateRows: 'auto auto',
-        gap: '16px'
-      }
+      gap: '24px'
     },
     divider: {
       background: colors.invariant.light,
@@ -92,9 +86,7 @@ const useStyles = makeStyles<{ bgImage?: string }>()((_theme, { bgImage }) => {
       background: '#111931',
       [theme.breakpoints.down(500)]: {
         height: 'auto',
-        padding: '16px 0px',
-        background: 'transparent',
-        border: 'none'
+        padding: '16px 0px'
       }
     },
     valueWrapper: {
@@ -116,7 +108,10 @@ const useStyles = makeStyles<{ bgImage?: string }>()((_theme, { bgImage }) => {
     },
 
     headerBigText: { ...typography.heading1, color: colors.invariant.text },
-    headerSmallText: { ...typography.body1, color: colors.invariant.textGrey },
+    headerSmallText: {
+      ...typography.body1,
+      color: colors.invariant.textGrey
+    },
     tooltipContentPoints: { ...typography.body2, color: colors.invariant.textGrey },
     leaderboardHeaderSectionTitle: { ...typography.heading3, color: colors.white.main },
     tooltip: {
@@ -165,19 +160,7 @@ const useStyles = makeStyles<{ bgImage?: string }>()((_theme, { bgImage }) => {
       flexDirection: 'column',
       gap: '8px',
       alignItems: 'flex-start',
-      justifyContent: 'flex-start',
-      [theme.breakpoints.down(500)]: {
-        alignItems: 'center',
-
-        border: '10px solid transparent',
-        borderImage: `url(${bgImage}) 20 fill round`,
-
-        backgroundRepeat: 'no-repeat',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        height: 100,
-        backgroundImage: `url(${bgImage})`
-      }
+      justifyContent: 'flex-start'
     },
     tooltipLink: {
       color: colors.invariant.green,

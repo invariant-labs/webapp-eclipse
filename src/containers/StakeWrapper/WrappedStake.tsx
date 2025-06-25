@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import useStyles from './styles'
-import { Box, Grid, Typography, Button, useMediaQuery } from '@mui/material'
+import { Box, Grid, Typography, Button } from '@mui/material'
 import { Link } from 'react-router-dom'
 import LaunchIcon from '@mui/icons-material/Launch'
 import { useDispatch, useSelector } from 'react-redux'
@@ -56,7 +56,6 @@ import { getTokenPrice, printBN } from '@utils/utils'
 import LiquidityStaking from '@components/Stake/LiquidityStaking/LiquidityStaking'
 import { StakeSwitch } from '@store/consts/types'
 import { HowItWorks } from '@components/Stake/HowItWorks/HowItWorks'
-import { theme } from '@static/theme'
 
 export const WrappedStake: React.FC = () => {
   const { classes } = useStyles()
@@ -184,65 +183,71 @@ export const WrappedStake: React.FC = () => {
 
   return (
     <Grid container className={classes.wrapper}>
-      <Box className={classes.titleWrapper}>
-        <Typography component='h1'>Liquidity staking</Typography>
-        <Box className={classes.subheaderDescription}>
-          Earn more with sBITZ.
-          <Link to='' target='_blank' className={classes.learnMoreLink}>
-            <span> Learn more</span> <LaunchIcon classes={{ root: classes.clipboardIcon }} />
-          </Link>
+
+      <Box className={classes.animatedContainer}>
+        <Box
+          className={`${classes.liquidityStakingWrapper} ${isExpanded ? classes.liquidityStakingExpanded : ''}`}
+        >
+          <Box className={classes.liquidityStakingHeaderWrapper}>
+            <Box className={classes.titleWrapper}>
+              <Typography component='h1'>Liquidity staking</Typography>
+              <Box className={classes.subheaderWrapper}>
+
+                <Box className={classes.subheaderDescription}>
+                  Earn more with sBITZ.
+                </Box>
+                <Link to='' target='_blank' className={classes.learnMoreLink}>
+                  <span> Learn more</span> <LaunchIcon classes={{ root: classes.clipboardIcon }} />
+                </Link>
+              </Box>
+            </Box>
+            <Button className={classes.statsExpanderButton} onClick={() => toggleExpand()}>
+              <p>
+                <img src={isExpanded ? EyeHide : EyeShow} width={20} height={20} />
+                Your Stats
+              </p>
+            </Button>
+          </Box>
+          <LiquidityStaking
+            walletStatus={walletStatus}
+            tokens={tokens}
+            handleStake={(props: StakeLiquidityPayload) => {
+              dispatch(actions.stake(props))
+            }}
+            handleUnstake={(props: StakeLiquidityPayload) => {
+              dispatch(actions.unstake(props))
+            }}
+            inProgress={progress}
+            success={success}
+            onConnectWallet={() => {
+              dispatch(walletActions.connect(false))
+            }}
+            onDisconnectWallet={() => {
+              dispatch(walletActions.disconnect())
+            }}
+            networkType={networkType}
+            sBitzApyApr={sBitzApyApr}
+            stakedTokenSupply={stakedBitzData.stakedTokenSupply}
+            stakedAmount={stakedBitzData.stakedAmount}
+            stakeDataLoading={stakeLoading}
+            changeStakeTab={(tab: StakeSwitch) => {
+              dispatch(actions.setStakeTab({ tab }))
+            }}
+            currentStakeTab={currentStakeTab}
+            ethBalance={ethBalance}
+            isBalanceLoading={isBalanceLoading}
+            stakeInput={stakeInput}
+            unstakeInput={unstakeInput}
+            setStakeInput={(val: string) => {
+              dispatch(actions.setStakeInputVal({ val }))
+            }}
+            setUnstakeInput={(val: string) => {
+              dispatch(actions.setUnstakeInputVal({ val }))
+            }}
+          />
+
         </Box>
-      </Box>
 
-      <Box className={classes.liquidityStakingHeaderWrapper}>
-
-        <Button className={classes.statsExpanderButton} onClick={() => toggleExpand()}>
-          <p>
-            <img src={isExpanded ? EyeHide : EyeShow} width={20} height={20} />
-            Your Stats
-          </p>
-        </Button>
-      </Box>
-      <LiquidityStaking
-        walletStatus={walletStatus}
-        tokens={tokens}
-        handleStake={(props: StakeLiquidityPayload) => {
-          dispatch(actions.stake(props))
-        }}
-        handleUnstake={(props: StakeLiquidityPayload) => {
-          dispatch(actions.unstake(props))
-        }}
-        inProgress={progress}
-        success={success}
-        onConnectWallet={() => {
-          dispatch(walletActions.connect(false))
-        }}
-        onDisconnectWallet={() => {
-          dispatch(walletActions.disconnect())
-        }}
-        networkType={networkType}
-        sBitzApyApr={sBitzApyApr}
-        stakedTokenSupply={stakedBitzData.stakedTokenSupply}
-        stakedAmount={stakedBitzData.stakedAmount}
-        stakeDataLoading={stakeLoading}
-        changeStakeTab={(tab: StakeSwitch) => {
-          dispatch(actions.setStakeTab({ tab }))
-        }}
-        currentStakeTab={currentStakeTab}
-        ethBalance={ethBalance}
-        isBalanceLoading={isBalanceLoading}
-        stakeInput={stakeInput}
-        unstakeInput={unstakeInput}
-        setStakeInput={(val: string) => {
-          dispatch(actions.setStakeInputVal({ val }))
-        }}
-        setUnstakeInput={(val: string) => {
-          dispatch(actions.setUnstakeInputVal({ val }))
-        }}
-      />
-
-      <Box className={classes.statsContainer}>
-        <Typography className={classes.statsTitle}>Your stats</Typography>
         <Box
           className={`${classes.yourStatsWrapper} ${isExpanded ? classes.yourStatsVisible : ''}`}
         >
@@ -257,6 +262,9 @@ export const WrappedStake: React.FC = () => {
             />
           )}
         </Box>
+      </Box>
+      <Box className={classes.statsContainer}>
+
 
         <Box className={classes.statsContainer}>
           <Typography className={classes.statsTitle}>Your stake</Typography>

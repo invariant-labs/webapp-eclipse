@@ -141,11 +141,21 @@ export const useStyles = makeStyles()(() => ({
   unselectedToggleButton: {
     fontWeight: 400
   },
+  subheaderWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    width: '100%',
+    gap: '8px',
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column',
+      alignItems: 'flex-start'
+    }
+  },
   titleWrapper: {
-    paddingBottom: 16,
     display: 'flex',
     maxWidth: 510,
     width: '100%',
+    flexDirection: 'column',
     justifyContent: 'space-between',
     gap: 12,
     [theme.breakpoints.down('sm')]: {
@@ -226,6 +236,7 @@ export const useStyles = makeStyles()(() => ({
   },
   statsExpanderButton: {
     height: 27,
+    minWidth: '120px',
     padding: '0px 8px',
     borderRadius: 8,
     backgroundColor: colors.invariant.component,
@@ -253,7 +264,7 @@ export const useStyles = makeStyles()(() => ({
     }
   },
   liquidityStakingHeaderWrapper: {
-    maxWidth: '500px',
+    maxWidth: '510px',
     width: '100%',
     display: 'flex',
     justifyContent: 'flex-end',
