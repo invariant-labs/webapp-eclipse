@@ -45,7 +45,6 @@ import { actions as statsActions } from '@store/reducers/stats'
 import { isLoading, lastInterval, poolsStatsWithTokensDetails } from '@store/selectors/stats'
 import { getPromotedPools, isLoading as promotedLoading } from '@store/selectors/leaderboard'
 import { actions as leaderboardActions } from '@store/reducers/leaderboard'
-import { actions as navigationActions } from '@store/reducers/navigation'
 import { BN } from '@coral-xyz/anchor'
 import { Intervals, LEADERBOARD_DECIMAL } from '@store/consts/static'
 import { poolsArraySortedByFees } from '@store/selectors/pools'
@@ -548,6 +547,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       isConnected ? (isNavigatingFromNewPosition ? ROUTES.PORTFOLIO : path) : ROUTES.LIQUIDITY
     )
   }
+
   if (position) {
     return (
       <PositionDetails
@@ -582,11 +582,9 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
               positionIndex: position.positionIndex,
               onSuccess: () => {
                 if (lastPosition && nextPosition) {
-                  dispatch(navigationActions.setNavigation({ address: location.pathname }))
-                  navigate(ROUTES.getPositionRoute(lastPosition.id))
+                  navigate(ROUTES.getPositionRoute(lastPosition.id), { replace: true })
                 } else if (previousPosition) {
-                  dispatch(navigationActions.setNavigation({ address: location.pathname }))
-                  navigate(ROUTES.getPositionRoute(previousPosition.id))
+                  navigate(ROUTES.getPositionRoute(previousPosition.id), { replace: true })
                 } else {
                   navigate(ROUTES.PORTFOLIO)
                 }
