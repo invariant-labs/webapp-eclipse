@@ -891,6 +891,13 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       : 0
   }, [tokenAIndex, tokenBIndex, allPools.length, currentPairReversed])
 
+  const oraclePrice = useMemo(() => {
+    if (!tokenAPriceData || !tokenBPriceData) {
+      return null
+    }
+    return tokenAPriceData.price / tokenBPriceData.price
+  }, [tokenAPriceData, tokenBPriceData, isXtoY])
+
   return (
     <NewPosition
       initialTokenFrom={initialTokenFrom}
@@ -1162,6 +1169,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       initialMaxSlippageToleranceCreatePosition={initialMaxSlippageToleranceCreatePosition}
       suggestedPrice={suggestedPrice}
       handleBack={handleBack}
+      oraclePrice={oraclePrice}
     />
   )
 }
