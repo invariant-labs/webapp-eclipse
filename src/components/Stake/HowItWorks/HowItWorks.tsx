@@ -12,24 +12,12 @@ export const HowItWorks = () => {
       <Box className={classes.innerContainer}>
         <img className={classes.image} src={howItWorksImage} alt='how it works' />
         <Box className={classes.stepsContainer}>
-          <Step number='01'>
-            Staking BITZ with Invariant issues sBITZ, a LST that continuously accrues staking
-            rewards. It replicates the benefits of traditional staking while preserving full
-            liquidity.
-          </Step>
+          <Step number='01'>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla a.</Step>
           <Step number='02' hasHiglight>
-            The value of sBITZ increases over time relative to BITZ, as staking rewards are
-            automatically reflected in its exchange rate.
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla a.
           </Step>
-          <Step number='03'>
-            Compounding every 5 minutes drastically improves staking efficiency compared to standard
-            setups that compound once or twice a day. This results in higher APY and faster value
-            growth.
-          </Step>
-          <Step number='04'>
-            When unstaking, users receive more BITZ than initially deposited, since the value of
-            sBITZ appreciates over time through continuous rewards compounding.
-          </Step>
+          <Step number='03'>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla a.</Step>
+          <Step number='04'>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</Step>
         </Box>
       </Box>
     </Box>
