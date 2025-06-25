@@ -86,7 +86,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     height: 400,
     width: '100%',
 
-    marginLeft: -8,
+    marginLeft: -16,
     [theme.breakpoints.down('sm')]: {
       height: 300
     }

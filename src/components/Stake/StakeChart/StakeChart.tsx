@@ -356,7 +356,6 @@ export const StakeChart: React.FC<StakeChartProps> = ({
             tickSize: 5,
             tickPadding: 5,
             tickRotation: 0,
-            legend: isMobile ? '' : 'BITZ',
             legendOffset: -40,
             tickValues: 6,
             format: value => formatNumberWithSuffix(value, { noDecimals: true })
