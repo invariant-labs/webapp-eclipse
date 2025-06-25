@@ -96,17 +96,11 @@ export const WrappedStake: React.FC = () => {
 
   const [bitzPrice, setBitzPrice] = useState(0)
 
-  const filteredTokens = useMemo(() => {
-    return tokensList.filter(item => item.decimals > 0 && item.symbol === sBITZ_MAIN.symbol)
-  }, [tokensList])
-
   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
 
   const sBitzBalance = useMemo(() => {
-    return new BN(
-      filteredTokens.find(token => token.address.equals(sBITZ_MAIN.address))?.balance || 0
-    )
-  }, [filteredTokens])
+    return new BN(tokensList.find(token => token.address.equals(sBITZ_MAIN.address))?.balance || 0)
+  }, [tokensList])
 
   const bitzToWithdraw = useMemo(() => {
     if (!stakedBitzData.stakedAmount || !stakedBitzData.stakedTokenSupply) {
