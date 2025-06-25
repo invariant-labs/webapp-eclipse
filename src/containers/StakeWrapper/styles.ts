@@ -16,8 +16,7 @@ export const useStyles = makeStyles()(() => ({
     alignItems: 'center',
     gap: '4px',
     color: colors.invariant.textGrey,
-    ...typography.body1,
-    marginBottom: -10
+    ...typography.body1
   },
   learnMoreLink: {
     color: colors.invariant.green,
