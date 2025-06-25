@@ -356,7 +356,6 @@ export const StakeChart: React.FC<StakeChartProps> = ({
             tickSize: 5,
             tickPadding: 5,
             tickRotation: 0,
-            legend: isMobile ? '' : 'BITZ',
             legendOffset: -40,
             tickValues: 6,
             format: value => formatNumberWithSuffix(value, { noDecimals: true })
@@ -468,7 +467,8 @@ export const StakeChart: React.FC<StakeChartProps> = ({
         className={classes.valuesContainer}
         sx={{
           flexDirection: isMobile ? 'column' : 'row',
-          gap: isMobile ? 1 : 4
+          gap: isMobile ? 1 : 4,
+          padding: '16px'
         }}>
         {bitzData.length > 0 && (
           <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
