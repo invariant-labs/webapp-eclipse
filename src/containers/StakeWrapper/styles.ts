@@ -106,6 +106,8 @@ export const useStyles = makeStyles()(() => ({
     backgroundColor: colors.invariant.light,
     borderRadius: 10,
     transition: 'all 0.3s ease',
+    willChange: 'transform, left',
+    transform: 'translateZ(0)',
     zIndex: 1
   },
   switchPoolsMarkerStake: {
@@ -173,6 +175,9 @@ export const useStyles = makeStyles()(() => ({
     position: 'relative',
     justifyContent: 'center',
     transition: 'all 0.3s ease-in-out',
+    willChange: 'transform, opacity',
+    transform: 'translateZ(0)',
+    backfaceVisibility: 'hidden',
     marginTop: '32px',
     [theme.breakpoints.down('md')]: {
       flexDirection: 'column-reverse',
@@ -185,6 +190,9 @@ export const useStyles = makeStyles()(() => ({
     alignItems: 'center',
     flexDirection: 'column',
     transition: 'transform 0.4s ease-in-out, width 0.4s ease-in-out',
+    willChange: 'transform, width',
+    backfaceVisibility: 'hidden',
+    transform: 'translateZ(0)',
     width: '100%',
     maxWidth: '600px',
     zIndex: 2,
@@ -206,6 +214,8 @@ export const useStyles = makeStyles()(() => ({
     opacity: 0,
     transform: 'translateX(100px)',
     transition: 'opacity 0.5s ease-in-out, transform 0.5s ease-in-out, visibility 0.1s linear 0.5s',
+    willChange: 'opacity, transform, visibility',
+    backfaceVisibility: 'hidden',
     pointerEvents: 'none',
     zIndex: 1,
     visibility: 'hidden',
