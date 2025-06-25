@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import useStyles from './styles'
 import { Box, Grid, Typography } from '@mui/material'
 import { Link } from 'react-router-dom'
@@ -50,10 +50,9 @@ export const WrappedStake: React.FC = () => {
   const { classes } = useStyles()
   const dispatch = useDispatch()
   const networkType = useSelector(network)
-
   const walletStatus = useSelector(status)
   const tokens = useSelector(swapTokensDict)
-
+  const tokensList = useSelector(swapTokens)
   const progress = useSelector(inProgress)
   const success = useSelector(successState)
   const isLoadingStats = useSelector(isLoading)
@@ -65,33 +64,10 @@ export const WrappedStake: React.FC = () => {
   const supplyBitz = useSelector(bitzSupply)
   const sbitzTvlPlot = useSelector(sbitzTVLPlot)
   const sbitzTvl = useSelector(sBitzTVL)
-  // Handlers for staking and unstaking
-
-  const handleStake = (props: StakeLiquidityPayload) => {
-    dispatch(actions.stake(props))
-  }
-
-  const handleUnstake = (props: StakeLiquidityPayload) => {
-    dispatch(actions.unstake(props))
-  }
-
-  const tokensList = useSelector(swapTokens)
-
   const stakedBitzData = useSelector(stakedData)
-  const [isLoadingDebounced, setIsLoadingDebounced] = useState(true)
-  const filteredTokens = useMemo(() => {
-    return tokensList.filter(item => item.decimals > 0 && item.symbol === sBITZ_MAIN.symbol)
-  }, [tokensList])
-
-  const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
-  const [backedByBITZData, setBackedByBITZData] = useState<{ amount: BN; price: number } | null>(
-    null
-  )
-  const currentNetwork = useSelector(network)
   const stakeLoading = useSelector(stakeDataLoading)
   const currentStakeTab = useSelector(stakeTab)
 
-  const initialLoadCompleted = useRef(false)
   const [chartData, setChartData] = useState<{
     bitzData: { x: string; y: number }[]
     sBitzData: { x: string; y: number }[]
@@ -103,108 +79,62 @@ export const WrappedStake: React.FC = () => {
     earnedAmount: 0,
     earnedUsd: 0
   })
+
   const [stakedAmount, setStakedAmount] = useState(100)
 
-  const isFirstMount = useRef(true)
-  const prevInProgressRef = useRef<boolean>(false)
+  const [bitzPrice, setBitzPrice] = useState(0)
 
-  const processedTokens = useMemo(() => {
-    return {
-      sBITZ: new BN(filteredTokens.find(token => token.symbol === sBITZ_MAIN.symbol)?.balance || 0),
-      backedByBITZ: backedByBITZData ?? { amount: new BN(0), price: 0 }
+  const filteredTokens = useMemo(() => {
+    return tokensList.filter(item => item.decimals > 0 && item.symbol === sBITZ_MAIN.symbol)
+  }, [tokensList])
+
+  const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
+
+  const sBitzBalance = useMemo(() => {
+    return new BN(
+      filteredTokens.find(token => token.address.equals(sBITZ_MAIN.address))?.balance || 0
+    )
+  }, [filteredTokens])
+
+  const bitzToWithdraw = useMemo(() => {
+    if (!stakedBitzData.stakedAmount || !stakedBitzData.stakedTokenSupply) {
+      return new BN(0)
     }
-  }, [filteredTokens, backedByBITZData])
+    return calculateTokensForWithdraw(
+      stakedBitzData.stakedTokenSupply,
+      stakedBitzData.stakedAmount,
+      sBitzBalance || new BN(0)
+    )
+  }, [stakedBitzData, sBitzBalance])
 
-  useEffect(() => {
-    setIsLoadingDebounced(true)
-    dispatch(actions.getStakedAmountAndBalance())
-  }, [dispatch])
+  const estimated24Yield = useMemo(() => {
+    const { sbitzPredictedYield } = computeBitzSbitzRewards(
+      +printBN(sBitzBalance, sBITZ_MAIN.decimals),
+      +printBN(stakedBitzData.bitzTotalBalance, BITZ_MAIN.decimals),
+      1
+    )
+    return sbitzPredictedYield[0] || 0
+  }, [sBitzBalance, stakedBitzData])
+
+  const sBitzApyApr = useMemo(() => {
+    if (!stakedBitzData.bitzTotalBalance) return { apr: 0, apy: 0 }
+    return computeBitzAprApy(+printBN(stakedBitzData.bitzTotalBalance, BITZ_MAIN.decimals))
+  }, [stakedBitzData])
 
   useEffect(() => {
     dispatch(sbitzStatsActions.getCurrentStats())
     dispatch(actions.getStakedAmountAndBalance())
 
     const fetchPriceData = async () => {
-      const tokenPrice = await getTokenPrice(BITZ_MAIN.address.toString(), currentNetwork)
-      setBackedByBITZData({
-        amount: backedByBITZData?.amount,
-        price: tokenPrice || 0
-      })
+      const tokenPrice = await getTokenPrice(BITZ_MAIN.address.toString(), networkType)
+      setBitzPrice(tokenPrice ?? 0)
     }
 
     fetchPriceData()
-  }, [])
+  }, [dispatch])
 
   useEffect(() => {
-    if (isFirstMount.current) {
-      isFirstMount.current = false
-      return
-    }
-
-    const operationJustCompleted = prevInProgressRef.current === true && !progress
-    prevInProgressRef.current = progress
-
-    if (!progress && (operationJustCompleted || isConnected)) {
-      setIsLoadingDebounced(true)
-
-      const timerId = setTimeout(() => {
-        dispatch(actions.getStakedAmountAndBalance())
-      }, 300)
-
-      return () => clearTimeout(timerId)
-    }
-  }, [isConnected, progress, dispatch])
-  useEffect(() => {
-    if (stakeLoading) {
-      setIsLoadingDebounced(true)
-      return
-    }
-
-    if (stakedBitzData.stakedAmount !== null && stakedBitzData.stakedTokenSupply !== null) {
-      const timer = setTimeout(() => {
-        initialLoadCompleted.current = true
-        setIsLoadingDebounced(false)
-      }, 500)
-
-      return () => clearTimeout(timer)
-    }
-  }, [stakeLoading, stakedBitzData])
-
-  useEffect(() => {
-    if (stakedBitzData.stakedTokenSupply === null || stakedBitzData.stakedAmount === null) {
-      return
-    }
-    if (!initialLoadCompleted.current) {
-      setIsLoadingDebounced(true)
-    }
-
-    const bitzToken = filteredTokens.find(token => token.symbol === sBITZ_MAIN.symbol)
-    const backedByBITZ = calculateTokensForWithdraw(
-      stakedBitzData.stakedTokenSupply,
-      stakedBitzData.stakedAmount,
-      bitzToken?.balance || new BN(0)
-    )
-    const fetchPriceData = async () => {
-      const tokenPrice = await getTokenPrice(BITZ_MAIN.address.toString(), currentNetwork)
-      setBackedByBITZData({
-        amount: backedByBITZ,
-        price: tokenPrice || 0
-      })
-    }
-
-    fetchPriceData()
-  }, [currentNetwork, stakedBitzData, filteredTokens, dispatch, isConnected])
-
-  useEffect(() => {
-    console.log(
-      stakedAmount,
-      stakedBitzData,
-      stakedBitzData.stakedAmount,
-      stakedBitzData.bitzTotalBalance,
-      stakedBitzData.stakedTokenSupply
-    )
     if (!stakedBitzData.stakedAmount || !stakedBitzData.bitzTotalBalance) {
-      //   dispatch(actions.getStakedAmountAndBalance())
       return
     }
 
@@ -224,28 +154,14 @@ export const WrappedStake: React.FC = () => {
       y: value
     }))
     const earnedAmount = sBitzData[sBitzData.length - 1]?.y - bitzData[sBitzData.length - 1]?.y
-    const earnedUsd = earnedAmount * (backedByBITZData?.price || 0)
+    const earnedUsd = earnedAmount * bitzPrice
     setChartData({
       bitzData,
       sBitzData,
       earnedAmount,
       earnedUsd
     })
-  }, [stakedBitzData, stakedAmount])
-
-  const estimated24Yield = useMemo(() => {
-    const { sbitzPredictedYield } = computeBitzSbitzRewards(
-      +printBN(processedTokens.sBITZ, sBITZ_MAIN.decimals),
-      +printBN(stakedBitzData.bitzTotalBalance, sBITZ_MAIN.decimals),
-      1
-    )
-    return sbitzPredictedYield[0] || 0
-  }, [processedTokens])
-
-  const sBitzApyApr = useMemo(() => {
-    if (!stakedBitzData.bitzTotalBalance) return { apr: 0, apy: 0 }
-    return computeBitzAprApy(+printBN(stakedBitzData.bitzTotalBalance, BITZ_MAIN.decimals))
-  }, [stakedBitzData])
+  }, [stakedBitzData, stakedAmount, bitzPrice])
 
   return (
     <Grid container className={classes.wrapper}>
@@ -261,8 +177,12 @@ export const WrappedStake: React.FC = () => {
       <LiquidityStaking
         walletStatus={walletStatus}
         tokens={tokens}
-        handleStake={handleStake}
-        handleUnstake={handleUnstake}
+        handleStake={(props: StakeLiquidityPayload) => {
+          dispatch(actions.stake(props))
+        }}
+        handleUnstake={(props: StakeLiquidityPayload) => {
+          dispatch(actions.unstake(props))
+        }}
         inProgress={progress}
         success={success}
         onConnectWallet={() => {
@@ -285,8 +205,10 @@ export const WrappedStake: React.FC = () => {
       <Box className={classes.statsContainer}>
         <Typography className={classes.statsTitle}>Your stats</Typography>
         <YourStakeProgress
-          processedTokens={processedTokens}
-          isLoading={isLoadingDebounced}
+          sBitzBalance={sBitzBalance}
+          bitzToWithdraw={bitzToWithdraw}
+          bitzPrice={bitzPrice}
+          isLoading={stakeLoading}
           isConnected={isConnected}
           yield24={estimated24Yield}
         />
