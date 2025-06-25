@@ -8,6 +8,7 @@ import {
   balance,
   balanceLoading,
   status,
+  SwapToken,
   swapTokens,
   swapTokensDict
 } from '@store/selectors/solanaWallet'
@@ -55,6 +56,7 @@ import { StakeSwitch } from '@store/consts/types'
 import { HowItWorks } from '@components/Stake/HowItWorks/HowItWorks'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { refreshIcon } from '@static/icons'
+import { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 
 export const WrappedStake: React.FC = () => {
   const { classes } = useStyles()
@@ -67,7 +69,7 @@ export const WrappedStake: React.FC = () => {
   const stakeInput = useSelector(stakeInputVal)
   const unstakeInput = useSelector(unstakeInputVal)
   const tokensList = useSelector(swapTokens)
-  const progress = useSelector(inProgress)
+  const isInProgress = useSelector(inProgress)
   const success = useSelector(successState)
   const isLoadingStats = useSelector(isLoading)
   const sbitzPlot = useSelector(sbitzSupplyPlot)
@@ -97,7 +99,9 @@ export const WrappedStake: React.FC = () => {
   const [stakedAmount, setStakedAmount] = useState(100)
   const [refresherTime, setRefresherTime] = useState<number>(REFRESHER_INTERVAL)
   const [bitzPrice, setBitzPrice] = useState(0)
-
+  const [sBitzPrice, setSBitzPrice] = useState(0)
+  const [progress, setProgress] = useState<ProgressState>('none')
+  const [priceLoading, setPriceLoading] = useState(false)
   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
 
   const sBitzBalance = useMemo(() => {
@@ -129,21 +133,55 @@ export const WrappedStake: React.FC = () => {
     return computeBitzAprApy(+printBN(stakedBitzData.bitzTotalBalance, BITZ_MAIN.decimals))
   }, [stakedBitzData])
 
-  const fetchPriceData = async () => {
-    const tokenPrice = await getTokenPrice(BITZ_MAIN.address.toString(), networkType)
-    setBitzPrice(tokenPrice ?? 0)
+  const tokenFrom: SwapToken = useMemo(
+    () =>
+      currentStakeTab === StakeSwitch.Stake
+        ? tokens[BITZ_MAIN.address.toString()]
+        : tokens[sBITZ_MAIN.address.toString()],
+    [currentStakeTab, tokens]
+  )
+  const tokenTo: SwapToken = useMemo(
+    () =>
+      currentStakeTab === StakeSwitch.Unstake
+        ? tokens[BITZ_MAIN.address.toString()]
+        : tokens[sBITZ_MAIN.address.toString()],
+    [currentStakeTab, tokens]
+  )
+
+  const fetchPrices = () => {
+    setPriceLoading(true)
+
+    const bitzAddr = BITZ_MAIN.address.toString()
+    const sBitzAddr = sBITZ_MAIN.address.toString()
+
+    Promise.allSettled([
+      getTokenPrice(bitzAddr, networkType),
+      getTokenPrice(sBitzAddr, networkType)
+    ])
+      .then(([bitzRes, sBitzRes]) => {
+        const bitzPrice =
+          bitzRes.status === 'fulfilled' && bitzRes.value != null ? bitzRes.value : 0
+        const sBitzPrice =
+          sBitzRes.status === 'fulfilled' && sBitzRes.value != null ? sBitzRes.value : 0
+        setBitzPrice(bitzPrice ?? 0)
+        setSBitzPrice(sBitzPrice ?? 0)
+      })
+      .finally(() => {
+        setPriceLoading(false)
+      })
   }
 
   useEffect(() => {
+    dispatch(walletActions.getBalance())
     dispatch(sbitzStatsActions.getCurrentStats())
     dispatch(actions.getStakedAmountAndBalance())
-
-    fetchPriceData()
+    fetchPrices()
   }, [dispatch])
 
   const onRefresh = () => {
     dispatch(walletActions.getBalance())
     dispatch(actions.getStakedAmountAndBalance())
+    fetchPrices()
   }
 
   const handleRefresh = () => {
@@ -193,6 +231,28 @@ export const WrappedStake: React.FC = () => {
     })
   }, [stakedBitzData, stakedAmount, bitzPrice])
 
+  useEffect(() => {
+    let timeoutId1: NodeJS.Timeout
+    let timeoutId2: NodeJS.Timeout
+
+    if (!isInProgress && progress === 'progress') {
+      setProgress(success ? 'approvedWithSuccess' : 'approvedWithFail')
+
+      timeoutId1 = setTimeout(() => {
+        setProgress(success ? 'success' : 'failed')
+      }, 1000)
+
+      timeoutId2 = setTimeout(() => {
+        setProgress('none')
+      }, 3000)
+    }
+
+    return () => {
+      clearTimeout(timeoutId1)
+      clearTimeout(timeoutId2)
+    }
+  }, [success, isInProgress])
+
   return (
     <Grid container className={classes.wrapper}>
       <Box className={classes.titleWrapper}>
@@ -225,15 +285,12 @@ export const WrappedStake: React.FC = () => {
         handleUnstake={(props: StakeLiquidityPayload) => {
           dispatch(actions.unstake(props))
         }}
-        inProgress={progress}
-        success={success}
         onConnectWallet={() => {
           dispatch(walletActions.connect(false))
         }}
         onDisconnectWallet={() => {
           dispatch(walletActions.disconnect())
         }}
-        networkType={networkType}
         sBitzApyApr={sBitzApyApr}
         stakedTokenSupply={stakedBitzData.stakedTokenSupply}
         stakedAmount={stakedBitzData.stakedAmount}
@@ -252,6 +309,13 @@ export const WrappedStake: React.FC = () => {
         setUnstakeInput={(val: string) => {
           dispatch(actions.setUnstakeInputVal({ val }))
         }}
+        progress={progress}
+        setProgress={setProgress}
+        tokenFrom={tokenFrom}
+        tokenTo={tokenTo}
+        priceLoading={priceLoading}
+        sBitzPrice={sBitzPrice}
+        bitzPrice={bitzPrice}
       />
 
       <Box className={classes.statsContainer}>
