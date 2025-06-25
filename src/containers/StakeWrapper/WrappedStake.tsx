@@ -146,7 +146,7 @@ export const WrappedStake: React.FC = () => {
     dispatch(actions.getStakedAmountAndBalance())
   }
 
-  const handleRefresh = async () => {
+  const handleRefresh = () => {
     onRefresh()
     setRefresherTime(REFRESHER_INTERVAL)
   }
@@ -273,6 +273,7 @@ export const WrappedStake: React.FC = () => {
             bitzData={chartData.bitzData}
             sBitzData={chartData.sBitzData}
             earnedUsd={chartData.earnedUsd}
+            stakeLoading={stakeLoading}
           />
         </Box>
         <HowItWorks />

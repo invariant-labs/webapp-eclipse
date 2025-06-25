@@ -23,7 +23,7 @@ export const ApyTooltip: React.FC<IApyTooltip> = ({ sBitzApyApr, stakeDataLoadin
   }, [sBitzApyApr])
 
   if (stakeDataLoading) {
-    return <Skeleton width={150} height={24} />
+    return <Skeleton width={200} height={24} />
   }
   return (
     <TooltipHover
