@@ -56,7 +56,7 @@ export const ApyTooltip: React.FC<IApyTooltip> = ({ sBitzApyApr, stakeDataLoadin
         {!isSm && <img src={arrowRightIcon} height={10} />}
         <img src={sBitzIcon} width={16} height={16} />
         <span className={classes.greenLabel}>{sBitzApyApr.apy?.toFixed(2) ?? 0}% APY</span>
-        <img src={infoIcon} height={12} />
+        <img src={infoIcon} height={12} width={12} />
       </Typography>
     </TooltipHover>
   )
