@@ -20,6 +20,7 @@ interface StakeChartProps {
   bitzData: PointData[]
   sBitzData: PointData[]
   onStakedAmountChange?: (amount: number) => void
+  stakeLoading: boolean
 }
 
 const generateMockBitzData = (): PointData[] => {
@@ -64,12 +65,13 @@ export const StakeChart: React.FC<StakeChartProps> = ({
   bitzData,
   sBitzData,
   earnedUsd,
-  onStakedAmountChange
+  onStakedAmountChange,
+  stakeLoading
 }) => {
   const { classes } = useStyles()
   const [inputValue, setInputValue] = useState(stakedAmount.toString())
 
-  const isLoading = !sBitzData.length || !bitzData.length
+  const isLoading = !sBitzData.length || !bitzData.length || stakeLoading
 
   const mockData = useMemo(
     () => ({
