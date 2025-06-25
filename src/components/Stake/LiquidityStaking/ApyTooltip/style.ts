@@ -18,15 +18,13 @@ const useStyles = makeStyles()(() => {
       color: colors.invariant.green,
       ...typography.caption2
     },
-    label: {},
     crossedText: {
       textDecoration: 'line-through',
       color: colors.invariant.textGrey,
-      ...typography.caption4
+      ...typography.caption2
     },
     greenLabel: {
       color: colors.invariant.green,
-      marginInline: 4,
       ...typography.caption1
     },
     itemWrapper: {
@@ -45,7 +43,8 @@ const useStyles = makeStyles()(() => {
       cursor: 'default',
       display: 'flex',
       alignItems: 'center',
-      height: 24
+      height: 24,
+      gap: 4
     }
   }
 })
