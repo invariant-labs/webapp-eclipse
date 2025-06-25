@@ -4,7 +4,6 @@ import { makeStyles } from 'tss-react/mui'
 export const useStyles = makeStyles()(() => ({
   container: {
     width: '100%',
-    maxWidth: 1072,
     display: 'flex',
     flexDirection: 'column',
     gap: 10,
