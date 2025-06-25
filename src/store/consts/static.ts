@@ -14,8 +14,8 @@ import {
 import { MAINNET_TOKENS } from '@invariant-labs/sdk-eclipse/lib/network'
 import { cat1Icon, cat2Icon, dog1Icon, dog2Icon } from '@static/icons'
 import { TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token'
-import sBitzIcon from '@static/png/sBitz.png'
-import BitzIcon from '@static/png/bitz.png'
+import sBitzIcon from '@static/png/sBitzIcon.png'
+import BitzIcon from '@static/png/bitzIcon.png'
 import rewardsArray from '@store/consts/rewards/rewardsArray.json'
 
 export enum NetworkType {
