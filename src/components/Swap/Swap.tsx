@@ -274,15 +274,13 @@ export const Swap: React.FC<ISwap> = ({
     }
   }, [network])
 
-  const priceImpact = Math.max(
-    +printBN(+simulationPath.firstPriceImpact, DECIMAL - 2),
-    +printBN(+simulationPath.secondPriceImpact, DECIMAL - 2)
+  const priceImpact = Math.pow(
+    Math.max(
+      +printBN(+simulationPath.firstPriceImpact, DECIMAL - 2),
+      +printBN(+simulationPath.secondPriceImpact, DECIMAL - 2)
+    ),
+    2
   )
-
-  const IS_ERROR_LABEL_SHOW =
-    priceImpact > 5 ||
-    tokens[tokenFromIndex ?? '']?.isUnknown ||
-    tokens[tokenToIndex ?? '']?.isUnknown
 
   const timeoutRef = useRef<number>(0)
 
@@ -584,6 +582,7 @@ export const Swap: React.FC<ISwap> = ({
         ])
 
         updateSimulation(simulateValue, simulateWithHopValue)
+        setAddBlur(false)
         setSimulateResult(simulateValue)
         setSimulateWithHopResult(simulateWithHopValue)
       } else if (inputRef === inputTarget.TO) {
@@ -609,6 +608,7 @@ export const Swap: React.FC<ISwap> = ({
         ])
 
         updateSimulation(simulateValue, simulateWithHopValue)
+        setAddBlur(false)
         setSimulateResult(simulateValue)
         setSimulateWithHopResult(simulateWithHopValue)
       }
@@ -911,6 +911,7 @@ export const Swap: React.FC<ISwap> = ({
     amountTo !== ''
 
   const handleRefresh = async () => {
+    setErrorVisible(false)
     onRefresh(tokenFromIndex, tokenToIndex)
     setRefresherTime(REFRESHER_INTERVAL)
   }
@@ -984,6 +985,41 @@ export const Swap: React.FC<ISwap> = ({
     (getStateMessage() === 'Loading' &&
       (inputRef === inputTarget.FROM || inputRef === inputTarget.DEFAULT))
 
+  const oraclePriceDiffPercentage = useMemo(() => {
+    if (!tokenFromPriceData || !tokenToPriceData) return 0
+
+    const tokenFromValue = tokenFromPriceData.price * +amountFrom
+    const tokenToValue = tokenToPriceData.price * +amountTo
+    if (tokenFromValue === 0 || tokenToValue === 0) return 0
+    if (tokenToValue > tokenFromValue) return 0
+
+    return Math.abs((tokenFromValue - tokenToValue) / tokenFromValue) * 100
+  }, [tokenFromPriceData, tokenToPriceData, amountFrom, amountTo])
+
+  const showBlur =
+    (inputRef === inputTarget.FROM && addBlur) ||
+    lockAnimation ||
+    (getStateMessage() === 'Loading' &&
+      (inputRef === inputTarget.FROM || inputRef === inputTarget.DEFAULT)) ||
+    (inputRef === inputTarget.TO && addBlur) ||
+    lockAnimation ||
+    (getStateMessage() === 'Loading' &&
+      (inputRef === inputTarget.TO || inputRef === inputTarget.DEFAULT))
+
+  const [errorVisible, setErrorVisible] = useState(false)
+
+  useEffect(() => {
+    const shouldShow =
+      (priceImpact > 5 ||
+        tokens[tokenFromIndex ?? '']?.isUnknown ||
+        tokens[tokenToIndex ?? '']?.isUnknown ||
+        oraclePriceDiffPercentage >= 10) &&
+      !priceToLoading &&
+      !priceFromLoading &&
+      !showBlur
+    const id = setTimeout(() => setErrorVisible(shouldShow), 150)
+    return () => clearTimeout(id)
+  }, [priceImpact, tokens, oraclePriceDiffPercentage, showBlur, priceToLoading, priceFromLoading])
   return (
     <Grid container className={classes.swapWrapper} alignItems='center'>
       {wrappedETHAccountExist && (
@@ -1270,9 +1306,17 @@ export const Swap: React.FC<ISwap> = ({
           </Box>
           <Box
             className={classes.unknownWarningContainer}
-            style={{ height: IS_ERROR_LABEL_SHOW ? '34px' : '0px' }}>
-            {priceImpact > 5 && (
-              <TooltipHover title='Your trade size might be too large'>
+            style={{ height: errorVisible ? '34px' : '0px' }}>
+            {oraclePriceDiffPercentage >= 10 && errorVisible && (
+              <TooltipHover title='This swap price my differ from market price' top={100} fullSpan>
+                <Box className={classes.unknownWarning}>
+                  Potential loss resulting from a {oraclePriceDiffPercentage.toFixed(2)}% price
+                  difference.
+                </Box>
+              </TooltipHover>
+            )}
+            {priceImpact > 5 && oraclePriceDiffPercentage < 10 && errorVisible && (
+              <TooltipHover title='Your trade size might be too large' top={100} fullSpan>
                 <Box className={classes.unknownWarning}>
                   High price impact: {priceImpact < 0.01 ? '<0.01%' : `${priceImpact.toFixed(2)}%`}!
                   This swap will cause a significant price movement.
@@ -1281,7 +1325,9 @@ export const Swap: React.FC<ISwap> = ({
             )}
             {tokens[tokenFromIndex ?? '']?.isUnknown && (
               <TooltipHover
-                title={`${tokens[tokenFromIndex ?? ''].symbol} is unknown, make sure address is correct before trading`}>
+                title={`${tokens[tokenFromIndex ?? ''].symbol} is unknown, make sure address is correct before trading`}
+                top={100}
+                fullSpan>
                 <Box className={classes.unknownWarning}>
                   {tokens[tokenFromIndex ?? ''].symbol} is not verified
                 </Box>
@@ -1289,7 +1335,9 @@ export const Swap: React.FC<ISwap> = ({
             )}
             {tokens[tokenToIndex ?? '']?.isUnknown && (
               <TooltipHover
-                title={`${tokens[tokenToIndex ?? ''].symbol} is unknown, make sure address is correct before trading`}>
+                title={`${tokens[tokenToIndex ?? ''].symbol} is unknown, make sure address is correct before trading`}
+                top={100}
+                fullSpan>
                 <Box className={classes.unknownWarning}>
                   {tokens[tokenToIndex ?? ''].symbol} is not verified
                 </Box>
