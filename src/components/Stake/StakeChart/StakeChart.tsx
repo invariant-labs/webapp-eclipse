@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { ResponsiveLine } from '@nivo/line'
 import { Box, Typography, TextField, Grid, useMediaQuery, Skeleton } from '@mui/material'
-import { colors, theme, typography } from '@static/theme'
+import { colors, theme } from '@static/theme'
 import { useStyles } from './style'
 import { linearGradientDef } from '@nivo/core'
 import BITZ from '@static/png/bitz.png'
@@ -176,25 +176,8 @@ export const StakeChart: React.FC<StakeChartProps> = ({
   return (
     <Box className={classes.chartContainer}>
       <Box className={classes.stakeText}>
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: theme.spacing(1),
-            flexWrap: 'wrap',
-            width: '100%'
-          }}>
-          <Typography
-            variant='h4'
-            component='span'
-            sx={{
-              ...typography.heading4,
-              color: colors.invariant.text,
-              whiteSpace: 'nowrap'
-            }}>
-            Depositing
-          </Typography>
+        <Box className={classes.inputWrapper}>
+          <Typography>Depositing</Typography>
 
           <TextField
             value={inputValue}
@@ -263,53 +246,31 @@ export const StakeChart: React.FC<StakeChartProps> = ({
             className={classes.inputField}
           />
 
-          <Typography
-            variant='h4'
-            component='span'
-            sx={{
-              color: colors.invariant.text,
-              ...typography.heading4,
-              display: 'flex',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              justifyContent: 'center'
-            }}>
+          <Typography>
             into Liquid Staking
-            <Box component='span' sx={{ display: 'flex', alignItems: 'center', mx: 1 }}>
-              <img src={sBITZ} alt='sBITZ' style={{ height: '20px', minWidth: '20px' }} />
-            </Box>
+            <img src={sBITZ} alt='sBITZ' style={{ height: '20px', minWidth: '20px' }} />
             over the next month
           </Typography>
         </Box>
 
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            textAlign: 'center',
-            width: '100%',
-            mt: theme.spacing(1)
-          }}>
-          <Typography
-            sx={{
-              color: colors.invariant.text,
-              ...typography.heading4,
-              display: 'flex',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              justifyContent: 'center'
-            }}>
+        <Box className={classes.lowerTitleWrapper}>
+          <Typography>
             will earn you an extra
             {isLoading ? (
-              <Skeleton variant='rounded' sx={{ width: 200, marginInline: 1 }} />
+              <Skeleton
+                variant='rounded'
+                sx={{
+                  width: isMobile ? 150 : 200,
+                  marginTop: isMobile ? -0.5 : 0,
+                  height: isMobile ? 15 : 20,
+                  marginInline: 1
+                }}
+              />
             ) : (
               <Typography
-                component='span'
                 sx={{
-                  color: colors.invariant.green,
-                  mx: 0.75,
-                  ...typography.heading4
+                  color: `${colors.invariant.green} !important`,
+                  mx: 0.75
                 }}>
                 {formatNumberWithoutSuffix(earnedAmount)} BITZ{' '}
                 {earnedUsd !== 0 ? `($${formatNumberWithoutSuffix(earnedUsd)})` : ''}
@@ -331,7 +292,7 @@ export const StakeChart: React.FC<StakeChartProps> = ({
           data={data}
           margin={{
             top: 20,
-            right: isMobile ? 10 : 20,
+            right: isMobile ? 0 : 20,
             bottom: 50,
             left: isMobile ? 40 : 60
           }}
@@ -470,32 +431,29 @@ export const StakeChart: React.FC<StakeChartProps> = ({
           gap: isMobile ? 1 : 4,
           padding: '16px'
         }}>
-        {bitzData.length > 0 && (
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <img src={BITZ} alt='BITZ Logo' style={{ width: '20px', height: '20px' }} />
-            {isLoading ? (
-              <Skeleton variant='rounded' height={24} width={200} sx={{ marginInline: 1 }} />
-            ) : (
-              <Typography className={classes.bitzValue}>
-                Staking Rewards:{' '}
-                {formatNumberWithSuffix(bitzData[bitzData.length - 1].y.toFixed(2))} BITZ
-              </Typography>
-            )}
-          </Box>
-        )}
-        {sBitzData.length > 0 && (
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <img src={sBITZ} alt='sBITZ Logo' style={{ width: '20px', height: '20px' }} />
-            {isLoading ? (
-              <Skeleton variant='rounded' width={200} height={24} sx={{ marginInline: 1 }} />
-            ) : (
-              <Typography className={classes.sBitzValue}>
-                Holding Rewards:{' '}
-                {formatNumberWithSuffix(sBitzData[sBitzData.length - 1].y.toFixed(2))} BITZ
-              </Typography>
-            )}
-          </Box>
-        )}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <img src={BITZ} alt='BITZ Logo' style={{ width: '20px', height: '20px' }} />
+          {isLoading ? (
+            <Skeleton variant='rounded' height={24} width={200} sx={{ marginInline: 1 }} />
+          ) : (
+            <Typography className={classes.bitzValue}>
+              Staking Rewards: {formatNumberWithSuffix(bitzData[bitzData.length - 1].y.toFixed(2))}{' '}
+              BITZ
+            </Typography>
+          )}
+        </Box>
+
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <img src={sBITZ} alt='sBITZ Logo' style={{ width: '20px', height: '20px' }} />
+          {isLoading ? (
+            <Skeleton variant='rounded' width={200} height={24} sx={{ marginInline: 1 }} />
+          ) : (
+            <Typography className={classes.sBitzValue}>
+              Holding Rewards:{' '}
+              {formatNumberWithSuffix(sBitzData[sBitzData.length - 1].y.toFixed(2))} BITZ
+            </Typography>
+          )}
+        </Box>
       </Box>
     </Box>
   )
