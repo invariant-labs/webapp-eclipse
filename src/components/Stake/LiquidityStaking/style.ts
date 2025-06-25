@@ -7,10 +7,10 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     maxWidth: '100%',
     display: 'flex',
     flexDirection: 'column',
-    width: 500,
+    width: 510,
     background: colors.invariant.component,
     borderRadius: 24,
-    padding: '24px 16px',
+    padding: '16px 24px 22px 24px',
     [theme.breakpoints.down('sm')]: {
       padding: '12px 8px'
     }

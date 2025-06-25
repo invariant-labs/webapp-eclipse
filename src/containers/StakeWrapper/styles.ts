@@ -10,15 +10,13 @@ export const useStyles = makeStyles()(() => ({
     alignItems: 'center',
     justifyContent: 'flex-start'
   },
-  header: {
-    ...typography.heading1,
-    color: colors.white.main
-  },
+
   subheaderDescription: {
     display: 'flex',
+    alignItems: 'center',
     gap: '4px',
     color: colors.invariant.textGrey,
-    ...typography.heading4
+    ...typography.body1
   },
   learnMoreLink: {
     color: colors.invariant.green,
@@ -26,10 +24,11 @@ export const useStyles = makeStyles()(() => ({
     display: 'flex',
     alignItems: 'center',
     gap: '3px',
-    ...typography.heading4
+    ...typography.body1
   },
   clipboardIcon: {
-    color: colors.invariant.green
+    color: colors.invariant.green,
+    width: 15
   },
   overviewContainer: {
     display: 'flex',
@@ -141,6 +140,22 @@ export const useStyles = makeStyles()(() => ({
   },
   unselectedToggleButton: {
     fontWeight: 400
+  },
+  titleWrapper: {
+    paddingBottom: 16,
+    display: 'flex',
+    maxWidth: 510,
+    width: '100%',
+    justifyContent: 'space-between',
+    gap: 12,
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column'
+    },
+    '& h1': {
+      ...typography.heading4,
+      whiteSpace: 'nowrap',
+      color: colors.invariant.text
+    }
   },
   animatedContainer: {
     display: 'flex',

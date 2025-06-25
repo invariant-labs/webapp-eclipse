@@ -2,23 +2,17 @@ import React, { useMemo } from 'react'
 import { Box, Skeleton, Typography, useMediaQuery } from '@mui/material'
 import useStyles from './style'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
-import { SwapToken } from '@store/selectors/solanaWallet'
 import { infoIcon, arrowRightIcon } from '@static/icons'
 import { theme } from '@static/theme'
+import bitzIcon from '@static/png/bitz.png'
+import sBitzIcon from '@static/png/sBitz.png'
 
 export interface IApyTooltip {
-  tokenFrom: SwapToken
-  tokenTo: SwapToken
   sBitzApyApr: { apy: number | null; apr: number | null }
   stakeDataLoading: boolean
 }
 
-export const ApyTooltip: React.FC<IApyTooltip> = ({
-  tokenFrom,
-  tokenTo,
-  sBitzApyApr,
-  stakeDataLoading
-}) => {
+export const ApyTooltip: React.FC<IApyTooltip> = ({ sBitzApyApr, stakeDataLoading }) => {
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
 
   const { classes } = useStyles()
@@ -36,31 +30,31 @@ export const ApyTooltip: React.FC<IApyTooltip> = ({
       title={
         <Box className={classes.tooltipWrapper}>
           <Box className={classes.itemWrapper}>
-            <img src={tokenFrom.logoURI} width={16} height={16} />
+            <img src={bitzIcon} width={16} height={16} />
             <Typography className={classes.tooltipText}>
               {sBitzApyApr.apr?.toFixed(2) ?? 0}% APR (Stake){' '}
             </Typography>
           </Box>
           <Typography className={classes.plus}>+</Typography>
           <Box className={classes.itemWrapper}>
-            <img src={tokenTo.logoURI} width={16} height={16} />
+            <img src={sBitzIcon} width={16} height={16} />
             <Typography className={classes.greenTooltipText}>
               {additionalApy}% (10s Compound){' '}
             </Typography>
           </Box>
           <Typography className={classes.plus}>+</Typography>
           <Box className={classes.itemWrapper}>
-            <img src={tokenTo.logoURI} width={16} height={16} />
+            <img src={sBitzIcon} width={16} height={16} />
             <Typography className={classes.greenTooltipText}>Pool APY/DeFi </Typography>
           </Box>
         </Box>
       }
       increasePadding>
       <Typography className={classes.apyLabel}>
-        <img src={tokenFrom.logoURI} width={16} height={16} />
+        <img src={bitzIcon} width={16} height={16} />
         <span className={classes.crossedText}> {sBitzApyApr.apr?.toFixed(2) ?? 0}% APR </span>
         {!isSm && <img src={arrowRightIcon} height={10} />}
-        <img src={tokenTo.logoURI} width={16} height={16} />
+        <img src={sBitzIcon} width={16} height={16} />
         <span className={classes.greenLabel}>{sBitzApyApr.apy?.toFixed(2) ?? 0}% APY</span>
         <img src={infoIcon} height={12} />
       </Typography>
