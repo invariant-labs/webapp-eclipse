@@ -138,10 +138,8 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
             ) : (
               <img src={tokenXIcon} className={classes.tokenIcon} />
             )}
-            {ikonType === 'swap' ? (
+            {ikonType === 'swap' || ikonType === 'unstake' || ikonType === 'stake' ? (
               arrow
-            ) : ikonType === 'unstake' || ikonType === 'stake' ? (
-              <StyledText>for</StyledText>
             ) : (
               <StyledText>+</StyledText>
             )}

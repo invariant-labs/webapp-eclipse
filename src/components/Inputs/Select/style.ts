@@ -46,6 +46,7 @@ export const useStyles = makeStyles<{ hideSelect: boolean; notRoundIcon: boolean
     },
     icon: {
       marginRight: 5,
+      borderRadius: '50%',
       minWidth: 20,
       height: 20,
       ...(notRoundIcon ? {} : { borderRadius: '100%' })
