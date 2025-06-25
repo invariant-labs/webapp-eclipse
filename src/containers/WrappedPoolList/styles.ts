@@ -73,8 +73,10 @@ export const useStyles = makeStyles<{ isXs: boolean }>()((theme: Theme, { isXs }
     borderRadius: 9,
     display: 'flex',
     alignItems: 'center',
+    textAlign: 'right',
     gap: 8,
     textTransform: 'none',
+    width: 155,
 
     '&:hover': {
       background: colors.invariant.componentDark,
@@ -94,7 +96,8 @@ export const useStyles = makeStyles<{ isXs: boolean }>()((theme: Theme, { isXs }
   showFavouritesText: {
     ...typography.body2,
     color: colors.invariant.textGrey,
-    marginTop: 2
+    marginTop: 2,
+    width: 108
   }
 }))
 
