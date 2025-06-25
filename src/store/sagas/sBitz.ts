@@ -67,10 +67,10 @@ export function* handleStake(action: PayloadAction<StakeLiquidityPayload>) {
     )
 
     const ata = getAssociatedTokenAddressSync(
-      BITZ_MAIN.address,
+      sBITZ_MAIN.address,
       wallet.publicKey,
       false,
-      TOKEN_PROGRAM_ID
+      TOKEN_2022_PROGRAM_ID
     )
 
     const stakeIx = yield* call(
@@ -293,10 +293,10 @@ export function* handleUnstake(action: PayloadAction<StakeLiquidityPayload>) {
     )
 
     const ata = getAssociatedTokenAddressSync(
-      sBITZ_MAIN.address,
+      BITZ_MAIN.address,
       wallet.publicKey,
       false,
-      TOKEN_2022_PROGRAM_ID
+      TOKEN_PROGRAM_ID
     )
 
     const unstakeIx = yield* call(
@@ -305,7 +305,7 @@ export function* handleUnstake(action: PayloadAction<StakeLiquidityPayload>) {
         amount: sbitzAmount,
         mint: BITZ_MAIN.address,
         stakedMint: sBITZ_MAIN.address,
-        createStakedATA: !walletAccounts[ata.toString()]
+        createAta: !walletAccounts[ata.toString()]
       },
       wallet.publicKey
     )
