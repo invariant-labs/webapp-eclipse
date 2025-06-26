@@ -111,7 +111,8 @@ import {
   ErrorCodeExtractionKeys,
   TUSD_MAIN,
   AlternativeFormatConfig,
-  defaultThresholds
+  defaultThresholds,
+  sBITZ_MAIN
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
@@ -131,6 +132,7 @@ import { fetchDigitalAsset } from '@metaplex-foundation/mpl-token-metadata'
 import { publicKey } from '@metaplex-foundation/umi-public-keys'
 import { createUmi } from '@metaplex-foundation/umi-bundle-defaults'
 import { Umi } from '@metaplex-foundation/umi'
+import { StakingStatsResponse } from '@store/reducers/sbitz-stats'
 
 export const transformBN = (amount: BN): string => {
   return (amount.div(new BN(1e2)).toNumber() / 1e4).toString()
@@ -902,6 +904,7 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
         [USDT_MAIN.address.toString()]: USDT_MAIN,
         [SOL_MAIN.address.toString()]: SOL_MAIN,
         [BITZ_MAIN.address.toString()]: BITZ_MAIN,
+        [sBITZ_MAIN.address.toString()]: sBITZ_MAIN,
         [DOGWIFHAT_MAIN.address.toString()]: DOGWIFHAT_MAIN,
         [LAIKA_MAIN.address.toString()]: LAIKA_MAIN,
         [MOON_MAIN.address.toString()]: MOON_MAIN,
@@ -2058,6 +2061,12 @@ export const getIntervalsFullSnap = async (
   )
   return data
 }
+export const fetchStackedBitzStats = async (): Promise<StakingStatsResponse> => {
+  const { data } = await axios.get<StakingStatsResponse>(
+    `https://stats.invariant.app/eclipse/sbitz/eclipse-mainnet`
+  )
+  return data
+}
 export const isValidPublicKey = (keyString?: string | null) => {
   try {
     if (!keyString) {
@@ -2305,6 +2314,7 @@ export const ROUTES = {
   PORTFOLIO: '/portfolio',
   CREATOR: '/creator',
   POINTS: '/points',
+  STAKE: '/stake',
 
   getExchangeRoute: (item1?: string, item2?: string): string => {
     const parts = [item1, item2].filter(Boolean)

@@ -14,7 +14,8 @@ import {
 import { MAINNET_TOKENS } from '@invariant-labs/sdk-eclipse/lib/network'
 import { cat1Icon, cat2Icon, dog1Icon, dog2Icon } from '@static/icons'
 import { TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token'
-
+import sBitzIcon from '@static/png/sBitzIcon.png'
+import BitzIcon from '@static/png/bitzIcon.png'
 import rewardsArray from '@store/consts/rewards/rewardsArray.json'
 
 export enum NetworkType {
@@ -172,8 +173,17 @@ export const BITZ_MAIN: Token = {
   address: new PublicKey('64mggk2nXg6vHC1qCdsZdEFzd5QGN4id54Vbho4PswCF'),
   decimals: 11,
   name: 'BITZ',
-  logoURI:
-    'https://www.geckoterminal.com/_next/image?url=https%3A%2F%2Fassets.geckoterminal.com%2Fpwhn8c5e9mxmannjvxi4yllnwk1d&w=64&q=75',
+  logoURI: BitzIcon,
+  coingeckoId: ''
+}
+
+export const sBITZ_MAIN: Token = {
+  tokenProgram: TOKEN_2022_PROGRAM_ID,
+  symbol: 'sBITZ',
+  address: new PublicKey('sBTZcSwRZhRq3JcjFh1xwxgCxmsN7MreyU3Zx8dA8uF'),
+  decimals: 11,
+  name: 'Staked BITZ',
+  logoURI: sBitzIcon,
   coingeckoId: ''
 }
 
@@ -655,7 +665,7 @@ export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
     SOL_MAIN.address,
     USDT_MAIN.address,
     BITZ_MAIN.address,
-    LAIKA_MAIN.address,
+    sBITZ_MAIN.address,
     TUSD_MAIN.address
   ],
   Testnet: [USDC_TEST.address, BTC_TEST.address, WETH_TEST.address],
@@ -699,6 +709,8 @@ export const WETH_CREATE_TOKEN_LAMPORTS_TEST = new BN(10100000)
 export const WETH_CLOSE_POSITION_LAMPORTS_MAIN = new BN(30000)
 export const WETH_CLOSE_POSITION_LAMPORTS_TEST = new BN(30000)
 
+export const WETH_MIN_STAKE_UNSTAKE_LAMPORTS = new BN(50)
+
 export const MINIMUM_PRICE_IMPACT = toDecimal(1, 4)
 
 export const getCreateTokenLamports = (network: NetworkType): BN => {
@@ -737,7 +749,8 @@ export const ADDRESSES_TO_REVERT_TOKEN_PAIRS: string[] = [
   KYSOL_MAIN.address.toString(),
   EZSOL_MAIN.address.toString(),
   TIA_MAIN.address.toString(),
-  BITZ_MAIN.address.toString()
+  BITZ_MAIN.address.toString(),
+  sBITZ_MAIN.address.toString()
 ]
 
 export const FormatConfig = {
@@ -796,6 +809,7 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
       WIF: DOGWIFHAT_MAIN.address.toString(),
       LAIKA: LAIKA_MAIN.address.toString(),
       BITZ: BITZ_MAIN.address.toString(),
+      sBITZ: sBITZ_MAIN.address.toString(),
       MOON: MOON_MAIN.address.toString(),
       GSVM: GSVM_MAIN.address.toString(),
       DARKMOON: DARKMOON_MAIN.address.toString(),

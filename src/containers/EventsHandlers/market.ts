@@ -138,7 +138,6 @@ const MarketEvents = () => {
           {} as Record<string, Token>
         )
 
-        console.log(parsedData)
         tokens = {
           ...tokens,
           ...parsedTokensMap
