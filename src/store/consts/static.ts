@@ -621,6 +621,16 @@ export const autoSwapPools = [
       address: new PublicKey('1Zxv7bYYzMuK8eey85ZSowa24S8B7QNfDx3GQpKQ4Bf'),
       feeIndex: 0
     }
+  },
+  {
+    pair: {
+      tokenX: new PublicKey('So11111111111111111111111111111111111111112'),
+      tokenY: new PublicKey('sBTZcSwRZhRq3JcjFh1xwxgCxmsN7MreyU3Zx8dA8uF')
+    },
+    swapPool: {
+      address: new PublicKey('9RkzLPufg9RVxRLXZx1drZvf1gXLwgffnhW9oFJSstad'),
+      feeIndex: 6
+    }
   }
 ]
 export const promotedTiers = [
@@ -653,6 +663,11 @@ export const promotedTiers = [
     tokenX: USDC_MAIN.address,
     tokenY: TUSD_MAIN.address,
     index: 0
+  },
+  {
+    tokenX: WETH_MAIN.address,
+    tokenY: sBITZ_MAIN.address,
+    index: 6
   }
 ]
 
@@ -924,6 +939,11 @@ export const getPopularPools = (network: NetworkType) => {
           tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE', // USDC
           tokenY: 'So11111111111111111111111111111111111111112', // ETH
           fee: '0.09'
+        },
+        {
+          tokenX: 'So11111111111111111111111111111111111111112', // ETH
+          tokenY: 'sBTZcSwRZhRq3JcjFh1xwxgCxmsN7MreyU3Zx8dA8uF', // sBITZ
+          fee: '1'
         },
         {
           tokenX: '64mggk2nXg6vHC1qCdsZdEFzd5QGN4id54Vbho4PswCF', // BITZ
