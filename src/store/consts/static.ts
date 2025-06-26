@@ -809,7 +809,7 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
       WIF: DOGWIFHAT_MAIN.address.toString(),
       LAIKA: LAIKA_MAIN.address.toString(),
       BITZ: BITZ_MAIN.address.toString(),
-      sBITZ_MAIN: sBITZ_MAIN.address.toString(),
+      sBITZ: sBITZ_MAIN.address.toString(),
       MOON: MOON_MAIN.address.toString(),
       GSVM: GSVM_MAIN.address.toString(),
       DARKMOON: DARKMOON_MAIN.address.toString(),

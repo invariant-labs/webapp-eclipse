@@ -52,7 +52,7 @@ import {
   computeBitzAprApy,
   computeBitzSbitzRewards
 } from '@invariant-labs/sbitz'
-import { sBITZ_MAIN, BITZ_MAIN, REFRESHER_INTERVAL } from '@store/consts/static'
+import { sBITZ_MAIN, BITZ_MAIN } from '@store/consts/static'
 import { getTokenPrice, printBN } from '@utils/utils'
 import LiquidityStaking from '@components/Stake/LiquidityStaking/LiquidityStaking'
 import { StakeSwitch } from '@store/consts/types'
@@ -104,7 +104,6 @@ export const WrappedStake: React.FC = () => {
 
 
   const [stakedAmount, setStakedAmount] = useState(100)
-  const [refresherTime, setRefresherTime] = useState<number>(REFRESHER_INTERVAL)
   const [bitzPrice, setBitzPrice] = useState(0)
   const [sBitzPrice, setSBitzPrice] = useState(0)
   const [progress, setProgress] = useState<ProgressState>('none')
@@ -191,23 +190,6 @@ export const WrappedStake: React.FC = () => {
     fetchPrices()
   }
 
-  const handleRefresh = () => {
-    onRefresh()
-    setRefresherTime(REFRESHER_INTERVAL)
-  }
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (refresherTime > 0) {
-        setRefresherTime(refresherTime - 1)
-      } else {
-        handleRefresh()
-      }
-    }, 1000)
-
-    return () => clearTimeout(timeout)
-  }, [refresherTime])
-
   useEffect(() => {
     if (!stakedBitzData.stakedAmount || !stakedBitzData.bitzTotalBalance) {
       return
@@ -277,7 +259,10 @@ export const WrappedStake: React.FC = () => {
               <Typography component='h1'>Liquidity staking</Typography>
               <Box className={classes.subheaderDescription}>
                 <Typography>Earn more with sBITZ.</Typography>
-                <Link to='' target='_blank' className={classes.learnMoreLink}>
+                <Link
+                  to='https://docs.invariant.app/docs/sbitz'
+                  target='_blank'
+                  className={classes.learnMoreLink}>
                   <span> {isSm ? 'More' : 'Learn More'}</span> <LaunchIcon classes={{ root: classes.clipboardIcon }} />
                 </Link>
               </Box>
@@ -292,7 +277,7 @@ export const WrappedStake: React.FC = () => {
               <TooltipHover title='Refresh'>
                 <Grid className={classes.refreshIconContainer}>
                   <Button
-                    onClick={handleRefresh}
+                    onClick={onRefresh}
                     className={classes.refreshIconBtn}
                     disabled={isBalanceLoading || stakeLoading || isLoadingStats}>
                     <img src={refreshIcon} className={classes.refreshIcon} alt='Refresh' />
@@ -368,7 +353,7 @@ export const WrappedStake: React.FC = () => {
 
 
         <Box className={classes.statsContainer}>
-          <Typography className={classes.statsTitle}>Your stake</Typography>
+          <Typography className={classes.statsTitle}>Earnings forecast</Typography>
           <StakeChart
             onStakedAmountChange={setStakedAmount}
             stakedAmount={stakedAmount}

@@ -131,7 +131,8 @@ export const useStyles = makeStyles()(() => ({
     ...typography.heading4,
     color: colors.invariant.text,
     textAlign: 'left',
-    marginBottom: '20px'
+    width: '100%',
+    marginBottom: '16px'
   },
   filtersContainerOverview: {
     marginTop: '32px',

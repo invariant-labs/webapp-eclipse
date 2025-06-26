@@ -29,6 +29,13 @@ const useStyles = makeStyles()(_theme => {
         width: 14
       }
     },
+    statsTitle: {
+      ...typography.heading4,
+      color: colors.invariant.text,
+      textAlign: 'left',
+      width: '100%',
+      marginBottom: '16px'
+    },
     tooltipTitle: { '& p': { ...typography.body2, color: colors.invariant.textGrey } },
     pointsContainer: {
       display: 'flex',
