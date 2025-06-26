@@ -102,7 +102,6 @@ export const WrappedStake: React.FC = () => {
 
   const [isExpanded, setIsExpanded] = useState(false)
 
-
   const [stakedAmount, setStakedAmount] = useState(100)
   const [bitzPrice, setBitzPrice] = useState(0)
   const [sBitzPrice, setSBitzPrice] = useState(0)
@@ -242,11 +241,20 @@ export const WrappedStake: React.FC = () => {
     }
   }, [success, isInProgress])
 
+  useEffect(() => {
+    const savedExpandedState = localStorage.getItem('STAKE_STATS_EXPANDED')
+    if (savedExpandedState !== null) {
+      setIsExpanded(JSON.parse(savedExpandedState))
+    }
+  }, [])
 
   const toggleExpand = () => {
-    setIsExpanded(prev => !prev)
+    setIsExpanded(prev => {
+      const newValue = !prev
+      localStorage.setItem('STAKE_STATS_EXPANDED', JSON.stringify(newValue))
+      return newValue
+    })
   }
-
 
   return (
     <Grid container className={classes.wrapper}>
