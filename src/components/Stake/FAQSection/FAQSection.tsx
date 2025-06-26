@@ -2,13 +2,18 @@ import { Faq } from '@common/Faq/Faq'
 import { Box, Typography } from '@mui/material'
 import { colors, typography } from '@static/theme'
 import useStyles from './style'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { ROUTES } from '@utils/utils'
 import { sBITZ_MAIN, WETH_MAIN } from '@store/consts/static'
+import { useDispatch } from 'react-redux'
+import { actions } from '@store/reducers/navigation'
 
 export const FAQSection = () => {
   const { classes } = useStyles()
   const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const location = useLocation()
+
   const faqData = [
     {
       question: 'What is sBITZ?',
@@ -94,7 +99,8 @@ export const FAQSection = () => {
           At this point, you can put your sBITZ to work by adding it to the{' '}
           <b
             style={{ cursor: 'pointer' }}
-            onClick={() =>
+            onClick={() => {
+              dispatch(actions.setNavigation({ address: location.pathname }))
               navigate(
                 ROUTES.getNewPositionRoute(
                   sBITZ_MAIN.address.toString(),
@@ -102,7 +108,7 @@ export const FAQSection = () => {
                   '1_00'
                 )
               )
-            }>
+            }}>
             sBITZ-ETH pool.
           </b>{' '}
           This way, on top of earning <b>staking rewards</b>, you’ll also earn <b>trading fees</b>{' '}
