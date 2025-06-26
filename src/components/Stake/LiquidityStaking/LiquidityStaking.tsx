@@ -10,7 +10,7 @@ import SwapSeparator from './SwapSeparator/SwapSeparator'
 import { Separator } from '@common/Separator/Separator'
 import { colors } from '@static/theme'
 import TransactionDetails from './TransactionDetails/TransactionDetails'
-import { convertBalanceToBN, printBN } from '@utils/utils'
+import { convertBalanceToBN, printBN, trimDecimalZeros } from '@utils/utils'
 import ApyTooltip from './ApyTooltip/ApyTooltip'
 import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
@@ -108,12 +108,12 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
   const handleActionButtons = (action: 'max' | 'half', tokenAddress: PublicKey) => {
     if (action === 'max') {
       const value = tokens[tokenAddress.toString()]?.balance || new BN(0)
-      const valueString = printBN(value, TOKEN_DECIMALS)
+      const valueString = trimDecimalZeros(printBN(value, TOKEN_DECIMALS))
       setAmountFrom(valueString)
     } else if (action === 'half') {
       const balance = tokens[tokenAddress.toString()]?.balance || new BN(0)
       const value = balance.div(new BN(2)) || new BN(0)
-      const valueString = printBN(value, TOKEN_DECIMALS)
+      const valueString = trimDecimalZeros(printBN(value, TOKEN_DECIMALS))
       setAmountFrom(valueString)
     }
   }
@@ -175,7 +175,9 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
         setIsRotating={setIsRotating}
       />
       <Box mt='32px' mb={'16px'} display='flex' justifyContent='space-between' alignItems='center'>
-        <Typography className={classes.title}>Stake</Typography>
+        <Typography className={classes.title}>
+          {currentStakeTab === StakeSwitch.Stake ? 'Stake' : 'Unstake'}
+        </Typography>
       </Box>
       <ExchangeAmountInput
         value={amountFrom}
