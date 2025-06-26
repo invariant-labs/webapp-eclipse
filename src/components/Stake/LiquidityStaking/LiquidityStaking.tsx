@@ -214,7 +214,7 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
         priceLoading={priceLoading}
         isBalanceLoading={isBalanceLoading}
         showMaxButton={true}
-        showBlur={stakeDataLoading}
+        showBlur={false}
         hideSelect
         notRoundIcon
         limit={1e14}
