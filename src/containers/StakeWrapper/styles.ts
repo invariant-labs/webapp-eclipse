@@ -159,7 +159,23 @@ export const useStyles = makeStyles()(() => ({
     width: '100%',
     flexDirection: 'column',
     justifyContent: 'space-between',
-    gap: 12,
+    alignItems: 'flex-end',
+    gap: 12
+  },
+  titleTextWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+    width: '100%',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
+    gap: 12
+  },
+  titleTextWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+    width: '100%',
+    justifyContent: 'space-between',
     [theme.breakpoints.down('sm')]: {
       flexDirection: 'column'
     },
@@ -168,6 +184,34 @@ export const useStyles = makeStyles()(() => ({
       whiteSpace: 'nowrap',
       color: colors.invariant.text
     }
+  },
+  refreshIcon: {
+    width: 26,
+    height: 21,
+    cursor: 'pointer',
+    transition: 'filter 300ms',
+    '&:hover': {
+      filter: 'brightness(1.5)',
+      '@media (hover: none)': {
+        filter: 'none'
+      }
+    }
+  },
+  refreshIconBtn: {
+    padding: 0,
+    margin: 0,
+    minWidth: 'auto',
+    background: 'none',
+    '&:hover': {
+      background: 'none'
+    },
+    '&:disabled': {
+      opacity: 0.5
+    }
+  },
+  refreshIconContainer: {
+    display: 'flex',
+    alignItems: 'center'
   },
   animatedContainer: {
     display: 'flex',

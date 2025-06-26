@@ -2,12 +2,7 @@ import { Box, Grid, Typography } from '@mui/material'
 import useStyles from './style'
 import Switcher from './Switcher/Switcher'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import {
-  BITZ_MAIN,
-  NetworkType,
-  sBITZ_MAIN,
-  WETH_MIN_STAKE_UNSTAKE_LAMPORTS
-} from '@store/consts/static'
+import { BITZ_MAIN, WETH_MIN_STAKE_UNSTAKE_LAMPORTS } from '@store/consts/static'
 import ExchangeAmountInput from '@components/Inputs/ExchangeAmountInput/ExchangeAmountInput'
 import { Status } from '@store/reducers/solanaWallet'
 import { SwapToken } from '@store/selectors/solanaWallet'
@@ -15,12 +10,12 @@ import SwapSeparator from './SwapSeparator/SwapSeparator'
 import { Separator } from '@common/Separator/Separator'
 import { colors } from '@static/theme'
 import TransactionDetails from './TransactionDetails/TransactionDetails'
-import { convertBalanceToBN, getMockedTokenPrice, getTokenPrice, printBN } from '@utils/utils'
+import { convertBalanceToBN, printBN } from '@utils/utils'
 import ApyTooltip from './ApyTooltip/ApyTooltip'
 import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
 import AnimatedButton, { ProgressState } from '@common/AnimatedButton/AnimatedButton'
-import { StakeSwitch, TokenPriceData } from '@store/consts/types'
+import { StakeSwitch } from '@store/consts/types'
 import { StakeLiquidityPayload } from '@store/reducers/sBitz'
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
 import { TOKEN_DECIMALS } from '@invariant-labs/sbitz/lib/consts'
@@ -30,11 +25,8 @@ export interface ILiquidityStaking {
   tokens: Record<string, SwapToken>
   handleStake: (props: StakeLiquidityPayload) => void
   handleUnstake: (props: StakeLiquidityPayload) => void
-  inProgress: boolean
-  success: boolean
   onConnectWallet: () => void
   onDisconnectWallet: () => void
-  networkType: NetworkType
   sBitzApyApr: { apy: number; apr: number }
   stakedTokenSupply: BN
   stakedAmount: BN
@@ -47,6 +39,13 @@ export interface ILiquidityStaking {
   unstakeInput: string
   setStakeInput: (val: string) => void
   setUnstakeInput: (val: string) => void
+  progress: ProgressState
+  setProgress: (val: ProgressState) => void
+  tokenFrom: SwapToken
+  tokenTo: SwapToken
+  priceLoading: boolean
+  sBitzPrice: number
+  bitzPrice: number
 }
 
 export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
@@ -54,11 +53,8 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
   tokens,
   handleStake,
   handleUnstake,
-  inProgress,
-  success,
   onConnectWallet,
   onDisconnectWallet,
-  networkType,
   sBitzApyApr,
   stakedTokenSupply,
   stakedAmount,
@@ -70,7 +66,14 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
   stakeInput,
   unstakeInput,
   setStakeInput,
-  setUnstakeInput
+  setUnstakeInput,
+  progress,
+  setProgress,
+  tokenFrom,
+  tokenTo,
+  priceLoading,
+  sBitzPrice,
+  bitzPrice
 }) => {
   const { classes } = useStyles()
 
@@ -93,87 +96,6 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
   const [amountTo, setAmountTo] = useState<string>('')
 
   const [isRotating, setIsRotating] = useState(false)
-
-  const [progress, setProgress] = useState<ProgressState>('none')
-
-  const tokenFrom: SwapToken = useMemo(
-    () =>
-      currentStakeTab === StakeSwitch.Stake
-        ? tokens[BITZ_MAIN.address.toString()]
-        : tokens[sBITZ_MAIN.address.toString()],
-    [currentStakeTab, tokens]
-  )
-  const tokenTo: SwapToken = useMemo(
-    () =>
-      currentStakeTab === StakeSwitch.Unstake
-        ? tokens[BITZ_MAIN.address.toString()]
-        : tokens[sBITZ_MAIN.address.toString()],
-    [currentStakeTab, tokens]
-  )
-
-  const [tokenFromPriceData, setTokenFromPriceData] = useState<TokenPriceData | undefined>(
-    undefined
-  )
-
-  const [priceFromLoading, setPriceFromLoading] = useState(false)
-
-  useEffect(() => {
-    const addr = tokenFrom.assetAddress.toString()
-
-    if (addr) {
-      setPriceFromLoading(true)
-      getTokenPrice(addr, networkType)
-        .then(data => setTokenFromPriceData({ price: data ?? 0 }))
-        .catch(() =>
-          setTokenFromPriceData(
-            getMockedTokenPrice(tokens[tokenFrom.toString()].symbol, networkType)
-          )
-        )
-        .finally(() => setPriceFromLoading(false))
-    } else {
-      setTokenFromPriceData(undefined)
-    }
-  }, [tokenFrom])
-
-  const [tokenToPriceData, setTokenToPriceData] = useState<TokenPriceData | undefined>(undefined)
-  const [priceToLoading, setPriceToLoading] = useState(false)
-
-  useEffect(() => {
-    const addr = tokenTo.assetAddress.toString()
-    if (addr) {
-      setPriceToLoading(true)
-      getTokenPrice(addr, networkType)
-        .then(data => setTokenToPriceData({ price: data ?? 0 }))
-        .catch(() =>
-          setTokenToPriceData(getMockedTokenPrice(tokens[tokenTo.toString()].symbol, networkType))
-        )
-        .finally(() => setPriceToLoading(false))
-    } else {
-      setTokenToPriceData(undefined)
-    }
-  }, [tokenTo])
-
-  useEffect(() => {
-    let timeoutId1: NodeJS.Timeout
-    let timeoutId2: NodeJS.Timeout
-
-    if (!inProgress && progress === 'progress') {
-      setProgress(success ? 'approvedWithSuccess' : 'approvedWithFail')
-
-      timeoutId1 = setTimeout(() => {
-        setProgress(success ? 'success' : 'failed')
-      }, 1000)
-
-      timeoutId2 = setTimeout(() => {
-        setProgress('none')
-      }, 3000)
-    }
-
-    return () => {
-      clearTimeout(timeoutId1)
-      clearTimeout(timeoutId2)
-    }
-  }, [success, inProgress])
 
   const handleSwitchTokens = () => {
     setIsRotating(true)
@@ -286,9 +208,9 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
         current={tokenFrom}
         hideBalances={walletStatus !== Status.Initialized}
         commonTokens={[]}
-        tokenPrice={tokenFromPriceData?.price}
-        priceLoading={priceFromLoading}
-        isBalanceLoading={false}
+        tokenPrice={sBitzPrice}
+        priceLoading={priceLoading}
+        isBalanceLoading={isBalanceLoading}
         showMaxButton={true}
         showBlur={stakeDataLoading}
         hideSelect
@@ -318,9 +240,9 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
         current={tokenTo}
         hideBalances={walletStatus !== Status.Initialized}
         commonTokens={[]}
-        tokenPrice={tokenToPriceData?.price}
-        priceLoading={priceToLoading}
-        isBalanceLoading={false}
+        tokenPrice={bitzPrice}
+        priceLoading={priceLoading}
+        isBalanceLoading={isBalanceLoading}
         showMaxButton={false}
         disabled
         showBlur={stakeDataLoading}
