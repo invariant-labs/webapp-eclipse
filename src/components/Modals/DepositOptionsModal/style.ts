@@ -4,9 +4,7 @@ import { makeStyles } from 'tss-react/mui'
 export const useStyles = makeStyles()(() => {
   return {
     root: {
-      top: 50,
       [theme.breakpoints.down('sm')]: {
-        top: 0,
         width: '100%'
       }
     },

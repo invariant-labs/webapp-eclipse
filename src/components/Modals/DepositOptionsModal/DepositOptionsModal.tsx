@@ -8,9 +8,11 @@ import {
   Popover,
   ToggleButton,
   ToggleButtonGroup,
-  Typography
+  Typography,
+  useMediaQuery
 } from '@mui/material'
 import DepositOption from './DepositOption'
+import { theme } from '@static/theme'
 
 enum SettingsOptions {
   Basic = 'Basic',
@@ -306,6 +308,7 @@ const DepoSitOptionsModal: React.FC<Props> = ({
       setAlignment(newAlignment)
     }
   }
+  const isSm = useMediaQuery(theme.breakpoints.down('sm'))
 
   return (
     <>
@@ -314,11 +317,11 @@ const DepoSitOptionsModal: React.FC<Props> = ({
         onClose={handleClose}
         classes={{ paper: classes.paper, root: classes.root }}
         anchorOrigin={{
-          vertical: 'top',
+          vertical: isSm ? 'top' : 'center',
           horizontal: 'center'
         }}
         transformOrigin={{
-          vertical: 'top',
+          vertical: isSm ? 'top' : 'center',
           horizontal: 'center'
         }}>
         <Grid container className={classes.detailsWrapper}>
