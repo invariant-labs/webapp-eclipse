@@ -238,6 +238,7 @@ export const WrappedStake: React.FC = () => {
 
   return (
     <Grid container className={classes.wrapper}>
+
       <SBitzBanner />
       <Box className={classes.titleWrapper}>
 

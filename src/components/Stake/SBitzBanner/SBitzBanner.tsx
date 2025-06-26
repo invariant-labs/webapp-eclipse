@@ -3,33 +3,45 @@ import { arrowRightIcon, closeIcon } from '@static/icons'
 import { sBITZ_MAIN, WETH_MAIN } from '@store/consts/static'
 import sBITZ from '@static/png/sBitz.png'
 import useStyles from './style'
-import { useState, useLayoutEffect } from 'react'
+import { useState, useLayoutEffect, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ROUTES } from '@utils/utils'
 import sBITZBannerBackground from '@static/png/sbitzbanner2.png'
 
 export const SBitzBanner = () => {
-    const { classes } = useStyles()
+    const { classes, cx } = useStyles()
     const [isVisible, setIsVisible] = useState(true)
+    const [isRendered, setIsRendered] = useState(true)
     const navigate = useNavigate()
+
     useLayoutEffect(() => {
         const bannerClosed = localStorage.getItem('SBITZ_BANNER_CLOSED')
         if (bannerClosed === 'true') {
             setIsVisible(false)
+            setIsRendered(false)
         }
     }, [])
+
+    useEffect(() => {
+        if (!isVisible) {
+            const timer = setTimeout(() => {
+                setIsRendered(false)
+            }, 300)
+            return () => clearTimeout(timer)
+        }
+    }, [isVisible])
 
     const handleClose = () => {
         setIsVisible(false)
         localStorage.setItem('SBITZ_BANNER_CLOSED', 'true')
     }
 
-    if (!isVisible) {
+    if (!isRendered) {
         return null
     }
 
     return (
-        <Box className={classes.bannerContainer}>
+        <Box className={cx(classes.bannerContainer, !isVisible && classes.bannerHidden)}>
             <IconButton className={classes.closeButton} onClick={handleClose}>
                 <img src={closeIcon} alt="Close" width={16} height={16} />
             </IconButton>

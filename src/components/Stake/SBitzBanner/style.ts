@@ -17,6 +17,9 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     minHeight: '100px',
     marginBottom: '48px',
     maxWidth: '510px',
+    maxHeight: '160px',
+    overflow: 'hidden',
+    transition: 'opacity 0.3s ease-out',
 
     [theme.breakpoints.down('md')]: {
       width: '90%',
@@ -27,6 +30,10 @@ export const useStyles = makeStyles()((theme: Theme) => ({
       padding: '16px',
       minHeight: '80px'
     }
+  },
+  bannerHidden: {
+    opacity: 0,
+    pointerEvents: 'none'
   },
   closeButton: {
     position: 'absolute',
