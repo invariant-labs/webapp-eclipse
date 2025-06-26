@@ -312,18 +312,18 @@ export const WrappedStake: React.FC = () => {
           isConnected={isConnected}
           yield24={estimated24Yield}
         /> */}
-        <Box className={classes.statsContainer}>
-          <Typography className={classes.statsTitle}>Earnings forecast</Typography>
-          <StakeChart
-            onStakedAmountChange={setStakedAmount}
-            stakedAmount={stakedAmount}
-            earnedAmount={chartData.earnedAmount}
-            bitzData={chartData.bitzData}
-            sBitzData={chartData.sBitzData}
-            earnedUsd={chartData.earnedUsd}
-            stakeLoading={stakeLoading}
-          />
-        </Box>
+        {/* <Box className={classes.statsContainer}> */}
+        <Typography className={classes.statsTitle}>Earnings forecast</Typography>
+        <StakeChart
+          onStakedAmountChange={setStakedAmount}
+          stakedAmount={stakedAmount}
+          earnedAmount={chartData.earnedAmount}
+          bitzData={chartData.bitzData}
+          sBitzData={chartData.sBitzData}
+          earnedUsd={chartData.earnedUsd}
+          stakeLoading={stakeLoading}
+        />
+        {/* </Box> */}
         {/* <HowItWorks />
         <OverallStats
           isLoadingStats={isLoadingStats}
