@@ -26,6 +26,13 @@ const useStyles = makeStyles<{ bgImage?: string }>()((_theme, { bgImage }) => {
         width: 14
       }
     },
+    statsTitle: {
+      ...typography.heading4,
+      color: colors.invariant.text,
+      textAlign: 'left',
+      width: '100%',
+      marginBottom: '16px'
+    },
     tooltipTitle: { '& p': { ...typography.body2, color: colors.invariant.textGrey } },
     pointsContainer: {
       display: 'grid',

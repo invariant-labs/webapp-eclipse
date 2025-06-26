@@ -319,7 +319,6 @@ export const WrappedStake: React.FC = () => {
       />
 
       <Box className={classes.statsContainer}>
-        <Typography className={classes.statsTitle}>Your stats</Typography>
         <YourStakeProgress
           sBitzBalance={sBitzBalance}
           bitzToWithdraw={bitzToWithdraw}
