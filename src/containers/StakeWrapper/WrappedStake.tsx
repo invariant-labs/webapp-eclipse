@@ -208,60 +208,66 @@ export const WrappedStake: React.FC = () => {
               </p>
             </Button>
           </Box>
-          <LiquidityStaking
-            walletStatus={walletStatus}
-            tokens={tokens}
-            handleStake={(props: StakeLiquidityPayload) => {
-              dispatch(actions.stake(props))
-            }}
-            handleUnstake={(props: StakeLiquidityPayload) => {
-              dispatch(actions.unstake(props))
-            }}
-            inProgress={progress}
-            success={success}
-            onConnectWallet={() => {
-              dispatch(walletActions.connect(false))
-            }}
-            onDisconnectWallet={() => {
-              dispatch(walletActions.disconnect())
-            }}
-            networkType={networkType}
-            sBitzApyApr={sBitzApyApr}
-            stakedTokenSupply={stakedBitzData.stakedTokenSupply}
-            stakedAmount={stakedBitzData.stakedAmount}
-            stakeDataLoading={stakeLoading}
-            changeStakeTab={(tab: StakeSwitch) => {
-              dispatch(actions.setStakeTab({ tab }))
-            }}
-            currentStakeTab={currentStakeTab}
-            ethBalance={ethBalance}
-            isBalanceLoading={isBalanceLoading}
-            stakeInput={stakeInput}
-            unstakeInput={unstakeInput}
-            setStakeInput={(val: string) => {
-              dispatch(actions.setStakeInputVal({ val }))
-            }}
-            setUnstakeInput={(val: string) => {
-              dispatch(actions.setUnstakeInputVal({ val }))
-            }}
-          />
-
-        </Box>
-
-        <Box
-          className={`${classes.yourStatsWrapper} ${isExpanded ? classes.yourStatsVisible : ''}`}
-        >
-          {isExpanded && (
-            <YourStakeProgress
-              sBitzBalance={sBitzBalance}
-              bitzToWithdraw={bitzToWithdraw}
-              bitzPrice={bitzPrice}
-              isLoading={stakeLoading}
-              isConnected={isConnected}
-              yield24={estimated24Yield}
+          <Box className={classes.stakingContentWrapper}>
+            <LiquidityStaking
+              walletStatus={walletStatus}
+              tokens={tokens}
+              handleStake={(props: StakeLiquidityPayload) => {
+                dispatch(actions.stake(props))
+              }}
+              handleUnstake={(props: StakeLiquidityPayload) => {
+                dispatch(actions.unstake(props))
+              }}
+              inProgress={progress}
+              success={success}
+              onConnectWallet={() => {
+                dispatch(walletActions.connect(false))
+              }}
+              onDisconnectWallet={() => {
+                dispatch(walletActions.disconnect())
+              }}
+              networkType={networkType}
+              sBitzApyApr={sBitzApyApr}
+              stakedTokenSupply={stakedBitzData.stakedTokenSupply}
+              stakedAmount={stakedBitzData.stakedAmount}
+              stakeDataLoading={stakeLoading}
+              changeStakeTab={(tab: StakeSwitch) => {
+                dispatch(actions.setStakeTab({ tab }))
+              }}
+              currentStakeTab={currentStakeTab}
+              ethBalance={ethBalance}
+              isBalanceLoading={isBalanceLoading}
+              stakeInput={stakeInput}
+              unstakeInput={unstakeInput}
+              setStakeInput={(val: string) => {
+                dispatch(actions.setStakeInputVal({ val }))
+              }}
+              setUnstakeInput={(val: string) => {
+                dispatch(actions.setUnstakeInputVal({ val }))
+              }}
             />
-          )}
+
+            <Box
+              className={`${classes.yourStatsWrapper} ${isExpanded ? classes.yourStatsVisible : ''}`}
+            >
+              {isExpanded && (
+                <YourStakeProgress
+                  sBitzBalance={sBitzBalance}
+                  bitzToWithdraw={bitzToWithdraw}
+                  bitzPrice={bitzPrice}
+                  isLoading={stakeLoading}
+                  isConnected={isConnected}
+                  yield24={estimated24Yield}
+                />
+              )}
+            </Box>
+          </Box>
+
+
         </Box>
+
+
+
       </Box>
       <Box className={classes.statsContainer}>
 

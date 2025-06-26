@@ -203,7 +203,7 @@ export const useStyles = makeStyles()(() => ({
     }
   },
   liquidityStakingExpanded: {
-    transform: 'translateX(-280px)',
+    transform: 'translateX(-80px)',
     width: 'calc(50% - 8px)'
   },
   yourStatsWrapper: {
@@ -212,7 +212,7 @@ export const useStyles = makeStyles()(() => ({
     width: 'calc(50% - 20px)',
     maxWidth: '600px',
     opacity: 0,
-    transform: 'translateX(100px)',
+    transform: 'translateX(200px)',
     transition: 'opacity 0.5s ease-in-out, transform 0.5s ease-in-out, visibility 0.1s linear 0.5s',
     willChange: 'opacity, transform, visibility',
     backfaceVisibility: 'hidden',
@@ -230,7 +230,7 @@ export const useStyles = makeStyles()(() => ({
   },
   yourStatsVisible: {
     opacity: 1,
-    transform: 'translateX(-20px)',
+    transform: 'translateX(250px)',
     pointerEvents: 'auto',
     visibility: 'visible',
     transition: 'opacity 0.5s ease-in-out, transform 0.5s ease-in-out, visibility 0s linear'
@@ -279,6 +279,13 @@ export const useStyles = makeStyles()(() => ({
     display: 'flex',
     justifyContent: 'flex-end',
     marginBottom: '16px'
+  },
+  stakingContentWrapper: {
+    display: 'flex',
+    gap: '16px',
+    [theme.breakpoints.down('md')]: {
+      flexDirection: 'column-reverse'
+    }
   }
 }))
 

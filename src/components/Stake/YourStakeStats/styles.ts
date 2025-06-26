@@ -159,6 +159,9 @@ const useStyles = makeStyles()(_theme => {
       display: 'flex',
       flexDirection: 'column',
       gap: '8px',
+      [theme.breakpoints.down('md')]: {
+        alignItems: 'center'
+      },
       alignItems: 'flex-start',
       justifyContent: 'flex-start'
     },

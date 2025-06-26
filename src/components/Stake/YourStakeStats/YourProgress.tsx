@@ -70,8 +70,8 @@ export const YourStakeProgress: React.FC<YourProgressProps> = ({
                 </Box>
               }
               isLoading={isLoading}
-              value={`$${formatNumberWithSuffix(
-                +printBN(bitzToWithdraw, BITZ_MAIN.decimals) * bitzPrice,
+              value={`${formatNumberWithSuffix(
+                +printBN(bitzToWithdraw, BITZ_MAIN.decimals),
                 { decimalsAfterDot: 2 }
               )}`}
             />
