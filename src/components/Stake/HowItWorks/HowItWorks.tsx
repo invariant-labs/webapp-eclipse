@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material'
-import useStyles from './style'
 import howItWorksImage from '@static/png/how-it-works.png'
 import { Step } from './Step/Step'
+import useStyles from './style'
 
 export const HowItWorks = () => {
   const { classes } = useStyles()
