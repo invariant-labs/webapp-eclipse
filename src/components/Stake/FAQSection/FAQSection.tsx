@@ -101,13 +101,7 @@ export const FAQSection = () => {
             style={{ cursor: 'pointer' }}
             onClick={() => {
               dispatch(actions.setNavigation({ address: location.pathname }))
-              navigate(
-                ROUTES.getNewPositionRoute(
-                  sBITZ_MAIN.address.toString(),
-                  WETH_MAIN.address.toString(),
-                  '1_00'
-                )
-              )
+              navigate(ROUTES.getNewPositionRoute(sBITZ_MAIN.symbol, WETH_MAIN.symbol, '1_00'))
             }}>
             sBITZ-ETH pool.
           </b>{' '}
