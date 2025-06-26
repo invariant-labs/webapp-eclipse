@@ -260,7 +260,10 @@ export const WrappedStake: React.FC = () => {
           <Typography component='h1'>Liquidity staking</Typography>
           <Box className={classes.subheaderDescription}>
             Earn more with sBITZ.
-            <Link to='' target='_blank' className={classes.learnMoreLink}>
+            <Link
+              to='https://docs.invariant.app/docs/sbitz'
+              target='_blank'
+              className={classes.learnMoreLink}>
               <span> Learn more</span> <LaunchIcon classes={{ root: classes.clipboardIcon }} />
             </Link>
           </Box>
