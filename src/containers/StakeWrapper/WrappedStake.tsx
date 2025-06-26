@@ -328,7 +328,7 @@ export const WrappedStake: React.FC = () => {
           yield24={estimated24Yield}
         />
         <Box className={classes.statsContainer}>
-          <Typography className={classes.statsTitle}>Your stake</Typography>
+          <Typography className={classes.statsTitle}>Staking returns</Typography>
           <StakeChart
             onStakedAmountChange={setStakedAmount}
             stakedAmount={stakedAmount}
