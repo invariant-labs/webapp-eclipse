@@ -320,11 +320,8 @@ export const useStyles = makeStyles()(() => ({
   },
   stakingContentWrapper: {
     display: 'flex',
-    gap: '16px',
     width: '100%',
     [theme.breakpoints.down('md')]: {
-      justifyContent: 'center',
-      alignItems: 'center',
       flexDirection: 'column-reverse'
     }
   }

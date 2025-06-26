@@ -6,7 +6,8 @@ const useStyles = makeStyles()(_theme => {
     mainWrapper: {
       maxWidth: 305,
       [theme.breakpoints.down('md')]: {
-        maxWidth: '100%'
+        maxWidth: '100%',
+        marginBottom: '16px'
       },
       width: '100%',
       [theme.breakpoints.down('sm')]: {
