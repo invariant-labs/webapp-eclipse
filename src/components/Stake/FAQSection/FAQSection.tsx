@@ -4,7 +4,7 @@ import { colors, typography } from '@static/theme'
 import useStyles from './style'
 import { useNavigate } from 'react-router-dom'
 import { ROUTES } from '@utils/utils'
-import { sBITZ_MAIN, WETH_ADDRESS, WETH_MAIN } from '@store/consts/static'
+import { sBITZ_MAIN, WETH_MAIN } from '@store/consts/static'
 
 export const FAQSection = () => {
   const { classes } = useStyles()
