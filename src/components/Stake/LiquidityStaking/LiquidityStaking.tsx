@@ -90,7 +90,7 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
         setUnstakeInput(val)
       }
     },
-    [currentStakeTab]
+    [currentStakeTab, setStakeInput, setUnstakeInput]
   )
 
   const [amountTo, setAmountTo] = useState<string>('')
@@ -164,7 +164,7 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
     } else {
       setAmountTo(printBN(calculateOtherTokenAmount(amountFrom), TOKEN_DECIMALS))
     }
-  }, [amountFrom])
+  }, [amountFrom, currentStakeTab, calculateOtherTokenAmount])
 
   return (
     <Grid container className={classes.wrapper}>
@@ -208,7 +208,7 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
         current={tokenFrom}
         hideBalances={walletStatus !== Status.Initialized}
         commonTokens={[]}
-        tokenPrice={sBitzPrice}
+        tokenPrice={tokenFrom.assetAddress.equals(BITZ_MAIN.address) ? bitzPrice : sBitzPrice}
         priceLoading={priceLoading}
         isBalanceLoading={isBalanceLoading}
         showMaxButton={true}
@@ -240,7 +240,7 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
         current={tokenTo}
         hideBalances={walletStatus !== Status.Initialized}
         commonTokens={[]}
-        tokenPrice={bitzPrice}
+        tokenPrice={tokenTo.assetAddress.equals(BITZ_MAIN.address) ? bitzPrice : sBitzPrice}
         priceLoading={priceLoading}
         isBalanceLoading={isBalanceLoading}
         showMaxButton={false}
