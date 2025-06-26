@@ -2,10 +2,13 @@ import { Faq } from '@common/Faq/Faq'
 import { Box, Typography } from '@mui/material'
 import { colors, typography } from '@static/theme'
 import useStyles from './style'
+import { useNavigate } from 'react-router-dom'
+import { ROUTES } from '@utils/utils'
+import { sBITZ_MAIN, WETH_ADDRESS, WETH_MAIN } from '@store/consts/static'
 
 export const FAQSection = () => {
   const { classes } = useStyles()
-
+  const navigate = useNavigate()
   const faqData = [
     {
       question: 'What is sBITZ?',
@@ -88,10 +91,23 @@ export const FAQSection = () => {
       question: 'What can I do with sBITZ?',
       answer: (
         <Typography className={classes.typography}>
-          At this point, you can put your sBITZ to work by adding it to the sBITZ-ETH(link do tej
-          pooli) pool. This way, on top of earning <b>staking rewards</b>, you’ll also earn{' '}
-          <b>trading fees</b> and <b>Invariant Points.</b> More yield opportunities on other
-          protocols within the Eclipse DeFi ecosystem should be available soon.
+          At this point, you can put your sBITZ to work by adding it to the{' '}
+          <b
+            style={{ cursor: 'pointer' }}
+            onClick={() =>
+              navigate(
+                ROUTES.getNewPositionRoute(
+                  sBITZ_MAIN.address.toString(),
+                  WETH_MAIN.address.toString(),
+                  '1_00'
+                )
+              )
+            }>
+            sBITZ-ETH pool.
+          </b>{' '}
+          This way, on top of earning <b>staking rewards</b>, you’ll also earn <b>trading fees</b>{' '}
+          and <b>Invariant Points.</b> More yield opportunities on other protocols within the
+          Eclipse DeFi ecosystem should be available soon.
         </Typography>
       )
     },
