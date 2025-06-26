@@ -1,7 +1,7 @@
 import { Box, Grid, Typography } from '@mui/material'
 import useStyles from './style'
 import Switcher from './Switcher/Switcher'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useLayoutEffect, useMemo, useState } from 'react'
 import { BITZ_MAIN, WETH_MIN_STAKE_UNSTAKE_LAMPORTS } from '@store/consts/static'
 import ExchangeAmountInput from '@components/Inputs/ExchangeAmountInput/ExchangeAmountInput'
 import { Status } from '@store/reducers/solanaWallet'
@@ -146,7 +146,7 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
 
   const calculateOtherTokenAmount = useCallback(
     (value: string, isStake?: boolean) => {
-      if (stakeDataLoading || !stakedAmount || !stakedTokenSupply) return new BN(0)
+      if (!stakedAmount || !stakedTokenSupply) return new BN(0)
       const isStakeAction = isStake ?? tokenFrom.assetAddress.equals(BITZ_MAIN.address)
       const amount = convertBalanceToBN(value, TOKEN_DECIMALS)
       if (isStakeAction) {
@@ -158,7 +158,7 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
     [stakeDataLoading, stakedAmount, stakedTokenSupply, tokenFrom, tokenTo]
   )
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!amountFrom || Number(amountFrom) === 0) {
       setAmountTo('0')
     } else {
