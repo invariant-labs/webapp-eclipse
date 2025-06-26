@@ -57,6 +57,7 @@ import { StakeSwitch } from '@store/consts/types'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { refreshIcon } from '@static/icons'
 import { ProgressState } from '@common/AnimatedButton/AnimatedButton'
+import { SBitzBanner } from '@components/Stake/SBitzBanner/SBitzBanner'
 
 export const WrappedStake: React.FC = () => {
   const { classes } = useStyles()
@@ -237,7 +238,10 @@ export const WrappedStake: React.FC = () => {
 
   return (
     <Grid container className={classes.wrapper}>
+
+      <SBitzBanner />
       <Box className={classes.titleWrapper}>
+
         <Box className={classes.titleTextWrapper}>
           <Typography component='h1'>Liquidity staking</Typography>
           <Box className={classes.subheaderDescription}>
