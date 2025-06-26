@@ -155,8 +155,11 @@ export const useStyles = makeStyles()(() => ({
   },
   titleWrapper: {
     display: 'flex',
-    maxWidth: 510,
     width: '100%',
+    maxWidth: 510,
+    [theme.breakpoints.down('md')]: {
+      maxWidth: '100%'
+    },
     marginBottom: '16px',
     justifyContent: 'space-between',
     alignItems: 'flex-end',
@@ -232,7 +235,7 @@ export const useStyles = makeStyles()(() => ({
     backfaceVisibility: 'hidden',
     transform: 'translateZ(0)',
     width: '100%',
-    maxWidth: '600px',
+    maxWidth: '510px',
     zIndex: 2,
     [theme.breakpoints.down('md')]: {
       transform: 'none !important',
@@ -241,7 +244,7 @@ export const useStyles = makeStyles()(() => ({
     }
   },
   liquidityStakingExpanded: {
-    transform: 'translateX(-80px)',
+    transform: 'translateX(-60px)',
     width: 'calc(50% - 8px)'
   },
   yourStatsWrapper: {
@@ -267,7 +270,7 @@ export const useStyles = makeStyles()(() => ({
   },
   yourStatsVisible: {
     opacity: 1,
-    transform: 'translateX(300px)',
+    transform: 'translateX(260px)',
     pointerEvents: 'auto',
     visibility: 'visible',
     transition: 'opacity 0.5s ease-in-out, transform 0.5s ease-in-out, visibility 0s linear'
