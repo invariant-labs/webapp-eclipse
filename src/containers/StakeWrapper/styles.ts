@@ -220,7 +220,6 @@ export const useStyles = makeStyles()(() => ({
     willChange: 'transform, opacity',
     transform: 'translateZ(0)',
     backfaceVisibility: 'hidden',
-    marginTop: '32px',
     [theme.breakpoints.down('md')]: {
       flexDirection: 'column-reverse',
       alignItems: 'center'
