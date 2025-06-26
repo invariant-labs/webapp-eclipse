@@ -157,25 +157,19 @@ export const useStyles = makeStyles()(() => ({
     display: 'flex',
     maxWidth: 510,
     width: '100%',
-    flexDirection: 'column',
+    marginBottom: '16px',
     justifyContent: 'space-between',
     alignItems: 'flex-end',
     gap: 12
   },
+
   titleTextWrapper: {
     display: 'flex',
-    flexDirection: 'row',
     width: '100%',
+    gap: '8px',
+    justifyContent: 'space-between',
     flexDirection: 'column',
-    justifyContent: 'space-between',
-    alignItems: 'flex-end',
-    gap: 12
-  },
-  titleTextWrapper: {
-    display: 'flex',
-    flexDirection: 'row',
-    width: '100%',
-    justifyContent: 'space-between',
+
     [theme.breakpoints.down('sm')]: {
       flexDirection: 'column'
     },
@@ -256,7 +250,7 @@ export const useStyles = makeStyles()(() => ({
     width: 'calc(50% - 20px)',
     maxWidth: '600px',
     opacity: 0,
-    transform: 'translateX(200px)',
+    transform: 'translateX(285px)',
     transition: 'opacity 0.5s ease-in-out, transform 0.5s ease-in-out, visibility 0.1s linear 0.5s',
     willChange: 'opacity, transform, visibility',
     backfaceVisibility: 'hidden',
@@ -268,17 +262,17 @@ export const useStyles = makeStyles()(() => ({
       right: 'auto',
       width: '100%',
       maxWidth: '100%',
-      marginBottom: '24px',
       transform: 'none !important'
     }
   },
   yourStatsVisible: {
     opacity: 1,
-    transform: 'translateX(250px)',
+    transform: 'translateX(300px)',
     pointerEvents: 'auto',
     visibility: 'visible',
     transition: 'opacity 0.5s ease-in-out, transform 0.5s ease-in-out, visibility 0s linear'
   },
+
   expandButton: {
     marginTop: '16px',
     backgroundColor: colors.invariant.component,
@@ -318,8 +312,6 @@ export const useStyles = makeStyles()(() => ({
     }
   },
   liquidityStakingHeaderWrapper: {
-    maxWidth: '510px',
-    width: '100%',
     display: 'flex',
     justifyContent: 'flex-end',
     marginBottom: '16px'
@@ -327,7 +319,10 @@ export const useStyles = makeStyles()(() => ({
   stakingContentWrapper: {
     display: 'flex',
     gap: '16px',
+    width: '100%',
     [theme.breakpoints.down('md')]: {
+      justifyContent: 'center',
+      alignItems: 'center',
       flexDirection: 'column-reverse'
     }
   }

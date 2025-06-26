@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import useStyles from './styles'
-import { Box, Button, Grid, Typography, Button } from '@mui/material'
+import { Box, Button, Grid, Typography, useMediaQuery } from '@mui/material'
 import { Link } from 'react-router-dom'
 import LaunchIcon from '@mui/icons-material/Launch'
 import { useDispatch, useSelector } from 'react-redux'
@@ -60,6 +60,7 @@ import { HowItWorks } from '@components/Stake/HowItWorks/HowItWorks'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { refreshIcon } from '@static/icons'
 import { ProgressState } from '@common/AnimatedButton/AnimatedButton'
+import { theme } from '@static/theme'
 
 export const WrappedStake: React.FC = () => {
   const { classes } = useStyles()
@@ -109,7 +110,7 @@ export const WrappedStake: React.FC = () => {
   const [progress, setProgress] = useState<ProgressState>('none')
   const [priceLoading, setPriceLoading] = useState(false)
   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
-
+  const isSm = useMediaQuery(theme.breakpoints.down('sm'))
   const sBitzBalance = useMemo(() => {
     return new BN(tokensList.find(token => token.address.equals(sBITZ_MAIN.address))?.balance || 0)
   }, [tokensList])
@@ -267,91 +268,102 @@ export const WrappedStake: React.FC = () => {
 
   return (
     <Grid container className={classes.wrapper}>
-      <Box className={classes.titleWrapper}>
-        <Box className={classes.titleTextWrapper}>
-          <Typography component='h1'>Liquidity staking</Typography>
-          <Box className={classes.subheaderDescription}>
-            Earn more with sBITZ.
-            <Link to='' target='_blank' className={classes.learnMoreLink}>
-              <span> Learn more</span> <LaunchIcon classes={{ root: classes.clipboardIcon }} />
-            </Link>
+      <Box className={classes.animatedContainer}>
+        <Box
+          className={`${classes.liquidityStakingWrapper} ${isExpanded ? classes.liquidityStakingExpanded : ''}`}
+        >
+          <Box className={classes.titleWrapper}>
+            <Box className={classes.titleTextWrapper}>
+              <Typography component='h1'>Liquidity staking</Typography>
+              <Box className={classes.subheaderDescription}>
+                <Typography>Earn more with sBITZ.</Typography>
+                <Link to='' target='_blank' className={classes.learnMoreLink}>
+                  <span> {isSm ? 'More' : 'Learn More'}</span> <LaunchIcon classes={{ root: classes.clipboardIcon }} />
+                </Link>
+              </Box>
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'flex-end', flexDirection: 'column-reverse', gap: 1 }}>
+              <Button className={classes.statsExpanderButton} onClick={() => toggleExpand()}>
+                <p>
+                  <img src={isExpanded ? EyeHide : EyeShow} width={20} height={20} />
+                  Your Stats
+                </p>
+              </Button>
+              <TooltipHover title='Refresh'>
+                <Grid className={classes.refreshIconContainer}>
+                  <Button
+                    onClick={handleRefresh}
+                    className={classes.refreshIconBtn}
+                    disabled={isBalanceLoading || stakeLoading || isLoadingStats}>
+                    <img src={refreshIcon} className={classes.refreshIcon} alt='Refresh' />
+                  </Button>
+                </Grid>
+              </TooltipHover>
+            </Box>
+
+          </Box>
+          <Box className={classes.stakingContentWrapper}>
+
+            <LiquidityStaking
+              walletStatus={walletStatus}
+              tokens={tokens}
+              handleStake={(props: StakeLiquidityPayload) => {
+                dispatch(actions.stake(props))
+              }}
+              handleUnstake={(props: StakeLiquidityPayload) => {
+                dispatch(actions.unstake(props))
+              }}
+              onConnectWallet={() => {
+                dispatch(walletActions.connect(false))
+              }}
+              onDisconnectWallet={() => {
+                dispatch(walletActions.disconnect())
+              }}
+              sBitzApyApr={sBitzApyApr}
+              stakedTokenSupply={stakedBitzData.stakedTokenSupply}
+              stakedAmount={stakedBitzData.stakedAmount}
+              stakeDataLoading={stakeLoading}
+              changeStakeTab={(tab: StakeSwitch) => {
+                dispatch(actions.setStakeTab({ tab }))
+              }}
+              currentStakeTab={currentStakeTab}
+              ethBalance={ethBalance}
+              isBalanceLoading={isBalanceLoading}
+              stakeInput={stakeInput}
+              unstakeInput={unstakeInput}
+              setStakeInput={(val: string) => {
+                dispatch(actions.setStakeInputVal({ val }))
+              }}
+              setUnstakeInput={(val: string) => {
+                dispatch(actions.setUnstakeInputVal({ val }))
+              }}
+              progress={progress}
+              setProgress={setProgress}
+              tokenFrom={tokenFrom}
+              tokenTo={tokenTo}
+              priceLoading={priceLoading}
+              sBitzPrice={sBitzPrice}
+              bitzPrice={bitzPrice}
+            />
+
+            <Box
+              className={`${classes.yourStatsWrapper} ${isExpanded ? classes.yourStatsVisible : ''}`}
+            >
+              {isExpanded && (
+                <YourStakeProgress
+                  sBitzBalance={sBitzBalance}
+                  bitzToWithdraw={bitzToWithdraw}
+                  bitzPrice={bitzPrice}
+                  isLoading={stakeLoading}
+                  isConnected={isConnected}
+                  yield24={estimated24Yield}
+                />
+              )}
+            </Box>
           </Box>
         </Box>
-        <TooltipHover title='Refresh'>
-          <Grid className={classes.refreshIconContainer}>
-            <Button
-              onClick={handleRefresh}
-              className={classes.refreshIconBtn}
-              disabled={isBalanceLoading || stakeLoading || isLoadingStats}>
-              <img src={refreshIcon} className={classes.refreshIcon} alt='Refresh' />
-            </Button>
-          </Grid>
-        </TooltipHover>
+
       </Box>
-      <LiquidityStaking
-        walletStatus={walletStatus}
-        tokens={tokens}
-        handleStake={(props: StakeLiquidityPayload) => {
-          dispatch(actions.stake(props))
-        }}
-        handleUnstake={(props: StakeLiquidityPayload) => {
-          dispatch(actions.unstake(props))
-        }}
-        onConnectWallet={() => {
-          dispatch(walletActions.connect(false))
-        }}
-        onDisconnectWallet={() => {
-          dispatch(walletActions.disconnect())
-        }}
-        sBitzApyApr={sBitzApyApr}
-        stakedTokenSupply={stakedBitzData.stakedTokenSupply}
-        stakedAmount={stakedBitzData.stakedAmount}
-        stakeDataLoading={stakeLoading}
-        changeStakeTab={(tab: StakeSwitch) => {
-          dispatch(actions.setStakeTab({ tab }))
-        }}
-        currentStakeTab={currentStakeTab}
-        ethBalance={ethBalance}
-        isBalanceLoading={isBalanceLoading}
-        stakeInput={stakeInput}
-        unstakeInput={unstakeInput}
-        setStakeInput={(val: string) => {
-          dispatch(actions.setStakeInputVal({ val }))
-        }}
-        setUnstakeInput={(val: string) => {
-          dispatch(actions.setUnstakeInputVal({ val }))
-        }}
-        progress={progress}
-        setProgress={setProgress}
-        tokenFrom={tokenFrom}
-        tokenTo={tokenTo}
-        priceLoading={priceLoading}
-        sBitzPrice={sBitzPrice}
-        bitzPrice={bitzPrice}
-      />
-
-      <Box
-        className={`${classes.yourStatsWrapper} ${isExpanded ? classes.yourStatsVisible : ''}`}
-      >
-        {isExpanded && (
-          <YourStakeProgress
-            sBitzBalance={sBitzBalance}
-            bitzToWithdraw={bitzToWithdraw}
-            bitzPrice={bitzPrice}
-            isLoading={stakeLoading}
-            isConnected={isConnected}
-            yield24={estimated24Yield}
-          />
-        )}
-      </Box>
-    </Box>
-
-
-        </Box >
-
-
-
-      </Box >
       <Box className={classes.statsContainer}>
 
 
