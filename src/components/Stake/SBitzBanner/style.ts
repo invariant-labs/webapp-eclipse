@@ -1,24 +1,22 @@
 import { Theme } from '@mui/material'
 import { makeStyles } from 'tss-react/mui'
 import { colors, typography } from '@static/theme'
-import sBitzBanner from '@static/png/sBITS_Stake.png'
 export const useStyles = makeStyles()((theme: Theme) => ({
   bannerContainer: {
     position: 'relative',
-    backgroundImage: `url(${sBitzBanner})`,
     backgroundSize: 'cover',
+    background: `radial-gradient(circle at 50% -400%, #00D9FF 0%, #00D9FF 20%, ${colors.invariant.component}aa 90%)`,
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat',
     padding: '24px',
     borderRadius: '24px',
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'center',
     minHeight: '100px',
-    margin: '0 auto',
     marginBottom: '48px',
-    width: '600px',
+    maxWidth: '510px',
 
     [theme.breakpoints.down('md')]: {
       width: '90%',
@@ -94,6 +92,45 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   iconRight: {
     marginLeft: '4px',
     filter: 'brightness(0)'
+  },
+  bannerContent: {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+
+    [theme.breakpoints.down('md')]: {
+      alignItems: 'flex-start'
+    }
+  },
+  bannerTextContent: {
+    display: 'flex',
+    flexDirection: 'column'
+  },
+  bannerImageContainer: {
+    marginRight: '32px',
+    marginLeft: '32px',
+    '& img': {
+      width: '150px',
+      height: 'auto'
+    },
+    [theme.breakpoints.down('md')]: {
+      marginRight: '0',
+      marginLeft: '0',
+      marginTop: '16px',
+      alignSelf: 'center',
+      '& img': {
+        width: '120px',
+        height: 'auto'
+      }
+    },
+
+    [theme.breakpoints.down('sm')]: {
+      '& img': {
+        width: '90px',
+        height: 'auto'
+      }
+    }
   }
 }))
 
