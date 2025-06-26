@@ -43,7 +43,7 @@ export const useStyles = makeStyles()(() => ({
     }
   },
   row: {
-    marginBottom: 16
+    marginBottom: 72
   },
   label: {
     ...typography.body3,

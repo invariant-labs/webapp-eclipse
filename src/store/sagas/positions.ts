@@ -1713,7 +1713,7 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
             const postAmountX = postAccountX.uiTokenAmount.amount
             const postAmountY = postAccountY.uiTokenAmount.amount
             const amountX = new BN(preAmountX).sub(new BN(postAmountX))
-            const amountY = new BN(preAmountY).sub(new BN(postAmountY))
+            const amountY = new BN(postAmountY).sub(new BN(preAmountY))
             try {
               const tokenX = allTokens[pair.tokenX.toString()]
               const tokenY = allTokens[pair.tokenY.toString()]
