@@ -243,7 +243,7 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
         hideBalances={walletStatus !== Status.Initialized}
         commonTokens={[]}
         tokenPrice={tokenTo.assetAddress.equals(BITZ_MAIN.address) ? bitzPrice : sBitzPrice}
-        priceLoading={priceLoading}
+        priceLoading={priceLoading || stakeDataLoading}
         isBalanceLoading={isBalanceLoading}
         showMaxButton={false}
         disabled
