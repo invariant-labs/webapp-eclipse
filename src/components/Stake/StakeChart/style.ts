@@ -11,11 +11,10 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     background: colors.invariant.component,
     borderRadius: 24,
     [theme.breakpoints.down('md')]: {
-      width: '100%',
-      padding: '20px'
+      width: '100%'
     },
     [theme.breakpoints.down('sm')]: {
-      padding: '16px',
+      padding: '16px 0',
       borderRadius: 16
     }
   },
