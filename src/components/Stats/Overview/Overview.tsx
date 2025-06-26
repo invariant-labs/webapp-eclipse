@@ -105,6 +105,7 @@ const Overview: React.FC<IOverview> = ({
               width={isSm ? '100%' : 'auto'}>
               <Intervals
                 interval={lastUsedInterval ?? IntervalsKeys.Daily}
+                intervals={[IntervalsKeys.Daily, IntervalsKeys.Weekly, IntervalsKeys.Monthly]}
                 setInterval={updateInterval}
                 dark
                 fullWidth={isSm}

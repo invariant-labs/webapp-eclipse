@@ -1019,8 +1019,8 @@ export const SOLANA_MAINNET_GENESIS_HASH = '5eykt4UsFv8P8NJdTREpY1vzqKqZKvdpKuc1
 export enum Intervals {
   Daily = '24H',
   Weekly = '1W',
-  Monthly = '1M'
-  // Yearly = 'yearly' Don't show year in UI
+  Monthly = '1M',
+  Yearly = '1Y'
 }
 
 export const MONTH_NAMES = [

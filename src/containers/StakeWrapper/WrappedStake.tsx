@@ -57,6 +57,7 @@ import { HowItWorks } from '@components/Stake/HowItWorks/HowItWorks'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { refreshIcon } from '@static/icons'
 import { ProgressState } from '@common/AnimatedButton/AnimatedButton'
+import { Intervals as IntervalsKeys } from '@store/consts/static'
 
 export const WrappedStake: React.FC = () => {
   const { classes } = useStyles()
@@ -103,6 +104,7 @@ export const WrappedStake: React.FC = () => {
   const [progress, setProgress] = useState<ProgressState>('none')
   const [priceLoading, setPriceLoading] = useState(false)
   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
+  const [interval, setInterval] = useState<IntervalsKeys>(IntervalsKeys.Monthly)
 
   const sBitzBalance = useMemo(() => {
     return new BN(tokensList.find(token => token.address.equals(sBITZ_MAIN.address))?.balance || 0)
@@ -211,8 +213,10 @@ export const WrappedStake: React.FC = () => {
       sbitzPredictedYield
     }: { sbitzPredictedYield: number[]; bitzPredictedYield: number[] } = computeBitzSbitzRewards(
       stakedAmount,
-      +printBN(stakedBitzData.bitzTotalBalance, sBITZ_MAIN.decimals)
+      +printBN(stakedBitzData.bitzTotalBalance, sBITZ_MAIN.decimals),
+      interval === '1Y' ? 365 : 31
     )
+
     const bitzData = bitzPredictedYield.map((value, index) => ({
       x: `Day ${index + 1}`,
       y: value
@@ -224,12 +228,12 @@ export const WrappedStake: React.FC = () => {
     const earnedAmount = sBitzData[sBitzData.length - 1]?.y - bitzData[sBitzData.length - 1]?.y
     const earnedUsd = earnedAmount * bitzPrice
     setChartData({
-      bitzData,
-      sBitzData,
+      bitzData: bitzData.filter((_, index) => (index + 1) % (interval === '1Y' ? 7 : 1) === 0),
+      sBitzData: sBitzData.filter((_, index) => (index + 1) % (interval === '1Y' ? 7 : 1) === 0),
       earnedAmount,
       earnedUsd
     })
-  }, [stakedBitzData, stakedAmount, bitzPrice])
+  }, [stakedBitzData, stakedAmount, bitzPrice, interval])
 
   useEffect(() => {
     let timeoutId1: NodeJS.Timeout
@@ -338,6 +342,8 @@ export const WrappedStake: React.FC = () => {
             sBitzData={chartData.sBitzData}
             earnedUsd={chartData.earnedUsd}
             stakeLoading={stakeLoading}
+            interval={interval}
+            setInterval={interval => setInterval(interval as IntervalsKeys)}
           />
         </Box>
         <HowItWorks />

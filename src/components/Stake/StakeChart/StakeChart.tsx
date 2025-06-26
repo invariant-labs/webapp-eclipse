@@ -7,6 +7,8 @@ import { linearGradientDef } from '@nivo/core'
 import BITZ from '@static/png/bitz.png'
 import sBITZ from '@static/png/sBitz.png'
 import { formatNumberWithoutSuffix, formatNumberWithSuffix } from '@utils/utils'
+import { Intervals as IntervalsKeys } from '@store/consts/static'
+import Intervals from '@components/Stats/Intervals/Intervals'
 
 type PointData = {
   x: string
@@ -21,6 +23,8 @@ interface StakeChartProps {
   sBitzData: PointData[]
   onStakedAmountChange?: (amount: number) => void
   stakeLoading: boolean
+  interval: string
+  setInterval: (interval: string) => void
 }
 
 const generateMockBitzData = (): PointData[] => {
@@ -66,7 +70,9 @@ export const StakeChart: React.FC<StakeChartProps> = ({
   sBitzData,
   earnedUsd,
   onStakedAmountChange,
-  stakeLoading
+  stakeLoading,
+  interval,
+  setInterval
 }) => {
   const { classes } = useStyles()
   const [inputValue, setInputValue] = useState(stakedAmount.toString())
@@ -108,10 +114,18 @@ export const StakeChart: React.FC<StakeChartProps> = ({
   const isTablet = useMediaQuery(theme.breakpoints.down('md'))
 
   const getTickFrequency = useCallback(() => {
-    if (isMobile) return 8
-    if (isTablet) return 4
-    return 2
-  }, [isMobile, isTablet])
+    let tickFrequency = 2
+
+    if (isMobile) {
+      tickFrequency = 8
+    }
+
+    if (isTablet) {
+      tickFrequency = 4
+    }
+
+    return interval === '1Y' ? tickFrequency * 2 : tickFrequency
+  }, [isMobile, isTablet, interval])
 
   useEffect(() => {
     setInputValue(stakedAmount.toString())
@@ -281,6 +295,12 @@ export const StakeChart: React.FC<StakeChartProps> = ({
             compared to staking BITZ directly
           </Typography>
         </Box>
+        <Intervals
+          interval={interval}
+          intervals={[IntervalsKeys.Monthly, IntervalsKeys.Yearly]}
+          setInterval={interval => setInterval(interval)}
+          dark
+        />
       </Box>
 
       <Box
@@ -292,6 +312,7 @@ export const StakeChart: React.FC<StakeChartProps> = ({
         }}>
         <ResponsiveLine
           data={data}
+          animate={false}
           margin={{
             top: 20,
             right: isMobile ? 0 : 20,
