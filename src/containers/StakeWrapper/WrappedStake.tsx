@@ -304,7 +304,6 @@ export const WrappedStake: React.FC = () => {
       />
 
       <Box className={classes.statsContainer}>
-        <Typography className={classes.statsTitle}>Your stats</Typography>
         <YourStakeProgress
           sBitzBalance={sBitzBalance}
           bitzToWithdraw={bitzToWithdraw}
@@ -314,7 +313,7 @@ export const WrappedStake: React.FC = () => {
           yield24={estimated24Yield}
         />
         <Box className={classes.statsContainer}>
-          <Typography className={classes.statsTitle}>Your stake</Typography>
+          <Typography className={classes.statsTitle}>Earnings forecast</Typography>
           <StakeChart
             onStakedAmountChange={setStakedAmount}
             stakedAmount={stakedAmount}

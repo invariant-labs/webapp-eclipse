@@ -44,7 +44,7 @@ const Overview: React.FC<IOverview> = ({
 
   return (
     <>
-      <Box display='flex' justifyContent='space-between' alignItems='center' mb={4}>
+      <Box display='flex' justifyContent='space-between' alignItems='center' mb={2}>
         <Typography className={classes.subheader}>Overview</Typography>
       </Box>
       <Grid

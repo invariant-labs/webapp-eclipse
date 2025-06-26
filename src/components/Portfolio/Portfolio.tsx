@@ -322,7 +322,7 @@ const Portfolio: React.FC<IProps> = ({
     <>
       <Box className={classes.overviewContainer}>
         <Box>
-          <Grid display={'flex'} marginBottom={isDownLg ? '12px' : '20px'}>
+          <Grid display={'flex'} marginBottom={isDownLg ? '12px' : '16px'}>
             <Typography className={classes.overviewHeaderTitle}>Overview</Typography>
           </Grid>
         </Box>

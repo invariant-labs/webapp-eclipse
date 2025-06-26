@@ -191,10 +191,9 @@ export const FAQSection = () => {
         flexDirection: 'column',
         justifyContent: 'center',
         gap: 2,
-        marginTop: '32px'
+        marginTop: '72px'
       }}>
-      <Typography
-        sx={{ ...typography.heading1, color: colors.invariant.text, textAlign: 'center' }}>
+      <Typography sx={{ ...typography.heading4, color: colors.invariant.text, textAlign: 'left' }}>
         Frequently Asked Questions
       </Typography>
       <Faq faqData={faqData} />

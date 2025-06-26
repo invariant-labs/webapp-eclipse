@@ -24,9 +24,9 @@ const useStyles = makeStyles<StyleProps>()((theme, { alignment }) => {
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
-      gap: '24px',
+      gap: '16px',
       width: '100%',
-      marginTop: '24px'
+      marginTop: '56px'
     },
     switchWrapper: {
       display: 'flex',
@@ -112,7 +112,12 @@ const useStyles = makeStyles<StyleProps>()((theme, { alignment }) => {
       paddingTop: 6,
       paddingBottom: 6
     },
-    leaderboardHeaderSectionTitle: { ...typography.heading3, color: colors.white.main }
+    leaderboardHeaderSectionTitle: {
+      textAlign: 'left',
+      width: '100%',
+      ...typography.heading4,
+      color: colors.white.main
+    }
   }
 })
 

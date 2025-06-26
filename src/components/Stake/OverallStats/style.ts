@@ -9,7 +9,7 @@ export const useStyles = makeStyles()(() => ({
     justifyContent: 'center',
     flexDirection: 'column',
     borderRadius: '24px',
-    marginTop: '32px'
+    marginTop: '72px'
   },
   heading: {
     ...typography.heading4,
