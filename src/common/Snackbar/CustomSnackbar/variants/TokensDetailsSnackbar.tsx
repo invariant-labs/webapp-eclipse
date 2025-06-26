@@ -7,6 +7,8 @@ import {
   closeIcon,
   depositIcon,
   snackbarSwapIcon,
+  stakeIcon,
+  unstakeIcon,
   withdrawIcon
 } from '@static/icons'
 import { colors } from '@static/theme'
@@ -51,6 +53,10 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
         return withdrawIcon
       case 'claim':
         return circleDolarIcon
+      case 'stake':
+        return stakeIcon
+      case 'unstake':
+        return unstakeIcon
       default:
         return ''
     }
@@ -66,6 +72,10 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
         return 'Withdrawn'
       case 'claim':
         return 'Claimed'
+      case 'stake':
+        return 'Staked:'
+      case 'unstake':
+        return 'Unstaked:'
       default:
         return ''
     }
@@ -102,10 +112,24 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
               position='relative'
               display='flex'
               alignItems='center'
-              width={ikonType === 'swap' || ikonType === 'claim' ? 18 : 22}>
+              width={
+                ikonType === 'swap' ||
+                ikonType === 'unstake' ||
+                ikonType === 'stake' ||
+                ikonType === 'claim'
+                  ? 18
+                  : 22
+              }>
               <img
                 src={icon}
-                height={ikonType === 'swap' || ikonType === 'claim' ? 15 : 18}
+                height={
+                  ikonType === 'swap' ||
+                  ikonType === 'claim' ||
+                  ikonType === 'unstake' ||
+                  ikonType === 'stake'
+                    ? 15
+                    : 18
+                }
                 style={{ marginBottom: '2px' }}
               />
             </Grid>
@@ -122,7 +146,12 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
                 )}
               </>
             )}
-            {hasBothAmounts && (ikonType === 'swap' ? arrow : <StyledText>+</StyledText>)}{' '}
+            {hasBothAmounts &&
+              (ikonType === 'swap' || ikonType === 'unstake' || ikonType === 'stake' ? (
+                arrow
+              ) : (
+                <StyledText>+</StyledText>
+              ))}{' '}
             {hasYAmount && (
               <>
                 <StyledText color={colors.invariant.green}>{tokenYAmount}</StyledText>
