@@ -15,6 +15,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     alignItems: 'flex-start',
     justifyContent: 'center',
     minHeight: '100px',
+    height: '128px',
     marginBottom: '48px',
     maxWidth: '462px',
     width: '462px',
