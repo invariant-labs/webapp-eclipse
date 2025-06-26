@@ -87,7 +87,7 @@ const useStyles = makeStyles()(_theme => {
       flexDirection: 'column',
       borderRadius: '14px',
       width: '100%',
-      height: 'auto',
+      height: 441,
       border: '1px solid #EF84F540',
       justifyContent: 'center',
       background: '#111931',
@@ -114,7 +114,7 @@ const useStyles = makeStyles()(_theme => {
       gap: '24px'
     },
 
-    headerBigText: { ...typography.heading1, color: colors.invariant.text },
+    headerBigText: { ...typography.heading2, color: colors.invariant.text },
     headerSmallText: {
       ...typography.body1,
       color: colors.invariant.textGrey

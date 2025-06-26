@@ -157,6 +157,9 @@ export const useStyles = makeStyles()(() => ({
   titleWrapper: {
     display: 'flex',
     maxWidth: 510,
+    [theme.breakpoints.down('md')]: {
+      maxWidth: '100%'
+    },
     width: '100%',
     marginBottom: '16px',
     justifyContent: 'space-between',
@@ -225,25 +228,24 @@ export const useStyles = makeStyles()(() => ({
   },
   liquidityStakingWrapper: {
     display: 'flex',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center',
     flexDirection: 'column',
     transition: 'transform 0.4s ease-in-out, width 0.4s ease-in-out',
     willChange: 'transform, width',
     backfaceVisibility: 'hidden',
     transform: 'translateZ(0)',
-    width: '100%',
-    maxWidth: '600px',
     zIndex: 2,
+    width: '510px',
+
     [theme.breakpoints.down('md')]: {
       transform: 'none !important',
-      width: '100% !important',
-      maxWidth: '100%'
+      width: 'auto'
     }
   },
   liquidityStakingExpanded: {
     transform: 'translateX(-80px)',
-    width: 'calc(50% - 8px)'
+    width: '510px'
   },
   yourStatsWrapper: {
     position: 'absolute',
@@ -251,7 +253,7 @@ export const useStyles = makeStyles()(() => ({
     width: 'calc(50% - 20px)',
     maxWidth: '600px',
     opacity: 0,
-    transform: 'translateX(285px)',
+    transform: 'translateX(200px)',
     transition: 'opacity 0.5s ease-in-out, transform 0.5s ease-in-out, visibility 0.1s linear 0.5s',
     willChange: 'opacity, transform, visibility',
     backfaceVisibility: 'hidden',
@@ -268,7 +270,7 @@ export const useStyles = makeStyles()(() => ({
   },
   yourStatsVisible: {
     opacity: 1,
-    transform: 'translateX(300px)',
+    transform: 'translateX(250px)',
     pointerEvents: 'auto',
     visibility: 'visible',
     transition: 'opacity 0.5s ease-in-out, transform 0.5s ease-in-out, visibility 0s linear'

@@ -28,7 +28,6 @@ export const YourStakeProgress: React.FC<YourProgressProps> = ({
   const { classes } = useStyles()
   return (
     <Grid className={classes.mainWrapper}>
-      <Typography className={classes.statsTitle}>Your stats</Typography>
 
       <Grid className={classes.boxWrapper}>
         {<BlurOverlay isConnected={isConnected} />}
