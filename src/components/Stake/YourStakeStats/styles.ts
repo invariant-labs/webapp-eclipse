@@ -46,6 +46,8 @@ const useStyles = makeStyles()(_theme => {
     },
     mobileWrapper: {
       display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
       gap: '8px'
     },
     pointsColumn: {
@@ -115,7 +117,7 @@ const useStyles = makeStyles()(_theme => {
       gap: '24px'
     },
 
-    headerBigText: { ...typography.heading2, color: colors.invariant.text, marginTop: '16px' },
+    headerBigText: { ...typography.heading2, color: colors.invariant.text, marginTop: '30px' },
     headerSmallText: {
       ...typography.body1,
       color: colors.invariant.textGrey
