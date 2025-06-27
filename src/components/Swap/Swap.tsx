@@ -272,11 +272,11 @@ export const Swap: React.FC<ISwap> = ({
   const [wasIsFetchingNewPoolRun, setWasIsFetchingNewPoolRun] = useState(false)
   const [wasSwapIsLoadingRun, setWasSwapIsLoadingRun] = useState(false)
   const [isReversingTokens, setIsReversingTokens] = useState(false)
+
   useEffect(() => {
     if (lastEdited && tokenFromIndex !== null && tokenToIndex !== null) {
       setInputRef(lastEdited === 'from' ? inputTarget.FROM : inputTarget.TO)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lastEdited, tokenFromIndex, tokenToIndex])
   const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT = useMemo(() => {
     if (network === NetworkType.Testnet) {
