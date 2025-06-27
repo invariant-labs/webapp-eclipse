@@ -21,9 +21,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     flexDirection: 'row',
     gap: 8,
     alignItems: 'center',
-    '& h1': {
-      height: '27px'
-    },
+
     [theme.breakpoints.down('sm')]: {
       flexDirection: 'column',
       alignItems: 'flex-start',
@@ -399,6 +397,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     width: '100%',
     display: 'flex',
     alignItems: 'center',
+    transition: 'all 0.3s ease',
     gap: 12
   },
   unknownWarning: {

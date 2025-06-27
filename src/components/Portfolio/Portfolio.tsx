@@ -65,10 +65,15 @@ interface IProps {
   setPositionListAlignment: (val: LiquidityPools) => void
   overviewSelectedTab: OverviewSwitcher
   handleOverviewSwitch: (panel: OverviewSwitcher) => void
+
+  setSelectedFilters: (token: ISearchToken[]) => void
+  selectedFilters: ISearchToken[]
 }
 
 const Portfolio: React.FC<IProps> = ({
   isBalanceLoading,
+  setSelectedFilters,
+  selectedFilters,
   shouldDisable,
   handleSnackbar,
   data,
@@ -95,7 +100,6 @@ const Portfolio: React.FC<IProps> = ({
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const location = useLocation()
-  const [selectedFilters, setSelectedFilters] = useState<ISearchToken[]>([])
   const isLg = useMediaQuery('@media (max-width: 1360px)')
   const isDownLg = useMediaQuery(theme.breakpoints.down('lg'))
   const isMb = useMediaQuery(theme.breakpoints.down('sm'))
@@ -125,7 +129,6 @@ const Portfolio: React.FC<IProps> = ({
     newValue: OverviewSwitcher
   ) => {
     if (newValue === null) return
-    console.log(newValue)
     handleOverviewSwitch(newValue)
   }
 
@@ -323,7 +326,7 @@ const Portfolio: React.FC<IProps> = ({
     <>
       <Box className={classes.overviewContainer}>
         <Box>
-          <Grid display={'flex'} marginBottom={isDownLg ? '12px' : '20px'}>
+          <Grid display={'flex'} marginBottom={isDownLg ? '12px' : '16px'}>
             <Typography className={classes.overviewHeaderTitle}>Overview</Typography>
           </Grid>
         </Box>

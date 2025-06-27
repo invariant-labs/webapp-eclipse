@@ -21,7 +21,7 @@ import { getEclipseWallet } from '@utils/web3/wallet'
 import { leaderboardSelectors } from '@store/selectors/leaderboard'
 import { ensureError, ROUTES } from '@utils/utils'
 
-const BANNER_STORAGE_KEY = 'invariant-banner-state-6'
+const BANNER_STORAGE_KEY = 'invariant-banner-state-7'
 const BANNER_HIDE_DURATION = 1000 * 60 * 60 * 24 // 24 hours
 
 const RootPage: React.FC = memo(() => {
@@ -56,7 +56,8 @@ const RootPage: React.FC = memo(() => {
     [ROUTES.POSITION, 'Invariant | Position Details'],
     [ROUTES.POINTS, 'Invariant | Points'],
     [ROUTES.STATISTICS, 'Invariant | Statistics'],
-    [ROUTES.CREATOR, 'Invariant | Creator']
+    [ROUTES.CREATOR, 'Invariant | Creator'],
+    [ROUTES.STAKE, 'Invariant | Stake']
   ])
 
   useEffect(() => {

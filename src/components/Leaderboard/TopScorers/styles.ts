@@ -51,9 +51,11 @@ const useStyles = makeStyles()(() => {
       textOverflow: 'ellipsis'
     },
     leaderboardHeaderSectionTitle: {
-      ...typography.heading3,
+      textAlign: 'left',
+      width: '100%',
+      ...typography.heading4,
       color: colors.white.main,
-      marginTop: '24px'
+      marginTop: '56px'
     },
     topScorersItem: {
       width: 284,

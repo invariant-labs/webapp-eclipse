@@ -43,7 +43,7 @@ export const useStyles = makeStyles()(() => ({
     }
   },
   row: {
-    marginBottom: 16
+    marginBottom: 72
   },
   label: {
     ...typography.body3,
@@ -60,5 +60,8 @@ export const useStyles = makeStyles()(() => ({
     [theme.breakpoints.down('md')]: {
       ...typography.body1
     }
+  },
+  addZIndex: {
+    zIndex: 2
   }
 }))

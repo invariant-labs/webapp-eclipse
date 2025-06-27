@@ -23,7 +23,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
   titleBar: {
     display: 'flex',
-    marginBottom: 20
+    marginBottom: 16
   },
   title: {
     color: colors.invariant.text,
@@ -238,7 +238,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   overviewContainer: {
     display: 'flex',
     flexDirection: 'column',
-    marginBottom: '24px',
+    marginBottom: '72px',
     width: '100%'
   },
   switchPoolsContainerOverview: {

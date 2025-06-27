@@ -307,3 +307,8 @@ export interface TokenSerialized {
   isUnknown?: boolean
   tokenProgram?: string
 }
+
+export enum StakeSwitch {
+  Stake = 'Stake',
+  Unstake = 'Unstake'
+}

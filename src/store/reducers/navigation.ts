@@ -10,6 +10,7 @@ export interface INavigation {
 
 export interface INavigationState {
   address: string
+  showFavourites: boolean
   liquidityPool: {
     filteredTokens: ISearchToken[]
     sortType: SortTypePoolList
@@ -25,6 +26,11 @@ export interface INavigationState {
     sortType: SortTypeTokenList
     pageNumber: number
   }
+  portfolioTokens: {
+    filteredTokens: ISearchToken[]
+    sortType: SortTypePoolList
+    pageNumber: number
+  }
 }
 
 export interface SetNavigationPayload {
@@ -36,11 +42,12 @@ export interface SetSearchPayload {
   sortType?: SortTypePoolList | SortTypeTokenList
   pageNumber?: number
   type: 'sortType' | 'pageNumber' | 'filteredTokens'
-  section: 'liquidityPool' | 'statsPool' | 'statsTokens'
+  section: 'liquidityPool' | 'statsPool' | 'statsTokens' | 'portfolioTokens'
 }
 const defaultStatus: INavigation = {
   navigationState: {
     address: ROUTES.ROOT,
+    showFavourites: false,
     liquidityPool: {
       filteredTokens: [],
       sortType: SortTypePoolList.FEE_24_DESC,
@@ -54,6 +61,11 @@ const defaultStatus: INavigation = {
     statsTokens: {
       filteredTokens: [],
       sortType: SortTypeTokenList.VOLUME_DESC,
+      pageNumber: 1
+    },
+    portfolioTokens: {
+      filteredTokens: [],
+      sortType: SortTypePoolList.FEE_24_DESC,
       pageNumber: 1
     }
   }
@@ -75,6 +87,7 @@ const navigationSlice = createSlice({
       switch (section) {
         case 'liquidityPool':
         case 'statsPool':
+        case 'portfolioTokens':
           state.navigationState[section] = {
             ...state.navigationState[section],
             [type]: updateData[type]
@@ -87,6 +100,10 @@ const navigationSlice = createSlice({
           }
           break
       }
+    },
+    setShowFavourites(state, action: PayloadAction<boolean>) {
+      state.navigationState.showFavourites = action.payload
+      return state
     }
   }
 })
