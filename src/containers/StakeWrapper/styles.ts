@@ -157,6 +157,7 @@ export const useStyles = makeStyles()(() => ({
   titleWrapper: {
     display: 'flex',
     width: '100%',
+    height: '27px',
     maxWidth: 510,
     [theme.breakpoints.down('md')]: {
       maxWidth: '100%'
