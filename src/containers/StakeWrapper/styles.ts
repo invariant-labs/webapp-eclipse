@@ -284,7 +284,8 @@ export const useStyles = makeStyles()(() => ({
     height: 27,
     minWidth: '120px',
     [theme.breakpoints.down('md')]: {
-      minWidth: '100px'
+      width: '90px',
+      minWidth: '90px'
     },
     padding: '0px 8px',
     borderRadius: 8,

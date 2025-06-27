@@ -8,6 +8,8 @@ import sBITZ from '@static/png/sBitz.png'
 import { BN } from '@coral-xyz/anchor'
 import { BITZ_MAIN, sBITZ_MAIN } from '@store/consts/static'
 import { formatNumberWithSuffix, printBN } from '@utils/utils'
+import { Separator } from '@common/Separator/Separator'
+import { colors } from '@static/theme'
 interface YourProgressProps {
   sBitzBalance: BN
   bitzToWithdraw: BN
@@ -46,6 +48,8 @@ export const YourStakeProgress: React.FC<YourProgressProps> = ({
                 decimalsAfterDot: 4
               })}
             />
+            <Separator color={colors.invariant.light} isHorizontal margin='0px 8px 0px 8px' />
+
             <ProgressItem
               isConnected={isConnected}
               isLoading={isLoading}
@@ -61,6 +65,8 @@ export const YourStakeProgress: React.FC<YourProgressProps> = ({
                 decimalsAfterDot: 4
               })}
             />
+            <Separator color={colors.invariant.light} isHorizontal margin='0px 8px 0px 8px' />
+
             <ProgressItem
               isConnected={isConnected}
               tooltip={<>The underlying BITZ tokens backing your sBITZ holdings.</>}
@@ -76,6 +82,8 @@ export const YourStakeProgress: React.FC<YourProgressProps> = ({
                 { decimalsAfterDot: 2 }
               )}`}
             />
+            <Separator color={colors.invariant.light} isHorizontal margin='0px 8px 0px 8px' />
+
             <ProgressItem
               isConnected={isConnected}
               isLoading={isLoading}

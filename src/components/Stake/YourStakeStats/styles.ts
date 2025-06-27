@@ -115,7 +115,7 @@ const useStyles = makeStyles()(_theme => {
       gap: '24px'
     },
 
-    headerBigText: { ...typography.heading2, color: colors.invariant.text },
+    headerBigText: { ...typography.heading2, color: colors.invariant.text, marginTop: '16px' },
     headerSmallText: {
       ...typography.body1,
       color: colors.invariant.textGrey
