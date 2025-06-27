@@ -37,6 +37,10 @@ export interface ISwapStore {
   swap: Swap
   accounts: FetcherRecords
   isLoading: boolean
+  amountInput: {
+    amountFrom: string
+    amountTo: string
+  }
 }
 
 export const defaultState: ISwapStore = {
@@ -57,7 +61,11 @@ export const defaultState: ISwapStore = {
     tickmaps: {},
     ticks: {}
   },
-  isLoading: false
+  isLoading: false,
+  amountInput: {
+    amountFrom: '',
+    amountTo: ''
+  }
 }
 
 export const swapSliceName = 'swap'
@@ -75,6 +83,16 @@ const swapSlice = createSlice({
     setSwapSuccess(state, action: PayloadAction<boolean>) {
       state.swap.inProgress = false
       state.swap.success = action.payload
+      return state
+    },
+    setInputAmount(
+      state,
+      action: PayloadAction<Partial<{ amountFrom: string; amountTo: string }>>
+    ) {
+      state.amountInput = {
+        ...state.amountInput,
+        ...action.payload
+      }
       return state
     },
     setPair(state, action: PayloadAction<{ tokenFrom: PublicKey; tokenTo: PublicKey }>) {
