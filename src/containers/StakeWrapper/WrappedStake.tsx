@@ -9,7 +9,7 @@ import {
   balanceLoading,
   status,
   SwapToken,
-  //   swapTokens,
+  // swapTokens,
   swapTokensDict
 } from '@store/selectors/solanaWallet'
 import { StakeLiquidityPayload } from '@store/reducers/sBitz'
@@ -26,15 +26,15 @@ import {
   unstakeInputVal
 } from '@store/selectors/sBitz'
 import {
-  //   bitzStaked,
-  //   bitzStakedPlot,
-  //   bitzSupply,
-  isLoading
-  //   sbitzSupply,
-  //   sbitzSupplyPlot,
-  //   sBitzTVL,
-  //   sbitzTVLPlot,
-  //   totalBitzStaked
+  bitzStaked,
+  bitzStakedPlot,
+  bitzSupply,
+  isLoading,
+  sbitzSupply,
+  sbitzSupplyPlot,
+  sBitzTVL,
+  sbitzTVLPlot,
+  totalBitzStaked
 } from '@store/selectors/sbitz-stats'
 
 import { network } from '@store/selectors/solanaConnection'
@@ -42,7 +42,7 @@ import { FAQSection } from '@components/Stake/FAQSection/FAQSection'
 import { StakeChart } from '@components/Stake/StakeChart/StakeChart'
 // import { BN } from '@coral-xyz/anchor'
 import {
-  //   calculateTokensForWithdraw,
+  // calculateTokensForWithdraw,
   computeBitzAprApy,
   computeBitzSbitzRewards
 } from '@invariant-labs/sbitz'
@@ -51,9 +51,9 @@ import { getTokenPrice, printBN } from '@utils/utils'
 import LiquidityStaking from '@components/Stake/LiquidityStaking/LiquidityStaking'
 import { StakeSwitch } from '@store/consts/types'
 // import { HowItWorks } from '@components/Stake/HowItWorks/HowItWorks'
-// import { StakedStats } from '@components/Stake/StakedStats/StakedStats'
+import { StakedStats } from '@components/Stake/StakedStats/StakedStats'
 // import { YourStakeProgress } from '@components/Stake/YourStakeStats/YourProgress'
-// import { OverallStats } from '@components/Stake/OverallStats/OverallStats'
+import { OverallStats } from '@components/Stake/OverallStats/OverallStats'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { refreshIcon } from '@static/icons'
 import { ProgressState } from '@common/AnimatedButton/AnimatedButton'
@@ -69,18 +69,18 @@ export const WrappedStake: React.FC = () => {
   const isBalanceLoading = useSelector(balanceLoading)
   const stakeInput = useSelector(stakeInputVal)
   const unstakeInput = useSelector(unstakeInputVal)
-  //   const tokensList = useSelector(swapTokens)
+  // const tokensList = useSelector(swapTokens)
   const isInProgress = useSelector(inProgress)
   const success = useSelector(successState)
   const isLoadingStats = useSelector(isLoading)
-  //   const sbitzPlot = useSelector(sbitzSupplyPlot)
-  //   const bitzPlot = useSelector(bitzStakedPlot)
-  //   const stakedBitzSupply = useSelector(sbitzSupply)
-  //   const backedByBitz = useSelector(bitzStaked)
-  //   const totalBitz = useSelector(totalBitzStaked)
-  //   const supplyBitz = useSelector(bitzSupply)
-  //   const sbitzTvlPlot = useSelector(sbitzTVLPlot)
-  //   const sbitzTvl = useSelector(sBitzTVL)
+  const sbitzPlot = useSelector(sbitzSupplyPlot)
+  const bitzPlot = useSelector(bitzStakedPlot)
+  const stakedBitzSupply = useSelector(sbitzSupply)
+  const backedByBitz = useSelector(bitzStaked)
+  const totalBitz = useSelector(totalBitzStaked)
+  const supplyBitz = useSelector(bitzSupply)
+  const sbitzTvlPlot = useSelector(sbitzTVLPlot)
+  const sbitzTvl = useSelector(sBitzTVL)
   const stakedBitzData = useSelector(stakedData)
   const stakeLoading = useSelector(stakeDataLoading)
   const currentStakeTab = useSelector(stakeTab)
@@ -102,31 +102,31 @@ export const WrappedStake: React.FC = () => {
   const [sBitzPrice, setSBitzPrice] = useState(0)
   const [progress, setProgress] = useState<ProgressState>('none')
   const [priceLoading, setPriceLoading] = useState(false)
-  //   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
+  // const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
 
-  //   const sBitzBalance = useMemo(() => {
-  //     return new BN(tokensList.find(token => token.address.equals(sBITZ_MAIN.address))?.balance || 0)
-  //   }, [tokensList])
+  // const sBitzBalance = useMemo(() => {
+  //   return new BN(tokensList.find(token => token.address.equals(sBITZ_MAIN.address))?.balance || 0)
+  // }, [tokensList])
 
-  //   const bitzToWithdraw = useMemo(() => {
-  //     if (!stakedBitzData.stakedAmount || !stakedBitzData.stakedTokenSupply) {
-  //       return new BN(0)
-  //     }
-  //     return calculateTokensForWithdraw(
-  //       stakedBitzData.stakedTokenSupply,
-  //       stakedBitzData.stakedAmount,
-  //       sBitzBalance || new BN(0)
-  //     )
-  //   }, [stakedBitzData, sBitzBalance])
+  // const bitzToWithdraw = useMemo(() => {
+  //   if (!stakedBitzData.stakedAmount || !stakedBitzData.stakedTokenSupply) {
+  //     return new BN(0)
+  //   }
+  //   return calculateTokensForWithdraw(
+  //     stakedBitzData.stakedTokenSupply,
+  //     stakedBitzData.stakedAmount,
+  //     sBitzBalance || new BN(0)
+  //   )
+  // }, [stakedBitzData, sBitzBalance])
 
-  //   const estimated24Yield = useMemo(() => {
-  //     const { sbitzPredictedYield } = computeBitzSbitzRewards(
-  //       +printBN(sBitzBalance, sBITZ_MAIN.decimals),
-  //       +printBN(stakedBitzData.bitzTotalBalance, BITZ_MAIN.decimals),
-  //       1
-  //     )
-  //     return sbitzPredictedYield[0] || 0
-  //   }, [sBitzBalance, stakedBitzData])
+  // const estimated24Yield = useMemo(() => {
+  //   const { sbitzPredictedYield } = computeBitzSbitzRewards(
+  //     +printBN(sBitzBalance, sBITZ_MAIN.decimals),
+  //     +printBN(stakedBitzData.bitzTotalBalance, BITZ_MAIN.decimals),
+  //     1
+  //   )
+  //   return sbitzPredictedYield[0] || 0
+  // }, [sBitzBalance, stakedBitzData])
 
   const sBitzApyApr = useMemo(() => {
     if (!stakedBitzData.bitzTotalBalance) return { apr: 0, apy: 0 }
@@ -328,7 +328,7 @@ export const WrappedStake: React.FC = () => {
           stakeLoading={stakeLoading}
         />
         {/* </Box> */}
-        {/* <HowItWorks />
+        {/* <HowItWorks /> */}
         <OverallStats
           isLoadingStats={isLoadingStats}
           bitzPlot={bitzPlot}
@@ -343,7 +343,7 @@ export const WrappedStake: React.FC = () => {
           totalBitzStaked={totalBitz}
           tvlPlot={sbitzTvlPlot}
           sbitzTvl={sbitzTvl}
-        /> */}
+        />
       </Box>
 
       <FAQSection />
