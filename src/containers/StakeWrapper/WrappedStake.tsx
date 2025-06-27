@@ -266,7 +266,6 @@ export const WrappedStake: React.FC = () => {
             <Box className={classes.titleTextWrapper}>
               <Typography component='h1'>Liquidity staking</Typography>
               <Box className={classes.subheaderDescription}>
-                <Typography>Earn more with sBITZ.</Typography>
                 <Link
                   to='https://docs.invariant.app/docs/sbitz'
                   target='_blank'
@@ -275,12 +274,12 @@ export const WrappedStake: React.FC = () => {
                 </Link>
               </Box>
             </Box>
-            <Box sx={{ display: 'flex', alignItems: 'flex-end', flexDirection: 'column-reverse', gap: 1 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               {isConnected && (
                 <Button className={classes.statsExpanderButton} onClick={() => toggleExpand()}>
                   <p>
                     <img src={isExpanded ? EyeHide : EyeShow} width={20} height={20} />
-                    Your Stats
+                    Portfolio
                   </p>
                 </Button>
               )}
@@ -295,7 +294,6 @@ export const WrappedStake: React.FC = () => {
                 </Grid>
               </TooltipHover>
             </Box>
-
           </Box>
           <Box className={classes.stakingContentWrapper}>
 

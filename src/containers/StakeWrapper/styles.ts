@@ -163,24 +163,19 @@ export const useStyles = makeStyles()(() => ({
     },
     marginBottom: '16px',
     justifyContent: 'space-between',
-    alignItems: 'flex-end',
+    alignItems: 'center',
     gap: 12
   },
 
   titleTextWrapper: {
     display: 'flex',
-    width: '100%',
-    gap: '8px',
-    justifyContent: 'space-between',
-    flexDirection: 'column',
-
-    [theme.breakpoints.down('sm')]: {
-      flexDirection: 'column'
-    },
+    alignItems: 'center',
+    gap: '16px',
     '& h1': {
       ...typography.heading4,
       whiteSpace: 'nowrap',
-      color: colors.invariant.text
+      color: colors.invariant.text,
+      margin: 0
     }
   },
   refreshIcon: {
@@ -287,6 +282,9 @@ export const useStyles = makeStyles()(() => ({
   statsExpanderButton: {
     height: 27,
     minWidth: '120px',
+    [theme.breakpoints.down('md')]: {
+      minWidth: '100px'
+    },
     padding: '0px 8px',
     borderRadius: 8,
     backgroundColor: colors.invariant.component,
