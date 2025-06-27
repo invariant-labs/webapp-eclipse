@@ -10,12 +10,7 @@ import {
   routingEssentials
 } from '@invariant-labs/sdk-eclipse'
 import { PoolStructure, Tick } from '@invariant-labs/sdk-eclipse/src/market'
-import {
-  DECIMAL,
-  parseLiquidityOnTicks,
-  simulateSwap,
-  SimulationStatus
-} from '@invariant-labs/sdk-eclipse/src/utils'
+import { DECIMAL, simulateSwap, SimulationStatus } from '@invariant-labs/sdk-eclipse/src/utils'
 import { BN } from '@coral-xyz/anchor'
 import {
   getMint,
@@ -102,7 +97,8 @@ import {
   NPT_MAIN,
   USDN_MAIN,
   WEETHS_MAIN,
-  sBITZ_MAIN
+  sBITZ_MAIN,
+  MAX_PLOT_TICK_DIFFERENCE
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
@@ -442,6 +438,19 @@ export const spacingMultiplicityGte = (arg: number, spacing: number): number => 
   return arg + (Math.abs(arg) % spacing)
 }
 
+export const parseLiquidityOnTicks = (currentTickIndex: number, ticks: Tick[]) => {
+  let currentLiquidity = new BN(0)
+
+  return ticks.map(tick => {
+    currentLiquidity = currentLiquidity.add(tick.liquidityChange.muln(tick.sign ? 1 : -1))
+    return {
+      liquidity:
+        Math.abs(tick.index - currentTickIndex) > MAX_PLOT_TICK_DIFFERENCE ? 0 : currentLiquidity,
+      index: tick.index
+    }
+  })
+}
+
 export const createLiquidityPlot = (
   rawTicks: Tick[],
   pool: PoolStructure,
@@ -450,7 +459,10 @@ export const createLiquidityPlot = (
   tokenYDecimal: number
 ) => {
   const sortedTicks = rawTicks.sort((a, b) => a.index - b.index)
-  const parsedTicks = rawTicks.length ? parseLiquidityOnTicks(sortedTicks) : []
+  console.log(sortedTicks.map(tick => tick.liquidityChange.toString()))
+  const parsedTicks = rawTicks.length
+    ? parseLiquidityOnTicks(pool.currentTickIndex, sortedTicks)
+    : []
 
   const ticks = rawTicks.map((raw, index) => ({
     ...raw,

@@ -1053,3 +1053,5 @@ export const thresholdsWithTokenDecimal = (decimals: number): FormatNumberThresh
     divider: 1000000000
   }
 ]
+
+export const MAX_PLOT_TICK_DIFFERENCE = 46154 // x100 difference
