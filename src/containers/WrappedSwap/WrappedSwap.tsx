@@ -28,7 +28,13 @@ import {
   balance,
   accounts as solanaAccounts
 } from '@store/selectors/solanaWallet'
-import { swap as swapPool, accounts, isLoading, amountInput } from '@store/selectors/swap'
+import {
+  swap as swapPool,
+  accounts,
+  isLoading,
+  amountInput,
+  lastEdited
+} from '@store/selectors/swap'
 import { PublicKey } from '@solana/web3.js'
 import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -75,7 +81,8 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const pointsPerUsdFee = useSelector(pointsPerUsd)
   const promotedSwapPairs = useSelector(swapPairs)
   const priceFeeds = useSelector(feeds)
-  const inputAmounts = useSelector(amountInput)
+  const { amountFrom, amountTo } = useSelector(amountInput)
+  const lastEditedValue = useSelector(lastEdited)
   const networkType = useSelector(network)
   const [progress, setProgress] = useState<ProgressState>('none')
   const [tokenFrom, setTokenFrom] = useState<PublicKey | null>(null)
@@ -356,11 +363,13 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const swapAccounts = useSelector(accounts)
   const swapIsLoading = useSelector(isLoading)
 
-  const setAmountFrom = (amount: string) => {
-    dispatch(swapActions.setInputAmount({ amountFrom: amount }))
+  const setAmountFrom = (val: string, isUser = false) => {
+    dispatch(swapActions.setInputAmount({ amountFrom: val }))
+    if (isUser) dispatch(swapActions.setLastEdited('from'))
   }
-  const setAmountTo = (amount: string) => {
-    dispatch(swapActions.setInputAmount({ amountTo: amount }))
+  const setAmountTo = (val: string, isUser = false) => {
+    dispatch(swapActions.setInputAmount({ amountTo: val }))
+    if (isUser) dispatch(swapActions.setLastEdited('to'))
   }
 
   return (
@@ -462,8 +471,9 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
       swapIsLoading={swapIsLoading}
       setAmountFrom={setAmountFrom}
       setAmountTo={setAmountTo}
-      amountFrom={inputAmounts.amountFrom}
-      amountTo={inputAmounts.amountTo}
+      amountFrom={amountFrom}
+      amountTo={amountTo}
+      lastEdited={lastEditedValue}
     />
   )
 }

@@ -131,10 +131,11 @@ export interface ISwap {
   tokensDict: Record<string, SwapToken>
   swapAccounts: FetcherRecords
   swapIsLoading: boolean
-  setAmountFrom: (amount: string) => void
-  setAmountTo: (amount: string) => void
+  setAmountFrom: (amount: string, isUser?: boolean) => void
+  setAmountTo: (amount: string, isUser?: boolean) => void
   amountFrom: string
   amountTo: string
+  lastEdited: string | null
 }
 
 export type SimulationPath = {
@@ -195,7 +196,8 @@ export const Swap: React.FC<ISwap> = ({
   setAmountFrom,
   setAmountTo,
   amountFrom,
-  amountTo
+  amountTo,
+  lastEdited
 }) => {
   const { classes, cx } = useStyles()
   enum inputTarget {
@@ -270,7 +272,12 @@ export const Swap: React.FC<ISwap> = ({
   const [wasIsFetchingNewPoolRun, setWasIsFetchingNewPoolRun] = useState(false)
   const [wasSwapIsLoadingRun, setWasSwapIsLoadingRun] = useState(false)
   const [isReversingTokens, setIsReversingTokens] = useState(false)
-
+  useEffect(() => {
+    if (lastEdited && tokenFromIndex !== null && tokenToIndex !== null) {
+      setInputRef(lastEdited === 'from' ? inputTarget.FROM : inputTarget.TO)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lastEdited, tokenFromIndex, tokenToIndex])
   const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT = useMemo(() => {
     if (network === NetworkType.Testnet) {
       return WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_TEST
@@ -694,8 +701,8 @@ export const Swap: React.FC<ISwap> = ({
       })
       setBestAmount(
         inputRef === inputTarget.FROM
-          ? simulateWithHopResult.simulation?.swapHopTwo.accumulatedAmountOut.toString()
-          : simulateWithHopResult.simulation?.swapHopOne.accumulatedAmountIn
+          ? simulateWithHopResult.simulation.swapHopTwo.accumulatedAmountOut
+          : simulateWithHopResult.simulation.swapHopOne.accumulatedAmountIn
               .add(simulateWithHopResult.simulation.swapHopOne.accumulatedFee)
               .toString()
       )
@@ -890,7 +897,18 @@ export const Swap: React.FC<ISwap> = ({
   const handleOpenTransactionDetails = () => {
     setDetailsOpen(!detailsOpen)
   }
-
+  useEffect(() => {
+    if (
+      lastEdited &&
+      tokenFromIndex !== null &&
+      tokenToIndex !== null &&
+      (amountFrom !== '' || amountTo !== '')
+    ) {
+      setInputRef(lastEdited === 'from' ? inputTarget.FROM : inputTarget.TO)
+      simulateWithTimeout()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lastEdited, tokenFromIndex, tokenToIndex])
   useEffect(() => {
     let timeoutId: NodeJS.Timeout
 
@@ -1153,7 +1171,7 @@ export const Swap: React.FC<ISwap> = ({
               className={classes.amountInput}
               setValue={value => {
                 if (value.match(/^\d*\.?\d*$/)) {
-                  setAmountFrom(value)
+                  setAmountFrom(value, true)
                   setInputRef(inputTarget.FROM)
                 }
               }}
@@ -1272,7 +1290,7 @@ export const Swap: React.FC<ISwap> = ({
               }
               setValue={value => {
                 if (value.match(/^\d*\.?\d*$/)) {
-                  setAmountTo(value)
+                  setAmountTo(value, true)
                   setInputRef(inputTarget.TO)
                 }
               }}

@@ -41,6 +41,7 @@ export interface ISwapStore {
     amountFrom: string
     amountTo: string
   }
+  lastEdited: 'from' | 'to' | null
 }
 
 export const defaultState: ISwapStore = {
@@ -65,7 +66,8 @@ export const defaultState: ISwapStore = {
   amountInput: {
     amountFrom: '',
     amountTo: ''
-  }
+  },
+  lastEdited: null
 }
 
 export const swapSliceName = 'swap'
@@ -89,11 +91,11 @@ const swapSlice = createSlice({
       state,
       action: PayloadAction<Partial<{ amountFrom: string; amountTo: string }>>
     ) {
-      state.amountInput = {
-        ...state.amountInput,
-        ...action.payload
-      }
-      return state
+      state.amountInput = { ...state.amountInput, ...action.payload }
+    },
+
+    setLastEdited(state, action: PayloadAction<'from' | 'to' | null>) {
+      state.lastEdited = action.payload
     },
     setPair(state, action: PayloadAction<{ tokenFrom: PublicKey; tokenTo: PublicKey }>) {
       state.swap.tokenFrom = action.payload.tokenFrom
