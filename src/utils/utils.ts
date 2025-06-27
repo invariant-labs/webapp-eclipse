@@ -438,7 +438,7 @@ export const spacingMultiplicityGte = (arg: number, spacing: number): number => 
   return arg + (Math.abs(arg) % spacing)
 }
 
-export const parseLiquidityOnTicks = (currentTickIndex: number, ticks: Tick[]) => {
+export const parseLiquidityInRange = (currentTickIndex: number, ticks: Tick[]) => {
   let currentLiquidity = new BN(0)
 
   return ticks.map(tick => {
@@ -459,9 +459,8 @@ export const createLiquidityPlot = (
   tokenYDecimal: number
 ) => {
   const sortedTicks = rawTicks.sort((a, b) => a.index - b.index)
-  console.log(sortedTicks.map(tick => tick.liquidityChange.toString()))
   const parsedTicks = rawTicks.length
-    ? parseLiquidityOnTicks(pool.currentTickIndex, sortedTicks)
+    ? parseLiquidityInRange(pool.currentTickIndex, sortedTicks)
     : []
 
   const ticks = rawTicks.map((raw, index) => ({
