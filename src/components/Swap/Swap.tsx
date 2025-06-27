@@ -907,7 +907,6 @@ export const Swap: React.FC<ISwap> = ({
       setInputRef(lastEdited === 'from' ? inputTarget.FROM : inputTarget.TO)
       simulateWithTimeout()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lastEdited, tokenFromIndex, tokenToIndex])
   useEffect(() => {
     let timeoutId: NodeJS.Timeout
