@@ -39,10 +39,10 @@ import {
   extractErrorCode,
   extractRuntimeErrorCode,
   formatNumberWithoutSuffix,
-  getAmountFromInstruction,
+  getAmountFromSwapInstruction,
   mapErrorCodeToMessage,
   printBN,
-  TokenType
+  SwapTokenType
 } from '@utils/utils'
 import { getMarketProgram } from '@utils/web3/programs/amm'
 import {
@@ -386,17 +386,17 @@ export function* handleSwapWithETH(): Generator {
             ? allTokens[swapPool.tokenY.toString()]
             : allTokens[swapPool.tokenX.toString()]
 
-          const amountIn = getAmountFromInstruction(
+          const amountIn = getAmountFromSwapInstruction(
             meta.innerInstructions[0],
             marketProgram.programAuthority.address.toString(),
             tokenIn.address.toString(),
-            TokenType.TokenIn
+            SwapTokenType.TokenIn
           )
-          const amountOut = getAmountFromInstruction(
+          const amountOut = getAmountFromSwapInstruction(
             meta.innerInstructions[0],
             marketProgram.programAuthority.address.toString(),
             tokenOut.address.toString(),
-            TokenType.TokenOut
+            SwapTokenType.TokenOut
           )
 
           let points = new BN(0)
@@ -832,23 +832,23 @@ export function* handleTwoHopSwapWithETH(): Generator {
             ? allTokens[secondPool.tokenY.toString()]
             : allTokens[secondPool.tokenX.toString()]
 
-          const amountIn = getAmountFromInstruction(
+          const amountIn = getAmountFromSwapInstruction(
             meta.innerInstructions[0],
             marketProgram.programAuthority.address.toString(),
             tokenIn.address.toString(),
-            TokenType.TokenIn
+            SwapTokenType.TokenIn
           )
-          const amountBetween = getAmountFromInstruction(
+          const amountBetween = getAmountFromSwapInstruction(
             meta.innerInstructions[0],
             marketProgram.programAuthority.address.toString(),
             tokenBetween.address.toString(),
-            TokenType.TokenBetween
+            SwapTokenType.TokenBetween
           )
-          const amountOut = getAmountFromInstruction(
+          const amountOut = getAmountFromSwapInstruction(
             meta.innerInstructions[0],
             marketProgram.programAuthority.address.toString(),
             tokenOut.address.toString(),
-            TokenType.TokenOut
+            SwapTokenType.TokenOut
           )
 
           let points = new BN(0)
@@ -1254,23 +1254,23 @@ export function* handleTwoHopSwap(): Generator {
             const tokenOut =
               allTokens[secondXtoY ? secondPool.tokenY.toString() : secondPool.tokenX.toString()]
 
-            const amountIn = getAmountFromInstruction(
+            const amountIn = getAmountFromSwapInstruction(
               meta.innerInstructions[0],
               marketProgram.programAuthority.address.toString(),
               tokenIn.address.toString(),
-              TokenType.TokenIn
+              SwapTokenType.TokenIn
             )
-            const amountBetween = getAmountFromInstruction(
+            const amountBetween = getAmountFromSwapInstruction(
               meta.innerInstructions[0],
               marketProgram.programAuthority.address.toString(),
               tokenBetween.address.toString(),
-              TokenType.TokenBetween
+              SwapTokenType.TokenBetween
             )
-            const amountOut = getAmountFromInstruction(
+            const amountOut = getAmountFromSwapInstruction(
               meta.innerInstructions[0],
               marketProgram.programAuthority.address.toString(),
               tokenOut.address.toString(),
-              TokenType.TokenOut
+              SwapTokenType.TokenOut
             )
 
             let points = new BN(0)
@@ -1674,17 +1674,17 @@ export function* handleSwap(): Generator {
             const tokenOut =
               allTokens[isXtoY ? swapPool.tokenY.toString() : swapPool.tokenX.toString()]
 
-            const amountIn = getAmountFromInstruction(
+            const amountIn = getAmountFromSwapInstruction(
               meta.innerInstructions[0],
               marketProgram.programAuthority.address.toString(),
               tokenIn.address.toString(),
-              TokenType.TokenIn
+              SwapTokenType.TokenIn
             )
-            const amountOut = getAmountFromInstruction(
+            const amountOut = getAmountFromSwapInstruction(
               meta.innerInstructions[0],
               marketProgram.programAuthority.address.toString(),
               tokenOut.address.toString(),
-              TokenType.TokenOut
+              SwapTokenType.TokenOut
             )
 
             let points = new BN(0)

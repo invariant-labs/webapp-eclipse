@@ -23,7 +23,13 @@ import {
   getTokenMetadata as fetchMetaData,
   unpackMint
 } from '@solana/spl-token'
-import { Connection, ParsedInnerInstruction, ParsedInstruction, PublicKey } from '@solana/web3.js'
+import {
+  Connection,
+  ParsedInnerInstruction,
+  ParsedInstruction,
+  ParsedTransactionMeta,
+  PublicKey
+} from '@solana/web3.js'
 import {
   Market,
   Tickmap,
@@ -2450,31 +2456,23 @@ export interface ITokenDecimalAndProgramID {
   programId: PublicKey
 }
 
-type InstructionAmounts = {
-  amountIn: number
-  amountBetween?: number
-  amountOut: number
-}
-
-export enum TokenType {
+export enum SwapTokenType {
   TokenIn,
   TokenBetween,
   TokenOut
 }
 
-export const getAmountFromInstruction = (
+export const getAmountFromSwapInstruction = (
   innerInstruction: ParsedInnerInstruction,
   marketProgramAuthority: string,
   token: string,
-  type: TokenType
-): InstructionAmounts => {
-  console.log(innerInstruction)
-
+  type: SwapTokenType
+): number => {
   let instruction: ParsedInstruction | undefined
 
   if (innerInstruction.instructions.length === 2) {
     instruction = innerInstruction.instructions.find(ix =>
-      type === TokenType.TokenIn
+      type === SwapTokenType.TokenIn
         ? (ix as ParsedInstruction).parsed.info.authority !== marketProgramAuthority
         : (ix as ParsedInstruction).parsed.info.authority === marketProgramAuthority
     ) as ParsedInstruction | undefined
@@ -2487,13 +2485,13 @@ export const getAmountFromInstruction = (
       let position = 0
 
       switch (type) {
-        case TokenType.TokenIn:
+        case SwapTokenType.TokenIn:
           position = 0
           break
-        case TokenType.TokenBetween:
+        case SwapTokenType.TokenBetween:
           position = 1
           break
-        case TokenType.TokenOut:
+        case SwapTokenType.TokenOut:
           position = 2
           break
       }
@@ -2501,6 +2499,92 @@ export const getAmountFromInstruction = (
       instruction = innerInstruction.instructions[position] as ParsedInstruction | undefined
     }
   }
+
+  return instruction?.parsed.info.amount || instruction?.parsed.info.tokenAmount.amount
+}
+
+export enum TokenType {
+  TokenX,
+  TokenY
+}
+
+export const getAmountFromInitPositionInstruction = (
+  meta: ParsedTransactionMeta,
+  type: TokenType
+): number => {
+  if (!meta.innerInstructions) {
+    return 0
+  }
+
+  const innerInstruction =
+    meta.innerInstructions.find(
+      innerInstruction =>
+        !!innerInstruction.instructions.find(
+          instruction =>
+            (instruction as ParsedInstruction)?.parsed.type === 'transfer' ||
+            (instruction as ParsedInstruction)?.parsed.type === 'transferChecked'
+        )
+    ) ?? meta.innerInstructions[2]
+
+  const instruction = innerInstruction.instructions.filter(
+    instruction =>
+      (instruction as ParsedInstruction)?.parsed.type === 'transfer' ||
+      (instruction as ParsedInstruction)?.parsed.type === 'transferChecked'
+  )[type === TokenType.TokenX ? 0 : 1] as ParsedInstruction | undefined
+
+  return instruction?.parsed.info.amount || instruction?.parsed.info.tokenAmount.amount
+}
+
+export const getAmountFromClaimFeeInstruction = (
+  meta: ParsedTransactionMeta,
+  type: TokenType
+): number => {
+  if (!meta.innerInstructions) {
+    return 0
+  }
+
+  const innerInstruction =
+    meta.innerInstructions.find(
+      innerInstruction =>
+        !!innerInstruction.instructions.find(
+          instruction =>
+            (instruction as ParsedInstruction)?.parsed.type === 'transfer' ||
+            (instruction as ParsedInstruction)?.parsed.type === 'transferChecked'
+        )
+    ) ?? meta.innerInstructions[0]
+
+  const instruction = innerInstruction.instructions.filter(
+    instruction =>
+      (instruction as ParsedInstruction)?.parsed.type === 'transfer' ||
+      (instruction as ParsedInstruction)?.parsed.type === 'transferChecked'
+  )[type === TokenType.TokenX ? 0 : 1] as ParsedInstruction | undefined
+
+  return instruction?.parsed.info.amount || instruction?.parsed.info.tokenAmount.amount
+}
+
+export const getAmountFromClosePositionInstruction = (
+  meta: ParsedTransactionMeta,
+  type: TokenType
+): number => {
+  if (!meta.innerInstructions) {
+    return 0
+  }
+
+  const innerInstruction =
+    meta.innerInstructions.find(
+      innerInstruction =>
+        !!innerInstruction.instructions.find(
+          instruction =>
+            (instruction as ParsedInstruction)?.parsed.type === 'transfer' ||
+            (instruction as ParsedInstruction)?.parsed.type === 'transferChecked'
+        )
+    ) ?? meta.innerInstructions[0]
+
+  const instruction = innerInstruction.instructions.filter(
+    instruction =>
+      (instruction as ParsedInstruction)?.parsed.type === 'transfer' ||
+      (instruction as ParsedInstruction)?.parsed.type === 'transferChecked'
+  )[type === TokenType.TokenX ? 0 : 1] as ParsedInstruction | undefined
 
   return instruction?.parsed.info.amount || instruction?.parsed.info.tokenAmount.amount
 }

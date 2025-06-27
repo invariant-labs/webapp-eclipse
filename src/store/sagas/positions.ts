@@ -56,12 +56,16 @@ import {
   extractErrorCode,
   extractRuntimeErrorCode,
   formatNumberWithoutSuffix,
+  getAmountFromInitPositionInstruction,
   getLiquidityTicksByPositionsList,
   getPositionByIdAndPoolAddress,
   getPositionsAddressesFromRange,
   getTicksFromAddresses,
+  TokenType,
   mapErrorCodeToMessage,
-  printBN
+  printBN,
+  getAmountFromClaimFeeInstruction,
+  getAmountFromClosePositionInstruction
 } from '@utils/utils'
 import { actions as connectionActions } from '@store/reducers/solanaConnection'
 import {
@@ -632,27 +636,11 @@ function* handleInitPositionWithETH(action: PayloadAction<InitPositionData>): Ge
         const meta = txDetails.meta
         if (meta?.innerInstructions && meta.innerInstructions) {
           try {
-            const targetInner = meta.innerInstructions[2] ?? meta.innerInstructions[0]
-
-            const nativeAmount = (
-              targetInner.instructions.find(
-                ix => (ix as ParsedInstruction).parsed.info.amount
-              ) as ParsedInstruction
-            ).parsed.info.amount
-
-            const splAmount = (
-              targetInner.instructions.find(
-                ix => (ix as ParsedInstruction).parsed.info.tokenAmount !== undefined
-              ) as ParsedInstruction
-            ).parsed.info.tokenAmount.amount
+            const amountX = getAmountFromInitPositionInstruction(meta, TokenType.TokenX)
+            const amountY = getAmountFromInitPositionInstruction(meta, TokenType.TokenY)
 
             const tokenX = allTokens[pair.tokenX.toString()]
             const tokenY = allTokens[pair.tokenY.toString()]
-
-            const nativeX = pair.tokenX.equals(NATIVE_MINT)
-
-            const amountX = nativeX ? nativeAmount : splAmount
-            const amountY = nativeX ? splAmount : nativeAmount
 
             yield put(
               snackbarsActions.add({
@@ -1696,43 +1684,30 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
         }
 
         const meta = txDetails.meta
-        if (meta?.preTokenBalances && meta.postTokenBalances) {
-          const accountXPredicate = entry =>
-            entry.mint === pair.tokenX.toString() && entry.owner === wallet.publicKey.toString()
-          const accountYPredicate = entry =>
-            entry.mint === pair.tokenY.toString() && entry.owner === wallet.publicKey.toString()
+        if (meta?.innerInstructions && meta.innerInstructions) {
+          try {
+            const amountX = getAmountFromInitPositionInstruction(meta, TokenType.TokenX)
+            const amountY = getAmountFromInitPositionInstruction(meta, TokenType.TokenY)
 
-          const preAccountX = meta.preTokenBalances.find(accountXPredicate)
-          const postAccountX = meta.postTokenBalances.find(accountXPredicate)
-          const preAccountY = meta.preTokenBalances.find(accountYPredicate)
-          const postAccountY = meta.postTokenBalances.find(accountYPredicate)
+            const tokenX = allTokens[pair.tokenX.toString()]
+            const tokenY = allTokens[pair.tokenY.toString()]
 
-          if (preAccountX && postAccountX && preAccountY && postAccountY) {
-            const preAmountX = preAccountX.uiTokenAmount.amount
-            const preAmountY = preAccountY.uiTokenAmount.amount
-            const postAmountX = postAccountX.uiTokenAmount.amount
-            const postAmountY = postAccountY.uiTokenAmount.amount
-            const amountX = new BN(preAmountX).sub(new BN(postAmountX))
-            const amountY = new BN(preAmountY).sub(new BN(postAmountY))
-            try {
-              const tokenX = allTokens[pair.tokenX.toString()]
-              const tokenY = allTokens[pair.tokenY.toString()]
-
-              yield put(
-                snackbarsActions.add({
-                  tokensDetails: {
-                    ikonType: 'deposit',
-                    tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals)),
-                    tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals)),
-                    tokenXIcon: tokenX.logoURI,
-                    tokenYIcon: tokenY.logoURI,
-                    tokenXSymbol: tokenX.symbol ?? tokenX.address.toString(),
-                    tokenYSymbol: tokenY.symbol ?? tokenY.address.toString()
-                  },
-                  persist: false
-                })
-              )
-            } catch {}
+            yield put(
+              snackbarsActions.add({
+                tokensDetails: {
+                  ikonType: 'deposit',
+                  tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals)),
+                  tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals)),
+                  tokenXIcon: tokenX.logoURI,
+                  tokenYIcon: tokenY.logoURI,
+                  tokenXSymbol: tokenX.symbol ?? tokenX.address.toString(),
+                  tokenYSymbol: tokenY.symbol ?? tokenY.address.toString()
+                },
+                persist: false
+              })
+            )
+          } catch {
+            // Should never be triggered
           }
         }
       }
@@ -2188,25 +2163,11 @@ export function* handleClaimFeeWithETH({ index, isLocked }: { index: number; isL
         const meta = txDetails.meta
         if (meta?.innerInstructions && meta.innerInstructions) {
           try {
-            const nativeAmount = (
-              meta.innerInstructions[0].instructions.find(
-                ix => (ix as ParsedInstruction).parsed.info.amount
-              ) as ParsedInstruction
-            ).parsed.info.amount
-
-            const splAmount = (
-              meta.innerInstructions[0].instructions.find(
-                ix => (ix as ParsedInstruction).parsed.info.tokenAmount !== undefined
-              ) as ParsedInstruction
-            ).parsed.info.tokenAmount.amount
+            const amountX = getAmountFromClaimFeeInstruction(meta, TokenType.TokenX)
+            const amountY = getAmountFromClaimFeeInstruction(meta, TokenType.TokenY)
 
             const tokenX = allTokens[pair.tokenX.toString()]
             const tokenY = allTokens[pair.tokenY.toString()]
-
-            const nativeX = pair.tokenX.equals(NATIVE_MINT)
-
-            const amountX = nativeX ? nativeAmount : splAmount
-            const amountY = nativeX ? splAmount : nativeAmount
 
             yield put(
               snackbarsActions.add({
@@ -2424,42 +2385,29 @@ export function* handleClaimFee(action: PayloadAction<{ index: number; isLocked:
       if (txDetails) {
         const meta = txDetails.meta
         if (meta?.preTokenBalances && meta.postTokenBalances) {
-          const accountXPredicate = entry =>
-            entry.mint === pair.tokenX.toString() && entry.owner === wallet.publicKey.toString()
-          const accountYPredicate = entry =>
-            entry.mint === pair.tokenY.toString() && entry.owner === wallet.publicKey.toString()
+          try {
+            const amountX = getAmountFromClaimFeeInstruction(meta, TokenType.TokenX)
+            const amountY = getAmountFromClaimFeeInstruction(meta, TokenType.TokenY)
 
-          const preAccountX = meta.preTokenBalances.find(accountXPredicate)
-          const postAccountX = meta.postTokenBalances.find(accountXPredicate)
-          const preAccountY = meta.preTokenBalances.find(accountYPredicate)
-          const postAccountY = meta.postTokenBalances.find(accountYPredicate)
+            const tokenX = allTokens[pair.tokenX.toString()]
+            const tokenY = allTokens[pair.tokenY.toString()]
 
-          if (preAccountX && postAccountX && preAccountY && postAccountY) {
-            const preAmountX = preAccountX.uiTokenAmount.amount
-            const preAmountY = preAccountY.uiTokenAmount.amount
-            const postAmountX = postAccountX.uiTokenAmount.amount
-            const postAmountY = postAccountY.uiTokenAmount.amount
-            const amountX = new BN(postAmountX).sub(new BN(preAmountX))
-            const amountY = new BN(postAmountY).sub(new BN(preAmountY))
-            try {
-              const tokenX = allTokens[pair.tokenX.toString()]
-              const tokenY = allTokens[pair.tokenY.toString()]
-
-              yield put(
-                snackbarsActions.add({
-                  tokensDetails: {
-                    ikonType: 'claim',
-                    tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals)),
-                    tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals)),
-                    tokenXIcon: tokenX.logoURI,
-                    tokenYIcon: tokenY.logoURI,
-                    tokenXSymbol: tokenX.symbol ?? tokenX.address.toString(),
-                    tokenYSymbol: tokenY.symbol ?? tokenY.address.toString()
-                  },
-                  persist: false
-                })
-              )
-            } catch {}
+            yield put(
+              snackbarsActions.add({
+                tokensDetails: {
+                  ikonType: 'claim',
+                  tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals)),
+                  tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals)),
+                  tokenXIcon: tokenX.logoURI,
+                  tokenYIcon: tokenY.logoURI,
+                  tokenXSymbol: tokenX.symbol ?? tokenX.address.toString(),
+                  tokenYSymbol: tokenY.symbol ?? tokenY.address.toString()
+                },
+                persist: false
+              })
+            )
+          } catch {
+            // Should never be triggered
           }
         }
       }
@@ -2899,25 +2847,11 @@ export function* handleClosePositionWithETH(data: ClosePositionData) {
         const meta = txDetails.meta
         if (meta?.innerInstructions && meta.innerInstructions) {
           try {
-            const nativeAmount = (
-              meta.innerInstructions[0].instructions.find(
-                ix => (ix as ParsedInstruction).parsed.info.amount
-              ) as ParsedInstruction
-            ).parsed.info.amount
-
-            const splAmount = (
-              meta.innerInstructions[0].instructions.find(
-                ix => (ix as ParsedInstruction).parsed.info.tokenAmount !== undefined
-              ) as ParsedInstruction
-            ).parsed.info.tokenAmount.amount
+            const amountX = getAmountFromClosePositionInstruction(meta, TokenType.TokenX)
+            const amountY = getAmountFromClosePositionInstruction(meta, TokenType.TokenY)
 
             const tokenX = allTokens[pair.tokenX.toString()]
             const tokenY = allTokens[pair.tokenY.toString()]
-
-            const nativeX = pair.tokenX.equals(NATIVE_MINT)
-
-            const amountX = nativeX ? nativeAmount : splAmount
-            const amountY = nativeX ? splAmount : nativeAmount
 
             yield put(
               snackbarsActions.add({
@@ -3117,44 +3051,29 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
 
       if (txDetails) {
         const meta = txDetails.meta
-        if (meta?.preTokenBalances && meta.postTokenBalances) {
-          const accountXPredicate = entry =>
-            entry.mint === pair.tokenX.toString() && entry.owner === wallet.publicKey.toString()
-          const accountYPredicate = entry =>
-            entry.mint === pair.tokenY.toString() && entry.owner === wallet.publicKey.toString()
+        if (meta?.innerInstructions && meta.innerInstructions) {
+          try {
+            const amountX = getAmountFromClosePositionInstruction(meta, TokenType.TokenX)
+            const amountY = getAmountFromClosePositionInstruction(meta, TokenType.TokenY)
 
-          const preAccountX = meta.preTokenBalances.find(accountXPredicate)
-          const postAccountX = meta.postTokenBalances.find(accountXPredicate)
-          const preAccountY = meta.preTokenBalances.find(accountYPredicate)
-          const postAccountY = meta.postTokenBalances.find(accountYPredicate)
+            const tokenX = allTokens[pair.tokenX.toString()]
+            const tokenY = allTokens[pair.tokenY.toString()]
 
-          if (preAccountX && postAccountX && preAccountY && postAccountY) {
-            const preAmountX = preAccountX.uiTokenAmount.amount
-            const preAmountY = preAccountY.uiTokenAmount.amount
-            const postAmountX = postAccountX.uiTokenAmount.amount
-            const postAmountY = postAccountY.uiTokenAmount.amount
-            const amountX = new BN(postAmountX).sub(new BN(preAmountX))
-            const amountY = new BN(postAmountY).sub(new BN(preAmountY))
-            try {
-              const tokenX = allTokens[pair.tokenX.toString()]
-              const tokenY = allTokens[pair.tokenY.toString()]
-
-              yield put(
-                snackbarsActions.add({
-                  tokensDetails: {
-                    ikonType: 'withdraw',
-                    tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals)),
-                    tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals)),
-                    tokenXIcon: tokenX.logoURI,
-                    tokenYIcon: tokenY.logoURI,
-                    tokenXSymbol: tokenX.symbol ?? tokenX.address.toString(),
-                    tokenYSymbol: tokenY.symbol ?? tokenY.address.toString()
-                  },
-                  persist: false
-                })
-              )
-            } catch {}
-          }
+            yield put(
+              snackbarsActions.add({
+                tokensDetails: {
+                  ikonType: 'withdraw',
+                  tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals)),
+                  tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals)),
+                  tokenXIcon: tokenX.logoURI,
+                  tokenYIcon: tokenY.logoURI,
+                  tokenXSymbol: tokenX.symbol ?? tokenX.address.toString(),
+                  tokenYSymbol: tokenY.symbol ?? tokenY.address.toString()
+                },
+                persist: false
+              })
+            )
+          } catch {}
         }
       }
     }

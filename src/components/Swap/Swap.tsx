@@ -348,7 +348,6 @@ export const Swap: React.FC<ISwap> = ({
     }
 
     setPointsForSwap(null)
-    console.log(4, null)
 
     clearTimeout(urlUpdateTimeoutRef.current)
     urlUpdateTimeoutRef.current = setTimeout(() => {
@@ -402,7 +401,6 @@ export const Swap: React.FC<ISwap> = ({
             )
           : new BN(0)
         setPointsForSwap(firstPoints.add(secondPoints))
-        console.log(5, firstPoints.add(secondPoints).toString())
       } else {
         const feePercentage = pools[simulateResult.poolIndex ?? 0]?.fee ?? new BN(0)
         let desiredAmount: string
@@ -419,7 +417,6 @@ export const Swap: React.FC<ISwap> = ({
 
         if (!feed || !feed.price || simulateResult.amountOut.eqn(0)) {
           setPointsForSwap(new BN(0))
-          console.log(1, new BN(0).toString())
           return
         }
 
@@ -432,11 +429,9 @@ export const Swap: React.FC<ISwap> = ({
           pointsPerUSD
         )
         setPointsForSwap(points)
-        console.log(2, points.toString())
       }
     } else {
       setPointsForSwap(new BN(0))
-      console.log(3, new BN(0).toString())
     }
   }, [simulateResult, simulateWithHopResult, isFirstPairGivingPoints, isSecondPairGivingPoints])
 
