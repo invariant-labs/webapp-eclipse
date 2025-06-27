@@ -98,7 +98,7 @@ import {
   USDN_MAIN,
   WEETHS_MAIN,
   sBITZ_MAIN,
-  MAX_PLOT_TICK_DIFFERENCE
+  MAX_PLOT_VISIBLE_TICK_RANGE
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
@@ -445,7 +445,9 @@ export const parseLiquidityInRange = (currentTickIndex: number, ticks: Tick[]) =
     currentLiquidity = currentLiquidity.add(tick.liquidityChange.muln(tick.sign ? 1 : -1))
     return {
       liquidity:
-        Math.abs(tick.index - currentTickIndex) > MAX_PLOT_TICK_DIFFERENCE ? 0 : currentLiquidity,
+        Math.abs(tick.index - currentTickIndex) > MAX_PLOT_VISIBLE_TICK_RANGE
+          ? 0
+          : currentLiquidity,
       index: tick.index
     }
   })
