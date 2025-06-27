@@ -149,8 +149,8 @@ export const mapIntervalToPrecision = (interval: Intervals): string => {
       return 'every 1 week'
     case Intervals.Monthly:
       return 'every 1 month'
-    // case Intervals.Yearly:
-    //   return 'every 1 year'
+    case Intervals.Yearly:
+      return 'every 1 year'
   }
 }
 
@@ -162,8 +162,8 @@ export const mapIntervalToString = (interval: Intervals): string => {
       return '1W'
     case Intervals.Monthly:
       return '1M'
-    // case Intervals.Yearly:
-    //   return '1Y'
+    case Intervals.Yearly:
+      return '1Y'
   }
 }
 
@@ -201,6 +201,10 @@ export const formatPlotDataLabels = (
       const startDay = weekStart.getDate()
       const startMonth = weekStart.getMonth() + 1
       return `${startDay < 10 ? '0' : ''}${startDay}/${startMonth < 10 ? '0' : ''}${startMonth}`
+    }
+    case Intervals.Yearly: {
+      const year = date.getFullYear()
+      return year.toString()
     }
   }
 }
