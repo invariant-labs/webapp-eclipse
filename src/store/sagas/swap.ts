@@ -387,13 +387,13 @@ export function* handleSwapWithETH(): Generator {
             : allTokens[swapPool.tokenX.toString()]
 
           const amountIn = getAmountFromSwapInstruction(
-            meta.innerInstructions[0],
+            meta,
             marketProgram.programAuthority.address.toString(),
             tokenIn.address.toString(),
             SwapTokenType.TokenIn
           )
           const amountOut = getAmountFromSwapInstruction(
-            meta.innerInstructions[0],
+            meta,
             marketProgram.programAuthority.address.toString(),
             tokenOut.address.toString(),
             SwapTokenType.TokenOut
@@ -833,19 +833,19 @@ export function* handleTwoHopSwapWithETH(): Generator {
             : allTokens[secondPool.tokenX.toString()]
 
           const amountIn = getAmountFromSwapInstruction(
-            meta.innerInstructions[0],
+            meta,
             marketProgram.programAuthority.address.toString(),
             tokenIn.address.toString(),
             SwapTokenType.TokenIn
           )
           const amountBetween = getAmountFromSwapInstruction(
-            meta.innerInstructions[0],
+            meta,
             marketProgram.programAuthority.address.toString(),
             tokenBetween.address.toString(),
             SwapTokenType.TokenBetween
           )
           const amountOut = getAmountFromSwapInstruction(
-            meta.innerInstructions[0],
+            meta,
             marketProgram.programAuthority.address.toString(),
             tokenOut.address.toString(),
             SwapTokenType.TokenOut
@@ -1255,19 +1255,19 @@ export function* handleTwoHopSwap(): Generator {
               allTokens[secondXtoY ? secondPool.tokenY.toString() : secondPool.tokenX.toString()]
 
             const amountIn = getAmountFromSwapInstruction(
-              meta.innerInstructions[0],
+              meta,
               marketProgram.programAuthority.address.toString(),
               tokenIn.address.toString(),
               SwapTokenType.TokenIn
             )
             const amountBetween = getAmountFromSwapInstruction(
-              meta.innerInstructions[0],
+              meta,
               marketProgram.programAuthority.address.toString(),
               tokenBetween.address.toString(),
               SwapTokenType.TokenBetween
             )
             const amountOut = getAmountFromSwapInstruction(
-              meta.innerInstructions[0],
+              meta,
               marketProgram.programAuthority.address.toString(),
               tokenOut.address.toString(),
               SwapTokenType.TokenOut
@@ -1675,13 +1675,13 @@ export function* handleSwap(): Generator {
               allTokens[isXtoY ? swapPool.tokenY.toString() : swapPool.tokenX.toString()]
 
             const amountIn = getAmountFromSwapInstruction(
-              meta.innerInstructions[0],
+              meta,
               marketProgram.programAuthority.address.toString(),
               tokenIn.address.toString(),
               SwapTokenType.TokenIn
             )
             const amountOut = getAmountFromSwapInstruction(
-              meta.innerInstructions[0],
+              meta,
               marketProgram.programAuthority.address.toString(),
               tokenOut.address.toString(),
               SwapTokenType.TokenOut

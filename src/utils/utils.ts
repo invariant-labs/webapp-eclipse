@@ -23,13 +23,7 @@ import {
   getTokenMetadata as fetchMetaData,
   unpackMint
 } from '@solana/spl-token'
-import {
-  Connection,
-  ParsedInnerInstruction,
-  ParsedInstruction,
-  ParsedTransactionMeta,
-  PublicKey
-} from '@solana/web3.js'
+import { Connection, ParsedInstruction, ParsedTransactionMeta, PublicKey } from '@solana/web3.js'
 import {
   Market,
   Tickmap,
@@ -2463,11 +2457,25 @@ export enum SwapTokenType {
 }
 
 export const getAmountFromSwapInstruction = (
-  innerInstruction: ParsedInnerInstruction,
+  meta: ParsedTransactionMeta,
   marketProgramAuthority: string,
   token: string,
   type: SwapTokenType
 ): number => {
+  if (!meta.innerInstructions) {
+    return 0
+  }
+
+  const innerInstruction =
+    meta.innerInstructions.find(
+      innerInstruction =>
+        !!innerInstruction.instructions.find(
+          instruction =>
+            (instruction as ParsedInstruction)?.parsed.type === 'transfer' ||
+            (instruction as ParsedInstruction)?.parsed.type === 'transferChecked'
+        )
+    ) ?? meta.innerInstructions[2]
+
   let instruction: ParsedInstruction | undefined
 
   if (innerInstruction.instructions.length === 2) {
@@ -2496,7 +2504,11 @@ export const getAmountFromSwapInstruction = (
           break
       }
 
-      instruction = innerInstruction.instructions[position] as ParsedInstruction | undefined
+      instruction = innerInstruction.instructions.filter(
+        instruction =>
+          (instruction as ParsedInstruction)?.parsed.type === 'transfer' ||
+          (instruction as ParsedInstruction)?.parsed.type === 'transferChecked'
+      )[position] as ParsedInstruction | undefined
     }
   }
 
