@@ -18,7 +18,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     color: colors.white.main
   },
   row: {
-    marginBottom: 16
+    marginBottom: 72
   },
   loading: {
     width: 150,
