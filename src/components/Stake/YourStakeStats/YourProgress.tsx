@@ -34,7 +34,9 @@ export const YourStakeProgress: React.FC<YourProgressProps> = ({
       <Grid className={classes.boxWrapper}>
         {<BlurOverlay isConnected={isConnected} />}
         <Grid className={classes.section}>
+
           <Grid className={classes.pointsColumn}>
+
             <ProgressItem
               isConnected={isConnected}
               label={

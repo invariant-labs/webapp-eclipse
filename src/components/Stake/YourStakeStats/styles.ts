@@ -84,7 +84,7 @@ const useStyles = makeStyles()(_theme => {
       position: 'relative',
       gap: '8px',
       alignItems: 'center',
-      padding: '16px 24px',
+      padding: '16px 24px 24px 24px', // Increased bottom padding
       display: 'flex',
 
       flexDirection: 'column',
@@ -96,7 +96,7 @@ const useStyles = makeStyles()(_theme => {
       background: '#111931',
       [theme.breakpoints.down(500)]: {
         height: 'auto',
-        padding: '16px 0px'
+        padding: '16px 0px 24px 0px' // Increased bottom padding for mobile
       }
     },
     valueWrapper: {
