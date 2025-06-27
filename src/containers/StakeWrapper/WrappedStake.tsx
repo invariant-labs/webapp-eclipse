@@ -9,13 +9,13 @@ import {
   balanceLoading,
   status,
   SwapToken,
-  swapTokens,
+  //   swapTokens,
   swapTokensDict
 } from '@store/selectors/solanaWallet'
 import { StakeLiquidityPayload } from '@store/reducers/sBitz'
 import { actions } from '@store/reducers/sBitz'
 import { actions as sbitzStatsActions } from '@store/reducers/sbitz-stats'
-import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
+import { /*Status,*/ actions as walletActions } from '@store/reducers/solanaWallet'
 import {
   inProgress,
   stakedData,
@@ -26,38 +26,39 @@ import {
   unstakeInputVal
 } from '@store/selectors/sBitz'
 import {
-  bitzStaked,
-  bitzStakedPlot,
-  bitzSupply,
-  isLoading,
-  sbitzSupply,
-  sbitzSupplyPlot,
-  sBitzTVL,
-  sbitzTVLPlot,
-  totalBitzStaked
+  //   bitzStaked,
+  //   bitzStakedPlot,
+  //   bitzSupply,
+  isLoading
+  //   sbitzSupply,
+  //   sbitzSupplyPlot,
+  //   sBitzTVL,
+  //   sbitzTVLPlot,
+  //   totalBitzStaked
 } from '@store/selectors/sbitz-stats'
 
 import { network } from '@store/selectors/solanaConnection'
 import { FAQSection } from '@components/Stake/FAQSection/FAQSection'
-import { OverallStats } from '@components/Stake/OverallStats/OverallStats'
 import { StakeChart } from '@components/Stake/StakeChart/StakeChart'
-import { StakedStats } from '@components/Stake/StakedStats/StakedStats'
-import { YourStakeProgress } from '@components/Stake/YourStakeStats/YourProgress'
-import { BN } from '@coral-xyz/anchor'
+// import { BN } from '@coral-xyz/anchor'
 import {
-  calculateTokensForWithdraw,
+  //   calculateTokensForWithdraw,
   computeBitzAprApy,
   computeBitzSbitzRewards
 } from '@invariant-labs/sbitz'
-import { sBITZ_MAIN, BITZ_MAIN, REFRESHER_INTERVAL } from '@store/consts/static'
+import { sBITZ_MAIN, BITZ_MAIN } from '@store/consts/static'
 import { getTokenPrice, printBN } from '@utils/utils'
 import LiquidityStaking from '@components/Stake/LiquidityStaking/LiquidityStaking'
 import { StakeSwitch } from '@store/consts/types'
-import { HowItWorks } from '@components/Stake/HowItWorks/HowItWorks'
+// import { HowItWorks } from '@components/Stake/HowItWorks/HowItWorks'
+// import { StakedStats } from '@components/Stake/StakedStats/StakedStats'
+// import { YourStakeProgress } from '@components/Stake/YourStakeStats/YourProgress'
+// import { OverallStats } from '@components/Stake/OverallStats/OverallStats'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { refreshIcon } from '@static/icons'
 import { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 import { Intervals as IntervalsKeys } from '@store/consts/static'
+import { SBitzBanner } from '@components/Stake/SBitzBanner/SBitzBanner'
 
 export const WrappedStake: React.FC = () => {
   const { classes } = useStyles()
@@ -69,18 +70,18 @@ export const WrappedStake: React.FC = () => {
   const isBalanceLoading = useSelector(balanceLoading)
   const stakeInput = useSelector(stakeInputVal)
   const unstakeInput = useSelector(unstakeInputVal)
-  const tokensList = useSelector(swapTokens)
+  //   const tokensList = useSelector(swapTokens)
   const isInProgress = useSelector(inProgress)
   const success = useSelector(successState)
   const isLoadingStats = useSelector(isLoading)
-  const sbitzPlot = useSelector(sbitzSupplyPlot)
-  const bitzPlot = useSelector(bitzStakedPlot)
-  const stakedBitzSupply = useSelector(sbitzSupply)
-  const backedByBitz = useSelector(bitzStaked)
-  const totalBitz = useSelector(totalBitzStaked)
-  const supplyBitz = useSelector(bitzSupply)
-  const sbitzTvlPlot = useSelector(sbitzTVLPlot)
-  const sbitzTvl = useSelector(sBitzTVL)
+  //   const sbitzPlot = useSelector(sbitzSupplyPlot)
+  //   const bitzPlot = useSelector(bitzStakedPlot)
+  //   const stakedBitzSupply = useSelector(sbitzSupply)
+  //   const backedByBitz = useSelector(bitzStaked)
+  //   const totalBitz = useSelector(totalBitzStaked)
+  //   const supplyBitz = useSelector(bitzSupply)
+  //   const sbitzTvlPlot = useSelector(sbitzTVLPlot)
+  //   const sbitzTvl = useSelector(sBitzTVL)
   const stakedBitzData = useSelector(stakedData)
   const stakeLoading = useSelector(stakeDataLoading)
   const currentStakeTab = useSelector(stakeTab)
@@ -98,37 +99,36 @@ export const WrappedStake: React.FC = () => {
   })
 
   const [stakedAmount, setStakedAmount] = useState(100)
-  const [refresherTime, setRefresherTime] = useState<number>(REFRESHER_INTERVAL)
   const [bitzPrice, setBitzPrice] = useState(0)
   const [sBitzPrice, setSBitzPrice] = useState(0)
   const [progress, setProgress] = useState<ProgressState>('none')
   const [priceLoading, setPriceLoading] = useState(false)
-  const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
   const [interval, setInterval] = useState<IntervalsKeys>(IntervalsKeys.Monthly)
+  //   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
 
-  const sBitzBalance = useMemo(() => {
-    return new BN(tokensList.find(token => token.address.equals(sBITZ_MAIN.address))?.balance || 0)
-  }, [tokensList])
+  //   const sBitzBalance = useMemo(() => {
+  //     return new BN(tokensList.find(token => token.address.equals(sBITZ_MAIN.address))?.balance || 0)
+  //   }, [tokensList])
 
-  const bitzToWithdraw = useMemo(() => {
-    if (!stakedBitzData.stakedAmount || !stakedBitzData.stakedTokenSupply) {
-      return new BN(0)
-    }
-    return calculateTokensForWithdraw(
-      stakedBitzData.stakedTokenSupply,
-      stakedBitzData.stakedAmount,
-      sBitzBalance || new BN(0)
-    )
-  }, [stakedBitzData, sBitzBalance])
+  //   const bitzToWithdraw = useMemo(() => {
+  //     if (!stakedBitzData.stakedAmount || !stakedBitzData.stakedTokenSupply) {
+  //       return new BN(0)
+  //     }
+  //     return calculateTokensForWithdraw(
+  //       stakedBitzData.stakedTokenSupply,
+  //       stakedBitzData.stakedAmount,
+  //       sBitzBalance || new BN(0)
+  //     )
+  //   }, [stakedBitzData, sBitzBalance])
 
-  const estimated24Yield = useMemo(() => {
-    const { sbitzPredictedYield } = computeBitzSbitzRewards(
-      +printBN(sBitzBalance, sBITZ_MAIN.decimals),
-      +printBN(stakedBitzData.bitzTotalBalance, BITZ_MAIN.decimals),
-      1
-    )
-    return sbitzPredictedYield[0] || 0
-  }, [sBitzBalance, stakedBitzData])
+  //   const estimated24Yield = useMemo(() => {
+  //     const { sbitzPredictedYield } = computeBitzSbitzRewards(
+  //       +printBN(sBitzBalance, sBITZ_MAIN.decimals),
+  //       +printBN(stakedBitzData.bitzTotalBalance, BITZ_MAIN.decimals),
+  //       1
+  //     )
+  //     return sbitzPredictedYield[0] || 0
+  //   }, [sBitzBalance, stakedBitzData])
 
   const sBitzApyApr = useMemo(() => {
     if (!stakedBitzData.bitzTotalBalance) return { apr: 0, apy: 0 }
@@ -186,23 +186,6 @@ export const WrappedStake: React.FC = () => {
     fetchPrices()
   }
 
-  const handleRefresh = () => {
-    onRefresh()
-    setRefresherTime(REFRESHER_INTERVAL)
-  }
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (refresherTime > 0) {
-        setRefresherTime(refresherTime - 1)
-      } else {
-        handleRefresh()
-      }
-    }, 1000)
-
-    return () => clearTimeout(timeout)
-  }, [refresherTime])
-
   useEffect(() => {
     if (!stakedBitzData.stakedAmount || !stakedBitzData.bitzTotalBalance) {
       return
@@ -259,12 +242,16 @@ export const WrappedStake: React.FC = () => {
 
   return (
     <Grid container className={classes.wrapper}>
+      <SBitzBanner />
       <Box className={classes.titleWrapper}>
         <Box className={classes.titleTextWrapper}>
           <Typography component='h1'>Liquidity staking</Typography>
           <Box className={classes.subheaderDescription}>
             Earn more with sBITZ.
-            <Link to='' target='_blank' className={classes.learnMoreLink}>
+            <Link
+              to='https://docs.invariant.app/docs/sbitz'
+              target='_blank'
+              className={classes.learnMoreLink}>
               <span> Learn more</span> <LaunchIcon classes={{ root: classes.clipboardIcon }} />
             </Link>
           </Box>
@@ -272,7 +259,7 @@ export const WrappedStake: React.FC = () => {
         <TooltipHover title='Refresh'>
           <Grid className={classes.refreshIconContainer}>
             <Button
-              onClick={handleRefresh}
+              onClick={onRefresh}
               className={classes.refreshIconBtn}
               disabled={isBalanceLoading || stakeLoading || isLoadingStats}>
               <img src={refreshIcon} className={classes.refreshIcon} alt='Refresh' />
@@ -323,30 +310,29 @@ export const WrappedStake: React.FC = () => {
       />
 
       <Box className={classes.statsContainer}>
-        <Typography className={classes.statsTitle}>Your stats</Typography>
-        <YourStakeProgress
+        {/* <YourStakeProgress
           sBitzBalance={sBitzBalance}
           bitzToWithdraw={bitzToWithdraw}
           bitzPrice={bitzPrice}
           isLoading={stakeLoading}
           isConnected={isConnected}
           yield24={estimated24Yield}
+        /> */}
+        {/* <Box className={classes.statsContainer}> */}
+        <Typography className={classes.statsTitle}>Earnings forecast</Typography>
+        <StakeChart
+          onStakedAmountChange={setStakedAmount}
+          stakedAmount={stakedAmount}
+          earnedAmount={chartData.earnedAmount}
+          bitzData={chartData.bitzData}
+          sBitzData={chartData.sBitzData}
+          earnedUsd={chartData.earnedUsd}
+          stakeLoading={stakeLoading}
+          interval={interval}
+          setInterval={interval => setInterval(interval as IntervalsKeys)}
         />
-        <Box className={classes.statsContainer}>
-          <Typography className={classes.statsTitle}>Your stake</Typography>
-          <StakeChart
-            onStakedAmountChange={setStakedAmount}
-            stakedAmount={stakedAmount}
-            earnedAmount={chartData.earnedAmount}
-            bitzData={chartData.bitzData}
-            sBitzData={chartData.sBitzData}
-            earnedUsd={chartData.earnedUsd}
-            stakeLoading={stakeLoading}
-            interval={interval}
-            setInterval={interval => setInterval(interval as IntervalsKeys)}
-          />
-        </Box>
-        <HowItWorks />
+        {/* </Box> */}
+        {/* <HowItWorks />
         <OverallStats
           isLoadingStats={isLoadingStats}
           bitzPlot={bitzPlot}
@@ -361,7 +347,7 @@ export const WrappedStake: React.FC = () => {
           totalBitzStaked={totalBitz}
           tvlPlot={sbitzTvlPlot}
           sbitzTvl={sbitzTvl}
-        />
+        /> */}
       </Box>
 
       <FAQSection />

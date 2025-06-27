@@ -1,7 +1,7 @@
 import { Box, Grid, Typography } from '@mui/material'
 import useStyles from './style'
 import Switcher from './Switcher/Switcher'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useLayoutEffect, useMemo, useState } from 'react'
 import { BITZ_MAIN, WETH_MIN_STAKE_UNSTAKE_LAMPORTS } from '@store/consts/static'
 import ExchangeAmountInput from '@components/Inputs/ExchangeAmountInput/ExchangeAmountInput'
 import { Status } from '@store/reducers/solanaWallet'
@@ -10,7 +10,7 @@ import SwapSeparator from './SwapSeparator/SwapSeparator'
 import { Separator } from '@common/Separator/Separator'
 import { colors } from '@static/theme'
 import TransactionDetails from './TransactionDetails/TransactionDetails'
-import { convertBalanceToBN, printBN } from '@utils/utils'
+import { convertBalanceToBN, printBN, trimDecimalZeros } from '@utils/utils'
 import ApyTooltip from './ApyTooltip/ApyTooltip'
 import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
@@ -90,7 +90,7 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
         setUnstakeInput(val)
       }
     },
-    [currentStakeTab]
+    [currentStakeTab, setStakeInput, setUnstakeInput]
   )
 
   const [amountTo, setAmountTo] = useState<string>('')
@@ -108,12 +108,12 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
   const handleActionButtons = (action: 'max' | 'half', tokenAddress: PublicKey) => {
     if (action === 'max') {
       const value = tokens[tokenAddress.toString()]?.balance || new BN(0)
-      const valueString = printBN(value, TOKEN_DECIMALS)
+      const valueString = trimDecimalZeros(printBN(value, TOKEN_DECIMALS))
       setAmountFrom(valueString)
     } else if (action === 'half') {
       const balance = tokens[tokenAddress.toString()]?.balance || new BN(0)
       const value = balance.div(new BN(2)) || new BN(0)
-      const valueString = printBN(value, TOKEN_DECIMALS)
+      const valueString = trimDecimalZeros(printBN(value, TOKEN_DECIMALS))
       setAmountFrom(valueString)
     }
   }
@@ -146,7 +146,7 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
 
   const calculateOtherTokenAmount = useCallback(
     (value: string, isStake?: boolean) => {
-      if (stakeDataLoading || !stakedAmount || !stakedTokenSupply) return new BN(0)
+      if (!stakedAmount || !stakedTokenSupply) return new BN(0)
       const isStakeAction = isStake ?? tokenFrom.assetAddress.equals(BITZ_MAIN.address)
       const amount = convertBalanceToBN(value, TOKEN_DECIMALS)
       if (isStakeAction) {
@@ -158,13 +158,13 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
     [stakeDataLoading, stakedAmount, stakedTokenSupply, tokenFrom, tokenTo]
   )
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!amountFrom || Number(amountFrom) === 0) {
       setAmountTo('0')
     } else {
       setAmountTo(printBN(calculateOtherTokenAmount(amountFrom), TOKEN_DECIMALS))
     }
-  }, [amountFrom])
+  }, [amountFrom, currentStakeTab, calculateOtherTokenAmount])
 
   return (
     <Grid container className={classes.wrapper}>
@@ -175,7 +175,9 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
         setIsRotating={setIsRotating}
       />
       <Box mt='32px' mb={'16px'} display='flex' justifyContent='space-between' alignItems='center'>
-        <Typography className={classes.title}>Stake</Typography>
+        <Typography className={classes.title}>
+          {currentStakeTab === StakeSwitch.Stake ? 'Stake' : 'Unstake'}
+        </Typography>
       </Box>
       <ExchangeAmountInput
         value={amountFrom}
@@ -208,11 +210,11 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
         current={tokenFrom}
         hideBalances={walletStatus !== Status.Initialized}
         commonTokens={[]}
-        tokenPrice={sBitzPrice}
+        tokenPrice={tokenFrom.assetAddress.equals(BITZ_MAIN.address) ? bitzPrice : sBitzPrice}
         priceLoading={priceLoading}
         isBalanceLoading={isBalanceLoading}
         showMaxButton={true}
-        showBlur={stakeDataLoading}
+        showBlur={false}
         hideSelect
         notRoundIcon
         limit={1e14}
@@ -240,8 +242,8 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
         current={tokenTo}
         hideBalances={walletStatus !== Status.Initialized}
         commonTokens={[]}
-        tokenPrice={bitzPrice}
-        priceLoading={priceLoading}
+        tokenPrice={tokenTo.assetAddress.equals(BITZ_MAIN.address) ? bitzPrice : sBitzPrice}
+        priceLoading={priceLoading || stakeDataLoading}
         isBalanceLoading={isBalanceLoading}
         showMaxButton={false}
         disabled

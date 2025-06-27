@@ -16,9 +16,11 @@ const useStyles = makeStyles()(() => {
     headerBigText: { ...typography.heading1, color: colors.invariant.text },
     headerSmallText: { ...typography.body1, color: colors.invariant.textGrey },
     leaderboardHeaderSectionTitle: {
-      ...typography.heading3,
-      color: colors.white.main,
-      marginTop: '24px'
+      width: '100%',
+      color: colors.invariant.text,
+      ...typography.heading4,
+      textAlign: 'left',
+      marginTop: '56px'
     },
     skeleton: {
       borderRadius: 24,
