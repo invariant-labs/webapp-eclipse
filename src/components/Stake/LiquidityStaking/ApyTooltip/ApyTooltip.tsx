@@ -16,6 +16,7 @@ export const ApyTooltip: React.FC<IApyTooltip> = ({ sBitzApyApr, stakeDataLoadin
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
 
   const { classes } = useStyles()
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const additionalApy = useMemo(() => {
     const { apr, apy } = sBitzApyApr
     if (!apr || !apy) return 0
