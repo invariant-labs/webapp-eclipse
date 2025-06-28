@@ -32,14 +32,16 @@ export const ApyTooltip: React.FC<IApyTooltip> = ({ sBitzApyApr, stakeDataLoadin
           <Box className={classes.itemWrapper}>
             <img src={bitzIcon} width={16} height={16} />
             <Typography className={classes.tooltipText}>
-              {sBitzApyApr.apr?.toFixed(2) ?? 0}% APR (Stake){' '}
+              {/* {sBitzApyApr.apr?.toFixed(2) ?? 0}% APR (Stake){' '} */}
+              309.17% APR (Stake){' '}
             </Typography>
           </Box>
           <Typography className={classes.plus}>+</Typography>
           <Box className={classes.itemWrapper}>
             <img src={sBitzIcon} width={16} height={16} />
             <Typography className={classes.greenTooltipText}>
-              {additionalApy}% (10s Compound){' '}
+              {/* {additionalApy}% (10s Compound){' '} */}
+              144.81% (10s Compound){' '}
             </Typography>
           </Box>
           <Typography className={classes.plus}>+</Typography>
@@ -52,10 +54,12 @@ export const ApyTooltip: React.FC<IApyTooltip> = ({ sBitzApyApr, stakeDataLoadin
       increasePadding>
       <Typography className={classes.apyLabel}>
         <img src={bitzIcon} width={16} height={16} />
-        <span className={classes.crossedText}> {sBitzApyApr.apr?.toFixed(2) ?? 0}% APR </span>
+        {/* <span className={classes.crossedText}> {sBitzApyApr.apr?.toFixed(2) ?? 0}% APR </span> */}
+        <span className={classes.crossedText}>309.17% APR </span>
         {!isSm && <img src={arrowRightIcon} height={10} />}
         <img src={sBitzIcon} width={16} height={16} />
-        <span className={classes.greenLabel}>{sBitzApyApr.apy?.toFixed(2) ?? 0}% APY</span>
+        {/* <span className={classes.greenLabel}>{sBitzApyApr.apy?.toFixed(2) ?? 0}% APY</span> */}
+        <span className={classes.greenLabel}>453.98% APY</span>
         <img src={infoIcon} height={12} width={12} />
       </Typography>
     </TooltipHover>
