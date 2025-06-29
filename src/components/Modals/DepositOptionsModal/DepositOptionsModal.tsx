@@ -145,7 +145,7 @@ const DepoSitOptionsModal: React.FC<Props> = ({
   open
 }) => {
   const { classes, cx } = useStyles()
-  const isSm = useMediaQuery(theme.breakpoints.down('sm'))
+
   const [alignment, setAlignment] = useState<SettingsOptions>(SettingsOptions.Basic)
 
   const [priceImpact, setPriceImpact] = useState<string>(initialMaxPriceImpact)
@@ -308,18 +308,18 @@ const DepoSitOptionsModal: React.FC<Props> = ({
       setAlignment(newAlignment)
     }
   }
+  const isSm = useMediaQuery(theme.breakpoints.down('sm'))
 
   return (
     <>
       <Popover
         open={open}
         onClose={handleClose}
-        classes={{ paper: classes.paper }}
+        classes={{ paper: classes.paper, root: classes.root }}
         anchorOrigin={{
           vertical: isSm ? 'top' : 'center',
           horizontal: 'center'
         }}
-        anchorEl={document.body}
         transformOrigin={{
           vertical: isSm ? 'top' : 'center',
           horizontal: 'center'
