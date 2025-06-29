@@ -36,8 +36,7 @@ export const useStyles = makeStyles()(theme => {
       gap: 0
     },
     autoText: {
-      marginRight: 3,
-      flex: '0 0 auto'
+      ...typography.caption1
     },
     infoTooltip: {
       marginLeft: 6,
@@ -77,7 +76,7 @@ export const useStyles = makeStyles()(theme => {
       flexDirection: 'row',
       justifyContent: 'flex-end',
       alignItems: 'center',
-      gap: 4,
+      gap: 24,
       [theme.breakpoints.down('sm')]: {
         alignItems: 'center',
         justifyContent: 'center'
@@ -229,7 +228,7 @@ export const useStyles = makeStyles()(theme => {
         }
       },
       letterSpacing: '-0.03em',
-      width: 60,
+      width: 50,
       height: 26,
       padding: 0,
       [theme.breakpoints.down('sm')]: {
@@ -259,7 +258,7 @@ export const useStyles = makeStyles()(theme => {
       }
     },
     skeleton: {
-      width: 128,
+      width: 112,
       height: 28,
       borderRadius: 9,
       backgroundColor: colors.invariant.light
@@ -367,6 +366,10 @@ export const useStyles = makeStyles()(theme => {
       position: 'absolute',
       top: 'calc(50% - 10px)',
       left: 'calc(50% - 10px)'
+    },
+    switchDepositContainer: {
+      display: 'flex',
+      gap: 12
     }
   }
 })
