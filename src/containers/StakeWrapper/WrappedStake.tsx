@@ -43,7 +43,7 @@ import { StakeChart } from '@components/Stake/StakeChart/StakeChart'
 // import { BN } from '@coral-xyz/anchor'
 import {
   //   calculateTokensForWithdraw,
-  computeBitzAprApy,
+  computeBitzAprApyWithCompound,
   computeBitzSbitzRewards
 } from '@invariant-labs/sbitz'
 import { sBITZ_MAIN, BITZ_MAIN } from '@store/consts/static'
@@ -130,7 +130,10 @@ export const WrappedStake: React.FC = () => {
 
   const sBitzApyApr = useMemo(() => {
     if (!stakedBitzData.bitzTotalBalance) return { apr: 0, apy: 0 }
-    return computeBitzAprApy(+printBN(stakedBitzData.bitzTotalBalance, BITZ_MAIN.decimals))
+    return computeBitzAprApyWithCompound(
+      +printBN(stakedBitzData.stakedAmount, BITZ_MAIN.decimals),
+      +printBN(stakedBitzData.bitzTotalBalance, BITZ_MAIN.decimals)
+    )
   }, [stakedBitzData])
 
   const tokenFrom: SwapToken = useMemo(
@@ -238,10 +241,8 @@ export const WrappedStake: React.FC = () => {
 
   return (
     <Grid container className={classes.wrapper}>
-
       <SBitzBanner />
       <Box className={classes.titleWrapper}>
-
         <Box className={classes.titleTextWrapper}>
           <Typography component='h1'>Liquidity staking</Typography>
           <Box className={classes.subheaderDescription}>

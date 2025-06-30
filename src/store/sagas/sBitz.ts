@@ -500,24 +500,18 @@ export function* handleGetStakedAmountAndBalance() {
   const networkType = yield* select(network)
   const rpc = yield* select(rpcAddress)
   const wallet = yield* call(getWallet)
-  const connection = yield* call(getConnection)
 
   const stakingProgram = yield* call(getStakingProgram, networkType, rpc, wallet as IWallet)
   try {
-    const { stakedAmount, stakedTokenSupply } = yield* call([
+    const { stakedAmountSbitz, stakedAmountPowPow, sbitzSupply } = yield* call([
       stakingProgram,
       stakingProgram.getStakedAmountAndStakedTokenSupply
     ])
-
-    const [boost] = stakingProgram.getBoostAddressAndBump(BITZ_MAIN.address)
-    const ata = getAssociatedTokenAddressSync(BITZ_MAIN.address, boost, true)
-    const bitzAccountAmountInfo = yield* call([connection, connection.getTokenAccountBalance], ata)
-
     yield put(
       actions.setStakedAmountAndBalance({
-        stakedAmount,
-        stakedTokenSupply,
-        bitzTotalBalance: bitzAccountAmountInfo.value.amount
+        stakedAmount: stakedAmountSbitz,
+        bitzTotalBalance: stakedAmountPowPow,
+        stakedTokenSupply: sbitzSupply
       })
     )
   } catch (error: any) {
@@ -525,8 +519,8 @@ export function* handleGetStakedAmountAndBalance() {
     yield put(
       actions.setStakedAmountAndBalance({
         stakedAmount: null,
-        stakedTokenSupply: null,
-        bitzTotalBalance: null
+        bitzTotalBalance: null,
+        stakedTokenSupply: null
       })
     )
   }
