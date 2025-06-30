@@ -2454,10 +2454,10 @@ export interface ITokenDecimalAndProgramID {
   programId: PublicKey
 }
 export const findStrategy = (
-  poolAddress: string,
+  tokenAddress: string,
   currentNetwork: NetworkType = NetworkType.Mainnet
 ) => {
-  const poolTicker = addressToTicker(currentNetwork, poolAddress)
+  const poolTicker = addressToTicker(currentNetwork, tokenAddress)
   let strategy = STRATEGIES.find(s => {
     const tickerA = addressToTicker(currentNetwork, s.tokenAddressA)
     const tickerB = s.tokenAddressB ? addressToTicker(currentNetwork, s.tokenAddressB) : undefined
@@ -2465,7 +2465,7 @@ export const findStrategy = (
   })
   if (!strategy) {
     strategy = {
-      tokenAddressA: poolAddress,
+      tokenAddressA: tokenAddress,
       feeTier: DEFAULT_FEE_TIER
     }
   }

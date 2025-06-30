@@ -1,4 +1,5 @@
 import {
+  DEFAULT_STRATEGY,
   Intervals,
   NetworkType,
   POSITIONS_PER_PAGE,
@@ -375,7 +376,14 @@ const PortfolioWrapper = () => {
       navigate(
         ROUTES.getNewPositionRoute(strategy.tokenAddressA, strategy.tokenAddressB, strategy.feeTier)
       )
-    } else navigate(ROUTES.getNewPositionRoute('ETH', 'USDC', '0_09'))
+    } else
+      navigate(
+        ROUTES.getNewPositionRoute(
+          DEFAULT_STRATEGY.tokenA,
+          DEFAULT_STRATEGY.tokenB,
+          DEFAULT_STRATEGY.feeTier
+        )
+      )
   }
 
   return isConnected ? (
