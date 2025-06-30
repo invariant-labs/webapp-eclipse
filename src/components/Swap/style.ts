@@ -396,6 +396,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     marginTop: 12,
     width: '100%',
     display: 'flex',
+    flexDirection: 'column',
     alignItems: 'center',
     transition: 'all 0.3s ease',
     gap: 12
