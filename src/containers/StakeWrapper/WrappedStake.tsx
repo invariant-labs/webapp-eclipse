@@ -243,26 +243,16 @@ export const WrappedStake: React.FC = () => {
     }
   }, [success, isInProgress])
 
-  useEffect(() => {
-    const savedExpandedState = localStorage.getItem('STAKE_STATS_EXPANDED')
-    if (savedExpandedState !== null) {
-      setIsExpanded(JSON.parse(savedExpandedState))
-    }
-  }, [])
-
   const toggleExpand = () => {
     if (walletStatus === Status.Initialized) {
       if (!isExpanded) {
-        // When expanding
         setShouldRenderStats(true)
-        // Short delay to ensure DOM update before animation
         setTimeout(() => {
           setIsExpanded(true)
         }, 50)
       } else {
         // When collapsing
         setIsExpanded(false)
-        // Remove from DOM after transition
         setTimeout(() => {
           setShouldRenderStats(false)
         }, 300)
@@ -277,29 +267,27 @@ export const WrappedStake: React.FC = () => {
   }
 
   useEffect(() => {
-    if (walletStatus !== Status.Initialized) {
-      setIsExpanded(false)
+    const initializePanel = () => {
+      const savedExpandedState = localStorage.getItem('STAKE_STATS_EXPANDED');
 
-      const timer = setTimeout(() => {
-        setShouldRenderStats(false)
-      }, 300)
+      if (walletStatus === Status.Initialized) {
+        if (savedExpandedState !== null && JSON.parse(savedExpandedState) === true) {
+          setShouldRenderStats(true);
 
-      localStorage.setItem('STAKE_STATS_EXPANDED', JSON.stringify(false))
-
-      return () => clearTimeout(timer)
-    } else {
-      const savedExpandedState = localStorage.getItem('STAKE_STATS_EXPANDED')
-      if (savedExpandedState !== null && JSON.parse(savedExpandedState) === true) {
-        setShouldRenderStats(true)
-
-        setTimeout(() => {
-          setIsExpanded(true)
-        }, 50)
+          setTimeout(() => {
+            setIsExpanded(true);
+          }, 50);
+        }
+      } else {
+        setIsExpanded(false);
+        setShouldRenderStats(false);
       }
-    }
+    };
 
-    prevConnectionStatus.current = walletStatus
-  }, [walletStatus])
+    initializePanel();
+
+    prevConnectionStatus.current = walletStatus;
+  }, [walletStatus]);
 
   return (
     <Grid container className={classes.wrapper}>
@@ -384,9 +372,9 @@ export const WrappedStake: React.FC = () => {
               bitzPrice={bitzPrice}
             />
             <Box
-              className={`${classes.yourStatsWrapper} ${isExpanded ? classes.yourStatsVisible : ''}`}
+              className={`${classes.yourStatsWrapper} ${isExpanded && isConnected ? classes.yourStatsVisible : ''}`}
             >
-              {shouldRenderStats && (
+              {shouldRenderStats && isConnected && (
                 <YourStakeProgress
                   sBitzBalance={sBitzBalance}
                   bitzToWithdraw={bitzToWithdraw}
@@ -438,5 +426,7 @@ export const WrappedStake: React.FC = () => {
     </Grid >
   )
 }
+
+
 
 export default WrappedStake
