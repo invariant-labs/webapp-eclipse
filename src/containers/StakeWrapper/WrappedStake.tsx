@@ -50,7 +50,6 @@ import { sBITZ_MAIN, BITZ_MAIN } from '@store/consts/static'
 import { getTokenPrice, printBN } from '@utils/utils'
 import LiquidityStaking from '@components/Stake/LiquidityStaking/LiquidityStaking'
 import { StakeSwitch } from '@store/consts/types'
-// import { HowItWorks } from '@components/Stake/HowItWorks/HowItWorks'
 // import { StakedStats } from '@components/Stake/StakedStats/StakedStats'
 // import { YourStakeProgress } from '@components/Stake/YourStakeStats/YourProgress'
 // import { OverallStats } from '@components/Stake/OverallStats/OverallStats'
@@ -58,6 +57,7 @@ import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { refreshIcon } from '@static/icons'
 import { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 import { SBitzBanner } from '@components/Stake/SBitzBanner/SBitzBanner'
+import { HowItWorks } from '@components/Stake/HowItWorks/HowItWorks'
 
 export const WrappedStake: React.FC = () => {
   const { classes } = useStyles()
@@ -328,8 +328,8 @@ export const WrappedStake: React.FC = () => {
           stakeLoading={stakeLoading}
         />
         {/* </Box> */}
-        {/* <HowItWorks />
-        <OverallStats
+        <HowItWorks />
+        {/* <OverallStats
           isLoadingStats={isLoadingStats}
           bitzPlot={bitzPlot}
           sbitzPlot={sbitzPlot}
