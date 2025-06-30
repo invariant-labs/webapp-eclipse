@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState, useRef } from 'react'
 import useStyles from './styles'
 import { Box, Button, Grid, Typography, useMediaQuery } from '@mui/material'
 import { Link } from 'react-router-dom'
@@ -101,6 +101,7 @@ export const WrappedStake: React.FC = () => {
   })
 
   const [isExpanded, setIsExpanded] = useState(false)
+  const prevConnectionStatus = useRef<Status | null>(null)
 
   const [stakedAmount, setStakedAmount] = useState(100)
   const [bitzPrice, setBitzPrice] = useState(0)
@@ -256,6 +257,15 @@ export const WrappedStake: React.FC = () => {
     })
   }
 
+  useEffect(() => {
+    if (prevConnectionStatus.current === Status.Initialized && walletStatus !== Status.Initialized) {
+      setIsExpanded(false)
+      localStorage.setItem('STAKE_STATS_EXPANDED', JSON.stringify(false))
+    }
+
+    prevConnectionStatus.current = walletStatus
+  }, [walletStatus])
+
   return (
     <Grid container className={classes.wrapper}>
       <Box className={classes.animatedContainer}>
@@ -338,7 +348,6 @@ export const WrappedStake: React.FC = () => {
               sBitzPrice={sBitzPrice}
               bitzPrice={bitzPrice}
             />
-
             <Box
               className={`${classes.yourStatsWrapper} ${isExpanded ? classes.yourStatsVisible : ''}`}
             >

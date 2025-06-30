@@ -15,6 +15,7 @@ interface IProgressItemProps {
   isLoading?: boolean
   withButton?: boolean
   isConnected: boolean
+  bgImage?: string
 }
 
 export const ProgressItem: React.FC<IProgressItemProps> = ({
@@ -24,9 +25,10 @@ export const ProgressItem: React.FC<IProgressItemProps> = ({
   withButton = false,
   isLoading = false,
   isConnected,
-  onModalOpen
+  onModalOpen,
+  bgImage
 }) => {
-  const { classes } = useStyles()
+  const { classes } = useStyles({ bgImage })
   const isMobile = useMediaQuery(theme.breakpoints.down(500))
 
   return (

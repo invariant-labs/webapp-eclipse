@@ -1,10 +1,13 @@
 import { colors, theme, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
-const useStyles = makeStyles()(_theme => {
+const useStyles = makeStyles<{ bgImage?: string }>()((_theme, params = {}) => {
+  const { bgImage = '' } = params
+
   return {
     mainWrapper: {
       maxWidth: 305,
+      position: 'relative',
       [theme.breakpoints.down('md')]: {
         maxWidth: '100%',
         marginBottom: '16px'
@@ -84,7 +87,7 @@ const useStyles = makeStyles()(_theme => {
       position: 'relative',
       gap: '8px',
       alignItems: 'center',
-      padding: '16px 24px 24px 24px', // Increased bottom padding
+      padding: '16px 24px 24px 24px',
       display: 'flex',
 
       flexDirection: 'column',
@@ -96,12 +99,15 @@ const useStyles = makeStyles()(_theme => {
       background: '#111931',
       [theme.breakpoints.down(500)]: {
         height: 'auto',
-        padding: '16px 0px 24px 0px' // Increased bottom padding for mobile
+        border: 'none',
+        background: 'transparent',
+        padding: '16px 0px 24px 0px'
       }
     },
     valueWrapper: {
       display: 'flex',
       alignItems: 'center',
+      minHeight: '32px',
       gap: '8px'
     },
     withButtonWrapper: {
@@ -117,7 +123,31 @@ const useStyles = makeStyles()(_theme => {
       gap: '24px'
     },
 
-    headerBigText: { ...typography.heading2, color: colors.invariant.text, marginTop: '30px' },
+    headerBigText: {
+      ...typography.heading2,
+      color: colors.invariant.text,
+      [theme.breakpoints.down(500)]: {
+        marginTop: 0
+      },
+      marginTop: '30px'
+    },
+    portfolioHeader: {
+      position: 'absolute',
+      top: '-42px',
+      left: 0,
+      [theme.breakpoints.down('md')]: {
+        position: 'static',
+        marginBottom: '16px'
+      },
+      [theme.breakpoints.down(500)]: {
+        maxWidth: '100%',
+        textAlign: 'center'
+      },
+      ...typography.heading4,
+      whiteSpace: 'nowrap',
+      color: colors.invariant.text,
+      margin: 0
+    },
     headerSmallText: {
       ...typography.body1,
       color: colors.invariant.textGrey
@@ -144,7 +174,8 @@ const useStyles = makeStyles()(_theme => {
     },
     blur: {
       width: 120,
-      height: 36,
+      minHeight: 30,
+      marginTop: '16px',
       borderRadius: 16
     },
     button: {
@@ -171,6 +202,18 @@ const useStyles = makeStyles()(_theme => {
       gap: '8px',
       [theme.breakpoints.down('md')]: {
         alignItems: 'center'
+      },
+      [theme.breakpoints.down(500)]: {
+        alignItems: 'center',
+
+        border: '10px solid transparent',
+        borderImage: bgImage ? `url(${bgImage}) 20 fill round` : 'none',
+
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        height: 100,
+        backgroundImage: bgImage ? `url(${bgImage})` : 'none'
       },
       alignItems: 'flex-start',
       justifyContent: 'flex-start'

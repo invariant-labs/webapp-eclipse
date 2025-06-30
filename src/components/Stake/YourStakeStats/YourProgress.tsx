@@ -10,6 +10,10 @@ import { BITZ_MAIN, sBITZ_MAIN } from '@store/consts/static'
 import { formatNumberWithSuffix, printBN } from '@utils/utils'
 import { Separator } from '@common/Separator/Separator'
 import { colors } from '@static/theme'
+import top from '@static/png/trapezeMobileTop.png'
+import bot from '@static/png/trapezeMobileBottom.png'
+import mid from '@static/png/boxMobileMiddle.png'
+
 interface YourProgressProps {
   sBitzBalance: BN
   bitzToWithdraw: BN
@@ -27,10 +31,12 @@ export const YourStakeProgress: React.FC<YourProgressProps> = ({
   yield24,
   isConnected
 }) => {
-  const { classes } = useStyles()
+  const { classes } = useStyles({})
   return (
     <Grid className={classes.mainWrapper}>
-
+      <Typography className={classes.portfolioHeader}>
+        Portfolio
+      </Typography>
       <Grid className={classes.boxWrapper}>
         {<BlurOverlay isConnected={isConnected} />}
         <Grid className={classes.section}>
@@ -39,10 +45,11 @@ export const YourStakeProgress: React.FC<YourProgressProps> = ({
 
             <ProgressItem
               isConnected={isConnected}
+              bgImage={top}
               label={
                 <Box className={classes.boxLabel}>
                   <img src={sBITZ} width={20} height={20} />
-                  <Typography>sBITZ</Typography>
+                  <Typography>sBITZ Amount</Typography>
                 </Box>
               }
               isLoading={isLoading}
@@ -52,30 +59,15 @@ export const YourStakeProgress: React.FC<YourProgressProps> = ({
             />
             <Separator color={colors.invariant.light} isHorizontal margin='0px 8px 0px 8px' />
 
-            <ProgressItem
-              isConnected={isConnected}
-              isLoading={isLoading}
-              tooltip={<>Estimated BITZ rewards from holding sBITZ over the next 24 hours.</>}
-              label={
-                <Box className={classes.boxLabel}>
-                  <Typography>24H </Typography>
-                  <img src={BITZ} width={20} height={20} />
-                  <Typography> BITZ Rewards</Typography>
-                </Box>
-              }
-              value={formatNumberWithSuffix(yield24, {
-                decimalsAfterDot: 4
-              })}
-            />
-            <Separator color={colors.invariant.light} isHorizontal margin='0px 8px 0px 8px' />
 
             <ProgressItem
               isConnected={isConnected}
+              bgImage={mid}
               tooltip={<>The underlying BITZ tokens backing your sBITZ holdings.</>}
               label={
                 <Box className={classes.boxLabel}>
-                  <Typography>Backed by</Typography> <img src={BITZ} width={20} height={20} />{' '}
-                  <Typography>BITZ</Typography>
+                  <img src={BITZ} width={20} height={20} />
+                  <Typography>Redeemable BITZ</Typography> {' '}
                 </Box>
               }
               isLoading={isLoading}
@@ -89,7 +81,26 @@ export const YourStakeProgress: React.FC<YourProgressProps> = ({
             <ProgressItem
               isConnected={isConnected}
               isLoading={isLoading}
-              label='Value'
+              bgImage={mid}
+              tooltip={<>Estimated BITZ rewards earned from holding sBITZ over the next 24 hours. Staking rewards don't increase your sBITZ amount. Instead, the same amount of sBITZ gradually becomes redeemable for more BITZ over time.</>}
+              label={
+                <Box className={classes.boxLabel}>
+                  <img src={BITZ} width={20} height={20} />
+                  <Typography>24H BITZ Rewards</Typography>
+                </Box>
+              }
+              value={formatNumberWithSuffix(yield24, {
+                decimalsAfterDot: 4
+              })}
+            />
+
+            <Separator color={colors.invariant.light} isHorizontal margin='0px 8px 0px 8px' />
+
+            <ProgressItem
+              isConnected={isConnected}
+              isLoading={isLoading}
+              bgImage={bot}
+              label='USD Value'
               value={`$${formatNumberWithSuffix(
                 +printBN(bitzToWithdraw, BITZ_MAIN.decimals) * bitzPrice,
                 { decimalsAfterDot: 2 }
