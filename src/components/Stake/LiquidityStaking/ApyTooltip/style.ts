@@ -11,20 +11,20 @@ const useStyles = makeStyles()(() => {
       flexDirection: 'column'
     },
     tooltipText: {
-      color: colors.invariant.textGrey,
+      color: colors.invariant.green,
       ...typography.caption2
     },
     greenTooltipText: {
-      color: colors.invariant.green,
+      color: colors.invariant.blue,
       ...typography.caption2
     },
     crossedText: {
       textDecoration: 'line-through',
-      color: colors.invariant.textGrey,
+      color: colors.invariant.green,
       ...typography.caption2
     },
     greenLabel: {
-      color: colors.invariant.green,
+      color: colors.invariant.blue,
       ...typography.caption1
     },
     itemWrapper: {
@@ -45,6 +45,16 @@ const useStyles = makeStyles()(() => {
       alignItems: 'center',
       height: 24,
       gap: 4
+    },
+    greenChip: {
+      ...typography.caption2,
+      borderColor: colors.invariant.blue,
+      color: colors.invariant.blue,
+      '.MuiChip-icon': { color: colors.invariant.blue }
+    },
+    crossedValue: {
+      color: colors.invariant.green,
+      textDecoration: 'line-through'
     }
   }
 })

@@ -43,7 +43,6 @@ import { StakeChart } from '@components/Stake/StakeChart/StakeChart'
 // import { BN } from '@coral-xyz/anchor'
 import {
   //   calculateTokensForWithdraw,
-  computeBitzAprApyWithCompound,
   computeBitzSbitzRewards
 } from '@invariant-labs/sbitz'
 import { sBITZ_MAIN, BITZ_MAIN } from '@store/consts/static'
@@ -128,9 +127,75 @@ export const WrappedStake: React.FC = () => {
   //     return sbitzPredictedYield[0] || 0
   //   }, [sBitzBalance, stakedBitzData])
 
-  const sBitzApyApr = useMemo(() => {
-    if (!stakedBitzData.bitzTotalBalance) return { apr: 0, apy: 0 }
-    return computeBitzAprApyWithCompound(
+  const computeBitzAndSbitzYield = (
+    bitzStakedInSbitz: number,
+    bitzStakedInPowPow: number
+  ): {
+    sbitzMonthly: number
+    sbitzAnnual: number
+    bitzMonthly: number
+    bitzAnnual: number
+  } => {
+    const TOTAL_STAKING_REWARD_PER_DAY = 720
+    const COMPOUND_INTERVAL_SECONDS = 10
+    const COMPOUNDS_PER_DAY = 86_400 / COMPOUND_INTERVAL_SECONDS
+    const INVERSE_COMPOUNDS_PER_DAY = 1 / COMPOUNDS_PER_DAY
+    const DAYS_IN_YEAR = 365
+    const DAYS_IN_MONTH = 30
+
+    let myStakeS = 1
+    let sbitzStake = bitzStakedInSbitz
+    let totalStakeS = 1 + bitzStakedInPowPow
+    let myStakeSMonth = 1
+
+    let myStakeB = 1
+    let sbitzStakeB = bitzStakedInSbitz
+    let totalStakeB = 1 + bitzStakedInPowPow
+    let myStakeBMonth = 1
+
+    for (let day = 0; day < DAYS_IN_YEAR; day++) {
+      const dailyRateS = TOTAL_STAKING_REWARD_PER_DAY / totalStakeS
+      const factorS = Math.pow(1 + dailyRateS * INVERSE_COMPOUNDS_PER_DAY, COMPOUNDS_PER_DAY)
+
+      const prevMyS = myStakeS
+      const prevSbitz = sbitzStake
+
+      myStakeS *= factorS
+      sbitzStake *= factorS
+      totalStakeS += myStakeS - prevMyS + (sbitzStake - prevSbitz)
+
+      const dailyRateB = TOTAL_STAKING_REWARD_PER_DAY / totalStakeB
+      const factorB = Math.pow(1 + dailyRateB * INVERSE_COMPOUNDS_PER_DAY, COMPOUNDS_PER_DAY)
+
+      const prevSbitzB = sbitzStakeB
+
+      sbitzStakeB *= factorB
+      myStakeB += dailyRateB
+      totalStakeB += sbitzStakeB - prevSbitzB
+
+      if (day === DAYS_IN_MONTH - 1) {
+        myStakeSMonth = myStakeS
+        myStakeBMonth = myStakeB
+      }
+    }
+
+    return {
+      sbitzMonthly: Math.round((myStakeSMonth - 1) * 10_000) / 100,
+      sbitzAnnual: Math.round((myStakeS - 1) * 10_000) / 100,
+      bitzMonthly: Math.round((myStakeBMonth - 1) * 10_000) / 100,
+      bitzAnnual: Math.round((myStakeB - 1) * 10_000) / 100
+    }
+  }
+
+  const sBitzBitzMonthlyAnnual = useMemo(() => {
+    if (!stakedBitzData.bitzTotalBalance || !stakedBitzData.stakedAmount)
+      return {
+        sbitzMonthly: 0,
+        sbitzAnnual: 0,
+        bitzMonthly: 0,
+        bitzAnnual: 0
+      }
+    return computeBitzAndSbitzYield(
       +printBN(stakedBitzData.stakedAmount, BITZ_MAIN.decimals),
       +printBN(stakedBitzData.bitzTotalBalance, BITZ_MAIN.decimals)
     )
@@ -281,7 +346,6 @@ export const WrappedStake: React.FC = () => {
         onDisconnectWallet={() => {
           dispatch(walletActions.disconnect())
         }}
-        sBitzApyApr={sBitzApyApr}
         stakedTokenSupply={stakedBitzData.stakedTokenSupply}
         stakedAmount={stakedBitzData.stakedAmount}
         stakeDataLoading={stakeLoading}
@@ -306,6 +370,7 @@ export const WrappedStake: React.FC = () => {
         priceLoading={priceLoading}
         sBitzPrice={sBitzPrice}
         bitzPrice={bitzPrice}
+        sBitzBitzMonthlyAnnual={sBitzBitzMonthlyAnnual}
       />
 
       <Box className={classes.statsContainer}>

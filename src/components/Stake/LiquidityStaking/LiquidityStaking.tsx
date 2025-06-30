@@ -27,7 +27,6 @@ export interface ILiquidityStaking {
   handleUnstake: (props: StakeLiquidityPayload) => void
   onConnectWallet: () => void
   onDisconnectWallet: () => void
-  sBitzApyApr: { apy: number; apr: number }
   stakedTokenSupply: BN
   stakedAmount: BN
   stakeDataLoading: boolean
@@ -46,6 +45,12 @@ export interface ILiquidityStaking {
   priceLoading: boolean
   sBitzPrice: number
   bitzPrice: number
+  sBitzBitzMonthlyAnnual: {
+    sbitzMonthly: number
+    sbitzAnnual: number
+    bitzMonthly: number
+    bitzAnnual: number
+  }
 }
 
 export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
@@ -55,7 +60,6 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
   handleUnstake,
   onConnectWallet,
   onDisconnectWallet,
-  sBitzApyApr,
   stakedTokenSupply,
   stakedAmount,
   stakeDataLoading,
@@ -73,7 +77,8 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
   tokenTo,
   priceLoading,
   sBitzPrice,
-  bitzPrice
+  bitzPrice,
+  sBitzBitzMonthlyAnnual
 }) => {
   const { classes } = useStyles()
 
@@ -227,9 +232,13 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
       <Box mb={'16px'} display='flex' justifyContent='space-between' alignItems='center'>
         <Typography className={classes.title}>You receive</Typography>
         {currentStakeTab === StakeSwitch.Stake && (
-          <ApyTooltip sBitzApyApr={sBitzApyApr} stakeDataLoading={stakeDataLoading} />
+          <ApyTooltip
+            sBitzBitzMonthlyAnnual={sBitzBitzMonthlyAnnual}
+            stakeDataLoading={stakeDataLoading}
+          />
         )}
       </Box>
+
       <ExchangeAmountInput
         value={amountTo}
         balance={printBN(tokenTo?.balance || new BN(0), tokenTo?.decimals)}
