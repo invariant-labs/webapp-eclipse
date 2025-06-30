@@ -250,17 +250,26 @@ export const WrappedStake: React.FC = () => {
   }, [])
 
   const toggleExpand = () => {
-    setIsExpanded(prev => {
-      const newValue = !prev
-      localStorage.setItem('STAKE_STATS_EXPANDED', JSON.stringify(newValue))
-      return newValue
-    })
+    if (walletStatus === Status.Initialized) {
+      setIsExpanded(prev => {
+        const newValue = !prev
+        localStorage.setItem('STAKE_STATS_EXPANDED', JSON.stringify(newValue))
+        return newValue
+      })
+    } else {
+      setIsExpanded(false)
+      localStorage.setItem('STAKE_STATS_EXPANDED', JSON.stringify(false))
+    }
   }
 
   useEffect(() => {
-    if (prevConnectionStatus.current === Status.Initialized && walletStatus !== Status.Initialized) {
+    if (walletStatus !== Status.Initialized) {
       setIsExpanded(false)
-      localStorage.setItem('STAKE_STATS_EXPANDED', JSON.stringify(false))
+    } else {
+      const savedExpandedState = localStorage.getItem('STAKE_STATS_EXPANDED')
+      if (savedExpandedState !== null && JSON.parse(savedExpandedState) === true) {
+        setIsExpanded(true)
+      }
     }
 
     prevConnectionStatus.current = walletStatus
