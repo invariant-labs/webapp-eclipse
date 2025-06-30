@@ -108,11 +108,11 @@ export const WrappedStake: React.FC = () => {
   const [sBitzPrice, setSBitzPrice] = useState(0)
   const [progress, setProgress] = useState<ProgressState>('none')
   const [priceLoading, setPriceLoading] = useState(false)
-  const [shouldRenderStats, setShouldRenderStats] = useState(false) // Add this new state to track animation
+  const [shouldRenderStats, setShouldRenderStats] = useState(false)
 
   const STORAGE_KEY = 'STAKE_STATS_EXPANDED';
   const EXPAND_DELAY = 50;
-  const COLLAPSE_DELAY = 300;
+  const COLLAPSE_DELAY = 200;
 
   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
