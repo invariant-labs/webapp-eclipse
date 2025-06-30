@@ -1,15 +1,14 @@
-import { Box, Grid, Typography } from '@mui/material'
+import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import React from 'react'
 import useStyles from './styles'
 import { ProgressItem } from './ProgressItem'
-import { BlurOverlay } from './BlurOverlay'
 import BITZ from '@static/png/bitz.png'
 import sBITZ from '@static/png/sBitz.png'
 import { BN } from '@coral-xyz/anchor'
 import { BITZ_MAIN, sBITZ_MAIN } from '@store/consts/static'
 import { formatNumberWithSuffix, printBN } from '@utils/utils'
 import { Separator } from '@common/Separator/Separator'
-import { colors } from '@static/theme'
+import { colors, theme } from '@static/theme'
 import top from '@static/png/trapezeMobileTop.png'
 import bot from '@static/png/trapezeMobileBottom.png'
 import mid from '@static/png/boxMobileMiddle.png'
@@ -28,23 +27,21 @@ export const YourStakeProgress: React.FC<YourProgressProps> = ({
   bitzToWithdraw,
   bitzPrice,
   isLoading,
-  yield24,
-  isConnected
+  yield24
 }) => {
   const { classes } = useStyles({})
+  const isMobile = useMediaQuery(theme.breakpoints.down(500));
   return (
     <Grid className={classes.mainWrapper}>
       <Typography className={classes.portfolioHeader}>
         Portfolio
       </Typography>
       <Grid className={classes.boxWrapper}>
-        {<BlurOverlay isConnected={isConnected} />}
         <Grid className={classes.section}>
 
           <Grid className={classes.pointsColumn}>
 
             <ProgressItem
-              isConnected={isConnected}
               bgImage={top}
               label={
                 <Box className={classes.boxLabel}>
@@ -57,11 +54,10 @@ export const YourStakeProgress: React.FC<YourProgressProps> = ({
                 decimalsAfterDot: 4
               })}
             />
-            <Separator color={colors.invariant.light} isHorizontal margin='0px 8px 0px 8px' />
+            {!isMobile && <Separator color={colors.invariant.light} isHorizontal margin='0px 8px 0px 8px' />}
 
 
             <ProgressItem
-              isConnected={isConnected}
               bgImage={mid}
               tooltip={<>The underlying BITZ tokens backing your sBITZ holdings.</>}
               label={
@@ -76,10 +72,9 @@ export const YourStakeProgress: React.FC<YourProgressProps> = ({
                 { decimalsAfterDot: 2 }
               )}`}
             />
-            <Separator color={colors.invariant.light} isHorizontal margin='0px 8px 0px 8px' />
+            {!isMobile && <Separator color={colors.invariant.light} isHorizontal margin='0px 8px 0px 8px' />}
 
             <ProgressItem
-              isConnected={isConnected}
               isLoading={isLoading}
               bgImage={mid}
               tooltip={<>Estimated BITZ rewards earned from holding sBITZ over the next 24 hours. Staking rewards don't increase your sBITZ amount. Instead, the same amount of sBITZ gradually becomes redeemable for more BITZ over time.</>}
@@ -94,10 +89,10 @@ export const YourStakeProgress: React.FC<YourProgressProps> = ({
               })}
             />
 
-            <Separator color={colors.invariant.light} isHorizontal margin='0px 8px 0px 8px' />
+            {!isMobile && <Separator color={colors.invariant.light} isHorizontal margin='0px 8px 0px 8px' />}
+
 
             <ProgressItem
-              isConnected={isConnected}
               isLoading={isLoading}
               bgImage={bot}
               label='USD Value'

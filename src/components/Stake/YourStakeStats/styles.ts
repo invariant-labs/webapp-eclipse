@@ -140,8 +140,7 @@ const useStyles = makeStyles<{ bgImage?: string }>()((_theme, params = {}) => {
         marginBottom: '16px'
       },
       [theme.breakpoints.down(500)]: {
-        maxWidth: '100%',
-        textAlign: 'center'
+        display: 'none'
       },
       ...typography.heading4,
       whiteSpace: 'nowrap',

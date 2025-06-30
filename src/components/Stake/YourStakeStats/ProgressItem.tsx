@@ -14,7 +14,6 @@ interface IProgressItemProps {
   tooltip?: React.ReactNode
   isLoading?: boolean
   withButton?: boolean
-  isConnected: boolean
   bgImage?: string
 }
 
@@ -24,7 +23,6 @@ export const ProgressItem: React.FC<IProgressItemProps> = ({
   tooltip,
   withButton = false,
   isLoading = false,
-  isConnected,
   onModalOpen,
   bgImage
 }) => {
@@ -41,7 +39,7 @@ export const ProgressItem: React.FC<IProgressItemProps> = ({
           </TooltipHover>
         )}
       </Grid>
-      {isLoading && isConnected ? (
+      {isLoading ? (
         <Skeleton variant='rounded' animation='wave' className={classes.blur} />
       ) : isMobile && withButton ? (
         <Box className={classes.withButtonWrapper}>
