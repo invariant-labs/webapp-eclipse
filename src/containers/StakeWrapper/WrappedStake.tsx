@@ -109,6 +109,11 @@ export const WrappedStake: React.FC = () => {
   const [progress, setProgress] = useState<ProgressState>('none')
   const [priceLoading, setPriceLoading] = useState(false)
   const [shouldRenderStats, setShouldRenderStats] = useState(false) // Add this new state to track animation
+
+  const STORAGE_KEY = 'STAKE_STATS_EXPANDED';
+  const EXPAND_DELAY = 50;
+  const COLLAPSE_DELAY = 300;
+
   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
   const sBitzBalance = useMemo(() => {
@@ -243,52 +248,42 @@ export const WrappedStake: React.FC = () => {
     }
   }, [success, isInProgress])
 
-  const toggleExpand = () => {
-    if (walletStatus === Status.Initialized) {
-      if (!isExpanded) {
-        setShouldRenderStats(true)
-        setTimeout(() => {
-          setIsExpanded(true)
-        }, 50)
-      } else {
-        // When collapsing
-        setIsExpanded(false)
-        setTimeout(() => {
-          setShouldRenderStats(false)
-        }, 300)
-      }
 
-      localStorage.setItem('STAKE_STATS_EXPANDED', JSON.stringify(!isExpanded))
+  const toggleExpand = () => {
+    const isWalletInitialized = walletStatus === Status.Initialized;
+    const newExpandedState = isWalletInitialized && !isExpanded;
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(newExpandedState));
+
+    if (newExpandedState) {
+      setShouldRenderStats(true);
+      setTimeout(() => setIsExpanded(true), EXPAND_DELAY);
     } else {
-      setIsExpanded(false)
-      setShouldRenderStats(false)
-      localStorage.setItem('STAKE_STATS_EXPANDED', JSON.stringify(false))
+      setIsExpanded(false);
+      if (shouldRenderStats) {
+        setTimeout(() => setShouldRenderStats(false), COLLAPSE_DELAY);
+      }
     }
   }
 
   useEffect(() => {
-    const initializePanel = () => {
-      const savedExpandedState = localStorage.getItem('STAKE_STATS_EXPANDED');
+    const isWalletInitialized = walletStatus === Status.Initialized;
 
-      if (walletStatus === Status.Initialized) {
-        if (savedExpandedState !== null && JSON.parse(savedExpandedState) === true) {
-          setShouldRenderStats(true);
+    if (isWalletInitialized) {
+      const savedExpandedState = localStorage.getItem(STORAGE_KEY);
+      const shouldExpand = savedExpandedState !== null && JSON.parse(savedExpandedState);
 
-          setTimeout(() => {
-            setIsExpanded(true);
-          }, 50);
-        }
-      } else {
-        setIsExpanded(false);
-        setShouldRenderStats(false);
+      if (shouldExpand) {
+        setShouldRenderStats(true);
+        setTimeout(() => setIsExpanded(true), EXPAND_DELAY);
       }
-    };
-
-    initializePanel();
+    } else {
+      setIsExpanded(false);
+      setShouldRenderStats(false);
+    }
 
     prevConnectionStatus.current = walletStatus;
   }, [walletStatus]);
-
   return (
     <Grid container className={classes.wrapper}>
       <Box className={classes.animatedContainer}>
