@@ -297,11 +297,12 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
               ) as ParsedInstruction
             ).parsed.info.amount
 
-            const splAmount = (
-              meta.innerInstructions[0].instructions.find(
-                ix => (ix as ParsedInstruction).parsed.info.tokenAmount !== undefined
-              ) as ParsedInstruction
-            ).parsed.info.tokenAmount.amount
+            const splIx = meta.innerInstructions[0].instructions.find(
+              ix =>
+                (ix as ParsedInstruction).parsed.info.tokenAmount !== undefined ||
+                (ix as ParsedInstruction).parsed.info.amount !== undefined
+            ) as ParsedInstruction
+            const splAmount = splIx.parsed.info.tokenAmount.amount || splIx.parsed.info.amount
 
             const tokenX = allTokens[pair.tokenX.toString()]
             const tokenY = allTokens[pair.tokenY.toString()]
