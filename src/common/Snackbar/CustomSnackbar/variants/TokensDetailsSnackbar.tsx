@@ -83,7 +83,9 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
         return ''
     }
   }, [ikonType])
-
+  const hasXAmount = tokenXAmount !== '0'
+  const hasYAmount = tokenYAmount !== '0'
+  const hasBothAmounts = hasXAmount && hasYAmount
   return (
     <>
       <Box
@@ -134,12 +136,18 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
                 style={{ marginBottom: '2px' }}
               />
             </Grid>
-            <StyledText>{title}</StyledText>
-            <StyledText color={colors.invariant.green}>{tokenXAmount}</StyledText>
-            {tokenXIcon === '/unknownToken.svg' ? (
-              <StyledText>{tokenXSymbol}</StyledText>
-            ) : (
-              <img src={tokenXIcon} className={classes.tokenIcon} />
+            <StyledText>
+              {title} {!hasBothAmounts && 'succesfully'}
+            </StyledText>
+            {hasXAmount && (
+              <>
+                <StyledText color={colors.invariant.green}>{tokenXAmount}</StyledText>
+                {tokenXIcon === '/unknownToken.svg' ? (
+                  <StyledText>{tokenXSymbol}</StyledText>
+                ) : (
+                  <img src={tokenXIcon} className={classes.tokenIcon} />
+                )}
+              </>
             )}
             {ikonType === 'swap' || ikonType === 'unstake' || ikonType === 'stake' ? (
               arrow
