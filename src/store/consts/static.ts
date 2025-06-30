@@ -835,7 +835,7 @@ export const disabledPools = [
   {
     tokenX: 'sBTZcSwRZhRq3JcjFh1xwxgCxmsN7MreyU3Zx8dA8uF',
     tokenY: 'So11111111111111111111111111111111111111112',
-    feeTiers: ['0.01']
+    feeTiers: ['0.01', '0.3']
   }
 ]
 

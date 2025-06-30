@@ -15,7 +15,13 @@ import {
   plusIcon,
   unknownTokenIcon
 } from '@static/icons'
-import { Intervals, ITEMS_PER_PAGE, NetworkType, SortTypePoolList } from '@store/consts/static'
+import {
+  disabledPools,
+  Intervals,
+  ITEMS_PER_PAGE,
+  NetworkType,
+  SortTypePoolList
+} from '@store/consts/static'
 import {
   addressToTicker,
   calculateAPYAndAPR,
@@ -222,6 +228,18 @@ const PoolListItem: React.FC<IProps> = ({
     setShowInfo(false)
   }, [itemNumber])
 
+  const isDisabled = useMemo(() => {
+    if (tokenAData.address === null || tokenBData.address === null) return []
+
+    return disabledPools
+      .filter(
+        pool =>
+          (pool.tokenX === tokenAData.address && pool.tokenY === tokenBData.address) ||
+          (pool.tokenX === tokenBData.address && pool.tokenY === tokenAData.address)
+      )
+      .flatMap(p => p.feeTiers)
+  }, [tokenAData.address, tokenBData.address, disabledPools]).includes(fee.toString())
+
   //HOTFIX
   const { convertedApy, convertedApr } = calculateAPYAndAPR(apy, poolAddress, volume, fee, TVL)
   const ActionsButtons = (
@@ -229,9 +247,11 @@ const PoolListItem: React.FC<IProps> = ({
       <button className={classes.actionButton} onClick={handleOpenSwap}>
         <img width={28} src={horizontalSwapIcon} alt={'Exchange'} />
       </button>
-      <button className={classes.actionButton} onClick={handleOpenPosition}>
-        <img width={28} src={plusIcon} alt={'Open'} />
-      </button>
+      {!isDisabled && (
+        <button className={classes.actionButton} onClick={handleOpenPosition}>
+          <img width={28} src={plusIcon} alt={'Open'} />
+        </button>
+      )}
       <button
         className={classes.actionButton}
         onClick={() => {
@@ -434,11 +454,13 @@ const PoolListItem: React.FC<IProps> = ({
                   <img width={32} height={32} src={horizontalSwapIcon} alt={'Exchange'} />
                 </button>
               </TooltipHover>
-              <TooltipHover title='Add position'>
-                <button className={classes.actionButton} onClick={handleOpenPosition}>
-                  <img width={32} height={32} src={plusIcon} alt={'Open'} />
-                </button>
-              </TooltipHover>
+              {!isDisabled && (
+                <TooltipHover title='Add position'>
+                  <button className={classes.actionButton} onClick={handleOpenPosition}>
+                    <img width={32} height={32} src={plusIcon} alt={'Open'} />
+                  </button>
+                </TooltipHover>
+              )}
               <TooltipHover title='Open in explorer'>
                 <button
                   className={classes.actionButton}
