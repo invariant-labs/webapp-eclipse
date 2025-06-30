@@ -87,7 +87,7 @@ const useStyles = makeStyles<{ bgImage?: string }>()((_theme, params = {}) => {
       position: 'relative',
       gap: '8px',
       alignItems: 'center',
-      padding: '16px 24px 24px 24px',
+      padding: '24px',
       display: 'flex',
 
       flexDirection: 'column',
