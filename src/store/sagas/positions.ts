@@ -65,7 +65,8 @@ import {
   mapErrorCodeToMessage,
   printBN,
   getAmountFromClaimFeeInstruction,
-  getAmountFromClosePositionInstruction
+  getAmountFromClosePositionInstruction,
+  getTokenProgramId
 } from '@utils/utils'
 import { actions as connectionActions } from '@store/reducers/solanaConnection'
 import {
@@ -79,9 +80,10 @@ import { ClaimAllFee } from '@invariant-labs/sdk-eclipse/lib/market'
 import nacl from 'tweetnacl'
 import { BN } from '@coral-xyz/anchor'
 import { parseTick, Position } from '@invariant-labs/sdk-eclipse/lib/market'
-import { NATIVE_MINT } from '@solana/spl-token'
+import { getAssociatedTokenAddressSync, NATIVE_MINT } from '@solana/spl-token'
 import { unknownTokenIcon } from '@static/icons'
 import { config, priceFeeds } from '@store/selectors/leaderboard'
+
 function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionData>): Generator {
   const data = action.payload
 
@@ -2536,6 +2538,37 @@ export function* handleClaimAllFees() {
       upperTickIndex: position.upperTickIndex
     }))
 
+    const accountToMint = {}
+
+    for (const position of formattedPositions) {
+      const tokenX = position.pair.tokenX
+      const tokenY = position.pair.tokenY
+      if (!accountToMint[tokenX.toString()]) {
+        const tokenAccountX = tokensAccounts[tokenX.toString()]
+        if (tokenAccountX) {
+          accountToMint[tokenAccountX.address.toString()] = tokenX.toString()
+        } else {
+          const programId =
+            allTokens[tokenX.toString()].tokenProgram ??
+            (yield* call(getTokenProgramId, connection, tokenX))
+          const ataX = getAssociatedTokenAddressSync(tokenX, wallet.publicKey, false, programId)
+          accountToMint[ataX.toString()] = tokenX.toString()
+        }
+      }
+      if (!accountToMint[tokenY.toString()]) {
+        const tokenAccountY = tokensAccounts[tokenY.toString()]
+        if (tokenAccountY) {
+          accountToMint[tokenAccountY.address.toString()] = tokenY.toString()
+        } else {
+          const programId =
+            allTokens[tokenY.toString()].tokenProgram ??
+            (yield* call(getTokenProgramId, connection, tokenY))
+          const ataY = getAssociatedTokenAddressSync(tokenY, wallet.publicKey, false, programId)
+          accountToMint[ataY.toString()] = tokenY.toString()
+        }
+      }
+    }
+
     const txs = yield* call([marketProgram, marketProgram.claimAllFeesTxs], {
       owner: wallet.publicKey,
       positions: formattedPositions
@@ -2602,9 +2635,12 @@ export function* handleClaimAllFees() {
               }
 
               splTransfers.map((transfer, index) => {
-                const token = allTokens[transfer.parsed.info.mint]
+                const token =
+                  allTokens[
+                    transfer.parsed.info?.mint || accountToMint[transfer.parsed.info?.destination]
+                  ]
                 const amount =
-                  transfer.parsed.info.tokenAmount.amount || transfer.parsed.info.amount
+                  transfer.parsed.info?.tokenAmount?.amount || transfer.parsed.info.amount
                 if (index === 0) {
                   tokenYAmount = formatNumberWithoutSuffix(printBN(amount, token.decimals))
                   tokenYIcon = token.logoURI
