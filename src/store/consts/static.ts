@@ -1055,3 +1055,7 @@ export const thresholdsWithTokenDecimal = (decimals: number): FormatNumberThresh
 ]
 
 export const MAX_PLOT_VISIBLE_TICK_RANGE = 46154 // x100 difference
+
+export const PORTFOLIO_STAKE_STORAGE_KEY = 'STAKE_STATS_EXPANDED'
+export const PORTFOLIO_STAKE_EXPAND_DELAY = 50
+export const PORTFOLIO_STAKE_COLLAPSE_DELAY = 200
