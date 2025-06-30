@@ -80,7 +80,9 @@ export const YourStakeProgress: React.FC<YourProgressProps> = ({
                   <Typography>24H BITZ Rewards</Typography>
                 </Box>
               }
-              value={formatNumberWithSuffix(yield24.toFixed(4), { decimalsAfterDot: 4 })}
+              value={yield24 > 0 && yield24 < 0.0001
+                ? "<0.0001"
+                : formatNumberWithSuffix(yield24.toFixed(4), { decimalsAfterDot: 4 })}
             />
 
             {!isMobile && <Separator color={colors.invariant.light} isHorizontal margin='0px 8px 0px 8px' />}
