@@ -308,14 +308,12 @@ export const WrappedStake: React.FC = () => {
               </Box>
             </Box>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              {isConnected && (
-                <Button className={classes.statsExpanderButton} onClick={() => toggleExpand()}>
-                  <p>
-                    <img src={isExpanded ? EyeHide : EyeShow} width={20} height={20} />
-                    Portfolio
-                  </p>
-                </Button>
-              )}
+              <Button className={classes.statsExpanderButton} onClick={() => toggleExpand()} disabled={!isConnected}>
+                <p>
+                  <img src={isExpanded ? EyeHide : EyeShow} width={20} height={20} style={{ opacity: isConnected ? 1 : 0.3 }} />
+                  Portfolio
+                </p>
+              </Button>
               <TooltipHover title='Refresh'>
                 <Grid className={classes.refreshIconContainer}>
                   <Button

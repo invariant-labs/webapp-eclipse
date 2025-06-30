@@ -307,12 +307,17 @@ export const useStyles = makeStyles()(() => ({
         color: colors.invariant.textGrey
       }
     },
+    '&:disabled': {
+      color: colors.invariant.light,
+      transition: 'all 0.3s'
+    },
     p: {
       display: 'flex',
       alignItems: 'center',
       gap: '8px'
     }
   },
+
   liquidityStakingHeaderWrapper: {
     display: 'flex',
     justifyContent: 'flex-end',
