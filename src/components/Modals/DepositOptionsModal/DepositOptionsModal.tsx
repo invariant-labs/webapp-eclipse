@@ -311,83 +311,98 @@ const DepoSitOptionsModal: React.FC<Props> = ({
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
 
   return (
-    <>
-      <Popover
-        open={open}
-        onClose={handleClose}
-        classes={{ paper: classes.paper, root: classes.root }}
-        anchorOrigin={{
-          vertical: isSm ? 'top' : 'center',
-          horizontal: 'center'
-        }}
-        transformOrigin={{
-          vertical: isSm ? 'top' : 'center',
-          horizontal: 'center'
-        }}>
-        <Grid container className={classes.detailsWrapper}>
-          <Grid container>
-            <Box className={classes.headerContainer}>
-              <Typography className={classes.headerText}>Autoswap Settings</Typography>
-              <Typography className={classes.info}>
-                These settings enable liquidity addition with any token ratio while ensuring safe
-                swaps. Adjusting these parameters is recommended for advanced users familiar with
-                their purpose
-              </Typography>
-              <Button className={classes.closeModal} onClick={handleClose} aria-label='Close' />
-            </Box>
-            <Box className={classes.switchSettingsTypeContainer}>
-              <Box
-                className={classes.switchSettingsTypeMarker}
-                sx={{
-                  left: alignment === SettingsOptions.Basic ? 0 : '50%'
-                }}
-              />
-              <ToggleButtonGroup
-                value={alignment}
-                exclusive
-                onChange={handleSwitchSettingsType}
-                className={classes.switchSettingsTypeButtonsGroup}>
-                <ToggleButton
-                  value={SettingsOptions.Basic}
-                  disableRipple
-                  className={cx(
-                    classes.switchSettingsTypeButton,
-                    alignment === SettingsOptions.Basic
-                      ? classes.switchSelected
-                      : classes.switchNotSelected
-                  )}>
-                  Basic
-                </ToggleButton>
-                <ToggleButton
-                  value={SettingsOptions.Advanced}
-                  disableRipple
-                  className={cx(
-                    classes.switchSettingsTypeButton,
-                    alignment === SettingsOptions.Advanced
-                      ? classes.switchSelected
-                      : classes.switchNotSelected
-                  )}>
-                  Advanced
-                </ToggleButton>
-              </ToggleButtonGroup>
-            </Box>
-          </Grid>
-          <Divider className={classes.divider} />
-          {availableSettings.map((item, index) => (
-            <React.Fragment key={index}>{item}</React.Fragment>
-          ))}
-          <Divider className={classes.divider} />
-          <Button
-            className={classes.setAsDefaultBtn}
-            disableRipple
-            disableElevation
-            disableFocusRipple
-            onClick={resetSettings}>
-            Restore Default
-          </Button>
+    <Popover
+      open={open}
+      onClose={handleClose}
+      classes={{ paper: classes.paper, root: classes.root }}
+      anchorOrigin={{
+        vertical: isSm ? 'top' : 'center',
+        horizontal: 'center'
+      }}
+      transformOrigin={{
+        vertical: isSm ? 'top' : 'center',
+        horizontal: 'center'
+      }}>
+      <Grid container className={classes.detailsWrapper}>
+        <Grid container>
+          <Box className={classes.headerContainer}>
+            <Typography className={classes.headerText}>Autoswap Settings</Typography>
+            <Typography className={classes.info}>
+              These settings enable liquidity addition with any token ratio while ensuring safe
+              swaps. Adjusting these parameters is recommended for advanced users familiar with
+              their purpose
+            </Typography>
+            <Button className={classes.closeModal} onClick={handleClose} aria-label='Close' />
+          </Box>
+          <Box className={classes.switchSettingsTypeContainer}>
+            <Box
+              className={classes.switchSettingsTypeMarker}
+              sx={{
+                left: alignment === SettingsOptions.Basic ? 0 : '50%'
+              }}
+            />
+            <ToggleButtonGroup
+              value={alignment}
+              exclusive
+              onChange={handleSwitchSettingsType}
+              className={classes.switchSettingsTypeButtonsGroup}>
+              <ToggleButton
+                value={SettingsOptions.Basic}
+                disableRipple
+                className={cx(
+                  classes.switchSettingsTypeButton,
+                  alignment === SettingsOptions.Basic
+                    ? classes.switchSelected
+                    : classes.switchNotSelected
+                )}>
+                Basic
+              </ToggleButton>
+              <ToggleButton
+                value={SettingsOptions.Advanced}
+                disableRipple
+                className={cx(
+                  classes.switchSettingsTypeButton,
+                  alignment === SettingsOptions.Advanced
+                    ? classes.switchSelected
+                    : classes.switchNotSelected
+                )}>
+                Advanced
+              </ToggleButton>
+            </ToggleButtonGroup>
+          </Box>
         </Grid>
-      </Popover>
-    </>
+        <Divider className={classes.divider} />
+        {isSm && (
+          <>
+            <Button
+              className={classes.setAsDefaultBtn}
+              disableRipple
+              disableElevation
+              disableFocusRipple
+              onClick={resetSettings}>
+              Restore Default
+            </Button>
+            <Divider className={classes.divider} />
+          </>
+        )}
+        {availableSettings.map((item, index) => (
+          <React.Fragment key={index}>{item}</React.Fragment>
+        ))}
+        {!isSm && (
+          <>
+            <Divider className={classes.divider} />
+            <Button
+              className={classes.setAsDefaultBtn}
+              disableRipple
+              disableElevation
+              disableFocusRipple
+              onClick={resetSettings}>
+              Restore Default
+            </Button>
+          </>
+        )}
+      </Grid>
+    </Popover>
   )
 }
 export default DepoSitOptionsModal

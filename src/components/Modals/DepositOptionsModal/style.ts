@@ -16,7 +16,11 @@ export const useStyles = makeStyles()(() => {
       },
 
       [theme.breakpoints.down('sm')]: {
-        top: '0 !important'
+        top: '0 !important',
+        left: '0 !important',
+        margin: 0,
+        maxWidth: '100%',
+        maxHeight: '100%'
       }
     },
     tooltip: {
