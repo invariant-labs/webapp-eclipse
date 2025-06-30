@@ -1250,7 +1250,7 @@ export function* handleTwoHopSwap(): Generator {
             const tokenIn =
               allTokens[firstXtoY ? firstPool.tokenX.toString() : firstPool.tokenY.toString()]
             const tokenBetween =
-              allTokens[secondXtoY ? firstPool.tokenX.toString() : firstPool.tokenY.toString()]
+              allTokens[secondXtoY ? secondPool.tokenX.toString() : secondPool.tokenY.toString()]
             const tokenOut =
               allTokens[secondXtoY ? secondPool.tokenY.toString() : secondPool.tokenX.toString()]
 

@@ -2580,7 +2580,9 @@ export function* handleClaimAllFees() {
               const nativeAmount = nativeTransfer ? nativeTransfer.parsed.info.amount : 0
 
               const splTransfers = metaInstructions.instructions.filter(
-                ix => (ix as ParsedInstruction).parsed.info.tokenAmount !== undefined
+                ix =>
+                  (ix as ParsedInstruction).parsed.info.tokenAmount !== undefined ||
+                  (ix as ParsedInstruction).parsed.info.amount !== undefined
               ) as ParsedInstruction[]
 
               let tokenXAmount = '0'
@@ -2600,7 +2602,8 @@ export function* handleClaimAllFees() {
 
               splTransfers.map((transfer, index) => {
                 const token = allTokens[transfer.parsed.info.mint]
-                const amount = transfer.parsed.info.tokenAmount.amount
+                const amount =
+                  transfer.parsed.info.tokenAmount.amount || transfer.parsed.info.amount
                 if (index === 0) {
                   tokenYAmount = formatNumberWithoutSuffix(printBN(amount, token.decimals))
                   tokenYIcon = token.logoURI
