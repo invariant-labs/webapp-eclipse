@@ -9,13 +9,13 @@ import {
   balanceLoading,
   status,
   SwapToken,
-  //   swapTokens,
+  swapTokens,
   swapTokensDict
 } from '@store/selectors/solanaWallet'
 import { StakeLiquidityPayload } from '@store/reducers/sBitz'
 import { actions } from '@store/reducers/sBitz'
 import { actions as sbitzStatsActions } from '@store/reducers/sbitz-stats'
-import { /*Status,*/ actions as walletActions } from '@store/reducers/solanaWallet'
+import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
 import EyeShow from '@static/svg/eye-show.svg'
 import EyeHide from '@static/svg/eye-off.svg'
 
@@ -48,7 +48,7 @@ import { StakeChart } from '@components/Stake/StakeChart/StakeChart'
 import { YourStakeProgress } from '@components/Stake/YourStakeStats/YourProgress'
 import { BN } from '@coral-xyz/anchor'
 import {
-  //   calculateTokensForWithdraw,
+  calculateTokensForWithdraw,
   computeBitzAprApy,
   computeBitzSbitzRewards
 } from '@invariant-labs/sbitz'
@@ -76,7 +76,7 @@ export const WrappedStake: React.FC = () => {
   const isBalanceLoading = useSelector(balanceLoading)
   const stakeInput = useSelector(stakeInputVal)
   const unstakeInput = useSelector(unstakeInputVal)
-  //   const tokensList = useSelector(swapTokens)
+  const tokensList = useSelector(swapTokens)
   const isInProgress = useSelector(inProgress)
   const success = useSelector(successState)
   const isLoadingStats = useSelector(isLoading)
@@ -118,31 +118,31 @@ export const WrappedStake: React.FC = () => {
   const EXPAND_DELAY = 50;
   const COLLAPSE_DELAY = 200;
 
-  //   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
+  const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
-  //   const sBitzBalance = useMemo(() => {
-  //     return new BN(tokensList.find(token => token.address.equals(sBITZ_MAIN.address))?.balance || 0)
-  //   }, [tokensList])
+  const sBitzBalance = useMemo(() => {
+    return new BN(tokensList.find(token => token.address.equals(sBITZ_MAIN.address))?.balance || 0)
+  }, [tokensList])
 
-  //   const bitzToWithdraw = useMemo(() => {
-  //     if (!stakedBitzData.stakedAmount || !stakedBitzData.stakedTokenSupply) {
-  //       return new BN(0)
-  //     }
-  //     return calculateTokensForWithdraw(
-  //       stakedBitzData.stakedTokenSupply,
-  //       stakedBitzData.stakedAmount,
-  //       sBitzBalance || new BN(0)
-  //     )
-  //   }, [stakedBitzData, sBitzBalance])
+  const bitzToWithdraw = useMemo(() => {
+    if (!stakedBitzData.stakedAmount || !stakedBitzData.stakedTokenSupply) {
+      return new BN(0)
+    }
+    return calculateTokensForWithdraw(
+      stakedBitzData.stakedTokenSupply,
+      stakedBitzData.stakedAmount,
+      sBitzBalance || new BN(0)
+    )
+  }, [stakedBitzData, sBitzBalance])
 
-  //   const estimated24Yield = useMemo(() => {
-  //     const { sbitzPredictedYield } = computeBitzSbitzRewards(
-  //       +printBN(sBitzBalance, sBITZ_MAIN.decimals),
-  //       +printBN(stakedBitzData.bitzTotalBalance, BITZ_MAIN.decimals),
-  //       1
-  //     )
-  //     return sbitzPredictedYield[0] || 0
-  //   }, [sBitzBalance, stakedBitzData])
+  const estimated24Yield = useMemo(() => {
+    const { sbitzPredictedYield } = computeBitzSbitzRewards(
+      +printBN(sBitzBalance, sBITZ_MAIN.decimals),
+      +printBN(stakedBitzData.bitzTotalBalance, BITZ_MAIN.decimals),
+      1
+    )
+    return sbitzPredictedYield[0] || 0
+  }, [sBitzBalance, stakedBitzData])
 
   const sBitzApyApr = useMemo(() => {
     if (!stakedBitzData.bitzTotalBalance) return { apr: 0, apy: 0 }
@@ -377,14 +377,14 @@ export const WrappedStake: React.FC = () => {
               className={`${classes.yourStatsWrapper} ${isExpanded && isConnected ? classes.yourStatsVisible : ''}`}
             >
               {shouldRenderStats && isConnected && (
-                {/* <YourStakeProgress
+                <YourStakeProgress
                   sBitzBalance={sBitzBalance}
                   bitzToWithdraw={bitzToWithdraw}
                   bitzPrice={bitzPrice}
                   isLoading={stakeLoading || isBalanceLoading || isLoadingStats}
                   isConnected={isConnected}
                   yield24={estimated24Yield}
-                /> */}
+                />
               )}
             </Box>
           </Box>
