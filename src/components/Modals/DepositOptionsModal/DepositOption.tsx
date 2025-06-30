@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react'
 import useStyles from './style'
-import { Box, Button, Divider, Grid, Input, Typography } from '@mui/material'
+import { Box, Button, Divider, Grid, Input, Typography, useMediaQuery } from '@mui/material'
 import { goldenInfoIcon, infoIcon } from '@static/icons'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
+import { theme } from '@static/theme'
 
 interface Props {
   value: string
@@ -34,8 +35,10 @@ const DepositOption: React.FC<Props> = ({
   divider
 }) => {
   const { classes, cx } = useStyles()
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const inputRef = useRef<HTMLInputElement>(null)
   const [temp, setTemp] = useState<string>(valueIndex === -1 ? value : '')
+
   const allowOnlyDigitsAndTrimUnnecessaryZeros: React.ChangeEventHandler<
     HTMLInputElement | HTMLTextAreaElement
   > = e => {
@@ -89,51 +92,78 @@ const DepositOption: React.FC<Props> = ({
       }
     }
   }
+
   useEffect(() => {
     if (valueIndex !== -1 && temp !== '') setTemp('')
   }, [value, valueIndex])
+
+  const renderTooltipContent = (message: string) => (
+    <Box className={classes.singleOptionTooltipContainer}>
+      <img src={goldenInfoIcon} alt='' className={classes.singleOptionTooltipIcon} />
+      <Box className={classes.singleOptionMessageContainer}>{message}</Box>
+    </Box>
+  )
+
   return (
     <>
       {divider && <Divider className={classes.divider} />}
       <Typography className={classes.label}>{label}</Typography>
       <Grid container className={classes.defaultOptionsContainer}>
-        {options.map((tier, index) => (
-          <Button
-            className={cx(
-              classes.slippagePercentageButton,
-              valueIndex === index && classes.slippagePercentageButtonActive
-            )}
-            key={tier.value}
-            onClick={e => {
-              e.preventDefault()
-              setValue(Number(options[index].value).toFixed(2))
-              saveValue(Number(options[index].value).toFixed(2))
-            }}>
-            <Box className={classes.singleOption}>
-              <Box className={classes.singleOptionValue}>{tier.value}%</Box>
-              <TooltipHover
-                top={-12}
-                title={
-                  <Box className={classes.singleOptionTooltipContainer}>
-                    <img src={goldenInfoIcon} alt='' className={classes.singleOptionTooltipIcon} />
-                    <Box className={classes.singleOptionMessageContainer}>{tier.message}</Box>
+        {options.map((tier, index) => {
+          const hasMessage = tier.message !== ''
+          const labelWithIcon = (
+            <Typography className={classes.singleItemLabel}>
+              {tier.label}
+              {hasMessage && (
+                <img
+                  src={infoIcon}
+                  alt=''
+                  className={cx(classes.grayscaleIcon, classes.labelInfoItem)}
+                />
+              )}
+            </Typography>
+          )
+
+          return (
+            <Button
+              className={cx(
+                classes.slippagePercentageButton,
+                valueIndex === index && classes.slippagePercentageButtonActive
+              )}
+              key={tier.value}
+              onClick={e => {
+                e.preventDefault()
+                setValue(Number(options[index].value).toFixed(2))
+                saveValue(Number(options[index].value).toFixed(2))
+              }}>
+              <Box className={classes.singleOption}>
+                <Box className={classes.singleOptionValue}>{tier.value}%</Box>
+                {!isMobile && hasMessage && (
+                  <TooltipHover top={-12} title={renderTooltipContent(tier.message)}>
+                    {labelWithIcon}
+                  </TooltipHover>
+                )}
+                {!isMobile && !hasMessage && labelWithIcon}
+                {isMobile && (
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: '4px', mt: '4px' }}>
+                    <Typography className={classes.singleItemLabel}>{tier.label}</Typography>
+                    {hasMessage && (
+                      <TooltipHover top={-12} title={renderTooltipContent(tier.message)}>
+                        <img
+                          src={infoIcon}
+                          alt=''
+                          className={cx(classes.grayscaleIcon, classes.labelInfoItem)}
+                        />
+                      </TooltipHover>
+                    )}
                   </Box>
-                }>
-                <Typography className={classes.singleItemLabel}>
-                  {tier.label}
-                  {tier.message !== '' ? (
-                    <img
-                      src={infoIcon}
-                      alt=''
-                      className={cx(classes.grayscaleIcon, classes.labelInfoItem)}
-                    />
-                  ) : null}
-                </Typography>
-              </TooltipHover>
-            </Box>
-          </Button>
-        ))}
+                )}
+              </Box>
+            </Button>
+          )
+        })}
       </Grid>
+
       <Input
         disableUnderline
         placeholder='0.00'
