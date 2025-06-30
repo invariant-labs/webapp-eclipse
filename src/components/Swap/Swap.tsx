@@ -286,12 +286,9 @@ export const Swap: React.FC<ISwap> = ({
     }
   }, [network])
 
-  const priceImpact = Math.pow(
-    Math.max(
-      +printBN(+simulationPath.firstPriceImpact, DECIMAL - 2),
-      +printBN(+simulationPath.secondPriceImpact, DECIMAL - 2)
-    ),
-    2
+  const priceImpact = Math.max(
+    +printBN(+simulationPath.firstPriceImpact, DECIMAL - 2),
+    +printBN(+simulationPath.secondPriceImpact, DECIMAL - 2)
   )
 
   const timeoutRef = useRef<number>(0)
