@@ -108,6 +108,7 @@ export const WrappedStake: React.FC = () => {
   const [sBitzPrice, setSBitzPrice] = useState(0)
   const [progress, setProgress] = useState<ProgressState>('none')
   const [priceLoading, setPriceLoading] = useState(false)
+  const [shouldRenderStats, setShouldRenderStats] = useState(false) // Add this new state to track animation
   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
   const sBitzBalance = useMemo(() => {
@@ -251,13 +252,26 @@ export const WrappedStake: React.FC = () => {
 
   const toggleExpand = () => {
     if (walletStatus === Status.Initialized) {
-      setIsExpanded(prev => {
-        const newValue = !prev
-        localStorage.setItem('STAKE_STATS_EXPANDED', JSON.stringify(newValue))
-        return newValue
-      })
+      if (!isExpanded) {
+        // When expanding
+        setShouldRenderStats(true)
+        // Short delay to ensure DOM update before animation
+        setTimeout(() => {
+          setIsExpanded(true)
+        }, 50)
+      } else {
+        // When collapsing
+        setIsExpanded(false)
+        // Remove from DOM after transition
+        setTimeout(() => {
+          setShouldRenderStats(false)
+        }, 300)
+      }
+
+      localStorage.setItem('STAKE_STATS_EXPANDED', JSON.stringify(!isExpanded))
     } else {
       setIsExpanded(false)
+      setShouldRenderStats(false)
       localStorage.setItem('STAKE_STATS_EXPANDED', JSON.stringify(false))
     }
   }
@@ -265,10 +279,22 @@ export const WrappedStake: React.FC = () => {
   useEffect(() => {
     if (walletStatus !== Status.Initialized) {
       setIsExpanded(false)
+
+      const timer = setTimeout(() => {
+        setShouldRenderStats(false)
+      }, 300)
+
+      localStorage.setItem('STAKE_STATS_EXPANDED', JSON.stringify(false))
+
+      return () => clearTimeout(timer)
     } else {
       const savedExpandedState = localStorage.getItem('STAKE_STATS_EXPANDED')
       if (savedExpandedState !== null && JSON.parse(savedExpandedState) === true) {
-        setIsExpanded(true)
+        setShouldRenderStats(true)
+
+        setTimeout(() => {
+          setIsExpanded(true)
+        }, 50)
       }
     }
 
@@ -360,7 +386,7 @@ export const WrappedStake: React.FC = () => {
             <Box
               className={`${classes.yourStatsWrapper} ${isExpanded ? classes.yourStatsVisible : ''}`}
             >
-              {isExpanded && (
+              {shouldRenderStats && (
                 <YourStakeProgress
                   sBitzBalance={sBitzBalance}
                   bitzToWithdraw={bitzToWithdraw}
