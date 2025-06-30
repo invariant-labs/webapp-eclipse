@@ -12,7 +12,7 @@ export interface IFeeSwitch {
   promotedPoolTierIndex: number | undefined
   feeTiersWithTvl: Record<number, number>
   showTVL?: boolean
-
+  disabledFeeTiers: string[]
   totalTvl: number
   isLoadingStats: boolean
   containerKey?: string
@@ -28,7 +28,8 @@ export const FeeSwitch: React.FC<IFeeSwitch> = ({
   feeTiersWithTvl,
   totalTvl,
   isLoadingStats,
-  containerKey
+  containerKey,
+  disabledFeeTiers
 }) => {
   const { classes, cx } = useStyles()
   const [blocked, setBlocked] = useState(false)
@@ -118,67 +119,71 @@ export const FeeSwitch: React.FC<IFeeSwitch> = ({
         scrollButtons
         TabIndicatorProps={{ children: <span /> }}
         classes={tabsClasses}>
-        {feeTiers.map((tier, index) => (
-          <Tab
-            key={index}
-            disableRipple
-            ref={index === bestTierIndex ? setBestTierNode : undefined}
-            label={
-              <Box className={classes.tabContainer}>
-                {isLoadingStats || !showTVL ? (
-                  <Skeleton animation={false} height={15} width={60} />
-                ) : (
-                  <Typography
-                    className={cx(classes.tabTvl, {
-                      [classes.tabSelectedTvl]:
-                        currentValue === index ||
-                        promotedPoolTierIndex === index ||
-                        bestTierIndex === index
-                    })}>
-                    TVL {getTvlValue(tier)}%
-                  </Typography>
-                )}
-                <Box>{showOnlyPercents ? `${tier}%` : `${tier}% fee`}</Box>
-                {isLoadingStats || !showTVL ? (
-                  <Skeleton animation={false} height={15} width={60} />
-                ) : (
-                  <Typography
-                    className={cx(classes.tabTvl, {
-                      [classes.tabSelectedTvl]:
-                        currentValue === index ||
-                        promotedPoolTierIndex === index ||
-                        bestTierIndex === index
-                    })}>
-                    {doesPoolExist(tier)
-                      ? `$${
-                          +formatNumberWithSuffix(feeTiersWithTvl[tier], {
-                            noDecimals: true,
-                            decimalsAfterDot: 18
-                          }) < 1000
-                            ? (+formatNumberWithSuffix(feeTiersWithTvl[tier], {
-                                noDecimals: true,
-                                decimalsAfterDot: 18
-                              })).toFixed(2)
-                            : formatNumberWithSuffix(feeTiersWithTvl[tier])
-                        }`
-                      : 'Not created'}
-                  </Typography>
-                )}
-              </Box>
-            }
-            classes={{
-              root: cx(
-                singleTabClasses.root,
-                index === promotedPoolTierIndex
-                  ? singleTabClasses.promoted
-                  : index === bestTierIndex
-                    ? singleTabClasses.best
-                    : undefined
-              ),
-              selected: singleTabClasses.selected
-            }}
-          />
-        ))}
+        {feeTiers.map((tier, index) => {
+          const isDisabled = disabledFeeTiers.includes(tier.toString())
+          if (isDisabled) return
+          return (
+            <Tab
+              key={index}
+              disableRipple
+              ref={index === bestTierIndex ? setBestTierNode : undefined}
+              label={
+                <Box className={classes.tabContainer}>
+                  {isLoadingStats || !showTVL ? (
+                    <Skeleton animation={false} height={15} width={60} />
+                  ) : (
+                    <Typography
+                      className={cx(classes.tabTvl, {
+                        [classes.tabSelectedTvl]:
+                          currentValue === index ||
+                          promotedPoolTierIndex === index ||
+                          bestTierIndex === index
+                      })}>
+                      TVL {getTvlValue(tier)}%
+                    </Typography>
+                  )}
+                  <Box>{showOnlyPercents ? `${tier}%` : `${tier}% fee`}</Box>
+                  {isLoadingStats || !showTVL ? (
+                    <Skeleton animation={false} height={15} width={60} />
+                  ) : (
+                    <Typography
+                      className={cx(classes.tabTvl, {
+                        [classes.tabSelectedTvl]:
+                          currentValue === index ||
+                          promotedPoolTierIndex === index ||
+                          bestTierIndex === index
+                      })}>
+                      {doesPoolExist(tier)
+                        ? `$${
+                            +formatNumberWithSuffix(feeTiersWithTvl[tier], {
+                              noDecimals: true,
+                              decimalsAfterDot: 18
+                            }) < 1000
+                              ? (+formatNumberWithSuffix(feeTiersWithTvl[tier], {
+                                  noDecimals: true,
+                                  decimalsAfterDot: 18
+                                })).toFixed(2)
+                              : formatNumberWithSuffix(feeTiersWithTvl[tier])
+                          }`
+                        : 'Not created'}
+                    </Typography>
+                  )}
+                </Box>
+              }
+              classes={{
+                root: cx(
+                  singleTabClasses.root,
+                  index === promotedPoolTierIndex
+                    ? singleTabClasses.promoted
+                    : index === bestTierIndex
+                      ? singleTabClasses.best
+                      : undefined
+                ),
+                selected: singleTabClasses.selected
+              }}
+            />
+          )
+        })}
       </Tabs>
     </Grid>
   )

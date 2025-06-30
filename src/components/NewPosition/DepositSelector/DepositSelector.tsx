@@ -17,6 +17,7 @@ import {
   ALL_FEE_TIERS_DATA,
   AutoswapCustomError,
   DepositOptions,
+  disabledPools,
   MINIMUM_PRICE_IMPACT,
   NetworkType,
   WETH_POOL_INIT_LAMPORTS_MAIN,
@@ -892,6 +893,21 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     valueB
   ])
 
+  const disabledFeeTiers = useMemo(() => {
+    if (tokenAIndex === null || tokenBIndex === null) return []
+
+    const tokenA = tokens[tokenAIndex].assetAddress.toString()
+    const tokenB = tokens[tokenBIndex].assetAddress.toString()
+
+    return disabledPools
+      .filter(
+        pool =>
+          (pool.tokenX === tokenA && pool.tokenY === tokenB) ||
+          (pool.tokenX === tokenB && pool.tokenY === tokenA)
+      )
+      .flatMap(p => p.feeTiers)
+  }, [tokenAIndex, tokenBIndex, tokens, disabledPools])
+
   return (
     <Grid container className={cx(classes.wrapper, className)}>
       <DepoSitOptionsModal
@@ -967,6 +983,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
         </Grid>
 
         <FeeSwitch
+          disabledFeeTiers={disabledFeeTiers}
           containerKey={`${tokenAIndex}` + `${tokenBIndex}`}
           showTVL={tokenAIndex !== null && tokenBIndex !== null}
           onSelect={fee => {
@@ -1030,7 +1047,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             currency={tokenAIndex !== null ? tokens[tokenAIndex].symbol : null}
             currencyIconSrc={tokenAIndex !== null ? tokens[tokenAIndex].logoURI : undefined}
             currencyIsUnknown={
-              tokenAIndex !== null ? (tokens[tokenAIndex].isUnknown ?? false) : false
+              tokenAIndex !== null ? tokens[tokenAIndex].isUnknown ?? false : false
             }
             placeholder='0.0'
             actionButtons={[
@@ -1101,7 +1118,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             currency={tokenBIndex !== null ? tokens[tokenBIndex].symbol : null}
             currencyIconSrc={tokenBIndex !== null ? tokens[tokenBIndex].logoURI : undefined}
             currencyIsUnknown={
-              tokenBIndex !== null ? (tokens[tokenBIndex].isUnknown ?? false) : false
+              tokenBIndex !== null ? tokens[tokenBIndex].isUnknown ?? false : false
             }
             placeholder='0.0'
             actionButtons={[
