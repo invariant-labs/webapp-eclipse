@@ -7,7 +7,7 @@ interface IBlurOverlayProps {
 }
 
 export const BlurOverlay: React.FC<IBlurOverlayProps> = ({ isConnected }) => {
-  const { classes } = useStyles()
+  const { classes } = useStyles({})
   return (
     <>
       {!isConnected ? (
