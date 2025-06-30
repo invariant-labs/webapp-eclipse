@@ -93,7 +93,7 @@ export const YourStakeProgress: React.FC<YourProgressProps> = ({
               bgImage={bot}
               label='USD Value'
               value={`$${formatNumberWithSuffix(
-                +printBN(bitzToWithdraw, BITZ_MAIN.decimals) * bitzPrice,
+                (+printBN(bitzToWithdraw, BITZ_MAIN.decimals) * bitzPrice).toFixed(2),
                 { decimalsAfterDot: 2 }
               )}`}
             />
