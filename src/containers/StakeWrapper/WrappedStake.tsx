@@ -52,7 +52,7 @@ import {
   computeBitzAprApy,
   computeBitzSbitzRewards
 } from '@invariant-labs/sbitz'
-import { sBITZ_MAIN, BITZ_MAIN } from '@store/consts/static'
+import { sBITZ_MAIN, BITZ_MAIN, PORTFOLIO_STAKE_EXPAND_DELAY, PORTFOLIO_STAKE_STORAGE_KEY, PORTFOLIO_STAKE_COLLAPSE_DELAY } from '@store/consts/static'
 import { getTokenPrice, printBN } from '@utils/utils'
 import LiquidityStaking from '@components/Stake/LiquidityStaking/LiquidityStaking'
 import { StakeSwitch } from '@store/consts/types'
@@ -114,9 +114,7 @@ export const WrappedStake: React.FC = () => {
   const [priceLoading, setPriceLoading] = useState(false)
   const [shouldRenderStats, setShouldRenderStats] = useState(false)
 
-  const STORAGE_KEY = 'STAKE_STATS_EXPANDED';
-  const EXPAND_DELAY = 50;
-  const COLLAPSE_DELAY = 200;
+
 
   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
@@ -257,15 +255,15 @@ export const WrappedStake: React.FC = () => {
     const isWalletInitialized = walletStatus === Status.Initialized;
     const newExpandedState = isWalletInitialized && !isExpanded;
 
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(newExpandedState));
+    localStorage.setItem(PORTFOLIO_STAKE_STORAGE_KEY, JSON.stringify(newExpandedState));
 
     if (newExpandedState) {
       setShouldRenderStats(true);
-      setTimeout(() => setIsExpanded(true), EXPAND_DELAY);
+      setTimeout(() => setIsExpanded(true), PORTFOLIO_STAKE_EXPAND_DELAY);
     } else {
       setIsExpanded(false);
       if (shouldRenderStats) {
-        setTimeout(() => setShouldRenderStats(false), COLLAPSE_DELAY);
+        setTimeout(() => setShouldRenderStats(false), PORTFOLIO_STAKE_COLLAPSE_DELAY);
       }
     }
   }
@@ -274,12 +272,12 @@ export const WrappedStake: React.FC = () => {
     const isWalletInitialized = walletStatus === Status.Initialized;
 
     if (isWalletInitialized) {
-      const savedExpandedState = localStorage.getItem(STORAGE_KEY);
+      const savedExpandedState = localStorage.getItem(PORTFOLIO_STAKE_STORAGE_KEY);
       const shouldExpand = savedExpandedState !== null && JSON.parse(savedExpandedState);
 
       if (shouldExpand) {
         setShouldRenderStats(true);
-        setTimeout(() => setIsExpanded(true), EXPAND_DELAY);
+        setTimeout(() => setIsExpanded(true), PORTFOLIO_STAKE_EXPAND_DELAY);
       }
     } else {
       setIsExpanded(false);

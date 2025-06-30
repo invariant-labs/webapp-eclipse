@@ -50,9 +50,7 @@ export const YourStakeProgress: React.FC<YourProgressProps> = ({
                 </Box>
               }
               isLoading={isLoading}
-              value={formatNumberWithSuffix(printBN(sBitzBalance, sBITZ_MAIN.decimals), {
-                decimalsAfterDot: 4
-              })}
+              value={formatNumberWithSuffix((+printBN(sBitzBalance, sBITZ_MAIN.decimals)).toFixed(4), { decimalsAfterDot: 4 })}
             />
             {!isMobile && <Separator color={colors.invariant.light} isHorizontal margin='0px 8px 0px 8px' />}
 
@@ -68,9 +66,7 @@ export const YourStakeProgress: React.FC<YourProgressProps> = ({
               }
               isLoading={isLoading}
               value={`${formatNumberWithSuffix(
-                +printBN(bitzToWithdraw, BITZ_MAIN.decimals),
-                { decimalsAfterDot: 2 }
-              )}`}
+                (+printBN(bitzToWithdraw, BITZ_MAIN.decimals)).toFixed(4), { decimalsAfterDot: 4 })}`}
             />
             {!isMobile && <Separator color={colors.invariant.light} isHorizontal margin='0px 8px 0px 8px' />}
 
@@ -84,9 +80,7 @@ export const YourStakeProgress: React.FC<YourProgressProps> = ({
                   <Typography>24H BITZ Rewards</Typography>
                 </Box>
               }
-              value={formatNumberWithSuffix(yield24, {
-                decimalsAfterDot: 4
-              })}
+              value={formatNumberWithSuffix(yield24.toFixed(4), { decimalsAfterDot: 4 })}
             />
 
             {!isMobile && <Separator color={colors.invariant.light} isHorizontal margin='0px 8px 0px 8px' />}
