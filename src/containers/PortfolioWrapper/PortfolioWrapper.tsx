@@ -51,6 +51,8 @@ import useStyles from './styles'
 import Portfolio from '@components/Portfolio/Portfolio'
 import { VariantType } from 'notistack'
 import { IPositionItem } from '@store/consts/types'
+import { portfolioSearch } from '@store/selectors/navigation'
+import { ISearchToken } from '@common/FilterSearch/FilterSearch'
 
 const PortfolioWrapper = () => {
   const { classes } = useStyles()
@@ -70,9 +72,19 @@ const PortfolioWrapper = () => {
   const disabledButton = useSelector(shouldDisable)
   const positionListAlignment = useSelector(positionListSwitcher)
   const overviewSelectedTab = useSelector(overviewSwitch)
-
+  const searchParamsToken = useSelector(portfolioSearch)
   const navigate = useNavigate()
   const dispatch = useDispatch()
+
+  const setSearchTokensValue = (tokens: ISearchToken[]) => {
+    dispatch(
+      navigationActions.setSearch({
+        section: 'portfolioTokens',
+        type: 'filteredTokens',
+        filteredTokens: tokens
+      })
+    )
+  }
 
   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
 
@@ -349,6 +361,8 @@ const PortfolioWrapper = () => {
 
   return isConnected ? (
     <Portfolio
+      selectedFilters={searchParamsToken.filteredTokens}
+      setSelectedFilters={setSearchTokensValue}
       shouldDisable={disabledButton}
       tokensList={tokensList}
       isBalanceLoading={isBalanceLoading}
