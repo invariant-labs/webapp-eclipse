@@ -3,22 +3,14 @@ import { makeStyles } from 'tss-react/mui'
 
 interface StyleProps {
   interval: string
+  intervals: string[]
   dark?: boolean
   fullWidth?: boolean
 }
 
-const useStyles = makeStyles<StyleProps>()((theme, { interval, dark, fullWidth }) => {
+const useStyles = makeStyles<StyleProps>()((theme, { interval, intervals, dark, fullWidth }) => {
   const getMarkerPosition = (interval: string) => {
-    switch (interval) {
-      case '24H':
-        return '0'
-      case '1W':
-        return '100%'
-      case '1M':
-        return '200%'
-      default:
-        return '0'
-    }
+    return intervals.indexOf(interval) * 100 + '%'
   }
 
   return {
@@ -62,7 +54,7 @@ const useStyles = makeStyles<StyleProps>()((theme, { interval, dark, fullWidth }
       position: 'absolute',
       top: 0,
       bottom: 0,
-      width: 'calc(100% / 3)',
+      width: `calc(100% / ${intervals.length})`,
       backgroundColor: colors.invariant.light,
       borderRadius: 10,
       transition: 'transform 0.3s ease',
