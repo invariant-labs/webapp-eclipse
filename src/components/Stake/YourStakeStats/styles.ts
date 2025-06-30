@@ -137,9 +137,7 @@ const useStyles = makeStyles<{ bgImage?: string }>()((_theme, params = {}) => {
       left: 0,
       [theme.breakpoints.down('md')]: {
         position: 'static',
-        marginBottom: '16px'
-      },
-      [theme.breakpoints.down(500)]: {
+        marginBottom: '16px',
         display: 'none'
       },
       ...typography.heading4,
