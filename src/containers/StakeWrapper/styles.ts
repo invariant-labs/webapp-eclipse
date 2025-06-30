@@ -309,7 +309,13 @@ export const useStyles = makeStyles()(() => ({
     },
     '&:disabled': {
       color: colors.invariant.light,
-      transition: 'all 0.3s'
+      transition: 'all 0.3s',
+      pointerEvents: 'auto'
+    },
+    '&:disabled:hover': {
+      background: colors.invariant.component,
+
+      cursor: 'not-allowed'
     },
     p: {
       display: 'flex',
