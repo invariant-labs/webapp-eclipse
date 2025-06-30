@@ -3,6 +3,10 @@ import { colors, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()((theme: Theme) => ({
+  root: {
+    background: colors.invariant.newDark,
+    borderRadius: 20
+  },
   amountInput: {
     background: colors.invariant.newDark,
     color: colors.invariant.light,

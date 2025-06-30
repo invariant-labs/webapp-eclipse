@@ -2,7 +2,7 @@ import React from 'react'
 import { theme } from '@static/theme'
 import { useStyles } from './style'
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { plusIcon, unknownTokenIcon } from '@static/icons'
 import { NetworkType } from '@store/consts/static'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
@@ -21,6 +21,8 @@ import { VariantType } from 'notistack'
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
 
 import { BN } from '@coral-xyz/anchor'
+import { useDispatch } from 'react-redux'
+import { actions } from '@store/reducers/navigation'
 
 export interface IProps {
   fee?: number
@@ -69,7 +71,9 @@ const PoolListItem: React.FC<IProps> = ({
   showAPY
 }) => {
   const { classes, cx } = useStyles()
+  const location = useLocation()
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
 
@@ -83,6 +87,7 @@ const PoolListItem: React.FC<IProps> = ({
       ? addressToTicker(network, addressTo ?? '')
       : addressToTicker(network, addressFrom ?? '')
 
+    dispatch(actions.setNavigation({ address: location.pathname }))
     navigate(
       ROUTES.getNewPositionRoute(
         tokenA,

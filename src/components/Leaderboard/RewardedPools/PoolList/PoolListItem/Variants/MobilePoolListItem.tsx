@@ -4,7 +4,7 @@ import { useMediaQuery, Grid, Typography, Box } from '@mui/material'
 import { airdropRainbowIcon, plusIcon, unknownTokenIcon } from '@static/icons'
 import { colors, theme, typography } from '@static/theme'
 import { shortenAddress } from '@utils/uiUtils'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useStyles } from './style'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import {
@@ -19,6 +19,8 @@ import {
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
 import { IProps } from '../PoolListItem'
 import { BN } from '@coral-xyz/anchor'
+import { useDispatch } from 'react-redux'
+import { actions } from '@store/reducers/navigation'
 
 export const MobilePoolListItem: React.FC<IProps> = ({
   fee = 0,
@@ -43,7 +45,8 @@ export const MobilePoolListItem: React.FC<IProps> = ({
   const { classes, cx } = useStyles()
   const navigate = useNavigate()
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
-
+  const dispatch = useDispatch()
+  const location = useLocation()
   const handleOpenPosition = () => {
     const isXtoY = initialXtoY(addressFrom ?? '', addressTo ?? '')
 
@@ -54,6 +57,7 @@ export const MobilePoolListItem: React.FC<IProps> = ({
       ? addressToTicker(network, addressTo ?? '')
       : addressToTicker(network, addressFrom ?? '')
 
+    dispatch(actions.setNavigation({ address: location.pathname }))
     navigate(
       ROUTES.getNewPositionRoute(
         tokenA,

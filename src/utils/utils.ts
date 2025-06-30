@@ -10,14 +10,14 @@ import {
   routingEssentials
 } from '@invariant-labs/sdk-eclipse'
 import { PoolStructure, Tick } from '@invariant-labs/sdk-eclipse/src/market'
-import {
-  DECIMAL,
-  parseLiquidityOnTicks,
-  simulateSwap,
-  SimulationStatus
-} from '@invariant-labs/sdk-eclipse/src/utils'
+import { DECIMAL, simulateSwap, SimulationStatus } from '@invariant-labs/sdk-eclipse/src/utils'
 import { BN } from '@coral-xyz/anchor'
-import { getMint, Mint } from '@solana/spl-token'
+import {
+  getMint,
+  TOKEN_2022_PROGRAM_ID,
+  getTokenMetadata as fetchMetaData,
+  unpackMint
+} from '@solana/spl-token'
 import { Connection, PublicKey } from '@solana/web3.js'
 import {
   Market,
@@ -45,33 +45,21 @@ import {
 import { PlotTickData, PositionWithAddress, PositionWithoutTicks } from '@store/reducers/positions'
 import {
   ADDRESSES_TO_REVERT_TOKEN_PAIRS,
-  AI16Z_MAIN,
-  BRICK_MAIN,
   BTC_DEV,
   BTC_TEST,
   PRICE_QUERY_COOLDOWN,
   DARKMOON_MAIN,
-  DOGO_MAIN,
-  DOGW_MAIN,
   DOGWIFHAT_MAIN,
-  EBULL_MAIN,
-  ECAT_MAIN,
-  EGOAT_MAIN,
   FormatConfig,
   getAddressTickerMap,
   getReversedAddressTickerMap,
   GSVM_MAIN,
   LAIKA_MAIN,
   MAX_U64,
-  MOCKED_TOKEN_MAIN,
-  MOO_MAIN,
   MOON_MAIN,
   MOON_TEST,
   NetworkType,
-  PANTY_MAIN,
-  PODAVINI_MAIN,
   PRICE_DECIMAL,
-  PUNKSTAR_MAIN,
   STTIA_MAIN,
   S22_TEST,
   SOL_MAIN,
@@ -79,17 +67,14 @@ import {
   TETH_MAIN,
   TIA_MAIN,
   tokensPrices,
-  TURBO_MAIN,
   USDC_DEV,
   USDC_MAIN,
   USDC_TEST,
-  VLR_MAIN,
   WETH_DEV,
   WETH_TEST,
   WRAPPED_ETH_ADDRESS,
   MAX_CROSSES_IN_SINGLE_TX,
   USDT_MAIN,
-  TURBO_AI_MAIN,
   ORCA_MAIN,
   SOLAR_MAIN,
   WETH_MAIN,
@@ -106,7 +91,14 @@ import {
   ErrorCodeExtractionKeys,
   TUSD_MAIN,
   AlternativeFormatConfig,
-  defaultThresholds
+  defaultThresholds,
+  JITOSOL_MAIN,
+  WBTC_MAIN,
+  NPT_MAIN,
+  USDN_MAIN,
+  WEETHS_MAIN,
+  sBITZ_MAIN,
+  MAX_PLOT_VISIBLE_TICK_RANGE
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
@@ -120,9 +112,13 @@ import {
   TokenPriceData
 } from '@store/consts/types'
 import { sqrt } from '@invariant-labs/sdk-eclipse/lib/math'
-import { Metaplex } from '@metaplex-foundation/js'
 import { apyToApr } from './uiUtils'
 import { alignTickToSpacing } from '@invariant-labs/sdk-eclipse/src/tick'
+import { fetchDigitalAsset } from '@metaplex-foundation/mpl-token-metadata'
+import { publicKey } from '@metaplex-foundation/umi-public-keys'
+import { createUmi } from '@metaplex-foundation/umi-bundle-defaults'
+import { Umi } from '@metaplex-foundation/umi'
+import { StakingStatsResponse } from '@store/reducers/sbitz-stats'
 
 export const transformBN = (amount: BN): string => {
   return (amount.div(new BN(1e2)).toNumber() / 1e4).toString()
@@ -442,6 +438,21 @@ export const spacingMultiplicityGte = (arg: number, spacing: number): number => 
   return arg + (Math.abs(arg) % spacing)
 }
 
+export const parseLiquidityInRange = (currentTickIndex: number, ticks: Tick[]) => {
+  let currentLiquidity = new BN(0)
+
+  return ticks.map(tick => {
+    currentLiquidity = currentLiquidity.add(tick.liquidityChange.muln(tick.sign ? 1 : -1))
+    return {
+      liquidity:
+        Math.abs(tick.index - currentTickIndex) > MAX_PLOT_VISIBLE_TICK_RANGE
+          ? 0
+          : currentLiquidity,
+      index: tick.index
+    }
+  })
+}
+
 export const createLiquidityPlot = (
   rawTicks: Tick[],
   pool: PoolStructure,
@@ -450,7 +461,9 @@ export const createLiquidityPlot = (
   tokenYDecimal: number
 ) => {
   const sortedTicks = rawTicks.sort((a, b) => a.index - b.index)
-  const parsedTicks = rawTicks.length ? parseLiquidityOnTicks(sortedTicks) : []
+  const parsedTicks = rawTicks.length
+    ? parseLiquidityInRange(pool.currentTickIndex, sortedTicks)
+    : []
 
   const ticks = rawTicks.map((raw, index) => ({
     ...raw,
@@ -888,38 +901,29 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
     case NetworkType.Mainnet:
       return {
         [WETH_MAIN.address.toString()]: WETH_MAIN,
-        [MOCKED_TOKEN_MAIN.address.toString()]: MOCKED_TOKEN_MAIN,
         [TETH_MAIN.address.toString()]: TETH_MAIN,
         [USDC_MAIN.address.toString()]: USDC_MAIN,
         [USDT_MAIN.address.toString()]: USDT_MAIN,
         [SOL_MAIN.address.toString()]: SOL_MAIN,
         [BITZ_MAIN.address.toString()]: BITZ_MAIN,
+        [sBITZ_MAIN.address.toString()]: sBITZ_MAIN,
         [DOGWIFHAT_MAIN.address.toString()]: DOGWIFHAT_MAIN,
         [LAIKA_MAIN.address.toString()]: LAIKA_MAIN,
         [MOON_MAIN.address.toString()]: MOON_MAIN,
         [GSVM_MAIN.address.toString()]: GSVM_MAIN,
         [DARKMOON_MAIN.address.toString()]: DARKMOON_MAIN,
-        [ECAT_MAIN.address.toString()]: ECAT_MAIN,
-        [TURBO_MAIN.address.toString()]: TURBO_MAIN,
-        [MOO_MAIN.address.toString()]: MOO_MAIN,
-        [EBULL_MAIN.address.toString()]: EBULL_MAIN,
-        [EGOAT_MAIN.address.toString()]: EGOAT_MAIN,
-        [DOGO_MAIN.address.toString()]: DOGO_MAIN,
-        [PUNKSTAR_MAIN.address.toString()]: PUNKSTAR_MAIN,
-        [AI16Z_MAIN.address.toString()]: AI16Z_MAIN,
-        [VLR_MAIN.address.toString()]: VLR_MAIN,
         [TIA_MAIN.address.toString()]: TIA_MAIN,
         [STTIA_MAIN.address.toString()]: STTIA_MAIN,
-        [BRICK_MAIN.address.toString()]: BRICK_MAIN,
-        [PANTY_MAIN.address.toString()]: PANTY_MAIN,
-        [PODAVINI_MAIN.address.toString()]: PODAVINI_MAIN,
-        [DOGW_MAIN.address.toString()]: DOGW_MAIN,
-        [TURBO_AI_MAIN.address.toString()]: TURBO_AI_MAIN,
         [ORCA_MAIN.address.toString()]: ORCA_MAIN,
         [SOLAR_MAIN.address.toString()]: SOLAR_MAIN,
         [KYSOL_MAIN.address.toString()]: KYSOL_MAIN,
         [EZSOL_MAIN.address.toString()]: EZSOL_MAIN,
-        [TUSD_MAIN.address.toString()]: TUSD_MAIN
+        [TUSD_MAIN.address.toString()]: TUSD_MAIN,
+        [JITOSOL_MAIN.address.toString()]: JITOSOL_MAIN,
+        [WBTC_MAIN.address.toString()]: WBTC_MAIN,
+        [NPT_MAIN.address.toString()]: NPT_MAIN,
+        [USDN_MAIN.address.toString()]: USDN_MAIN,
+        [WEETHS_MAIN.address.toString()]: WEETHS_MAIN
       }
     case NetworkType.Devnet:
       return {
@@ -1687,32 +1691,43 @@ export const getTokenProgramId = async (
 
 export const getFullNewTokensData = async (
   addresses: PublicKey[],
-  connection: Connection
+  connection: Connection,
+  concurrencyLimit: number = 20
 ): Promise<Record<string, Token>> => {
-  const promises: Promise<[PublicKey, Mint]>[] = addresses.map(async address => {
-    const programId = await getTokenProgramId(connection, address)
-
-    return [programId, await getMint(connection, address, undefined, programId)] as [
-      PublicKey,
-      Mint
-    ]
-  })
-
+  const umi = createUmi(connection.rpcEndpoint)
   const tokens: Record<string, Token> = {}
-
-  const results = await Promise.allSettled(promises)
-
-  for (const [index, result] of results.entries()) {
-    const [programId, decimals] =
-      result.status === 'fulfilled' ? [result.value[0], result.value[1].decimals] : [undefined, 6]
-
-    tokens[addresses[index].toString()] = await getTokenMetadata(
-      connection,
-      addresses[index].toString(),
-      decimals,
-      programId
-    )
+  const promiseChains: Promise<void>[] = new Array(concurrencyLimit).fill(
+    Promise.resolve<void>(undefined)
+  )
+  let nextIndex = 0
+  const enqueue = (task: () => Promise<void>): Promise<void> => {
+    const slot = nextIndex
+    nextIndex = (nextIndex + 1) % concurrencyLimit
+    const resultPromise = promiseChains[slot].then(task)
+    promiseChains[slot] = resultPromise.catch(() => {})
+    return resultPromise
   }
+
+  await Promise.all(
+    addresses.map(address =>
+      enqueue(async () => {
+        const programId = await getTokenProgramId(connection, address)
+        const mint = await getMint(connection, address, undefined, programId)
+
+        const token = await getTokenMetadata(
+          connection,
+          address.toString(),
+          mint.decimals,
+          programId,
+          umi
+        )
+
+        tokens[address.toString()] = token
+      })
+    )
+  )
+
+  await Promise.all(promiseChains)
 
   return tokens
 }
@@ -1731,31 +1746,35 @@ export async function getTokenMetadata(
   connection: Connection,
   address: string,
   decimals: number,
-  tokenProgram?: PublicKey
+  tokenProgram?: PublicKey,
+  umiInstance?: Umi
 ): Promise<Token> {
   const mintAddress = new PublicKey(address)
+  let metadata
 
   try {
-    const metaplex = new Metaplex(connection)
-
-    const nft = await metaplex.nfts().findByMint({ mintAddress })
-
-    const irisTokenData = await axios.get<any>(nft.uri).then(res => res.data)
+    if (tokenProgram?.toString() === TOKEN_2022_PROGRAM_ID.toString()) {
+      metadata = await fetchMetaData(connection, mintAddress, undefined, tokenProgram)
+    } else {
+      const umi = umiInstance ?? createUmi(connection.rpcEndpoint)
+      const metaplexMetadata = await fetchDigitalAsset(umi, publicKey(address))
+      metadata = metaplexMetadata.metadata
+    }
+    const irisTokenData = await axios.get<any>(metadata.uri).then(res => res.data)
 
     return {
       tokenProgram,
       address: mintAddress,
       decimals,
       symbol:
-        nft?.symbol || irisTokenData?.symbol || `${address.slice(0, 2)}...${address.slice(-4)}`,
-      name: nft?.name || irisTokenData?.name || address,
-      logoURI: nft?.json?.image || irisTokenData?.image || '/unknownToken.svg',
+        metadata?.symbol ||
+        irisTokenData?.symbol ||
+        `${address.slice(0, 2)}...${address.slice(-4)}`,
+      name: metadata?.name || irisTokenData?.name || address,
+      logoURI: irisTokenData?.image || '/unknownToken.svg',
       isUnknown: true
     }
-  } catch (e: unknown) {
-    const error = ensureError(e)
-    console.log(error)
-
+  } catch {
     return {
       tokenProgram,
       address: mintAddress,
@@ -1780,7 +1799,6 @@ export const getNewTokenOrThrow = async (
   console.log(info)
 
   const tokenData = await getTokenMetadata(connection, address, info.decimals, programId)
-
   return {
     [address.toString()]: tokenData
   }
@@ -2036,6 +2054,12 @@ export const getIntervalsFullSnap = async (
   )
   return data
 }
+export const fetchStackedBitzStats = async (): Promise<StakingStatsResponse> => {
+  const { data } = await axios.get<StakingStatsResponse>(
+    `https://stats.invariant.app/eclipse/sbitz/eclipse-mainnet`
+  )
+  return data
+}
 export const isValidPublicKey = (keyString?: string | null) => {
   try {
     if (!keyString) {
@@ -2283,6 +2307,7 @@ export const ROUTES = {
   PORTFOLIO: '/portfolio',
   CREATOR: '/creator',
   POINTS: '/points',
+  STAKE: '/stake',
 
   getExchangeRoute: (item1?: string, item2?: string): string => {
     const parts = [item1, item2].filter(Boolean)
@@ -2350,4 +2375,80 @@ export const ensureApprovalDenied = (error: Error): boolean => {
 
 export const mapErrorCodeToMessage = (errorNumber: number): string => {
   return ERROR_CODE_TO_MESSAGE[errorNumber] || COMMON_ERROR_MESSAGE
+}
+
+export const getMarketNewTokensData = async (
+  addresses: PublicKey[],
+  connection: Connection,
+  concurrencyLimit: number = 20
+): Promise<Record<string, Token>> => {
+  const umi = createUmi(connection.rpcEndpoint)
+  const tokens: Record<string, Token> = {}
+  const promiseChains: Promise<void>[] = new Array(concurrencyLimit).fill(
+    Promise.resolve<void>(undefined)
+  )
+  const data = await getTokenDecimalsAndProgramID(connection, addresses)
+  let nextIndex = 0
+  const enqueue = (task: () => Promise<void>): Promise<void> => {
+    const slot = nextIndex
+    nextIndex = (nextIndex + 1) % concurrencyLimit
+    const resultPromise = promiseChains[slot].then(task)
+    promiseChains[slot] = resultPromise.catch(() => {})
+    return resultPromise
+  }
+
+  await Promise.all(
+    data.map(data =>
+      enqueue(async () => {
+        const token = await getTokenMetadata(
+          connection,
+          data.address.toString(),
+          data.decimals,
+          data.programId,
+          umi
+        )
+
+        tokens[data.address.toString()] = token
+      })
+    )
+  )
+
+  await Promise.all(promiseChains)
+
+  return tokens
+}
+
+export const getTokenDecimalsAndProgramID = async (
+  connection: Connection,
+  tokens: PublicKey[],
+  BATCH_SIZE: number = 80
+): Promise<ITokenDecimalAndProgramID[]> => {
+  const data: ITokenDecimalAndProgramID[] = []
+
+  const pubkeys = tokens.map(t => new PublicKey(t))
+
+  for (let i = 0; i < pubkeys.length; i += BATCH_SIZE) {
+    const batch = pubkeys.slice(i, i + BATCH_SIZE)
+    const accounts = await connection.getMultipleAccountsInfo(batch)
+
+    for (let j = 0; j < batch.length; j++) {
+      const info = accounts[j]
+      if (!info) continue
+
+      const unpacked = unpackMint(batch[j], info, info.owner)
+
+      data.push({
+        address: batch[j],
+        decimals: unpacked.decimals,
+        programId: info.owner
+      })
+    }
+  }
+
+  return data
+}
+export interface ITokenDecimalAndProgramID {
+  address: PublicKey
+  decimals: number
+  programId: PublicKey
 }

@@ -33,7 +33,7 @@ import { PlotTickData } from '@store/reducers/positions'
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import { VariantType } from 'notistack'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import ConcentrationTypeSwitch from './ConcentrationTypeSwitch/ConcentrationTypeSwitch'
 import DepositSelector from './DepositSelector/DepositSelector'
 import MarketIdLabel from './MarketIdLabel/MarketIdLabel'
@@ -171,6 +171,8 @@ export interface INewPosition {
   initialMaxSlippageToleranceCreatePosition: string
   updateLiquidity: (lq: BN) => void
   suggestedPrice: number
+  handleBack: () => void
+  oraclePrice: number | null
 }
 
 export const NewPosition: React.FC<INewPosition> = ({
@@ -247,7 +249,9 @@ export const NewPosition: React.FC<INewPosition> = ({
   initialMaxSlippageToleranceSwap,
   onMaxSlippageToleranceCreatePositionChange,
   initialMaxSlippageToleranceCreatePosition,
-  suggestedPrice
+  suggestedPrice,
+  handleBack,
+  oraclePrice
 }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
@@ -353,7 +357,6 @@ export const NewPosition: React.FC<INewPosition> = ({
     isWaitingForNewPool,
     isLoadingTicksOrTickmap
   ])
-
   const isDepositEmptyOrZero = (val: string) => val === '' || +val === 0
 
   const isAutoswapOn = useMemo(
@@ -650,37 +653,32 @@ export const NewPosition: React.FC<INewPosition> = ({
               ? '&range=true'
               : '&range=false'
 
-        urlUpdateTimeoutRef.current = setTimeout(
-          () =>
-            navigate(
-              ROUTES.getNewPositionRoute(
-                token1Symbol,
-                token2Symbol,
-                parsedFee + concParam + rangeParam
-              ),
-              {
-                replace: true
-              }
+        urlUpdateTimeoutRef.current = setTimeout(() => {
+          navigate(
+            ROUTES.getNewPositionRoute(
+              token1Symbol,
+              token2Symbol,
+              parsedFee + concParam + rangeParam
             ),
-          500
-        )
+            {
+              replace: true
+            }
+          )
+        }, 500)
       } else if (index1 != null) {
         const tokenSymbol = addressToTicker(network, tokens[index1].assetAddress.toString())
-        urlUpdateTimeoutRef.current = setTimeout(
-          () => navigate(ROUTES.getNewPositionRoute(tokenSymbol, parsedFee), { replace: true }),
-          500
-        )
+        urlUpdateTimeoutRef.current = setTimeout(() => {
+          navigate(ROUTES.getNewPositionRoute(tokenSymbol, parsedFee), { replace: true })
+        }, 500)
       } else if (index2 != null) {
         const tokenSymbol = addressToTicker(network, tokens[index2].assetAddress.toString())
-        urlUpdateTimeoutRef.current = setTimeout(
-          () => navigate(ROUTES.getNewPositionRoute(tokenSymbol, parsedFee), { replace: true }),
-          500
-        )
+        urlUpdateTimeoutRef.current = setTimeout(() => {
+          navigate(ROUTES.getNewPositionRoute(tokenSymbol, parsedFee), { replace: true })
+        }, 500)
       } else if (fee != null) {
-        urlUpdateTimeoutRef.current = setTimeout(
-          () => navigate(ROUTES.getNewPositionRoute(parsedFee), { replace: true }),
-          500
-        )
+        urlUpdateTimeoutRef.current = setTimeout(() => {
+          navigate(ROUTES.getNewPositionRoute(parsedFee), { replace: true })
+        }, 500)
       }
     }
   }
@@ -908,12 +906,10 @@ export const NewPosition: React.FC<INewPosition> = ({
 
   return (
     <Grid container className={classes.wrapper}>
-      <Link to={ROUTES.PORTFOLIO} style={{ textDecoration: 'none', maxWidth: 'fit-content' }}>
-        <Grid className={classes.back} container item>
-          <img className={classes.backIcon} src={backIcon} alt='back' />
-          <Typography className={classes.backText}>Positions</Typography>
-        </Grid>
-      </Link>
+      <Grid onClick={() => handleBack()} className={classes.back} container item>
+        <img className={classes.backIcon} src={backIcon} alt='back' />
+        <Typography className={classes.backText}>Back</Typography>
+      </Grid>
 
       <Grid container className={classes.headerContainer}>
         <Box className={classes.titleContainer}>
@@ -1384,6 +1380,7 @@ export const NewPosition: React.FC<INewPosition> = ({
             setOnlyUserPositions={setOnlyUserPositions}
             usdcPrice={usdcPrice}
             suggestedPrice={suggestedPrice}
+            oraclePrice={oraclePrice}
             currentFeeIndex={currentFeeIndex}
             bestFeeIndex={bestFeeIndex}
           />
