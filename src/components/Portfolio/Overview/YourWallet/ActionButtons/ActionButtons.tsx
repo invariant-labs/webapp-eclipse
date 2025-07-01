@@ -40,7 +40,7 @@ export const ActionButtons = ({ pool, strategy, currentNetwork }: IActionButtons
 
   return (
     <>
-      <TooltipHover title='Add Position'>
+      <TooltipHover title='Add position'>
         <Box
           className={classes.actionIcon}
           onClick={() => {

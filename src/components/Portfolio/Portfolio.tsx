@@ -539,7 +539,7 @@ const Portfolio: React.FC<IProps> = ({
                     </Grid>
                   </TooltipHover>
                   <Button scheme='pink' onClick={onAddPositionClick}>
-                    <span className={classes.buttonText}>+ Add Position</span>
+                    <span className={classes.buttonText}>+ Add position</span>
                   </Button>
                 </Grid>
               </Grid>
@@ -577,7 +577,7 @@ const Portfolio: React.FC<IProps> = ({
                       </TooltipHover>
                     </Grid>
                     <Button scheme='pink' onClick={onAddPositionClick}>
-                      <span className={classes.buttonText}>{!hidePlus && '+ '}Add Position</span>
+                      <span className={classes.buttonText}>{!hidePlus && '+ '}Add position</span>
                     </Button>
                   </Grid>
                 </Grid>
