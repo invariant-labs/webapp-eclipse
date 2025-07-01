@@ -3,11 +3,24 @@ import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => {
   return {
+    root: {
+      [theme.breakpoints.down('sm')]: {
+        width: '100%'
+      }
+    },
     paper: {
       background: 'none',
-      backgroundColor: 'transparent',
+      // backgroundColor: 'transparent',
       '& > *': {
-        backgroundColor: 'transparent'
+        // backgroundColor: 'transparent'
+      },
+
+      [theme.breakpoints.down('sm')]: {
+        top: '0 !important',
+        left: '0 !important',
+        margin: 0,
+        maxWidth: '100%',
+        maxHeight: '100%'
       }
     },
     tooltip: {
@@ -18,7 +31,7 @@ export const useStyles = makeStyles()(() => {
       borderRadius: 8
     },
     detailsWrapper: {
-      width: 332,
+      width: 350,
       display: 'flex',
       flexDirection: 'column',
       backgroundColor: colors.invariant.component,
@@ -28,6 +41,9 @@ export const useStyles = makeStyles()(() => {
       '& h2': {
         ...typography.heading4,
         paddingBottom: 10
+      },
+      [theme.breakpoints.down('sm')]: {
+        width: '100%'
       }
     },
     closeModal: {
@@ -170,6 +186,7 @@ export const useStyles = makeStyles()(() => {
       marginTop: 10
     },
     slippagePercentageButton: {
+      minWidth: 100,
       height: 30,
       borderRadius: 8,
       backgroundColor: colors.invariant.newDark,
@@ -285,10 +302,12 @@ export const useStyles = makeStyles()(() => {
     switchSelected: { color: colors.invariant.text, fontWeight: 700 },
     switchNotSelected: { color: colors.invariant.text, fontWeight: 400 },
     defaultOptionsContainer: {
+      display: 'flex',
       gap: 9
     },
     singleOption: {
       display: 'flex',
+      flexWrap: 'nowrap',
       flexDirection: 'column',
       justifyContent: 'center',
       height: '100%',
@@ -321,6 +340,7 @@ export const useStyles = makeStyles()(() => {
       marginLeft: 2
     },
     singleItemLabel: {
+      textWrap: 'nowrap',
       fontWeight: 400,
       fontSize: 10,
       letterSpacing: '-0.03%',
