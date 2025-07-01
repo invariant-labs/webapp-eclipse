@@ -6,7 +6,7 @@ import { useStyles } from './style'
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import { formatNumberWithSuffix } from '@utils/utils'
 import { Intervals, ITEMS_PER_PAGE, NetworkType, SortTypeTokenList } from '@store/consts/static'
-import { newTabBtnIcon, unknownTokenIcon } from '@static/icons'
+import { newTabBtnIcon, star, starFill, unknownTokenIcon } from '@static/icons'
 import { mapIntervalToString, shortenAddress } from '@utils/uiUtils'
 import { VariantType } from 'notistack'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
@@ -30,6 +30,8 @@ interface IProps {
   network?: NetworkType
   copyAddressHandler?: (message: string, variant: VariantType) => void
   interval?: Intervals
+  isFavourite?: boolean
+  switchFavouriteTokens?: (tokenAddress: string) => void
 }
 
 const TokenListItem: React.FC<IProps> = ({
@@ -47,7 +49,9 @@ const TokenListItem: React.FC<IProps> = ({
   address,
   network,
   interval = Intervals.Daily,
-  copyAddressHandler
+  isFavourite = false,
+  copyAddressHandler,
+  switchFavouriteTokens
 }) => {
   const { classes } = useStyles()
   // const isNegative = priceChange < 0
@@ -95,7 +99,24 @@ const TokenListItem: React.FC<IProps> = ({
                 ? `1px solid ${colors.invariant.light}`
                 : `2px solid ${colors.invariant.light}`
           }}>
-          {!isMd && <Typography component='p'>{itemNumber}</Typography>}
+          <Box className={classes.tokenIndexContainer}>
+            {!isMd && (
+              <Box className={classes.tokenIndex}>
+                <Typography>{itemNumber}</Typography>
+              </Box>
+            )}
+            <img
+              className={classes.favouriteButton}
+              src={isFavourite ? starFill : star}
+              onClick={e => {
+                if (address && switchFavouriteTokens) {
+                  switchFavouriteTokens(address)
+                }
+
+                e.stopPropagation()
+              }}
+            />
+          </Box>{' '}
           <Grid className={classes.tokenName}>
             {icon === '/src/static/svg/unknownToken.svg' && isSm ? (
               <Typography>{symbol}</Typography>
@@ -162,11 +183,10 @@ const TokenListItem: React.FC<IProps> = ({
                 : `px solid ${colors.invariant.light}`
           }}
           classes={{ container: classes.container, root: classes.header }}>
-          {!isMd && (
-            <Typography style={{ lineHeight: '12px' }}>
-              N<sup>o</sup>
-            </Typography>
-          )}
+          <Typography style={{ lineHeight: '12px' }}>
+            N<sup>o</sup>
+          </Typography>
+
           <Typography
             style={{ cursor: 'pointer' }}
             onClick={() => {
