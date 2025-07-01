@@ -205,9 +205,9 @@ const Portfolio: React.FC<IProps> = ({
 
   const { currentData, noInitialPositions } = useMemo(() => {
     if (alignment === LiquidityPools.Standard) {
-      return { currentData: data, noInitialPositions: length > 0 }
+      return { currentData: data, noInitialPositions: length === 0 }
     }
-    return { currentData: lockedData, noInitialPositions: lockedLength > 0 }
+    return { currentData: lockedData, noInitialPositions: lockedLength === 0 }
   }, [alignment, data, lockedData, length, lockedLength])
 
   const filteredData = useMemo(() => {
