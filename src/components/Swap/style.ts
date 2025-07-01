@@ -403,6 +403,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
   unknownWarning: {
     width: '100%',
+    height: 'fit-content',
     background: alpha(colors.invariant.Error, 0.25),
     border: `1px solid ${colors.invariant.Error}`,
     ...typography.caption2,

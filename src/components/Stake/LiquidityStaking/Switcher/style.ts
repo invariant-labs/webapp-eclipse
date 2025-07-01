@@ -43,9 +43,6 @@ const useStyles = makeStyles<StyleProps>()((theme, { switchTab }) => {
       display: 'inline-flex',
       height: 46,
 
-      [theme.breakpoints.down('md')]: {
-        width: '95%'
-      },
       [theme.breakpoints.down('sm')]: {
         height: 36,
         width: '100%'
