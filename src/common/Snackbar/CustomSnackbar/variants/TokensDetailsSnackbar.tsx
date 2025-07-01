@@ -151,6 +151,10 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
             )}
             {ikonType === 'swap' || ikonType === 'unstake' || ikonType === 'stake' ? (
               arrow
+            ) : ikonType === 'claim' ? (
+              hasBothAmounts ? (
+                <StyledText>+</StyledText>
+              ) : null
             ) : (
               <StyledText>+</StyledText>
             )}
