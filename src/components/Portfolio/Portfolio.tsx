@@ -51,7 +51,6 @@ interface IProps {
   handleRefresh: () => void
   length: number
   lockedLength: number
-  noInitialPositions: boolean
   lockedData: IPositionItem[]
   currentNetwork: NetworkType
   handleLockPosition: (index: number) => void
@@ -65,7 +64,6 @@ interface IProps {
   setPositionListAlignment: (val: LiquidityPools) => void
   overviewSelectedTab: OverviewSwitcher
   handleOverviewSwitch: (panel: OverviewSwitcher) => void
-
   setSelectedFilters: (token: ISearchToken[]) => void
   selectedFilters: ISearchToken[]
 }
@@ -82,7 +80,6 @@ const Portfolio: React.FC<IProps> = ({
   showNoConnected = false,
   noConnectedBlockerProps,
   handleRefresh,
-  noInitialPositions,
   lockedData,
   currentNetwork,
   handleLockPosition,
@@ -205,12 +202,13 @@ const Portfolio: React.FC<IProps> = ({
   )
 
   const hidePlus = useMediaQuery(theme.breakpoints.down(350))
-  const currentData = useMemo(() => {
+
+  const { currentData, noInitialPositions } = useMemo(() => {
     if (alignment === LiquidityPools.Standard) {
-      return data
+      return { currentData: data, noInitialPositions: length > 0 }
     }
-    return lockedData
-  }, [alignment, data, lockedData])
+    return { currentData: lockedData, noInitialPositions: lockedLength > 0 }
+  }, [alignment, data, lockedData, length, lockedLength])
 
   const filteredData = useMemo(() => {
     if (selectedFilters.length === 0) return currentData

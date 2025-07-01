@@ -389,7 +389,6 @@ const PortfolioWrapper = () => {
       }}
       length={list.length}
       lockedLength={lockedList.length}
-      noInitialPositions={list.length === 0 && lockedList.length === 0}
       handleLockPosition={handleLockPosition}
       handleClosePosition={handleClosePosition}
       handleClaimFee={handleClaimFee}
