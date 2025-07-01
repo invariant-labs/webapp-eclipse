@@ -1384,7 +1384,7 @@ export const Swap: React.FC<ISwap> = ({
                 </Box>
               </TooltipHover>
             )}
-            <Grid width={1} display='flex'>
+            <Grid width={1} gap={1} display='flex'>
               {tokens[tokenFromIndex ?? '']?.isUnknown && (
                 <TooltipHover
                   title={`${tokens[tokenFromIndex ?? ''].symbol} is unknown, make sure address is correct before trading`}
