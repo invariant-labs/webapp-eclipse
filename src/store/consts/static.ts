@@ -833,9 +833,14 @@ export const defaultImages: string[] = [dog1Icon, dog2Icon, cat1Icon, cat2Icon]
 
 export const disabledPools = [
   {
-    tokenX: 'sBTZcSwRZhRq3JcjFh1xwxgCxmsN7MreyU3Zx8dA8uF',
-    tokenY: 'So11111111111111111111111111111111111111112',
-    feeTiers: ['0.01', '0.3']
+    tokenX: sBITZ_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    feeTiers: ['0.01']
+  },
+  {
+    tokenX: BITZ_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    feeTiers: ['0.01']
   }
 ]
 

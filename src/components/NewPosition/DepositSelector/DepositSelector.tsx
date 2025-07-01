@@ -896,14 +896,14 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   const disabledFeeTiers = useMemo(() => {
     if (tokenAIndex === null || tokenBIndex === null) return []
 
-    const tokenA = tokens[tokenAIndex].assetAddress.toString()
-    const tokenB = tokens[tokenBIndex].assetAddress.toString()
+    const tokenA = tokens[tokenAIndex].assetAddress
+    const tokenB = tokens[tokenBIndex].assetAddress
 
     return disabledPools
       .filter(
         pool =>
-          (pool.tokenX === tokenA && pool.tokenY === tokenB) ||
-          (pool.tokenX === tokenB && pool.tokenY === tokenA)
+          (pool.tokenX.equals(tokenA) && pool.tokenY.equals(tokenB)) ||
+          (pool.tokenX.equals(tokenB) && pool.tokenY.equals(tokenA))
       )
       .flatMap(p => p.feeTiers)
   }, [tokenAIndex, tokenBIndex, tokens, disabledPools])

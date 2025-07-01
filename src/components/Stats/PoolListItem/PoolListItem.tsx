@@ -234,8 +234,10 @@ const PoolListItem: React.FC<IProps> = ({
     return disabledPools
       .filter(
         pool =>
-          (pool.tokenX === tokenAData.address && pool.tokenY === tokenBData.address) ||
-          (pool.tokenX === tokenBData.address && pool.tokenY === tokenAData.address)
+          (pool.tokenX.toString() === tokenAData.address &&
+            pool.tokenY.toString() === tokenBData.address) ||
+          (pool.tokenX.toString() === tokenBData.address &&
+            pool.tokenY.toString() === tokenAData.address)
       )
       .flatMap(p => p.feeTiers)
   }, [tokenAData.address, tokenBData.address, disabledPools]).includes(fee.toString())
@@ -247,11 +249,15 @@ const PoolListItem: React.FC<IProps> = ({
       <button className={classes.actionButton} onClick={handleOpenSwap}>
         <img width={28} src={horizontalSwapIcon} alt={'Exchange'} />
       </button>
-      {!isDisabled && (
-        <button className={classes.actionButton} onClick={handleOpenPosition}>
-          <img width={28} src={plusIcon} alt={'Open'} />
-        </button>
-      )}
+
+      <button
+        disabled={isDisabled}
+        style={isDisabled ? { cursor: 'not-allowed' } : {}}
+        className={classes.actionButton}
+        onClick={handleOpenPosition}>
+        <img width={28} src={plusIcon} alt={'Open'} />
+      </button>
+
       <button
         className={classes.actionButton}
         onClick={() => {
@@ -454,13 +460,17 @@ const PoolListItem: React.FC<IProps> = ({
                   <img width={32} height={32} src={horizontalSwapIcon} alt={'Exchange'} />
                 </button>
               </TooltipHover>
-              {!isDisabled && (
-                <TooltipHover title='Add position'>
-                  <button className={classes.actionButton} onClick={handleOpenPosition}>
-                    <img width={32} height={32} src={plusIcon} alt={'Open'} />
-                  </button>
-                </TooltipHover>
-              )}
+
+              <TooltipHover disabled={isDisabled} title='Add position'>
+                <button
+                  disabled={isDisabled}
+                  style={isDisabled ? { cursor: 'not-allowed' } : {}}
+                  className={classes.actionButton}
+                  onClick={handleOpenPosition}>
+                  <img width={32} height={32} src={plusIcon} alt={'Open'} />
+                </button>
+              </TooltipHover>
+
               <TooltipHover title='Open in explorer'>
                 <button
                   className={classes.actionButton}
