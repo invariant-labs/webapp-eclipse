@@ -9,7 +9,7 @@ import { LEADERBOARD_DECIMAL } from '@store/consts/static'
 interface IEstimatedPointsLabel {
   swapMultiplier: string
   stringPointsValue: string
-  pointsForSwap: BN
+  pointsForSwap: BN | null
   isLessThanOne: boolean
   decimalIndex: any
   isAnimating: boolean
@@ -33,7 +33,7 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
   const { classes } = useStyles({ isVisible: isAnimating, width: 200, isChanging })
 
   useEffect(() => {
-    if (isAnimating || !pointsForSwap.isZero()) {
+    if (isAnimating || !pointsForSwap?.isZero()) {
       setIsChanging(true)
 
       setDisplayedValue(
@@ -56,9 +56,9 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
         <span className={classes.pointsAmount}>
           <p className={classes.pointsValue}>
             {' '}
-            {pointsForSwap.isZero()
+            {pointsForSwap?.isZero()
               ? '0.00'
-              : pointsForSwap.gte(
+              : pointsForSwap?.gte(
                     new BN('1000000000').mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL)))
                   )
                 ? '>1B'
