@@ -3,11 +3,26 @@ import { colors, theme } from '@static/theme'
 import sBITZ from '@static/png/sBitz.png'
 import BITZ from '@static/png/bitz.png'
 import SupplyChart from './Charts/sBITZSupplyChart/SupplyChart'
-import { Intervals } from '@store/consts/static'
+import { BITZ_MAIN, Intervals, sBITZ_MAIN } from '@store/consts/static'
 import { Separator } from '@common/Separator/Separator'
 import { useStyles } from './style'
+import { TimeData } from '@store/reducers/sbitz-stats'
+import { formatNumberWithoutSuffix, printBN } from '@utils/utils'
 
-export const OverallStats = () => {
+interface Props {
+  isLoadingStats: boolean
+  sbitzSupply: string
+  bitzStaked: string
+  sbitzPlot: TimeData[]
+  bitzPlot: TimeData[]
+}
+export const OverallStats = ({
+  isLoadingStats,
+  sbitzPlot,
+  bitzPlot,
+  bitzStaked,
+  sbitzSupply
+}: Props) => {
   const { classes, cx } = useStyles()
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
 
@@ -24,7 +39,11 @@ export const OverallStats = () => {
           <Box className={classes.statsHeader}>
             <Box className={classes.textContainer}>
               <Typography className={classes.statsTitle}>sBITZ supply</Typography>
-              <Typography className={classes.statsValue}>$2,472,938.34</Typography>
+              <Typography className={classes.statsValue}>
+                {formatNumberWithoutSuffix(
+                  isLoadingStats ? Math.random() * 10000 : printBN(sbitzSupply, sBITZ_MAIN.decimals)
+                )}
+              </Typography>
             </Box>
             <Box className={classes.iconContainer}>
               <img src={sBITZ} alt='sBITZ' className={classes.tokenIcon} />
@@ -32,15 +51,10 @@ export const OverallStats = () => {
           </Box>
           <Box className={classes.chartContainer}>
             <SupplyChart
-              lastStatsTimestamp={1750604221}
-              isLoading={false}
+              isLoading={isLoadingStats}
               interval={Intervals.Daily}
-              data={[
-                { timestamp: 1710604221, value: 4.32 },
-                { timestamp: 1750603221, value: 24.32 },
-                { timestamp: 1850603221, value: 34.32 }
-              ]}
-              color={'#00D9FF'}
+              data={sbitzPlot}
+              color={colors.invariant.lightBlue}
             />
           </Box>
         </Box>
@@ -55,8 +69,12 @@ export const OverallStats = () => {
         <Box className={classes.sectionContainer}>
           <Box className={classes.statsHeader}>
             <Box className={classes.textContainer}>
-              <Typography className={classes.statsTitle}>BITZ Supply</Typography>
-              <Typography className={classes.statsValue}>$2,472,938.34</Typography>
+              <Typography className={classes.statsTitle}>BITZ staked</Typography>
+              <Typography className={classes.statsValue}>
+                {formatNumberWithoutSuffix(
+                  isLoadingStats ? Math.random() * 10000 : +printBN(bitzStaked, BITZ_MAIN.decimals)
+                )}
+              </Typography>
             </Box>
             <Box className={classes.iconContainer}>
               <img src={BITZ} alt='BITZ' className={classes.tokenIcon} />
@@ -64,14 +82,9 @@ export const OverallStats = () => {
           </Box>
           <Box className={classes.chartContainer}>
             <SupplyChart
-              lastStatsTimestamp={1750604221}
-              isLoading={false}
+              isLoading={isLoadingStats}
               interval={Intervals.Daily}
-              data={[
-                { timestamp: 1710604221, value: 4.32 },
-                { timestamp: 1750603221, value: 24.32 },
-                { timestamp: 1850603221, value: 34.32 }
-              ]}
+              data={bitzPlot}
               color={colors.invariant.green}
             />
           </Box>

@@ -13,6 +13,7 @@ import { status } from '@store/selectors/solanaWallet'
 import { Status as WalletStatus } from '@store/reducers/solanaWallet'
 import { actions as walletActions } from '@store/reducers/solanaWallet'
 import { actions as leaderboardActions } from '@store/reducers/leaderboard'
+import { actions as saleActions } from '@store/reducers/sale'
 import { actions } from '@store/reducers/positions'
 import { DEFAULT_PUBLICKEY, NetworkType } from '@store/consts/static'
 import { network } from '@store/selectors/solanaConnection'
@@ -21,7 +22,7 @@ import { getEclipseWallet } from '@utils/web3/wallet'
 import { leaderboardSelectors } from '@store/selectors/leaderboard'
 import { ensureError, ROUTES } from '@utils/utils'
 
-const BANNER_STORAGE_KEY = 'invariant-banner-state-6'
+const BANNER_STORAGE_KEY = 'invariant-banner-state-7'
 const BANNER_HIDE_DURATION = 1000 * 60 * 60 * 24 // 24 hours
 
 const RootPage: React.FC = memo(() => {
@@ -53,6 +54,7 @@ const RootPage: React.FC = memo(() => {
     [ROUTES.LIQUIDITY, 'Invariant | Liquidity'],
     [ROUTES.PORTFOLIO, 'Invariant | Portfolio'],
     [ROUTES.NEW_POSITION, 'Invariant | New Position'],
+    [ROUTES.SALE, 'Invariant | Sale'],
     [ROUTES.POSITION, 'Invariant | Position Details'],
     [ROUTES.POINTS, 'Invariant | Points'],
     [ROUTES.STATISTICS, 'Invariant | Statistics'],
@@ -104,6 +106,7 @@ const RootPage: React.FC = memo(() => {
         dispatch(walletActions.changeWalletInExtension())
         dispatch(leaderboardActions.getLeaderboardData({ page: 1, itemsPerPage }))
         dispatch(actions.getPositionsList())
+        dispatch(saleActions.getUserStats())
       }
 
       if (

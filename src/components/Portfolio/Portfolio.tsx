@@ -51,7 +51,6 @@ interface IProps {
   handleRefresh: () => void
   length: number
   lockedLength: number
-  noInitialPositions: boolean
   lockedData: IPositionItem[]
   currentNetwork: NetworkType
   handleLockPosition: (index: number) => void
@@ -65,10 +64,14 @@ interface IProps {
   setPositionListAlignment: (val: LiquidityPools) => void
   overviewSelectedTab: OverviewSwitcher
   handleOverviewSwitch: (panel: OverviewSwitcher) => void
+  setSelectedFilters: (token: ISearchToken[]) => void
+  selectedFilters: ISearchToken[]
 }
 
 const Portfolio: React.FC<IProps> = ({
   isBalanceLoading,
+  setSelectedFilters,
+  selectedFilters,
   shouldDisable,
   handleSnackbar,
   data,
@@ -77,7 +80,6 @@ const Portfolio: React.FC<IProps> = ({
   showNoConnected = false,
   noConnectedBlockerProps,
   handleRefresh,
-  noInitialPositions,
   lockedData,
   currentNetwork,
   handleLockPosition,
@@ -95,7 +97,6 @@ const Portfolio: React.FC<IProps> = ({
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const location = useLocation()
-  const [selectedFilters, setSelectedFilters] = useState<ISearchToken[]>([])
   const isLg = useMediaQuery('@media (max-width: 1360px)')
   const isDownLg = useMediaQuery(theme.breakpoints.down('lg'))
   const isMb = useMediaQuery(theme.breakpoints.down('sm'))
@@ -201,12 +202,13 @@ const Portfolio: React.FC<IProps> = ({
   )
 
   const hidePlus = useMediaQuery(theme.breakpoints.down(350))
-  const currentData = useMemo(() => {
+
+  const { currentData, noInitialPositions } = useMemo(() => {
     if (alignment === LiquidityPools.Standard) {
-      return data
+      return { currentData: data, noInitialPositions: length === 0 }
     }
-    return lockedData
-  }, [alignment, data, lockedData])
+    return { currentData: lockedData, noInitialPositions: lockedLength === 0 }
+  }, [alignment, data, lockedData, length, lockedLength])
 
   const filteredData = useMemo(() => {
     if (selectedFilters.length === 0) return currentData
@@ -322,7 +324,7 @@ const Portfolio: React.FC<IProps> = ({
     <>
       <Box className={classes.overviewContainer}>
         <Box>
-          <Grid display={'flex'} marginBottom={isDownLg ? '12px' : '20px'}>
+          <Grid display={'flex'} marginBottom={isDownLg ? '12px' : '16px'}>
             <Typography className={classes.overviewHeaderTitle}>Overview</Typography>
           </Grid>
         </Box>
@@ -535,7 +537,7 @@ const Portfolio: React.FC<IProps> = ({
                     </Grid>
                   </TooltipHover>
                   <Button scheme='pink' onClick={onAddPositionClick}>
-                    <span className={classes.buttonText}>+ Add Position</span>
+                    <span className={classes.buttonText}>+ Add position</span>
                   </Button>
                 </Grid>
               </Grid>
@@ -573,7 +575,7 @@ const Portfolio: React.FC<IProps> = ({
                       </TooltipHover>
                     </Grid>
                     <Button scheme='pink' onClick={onAddPositionClick}>
-                      <span className={classes.buttonText}>{!hidePlus && '+ '}Add Position</span>
+                      <span className={classes.buttonText}>{!hidePlus && '+ '}Add position</span>
                     </Button>
                   </Grid>
                 </Grid>

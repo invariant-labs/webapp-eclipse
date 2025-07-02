@@ -50,6 +50,7 @@ const MarketEvents = () => {
     }
     const connectEvents = () => {
       let tokens = getNetworkTokensList(networkType)
+
       const currentListUnkown: PublicKey[] =
         unknownAdresses !== null
           ? unknownAdresses
@@ -97,10 +98,14 @@ const MarketEvents = () => {
         fetchedTokensStr !== null
           ? (JSON.parse(fetchedTokensStr) as Record<string, TokenSerialized>)
           : {}
+      const currentAddressList = currentList.map(k => k.toString())
+      const parsedData = Object.values(fetchedTokens).map(serialized => serialized.address)
+      const arraysEqual =
+        JSON.stringify([...currentAddressList].sort()) === JSON.stringify([...parsedData].sort())
 
       const shouldFetchTokens =
         lastTokenFetchAmount === null ||
-        currentList.length > (lastTokenFetchAmount?.amount || 0) ||
+        !arraysEqual ||
         (lastTokenFetchAmount !== null &&
           Number(lastTokenFetchAmount.lastTimestamp) + TOKEN_FETCH_DELAY <= Date.now())
 
@@ -138,7 +143,6 @@ const MarketEvents = () => {
           {} as Record<string, Token>
         )
 
-        console.log(parsedData)
         tokens = {
           ...tokens,
           ...parsedTokensMap

@@ -21,7 +21,7 @@ export const SwapSeparator: React.FC<ISwapSeparator> = ({ onClick, rotateRight, 
           src={swapArrowIcon}
           alt='Swap Arrow'
           className={cx(classes.swapArrow, isRotating && classes.rotate)}
-          onClick={onClick}
+          onClick={isRotating ? () => {} : onClick}
           width={10}
           height={16}
         />

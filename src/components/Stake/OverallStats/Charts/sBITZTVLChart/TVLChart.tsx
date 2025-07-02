@@ -14,15 +14,15 @@ interface StatsInterface {
   className?: string
   isLoading: boolean
   interval: IntervalsKeys
-  lastStatsTimestamp: number
+  //   lastStatsTimestamp: number
 }
 
 const TVLChart: React.FC<StatsInterface> = ({
   data,
   className,
   isLoading,
-  interval,
-  lastStatsTimestamp
+  interval
+  //   lastStatsTimestamp
 }) => {
   const { classes, cx } = useStyles()
   const [hoveredBar, setHoveredBar] = useState<any>(null)
@@ -130,7 +130,7 @@ const TVLChart: React.FC<StatsInterface> = ({
             y={0}
             width={hoveredBarPosition.width}
             height={innerHeight}
-            fill='#f075d7'
+            fill='#4ee2fc'
             fillOpacity={0.3}
             style={{ pointerEvents: 'none' }}
           />
@@ -187,7 +187,7 @@ const TVLChart: React.FC<StatsInterface> = ({
     if (!hoveredBar) return null
 
     const timestamp = hoveredBar.timestamp || hoveredBar.indexValue
-    const date = getLabelDate(interval, timestamp, lastStatsTimestamp)
+    const date = getLabelDate(interval, timestamp, timestamp)
 
     return (
       <div
@@ -263,13 +263,13 @@ const TVLChart: React.FC<StatsInterface> = ({
           padding={0.03}
           indexScale={{ type: 'band', round: true }}
           defs={[
-            linearGradientDef('tvl-gradient', [
-              { offset: 0, color: '#EF84F5' },
-              { offset: 100, color: '#9C3EBD', opacity: 0.8 }
+            linearGradientDef('cyan-gradient', [
+              { offset: 0, color: '#00D9FF' },
+              { offset: 100, color: '#0369A1', opacity: 0.8 }
             ])
           ]}
-          fill={[{ match: '*', id: 'tvl-gradient' }]}
-          colors={colors.invariant.pink}
+          fill={[{ match: '*', id: 'cyan-gradient' }]}
+          colors={colors.invariant.lightBlue}
           layers={['grid', 'axes', 'bars', 'markers', 'legends', 'annotations', CustomHoverLayer]}
         />
         <CustomTooltip />

@@ -3,13 +3,13 @@ import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => ({
   container: {
-    maxWidth: '1072px',
+    // maxWidth: '1072px',
     width: '100%',
     display: 'flex',
     justifyContent: 'center',
     flexDirection: 'column',
     borderRadius: '24px',
-    marginTop: '32px'
+    marginTop: '72px'
   },
   heading: {
     ...typography.heading4,

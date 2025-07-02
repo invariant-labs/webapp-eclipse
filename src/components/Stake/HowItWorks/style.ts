@@ -4,16 +4,15 @@ import { makeStyles } from 'tss-react/mui'
 export const useStyles = makeStyles()(() => ({
   container: {
     width: '100%',
-    maxWidth: 1072,
     display: 'flex',
     flexDirection: 'column',
-    gap: 10,
-    marginBlock: 72
+    gap: 16,
+    marginTop: 72
   },
   title: {
-    ...typography.heading1,
+    ...typography.heading4,
     color: colors.white.main,
-    textAlign: 'center'
+    textAlign: 'left'
   },
   innerContainer: {
     backgroundColor: colors.invariant.component,

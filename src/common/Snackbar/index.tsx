@@ -14,11 +14,14 @@ export type IkonType = 'swap' | 'deposit' | 'withdraw' | 'claim' | 'stake' | 'un
 export interface TokensDetailsProps {
   ikonType: IkonType
   tokenXAmount: string
-  tokenYAmount: string
+  tokenBetweenAmount?: string
+  tokenYAmount?: string
   tokenXIcon: string
-  tokenYIcon: string
+  tokenBetweenIcon?: string
+  tokenYIcon?: string
   tokenXSymbol: string
-  tokenYSymbol: string
+  tokenBetweenSymbol?: string
+  tokenYSymbol?: string
   earnedPoints?: string
   tokenXIconAutoSwap?: string
   tokenYIconAutoSwap?: string

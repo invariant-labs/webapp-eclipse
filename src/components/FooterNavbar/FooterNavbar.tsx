@@ -8,6 +8,8 @@ import {
   lqStakingIcon,
   moreIcon,
   saleIcon,
+  lqStakingIcon,
+  saleIcon,
   statsIcon,
   swapArrowsIcon,
   tokenCreatorIcon,
@@ -137,6 +139,7 @@ export const FooterNavbar = () => {
   const otherRoutesToHighlight: Record<string, RegExp[]> = {
     liquidity: [/^liquidity\/*/],
     exchange: [/^exchange\/*/],
+    sale: [/^sale\/*/],
     portfolio: [/^portfolio\/*/, /^newPosition\/*/, /^position\/*/],
 
     ...(typeOfNetwork === NetworkType.Mainnet ? { leaderboard: [/^points\/*/] } : {}),

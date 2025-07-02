@@ -18,7 +18,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     color: colors.white.main
   },
   row: {
-    marginBottom: 16
+    marginBottom: 72
   },
   loading: {
     width: 150,
@@ -72,6 +72,8 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     alignItems: 'center',
     gap: 8,
     textTransform: 'none',
+    width: 155,
+    textAlign: 'right',
 
     '&:hover': {
       background: colors.invariant.componentDark,
@@ -91,7 +93,8 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   showFavouritesText: {
     ...typography.body2,
     color: colors.invariant.textGrey,
-    marginTop: 2
+    marginTop: 2,
+    width: 108
   }
 }))
 

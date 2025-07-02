@@ -73,7 +73,7 @@ export const useStyles = makeStyles()(() => ({
   },
   tooltipValue: {
     ...typography.caption1,
-    color: colors.invariant.pink,
+    color: colors.invariant.lightBlue,
     textAlign: 'center'
   }
 }))

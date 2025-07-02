@@ -4,15 +4,16 @@ import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()((theme: Theme) => ({
   wrapper: {
-    maxWidth: '100%',
+    maxWidth: 510,
     display: 'flex',
     flexDirection: 'column',
-    width: 500,
+    width: '100%',
     background: colors.invariant.component,
     borderRadius: 24,
-    padding: '24px 16px',
+
+    padding: '16px 24px 22px 24px',
     [theme.breakpoints.down('sm')]: {
-      padding: '0 8px'
+      padding: '12px 8px'
     }
   },
   title: {

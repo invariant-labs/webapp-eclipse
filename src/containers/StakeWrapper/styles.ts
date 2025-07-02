@@ -1,4 +1,4 @@
-import { typography, colors } from '@static/theme'
+import { typography, colors, theme } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => ({
@@ -10,15 +10,13 @@ export const useStyles = makeStyles()(() => ({
     alignItems: 'center',
     justifyContent: 'flex-start'
   },
-  header: {
-    ...typography.heading1,
-    color: colors.white.main
-  },
+
   subheaderDescription: {
     display: 'flex',
+    alignItems: 'center',
     gap: '4px',
     color: colors.invariant.textGrey,
-    ...typography.heading4
+    ...typography.body1
   },
   learnMoreLink: {
     color: colors.invariant.green,
@@ -26,10 +24,11 @@ export const useStyles = makeStyles()(() => ({
     display: 'flex',
     alignItems: 'center',
     gap: '3px',
-    ...typography.heading4
+    ...typography.body1
   },
   clipboardIcon: {
-    color: colors.invariant.green
+    color: colors.invariant.green,
+    width: 15
   },
   overviewContainer: {
     display: 'flex',
@@ -107,6 +106,8 @@ export const useStyles = makeStyles()(() => ({
     backgroundColor: colors.invariant.light,
     borderRadius: 10,
     transition: 'all 0.3s ease',
+    willChange: 'transform, left',
+    transform: 'translateZ(0)',
     zIndex: 1
   },
   switchPoolsMarkerStake: {
@@ -120,7 +121,7 @@ export const useStyles = makeStyles()(() => ({
   },
   statsContainer: {
     width: '100%',
-    marginTop: '20px',
+    marginTop: '72px',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
@@ -130,7 +131,8 @@ export const useStyles = makeStyles()(() => ({
     ...typography.heading4,
     color: colors.invariant.text,
     textAlign: 'left',
-    marginBottom: '20px'
+    width: '100%',
+    marginBottom: '16px'
   },
   filtersContainerOverview: {
     marginTop: '32px',
@@ -141,6 +143,198 @@ export const useStyles = makeStyles()(() => ({
   },
   unselectedToggleButton: {
     fontWeight: 400
+  },
+  subheaderWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    width: '100%',
+    gap: '8px',
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column',
+      alignItems: 'flex-start'
+    }
+  },
+  titleWrapper: {
+    display: 'flex',
+    width: '100%',
+    height: '27px',
+    maxWidth: 510,
+    [theme.breakpoints.down('md')]: {
+      maxWidth: '100%'
+    },
+    marginBottom: '16px',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 12
+  },
+
+  titleTextWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '16px',
+    '& h1': {
+      ...typography.heading4,
+      whiteSpace: 'nowrap',
+      color: colors.invariant.text,
+      margin: 0
+    }
+  },
+  refreshIcon: {
+    width: 26,
+    height: 21,
+    cursor: 'pointer',
+    transition: 'filter 300ms',
+    '&:hover': {
+      filter: 'brightness(1.5)',
+      '@media (hover: none)': {
+        filter: 'none'
+      }
+    }
+  },
+  refreshIconBtn: {
+    padding: 0,
+    margin: 0,
+    minWidth: 'auto',
+    background: 'none',
+    '&:hover': {
+      background: 'none'
+    },
+    '&:disabled': {
+      opacity: 0.5
+    }
+  },
+  refreshIconContainer: {
+    display: 'flex',
+    alignItems: 'center'
+  },
+  animatedContainer: {
+    display: 'flex',
+    width: '100%',
+    position: 'relative',
+    justifyContent: 'center',
+    transition: 'all 0.3s ease-in-out',
+    willChange: 'transform, opacity',
+    transform: 'translateZ(0)',
+    backfaceVisibility: 'hidden',
+    [theme.breakpoints.down('md')]: {
+      flexDirection: 'column-reverse',
+      alignItems: 'center'
+    }
+  },
+  liquidityStakingWrapper: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexDirection: 'column',
+    transition: 'transform 0.4s ease-in-out, width 0.4s ease-in-out',
+    willChange: 'transform, width',
+    backfaceVisibility: 'hidden',
+    transform: 'translateZ(0)',
+    zIndex: 2,
+    width: '510px',
+
+    [theme.breakpoints.down('md')]: {
+      transform: 'none !important',
+      width: 'auto'
+    }
+  },
+  liquidityStakingExpanded: {
+    transform: 'translateX(-80px)',
+    width: '510px'
+  },
+  yourStatsWrapper: {
+    position: 'absolute',
+    right: 0,
+    width: 'calc(50% - 20px)',
+    maxWidth: '600px',
+    opacity: 0,
+    transform: 'translateX(200px)',
+    transition: 'opacity 0.5s ease-in-out, transform 0.5s ease-in-out, visibility 0.1s linear 0.5s',
+    willChange: 'opacity, transform, visibility',
+    backfaceVisibility: 'hidden',
+    pointerEvents: 'none',
+    zIndex: 1,
+    visibility: 'hidden',
+    [theme.breakpoints.down('md')]: {
+      position: 'relative',
+      right: 'auto',
+      width: '100%',
+      maxWidth: '100%',
+      transform: 'none !important'
+    }
+  },
+  yourStatsVisible: {
+    opacity: 1,
+    transform: 'translateX(250px)',
+    pointerEvents: 'auto',
+    visibility: 'visible',
+    transition: 'opacity 0.5s ease-in-out, transform 0.5s ease-in-out, visibility 0s linear'
+  },
+
+  expandButton: {
+    marginTop: '16px',
+    backgroundColor: colors.invariant.component,
+    color: colors.invariant.text,
+    '&:hover': {
+      backgroundColor: colors.invariant.light
+    },
+    ...typography.body2
+  },
+  statsExpanderButton: {
+    height: 27,
+    minWidth: '120px',
+    [theme.breakpoints.down('md')]: {
+      width: '90px',
+      minWidth: '90px'
+    },
+    padding: '0px 8px',
+    borderRadius: 8,
+    backgroundColor: colors.invariant.component,
+    color: colors.invariant.textGrey,
+    fontSize: 14,
+    cursor: 'pointer',
+    userSelect: 'none',
+    display: 'flex',
+    alignItems: 'center',
+    textTransform: 'none',
+    transition: '300ms',
+
+    '&:hover': {
+      background: colors.invariant.light,
+      color: colors.invariant.text,
+      '@media (hover: none)': {
+        backgroundColor: colors.invariant.component,
+        color: colors.invariant.textGrey
+      }
+    },
+    '&:disabled': {
+      color: colors.invariant.light,
+      transition: 'all 0.3s',
+      pointerEvents: 'auto'
+    },
+    '&:disabled:hover': {
+      background: colors.invariant.component,
+
+      cursor: 'not-allowed'
+    },
+    p: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '8px'
+    }
+  },
+
+  liquidityStakingHeaderWrapper: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    marginBottom: '16px'
+  },
+  stakingContentWrapper: {
+    display: 'flex',
+    width: '100%',
+    [theme.breakpoints.down('md')]: {
+      flexDirection: 'column-reverse'
+    }
   }
 }))
 
