@@ -37,7 +37,7 @@ export const FooterNavbar = () => {
 
   const moreOptions: INavLinks[] = [
     {
-      label: 'Liquid staking',
+      label: 'Stake',
       icon: lqStakingIcon,
       url: 'stake',
       onClick: () => {
@@ -49,9 +49,9 @@ export const FooterNavbar = () => {
       width: 25
     },
     {
-      label: 'Sale',
+      label: 'Presale',
       icon: saleIcon,
-      url: 'sale',
+      url: 'presale',
       onClick: () => {
         setIsMorePopupOpen(false)
         setAnchorEl(null)
@@ -137,7 +137,7 @@ export const FooterNavbar = () => {
   const otherRoutesToHighlight: Record<string, RegExp[]> = {
     liquidity: [/^liquidity\/*/],
     exchange: [/^exchange\/*/],
-    sale: [/^sale\/*/],
+    sale: [/^presale\/*/],
     portfolio: [/^portfolio\/*/, /^newPosition\/*/, /^position\/*/],
 
     ...(typeOfNetwork === NetworkType.Mainnet ? { leaderboard: [/^points\/*/] } : {}),
@@ -309,6 +309,7 @@ export const FooterNavbar = () => {
                       }
                     />
                     <Typography
+                      style={{ marginTop: 0 }}
                       sx={
                         isOptionActive
                           ? { color: colors.white.main }
