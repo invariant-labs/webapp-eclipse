@@ -58,7 +58,7 @@ export const FooterNavbar = () => {
           },
 
           {
-            label: 'Sale',
+            label: 'Presale',
             icon: saleIcon,
             url: 'sale',
             width: 95

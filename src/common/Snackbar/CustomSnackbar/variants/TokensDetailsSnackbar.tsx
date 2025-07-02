@@ -197,12 +197,16 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
                 ) : (
                   <img src={tokenBetweenIcon} className={classes.tokenIcon} />
                 )}
-                {ikonType === 'swap' ? arrow : <StyledText>+</StyledText>}
-                <StyledText color={colors.invariant.green}>{tokenYAmount}</StyledText>
-                {tokenYIcon === '/unknownToken.svg' ? (
-                  <StyledText>{tokenYSymbol}</StyledText>
-                ) : (
-                  <img src={tokenYIcon} className={classes.tokenIcon} />
+                {tokenYSymbol && (
+                  <>
+                    {ikonType === 'swap' ? arrow : <StyledText>+</StyledText>}
+                    <StyledText color={colors.invariant.green}>{tokenYAmount}</StyledText>
+                    {tokenYIcon === '/unknownToken.svg' ? (
+                      <StyledText>{tokenYSymbol}</StyledText>
+                    ) : (
+                      <img src={tokenYIcon} className={classes.tokenIcon} />
+                    )}
+                  </>
                 )}
               </Grid>
             </>

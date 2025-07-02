@@ -2306,7 +2306,7 @@ export const ROUTES = {
   EXCHANGE_WITH_PARAMS: '/exchange/:item1?/:item2?',
   LIQUIDITY: '/liquidity',
   STATISTICS: '/statistics',
-  SALE: '/sale',
+  SALE: '/presale',
   NEW_POSITION: '/newPosition',
   NEW_POSITION_WITH_PARAMS: '/newPosition/:item1?/:item2?/:item3?',
   POSITION: '/position',

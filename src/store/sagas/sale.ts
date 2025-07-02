@@ -133,7 +133,8 @@ export function* depositSale(action: PayloadAction<IDepositSale>) {
           tokensDetails: {
             ikonType: 'deposit',
             tokenXAmount: formatNumberWithoutSuffix(printBN(amount, REWARD_SCALE)),
-            tokenXIcon: USDC_MAIN.logoURI
+            tokenXIcon: USDC_MAIN.logoURI,
+            tokenXSymbol: USDC_MAIN.symbol
           },
           persist: false,
           txid
