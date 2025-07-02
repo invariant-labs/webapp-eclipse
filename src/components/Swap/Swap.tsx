@@ -236,7 +236,7 @@ export const Swap: React.FC<ISwap> = ({
   const txDown = useMediaQuery(theme.breakpoints.down(483))
   const txDown2 = useMediaQuery(theme.breakpoints.down(360))
 
-  const [pointsForSwap, setPointsForSwap] = React.useState<BN>(new BN(0))
+  const [pointsForSwap, setPointsForSwap] = React.useState<BN | null>(null)
   const [simulateResult, setSimulateResult] = React.useState<{
     amountOut: BN
     poolIndex: number
@@ -358,7 +358,7 @@ export const Swap: React.FC<ISwap> = ({
       setIsSecondPairGivingPoints(false)
     }
 
-    setPointsForSwap(new BN(0))
+    setPointsForSwap(null)
 
     clearTimeout(urlUpdateTimeoutRef.current)
     urlUpdateTimeoutRef.current = setTimeout(() => {
@@ -391,22 +391,26 @@ export const Swap: React.FC<ISwap> = ({
         const firstFeed = feeds[simulationPath.tokenFrom?.assetAddress.toString() ?? '']
         const secondFeed = feeds[simulationPath.tokenBetween?.assetAddress.toString() ?? '']
 
-        const firstPoints = calculatePoints(
-          simulationPath.firstAmount ?? new BN(0),
-          simulationPath.tokenFrom?.decimals ?? 0,
-          simulationPath.firstPair.feeTier.fee ?? new BN(0),
-          firstFeed?.price ?? '0',
-          firstFeed?.priceDecimals ?? 0,
-          pointsPerUSD
-        )
-        const secondPoints = calculatePoints(
-          simulationPath.secondAmount ?? new BN(0),
-          simulationPath.tokenBetween?.decimals ?? 0,
-          simulationPath.secondPair.feeTier.fee ?? new BN(0),
-          secondFeed?.price ?? '0',
-          secondFeed?.priceDecimals ?? 0,
-          pointsPerUSD
-        )
+        const firstPoints = isFirstPairGivingPoints
+          ? calculatePoints(
+              simulationPath.firstAmount ?? new BN(0),
+              simulationPath.tokenFrom?.decimals ?? 0,
+              simulationPath.firstPair.feeTier.fee ?? new BN(0),
+              firstFeed?.price ?? '0',
+              firstFeed?.priceDecimals ?? 0,
+              pointsPerUSD
+            )
+          : new BN(0)
+        const secondPoints = isSecondPairGivingPoints
+          ? calculatePoints(
+              simulationPath.secondAmount ?? new BN(0),
+              simulationPath.tokenBetween?.decimals ?? 0,
+              simulationPath.secondPair.feeTier.fee ?? new BN(0),
+              secondFeed?.price ?? '0',
+              secondFeed?.priceDecimals ?? 0,
+              pointsPerUSD
+            )
+          : new BN(0)
         setPointsForSwap(firstPoints.add(secondPoints))
       } else {
         const feePercentage = pools[simulateResult.poolIndex ?? 0]?.fee ?? new BN(0)
@@ -1018,7 +1022,8 @@ export const Swap: React.FC<ISwap> = ({
       (inputRef === inputTarget.TO || inputRef === inputTarget.DEFAULT)) ||
     lockAnimation ||
     (getStateMessage() === 'Loading' &&
-      (inputRef === inputTarget.FROM || inputRef === inputTarget.DEFAULT))
+      (inputRef === inputTarget.FROM || inputRef === inputTarget.DEFAULT)) ||
+    pointsForSwap === null
 
   const oraclePriceDiffPercentage = useMemo(() => {
     if (!tokenFromPriceData || !tokenToPriceData) return 0

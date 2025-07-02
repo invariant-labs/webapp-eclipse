@@ -480,7 +480,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       return 'Enter token amount'
     }
 
-    return 'Add Position'
+    return 'Add position'
   }, [
     isAutoSwapAvailable,
     tokenACheckbox,
@@ -1171,7 +1171,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
                     onAddLiquidity()
                   }
                 }}
-                disabled={getButtonMessage() !== 'Add Position'}
+                disabled={getButtonMessage() !== 'Add position'}
                 content={getButtonMessage()}
                 progress={progress}
               />
@@ -1229,7 +1229,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
                 }
               }
             }}
-            disabled={getButtonMessage() !== 'Add Position'}
+            disabled={getButtonMessage() !== 'Add position'}
             content={getButtonMessage()}
             progress={progress}
           />
