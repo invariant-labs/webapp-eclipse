@@ -23,6 +23,28 @@ export const SwapPointsPopover = ({
 
   return (
     <TooltipHover
+      componentsProps={{
+        tooltip: {
+          sx: {
+            '@media (max-width:671px)': {
+              maxWidth: '100vw',
+              marginLeft: '8px',
+              marginRight: '8px'
+            }
+          }
+        },
+        popper: {
+          modifiers: [
+            {
+              name: 'preventOverflow',
+              options: {
+                boundary: 'viewport',
+                altAxis: true
+              }
+            }
+          ]
+        }
+      }}
       title={
         <div className={classes.backgroundContainer}>
           <div
@@ -68,7 +90,7 @@ export const SwapPointsPopover = ({
           <div
             className={isPairGivingPoints ? classes.promotedSwapsContainer : classes.halfContainer}>
             <Typography className={classes.standardText}>
-              Pairs currently distributing swap points:
+              Pairs (all fee tiers) currently distributing swap points:
             </Typography>
             <Box display={'flex'} gap={'4px'} flexDirection={'column'} padding={'4px'}>
               {promotedSwapPairs.map(item => (
@@ -81,7 +103,8 @@ export const SwapPointsPopover = ({
           </div>
         </div>
       }
-      placement='bottom'>
+      placement='bottom'
+      maxWidth={519}>
       {children}
     </TooltipHover>
   )

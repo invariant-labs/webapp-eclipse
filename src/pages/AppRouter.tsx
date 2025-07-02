@@ -18,6 +18,7 @@ import TokenCreatorPage from './TokenCreatorPage/TokenCreatorPage'
 import StatsPage from './StatsPage/StatsPage'
 import SwapPage from './SwapPage/SwapPage'
 import { ROUTES } from '@utils/utils'
+import StakePage from './StakePage/StakePage'
 import { PreSalePage } from './PreSalePage/PreSalePage'
 
 const createRouter = (currentNetwork: NetworkType) =>
@@ -29,6 +30,7 @@ const createRouter = (currentNetwork: NetworkType) =>
         <Route path={ROUTES.STATISTICS} element={<StatsPage />} />
         <Route path={ROUTES.NEW_POSITION_WITH_PARAMS} element={<NewPositionPage />} />
         <Route path={ROUTES.POSITION_WITH_ID} element={<SinglePositionPage />} />
+        <Route path={ROUTES.STAKE} element={<StakePage />} />
         <Route path={ROUTES.SALE} element={<PreSalePage />} />
         <Route path={ROUTES.PORTFOLIO} element={<PortfolioPage />} />
         {currentNetwork === NetworkType.Testnet && (

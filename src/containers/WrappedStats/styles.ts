@@ -1,4 +1,4 @@
-import { alpha, Theme } from '@mui/material'
+import { Theme } from '@mui/material'
 import { typography, colors } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
@@ -17,33 +17,15 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     ...typography.heading4,
     color: colors.white.main
   },
-  plotsRow: {
-    flexWrap: 'nowrap',
-    marginBottom: 24,
-    flexDirection: 'column',
-    background: colors.invariant.component,
-    borderRadius: 24,
-    padding: 24,
-    [theme.breakpoints.down('sm')]: {
-      flexDirection: 'column',
-      padding: '12px 8px'
-    }
-  },
   row: {
-    marginBottom: 16
+    marginBottom: 72
   },
   loading: {
     width: 150,
     height: 150,
     margin: 'auto'
   },
-  plot: {
-    width: 605,
 
-    [theme.breakpoints.down('sm')]: {
-      width: '100%'
-    }
-  },
   searchBar: {
     width: 221,
     height: 32,
@@ -71,20 +53,48 @@ export const useStyles = makeStyles()((theme: Theme) => ({
       alignItems: 'flex-start'
     }
   },
-  loadingOverlay: {
-    position: 'relative',
-    width: '100%',
-    height: '100%',
-    '&::after': {
-      content: '""',
-      position: 'absolute',
-      inset: 0,
-      backgroundColor: alpha(colors.invariant.newDark, 0.7),
-      backdropFilter: 'blur(4px)',
-      zIndex: 1,
-      pointerEvents: 'none',
-      borderRadius: '24px'
+
+  headerContainer: {
+    display: 'flex',
+    gap: 14,
+
+    [theme.breakpoints.down('sm')]: {
+      width: '100%'
     }
+  },
+
+  showFavouritesButton: {
+    height: 40,
+    background: colors.invariant.component,
+    padding: '6px 8px',
+    borderRadius: 9,
+    display: 'flex',
+    alignItems: 'center',
+    gap: 8,
+    textTransform: 'none',
+    width: 155,
+    textAlign: 'right',
+
+    '&:hover': {
+      background: colors.invariant.componentDark,
+      boxShadow: 'none'
+    },
+
+    '& .MuiTouchRipple-root .MuiTouchRipple-child': {
+      backgroundColor: colors.invariant.lightGrey
+    },
+
+    [theme.breakpoints.down('md')]: {
+      minWidth: 40,
+      width: 40
+    }
+  },
+
+  showFavouritesText: {
+    ...typography.body2,
+    color: colors.invariant.textGrey,
+    marginTop: 2,
+    width: 108
   }
 }))
 

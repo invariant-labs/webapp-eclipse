@@ -10,13 +10,18 @@ type ExtraVariants = 'pending' | 'custom'
 
 export type SnackbarVariant = ExtraVariants
 
-export type IkonType = 'swap' | 'deposit' | 'withdraw' | 'claim'
+export type IkonType = 'swap' | 'deposit' | 'withdraw' | 'claim' | 'stake' | 'unstake'
 export interface TokensDetailsProps {
   ikonType: IkonType
   tokenXAmount: string
-  tokenYAmount?: string
+  tokenBetweenAmount?: string
+  tokenYAmount: string
   tokenXIcon: string
-  tokenYIcon?: string
+  tokenBetweenIcon?: string
+  tokenYIcon: string
+  tokenXSymbol: string
+  tokenBetweenSymbol?: string
+  tokenYSymbol: string
   earnedPoints?: string
   tokenXSymbol?: string
   tokenYSymbol?: string
@@ -37,14 +42,14 @@ export interface CustomProps {
   closePosition?: object
 }
 
-export interface SnackbarSnackbarProps extends CustomContentProps, CustomProps { }
+export interface SnackbarSnackbarProps extends CustomContentProps, CustomProps {}
 
 declare module 'notistack' {
   interface VariantOverrides {
     pending: true
     custom: true
   }
-  interface OptionsObject extends CustomProps { }
+  interface OptionsObject extends CustomProps {}
 }
 
 interface ISnackbarProps {

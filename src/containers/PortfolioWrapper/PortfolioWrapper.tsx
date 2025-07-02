@@ -27,7 +27,14 @@ import {
   prices,
   shouldDisable
 } from '@store/selectors/positions'
-import { address, balanceLoading, status, swapTokens, balance } from '@store/selectors/solanaWallet'
+import {
+  address,
+  balanceLoading,
+  status,
+  swapTokens,
+  balance,
+  overviewSwitch
+} from '@store/selectors/solanaWallet'
 import { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
@@ -37,12 +44,15 @@ import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import { actions as actionsStats } from '@store/reducers/stats'
 import { actions as lockerActions } from '@store/reducers/locker'
 import { actions as snackbarActions } from '@store/reducers/snackbars'
+import { actions as navigationActions } from '@store/reducers/navigation'
 import { Grid, useMediaQuery } from '@mui/material'
 import { theme } from '@static/theme'
 import useStyles from './styles'
 import Portfolio from '@components/Portfolio/Portfolio'
 import { VariantType } from 'notistack'
 import { IPositionItem } from '@store/consts/types'
+import { portfolioSearch } from '@store/selectors/navigation'
+import { ISearchToken } from '@common/FilterSearch/FilterSearch'
 
 const PortfolioWrapper = () => {
   const { classes } = useStyles()
@@ -61,9 +71,20 @@ const PortfolioWrapper = () => {
   const ethBalance = useSelector(balance)
   const disabledButton = useSelector(shouldDisable)
   const positionListAlignment = useSelector(positionListSwitcher)
-
+  const overviewSelectedTab = useSelector(overviewSwitch)
+  const searchParamsToken = useSelector(portfolioSearch)
   const navigate = useNavigate()
   const dispatch = useDispatch()
+
+  const setSearchTokensValue = (tokens: ISearchToken[]) => {
+    dispatch(
+      navigationActions.setSearch({
+        section: 'portfolioTokens',
+        type: 'filteredTokens',
+        filteredTokens: tokens
+      })
+    )
+  }
 
   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
 
@@ -340,6 +361,8 @@ const PortfolioWrapper = () => {
 
   return isConnected ? (
     <Portfolio
+      selectedFilters={searchParamsToken.filteredTokens}
+      setSelectedFilters={setSearchTokensValue}
       shouldDisable={disabledButton}
       tokensList={tokensList}
       isBalanceLoading={isBalanceLoading}
@@ -348,6 +371,7 @@ const PortfolioWrapper = () => {
       setLastPage={setLastPage}
       handleRefresh={handleRefresh}
       onAddPositionClick={() => {
+        dispatch(navigationActions.setNavigation({ address: location.pathname }))
         navigate(ROUTES.NEW_POSITION)
       }}
       currentNetwork={currentNetwork}
@@ -365,7 +389,6 @@ const PortfolioWrapper = () => {
       }}
       length={list.length}
       lockedLength={lockedList.length}
-      noInitialPositions={list.length === 0 && lockedList.length === 0}
       handleLockPosition={handleLockPosition}
       handleClosePosition={handleClosePosition}
       handleClaimFee={handleClaimFee}
@@ -373,6 +396,8 @@ const PortfolioWrapper = () => {
       setPositionListAlignment={(positionType: LiquidityPools) =>
         dispatch(actions.setPositionListSwitcher(positionType))
       }
+      overviewSelectedTab={overviewSelectedTab}
+      handleOverviewSwitch={option => dispatch(walletActions.setOverviewSwitch(option))}
     />
   ) : (
     <Grid className={classes.emptyContainer}>

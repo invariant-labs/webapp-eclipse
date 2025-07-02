@@ -20,13 +20,22 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
   container: {
     display: 'grid',
-    gridTemplateColumns: '5% 34% 17.5% auto 12.5% 60px',
+    gridTemplateColumns: '70px 34% 17.5% auto 12.5% 60px',
     padding: '18px 24px',
     whiteSpace: 'nowrap',
     height: 69,
     boxSizing: 'border-box',
+    [theme.breakpoints.down('md')]: {
+      gridTemplateColumns: '40px 30% 17.5% auto 12% 60px',
+      padding: ' 14px 20px ',
+      height: 69,
+
+      '& p': {
+        ...typography.caption1
+      }
+    },
     [theme.breakpoints.down('sm')]: {
-      gridTemplateColumns: '30% 22.5% 32.5% 15%',
+      gridTemplateColumns: '30px auto 22.5% max(25%, 90px) max(15%, 60px)',
       padding: '18px 8px',
       height: 69,
 
@@ -148,5 +157,17 @@ export const useStyles = makeStyles()((theme: Theme) => ({
         color: colors.invariant.lightHover
       }
     }
+  },
+  tokenIndexContainer: {
+    display: 'flex',
+    alignItems: 'center'
+  },
+
+  tokenIndex: {
+    width: 32
+  },
+
+  favouriteButton: {
+    cursor: 'pointer'
   }
 }))

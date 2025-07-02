@@ -21,11 +21,10 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
   container: {
     transition: 'all 0.3s',
     height: !showInfo ? 69 : 135,
-
     color: colors.white.main,
     display: 'grid',
     alignItems: 'center',
-    gridTemplateColumns: '30px auto 190px 120px 120px 140px 120px 150px',
+    gridTemplateColumns: '70px auto 120px 190px 140px 120px 120px 150px',
     padding: '20px 26px 14px 24px',
     whiteSpace: 'nowrap',
 
@@ -43,13 +42,13 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     },
 
     [theme.breakpoints.down(1160)]: {
-      gridTemplateColumns: 'auto 200px 100px 120px 140px 100px'
+      gridTemplateColumns: '40px auto 120px 190px 140px 120px 100px'
     },
 
     [theme.breakpoints.down('md')]: {
       height: !showInfo ? 69 : 104,
 
-      gridTemplateColumns: 'auto 100px 140px 80px 24px',
+      gridTemplateColumns: '40px auto 130px 130px 80px 24px',
       rowGap: 25,
       cursor: 'pointer'
     },
@@ -58,28 +57,35 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
       height: !showInfo ? 69 : 143,
 
       rowGap: 20,
-      gridTemplateColumns: '27% 15% 22% 29% 7%',
+      gridTemplateColumns: '30px auto 23% 22% 17% 24px',
       padding: '20px 4px 16px 8px',
 
       '& p': {
         justifyContent: 'flex-start',
         ...typography.caption1
       },
-      '& > p:nth-of-type(4)': {
+      '& > p:nth-of-type(5)': {
+        justifyContent: 'flex-end'
+      },
+      '& > div:nth-of-type(6)': {
         justifyContent: 'flex-end'
       }
     }
   },
 
   containerNoAPY: {
-    gridTemplateColumns: '30px auto 120px 120px 140px 120px 150px',
+    gridTemplateColumns: '70px auto 120px 140px 120px 120px 150px',
 
     [theme.breakpoints.down(1160)]: {
-      gridTemplateColumns: 'auto 100px 80px 120px'
+      gridTemplateColumns: '40px auto 120px 140px 120px 100px'
     },
 
     [theme.breakpoints.down('md')]: {
-      gridTemplateColumns: 'auto 100px 140px 80px 24px'
+      gridTemplateColumns: '40px auto 130px 130px 80px 24px'
+    },
+
+    [theme.breakpoints.down('sm')]: {
+      gridTemplateColumns: '30px auto 23% 22% 17% 24px'
     },
 
     cursor: 'pointer'
@@ -94,7 +100,7 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     '& p': {
       maxWidth: 'calc(100% - 80px);',
 
-      paddingRight: 12,
+      paddingRight: 4,
       overflow: 'hidden',
       whiteSpace: 'nowrap',
       textOverflow: 'ellipsis'
@@ -219,8 +225,14 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
   },
   airdropIcon: {
     marginRight: 15,
+    marginBottom: 6,
     [theme.breakpoints.down(1160)]: {
       marginRight: 25
+    },
+
+    [theme.breakpoints.down('sm')]: {
+      marginRight: 6,
+      marginBottom: 12
     }
   },
   iconContainer: {
@@ -270,10 +282,7 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     alignItems: 'center',
     gap: 4,
     fontSize: 30,
-    height: 32,
-    [theme.breakpoints.down(850)]: {
-      height: '20px'
-    }
+    height: 32
   },
   apy: {
     fontSize: 12,
@@ -337,5 +346,18 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     [theme.breakpoints.down('sm')]: {
       ...typography.caption1
     }
+  },
+
+  tokenIndexContainer: {
+    display: 'flex',
+    alignItems: 'center'
+  },
+
+  tokenIndex: {
+    width: 32
+  },
+
+  favouriteButton: {
+    cursor: 'pointer'
   }
 }))

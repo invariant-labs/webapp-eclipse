@@ -86,6 +86,7 @@ export const colors = {
     offWhite: '#FBFBFB',
     goldenYellow: '#FFD15C',
     normal: '#2A365C',
+    lightBlue: '#00D9FF',
     errorTransparent: 'rgba(251, 85, 95, 0.2)',
     greenLinearGradient: 'linear-gradient(180deg, #2EE09A 0%, #21A47C 100%)',
     greenLinearGradientOpacity:

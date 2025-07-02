@@ -4,10 +4,12 @@ import { poolsSaga } from './pool'
 import { swapSaga } from './swap'
 import { walletSaga } from './wallet'
 import { positionsSaga } from './positions'
-import { intervalStatsHandler } from './stats'
+import { statsSaga } from './stats'
 import { creatorSaga } from './creator'
 import { lockerSaga } from './locker'
 import { leaderboardSaga } from './leaderboard'
+import { stakeSaga } from './sBitz'
+import { sbitzStatsSaga } from './sbitz-stats'
 import { saleSaga } from './sale'
 
 export function* rootSaga(): Generator {
@@ -18,10 +20,12 @@ export function* rootSaga(): Generator {
       swapSaga,
       positionsSaga,
       poolsSaga,
-      intervalStatsHandler,
+      statsSaga,
       creatorSaga,
       leaderboardSaga,
       lockerSaga,
+      sbitzStatsSaga,
+      stakeSaga,
       saleSaga
     ].map(spawn)
   )

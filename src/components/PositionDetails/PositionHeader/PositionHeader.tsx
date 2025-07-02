@@ -1,20 +1,24 @@
 import { Box, Typography, useMediaQuery } from '@mui/material'
 import { useStyles } from './style'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
-import { airdropRainbowIcon, backArrowIcon, newTabIcon } from '@static/icons'
+import { airdropRainbowIcon, backIcon, newTabIcon } from '@static/icons'
 import { theme } from '@static/theme'
 import MarketIdLabel from '@components/NewPosition/MarketIdLabel/MarketIdLabel'
 import { VariantType } from 'notistack'
 import Refresher from '@common/Refresher/Refresher'
 import { REFRESHER_INTERVAL } from '@store/consts/static'
 import { useEffect, useMemo, useState } from 'react'
-import { ROUTES, truncateString } from '@utils/utils'
+import { ROUTES } from '@utils/utils'
 import { LockButton } from './LockButton'
 import { Button } from '@common/Button/Button'
 import { INavigatePosition } from '@store/consts/types'
 import { MobileNavigation } from '../Navigation/MobileNavigation/MobileNavigation'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { ReverseTokensIcon } from '@static/componentIcon/ReverseTokensIcon'
+import { actions } from '@store/reducers/navigation'
+import { useDispatch } from 'react-redux'
+import { ReactFitty } from 'react-fitty'
+import classNames from 'classnames'
 
 type Props = {
   tokenA: {
@@ -76,7 +80,8 @@ export const PositionHeader = ({
   const [refresherTime, setRefresherTime] = useState(REFRESHER_INTERVAL)
 
   const navigate = useNavigate()
-
+  const location = useLocation()
+  const dispatch = useDispatch()
   useEffect(() => {
     const timeout = setTimeout(() => {
       if (refresherTime > 0) {
@@ -190,8 +195,8 @@ export const PositionHeader = ({
     <Box className={classes.headerContainer}>
       <Box className={classes.navigation}>
         <Box className={cx(classes.wrapper, classes.backContainer)} onClick={() => onGoBackClick()}>
-          <img src={backArrowIcon} alt='Back arrow' />
-          <Typography className={classes.backText}>Back to portfolio</Typography>
+          <img src={backIcon} alt='Back arrow' />
+          <Typography className={classes.backText}>Back</Typography>
         </Box>
         {isMdDown && (
           <Box className={classes.navigationSide}>
@@ -205,6 +210,7 @@ export const PositionHeader = ({
               direction='left'
               onClick={() => {
                 if (previousPosition) {
+                  dispatch(actions.setNavigation({ address: location.pathname }))
                   navigate(ROUTES.getPositionRoute(previousPosition.id))
                 }
               }}
@@ -214,6 +220,7 @@ export const PositionHeader = ({
               direction='right'
               onClick={() => {
                 if (nextPosition) {
+                  dispatch(actions.setNavigation({ address: location.pathname }))
                   navigate(ROUTES.getPositionRoute(nextPosition.id))
                 }
               }}
@@ -245,7 +252,7 @@ export const PositionHeader = ({
       )}
       <Box className={classes.container}>
         <Box className={classes.upperContainer}>
-          <Box className={classes.wrapper}>
+          <Box className={classNames(classes.wrapper, classes.tickerWrapper)}>
             <Box className={classes.iconContainer}>
               <img className={classes.icon} src={tokenA.icon} alt={tokenA.ticker} />
               <TooltipHover title='Reverse tokens'>
@@ -256,16 +263,11 @@ export const PositionHeader = ({
               </TooltipHover>
               <img className={classes.icon} src={tokenB.icon} alt={tokenB.ticker} />
             </Box>
-            <TooltipHover
-              title={
-                tokenA.ticker.length > 4 || tokenB.ticker.length > 4
-                  ? tokenA.ticker + ' - ' + tokenB.ticker
-                  : ''
-              }>
-              <Typography className={classes.tickerContainer}>
-                {truncateString(tokenA.ticker, 3)} - {truncateString(tokenB.ticker, 3)}
+            <Box className={classes.tickersContainer}>
+              <Typography className={classes.tickerContainer} component={ReactFitty} maxSize={24}>
+                {tokenA.ticker} - {tokenB.ticker}
               </Typography>
-            </TooltipHover>
+            </Box>
             <TooltipHover title={tooltipText}>
               <img
                 className={cx(classes.airdropIcon, {

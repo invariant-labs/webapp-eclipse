@@ -95,6 +95,7 @@ const SinglePositionInfo: React.FC<IProp> = ({
           points24={points24}
           arePointsDistributed={arePointsDistributed}
           isLoading={showPositionLoader}
+          showPoolDetailsLoader={showPoolDetailsLoader}
           isLocked={isLocked}
         />
         <Separator size='100%' isHorizontal color={colors.invariant.light} />

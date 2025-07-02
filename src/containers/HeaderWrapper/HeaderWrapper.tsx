@@ -11,6 +11,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { actions as saleActions } from '@store/reducers/sale'
 import { actions as leaderboardActions } from '@store/reducers/leaderboard'
+import { actions as navigationActions } from '@store/reducers/navigation'
 import { Chain, WalletType } from '@store/consts/types'
 import { RpcErrorModal } from '@components/RpcErrorModal/RpcErrorModal'
 import { ThankYouModal } from '@components/Modals/ThankYouModal/ThankYouModal'
@@ -225,6 +226,7 @@ export const HeaderWrapper: React.FC = () => {
             }
 
             if (location.pathname.startsWith(ROUTES.NEW_POSITION)) {
+              dispatch(navigationActions.setNavigation({ address: location.pathname }))
               navigate(ROUTES.NEW_POSITION)
             }
 

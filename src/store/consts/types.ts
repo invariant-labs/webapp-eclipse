@@ -130,6 +130,7 @@ export enum Chain {
   Solana = 'Solana',
   AlephZero = 'Aleph Zero',
   Eclipse = 'Eclipse',
+  Sonic = 'Sonic',
   Vara = 'Vara'
 }
 
@@ -295,4 +296,19 @@ export interface INavigatePosition {
   tokenYIcon: string
   fee: number
   id: string
+}
+export interface TokenSerialized {
+  symbol: string
+  address: string
+  decimals: number
+  name: string
+  logoURI: string
+  coingeckoId?: string
+  isUnknown?: boolean
+  tokenProgram?: string
+}
+
+export enum StakeSwitch {
+  Stake = 'Stake',
+  Unstake = 'Unstake'
 }

@@ -13,9 +13,12 @@ import {
   WETH_TEST
 } from '@store/consts/static'
 import { InputPagination } from '@common/Pagination/InputPagination/InputPagination'
-import NotFoundPlaceholder from '../NotFoundPlaceholder/NotFoundPlaceholder'
 import { VariantType } from 'notistack'
 import { Keypair } from '@solana/web3.js'
+import { useDispatch, useSelector } from 'react-redux'
+import { tokenSearch } from '@store/selectors/navigation'
+import { actions } from '@store/reducers/navigation'
+import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
 
 export interface ITokensListData {
   icon: string
@@ -25,6 +28,7 @@ export interface ITokensListData {
   volume: number
   TVL: number
   address: string
+  isFavourite: boolean
   isUnknown: boolean
 }
 
@@ -35,6 +39,7 @@ export interface ITokensList {
   copyAddressHandler: (message: string, variant: VariantType) => void
   isLoading: boolean
   interval: Intervals
+  switchFavouriteTokens: (tokenAddress: string) => void
 }
 
 const tokens = [BTC_TEST, USDC_TEST, WETH_TEST]
@@ -48,7 +53,8 @@ const generateMockData = () => {
     volume: Math.random() * 10000,
     TVL: Math.random() * 10000,
     address: Keypair.generate().publicKey.toString(),
-    isUnknown: false
+    isUnknown: false,
+    isFavourite: false
   }))
 }
 
@@ -58,12 +64,19 @@ const TokensList: React.FC<ITokensList> = ({
   network,
   copyAddressHandler,
   isLoading,
-  interval
+  interval,
+  switchFavouriteTokens
 }) => {
   const [initialDataLength, setInitialDataLength] = useState(initialLength)
   const { classes, cx } = useStyles()
-  const [page, setPage] = useState(1)
-  const [sortType, setSortType] = React.useState(SortTypeTokenList.VOLUME_DESC)
+  const dispatch = useDispatch()
+  const searchParams = useSelector(tokenSearch)
+  const page = searchParams.pageNumber
+  const [sortType, setSortType] = React.useState(searchParams.sortType)
+
+  useEffect(() => {
+    dispatch(actions.setSearch({ section: 'statsTokens', type: 'sortType', sortType }))
+  }, [sortType])
 
   const isXsDown = useMediaQuery(theme.breakpoints.down('xs'))
 
@@ -107,8 +120,14 @@ const TokensList: React.FC<ITokensList> = ({
     setInitialDataLength(initialLength)
   }, [initialLength])
 
-  const handleChangePagination = (page: number): void => {
-    setPage(page)
+  const handleChangePagination = (newPage: number) => {
+    dispatch(
+      actions.setSearch({
+        section: 'statsTokens',
+        type: 'pageNumber',
+        pageNumber: newPage
+      })
+    )
   }
 
   const getEmptyRowsCount = () => {
@@ -142,10 +161,6 @@ const TokensList: React.FC<ITokensList> = ({
     [initialDataLength, isCenterAligment]
   )
 
-  useEffect(() => {
-    setPage(1)
-  }, [data, pages])
-
   return (
     <Grid
       container
@@ -178,6 +193,8 @@ const TokensList: React.FC<ITokensList> = ({
                   network={network}
                   copyAddressHandler={copyAddressHandler}
                   interval={interval}
+                  isFavourite={token.isFavourite}
+                  switchFavouriteTokens={switchFavouriteTokens}
                 />
               )
             })}
@@ -196,7 +213,13 @@ const TokensList: React.FC<ITokensList> = ({
               ))}
           </>
         ) : (
-          <NotFoundPlaceholder title='No tokens found...' isStats />
+          <EmptyPlaceholder
+            height={initialDataLength < ITEMS_PER_PAGE ? initialDataLength * 69 : 688}
+            newVersion
+            mainTitle={`You don't have any favourite tokens yet...`}
+            desc={'You can add them by clicking the star icon next to the token!'}
+            withButton={false}
+          />
         )}
         <Grid
           className={classes.pagination}
@@ -206,7 +229,7 @@ const TokensList: React.FC<ITokensList> = ({
           {pages > 0 && (
             <InputPagination
               pages={pages}
-              defaultPage={1}
+              defaultPage={page}
               handleChangePage={handleChangePagination}
               variant='center'
               page={page}

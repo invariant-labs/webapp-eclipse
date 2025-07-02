@@ -17,9 +17,10 @@ export const BlurOverlay: React.FC<IBlurOverlayProps> = ({ isConnected }) => {
             transform: 'translate(-50%,-50%)',
             top: '50%',
             left: '50%',
-            backdropFilter: 'blur(2px)',
             zIndex: '2',
-            padding: 4
+            padding: 4,
+            backdropFilter: 'blur(2px)',
+            WebkitBackdropFilter: 'blur(2px)'
           }}
         />
       ) : null}

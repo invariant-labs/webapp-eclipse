@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import {
   airdropIcon,
   liquidityIcon,
+  lqStakingIcon,
   saleIcon,
   statsIcon,
   swapArrowsIcon,
@@ -39,31 +40,43 @@ export const FooterNavbar = () => {
       width: 26
     },
 
-    typeOfNetwork === NetworkType.Testnet
-      ? {
-        label: 'Creator',
-        icon: tokenCreatorIcon,
-        url: 'creator',
-        width: 33
-      }
-      : {
-        label: 'Points',
-        icon: airdropIcon,
-        url: 'points',
-        width: 26
-      },
+    ...(typeOfNetwork === NetworkType.Testnet
+      ? [
+          {
+            label: 'Creator',
+            icon: tokenCreatorIcon,
+            url: 'creator',
+            width: 33
+          }
+        ]
+      : [
+          {
+            label: 'Points',
+            icon: airdropIcon,
+            url: 'points',
+            width: 26
+          },
 
-    {
-      label: 'Sale',
-      icon: saleIcon,
-      url: 'sale',
-      width: 95
-    },
+          {
+            label: 'Sale',
+            icon: saleIcon,
+            url: 'sale',
+            width: 95
+          },
+          {
+            label: 'Stake',
+            icon: lqStakingIcon,
+            url: 'stake',
+            width: 30,
+            margin: 1
+          }
+        ]),
     {
       label: 'Stats',
       icon: statsIcon,
       url: 'statistics',
-      width: 30
+      width: 30,
+      margin: 3
     }
   ]
 
@@ -84,7 +97,8 @@ export const FooterNavbar = () => {
     portfolio: [/^portfolio\/*/, /^newPosition\/*/, /^position\/*/],
 
     ...(typeOfNetwork === NetworkType.Mainnet ? { leaderboard: [/^points\/*/] } : {}),
-    ...(typeOfNetwork === NetworkType.Testnet ? { creator: [/^creator\/*/] } : {})
+    ...(typeOfNetwork === NetworkType.Testnet ? { creator: [/^creator\/*/] } : {}),
+    ...(typeOfNetwork === NetworkType.Mainnet ? { stake: [/^stake\/*/] } : {})
   }
 
   const [display, setDisplay] = useState(true)
@@ -132,8 +146,14 @@ export const FooterNavbar = () => {
               width={link.width}
               style={
                 active
-                  ? { filter: 'brightness(0) saturate(100%) invert(100%)' }
-                  : { filter: 'brightness(0) saturate(100%) invert(45%)' }
+                  ? {
+                      filter: 'brightness(0) saturate(100%) invert(100%)',
+                      marginTop: link?.margin ? link.margin : 0
+                    }
+                  : {
+                      filter: 'brightness(0) saturate(100%) invert(45%)',
+                      marginTop: link?.margin ? link.margin : 0
+                    }
               }
               className={classes.navImg}
               alt={link.label}
