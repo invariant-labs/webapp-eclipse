@@ -5,9 +5,7 @@ import { useEffect, useState } from 'react'
 import {
   airdropIcon,
   liquidityIcon,
-  lqStakingIcon,
   moreIcon,
-  saleIcon,
   lqStakingIcon,
   saleIcon,
   statsIcon,

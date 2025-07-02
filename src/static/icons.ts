@@ -111,18 +111,14 @@ import starFill from './svg/star-fill.svg'
 import swapArrowIcon from './svg/swapArrow.svg'
 import moreIcon from './svg/moreIcon.svg'
 import lqStakingIcon from './svg/lqStakingIcon.svg'
-import saleIcon from './svg/saleIcon.svg'
-import lqStakingIcon from './svg/lqStakingIcon.svg'
 import virtualCardIcon from './svg/virtualCard.svg'
 import greenInfoIcon from './svg/greenInfo.svg'
 import swapArrowClean from './svg/swapArrowClean.svg'
 import saleIcon from './svg/saleIcon.svg'
 
 export {
-  saleIcon,
   lqStakingIcon,
   moreIcon,
-  lqStakingIcon,
   logoTitleIcon,
   logoShortIcon,
   arrowIcon,
