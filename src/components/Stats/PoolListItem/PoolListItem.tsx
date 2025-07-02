@@ -13,7 +13,8 @@ import {
   lockIcon,
   newTabBtnIcon,
   plusIcon,
-  unknownTokenIcon
+  unknownTokenIcon,
+  plusDisabled
 } from '@static/icons'
 import {
   disabledPools,
@@ -255,7 +256,12 @@ const PoolListItem: React.FC<IProps> = ({
         style={isDisabled ? { cursor: 'not-allowed' } : {}}
         className={classes.actionButton}
         onClick={handleOpenPosition}>
-        <img width={28} src={plusIcon} alt={'Open'} />
+        <img
+          width={28}
+          style={isDisabled ? { opacity: 0.6 } : {}}
+          src={isDisabled ? plusDisabled : plusIcon}
+          alt={'Open'}
+        />
       </button>
 
       <button
@@ -461,13 +467,19 @@ const PoolListItem: React.FC<IProps> = ({
                 </button>
               </TooltipHover>
 
-              <TooltipHover disabled={isDisabled} title='Add position'>
+              <TooltipHover title={isDisabled ? 'Pool disabled' : 'Add position'}>
                 <button
                   disabled={isDisabled}
                   style={isDisabled ? { cursor: 'not-allowed' } : {}}
                   className={classes.actionButton}
                   onClick={handleOpenPosition}>
-                  <img width={32} height={32} src={plusIcon} alt={'Open'} />
+                  <img
+                    width={32}
+                    height={32}
+                    style={isDisabled ? { opacity: 0.6 } : {}}
+                    src={isDisabled ? plusDisabled : plusIcon}
+                    alt={'Open'}
+                  />
                 </button>
               </TooltipHover>
 
