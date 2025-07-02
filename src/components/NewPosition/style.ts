@@ -175,7 +175,18 @@ const useStyles = makeStyles()(theme => {
       '&:hover': {
         filter: 'brightness(1.5)'
       }
-    }
+    },
+    switchWrapper: {
+      display: 'flex',
+      flexDirection: 'row',
+      gap: 4,
+      alignItems: 'center',
+      justifyContent: 'flex-end',
+      width: '100%'
+    },
+    switchTooltipWrapper: { display: 'flex', flexDirection: 'column', gap: 8 },
+    tooltipIconInfo: { width: 14, height: 14 },
+    switchTooltipParagraph: { ...typography.caption2 }
   }
 })
 
