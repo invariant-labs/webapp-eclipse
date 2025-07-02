@@ -59,6 +59,18 @@ export const FooterNavbar = () => {
       },
       isLink: true,
       width: 25
+    },
+    {
+      label: 'Stats',
+      icon: statsIcon,
+      url: 'statistics',
+      width: 20,
+      onClick: () => {
+        setIsMorePopupOpen(false)
+        setAnchorEl(null)
+        unblurContent()
+      },
+      isLink: true
     }
   ]
 
@@ -100,13 +112,7 @@ export const FooterNavbar = () => {
           width: 26,
           isLink: true
         },
-    {
-      label: 'Stats',
-      icon: statsIcon,
-      url: 'statistics',
-      width: 30,
-      isLink: true
-    },
+
     ...(typeOfNetwork === NetworkType.Mainnet
       ? [
           {
