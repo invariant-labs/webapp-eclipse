@@ -48,7 +48,7 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     [theme.breakpoints.down('md')]: {
       height: !showInfo ? 69 : 155,
 
-      gridTemplateColumns: '40px auto 130px 130px 80px 24px',
+      gridTemplateColumns: '30px auto 125px 130px 90px 15px',
       rowGap: 16,
       cursor: 'pointer'
     },
@@ -265,7 +265,10 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     marginRight: 3,
     borderRadius: '50%',
     ':last-of-type': {
-      marginRight: 8
+      marginRight: 8,
+      [theme.breakpoints.down(650)]: {
+        marginRight: 4
+      }
     },
     [theme.breakpoints.down('sm')]: {
       ':last-of-type': {
