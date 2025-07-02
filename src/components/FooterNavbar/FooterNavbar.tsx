@@ -36,18 +36,23 @@ export const FooterNavbar = () => {
   const [isMorePopupOpen, setIsMorePopupOpen] = useState(false)
 
   const moreOptions: INavLinks[] = [
-    {
-      label: 'Stake',
-      icon: lqStakingIcon,
-      url: 'stake',
-      onClick: () => {
-        setIsMorePopupOpen(false)
-        setAnchorEl(null)
-        unblurContent()
-      },
-      isLink: true,
-      width: 25
-    },
+    ...(typeOfNetwork === NetworkType.Mainnet
+      ? [
+          {
+            label: 'Stake',
+            icon: lqStakingIcon,
+            url: 'stake',
+            onClick: () => {
+              setIsMorePopupOpen(false)
+              setAnchorEl(null)
+              unblurContent()
+            },
+            isLink: true,
+            width: 25
+          }
+        ]
+      : []),
+
     {
       label: 'Presale',
       icon: saleIcon,
@@ -113,21 +118,17 @@ export const FooterNavbar = () => {
           isLink: true
         },
 
-    ...(typeOfNetwork === NetworkType.Mainnet
-      ? [
-          {
-            label: 'More',
-            icon: moreIcon,
-            width: 25,
-            isLink: false,
-            onClick: (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
-              setAnchorEl(e.currentTarget as HTMLButtonElement)
-              setIsMorePopupOpen(true)
-              blurContent()
-            }
-          }
-        ]
-      : [])
+    {
+      label: 'More',
+      icon: moreIcon,
+      width: 25,
+      isLink: false,
+      onClick: (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
+        setAnchorEl(e.currentTarget as HTMLButtonElement)
+        setIsMorePopupOpen(true)
+        blurContent()
+      }
+    }
   ]
 
   const location = useLocation()
