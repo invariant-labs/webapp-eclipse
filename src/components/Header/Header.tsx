@@ -147,7 +147,7 @@ export const Header: React.FC<IHeader> = ({
           item
           className={classes.routers}
           sx={{
-            display: { lg: 'block' },
+            display: { lg: 'flex' },
             [theme.breakpoints.down(1200)]: {
               display: 'none'
             }
