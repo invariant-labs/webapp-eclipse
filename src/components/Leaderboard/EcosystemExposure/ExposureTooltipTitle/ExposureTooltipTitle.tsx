@@ -37,17 +37,15 @@ export const ExposureTooltipTitle: React.FC<ExposureTooltipTitleProps> = ({
               <Grid className={classes.title}>
                 <Typography>{task.title}</Typography>
                 {index === 0 && (
-                  <>
-                    <Typography
-                      component='a'
-                      className={classes.link}
-                      href={link}
-                      target='_blank'
-                      rel='noopener noreferrer'>
-                      {id}
-                    </Typography>
+                  <Typography
+                    component='a'
+                    className={classes.link}
+                    href={link}
+                    target='_blank'
+                    rel='noopener noreferrer'>
+                    {id}
                     <img src={newTabIcon} className={classes.newTabIcon} />
-                  </>
+                  </Typography>
                 )}
                 <Grid className={classes.progressWrapper}>
                   <img

@@ -232,7 +232,7 @@ export const Swap: React.FC<ISwap> = ({
   const [hideUnknownTokens, setHideUnknownTokens] = React.useState<boolean>(
     initialHideUnknownTokensValue
   )
-  const [pointsForSwap, setPointsForSwap] = React.useState<BN>(new BN(0))
+  const [pointsForSwap, setPointsForSwap] = React.useState<BN | null>(null)
   const [simulateResult, setSimulateResult] = React.useState<{
     amountOut: BN
     poolIndex: number
@@ -286,12 +286,9 @@ export const Swap: React.FC<ISwap> = ({
     }
   }, [network])
 
-  const priceImpact = Math.pow(
-    Math.max(
-      +printBN(+simulationPath.firstPriceImpact, DECIMAL - 2),
-      +printBN(+simulationPath.secondPriceImpact, DECIMAL - 2)
-    ),
-    2
+  const priceImpact = Math.max(
+    +printBN(+simulationPath.firstPriceImpact, DECIMAL - 2),
+    +printBN(+simulationPath.secondPriceImpact, DECIMAL - 2)
   )
 
   const timeoutRef = useRef<number>(0)
@@ -357,7 +354,7 @@ export const Swap: React.FC<ISwap> = ({
       setIsSecondPairGivingPoints(false)
     }
 
-    setPointsForSwap(new BN(0))
+    setPointsForSwap(null)
 
     clearTimeout(urlUpdateTimeoutRef.current)
     urlUpdateTimeoutRef.current = setTimeout(() => {
@@ -390,22 +387,26 @@ export const Swap: React.FC<ISwap> = ({
         const firstFeed = feeds[simulationPath.tokenFrom?.assetAddress.toString() ?? '']
         const secondFeed = feeds[simulationPath.tokenBetween?.assetAddress.toString() ?? '']
 
-        const firstPoints = calculatePoints(
-          simulationPath.firstAmount ?? new BN(0),
-          simulationPath.tokenFrom?.decimals ?? 0,
-          simulationPath.firstPair.feeTier.fee ?? new BN(0),
-          firstFeed?.price ?? '0',
-          firstFeed?.priceDecimals ?? 0,
-          pointsPerUSD
-        )
-        const secondPoints = calculatePoints(
-          simulationPath.secondAmount ?? new BN(0),
-          simulationPath.tokenBetween?.decimals ?? 0,
-          simulationPath.secondPair.feeTier.fee ?? new BN(0),
-          secondFeed?.price ?? '0',
-          secondFeed?.priceDecimals ?? 0,
-          pointsPerUSD
-        )
+        const firstPoints = isFirstPairGivingPoints
+          ? calculatePoints(
+              simulationPath.firstAmount ?? new BN(0),
+              simulationPath.tokenFrom?.decimals ?? 0,
+              simulationPath.firstPair.feeTier.fee ?? new BN(0),
+              firstFeed?.price ?? '0',
+              firstFeed?.priceDecimals ?? 0,
+              pointsPerUSD
+            )
+          : new BN(0)
+        const secondPoints = isSecondPairGivingPoints
+          ? calculatePoints(
+              simulationPath.secondAmount ?? new BN(0),
+              simulationPath.tokenBetween?.decimals ?? 0,
+              simulationPath.secondPair.feeTier.fee ?? new BN(0),
+              secondFeed?.price ?? '0',
+              secondFeed?.priceDecimals ?? 0,
+              pointsPerUSD
+            )
+          : new BN(0)
         setPointsForSwap(firstPoints.add(secondPoints))
       } else {
         const feePercentage = pools[simulateResult.poolIndex ?? 0]?.fee ?? new BN(0)
@@ -1017,7 +1018,8 @@ export const Swap: React.FC<ISwap> = ({
       (inputRef === inputTarget.TO || inputRef === inputTarget.DEFAULT)) ||
     lockAnimation ||
     (getStateMessage() === 'Loading' &&
-      (inputRef === inputTarget.FROM || inputRef === inputTarget.DEFAULT))
+      (inputRef === inputTarget.FROM || inputRef === inputTarget.DEFAULT)) ||
+    pointsForSwap === null
 
   const oraclePriceDiffPercentage = useMemo(() => {
     if (!tokenFromPriceData || !tokenToPriceData) return 0
@@ -1043,17 +1045,40 @@ export const Swap: React.FC<ISwap> = ({
   const [errorVisible, setErrorVisible] = useState(false)
 
   useEffect(() => {
-    const shouldShow =
-      (priceImpact > 5 ||
-        tokens[tokenFromIndex ?? '']?.isUnknown ||
-        tokens[tokenToIndex ?? '']?.isUnknown ||
-        oraclePriceDiffPercentage >= 10) &&
+    const hasUnknown =
+      tokens[tokenFromIndex ?? '']?.isUnknown || tokens[tokenToIndex ?? '']?.isUnknown
+
+    const riskWarning =
+      (priceImpact > 5 || oraclePriceDiffPercentage >= 10) &&
       !priceToLoading &&
       !priceFromLoading &&
       !showBlur
-    const id = setTimeout(() => setErrorVisible(shouldShow), 150)
+
+    if (hasUnknown) {
+      setErrorVisible(true)
+      return
+    }
+    const id = setTimeout(() => setErrorVisible(riskWarning), 150)
     return () => clearTimeout(id)
-  }, [priceImpact, tokens, oraclePriceDiffPercentage, showBlur, priceToLoading, priceFromLoading])
+  }, [
+    priceImpact,
+    oraclePriceDiffPercentage,
+    priceFromLoading,
+    priceToLoading,
+    showBlur,
+    tokens,
+    tokenFromIndex,
+    tokenToIndex
+  ])
+
+  const unknownFrom = tokens[tokenFromIndex ?? '']?.isUnknown
+  const unknownTo = tokens[tokenToIndex ?? '']?.isUnknown
+  const hasUnknown = unknownFrom || unknownTo
+  const showOracle = oraclePriceDiffPercentage >= 10 && errorVisible
+  const showImpact = priceImpact > 5 && oraclePriceDiffPercentage < 10 && errorVisible
+
+  const warningsCount = [showOracle, showImpact, hasUnknown].filter(Boolean).length
+
   return (
     <Grid container className={classes.swapWrapper} alignItems='center'>
       {wrappedETHAccountExist && (
@@ -1340,7 +1365,9 @@ export const Swap: React.FC<ISwap> = ({
           </Box>
           <Box
             className={classes.unknownWarningContainer}
-            style={{ height: errorVisible ? '34px' : '0px' }}>
+            style={{
+              height: errorVisible ? `${warningsCount === 1 ? 34 : warningsCount * 46}px` : '0px'
+            }}>
             {oraclePriceDiffPercentage >= 10 && errorVisible && (
               <TooltipHover title='This swap price my differ from market price' top={100} fullSpan>
                 <Box className={classes.unknownWarning}>
@@ -1357,26 +1384,28 @@ export const Swap: React.FC<ISwap> = ({
                 </Box>
               </TooltipHover>
             )}
-            {tokens[tokenFromIndex ?? '']?.isUnknown && (
-              <TooltipHover
-                title={`${tokens[tokenFromIndex ?? ''].symbol} is unknown, make sure address is correct before trading`}
-                top={100}
-                fullSpan>
-                <Box className={classes.unknownWarning}>
-                  {tokens[tokenFromIndex ?? ''].symbol} is not verified
-                </Box>
-              </TooltipHover>
-            )}
-            {tokens[tokenToIndex ?? '']?.isUnknown && (
-              <TooltipHover
-                title={`${tokens[tokenToIndex ?? ''].symbol} is unknown, make sure address is correct before trading`}
-                top={100}
-                fullSpan>
-                <Box className={classes.unknownWarning}>
-                  {tokens[tokenToIndex ?? ''].symbol} is not verified
-                </Box>
-              </TooltipHover>
-            )}
+            <Grid width={1} gap={1} display='flex'>
+              {tokens[tokenFromIndex ?? '']?.isUnknown && (
+                <TooltipHover
+                  title={`${tokens[tokenFromIndex ?? ''].symbol} is unknown, make sure address is correct before trading`}
+                  top={100}
+                  fullSpan>
+                  <Box className={classes.unknownWarning}>
+                    {tokens[tokenFromIndex ?? ''].symbol} is not verified
+                  </Box>
+                </TooltipHover>
+              )}
+              {tokens[tokenToIndex ?? '']?.isUnknown && (
+                <TooltipHover
+                  title={`${tokens[tokenToIndex ?? ''].symbol} is unknown, make sure address is correct before trading`}
+                  top={100}
+                  fullSpan>
+                  <Box className={classes.unknownWarning}>
+                    {tokens[tokenToIndex ?? ''].symbol} is not verified
+                  </Box>
+                </TooltipHover>
+              )}
+            </Grid>
           </Box>
           <Box className={classes.mobileChangeWrapper}>
             <Box className={classes.transactionDetails}>

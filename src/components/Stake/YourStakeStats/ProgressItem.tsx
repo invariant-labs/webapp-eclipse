@@ -10,23 +10,21 @@ import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 interface IProgressItemProps {
   onModalOpen?: (open: boolean) => void
   label: string | React.ReactNode
-  bgImage: string
   value: string | number
   tooltip?: React.ReactNode
   isLoading?: boolean
   withButton?: boolean
-  isConnected: boolean
+  bgImage?: string
 }
 
 export const ProgressItem: React.FC<IProgressItemProps> = ({
   label,
   value,
   tooltip,
-  bgImage,
   withButton = false,
   isLoading = false,
-  isConnected,
-  onModalOpen
+  onModalOpen,
+  bgImage
 }) => {
   const { classes } = useStyles({ bgImage })
   const isMobile = useMediaQuery(theme.breakpoints.down(500))
@@ -41,7 +39,7 @@ export const ProgressItem: React.FC<IProgressItemProps> = ({
           </TooltipHover>
         )}
       </Grid>
-      {isLoading && isConnected ? (
+      {isLoading ? (
         <Skeleton variant='rounded' animation='wave' className={classes.blur} />
       ) : isMobile && withButton ? (
         <Box className={classes.withButtonWrapper}>

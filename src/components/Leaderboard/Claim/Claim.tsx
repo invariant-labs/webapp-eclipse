@@ -67,7 +67,7 @@ export const Claim: React.FC<ClaimProps> = ({
                     </Button>
                   ) : (
                     <ChangeWalletButton
-                      name={isSm ? 'Connect' : 'Connect Wallet'}
+                      name={isSm ? 'Connect' : 'Connect wallet'}
                       onConnect={onConnectWallet}
                       connected={false}
                       onDisconnect={() => {}}

@@ -1,10 +1,17 @@
 import { colors, theme, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
-const useStyles = makeStyles<{ bgImage?: string }>()((_theme, { bgImage }) => {
+const useStyles = makeStyles<{ bgImage?: string }>()((_theme, params = {}) => {
+  const { bgImage = '' } = params
+
   return {
     mainWrapper: {
-      maxWidth: 605,
+      maxWidth: 305,
+      position: 'relative',
+      [theme.breakpoints.down('md')]: {
+        maxWidth: '100%',
+        marginBottom: '16px'
+      },
       width: '100%',
       [theme.breakpoints.down('sm')]: {
         maxWidth: '100%'
@@ -35,36 +42,22 @@ const useStyles = makeStyles<{ bgImage?: string }>()((_theme, { bgImage }) => {
     },
     tooltipTitle: { '& p': { ...typography.body2, color: colors.invariant.textGrey } },
     pointsContainer: {
-      display: 'grid',
-      gridTemplateColumns: '1fr auto 1fr',
+      display: 'flex',
+      flexDirection: 'column',
       width: '100%',
-      gap: '24px',
-
-      [theme.breakpoints.down(500)]: {
-        display: 'flex',
-        flexDirection: 'column'
-      }
+      gap: '24px'
     },
     mobileWrapper: {
       display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
       gap: '8px'
     },
     pointsColumn: {
       display: 'flex',
       flexDirection: 'column',
       width: '100%',
-      [theme.breakpoints.up(500)]: {
-        '& > *:nth-of-type(odd)': {
-          borderBottom: `1px solid ${colors.invariant.light}`
-        },
-        '& > *:nth-of-type(even)': {
-          borderBottom: 'none'
-        }
-      },
-      [theme.breakpoints.down(500)]: {
-        gap: '24px',
-        borderBottom: 'none'
-      }
+      gap: '24px'
     },
     divider: {
       background: colors.invariant.light,
@@ -94,26 +87,27 @@ const useStyles = makeStyles<{ bgImage?: string }>()((_theme, { bgImage }) => {
       position: 'relative',
       gap: '8px',
       alignItems: 'center',
-      padding: '16px 24px',
+      padding: '24px',
       display: 'flex',
 
       flexDirection: 'column',
       borderRadius: '14px',
       width: '100%',
-      height: '239px',
+      height: 441,
       border: '1px solid #EF84F540',
       justifyContent: 'center',
       background: '#111931',
       [theme.breakpoints.down(500)]: {
         height: 'auto',
-        padding: '16px 0px',
+        border: 'none',
         background: 'transparent',
-        border: 'none'
+        padding: '16px 0px 24px 0px'
       }
     },
     valueWrapper: {
       display: 'flex',
       alignItems: 'center',
+      minHeight: '32px',
       gap: '8px'
     },
     withButtonWrapper: {
@@ -129,8 +123,32 @@ const useStyles = makeStyles<{ bgImage?: string }>()((_theme, { bgImage }) => {
       gap: '24px'
     },
 
-    headerBigText: { ...typography.heading1, color: colors.invariant.text },
-    headerSmallText: { ...typography.body1, color: colors.invariant.textGrey },
+    headerBigText: {
+      ...typography.heading2,
+      color: colors.invariant.text,
+      [theme.breakpoints.down(500)]: {
+        marginTop: 0
+      },
+      marginTop: '30px'
+    },
+    portfolioHeader: {
+      position: 'absolute',
+      top: '-42px',
+      left: 0,
+      [theme.breakpoints.down('md')]: {
+        position: 'static',
+        marginBottom: '16px',
+        display: 'none'
+      },
+      ...typography.heading4,
+      whiteSpace: 'nowrap',
+      color: colors.invariant.text,
+      margin: 0
+    },
+    headerSmallText: {
+      ...typography.body1,
+      color: colors.invariant.textGrey
+    },
     tooltipContentPoints: { ...typography.body2, color: colors.invariant.textGrey },
     leaderboardHeaderSectionTitle: { ...typography.heading3, color: colors.white.main },
     tooltip: {
@@ -153,7 +171,8 @@ const useStyles = makeStyles<{ bgImage?: string }>()((_theme, { bgImage }) => {
     },
     blur: {
       width: 120,
-      height: 36,
+      minHeight: 30,
+      marginTop: '16px',
       borderRadius: 16
     },
     button: {
@@ -178,20 +197,23 @@ const useStyles = makeStyles<{ bgImage?: string }>()((_theme, { bgImage }) => {
       display: 'flex',
       flexDirection: 'column',
       gap: '8px',
-      alignItems: 'flex-start',
-      justifyContent: 'flex-start',
+      [theme.breakpoints.down('md')]: {
+        alignItems: 'center'
+      },
       [theme.breakpoints.down(500)]: {
         alignItems: 'center',
 
         border: '10px solid transparent',
-        borderImage: `url(${bgImage}) 20 fill round`,
+        borderImage: bgImage ? `url(${bgImage}) 20 fill round` : 'none',
 
         backgroundRepeat: 'no-repeat',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         height: 100,
-        backgroundImage: `url(${bgImage})`
-      }
+        backgroundImage: bgImage ? `url(${bgImage})` : 'none'
+      },
+      alignItems: 'flex-start',
+      justifyContent: 'flex-start'
     },
     tooltipLink: {
       color: colors.invariant.green,
