@@ -358,7 +358,7 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
         })
       )
     }
-  }, [tokenFrom, tokenTo])
+  }, [tokenFrom, tokenTo, dispatch])
 
   const swapAccounts = useSelector(accounts)
   const swapIsLoading = useSelector(isLoading)

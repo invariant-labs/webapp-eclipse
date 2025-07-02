@@ -227,6 +227,7 @@ export const Swap: React.FC<ISwap> = ({
         )
       : false
   )
+  const [pendingSimulation, setPendingSimulation] = useState(false)
   const [rateLoading, setRateLoading] = React.useState<boolean>(false)
   const [refresherTime, setRefresherTime] = React.useState<number>(REFRESHER_INTERVAL)
   const [hideUnknownTokens, setHideUnknownTokens] = React.useState<boolean>(
@@ -492,11 +493,19 @@ export const Swap: React.FC<ISwap> = ({
 
   useEffect(() => {
     if (progress === 'none' && !(amountFrom === '' && amountTo === '')) {
-      simulateWithTimeout()
+      if (swapIsLoading) {
+        setPendingSimulation(true)
+      } else {
+        simulateWithTimeout()
+      }
     }
-  }, [progress])
+  }, [progress, swapIsLoading])
 
   const simulateWithTimeout = () => {
+    if (pendingSimulation || swapIsLoading) {
+      return
+    }
+
     setThrottle(true)
 
     clearTimeout(timeoutRef.current)
@@ -507,6 +516,13 @@ export const Swap: React.FC<ISwap> = ({
     }, 500)
     timeoutRef.current = timeout as unknown as number
   }
+
+  useEffect(() => {
+    if (!swapIsLoading && pendingSimulation) {
+      setPendingSimulation(false)
+      simulateWithTimeout()
+    }
+  }, [swapIsLoading, pendingSimulation])
 
   useEffect(() => {
     if (tokenFromIndex !== null && tokenToIndex !== null) {
@@ -523,8 +539,10 @@ export const Swap: React.FC<ISwap> = ({
       }
     }
 
-    setAddBlur(false)
-  }, [bestAmount, simulateResult, simulateWithHopResult])
+    if (!pendingSimulation && !swapIsLoading) {
+      setAddBlur(false)
+    }
+  }, [bestAmount, simulateResult, simulateWithHopResult, pendingSimulation, swapIsLoading])
 
   useEffect(() => {
     updateEstimatedAmount()
@@ -570,62 +588,73 @@ export const Swap: React.FC<ISwap> = ({
   }
 
   const setSimulateAmount = async () => {
-    setAddBlur(true)
+    if (!swapIsLoading) {
+      setAddBlur(true)
+    }
+
     if (tokenFromIndex !== null && tokenToIndex !== null && !swapIsLoading) {
-      if (inputRef === inputTarget.FROM) {
-        const [simulateValue, simulateWithHopValue] = await Promise.all([
-          handleSimulate(
-            pools,
-            poolTicks,
-            tickmap,
-            fromFee(new BN(Number(+slippTolerance * 1000))),
-            tokens[tokenFromIndex].assetAddress,
-            tokens[tokenToIndex].assetAddress,
-            convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals),
-            true
-          ),
-          handleSimulateWithHop(
-            market,
-            tokens[tokenFromIndex].assetAddress,
-            tokens[tokenToIndex].assetAddress,
-            convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals),
-            true,
-            swapAccounts
-          )
-        ])
-
-        updateSimulation(simulateValue, simulateWithHopValue)
-        setAddBlur(false)
-        setSimulateResult(simulateValue)
-        setSimulateWithHopResult(simulateWithHopValue)
-      } else if (inputRef === inputTarget.TO) {
-        const [simulateValue, simulateWithHopValue] = await Promise.all([
-          handleSimulate(
-            pools,
-            poolTicks,
-            tickmap,
-            fromFee(new BN(Number(+slippTolerance * 1000))),
-            tokens[tokenFromIndex].assetAddress,
-            tokens[tokenToIndex].assetAddress,
-            convertBalanceToBN(amountTo, tokens[tokenToIndex].decimals),
-            false
-          ),
-          handleSimulateWithHop(
-            market,
-            tokens[tokenFromIndex].assetAddress,
-            tokens[tokenToIndex].assetAddress,
-            convertBalanceToBN(amountTo, tokens[tokenToIndex].decimals),
-            false,
-            swapAccounts
-          )
-        ])
-
-        updateSimulation(simulateValue, simulateWithHopValue)
-        setAddBlur(false)
-        setSimulateResult(simulateValue)
-        setSimulateWithHopResult(simulateWithHopValue)
+      if (!swapAccounts || Object.keys(swapAccounts.pools || {}).length === 0) {
+        return
       }
-    } else {
+
+      try {
+        if (inputRef === inputTarget.FROM) {
+          const [simulateValue, simulateWithHopValue] = await Promise.all([
+            handleSimulate(
+              pools,
+              poolTicks,
+              tickmap,
+              fromFee(new BN(Number(+slippTolerance * 1000))),
+              tokens[tokenFromIndex].assetAddress,
+              tokens[tokenToIndex].assetAddress,
+              convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals),
+              true
+            ),
+            handleSimulateWithHop(
+              market,
+              tokens[tokenFromIndex].assetAddress,
+              tokens[tokenToIndex].assetAddress,
+              convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals),
+              true,
+              swapAccounts
+            )
+          ])
+
+          updateSimulation(simulateValue, simulateWithHopValue)
+          setSimulateResult(simulateValue)
+          setSimulateWithHopResult(simulateWithHopValue)
+        } else if (inputRef === inputTarget.TO) {
+          const [simulateValue, simulateWithHopValue] = await Promise.all([
+            handleSimulate(
+              pools,
+              poolTicks,
+              tickmap,
+              fromFee(new BN(Number(+slippTolerance * 1000))),
+              tokens[tokenFromIndex].assetAddress,
+              tokens[tokenToIndex].assetAddress,
+              convertBalanceToBN(amountTo, tokens[tokenToIndex].decimals),
+              false
+            ),
+            handleSimulateWithHop(
+              market,
+              tokens[tokenFromIndex].assetAddress,
+              tokens[tokenToIndex].assetAddress,
+              convertBalanceToBN(amountTo, tokens[tokenToIndex].decimals),
+              false,
+              swapAccounts
+            )
+          ])
+
+          updateSimulation(simulateValue, simulateWithHopValue)
+          setSimulateResult(simulateValue)
+          setSimulateWithHopResult(simulateWithHopValue)
+        }
+      } catch (error) {
+        console.error('Simulation failed:', error)
+      }
+    }
+
+    if (!pendingSimulation && !swapIsLoading) {
       setAddBlur(false)
     }
   }
@@ -959,12 +988,13 @@ export const Swap: React.FC<ISwap> = ({
 
   useEffect(() => {
     if (wasIsFetchingNewPoolRun && wasSwapIsLoadingRun && !isFetchingNewPool && !swapIsLoading) {
-      void setSimulateAmount()
       setWasIsFetchingNewPoolRun(false)
       setWasSwapIsLoadingRun(false)
       if (isReversingTokens) {
         setIsReversingTokens(false)
       }
+
+      void setSimulateAmount()
     }
   }, [wasIsFetchingNewPoolRun, wasSwapIsLoadingRun, isFetchingNewPool, swapIsLoading])
 
@@ -1032,15 +1062,19 @@ export const Swap: React.FC<ISwap> = ({
     return Math.abs((tokenFromValue - tokenToValue) / tokenFromValue) * 100
   }, [tokenFromPriceData, tokenToPriceData, amountFrom, amountTo])
 
-  const showBlur =
-    (inputRef === inputTarget.FROM && addBlur) ||
-    lockAnimation ||
-    (getStateMessage() === 'Loading' &&
-      (inputRef === inputTarget.FROM || inputRef === inputTarget.DEFAULT)) ||
-    (inputRef === inputTarget.TO && addBlur) ||
-    lockAnimation ||
-    (getStateMessage() === 'Loading' &&
-      (inputRef === inputTarget.TO || inputRef === inputTarget.DEFAULT))
+  const showBlur = useMemo(() => {
+    return (
+      (inputRef === inputTarget.FROM && addBlur) ||
+      lockAnimation ||
+      pendingSimulation ||
+      swapIsLoading ||
+      (getStateMessage() === 'Loading' &&
+        (inputRef === inputTarget.FROM || inputRef === inputTarget.DEFAULT)) ||
+      (inputRef === inputTarget.TO && addBlur) ||
+      (getStateMessage() === 'Loading' &&
+        (inputRef === inputTarget.TO || inputRef === inputTarget.DEFAULT))
+    )
+  }, [inputRef, addBlur, lockAnimation, pendingSimulation, swapIsLoading, getStateMessage])
 
   const [errorVisible, setErrorVisible] = useState(false)
 
@@ -1236,6 +1270,8 @@ export const Swap: React.FC<ISwap> = ({
               showBlur={
                 (inputRef === inputTarget.TO && addBlur) ||
                 lockAnimation ||
+                (pendingSimulation && inputRef !== inputTarget.FROM) ||
+                (swapIsLoading && inputRef !== inputTarget.FROM) ||
                 (getStateMessage() === 'Loading' &&
                   (inputRef === inputTarget.TO || inputRef === inputTarget.DEFAULT))
               }
@@ -1355,6 +1391,8 @@ export const Swap: React.FC<ISwap> = ({
               showBlur={
                 (inputRef === inputTarget.FROM && addBlur) ||
                 lockAnimation ||
+                (pendingSimulation && inputRef !== inputTarget.TO) ||
+                (swapIsLoading && inputRef !== inputTarget.TO) ||
                 (getStateMessage() === 'Loading' &&
                   (inputRef === inputTarget.FROM || inputRef === inputTarget.DEFAULT))
               }
