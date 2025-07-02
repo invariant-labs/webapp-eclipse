@@ -405,8 +405,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   unverfiedWrapper: {
     width: '100%',
     gap: 8,
-    display: 'flex',
-    flexDirection: 'column'
+    display: 'flex'
   },
   unknownWarning: {
     display: 'flex',
@@ -416,7 +415,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     alignItems: 'center',
     gap: 8,
     border: `1px solid ${alpha(colors.invariant.yellow, 0.3)}`,
-    ...typography.caption2,
+    ...typography.caption1,
     color: colors.invariant.yellow,
     padding: 8,
     paddingInline: 8,

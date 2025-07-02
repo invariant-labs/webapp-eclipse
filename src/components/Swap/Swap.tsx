@@ -233,7 +233,8 @@ export const Swap: React.FC<ISwap> = ({
   const [hideUnknownTokens, setHideUnknownTokens] = React.useState<boolean>(
     initialHideUnknownTokensValue
   )
-  const txDown = useMediaQuery(theme.breakpoints.down(460))
+  const txDown = useMediaQuery(theme.breakpoints.down(483))
+  const txDown2 = useMediaQuery(theme.breakpoints.down(360))
 
   const [pointsForSwap, setPointsForSwap] = React.useState<BN>(new BN(0))
   const [simulateResult, setSimulateResult] = React.useState<{
@@ -1071,10 +1072,11 @@ export const Swap: React.FC<ISwap> = ({
 
   const unknownFrom = tokens[tokenFromIndex ?? '']?.isUnknown
   const unknownTo = tokens[tokenToIndex ?? '']?.isUnknown
+  const isUnkown = unknownFrom || unknownTo
   const showOracle = oraclePriceDiffPercentage >= 10 && errorVisible
   const showImpact = priceImpact > 5 && oraclePriceDiffPercentage < 10 && errorVisible
 
-  const warningsCount = [showOracle, showImpact, unknownFrom, unknownTo].filter(Boolean).length
+  const warningsCount = [showOracle, showImpact, isUnkown].filter(Boolean).length
 
   return (
     <Grid container className={classes.swapWrapper} alignItems='center'>
@@ -1370,8 +1372,8 @@ export const Swap: React.FC<ISwap> = ({
             {oraclePriceDiffPercentage >= 10 && errorVisible && (
               <TooltipHover title='This swap price my differ from market price' top={100} fullSpan>
                 <Box className={classes.unknownWarning}>
-                  Potential loss resulting from a {oraclePriceDiffPercentage.toFixed(2)}% price
-                  difference.
+                  Potential loss {!txDown2 && 'resulting'} from a{' '}
+                  {oraclePriceDiffPercentage.toFixed(2)}% price difference.
                 </Box>
               </TooltipHover>
             )}
