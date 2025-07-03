@@ -29,7 +29,7 @@ const ApyTooltip: React.FC<IApyTooltip> = ({ stakeDataLoading, sBitzBitzMonthlyA
   )
 
   if (stakeDataLoading) {
-    return <Skeleton width={180} height={24} />
+    return <Skeleton width={isSm ? 175 : 317} className={classes.skeleton} variant='rounded' />
   }
 
   return (
@@ -57,14 +57,10 @@ const ApyTooltip: React.FC<IApyTooltip> = ({ stakeDataLoading, sBitzBitzMonthlyA
         </Box>
       }
       increasePadding>
-      <Stack direction='row' spacing={1} className={classes.row}>
+      <Stack direction='row' className={classes.row}>
         {!isSm && (
           <>
             <Box className={classes.valueWrapper}>
-              <Typography className={classes.greenValue} textAlign='center'>
-                {' '}
-                monthly
-              </Typography>
               <Box className={classes.value}>
                 <img src={bitzIcon} width={12} height={12} />
                 <Typography className={classes.crossedValue}>
@@ -73,26 +69,22 @@ const ApyTooltip: React.FC<IApyTooltip> = ({ stakeDataLoading, sBitzBitzMonthlyA
                     maximumFractionDigits: 2
                   })}
                 </Typography>
+                <Typography className={classes.arrow}>→</Typography>
                 <img src={sBitzIcon} width={12} height={12} />
                 <Typography className={classes.greenValue}>
                   {sbitzMonthly.toLocaleString(undefined, {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2
                   })}
-                  %
+                  %/mo
                 </Typography>
               </Box>
             </Box>
-            <Separator size={'50%'} width={1} isHorizontal={false} color={colors.invariant.light} />
+            <Separator size={14} width={1} isHorizontal={false} color={colors.invariant.light} />
           </>
         )}
 
         <Box className={classes.valueWrapper}>
-          <Typography className={classes.greenValue} textAlign='center'>
-            {' '}
-            yearly
-          </Typography>
-
           <Box className={classes.value}>
             <img src={bitzIcon} width={12} height={12} />
             <Typography className={classes.crossedValue}>
@@ -101,13 +93,14 @@ const ApyTooltip: React.FC<IApyTooltip> = ({ stakeDataLoading, sBitzBitzMonthlyA
                 maximumFractionDigits: 2
               })}
             </Typography>
+            <Typography className={classes.arrow}>→</Typography>
             <img src={sBitzIcon} width={12} height={12} />
             <Typography className={classes.greenValue}>
               {sbitzAnnual.toLocaleString(undefined, {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
               })}
-              %
+              %/yr
             </Typography>
           </Box>
         </Box>
