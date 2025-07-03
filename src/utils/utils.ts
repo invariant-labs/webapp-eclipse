@@ -18,7 +18,7 @@ import {
   getTokenMetadata as fetchMetaData,
   unpackMint
 } from '@solana/spl-token'
-import { Connection, PublicKey } from '@solana/web3.js'
+import { Connection, ParsedInstruction, ParsedTransactionMeta, PublicKey } from '@solana/web3.js'
 import {
   Market,
   Tickmap,
@@ -119,6 +119,7 @@ import { publicKey } from '@metaplex-foundation/umi-public-keys'
 import { createUmi } from '@metaplex-foundation/umi-bundle-defaults'
 import { Umi } from '@metaplex-foundation/umi'
 import { StakingStatsResponse } from '@store/reducers/sbitz-stats'
+import { DEFAULT_FEE_TIER, STRATEGIES } from '@store/consts/userStrategies'
 
 export const transformBN = (amount: BN): string => {
   return (amount.div(new BN(1e2)).toNumber() / 1e4).toString()
@@ -2451,4 +2452,180 @@ export interface ITokenDecimalAndProgramID {
   address: PublicKey
   decimals: number
   programId: PublicKey
+}
+export const findStrategy = (
+  tokenAddress: string,
+  currentNetwork: NetworkType = NetworkType.Mainnet
+) => {
+  const poolTicker = addressToTicker(currentNetwork, tokenAddress)
+  let strategy = STRATEGIES.find(s => {
+    const tickerA = addressToTicker(currentNetwork, s.tokenAddressA)
+    const tickerB = s.tokenAddressB ? addressToTicker(currentNetwork, s.tokenAddressB) : undefined
+    return tickerA === poolTicker || tickerB === poolTicker
+  })
+  if (!strategy) {
+    strategy = {
+      tokenAddressA: tokenAddress,
+      feeTier: DEFAULT_FEE_TIER
+    }
+  }
+
+  return {
+    ...strategy,
+    tokenSymbolA: addressToTicker(currentNetwork, strategy.tokenAddressA),
+    tokenSymbolB: strategy.tokenAddressB
+      ? addressToTicker(currentNetwork, strategy.tokenAddressB)
+      : '-'
+  }
+}
+
+export enum SwapTokenType {
+  TokenIn,
+  TokenBetween,
+  TokenOut
+}
+
+export const getAmountFromSwapInstruction = (
+  meta: ParsedTransactionMeta,
+  marketProgramAuthority: string,
+  token: string,
+  type: SwapTokenType
+): number => {
+  if (!meta.innerInstructions) {
+    return 0
+  }
+
+  const innerInstruction =
+    meta.innerInstructions.find(
+      innerInstruction =>
+        !!innerInstruction.instructions.find(
+          instruction =>
+            (instruction as ParsedInstruction)?.parsed.type === 'transfer' ||
+            (instruction as ParsedInstruction)?.parsed.type === 'transferChecked'
+        )
+    ) ?? meta.innerInstructions[2]
+
+  let instruction: ParsedInstruction | undefined
+
+  if (innerInstruction.instructions.length === 2) {
+    instruction = innerInstruction.instructions.find(ix =>
+      type === SwapTokenType.TokenIn
+        ? (ix as ParsedInstruction).parsed.info.authority !== marketProgramAuthority
+        : (ix as ParsedInstruction).parsed.info.authority === marketProgramAuthority
+    ) as ParsedInstruction | undefined
+  } else {
+    instruction = innerInstruction.instructions.find(
+      ix => (ix as ParsedInstruction).parsed.info.mint === token
+    ) as ParsedInstruction | undefined
+
+    if (!instruction) {
+      let position = 0
+
+      switch (type) {
+        case SwapTokenType.TokenIn:
+          position = 0
+          break
+        case SwapTokenType.TokenBetween:
+          position = 1
+          break
+        case SwapTokenType.TokenOut:
+          position = 2
+          break
+      }
+
+      instruction = innerInstruction.instructions.filter(
+        instruction =>
+          (instruction as ParsedInstruction)?.parsed.type === 'transfer' ||
+          (instruction as ParsedInstruction)?.parsed.type === 'transferChecked'
+      )[position] as ParsedInstruction | undefined
+    }
+  }
+
+  return instruction?.parsed.info.amount || instruction?.parsed.info.tokenAmount.amount
+}
+
+export enum TokenType {
+  TokenX,
+  TokenY
+}
+
+export const getAmountFromInitPositionInstruction = (
+  meta: ParsedTransactionMeta,
+  type: TokenType
+): number => {
+  if (!meta.innerInstructions) {
+    return 0
+  }
+
+  const innerInstruction =
+    meta.innerInstructions.find(
+      innerInstruction =>
+        !!innerInstruction.instructions.find(
+          instruction =>
+            (instruction as ParsedInstruction)?.parsed.type === 'transfer' ||
+            (instruction as ParsedInstruction)?.parsed.type === 'transferChecked'
+        )
+    ) ?? meta.innerInstructions[2]
+
+  const instruction = innerInstruction.instructions.filter(
+    instruction =>
+      (instruction as ParsedInstruction)?.parsed.type === 'transfer' ||
+      (instruction as ParsedInstruction)?.parsed.type === 'transferChecked'
+  )[type === TokenType.TokenX ? 0 : 1] as ParsedInstruction | undefined
+
+  return instruction?.parsed.info.amount || instruction?.parsed.info.tokenAmount.amount
+}
+
+export const getAmountFromClaimFeeInstruction = (
+  meta: ParsedTransactionMeta,
+  type: TokenType
+): number => {
+  if (!meta.innerInstructions) {
+    return 0
+  }
+
+  const innerInstruction =
+    meta.innerInstructions.find(
+      innerInstruction =>
+        !!innerInstruction.instructions.find(
+          instruction =>
+            (instruction as ParsedInstruction)?.parsed.type === 'transfer' ||
+            (instruction as ParsedInstruction)?.parsed.type === 'transferChecked'
+        )
+    ) ?? meta.innerInstructions[0]
+
+  const instruction = innerInstruction.instructions.filter(
+    instruction =>
+      (instruction as ParsedInstruction)?.parsed.type === 'transfer' ||
+      (instruction as ParsedInstruction)?.parsed.type === 'transferChecked'
+  )[type === TokenType.TokenX ? 0 : 1] as ParsedInstruction | undefined
+
+  return instruction?.parsed.info.amount || instruction?.parsed.info.tokenAmount.amount
+}
+
+export const getAmountFromClosePositionInstruction = (
+  meta: ParsedTransactionMeta,
+  type: TokenType
+): number => {
+  if (!meta.innerInstructions) {
+    return 0
+  }
+
+  const innerInstruction =
+    meta.innerInstructions.find(
+      innerInstruction =>
+        !!innerInstruction.instructions.find(
+          instruction =>
+            (instruction as ParsedInstruction)?.parsed.type === 'transfer' ||
+            (instruction as ParsedInstruction)?.parsed.type === 'transferChecked'
+        )
+    ) ?? meta.innerInstructions[0]
+
+  const instruction = innerInstruction.instructions.filter(
+    instruction =>
+      (instruction as ParsedInstruction)?.parsed.type === 'transfer' ||
+      (instruction as ParsedInstruction)?.parsed.type === 'transferChecked'
+  )[type === TokenType.TokenX ? 0 : 1] as ParsedInstruction | undefined
+
+  return instruction?.parsed.info.amount || instruction?.parsed.info.tokenAmount.amount
 }

@@ -22,9 +22,7 @@ import { addressToTicker, initialXtoY, parseFeeToPathFee, ROUTES } from '@utils/
 import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useStyles } from './style'
-
-import { SwapToken } from '@store/selectors/solanaWallet'
-import { useProcessedTokens } from '@store/hooks/userOverview/useProcessedToken'
+import { ProcessedToken } from '@store/hooks/userOverview/useProcessedToken'
 import { Overview } from './Overview/Overview/Overview'
 import { YourWallet } from './Overview/YourWallet/YourWallet'
 import { VariantType } from 'notistack'
@@ -51,7 +49,6 @@ interface IProps {
   handleRefresh: () => void
   length: number
   lockedLength: number
-  noInitialPositions: boolean
   lockedData: IPositionItem[]
   currentNetwork: NetworkType
   handleLockPosition: (index: number) => void
@@ -59,15 +56,15 @@ interface IProps {
   handleClaimFee: (index: number, isLocked: boolean) => void
   handleSnackbar: (message: string, variant: VariantType) => void
   isBalanceLoading: boolean
-  tokensList: SwapToken[]
   shouldDisable: boolean
   positionListAlignment: LiquidityPools
   setPositionListAlignment: (val: LiquidityPools) => void
   overviewSelectedTab: OverviewSwitcher
   handleOverviewSwitch: (panel: OverviewSwitcher) => void
-
   setSelectedFilters: (token: ISearchToken[]) => void
   selectedFilters: ISearchToken[]
+  isProcesing: boolean
+  processedTokens: ProcessedToken[]
 }
 
 const Portfolio: React.FC<IProps> = ({
@@ -82,18 +79,18 @@ const Portfolio: React.FC<IProps> = ({
   showNoConnected = false,
   noConnectedBlockerProps,
   handleRefresh,
-  noInitialPositions,
   lockedData,
   currentNetwork,
   handleLockPosition,
   handleClosePosition,
   handleClaimFee,
-  tokensList,
   lockedLength,
   positionListAlignment,
   setPositionListAlignment,
   overviewSelectedTab,
-  handleOverviewSwitch
+  handleOverviewSwitch,
+  isProcesing,
+  processedTokens
 }) => {
   const { classes, cx } = useStyles()
 
@@ -104,11 +101,6 @@ const Portfolio: React.FC<IProps> = ({
   const isDownLg = useMediaQuery(theme.breakpoints.down('lg'))
   const isMb = useMediaQuery(theme.breakpoints.down('sm'))
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
-  const { processedTokens, isProcesing } = useProcessedTokens(
-    tokensList,
-    isBalanceLoading,
-    currentNetwork
-  )
 
   const setLiquidityPoolsAlignment = (val: LiquidityPools) => {
     setAlignment(val)
@@ -205,12 +197,13 @@ const Portfolio: React.FC<IProps> = ({
   )
 
   const hidePlus = useMediaQuery(theme.breakpoints.down(350))
-  const currentData = useMemo(() => {
+
+  const { currentData, noInitialPositions } = useMemo(() => {
     if (alignment === LiquidityPools.Standard) {
-      return data
+      return { currentData: data, noInitialPositions: length === 0 }
     }
-    return lockedData
-  }, [alignment, data, lockedData])
+    return { currentData: lockedData, noInitialPositions: lockedLength === 0 }
+  }, [alignment, data, lockedData, length, lockedLength])
 
   const filteredData = useMemo(() => {
     if (selectedFilters.length === 0) return currentData
@@ -539,7 +532,7 @@ const Portfolio: React.FC<IProps> = ({
                     </Grid>
                   </TooltipHover>
                   <Button scheme='pink' onClick={onAddPositionClick}>
-                    <span className={classes.buttonText}>+ Add Position</span>
+                    <span className={classes.buttonText}>+ Add position</span>
                   </Button>
                 </Grid>
               </Grid>
@@ -577,7 +570,7 @@ const Portfolio: React.FC<IProps> = ({
                       </TooltipHover>
                     </Grid>
                     <Button scheme='pink' onClick={onAddPositionClick}>
-                      <span className={classes.buttonText}>{!hidePlus && '+ '}Add Position</span>
+                      <span className={classes.buttonText}>{!hidePlus && '+ '}Add position</span>
                     </Button>
                   </Grid>
                 </Grid>
