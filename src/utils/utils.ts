@@ -1340,6 +1340,8 @@ export const handleSimulateWithHop = async (
     }
   }
 
+  console.log('Route candidates', routeCandidates)
+
   if (routeCandidates.length === 0) {
     return { simulation: null, route: null, error: true }
   }
@@ -1353,6 +1355,7 @@ export const handleSimulateWithHop = async (
     accounts
   )
 
+  console.log('Hop simulations', simulations)
   if (simulations.length === 0) {
     return { simulation: null, route: null, error: true }
   }
