@@ -46,23 +46,26 @@ import { FAQSection } from '@components/Stake/FAQSection/FAQSection'
 import { StakeChart } from '@components/Stake/StakeChart/StakeChart'
 // import { StakedStats } from '@components/Stake/StakedStats/StakedStats'
 import { BN } from '@coral-xyz/anchor'
+import { calculateTokensForWithdraw, computeBitzSbitzRewards } from '@invariant-labs/sbitz'
 import {
-  calculateTokensForWithdraw,
-  computeBitzSbitzRewards
-} from '@invariant-labs/sbitz'
-import { sBITZ_MAIN, BITZ_MAIN, PORTFOLIO_STAKE_EXPAND_DELAY, PORTFOLIO_STAKE_STORAGE_KEY, PORTFOLIO_STAKE_COLLAPSE_DELAY } from '@store/consts/static'
+  sBITZ_MAIN,
+  BITZ_MAIN,
+  PORTFOLIO_STAKE_EXPAND_DELAY,
+  PORTFOLIO_STAKE_STORAGE_KEY,
+  PORTFOLIO_STAKE_COLLAPSE_DELAY
+} from '@store/consts/static'
 import { getTokenPrice, printBN } from '@utils/utils'
 import LiquidityStaking from '@components/Stake/LiquidityStaking/LiquidityStaking'
 import { StakeSwitch } from '@store/consts/types'
 // // import { HowItWorks } from '@components/Stake/HowItWorks/HowItWorks'
 // import { StakedStats } from '@components/Stake/StakedStats/StakedStats'
-// import { YourStakeProgress } from '@components/Stake/YourStakeStats/YourProgress'
 // import { OverallStats } from '@components/Stake/OverallStats/OverallStats'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { refreshIcon } from '@static/icons'
 import { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 import { theme } from '@static/theme'
 import { SBitzBanner } from '@components/Stake/SBitzBanner/SBitzBanner'
+import { YourStakeProgress } from '@components/Stake/YourStakeStats/YourProgress'
 
 export const WrappedStake: React.FC = () => {
   const { classes } = useStyles()
@@ -111,8 +114,6 @@ export const WrappedStake: React.FC = () => {
   const [progress, setProgress] = useState<ProgressState>('none')
   const [priceLoading, setPriceLoading] = useState(false)
   const [shouldRenderStats, setShouldRenderStats] = useState(false)
-
-
 
   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
@@ -317,49 +318,47 @@ export const WrappedStake: React.FC = () => {
     }
   }, [success, isInProgress])
 
-
   const toggleExpand = () => {
-    const isWalletInitialized = walletStatus === Status.Initialized;
-    const newExpandedState = isWalletInitialized && !isExpanded;
+    const isWalletInitialized = walletStatus === Status.Initialized
+    const newExpandedState = isWalletInitialized && !isExpanded
 
-    localStorage.setItem(PORTFOLIO_STAKE_STORAGE_KEY, JSON.stringify(newExpandedState));
+    localStorage.setItem(PORTFOLIO_STAKE_STORAGE_KEY, JSON.stringify(newExpandedState))
 
     if (newExpandedState) {
-      setShouldRenderStats(true);
-      setTimeout(() => setIsExpanded(true), PORTFOLIO_STAKE_EXPAND_DELAY);
+      setShouldRenderStats(true)
+      setTimeout(() => setIsExpanded(true), PORTFOLIO_STAKE_EXPAND_DELAY)
     } else {
-      setIsExpanded(false);
+      setIsExpanded(false)
       if (shouldRenderStats) {
-        setTimeout(() => setShouldRenderStats(false), PORTFOLIO_STAKE_COLLAPSE_DELAY);
+        setTimeout(() => setShouldRenderStats(false), PORTFOLIO_STAKE_COLLAPSE_DELAY)
       }
     }
   }
 
   useEffect(() => {
-    const isWalletInitialized = walletStatus === Status.Initialized;
+    const isWalletInitialized = walletStatus === Status.Initialized
 
     if (isWalletInitialized) {
-      const savedExpandedState = localStorage.getItem(PORTFOLIO_STAKE_STORAGE_KEY);
-      const shouldExpand = savedExpandedState !== null && JSON.parse(savedExpandedState);
+      const savedExpandedState = localStorage.getItem(PORTFOLIO_STAKE_STORAGE_KEY)
+      const shouldExpand = savedExpandedState !== null && JSON.parse(savedExpandedState)
 
       if (shouldExpand) {
-        setShouldRenderStats(true);
-        setTimeout(() => setIsExpanded(true), PORTFOLIO_STAKE_EXPAND_DELAY);
+        setShouldRenderStats(true)
+        setTimeout(() => setIsExpanded(true), PORTFOLIO_STAKE_EXPAND_DELAY)
       }
     } else {
-      setIsExpanded(false);
-      setShouldRenderStats(false);
+      setIsExpanded(false)
+      setShouldRenderStats(false)
     }
 
-    prevConnectionStatus.current = walletStatus;
-  }, [walletStatus]);
+    prevConnectionStatus.current = walletStatus
+  }, [walletStatus])
   return (
     <Grid container className={classes.wrapper}>
       <SBitzBanner />
       <Box className={classes.animatedContainer}>
         <Box
-          className={`${classes.liquidityStakingWrapper} ${isExpanded ? classes.liquidityStakingExpanded : ''}`}
-        >
+          className={`${classes.liquidityStakingWrapper} ${isExpanded ? classes.liquidityStakingExpanded : ''}`}>
           <Box className={classes.titleWrapper}>
             <Box className={classes.titleTextWrapper}>
               <Typography component='h1'>Liquidity staking</Typography>
@@ -368,14 +367,23 @@ export const WrappedStake: React.FC = () => {
                   to='https://docs.invariant.app/docs/sbitz'
                   target='_blank'
                   className={classes.learnMoreLink}>
-                  <span> {isSm ? 'More' : 'Learn More'}</span> <LaunchIcon classes={{ root: classes.clipboardIcon }} />
+                  <span> {isSm ? 'More' : 'Learn More'}</span>{' '}
+                  <LaunchIcon classes={{ root: classes.clipboardIcon }} />
                 </Link>
               </Box>
             </Box>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Button className={classes.statsExpanderButton} onClick={() => toggleExpand()} disabled={!isConnected}>
+              <Button
+                className={classes.statsExpanderButton}
+                onClick={() => toggleExpand()}
+                disabled={!isConnected}>
                 <p>
-                  <img src={isExpanded ? EyeHide : EyeShow} width={20} height={20} style={{ opacity: isConnected ? 1 : 0.3 }} />
+                  <img
+                    src={isExpanded ? EyeHide : EyeShow}
+                    width={20}
+                    height={20}
+                    style={{ opacity: isConnected ? 1 : 0.3 }}
+                  />
                   Portfolio
                 </p>
               </Button>
@@ -392,7 +400,6 @@ export const WrappedStake: React.FC = () => {
             </Box>
           </Box>
           <Box className={classes.stakingContentWrapper}>
-
             <LiquidityStaking
               walletStatus={walletStatus}
               tokens={tokens}
@@ -408,7 +415,7 @@ export const WrappedStake: React.FC = () => {
               onDisconnectWallet={() => {
                 dispatch(walletActions.disconnect())
               }}
-                    stakedTokenSupply={stakedBitzData.stakedTokenSupply}
+              stakedTokenSupply={stakedBitzData.stakedTokenSupply}
               stakedAmount={stakedBitzData.stakedAmount}
               stakeDataLoading={stakeLoading}
               changeStakeTab={(tab: StakeSwitch) => {
@@ -433,10 +440,9 @@ export const WrappedStake: React.FC = () => {
               sBitzPrice={sBitzPrice}
               bitzPrice={bitzPrice}
               sBitzBitzMonthlyAnnual={sBitzBitzMonthlyAnnual}
-      />
+            />
             <Box
-              className={`${classes.yourStatsWrapper} ${isExpanded && isConnected ? classes.yourStatsVisible : ''}`}
-            >
+              className={`${classes.yourStatsWrapper} ${isExpanded && isConnected ? classes.yourStatsVisible : ''}`}>
               {shouldRenderStats && isConnected && (
                 <YourStakeProgress
                   sBitzBalance={sBitzBalance}
@@ -450,11 +456,8 @@ export const WrappedStake: React.FC = () => {
             </Box>
           </Box>
         </Box>
-
       </Box>
       <Box className={classes.statsContainer}>
-
-
         {/* <Box className={classes.statsContainer}> */}
         <Typography className={classes.statsTitle}>Earnings forecast</Typography>
         <StakeChart
@@ -486,10 +489,8 @@ export const WrappedStake: React.FC = () => {
       </Box>
 
       <FAQSection />
-    </Grid >
+    </Grid>
   )
 }
-
-
 
 export default WrappedStake
