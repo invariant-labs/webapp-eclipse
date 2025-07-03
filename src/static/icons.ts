@@ -107,9 +107,11 @@ import star from './svg/star.svg'
 import starFill from './svg/star-fill.svg'
 import swapArrowIcon from './svg/swapArrow.svg'
 import lqStakingIcon from './svg/lqStakingIcon.svg'
+import warningStroke from './svg/warningStroke.svg'
 import plusDisabled from './svg/plusDisabled.svg'
 
 export {
+  warningStroke,
   plusDisabled,
   lqStakingIcon,
   logoTitleIcon,
