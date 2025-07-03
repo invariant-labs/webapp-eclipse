@@ -3,7 +3,7 @@ import { colors } from '@static/theme'
 
 const useStyles = makeStyles()(theme => ({
   container: {
-    padding: '24px',
+    width: '100%',
     borderRadius: '24px',
     display: 'flex',
     flexDirection: 'column-reverse',
@@ -29,16 +29,25 @@ const useStyles = makeStyles()(theme => ({
   },
   gridContainer: {
     maxWidth: '600px',
-    borderRadius: '24px'
+    width: '100%',
+    borderRadius: '24px',
+    display: 'flex',
+    flexWrap: 'wrap',
+    flexDirection: 'row',
+    [theme.breakpoints.down('md')]: {
+      flexDirection: 'column'
+    }
   },
   tokenomicsItemContainer: {
-    width: '100%',
-    height: '64px',
+    width: '50%',
     display: 'flex',
     justifyContent: 'flex-start',
     alignItems: 'center',
     borderRadius: '24px',
-    marginBottom: '12px'
+    marginBottom: '12px',
+    [theme.breakpoints.down('md')]: {
+      width: '100%'
+    }
   },
   arcContainer: {
     position: 'relative',
@@ -50,10 +59,9 @@ const useStyles = makeStyles()(theme => ({
   },
   desktopChartImage: {
     position: 'absolute',
-    width: '450px',
-    height: '450px',
+    height: '500px',
     left: '50%',
-    top: '-5%'
+    top: -30
   }
 }))
 

@@ -11,15 +11,13 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
     alignItems: 'flex-start',
     minHeight: '440px',
     width: '160px',
-    padding: theme.spacing(2.5),
     [theme.breakpoints.down('lg')]: {
       flexDirection: 'row',
-      height: '80px',
-      minHeight: '20px',
+      height: '100px',
+      minHeight: '100px',
       alignItems: 'center',
-      width: '100%',
-      overflowX: 'auto',
-      padding: '16px 8px 20px 30px'
+      justifyContent: 'center',
+      width: '100%'
     }
   },
   stepContent: {
@@ -33,27 +31,34 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
       alignItems: 'center',
       flexDirection: 'row',
       justifyContent: 'center'
+    },
+    [theme.breakpoints.down('lg')]: {
+      minWidth: 38,
+      width: 38
+    },
+    [theme.breakpoints.down('sm')]: {
+      minWidth: 34,
+      width: 34
+    },
+    [theme.breakpoints.down(550)]: {
+      minWidth: 30,
+      width: 30
     }
   },
   stepContainer: {
     display: 'flex',
-
     position: 'relative',
-
     [theme.breakpoints.down('lg')]: {
-      alignItems: 'center',
-      minWidth: '60px'
+      alignItems: 'center'
     }
   },
-
   stepMargin: {
     marginBottom: theme.spacing(5),
     [theme.breakpoints.down('lg')]: {
       marginBottom: 0,
-      width: '100%'
+      width: '30%'
     }
   },
-
   stepCircle: {
     width: '32px',
     height: '32px',
@@ -77,6 +82,9 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
     [theme.breakpoints.down('sm')]: {
       width: '24px',
       height: '24px'
+    },
+    [theme.breakpoints.down(550)]: {
+      borderWidth: '3px'
     }
   },
 
@@ -90,7 +98,7 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
     position: 'static',
     whiteSpace: 'nowrap',
 
-    marginLeft: '16px',
+    marginLeft: 10,
     [theme.breakpoints.down('lg')]: {
       marginLeft: 0,
       textAlign: 'center',
@@ -102,7 +110,7 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
       position: 'absolute',
       top: '120%',
       transform: 'translate(-50%,-50%)',
-      left: '49%'
+      left: '50%'
     }
   },
   labelSkeleton: {
@@ -114,10 +122,11 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
       position: 'absolute',
       top: '80%',
       transform: 'translate(-50%,-50%)',
-      left: '49%',
+      left: '50%',
       textAlign: 'center'
     }
   },
+
   connector: {
     position: 'absolute',
     left: '18px',
@@ -160,6 +169,9 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
       width: '100%',
       background: `linear-gradient(to right, ${colors.invariant.green}, ${colors.invariant.textGrey})`,
       zIndex: 1
+    },
+    [theme.breakpoints.down(550)]: {
+      height: '2px'
     }
   },
 
@@ -280,6 +292,13 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
 
   startStepLabel: {
     color: colors.invariant.green
+  },
+  labelText: {
+    textAlign: 'center',
+    ...typography.body1,
+    [theme.breakpoints.down(550)]: {
+      ...typography.caption4
+    }
   }
 }))
 

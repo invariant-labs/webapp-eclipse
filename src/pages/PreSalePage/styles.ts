@@ -1,7 +1,6 @@
-// import { typography, colors } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
-const useStyles = makeStyles()(theme => {
+const useStyles = makeStyles()(() => {
   return {
     container: {
       display: 'flex',
@@ -9,20 +8,7 @@ const useStyles = makeStyles()(theme => {
       justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: 'transparent',
-      paddingInline: 94,
-      minHeight: '60vh',
-
-      [theme.breakpoints.down('lg')]: {
-        paddingInline: 80
-      },
-
-      [theme.breakpoints.down('md')]: {
-        paddingInline: 90
-      },
-
-      [theme.breakpoints.down('sm')]: {
-        paddingInline: 8
-      }
+      minHeight: '60vh'
     }
   }
 })

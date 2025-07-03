@@ -18,6 +18,7 @@ import AnimatedButton, { ProgressState } from '@common/AnimatedButton/AnimatedBu
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
 import { WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_MAIN, WRAPPED_ETH_ADDRESS } from '@store/consts/static'
 import { createButtonActions } from '@utils/uiUtils'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 
 interface IProps {
   nativeBalance: BN
@@ -40,7 +41,7 @@ interface IProps {
   progress: ProgressState
   isBalanceLoading: boolean
   isLoading: boolean
-  alertBox?: { variant?: string, text: string }
+  alertBox?: { variant?: string; text: string }
   onBuyClick: (amount: BN) => void
   onConnectWallet: () => void
   onDisconnectWallet: () => void
@@ -78,7 +79,6 @@ export const BuyComponent: React.FC<IProps> = ({
   })
 
   const [value, setValue] = useState<string>('0')
-
 
   const [receive, setReceive] = useState<BN>(new BN(0))
   const filledPercentage = useMemo(() => {
@@ -144,7 +144,6 @@ export const BuyComponent: React.FC<IProps> = ({
     return 'Buy $INVT'
   }, [tokenIndex, tokens, isLoading, value])
 
-
   const actions = createButtonActions({
     tokens,
     wrappedTokenAddress: WRAPPED_ETH_ADDRESS,
@@ -152,7 +151,6 @@ export const BuyComponent: React.FC<IProps> = ({
     onAmountSet: setValue
   })
   const getAlerBoxColorVariant = useCallback(() => {
-
     if (alertBox?.variant === 'warning') {
       return classes.alertBoxYellow
     }
@@ -164,30 +162,38 @@ export const BuyComponent: React.FC<IProps> = ({
       <Box sx={{ minHeight: '206px' }}>
         <Box className={classes.headingContainer}>
           <Box sx={{ height: '60px', width: '100%' }}>
-
-            {(alertBox && isActive && walletStatus !== Status.Uninitialized) ? (
-
+            {alertBox && isActive && walletStatus !== Status.Uninitialized ? (
               <Box className={`${classes.alertBox} ${getAlerBoxColorVariant()}`}>
-                <Box className={classes.alertBoxContent}>
-                  <Typography className={classes.alertBoxText}>{alertBox && alertBox.text}</Typography>
-                </Box>
+                <TooltipHover
+                  gradient
+                  title={
+                    alertBox.variant !== 'warning' ? (
+                      ''
+                    ) : (
+                      <Box className={classes.tooltipBox}>
+                        <Typography>Eligibility was granted for:</Typography>
+                        <Typography>- Participating in the Invariant Points Program</Typography>
+                        <Typography>- Staking $BITZ on Invariant</Typography>
+                      </Box>
+                    )
+                  }
+                  placement='bottom'>
+                  <Typography className={classes.alertBoxText}>{alertBox.text}</Typography>
+                </TooltipHover>
               </Box>
             ) : walletStatus !== Status.Initialized ? (
               <Box className={classes.egibilityCheckerWrapper}>
-                <Box className={classes.egibilityChecker}>
-                  <Typography className={classes.egibilityCheckerText}>
-                    To participate in sale, check your eligibility
-                  </Typography>
-                  <ChangeWalletButton
-                    width={'40%'}
-                    height={36}
-                    name='Check eligibility'
-                    onConnect={onConnectWallet}
-                    connected={false}
-                    onDisconnect={onDisconnectWallet}
-                  />
-                </Box>
-
+                <Typography className={classes.egibilityCheckerText}>
+                  To participate in sale, check your eligibility
+                </Typography>
+                <ChangeWalletButton
+                  width={'40%'}
+                  height={36}
+                  name='Check eligibility'
+                  onConnect={onConnectWallet}
+                  connected={false}
+                  onDisconnect={onDisconnectWallet}
+                />
               </Box>
             ) : null}
           </Box>
@@ -210,16 +216,15 @@ export const BuyComponent: React.FC<IProps> = ({
                     <Typography className={classes.greenBodyText}>
                       ${formatNumberWithCommas(printBNandTrimZeros(currentAmount, mintDecimals, 2))}
                     </Typography>
-                    {' / '}${formatNumberWithCommas(printBNandTrimZeros(targetAmount, mintDecimals, 2))}
+                    {' / '}$
+                    {formatNumberWithCommas(printBNandTrimZeros(targetAmount, mintDecimals, 2))}
                   </>
                 )}
               </Typography>
             </>
           )}
-
         </Box>
         <Box sx={{ height: saleDidNotStart ? 'auto' : '49px' }}>
-
           <>
             {isLoading && !saleDidNotStart ? (
               <Skeleton variant='rounded' width={'100%'} height={49} sx={{ marginTop: '8px' }} />
@@ -232,15 +237,14 @@ export const BuyComponent: React.FC<IProps> = ({
                     </Box>
                     <Grid container className={classes.barWrapper}>
                       <Typography className={classes.sliderLabel}>0%</Typography>
-                      <Typography className={classes.sliderLabel}>{filledPercentage.toFixed(2)}%</Typography>
+                      <Typography className={classes.sliderLabel}>
+                        {filledPercentage.toFixed(2)}%
+                      </Typography>
                       <Typography className={classes.sliderLabel}>100%</Typography>
-                    </Grid></>
-
+                    </Grid>
+                  </>
                 )}
               </>
-
-
-
             )}
           </>
         </Box>
@@ -252,7 +256,7 @@ export const BuyComponent: React.FC<IProps> = ({
               alignItems: 'center',
               justifyContent: 'center',
               marginTop: '32px',
-              width: '100%',
+              width: '100%'
             }}>
             <Timer hours={hours} minutes={minutes} seconds={seconds} />
           </Box>
@@ -276,8 +280,15 @@ export const BuyComponent: React.FC<IProps> = ({
               {
                 label: 'Max',
                 onClick: () => {
-                  actions.maxSale(tokenIndex, currentRound, userDepositedAmount, whitelistWalletLimit, currentAmount, targetAmount, isPublic)
-
+                  actions.maxSale(
+                    tokenIndex,
+                    currentRound,
+                    userDepositedAmount,
+                    whitelistWalletLimit,
+                    currentAmount,
+                    targetAmount,
+                    isPublic
+                  )
                 },
                 variant: 'max'
               }
@@ -287,7 +298,7 @@ export const BuyComponent: React.FC<IProps> = ({
                 ? printBNandTrimZeros(tokens[tokenIndex].balance, tokens[tokenIndex].decimals)
                 : ''
             }
-            onBlur={() => { }}
+            onBlur={() => {}}
             value={value}
             isBalanceLoading={isBalanceLoading}
             walletUninitialized={walletStatus !== Status.Initialized}
@@ -304,31 +315,29 @@ export const BuyComponent: React.FC<IProps> = ({
           )}
         </Box>
       </Box>
-      {
-        walletStatus !== Status.Initialized ? (
-          <ChangeWalletButton
-            width={'100%'}
-            height={48}
-            name='Connect wallet'
-            defaultVariant='green'
-            onConnect={onConnectWallet}
-            connected={false}
-            onDisconnect={onDisconnectWallet}
-          />
-        ) : (
-          <AnimatedButton
-            className={classes.greenButton}
-            onClick={() => {
-              if (progress === 'none' && tokenIndex !== null) {
-                onBuyClick(convertBalanceToBN(value, mintDecimals))
-              }
-            }}
-            disabled={getButtonMessage() !== 'Buy $INVT' || !isActive}
-            content={getButtonMessage()}
-            progress={progress}
-          />
-        )
-      }
-    </Box >
+      {walletStatus !== Status.Initialized ? (
+        <ChangeWalletButton
+          width={'100%'}
+          height={48}
+          name='Connect wallet'
+          defaultVariant='green'
+          onConnect={onConnectWallet}
+          connected={false}
+          onDisconnect={onDisconnectWallet}
+        />
+      ) : (
+        <AnimatedButton
+          className={classes.greenButton}
+          onClick={() => {
+            if (progress === 'none' && tokenIndex !== null) {
+              onBuyClick(convertBalanceToBN(value, mintDecimals))
+            }
+          }}
+          disabled={getButtonMessage() !== 'Buy $INVT' || !isActive}
+          content={getButtonMessage()}
+          progress={progress}
+        />
+      )}
+    </Box>
   )
 }
