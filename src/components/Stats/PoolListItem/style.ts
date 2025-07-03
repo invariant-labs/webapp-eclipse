@@ -17,7 +17,25 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
       borderBottom: `2px solid ${colors.invariant.light}`
     }
   },
-
+  symbolsWrapper: {
+    display: 'flex',
+    flexWrap: 'nowrap',
+    minWidth: '64px',
+    [theme.breakpoints.down('md')]: {
+      minWidth: 60
+    },
+    [theme.breakpoints.down('sm')]: {
+      minWidth: 55
+    }
+  },
+  imageWrapper: {
+    position: 'relative',
+    display: 'flex'
+  },
+  imageToWrapper: {
+    position: 'relative',
+    display: 'flex'
+  },
   container: {
     transition: 'all 0.3s',
     height: !showInfo ? 69 : 135,
@@ -265,14 +283,14 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     marginRight: 3,
     borderRadius: '50%',
     ':last-of-type': {
-      marginRight: 8,
+      marginRight: 4,
       [theme.breakpoints.down(650)]: {
         marginRight: 4
       }
     },
     [theme.breakpoints.down('sm')]: {
       ':last-of-type': {
-        marginRight: 0
+        marginRight: 4
       }
     }
   },
@@ -281,7 +299,7 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     width: 12,
     height: 12,
     bottom: -6,
-    right: -6
+    right: 0
   },
   clipboardIcon: {
     marginLeft: 4,

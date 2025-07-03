@@ -15,6 +15,12 @@ export const useStyles = makeStyles()(() => ({
     background: colors.invariant.componentDark,
     borderRadius: 12
   },
+  warningIcon: {
+    width: 12,
+    position: 'absolute',
+    bottom: -2,
+    right: -6
+  },
   chartContainer: {
     height: '24px',
     borderRadius: '8px',
