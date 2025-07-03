@@ -525,6 +525,21 @@ export const Swap: React.FC<ISwap> = ({
   }, [swapIsLoading, pendingSimulation])
 
   useEffect(() => {
+    if (
+      !swapIsLoading &&
+      tokenFromIndex !== null &&
+      tokenToIndex !== null &&
+      (amountFrom !== '' || amountTo !== '') &&
+      !pendingSimulation &&
+      swapAccounts &&
+      Object.keys(swapAccounts.pools || {}).length > 0
+    ) {
+      console.log('Two-hop swap data loaded')
+      simulateWithTimeout()
+    }
+  }, [swapIsLoading])
+
+  useEffect(() => {
     if (tokenFromIndex !== null && tokenToIndex !== null) {
       if (inputRef === inputTarget.FROM) {
         const amount = getAmountOut(tokens[tokenToIndex])
@@ -588,12 +603,20 @@ export const Swap: React.FC<ISwap> = ({
   }
 
   const setSimulateAmount = async () => {
+    if (swapIsLoading) {
+      console.log('Two-hop swap data is loading, setting pending simulation...')
+      setPendingSimulation(true)
+      setAddBlur(true)
+      return
+    }
+
     if (!swapIsLoading) {
       setAddBlur(true)
     }
 
     if (tokenFromIndex !== null && tokenToIndex !== null && !swapIsLoading) {
       if (!swapAccounts || Object.keys(swapAccounts.pools || {}).length === 0) {
+        console.log('No swap accounts data available')
         return
       }
 
@@ -813,6 +836,7 @@ export const Swap: React.FC<ISwap> = ({
     if (
       (tokenFromIndex !== null && tokenToIndex !== null && throttle) ||
       isWaitingForNewPool ||
+      swapIsLoading ||
       isError("TypeError: Cannot read properties of undefined (reading 'bitmap')")
     ) {
       return 'Loading'
