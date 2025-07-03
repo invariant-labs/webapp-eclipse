@@ -7,7 +7,6 @@ const useStyles = makeStyles<{ percentage: number; isActive: boolean }>()(
       [theme.breakpoints.up('lg')]: {
         minWidth: '380px'
       },
-      minHeight: '360px',
       width: '100%'
     },
 
@@ -92,7 +91,6 @@ const useStyles = makeStyles<{ percentage: number; isActive: boolean }>()(
     infoCard: {
       background: isActive ? colors.invariant.component : 'transparent',
       padding: '12px',
-      height: isActive ? '129px' : 'auto',
       borderRadius: '12px',
       marginTop: '24px'
     },

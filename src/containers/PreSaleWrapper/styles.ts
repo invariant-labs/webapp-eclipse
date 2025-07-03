@@ -16,6 +16,7 @@ export const useStyles = makeStyles()(() => ({
     }
   },
   contentWrapper: {
+    padding: 24,
     width: '100%',
     minHeight: 445,
     display: 'flex',
@@ -39,6 +40,8 @@ export const useStyles = makeStyles()(() => ({
   stepperContainer: {
     display: 'flex',
     minWidth: '440px',
+    justifyContent: 'center',
+    alignItems: 'center',
     gap: 24,
     [theme.breakpoints.down('lg')]: {
       minWidth: 'unset',

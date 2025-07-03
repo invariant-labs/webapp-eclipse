@@ -1,5 +1,5 @@
 import { Box, Grid, Typography, Skeleton } from '@mui/material'
-import React from 'react'
+import React, { useMemo } from 'react'
 import useStyles from './style'
 import classNames from 'classnames'
 import { BN } from '@coral-xyz/anchor'
@@ -7,6 +7,7 @@ import { formatNumberWithCommas, printBNandTrimZeros } from '@utils/utils'
 import {
   EFFECTIVE_TARGET_MULTIPLIER,
   PERCENTAGE_SCALE,
+  REWARD_SCALE,
   TIER1,
   TIER2,
   TIER3,
@@ -27,6 +28,7 @@ interface RoundComponentProps {
   percentageFilled: BN
   userDepositedAmount: BN
   userRemainingAllocation: BN
+  userReceivededAmount: BN
   mintDecimals: number
   roundNumber: number
   proofOfInclusion: Uint8Array<ArrayBufferLike> | undefined
@@ -55,7 +57,8 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
   roundNumber,
   isLoadingSaleStats,
   isLoadingUserStats,
-  priceFormat
+  priceFormat,
+  userReceivededAmount
 }) => {
   const { classes } = useStyles({
     percentage: Number(printBNandTrimZeros(percentageFilled, PERCENTAGE_SCALE, 3)),
@@ -80,6 +83,8 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
       return <>1 INVT = {printBNandTrimZeros(amount, decimals, 4)}$</>
     }
   }
+
+  const isLastRound = useMemo(() => roundNumber === 4, [roundNumber])
 
   const renderFormattedNumberWithSkeleton = (
     amount: BN,
@@ -114,68 +119,75 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
           </Typography>
         </Box>
       )}
-      <Box className={classes.progressCard}>
-        <Box className={classes.progressHeader}>
-          {isActive ? (
-            <>
-              <Box className={classes.darkBackground}>
-                <Box
-                  className={classNames(
-                    classes.gradientProgress,
-                    walletStatus === Status.Initialized
-                      ? classes.activeProgress
-                      : classes.inactiveProgress
-                  )}
-                />
-              </Box>
-              <Grid container className={classes.barWrapper}>
-                <Typography className={classes.amountBought}>
+      {!isLastRound && (
+        <Box className={classes.progressCard}>
+          <Box className={classes.progressHeader}>
+            {isActive ? (
+              <>
+                <Box className={classes.darkBackground}>
+                  <Box
+                    className={classNames(
+                      classes.gradientProgress,
+                      walletStatus === Status.Initialized
+                        ? classes.activeProgress
+                        : classes.inactiveProgress
+                    )}
+                  />
+                </Box>
+                <Grid container className={classes.barWrapper}>
+                  <Typography className={classes.amountBought}>
+                    {renderFormattedNumberWithSkeleton(
+                      amountDeposited,
+                      mintDecimals,
+                      '$',
+                      '',
+                      '80px'
+                    )}
+                  </Typography>
+                  <Typography className={classes.amountLeft}>
+                    {renderFormattedNumberWithSkeleton(amountNeeded, mintDecimals, '$', '', '80px')}
+                  </Typography>
+                </Grid>
+              </>
+            ) : (
+              <>
+                <Box className={classes.infoRow}>
+                  <Typography className={classes.infoLabel}>Deposited:</Typography>
                   {renderFormattedNumberWithSkeleton(
                     amountDeposited,
                     mintDecimals,
                     '$',
                     '',
-                    '80px'
+                    '100px'
                   )}
-                </Typography>
-                <Typography className={classes.amountLeft}>
-                  {renderFormattedNumberWithSkeleton(amountNeeded, mintDecimals, '$', '', '80px')}
-                </Typography>
-              </Grid>
-            </>
-          ) : (
-            <>
-              <Box className={classes.infoRow}>
-                <Typography className={classes.infoLabel}>Deposited:</Typography>
-                {renderFormattedNumberWithSkeleton(amountDeposited, mintDecimals, '$', '', '100px')}
-              </Box>
-              <Box className={classes.infoRow}>
-                <Typography className={classes.infoLabel}>Target deposit:</Typography>
-                {renderFormattedNumberWithSkeleton(targetAmount, mintDecimals, '$', '', '100px')}
-              </Box>
-              <Box className={classes.infoRow}>
-                <Typography className={classes.infoLabel}>Maximal deposit:</Typography>
-                {renderFormattedNumberWithSkeleton(
-                  targetAmount.mul(EFFECTIVE_TARGET_MULTIPLIER),
-                  mintDecimals,
-                  '$',
-                  '',
-                  '100px'
-                )}
-              </Box>
-            </>
+                </Box>
+                <Box className={classes.infoRow}>
+                  <Typography className={classes.infoLabel}>Target deposit:</Typography>
+                  {renderFormattedNumberWithSkeleton(targetAmount, mintDecimals, '$', '', '100px')}
+                </Box>
+                <Box className={classes.infoRow}>
+                  <Typography className={classes.infoLabel}>Maximal deposit:</Typography>
+                  {renderFormattedNumberWithSkeleton(
+                    targetAmount.mul(EFFECTIVE_TARGET_MULTIPLIER),
+                    mintDecimals,
+                    '$',
+                    '',
+                    '100px'
+                  )}
+                </Box>
+              </>
+            )}
+          </Box>
+          {isActive && (
+            <Box className={classes.priceIncreaseBox}>
+              <Typography className={classes.priceIncreaseText}>
+                AMOUNT TILL PRICE INCREASE:
+              </Typography>
+              {renderFormattedNumberWithSkeleton(amountLeft, mintDecimals, '$', '', '100px')}
+            </Box>
           )}
         </Box>
-        {isActive && (
-          <Box className={classes.priceIncreaseBox}>
-            <Typography className={classes.priceIncreaseText}>
-              AMOUNT TILL PRICE INCREASE:
-            </Typography>
-            {renderFormattedNumberWithSkeleton(amountLeft, mintDecimals, '$', '', '100px')}
-          </Box>
-        )}
-      </Box>
-
+      )}
       <Box className={classes.infoCard}>
         {isActive && (
           <>
@@ -185,28 +197,27 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
                 {renderPriceWithSkeleton(currentPrice, mintDecimals, '160px', isLoadingSaleStats)}
               </Typography>
             </Box>
-            <Box className={classes.infoRow}>
-              <Typography className={classes.infoLabel}>Next ratio: </Typography>
-              <Typography className={classes.nextPrice}>
-                {renderPriceWithSkeleton(
-                  nextPrice,
-                  mintDecimals,
-                  '160px',
-                  isLoadingSaleStats,
-                  roundNumber + 1
-                )}
-              </Typography>
-            </Box>
+            {!isLastRound && (
+              <Box className={classes.infoRow}>
+                <Typography className={classes.infoLabel}>Next ratio: </Typography>
+                <Typography className={classes.nextPrice}>
+                  {renderPriceWithSkeleton(
+                    nextPrice,
+                    mintDecimals,
+                    '160px',
+                    isLoadingSaleStats,
+                    roundNumber + 1
+                  )}
+                </Typography>
+              </Box>
+            )}
             <Box className={classes.divider} />
           </>
         )}
 
         <Box className={classes.infoRow}>
           <Typography className={classes.secondaryLabel}>Your deposit: </Typography>
-          {!isLoadingUserStats &&
-          !saleDidNotStart &&
-          walletStatus === Status.Initialized &&
-          proofOfInclusion ? (
+          {!saleDidNotStart && walletStatus === Status.Initialized ? (
             <Typography className={classes.value}>
               {renderFormattedNumberWithSkeleton(
                 userDepositedAmount,
@@ -217,26 +228,20 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
                 isLoadingUserStats
               )}
             </Typography>
-          ) : isLoadingUserStats && walletStatus === Status.Initialized ? (
-            <Skeleton variant='text' width='80px' height={24} />
           ) : (
             <Typography className={classes.value}>-</Typography>
           )}
         </Box>
 
         <Box className={classes.infoRow}>
-          <Typography className={classes.secondaryLabel}>Your remaining allocation: </Typography>
-          {isLoadingUserStats && walletStatus === Status.Initialized ? (
-            <Skeleton variant='text' width='80px' height={24} />
-          ) : isActive &&
-            walletStatus === Status.Initialized &&
-            !(roundNumber === 4 || (roundNumber < 4 && !proofOfInclusion)) ? (
+          <Typography className={classes.secondaryLabel}>Your allocation: </Typography>
+          {!saleDidNotStart && walletStatus === Status.Initialized ? (
             <Typography className={classes.value}>
               {renderFormattedNumberWithSkeleton(
-                userRemainingAllocation,
-                mintDecimals,
-                '$',
+                userReceivededAmount,
+                REWARD_SCALE,
                 '',
+                ' INVT',
                 '80px',
                 isLoadingUserStats
               )}
@@ -245,6 +250,26 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
             <Typography className={classes.value}>-</Typography>
           )}
         </Box>
+
+        {!isLastRound && (
+          <Box className={classes.infoRow}>
+            <Typography className={classes.secondaryLabel}>Your remaining allocation: </Typography>
+            {!saleDidNotStart && walletStatus === Status.Initialized && !!proofOfInclusion ? (
+              <Typography className={classes.value}>
+                {renderFormattedNumberWithSkeleton(
+                  userRemainingAllocation,
+                  mintDecimals,
+                  '$',
+                  '',
+                  '80px',
+                  isLoadingUserStats
+                )}
+              </Typography>
+            ) : (
+              <Typography className={classes.value}>-</Typography>
+            )}
+          </Box>
+        )}
       </Box>
     </Box>
   )

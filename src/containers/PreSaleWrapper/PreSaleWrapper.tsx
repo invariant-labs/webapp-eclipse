@@ -234,7 +234,7 @@ export const PreSaleWrapper = () => {
     if (index !== -1) setTokenIndex(index)
   }, [tokens, mint])
 
-  const { deposited } = useMemo(
+  const { deposited, received } = useMemo(
     () =>
       userStats
         ? userStats
@@ -426,6 +426,7 @@ export const PreSaleWrapper = () => {
               proofOfInclusion={proofOfInclusion}
               percentageFilled={filledPercentage}
               userDepositedAmount={deposited}
+              userReceivededAmount={received}
               userRemainingAllocation={remainingAmount}
               isReversed={reversedPrices}
               mintDecimals={mintDecimals}
