@@ -304,7 +304,11 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
 
   exchangeRoot: {
+    width: '100%',
     position: 'relative',
+    display: 'flex',
+    flexShrink: 1,
+    justifyContent: 'space-between',
     background: colors.invariant.newDark,
     borderRadius: 20
   },
@@ -496,6 +500,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     position: 'relative'
   },
   mobileChangeWrapper: {
+    width: '100%',
     display: 'flex',
     flexDirection: 'column',
     [theme.breakpoints.down('sm')]: {

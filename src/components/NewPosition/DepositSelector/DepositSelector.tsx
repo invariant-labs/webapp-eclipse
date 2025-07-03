@@ -17,6 +17,7 @@ import {
   ALL_FEE_TIERS_DATA,
   AutoswapCustomError,
   DepositOptions,
+  disabledPools,
   MINIMUM_PRICE_IMPACT,
   NetworkType,
   WETH_POOL_INIT_LAMPORTS_MAIN,
@@ -892,6 +893,21 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     valueB
   ])
 
+  const disabledFeeTiers = useMemo(() => {
+    if (tokenAIndex === null || tokenBIndex === null) return []
+
+    const tokenA = tokens[tokenAIndex].assetAddress
+    const tokenB = tokens[tokenBIndex].assetAddress
+
+    return disabledPools
+      .filter(
+        pool =>
+          (pool.tokenX.equals(tokenA) && pool.tokenY.equals(tokenB)) ||
+          (pool.tokenX.equals(tokenB) && pool.tokenY.equals(tokenA))
+      )
+      .flatMap(p => p.feeTiers)
+  }, [tokenAIndex, tokenBIndex, tokens, disabledPools])
+
   return (
     <Grid container className={cx(classes.wrapper, className)}>
       <DepoSitOptionsModal
@@ -967,6 +983,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
         </Grid>
 
         <FeeSwitch
+          disabledFeeTiers={disabledFeeTiers}
           containerKey={`${tokenAIndex}` + `${tokenBIndex}`}
           showTVL={tokenAIndex !== null && tokenBIndex !== null}
           onSelect={fee => {
