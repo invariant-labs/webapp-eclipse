@@ -59,8 +59,9 @@ const useStyles = makeStyles()(theme => ({
   },
   desktopChartImage: {
     position: 'absolute',
-    height: '440px',
-    left: '50%'
+    height: '500px',
+    left: '50%',
+    top: -30
   }
 }))
 

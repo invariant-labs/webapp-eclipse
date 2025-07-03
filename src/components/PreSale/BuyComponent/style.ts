@@ -74,6 +74,7 @@ const useStyles = makeStyles<{ percentage: number; isActive?: boolean }>()(
       gap: '8px'
     },
     tooltipBox: {
+      width: '100%',
       display: 'flex',
       flexDirection: 'column',
       padding: 12,
