@@ -13,7 +13,7 @@ import {
   toMaxNumericPlaces
 } from '@utils/utils'
 import { PlotTickData } from '@store/reducers/positions'
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import ConcentrationSlider from '../ConcentrationSlider/ConcentrationSlider'
 import useStyles from './style'
 import { PositionOpeningMethod } from '@store/consts/types'
@@ -67,6 +67,10 @@ export interface IRangeSelector {
   oraclePrice: number | null
   currentFeeIndex: number
   bestFeeIndex: number
+  showPriceWarning: boolean
+  oraclePriceWarning: boolean
+  diffPercentage: number
+  oracleDiffPercentage: number
 }
 
 export const RangeSelector: React.FC<IRangeSelector> = ({
@@ -104,7 +108,11 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
   suggestedPrice,
   oraclePrice,
   currentFeeIndex,
-  bestFeeIndex
+  bestFeeIndex,
+  showPriceWarning,
+  oraclePriceWarning,
+  diffPercentage,
+  oracleDiffPercentage
 }) => {
   const { classes } = useStyles()
 
@@ -503,27 +511,6 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     changeRangeHandler(leftRange, rightRange)
     autoZoomHandler(leftRange, rightRange, true)
   }, [tokenASymbol, tokenBSymbol])
-
-  const oracleDiffPercentage = useMemo(() => {
-    if (oraclePrice === null || midPrice.x === 0) {
-      return 0
-    }
-    return Math.abs((oraclePrice - midPrice.x) / midPrice.x) * 100
-  }, [oraclePrice, midPrice.x])
-
-  const oraclePriceWarning = useMemo(
-    () => oraclePrice !== 0 && oracleDiffPercentage > 10,
-    [oracleDiffPercentage]
-  )
-
-  const diffPercentage = useMemo(() => {
-    return Math.abs((suggestedPrice - midPrice.x) / midPrice.x) * 100
-  }, [suggestedPrice, midPrice.x])
-
-  const showPriceWarning = useMemo(
-    () => (diffPercentage > 10 && !oraclePrice) || (diffPercentage > 10 && oraclePriceWarning),
-    [diffPercentage, oraclePriceWarning, oraclePrice]
-  )
 
   return (
     <Grid container className={classes.wrapper}>
