@@ -598,6 +598,7 @@ export const Swap: React.FC<ISwap> = ({
       }
 
       try {
+        console.log('Simulating swap')
         if (inputRef === inputTarget.FROM) {
           const [simulateValue, simulateWithHopValue] = await Promise.all([
             handleSimulate(
