@@ -105,12 +105,6 @@ const Liquidity: React.FC<LiquidityInterface> = ({
               ? { top: 24, bottom: 24, left: 30, right: 18 }
               : { top: 24, bottom: 24, left: 30, right: 24 }
           }
-          xScale={{
-            type: 'time',
-            format: 'native',
-            precision: 'day',
-            useUTC: false
-          }}
           axisBottom={{
             tickSize: 0,
             tickPadding: 10,

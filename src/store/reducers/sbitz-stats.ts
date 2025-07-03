@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { PayloadType } from '@store/consts/types'
+import { Intervals as IntervalsKeys } from '@store/consts/static'
 
 export interface TimeData {
   timestamp: number
@@ -41,6 +42,8 @@ export interface IStatsStore {
   // State management
   isLoading: boolean
   lastTimestamp: number
+
+  forecastInterval: IntervalsKeys
 }
 
 export const defaultState: IStatsStore = {
@@ -59,7 +62,9 @@ export const defaultState: IStatsStore = {
   sbitzTVLPlot: [],
 
   isLoading: false,
-  lastTimestamp: 0
+  lastTimestamp: 0,
+
+  forecastInterval: IntervalsKeys.Monthly
 }
 
 export const sbitzStatsSliceName = 'sbitz-stats'
@@ -86,6 +91,10 @@ const statsSlice = createSlice({
 
     setLoadingStats(state, action: PayloadAction<boolean>) {
       state.isLoading = action.payload
+      return state
+    },
+    setForecastInterval(state, action: PayloadAction<IntervalsKeys>) {
+      state.forecastInterval = action.payload
       return state
     }
   }

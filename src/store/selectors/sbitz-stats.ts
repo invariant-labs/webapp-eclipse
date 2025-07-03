@@ -17,7 +17,8 @@ export const {
   bitzStakedPlot,
   sbitzTVLPlot,
   isLoading,
-  lastTimestamp
+  lastTimestamp,
+  forecastInterval
 } = keySelectors(store, [
   'timestamp',
   'bitzStaked',
@@ -32,7 +33,8 @@ export const {
   'bitzStakedPlot',
   'sbitzTVLPlot',
   'isLoading',
-  'lastTimestamp'
+  'lastTimestamp',
+  'forecastInterval'
 ])
 
 export const stakingSelectors = {
@@ -49,7 +51,8 @@ export const stakingSelectors = {
   bitzStakedPlot,
   sbitzTVLPlot,
   isLoading,
-  lastTimestamp
+  lastTimestamp,
+  forecastInterval
 }
 
 export default stakingSelectors

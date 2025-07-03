@@ -29,6 +29,7 @@ import {
   unstakeInputVal
 } from '@store/selectors/sBitz'
 import {
+  forecastInterval,
   //   // bitzStaked,
   //   // bitzStakedPlot,
   //   // bitzSupply,
@@ -70,6 +71,7 @@ import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { refreshIcon } from '@static/icons'
 import { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 import { theme } from '@static/theme'
+import { Intervals as IntervalsKeys } from '@store/consts/static'
 import { SBitzBanner } from '@components/Stake/SBitzBanner/SBitzBanner'
 
 export const WrappedStake: React.FC = () => {
@@ -97,6 +99,7 @@ export const WrappedStake: React.FC = () => {
   const stakedBitzData = useSelector(stakedData)
   const stakeLoading = useSelector(stakeDataLoading)
   const currentStakeTab = useSelector(stakeTab)
+  const interval = useSelector(forecastInterval)
 
   const [chartData, setChartData] = useState<{
     bitzData: { x: string; y: number }[]
@@ -212,8 +215,10 @@ export const WrappedStake: React.FC = () => {
       sbitzPredictedYield
     }: { sbitzPredictedYield: number[]; bitzPredictedYield: number[] } = computeBitzSbitzRewards(
       stakedAmount,
-      +printBN(stakedBitzData.bitzTotalBalance, sBITZ_MAIN.decimals)
+      +printBN(stakedBitzData.bitzTotalBalance, sBITZ_MAIN.decimals),
+      interval === '1Y' ? 365 : 31
     )
+
     const bitzData = bitzPredictedYield.map((value, index) => ({
       x: `Day ${index + 1}`,
       y: value
@@ -225,12 +230,12 @@ export const WrappedStake: React.FC = () => {
     const earnedAmount = sBitzData[sBitzData.length - 1]?.y - bitzData[sBitzData.length - 1]?.y
     const earnedUsd = earnedAmount * bitzPrice
     setChartData({
-      bitzData,
-      sBitzData,
+      bitzData: bitzData.filter((_, index) => (index + 1) % (interval === '1Y' ? 7 : 1) === 0),
+      sBitzData: sBitzData.filter((_, index) => (index + 1) % (interval === '1Y' ? 7 : 1) === 0),
       earnedAmount,
       earnedUsd
     })
-  }, [stakedBitzData, stakedAmount, bitzPrice])
+  }, [stakedBitzData, stakedAmount, bitzPrice, interval])
 
   useEffect(() => {
     let timeoutId1: NodeJS.Timeout
@@ -404,6 +409,10 @@ export const WrappedStake: React.FC = () => {
           sBitzData={chartData.sBitzData}
           earnedUsd={chartData.earnedUsd}
           stakeLoading={stakeLoading}
+          interval={interval}
+          setInterval={interval =>
+            dispatch(sbitzStatsActions.setForecastInterval(interval as IntervalsKeys))
+          }
         />
         {/* </Box> */}
         {/* {/* <HowItWorks /> */}
