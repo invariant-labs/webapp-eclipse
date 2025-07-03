@@ -256,6 +256,8 @@ export interface Reward {
 export interface IPositionItem {
   tokenXName: string
   tokenYName: string
+  isUnknownX: boolean
+  isUnknownY: boolean
   tokenXIcon: string
   tokenYIcon: string
   tokenXLiq: number
