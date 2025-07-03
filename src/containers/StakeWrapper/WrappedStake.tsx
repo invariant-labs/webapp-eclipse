@@ -45,26 +45,27 @@ import { FAQSection } from '@components/Stake/FAQSection/FAQSection'
 // import { OverallStats } from '@components/Stake/OverallStats/OverallStats'
 import { StakeChart } from '@components/Stake/StakeChart/StakeChart'
 // import { StakedStats } from '@components/Stake/StakedStats/StakedStats'
-import { YourStakeProgress } from '@components/Stake/YourStakeStats/YourProgress'
 import { BN } from '@coral-xyz/anchor'
+import { calculateTokensForWithdraw, computeBitzSbitzRewards } from '@invariant-labs/sbitz'
 import {
-  calculateTokensForWithdraw,
-  computeBitzAprApy,
-  computeBitzSbitzRewards
-} from '@invariant-labs/sbitz'
-import { sBITZ_MAIN, BITZ_MAIN, PORTFOLIO_STAKE_EXPAND_DELAY, PORTFOLIO_STAKE_STORAGE_KEY, PORTFOLIO_STAKE_COLLAPSE_DELAY } from '@store/consts/static'
+  sBITZ_MAIN,
+  BITZ_MAIN,
+  PORTFOLIO_STAKE_EXPAND_DELAY,
+  PORTFOLIO_STAKE_STORAGE_KEY,
+  PORTFOLIO_STAKE_COLLAPSE_DELAY
+} from '@store/consts/static'
 import { getTokenPrice, printBN } from '@utils/utils'
 import LiquidityStaking from '@components/Stake/LiquidityStaking/LiquidityStaking'
 import { StakeSwitch } from '@store/consts/types'
 // // import { HowItWorks } from '@components/Stake/HowItWorks/HowItWorks'
 // import { StakedStats } from '@components/Stake/StakedStats/StakedStats'
-// import { YourStakeProgress } from '@components/Stake/YourStakeStats/YourProgress'
 // import { OverallStats } from '@components/Stake/OverallStats/OverallStats'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { refreshIcon } from '@static/icons'
 import { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 import { theme } from '@static/theme'
 import { SBitzBanner } from '@components/Stake/SBitzBanner/SBitzBanner'
+import { YourStakeProgress } from '@components/Stake/YourStakeStats/YourProgress'
 
 export const WrappedStake: React.FC = () => {
   const { classes } = useStyles()
@@ -114,8 +115,6 @@ export const WrappedStake: React.FC = () => {
   const [priceLoading, setPriceLoading] = useState(false)
   const [shouldRenderStats, setShouldRenderStats] = useState(false)
 
-
-
   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
   const sBitzBalance = useMemo(() => {
@@ -142,9 +141,78 @@ export const WrappedStake: React.FC = () => {
     return sbitzPredictedYield[0] || 0
   }, [sBitzBalance, stakedBitzData])
 
-  const sBitzApyApr = useMemo(() => {
-    if (!stakedBitzData.bitzTotalBalance) return { apr: 0, apy: 0 }
-    return computeBitzAprApy(+printBN(stakedBitzData.bitzTotalBalance, BITZ_MAIN.decimals))
+  const computeBitzAndSbitzYield = (
+    bitzStakedInSbitz: number,
+    bitzStakedInPowPow: number
+  ): {
+    sbitzMonthly: number
+    sbitzAnnual: number
+    bitzMonthly: number
+    bitzAnnual: number
+  } => {
+    const TOTAL_STAKING_REWARD_PER_DAY = 720
+    const COMPOUND_INTERVAL_SECONDS = 10
+    const COMPOUNDS_PER_DAY = 86_400 / COMPOUND_INTERVAL_SECONDS
+    const INVERSE_COMPOUNDS_PER_DAY = 1 / COMPOUNDS_PER_DAY
+    const DAYS_IN_YEAR = 365
+    const DAYS_IN_MONTH = 30
+
+    let myStakeS = 1
+    let sbitzStake = bitzStakedInSbitz
+    let totalStakeS = 1 + bitzStakedInPowPow
+    let myStakeSMonth = 1
+
+    let myStakeB = 1
+    let sbitzStakeB = bitzStakedInSbitz
+    let totalStakeB = 1 + bitzStakedInPowPow
+    let myStakeBMonth = 1
+
+    for (let day = 0; day < DAYS_IN_YEAR; day++) {
+      const dailyRateS = TOTAL_STAKING_REWARD_PER_DAY / totalStakeS
+      const factorS = Math.pow(1 + dailyRateS * INVERSE_COMPOUNDS_PER_DAY, COMPOUNDS_PER_DAY)
+
+      const prevMyS = myStakeS
+      const prevSbitz = sbitzStake
+
+      myStakeS *= factorS
+      sbitzStake *= factorS
+      totalStakeS += myStakeS - prevMyS + (sbitzStake - prevSbitz)
+
+      const dailyRateB = TOTAL_STAKING_REWARD_PER_DAY / totalStakeB
+      const factorB = Math.pow(1 + dailyRateB * INVERSE_COMPOUNDS_PER_DAY, COMPOUNDS_PER_DAY)
+
+      const prevSbitzB = sbitzStakeB
+
+      sbitzStakeB *= factorB
+      myStakeB += dailyRateB
+      totalStakeB += sbitzStakeB - prevSbitzB
+
+      if (day === DAYS_IN_MONTH - 1) {
+        myStakeSMonth = myStakeS
+        myStakeBMonth = myStakeB
+      }
+    }
+
+    return {
+      sbitzMonthly: Math.round((myStakeSMonth - 1) * 10_000) / 100,
+      sbitzAnnual: Math.round((myStakeS - 1) * 10_000) / 100,
+      bitzMonthly: Math.round((myStakeBMonth - 1) * 10_000) / 100,
+      bitzAnnual: Math.round((myStakeB - 1) * 10_000) / 100
+    }
+  }
+
+  const sBitzBitzMonthlyAnnual = useMemo(() => {
+    if (!stakedBitzData.bitzTotalBalance || !stakedBitzData.stakedAmount)
+      return {
+        sbitzMonthly: 0,
+        sbitzAnnual: 0,
+        bitzMonthly: 0,
+        bitzAnnual: 0
+      }
+    return computeBitzAndSbitzYield(
+      +printBN(stakedBitzData.stakedAmount, BITZ_MAIN.decimals),
+      +printBN(stakedBitzData.bitzTotalBalance, BITZ_MAIN.decimals)
+    )
   }, [stakedBitzData])
 
   const tokenFrom: SwapToken = useMemo(
@@ -250,52 +318,48 @@ export const WrappedStake: React.FC = () => {
     }
   }, [success, isInProgress])
 
-
   const toggleExpand = () => {
-    const isWalletInitialized = walletStatus === Status.Initialized;
-    const newExpandedState = isWalletInitialized && !isExpanded;
+    const isWalletInitialized = walletStatus === Status.Initialized
+    const newExpandedState = isWalletInitialized && !isExpanded
 
-    localStorage.setItem(PORTFOLIO_STAKE_STORAGE_KEY, JSON.stringify(newExpandedState));
+    localStorage.setItem(PORTFOLIO_STAKE_STORAGE_KEY, JSON.stringify(newExpandedState))
 
     if (newExpandedState) {
-      setShouldRenderStats(true);
-      setTimeout(() => setIsExpanded(true), PORTFOLIO_STAKE_EXPAND_DELAY);
+      setShouldRenderStats(true)
+      setTimeout(() => setIsExpanded(true), PORTFOLIO_STAKE_EXPAND_DELAY)
     } else {
-      setIsExpanded(false);
+      setIsExpanded(false)
       if (shouldRenderStats) {
-        setTimeout(() => setShouldRenderStats(false), PORTFOLIO_STAKE_COLLAPSE_DELAY);
+        setTimeout(() => setShouldRenderStats(false), PORTFOLIO_STAKE_COLLAPSE_DELAY)
       }
     }
   }
 
   useEffect(() => {
-    const isWalletInitialized = walletStatus === Status.Initialized;
+    const isWalletInitialized = walletStatus === Status.Initialized
 
     if (isWalletInitialized) {
-      const savedExpandedState = localStorage.getItem(PORTFOLIO_STAKE_STORAGE_KEY);
-      const shouldExpand = savedExpandedState !== null && JSON.parse(savedExpandedState);
+      const savedExpandedState = localStorage.getItem(PORTFOLIO_STAKE_STORAGE_KEY)
+      const shouldExpand = savedExpandedState !== null && JSON.parse(savedExpandedState)
 
       if (shouldExpand) {
-        setShouldRenderStats(true);
-        setTimeout(() => setIsExpanded(true), PORTFOLIO_STAKE_EXPAND_DELAY);
+        setShouldRenderStats(true)
+        setTimeout(() => setIsExpanded(true), PORTFOLIO_STAKE_EXPAND_DELAY)
       }
     } else {
-      setIsExpanded(false);
-      setShouldRenderStats(false);
+      setIsExpanded(false)
+      setShouldRenderStats(false)
     }
 
-    prevConnectionStatus.current = walletStatus;
-  }, [walletStatus]);
+    prevConnectionStatus.current = walletStatus
+  }, [walletStatus])
   return (
     <Grid container className={classes.wrapper}>
-
       <SBitzBanner />
       <Box className={classes.animatedContainer}>
         <Box
-          className={`${classes.liquidityStakingWrapper} ${isExpanded ? classes.liquidityStakingExpanded : ''}`}
-        >
+          className={`${classes.liquidityStakingWrapper} ${isExpanded ? classes.liquidityStakingExpanded : ''}`}>
           <Box className={classes.titleWrapper}>
-
             <Box className={classes.titleTextWrapper}>
               <Typography component='h1'>Liquidity staking</Typography>
               <Box className={classes.subheaderDescription}>
@@ -303,14 +367,23 @@ export const WrappedStake: React.FC = () => {
                   to='https://docs.invariant.app/docs/sbitz'
                   target='_blank'
                   className={classes.learnMoreLink}>
-                  <span> {isSm ? 'More' : 'Learn More'}</span> <LaunchIcon classes={{ root: classes.clipboardIcon }} />
+                  <span> {isSm ? 'More' : 'Learn More'}</span>{' '}
+                  <LaunchIcon classes={{ root: classes.clipboardIcon }} />
                 </Link>
               </Box>
             </Box>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Button className={classes.statsExpanderButton} onClick={() => toggleExpand()} disabled={!isConnected}>
+              <Button
+                className={classes.statsExpanderButton}
+                onClick={() => toggleExpand()}
+                disabled={!isConnected}>
                 <p>
-                  <img src={isExpanded ? EyeHide : EyeShow} width={20} height={20} style={{ opacity: isConnected ? 1 : 0.3 }} />
+                  <img
+                    src={isExpanded ? EyeHide : EyeShow}
+                    width={20}
+                    height={20}
+                    style={{ opacity: isConnected ? 1 : 0.3 }}
+                  />
                   Portfolio
                 </p>
               </Button>
@@ -327,7 +400,6 @@ export const WrappedStake: React.FC = () => {
             </Box>
           </Box>
           <Box className={classes.stakingContentWrapper}>
-
             <LiquidityStaking
               walletStatus={walletStatus}
               tokens={tokens}
@@ -343,7 +415,6 @@ export const WrappedStake: React.FC = () => {
               onDisconnectWallet={() => {
                 dispatch(walletActions.disconnect())
               }}
-              sBitzApyApr={sBitzApyApr}
               stakedTokenSupply={stakedBitzData.stakedTokenSupply}
               stakedAmount={stakedBitzData.stakedAmount}
               stakeDataLoading={stakeLoading}
@@ -368,10 +439,10 @@ export const WrappedStake: React.FC = () => {
               priceLoading={priceLoading}
               sBitzPrice={sBitzPrice}
               bitzPrice={bitzPrice}
+              sBitzBitzMonthlyAnnual={sBitzBitzMonthlyAnnual}
             />
             <Box
-              className={`${classes.yourStatsWrapper} ${isExpanded && isConnected ? classes.yourStatsVisible : ''}`}
-            >
+              className={`${classes.yourStatsWrapper} ${isExpanded && isConnected ? classes.yourStatsVisible : ''}`}>
               {shouldRenderStats && isConnected && (
                 <YourStakeProgress
                   sBitzBalance={sBitzBalance}
@@ -385,11 +456,8 @@ export const WrappedStake: React.FC = () => {
             </Box>
           </Box>
         </Box>
-
       </Box>
       <Box className={classes.statsContainer}>
-
-
         {/* <Box className={classes.statsContainer}> */}
         <Typography className={classes.statsTitle}>Earnings forecast</Typography>
         <StakeChart
@@ -421,10 +489,8 @@ export const WrappedStake: React.FC = () => {
       </Box>
 
       <FAQSection />
-    </Grid >
+    </Grid>
   )
 }
-
-
 
 export default WrappedStake
