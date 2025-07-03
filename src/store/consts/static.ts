@@ -591,7 +591,6 @@ export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
     TETH_MAIN.address,
     USDC_MAIN.address,
     SOL_MAIN.address,
-    USDT_MAIN.address,
     BITZ_MAIN.address,
     ES_MAIN.address,
     sBITZ_MAIN.address,
