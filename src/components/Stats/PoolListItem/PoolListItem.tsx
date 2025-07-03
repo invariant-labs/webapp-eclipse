@@ -117,10 +117,11 @@ const PoolListItem: React.FC<IProps> = ({
 }) => {
   const [showInfo, setShowInfo] = useState(false)
   const { classes, cx } = useStyles({ showInfo })
-
   const navigate = useNavigate()
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
   const isSmd = useMediaQuery(theme.breakpoints.down('md'))
+  const hideInterval = useMediaQuery(theme.breakpoints.between(600, 650))
+
   const isMd = useMediaQuery(theme.breakpoints.down(1160))
   const airdropIconRef = useRef<HTMLDivElement>(null)
   const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
@@ -369,7 +370,7 @@ const PoolListItem: React.FC<IProps> = ({
               />
             )}
 
-            {!isSm && (
+            {!isSm && !hideInterval && (
               <Typography>
                 {shortenAddress(tokenAData.symbol ?? '')}/{shortenAddress(tokenBData.symbol ?? '')}
               </Typography>
@@ -500,33 +501,61 @@ const PoolListItem: React.FC<IProps> = ({
           )}
           {isSmd && (
             <>
-              <>
-                <Typography component='h5' className={classes.extendedRowTitle}>
-                  Fees ({intervalSuffix}){' '}
-                  <span className={classes.extendedRowContent}>
-                    ${formatNumberWithSuffix((fee * 0.01 * volume).toFixed(2))}
-                  </span>
-                </Typography>
-                <Typography>{''}</Typography>
-                <Typography>{''}</Typography>
-                <Typography component='h5' className={classes.extendedRowTitle}>
-                  APY{' '}
-                  <span className={classes.extendedRowContent}>
-                    {`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '-' : Math.abs(convertedApy).toFixed(2) + '%'}`}
-                  </span>
-                </Typography>
-                <Typography
-                  component='h5'
-                  className={cx(classes.extendedRowTitle, classes.selfEnd)}>
-                  APR{' '}
-                  <span className={classes.extendedRowContent}>
-                    {`${convertedApr > 1000 ? '>1000%' : convertedApr === 0 ? '-' : Math.abs(convertedApr).toFixed(2) + '%'}`}
-                  </span>
-                </Typography>
-                <Typography>{''}</Typography>
-              </>
+              <Typography
+                component='h5'
+                style={isSm ? {} : { gridColumn: 'span 2' }}
+                className={classes.extendedRowTitle}>
+                Fees {!hideInterval && `(${intervalSuffix})`}{' '}
+                <span className={classes.extendedRowContent}>
+                  ${formatNumberWithSuffix((fee * 0.01 * volume).toFixed(2))}
+                </span>
+              </Typography>
+              {!isSm && (
+                <Grid className={classes.extendedGrid}>
+                  <Typography
+                    component='h5'
+                    style={{ textAlign: 'end', justifyContent: 'flex-end' }}
+                    className={classes.extendedRowTitle}>
+                    APY{' '}
+                    <span className={classes.extendedRowContent}>
+                      {`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '-' : Math.abs(convertedApy).toFixed(2) + '%'}`}
+                    </span>
+                  </Typography>
+                  <Typography
+                    component='h5'
+                    style={{ textAlign: 'end', justifyContent: 'flex-end' }}
+                    className={cx(classes.extendedRowTitle, classes.selfEnd)}>
+                    APR{' '}
+                    <span className={classes.extendedRowContent}>
+                      {`${convertedApr > 1000 ? '>1000%' : convertedApr === 0 ? '-' : Math.abs(convertedApr).toFixed(2) + '%'}`}
+                    </span>
+                  </Typography>
+
+                  {ActionsButtons}
+                </Grid>
+              )}
+
               {isSm && (
                 <>
+                  <Typography>{''}</Typography>
+                  <Typography>{''}</Typography>
+                  <Typography component='h5' className={classes.extendedRowTitle}>
+                    APY{' '}
+                    <span className={classes.extendedRowContent}>
+                      {`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '-' : Math.abs(convertedApy).toFixed(2) + '%'}`}
+                    </span>
+                  </Typography>
+                  <Typography
+                    component='h5'
+                    style={{ textAlign: 'end', justifyContent: 'flex-end' }}
+                    className={cx(classes.extendedRowTitle, classes.selfEnd)}>
+                    APR{' '}
+                    <span className={classes.extendedRowContent}>
+                      {`${convertedApr > 1000 ? '>1000%' : convertedApr === 0 ? '-' : Math.abs(convertedApr).toFixed(2) + '%'}`}
+                    </span>
+                  </Typography>
+                  <Typography>{''}</Typography>
+
                   <Typography
                     component='h5'
                     className={classes.extendedRowTitle}

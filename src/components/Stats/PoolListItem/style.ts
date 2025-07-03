@@ -46,10 +46,10 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     },
 
     [theme.breakpoints.down('md')]: {
-      height: !showInfo ? 69 : 104,
+      height: !showInfo ? 69 : 155,
 
-      gridTemplateColumns: '40px auto 130px 130px 80px 24px',
-      rowGap: 25,
+      gridTemplateColumns: '30px auto 125px 130px 90px 15px',
+      rowGap: 16,
       cursor: 'pointer'
     },
 
@@ -188,16 +188,32 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     color: colors.invariant.text,
     ...typography.caption1
   },
+  extendedGrid: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gridColumn: 'span 4',
+    gap: 8
+  },
   action: {
     display: 'flex',
     justifyContent: 'flex-end',
     alignItems: 'center',
     minWidth: 'max-content',
     gap: 8,
-    [theme.breakpoints.down('sm')]: {
-      justifyContent: 'flex-end',
+    [theme.breakpoints.down('md')]: {
       visibility: showInfo ? 'visible' : 'hidden',
-      gridColumn: 'span 3'
+      justifyContent: 'flex-end',
+      width: 137,
+      marginLeft: 7,
+      gap: 3
+    },
+    [theme.breakpoints.down('sm')]: {
+      gap: 8,
+      marginLeft: 0,
+      gridColumn: 'span 3',
+      width: '100%',
+      justifyContent: 'flex-end'
     }
   },
   actionButton: {
@@ -249,7 +265,10 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     marginRight: 3,
     borderRadius: '50%',
     ':last-of-type': {
-      marginRight: 8
+      marginRight: 8,
+      [theme.breakpoints.down(650)]: {
+        marginRight: 4
+      }
     },
     [theme.breakpoints.down('sm')]: {
       ':last-of-type': {
@@ -308,18 +327,13 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     transition: 'all 0.3s ease',
     transform: showInfo ? 'rotate(180deg)' : 'rotate(0deg)'
   },
-  extendedRowPlaceholder: {
-    flex: '0 0 0',
-    width: 0,
-    height: 0
-  },
+
   extendedRowTitle: {
     visibility: showInfo ? 'visible' : 'hidden',
-    flex: '0 0 auto',
+
     ...typography.body3,
     display: 'flex',
-    flexWrap: 'nowrap',
-    textWrap: 'nowrap',
+
     gap: 6,
 
     color: colors.invariant.textGrey,
@@ -329,17 +343,12 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     },
     [theme.breakpoints.up('sm')]: {
       ':last-of-type': {
-        justifySelf: 'end'
+        // justifySelf: 'end'
       }
     }
   },
-  extendedAPY: {
-    gridColumn: 'span 2'
-  },
 
   extendedRowContent: {
-    flexWrap: 'nowrap',
-
     ...typography.body3,
     fontWeight: 700,
     color: colors.invariant.text,
