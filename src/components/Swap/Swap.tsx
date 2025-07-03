@@ -496,7 +496,10 @@ export const Swap: React.FC<ISwap> = ({
       if (swapIsLoading) {
         setPendingSimulation(true)
       } else {
-        simulateWithTimeout()
+        // Only simulate if we have the necessary data
+        if (swapAccounts && Object.keys(swapAccounts.pools || {}).length > 0) {
+          simulateWithTimeout()
+        }
       }
     }
   }, [progress, swapIsLoading])
@@ -523,21 +526,6 @@ export const Swap: React.FC<ISwap> = ({
       simulateWithTimeout()
     }
   }, [swapIsLoading, pendingSimulation])
-
-  useEffect(() => {
-    if (
-      !swapIsLoading &&
-      tokenFromIndex !== null &&
-      tokenToIndex !== null &&
-      (amountFrom !== '' || amountTo !== '') &&
-      !pendingSimulation &&
-      swapAccounts &&
-      Object.keys(swapAccounts.pools || {}).length > 0
-    ) {
-      console.log('Two-hop swap data loaded')
-      simulateWithTimeout()
-    }
-  }, [swapIsLoading])
 
   useEffect(() => {
     if (tokenFromIndex !== null && tokenToIndex !== null) {
@@ -621,7 +609,7 @@ export const Swap: React.FC<ISwap> = ({
       }
 
       try {
-        console.log('Simulating swap')
+        console.log('Simulating swap with accounts:', Object.keys(swapAccounts.pools || {}).length, 'pools')
         if (inputRef === inputTarget.FROM) {
           const [simulateValue, simulateWithHopValue] = await Promise.all([
             handleSimulate(
