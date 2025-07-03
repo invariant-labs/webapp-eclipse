@@ -466,7 +466,6 @@ export const Swap: React.FC<ISwap> = ({
       swapAccounts &&
       Object.keys(swapAccounts.pools || {}).length > 0
     ) {
-      console.log('Triggering simulation from amountFrom useEffect')
       simulateWithTimeout()
     }
   }, [
@@ -490,7 +489,6 @@ export const Swap: React.FC<ISwap> = ({
       swapAccounts &&
       Object.keys(swapAccounts.pools || {}).length > 0
     ) {
-      console.log('Triggering simulation from amountTo useEffect')
       simulateWithTimeout()
     }
   }, [
@@ -510,9 +508,7 @@ export const Swap: React.FC<ISwap> = ({
       if (swapIsLoading) {
         setPendingSimulation(true)
       } else {
-        // Only simulate if we have the necessary data
         if (swapAccounts && Object.keys(swapAccounts.pools || {}).length > 0) {
-          console.log('Triggering simulation from progress/swapIsLoading useEffect')
           simulateWithTimeout()
         }
       }
@@ -538,7 +534,6 @@ export const Swap: React.FC<ISwap> = ({
   useEffect(() => {
     if (!swapIsLoading && pendingSimulation) {
       setPendingSimulation(false)
-      console.log('Triggering simulation from pendingSimulation useEffect')
       simulateWithTimeout()
     }
   }, [swapIsLoading, pendingSimulation])
@@ -608,7 +603,6 @@ export const Swap: React.FC<ISwap> = ({
 
   const setSimulateAmount = async () => {
     if (swapIsLoading) {
-      console.log('Two-hop swap data is loading, setting pending simulation...')
       setPendingSimulation(true)
       setAddBlur(true)
       return
@@ -620,16 +614,10 @@ export const Swap: React.FC<ISwap> = ({
 
     if (tokenFromIndex !== null && tokenToIndex !== null && !swapIsLoading) {
       if (!swapAccounts || Object.keys(swapAccounts.pools || {}).length === 0) {
-        console.log('No swap accounts data available')
         return
       }
 
       try {
-        console.log(
-          'Simulating swap with accounts:',
-          Object.keys(swapAccounts.pools || {}).length,
-          'pools'
-        )
         if (inputRef === inputTarget.FROM) {
           const [simulateValue, simulateWithHopValue] = await Promise.all([
             handleSimulate(

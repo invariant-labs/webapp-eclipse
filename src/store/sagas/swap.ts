@@ -1809,7 +1809,6 @@ export function* handleSwap(): Generator {
 export function* handleGetTwoHopSwapData(
   action: PayloadAction<{ tokenFrom: PublicKey; tokenTo: PublicKey }>
 ): Generator {
-  console.log('Fetching Data', Date.now() / 1e3)
   const { tokenFrom, tokenTo } = action.payload
 
   const networkType = yield* select(network)
@@ -1865,7 +1864,6 @@ export function* handleGetTwoHopSwapData(
   })
   accounts.ticks = { ...accounts.ticks, ...accountsTicks.ticks }
 
-  console.log('Fetched Data', Date.now() / 1e3)
   yield put(swapActions.setTwoHopSwapData({ accounts }))
 }
 

@@ -1075,7 +1075,6 @@ export const handleSimulate = async (
   priceImpact: BN
   error: string[]
 }> => {
-  console.log('Simulating', Date.now() / 1e3)
   const filteredPools = findPairs(fromToken, toToken, pools)
   const errorMessage: string[] = []
   let isXtoY = false
@@ -1318,7 +1317,6 @@ export const handleSimulateWithHop = async (
   byAmountIn: boolean,
   accounts: FetcherRecords
 ) => {
-  console.log('Simulating two-hop', Date.now() / 1e3)
   const { routeCandidates } = routingEssentials(
     tokenIn,
     tokenOut,
@@ -1340,8 +1338,6 @@ export const handleSimulateWithHop = async (
     }
   }
 
-  console.log('Route candidates', routeCandidates)
-
   if (routeCandidates.length === 0) {
     return { simulation: null, route: null, error: true }
   }
@@ -1355,7 +1351,6 @@ export const handleSimulateWithHop = async (
     accounts
   )
 
-  console.log('Hop simulations', simulations)
   if (simulations.length === 0) {
     return { simulation: null, route: null, error: true }
   }
