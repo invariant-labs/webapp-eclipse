@@ -842,6 +842,19 @@ export const walletNames = {
 
 export const defaultImages: string[] = [dog1Icon, dog2Icon, cat1Icon, cat2Icon]
 
+export const disabledPools = [
+  {
+    tokenX: sBITZ_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    feeTiers: ['0.01']
+  },
+  {
+    tokenX: BITZ_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    feeTiers: ['0.01']
+  }
+]
+
 export const getPopularPools = (network: NetworkType) => {
   switch (network) {
     case NetworkType.Mainnet:
@@ -1066,6 +1079,11 @@ export const thresholdsWithTokenDecimal = (decimals: number): FormatNumberThresh
 ]
 
 export const MAX_PLOT_VISIBLE_TICK_RANGE = 46154 // x100 difference
+export const DEFAULT_STRATEGY = {
+  tokenA: 'ETH',
+  tokenB: 'USDC',
+  feeTier: '0_09'
+}
 
 export const PORTFOLIO_STAKE_STORAGE_KEY = 'STAKE_STATS_EXPANDED'
 export const PORTFOLIO_STAKE_EXPAND_DELAY = 50

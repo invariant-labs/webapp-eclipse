@@ -67,6 +67,7 @@ export const colors = {
     lightPink: '#f29df7',
     violet: '#9C3EBD',
     green: '#2EE09A',
+    greenOpacity: '#256964',
     dark: '#040B22',
     newDark: '#111931',
     component: '#202946',

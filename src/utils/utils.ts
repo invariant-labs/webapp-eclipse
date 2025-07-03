@@ -120,6 +120,7 @@ import { publicKey } from '@metaplex-foundation/umi-public-keys'
 import { createUmi } from '@metaplex-foundation/umi-bundle-defaults'
 import { Umi } from '@metaplex-foundation/umi'
 import { StakingStatsResponse } from '@store/reducers/sbitz-stats'
+import { DEFAULT_FEE_TIER, STRATEGIES } from '@store/consts/userStrategies'
 
 export const transformBN = (amount: BN): string => {
   return (amount.div(new BN(1e2)).toNumber() / 1e4).toString()
@@ -2458,6 +2459,31 @@ export interface ITokenDecimalAndProgramID {
   address: PublicKey
   decimals: number
   programId: PublicKey
+}
+export const findStrategy = (
+  tokenAddress: string,
+  currentNetwork: NetworkType = NetworkType.Mainnet
+) => {
+  const poolTicker = addressToTicker(currentNetwork, tokenAddress)
+  let strategy = STRATEGIES.find(s => {
+    const tickerA = addressToTicker(currentNetwork, s.tokenAddressA)
+    const tickerB = s.tokenAddressB ? addressToTicker(currentNetwork, s.tokenAddressB) : undefined
+    return tickerA === poolTicker || tickerB === poolTicker
+  })
+  if (!strategy) {
+    strategy = {
+      tokenAddressA: tokenAddress,
+      feeTier: DEFAULT_FEE_TIER
+    }
+  }
+
+  return {
+    ...strategy,
+    tokenSymbolA: addressToTicker(currentNetwork, strategy.tokenAddressA),
+    tokenSymbolB: strategy.tokenAddressB
+      ? addressToTicker(currentNetwork, strategy.tokenAddressB)
+      : '-'
+  }
 }
 
 export enum SwapTokenType {

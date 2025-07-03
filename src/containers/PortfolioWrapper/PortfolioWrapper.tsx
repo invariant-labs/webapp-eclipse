@@ -1,4 +1,5 @@
 import {
+  DEFAULT_STRATEGY,
   Intervals,
   NetworkType,
   POSITIONS_PER_PAGE,
@@ -38,7 +39,7 @@ import {
 import { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { calcYPerXPriceBySqrtPrice, printBN, ROUTES } from '@utils/utils'
+import { calcYPerXPriceBySqrtPrice, findStrategy, printBN, ROUTES } from '@utils/utils'
 import { network } from '@store/selectors/solanaConnection'
 import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import { actions as actionsStats } from '@store/reducers/stats'
@@ -53,6 +54,7 @@ import { VariantType } from 'notistack'
 import { IPositionItem } from '@store/consts/types'
 import { portfolioSearch } from '@store/selectors/navigation'
 import { ISearchToken } from '@common/FilterSearch/FilterSearch'
+import { useProcessedTokens } from '@store/hooks/userOverview/useProcessedToken'
 
 const PortfolioWrapper = () => {
   const { classes } = useStyles()
@@ -73,6 +75,14 @@ const PortfolioWrapper = () => {
   const positionListAlignment = useSelector(positionListSwitcher)
   const overviewSelectedTab = useSelector(overviewSwitch)
   const searchParamsToken = useSelector(portfolioSearch)
+  const { processedTokens, isProcesing } = useProcessedTokens(
+    tokensList,
+    isBalanceLoading,
+    currentNetwork
+  )
+
+  const [maxToken] = [...processedTokens].sort((a, b) => b.value - a.value)
+
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
@@ -359,21 +369,34 @@ const PortfolioWrapper = () => {
     dispatch(leaderboardActions.getLeaderboardConfig())
   }, [dispatch])
 
+  const onAddPositionClick = () => {
+    dispatch(navigationActions.setNavigation({ address: location.pathname }))
+    if (maxToken) {
+      const strategy = findStrategy(maxToken.id.toString())
+      navigate(
+        ROUTES.getNewPositionRoute(strategy.tokenAddressA, strategy.tokenAddressB, strategy.feeTier)
+      )
+    } else
+      navigate(
+        ROUTES.getNewPositionRoute(
+          DEFAULT_STRATEGY.tokenA,
+          DEFAULT_STRATEGY.tokenB,
+          DEFAULT_STRATEGY.feeTier
+        )
+      )
+  }
+
   return isConnected ? (
     <Portfolio
       selectedFilters={searchParamsToken.filteredTokens}
       setSelectedFilters={setSearchTokensValue}
       shouldDisable={disabledButton}
-      tokensList={tokensList}
       isBalanceLoading={isBalanceLoading}
       handleSnackbar={handleSnackbar}
       initialPage={lastPage}
       setLastPage={setLastPage}
       handleRefresh={handleRefresh}
-      onAddPositionClick={() => {
-        dispatch(navigationActions.setNavigation({ address: location.pathname }))
-        navigate(ROUTES.NEW_POSITION)
-      }}
+      onAddPositionClick={onAddPositionClick}
       currentNetwork={currentNetwork}
       data={data}
       lockedData={lockedData}
@@ -398,6 +421,8 @@ const PortfolioWrapper = () => {
       }
       overviewSelectedTab={overviewSelectedTab}
       handleOverviewSwitch={option => dispatch(walletActions.setOverviewSwitch(option))}
+      processedTokens={processedTokens}
+      isProcesing={isProcesing}
     />
   ) : (
     <Grid className={classes.emptyContainer}>
