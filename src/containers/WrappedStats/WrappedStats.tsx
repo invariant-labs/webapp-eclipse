@@ -320,6 +320,8 @@ export const WrappedStats: React.FC = () => {
                 symbolTo: poolData.tokenYDetails?.symbol ?? poolData.tokenY.toString(),
                 iconFrom: poolData.tokenXDetails?.logoURI ?? unknownTokenIcon,
                 iconTo: poolData.tokenYDetails?.logoURI ?? unknownTokenIcon,
+                unkownForm: poolData.tokenXDetails.isUnknown,
+                unkownTo: poolData.tokenYDetails.isUnknown,
                 volume: poolData.volume24,
                 TVL: poolData.tvl,
                 fee: poolData.fee,
