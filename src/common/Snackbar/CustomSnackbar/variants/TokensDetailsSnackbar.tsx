@@ -149,29 +149,33 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
                 )}
               </>
             )}
-            {ikonType === 'swap' || ikonType === 'unstake' || ikonType === 'stake' ? (
-              arrow
-            ) : ikonType === 'claim' ? (
-              hasBothAmounts ? (
-                <StyledText>+</StyledText>
-              ) : null
-            ) : (
-              <StyledText>+</StyledText>
-            )}
-            <StyledText color={colors.invariant.green}>
-              {tokenBetweenAmount ? tokenBetweenAmount : tokenYAmount}
-            </StyledText>
-            {(
-              tokenBetweenAmount
-                ? tokenBetweenIcon === '/unknownToken.svg'
-                : tokenYIcon === '/unknownToken.svg'
-            ) ? (
-              <StyledText>{tokenBetweenAmount ? tokenBetweenSymbol : tokenYSymbol}</StyledText>
-            ) : (
-              <img
-                src={tokenBetweenAmount ? tokenBetweenIcon : tokenYIcon}
-                className={classes.tokenIcon}
-              />
+            {!!tokenYAmount && (
+              <>
+                {ikonType === 'swap' || ikonType === 'unstake' || ikonType === 'stake' ? (
+                  arrow
+                ) : ikonType === 'claim' ? (
+                  hasBothAmounts ? (
+                    <StyledText>+</StyledText>
+                  ) : null
+                ) : (
+                  <StyledText>+</StyledText>
+                )}
+                <StyledText color={colors.invariant.green}>
+                  {tokenBetweenAmount ? tokenBetweenAmount : tokenYAmount}
+                </StyledText>
+                {(
+                  tokenBetweenAmount
+                    ? tokenBetweenIcon === '/unknownToken.svg'
+                    : tokenYIcon === '/unknownToken.svg'
+                ) ? (
+                  <StyledText>{tokenBetweenAmount ? tokenBetweenSymbol : tokenYSymbol}</StyledText>
+                ) : (
+                  <img
+                    src={tokenBetweenAmount ? tokenBetweenIcon : tokenYIcon}
+                    className={classes.tokenIcon}
+                  />
+                )}
+              </>
             )}
           </Grid>
 
@@ -197,16 +201,13 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
                 ) : (
                   <img src={tokenBetweenIcon} className={classes.tokenIcon} />
                 )}
-                {tokenYSymbol && (
-                  <>
-                    {ikonType === 'swap' ? arrow : <StyledText>+</StyledText>}
-                    <StyledText color={colors.invariant.green}>{tokenYAmount}</StyledText>
-                    {tokenYIcon === '/unknownToken.svg' ? (
-                      <StyledText>{tokenYSymbol}</StyledText>
-                    ) : (
-                      <img src={tokenYIcon} className={classes.tokenIcon} />
-                    )}
-                  </>
+
+                {ikonType === 'swap' ? arrow : <StyledText>+</StyledText>}
+                <StyledText color={colors.invariant.green}>{tokenYAmount}</StyledText>
+                {tokenYIcon === '/unknownToken.svg' ? (
+                  <StyledText>{tokenYSymbol}</StyledText>
+                ) : (
+                  <img src={tokenYIcon} className={classes.tokenIcon} />
                 )}
               </Grid>
             </>

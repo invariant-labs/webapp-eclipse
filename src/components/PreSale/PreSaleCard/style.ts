@@ -5,29 +5,22 @@ const useStyles = makeStyles<{ gradientDirection?: string; gradientPrimaryColor?
   theme => ({
     container: {
       display: 'flex',
-      position: 'relative',
-      overflow: 'hidden',
       width: '100%',
-      height: '130px',
-
       borderRadius: '24px',
       padding: '24px',
       boxSizing: 'border-box',
       maxWidth: '100%',
       [theme.breakpoints.down('lg')]: {
         height: 'auto',
-        minHeight: '110px',
         padding: '20px'
       },
 
       [theme.breakpoints.down('md')]: {
         maxWidth: '100%',
-        minHeight: '90px',
         padding: '16px'
       },
 
       [theme.breakpoints.down('sm')]: {
-        minHeight: '80px',
         padding: '12px',
         borderRadius: '16px',
         '&::before': {

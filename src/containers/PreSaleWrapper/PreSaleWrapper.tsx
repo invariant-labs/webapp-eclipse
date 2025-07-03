@@ -29,8 +29,7 @@ import {
   getTimestampSeconds
 } from '@invariant-labs/sale-sdk/lib/utils'
 import { ProgressState } from '@common/AnimatedButton/AnimatedButton'
-
-import { colors, typography, theme } from '@static/theme'
+import { colors, theme } from '@static/theme'
 import { Faq } from '@common/Faq/Faq'
 import { PreSaleCard } from '@components/PreSale/PreSaleCard/PreSaleCard'
 import SolanaHackatonHero from '@static/png/presale/cards/SolanaHackaton.png'
@@ -196,7 +195,8 @@ export const PreSaleWrapper = () => {
   const [progress, setProgress] = useState<ProgressState>('none')
   const [tokenIndex, setTokenIndex] = useState<number | null>(null)
   const [currentTimestamp, setCurrentTimestamp] = useState<BN>(getTimestampSeconds())
-  const [reversedPrices, setReversedPrices] = useState(false);
+  const initialReversePrices = localStorage.getItem('INVARIANT_SALE_REVERSE_PRICES') === 'true'
+  const [reversedPrices, setReversedPrices] = useState(initialReversePrices)
 
   const slidesToShow = useMemo(() => {
     if (isSmallMobile) return 1
@@ -205,10 +205,13 @@ export const PreSaleWrapper = () => {
     return 3
   }, [isMobile, isTablet, isSmallMobile])
 
-
   const togglePriceDirection = useCallback(() => {
-    setReversedPrices(prev => !prev);
-  }, []);
+    setReversedPrices(prev => {
+      const next = !prev
+      localStorage.setItem('INVARIANT_SALE_REVERSE_PRICES', String(next))
+      return next
+    })
+  }, [])
 
   const { targetAmount, currentAmount, whitelistWalletLimit, startTimestamp, duration, mint } =
     useMemo(
@@ -216,13 +219,13 @@ export const PreSaleWrapper = () => {
         saleStats
           ? saleStats
           : {
-            targetAmount: new BN(0),
-            currentAmount: new BN(0),
-            whitelistWalletLimit: new BN(0),
-            startTimestamp: new BN(0),
-            duration: new BN(0),
-            mint: new PublicKey(0)
-          },
+              targetAmount: new BN(0),
+              currentAmount: new BN(0),
+              whitelistWalletLimit: new BN(0),
+              startTimestamp: new BN(0),
+              duration: new BN(0),
+              mint: new PublicKey(0)
+            },
       [saleStats]
     )
 
@@ -236,12 +239,11 @@ export const PreSaleWrapper = () => {
       userStats
         ? userStats
         : {
-          deposited: new BN(0),
-          received: new BN(0)
-        },
+            deposited: new BN(0),
+            received: new BN(0)
+          },
     [userStats]
   )
-
 
   const round = useMemo(() => getRound(currentAmount, targetAmount), [saleStats])
 
@@ -275,7 +277,6 @@ export const PreSaleWrapper = () => {
 
   const tierPrices = useMemo(() => getTierPrices(mintDecimals), [mintDecimals])
 
-
   const { price, nextPrice } = useMemo(
     () => getPrice(currentAmount, targetAmount, mintDecimals),
     [currentAmount, targetAmount, mintDecimals]
@@ -300,7 +301,6 @@ export const PreSaleWrapper = () => {
     return !saleDidNotStart && !saleEnded && !saleSoldOut
   }, [saleDidNotStart, saleEnded, saleSoldOut])
 
-
   const isPublic = useMemo(() => round === 4, [round])
 
   const proofOfInclusion = useMemo(() => {
@@ -320,7 +320,8 @@ export const PreSaleWrapper = () => {
     }
     if (!isPublic && !proofOfInclusion) {
       return {
-        text: 'You are not eligible for this round of sale', variant: 'warning'
+        text: 'You are not eligible for this round of sale',
+        variant: 'warning'
       }
     }
     if (isPublic) {
@@ -366,223 +367,167 @@ export const PreSaleWrapper = () => {
     }
   }, [success, inProgress])
 
-
-
-
   const displayPriceInfo = useMemo(() => {
     if (reversedPrices) {
-      const tierIndex = round - 1;
-      const currentTierPrice = tierIndex >= 0 ?
-        [TIER1, TIER2, TIER3, TIER4][Math.min(tierIndex, 3)] : price;
-      const nextTierPrice = tierIndex > 0 ?
-        [TIER1, TIER2, TIER3, TIER4][Math.min(tierIndex + 1, 3)] : nextPrice;
+      const tierIndex = round - 1
+      const currentTierPrice =
+        tierIndex >= 0 ? [TIER1, TIER2, TIER3, TIER4][Math.min(tierIndex, 3)] : price
+      const nextTierPrice =
+        tierIndex > 0 ? [TIER1, TIER2, TIER3, TIER4][Math.min(tierIndex + 1, 3)] : nextPrice
       return {
         currentPrice: currentTierPrice,
         nextPrice: nextTierPrice
-      };
+      }
     }
 
     return {
       currentPrice: price,
       nextPrice: nextPrice
-    };
-  }, [price, nextPrice, round, reversedPrices]);
-
-
-  const displayPrices = useMemo(() => {
-    return tierPrices;
-  }, [tierPrices]);
+    }
+  }, [price, nextPrice, round, reversedPrices])
 
   const stepLabels = useMemo(() => {
-    return displayPrices.map((price, idx) => {
-      if (reversedPrices) {
-        const baseValue = new BN(10).pow(new BN(mintDecimals));
-        const inverted = baseValue.mul(baseValue).div(price);
+    return tierPrices.map((price, idx) => {
+      if (reversedPrices && !price.isZero()) {
+        const baseValue = new BN(10).pow(new BN(mintDecimals))
+        const inverted = baseValue.mul(baseValue).div(price)
         return {
           id: idx + 1,
           label: `1$ = ${printBNandTrimZeros(inverted, mintDecimals, 2)} INVT`
-        };
+        }
       } else {
         return {
           id: idx + 1,
           label: `1 INVT = ${printBNandTrimZeros(price, mintDecimals, 4)}$`
-        };
+        }
       }
-    });
-  }, [displayPrices, reversedPrices, mintDecimals]);
+    })
+  }, [tierPrices, reversedPrices, mintDecimals])
 
   return (
     <Grid className={classes.pageWrapper} sx={{ position: 'relative' }}>
       <Hidden lgDown>
         <OverlayWrapper />
       </Hidden>
-      <Box className={classes.infoContainer}>
-        <Box className={classes.contentWrapper}>
-          <Grid className={classes.stepperContainer}>
-            <SaleStepper
-              isLoading={isLoadingSaleStats}
-              currentStep={round - 1}
-              steps={stepLabels}
+      <Box className={classes.contentWrapper}>
+        <Grid className={classes.stepperContainer}>
+          <SaleStepper isLoading={isLoadingSaleStats} currentStep={round - 1} steps={stepLabels} />
+          <Box className={classes.roundComponentContainer}>
+            <RoundComponent
+              isActive={isActive}
+              saleDidNotStart={saleDidNotStart}
+              targetAmount={targetAmount}
+              amountDeposited={currentAmount}
+              amountNeeded={amountNeeded}
+              amountLeft={amountLeft}
+              currentPrice={displayPriceInfo.currentPrice}
+              walletStatus={walletStatus}
+              nextPrice={displayPriceInfo.nextPrice}
+              proofOfInclusion={proofOfInclusion}
+              percentageFilled={filledPercentage}
+              userDepositedAmount={deposited}
+              userRemainingAllocation={remainingAmount}
+              isReversed={reversedPrices}
+              mintDecimals={mintDecimals}
+              roundNumber={round}
+              isLoadingSaleStats={isLoadingSaleStats}
+              isLoadingUserStats={isLoadingUserStats}
+              priceFormat={reversedPrices ? 'usdc-to-token' : 'token-to-usdc'}
             />
-            <Box className={classes.roundComponentContainer}>
-
-              <RoundComponent
-                isActive={isActive}
-                saleDidNotStart={saleDidNotStart}
-                targetAmount={targetAmount}
-                amountDeposited={currentAmount}
-                amountNeeded={amountNeeded}
-                amountLeft={amountLeft}
-                currentPrice={displayPriceInfo.currentPrice}
-                walletStatus={walletStatus}
-                nextPrice={displayPriceInfo.nextPrice}
-                proofOfInclusion={proofOfInclusion}
-                percentageFilled={filledPercentage}
-                userDepositedAmount={deposited}
-                userRemainingAllocation={remainingAmount}
-                isReversed={reversedPrices}
-                mintDecimals={mintDecimals}
-                roundNumber={round}
-                isLoadingSaleStats={isLoadingSaleStats}
-                isLoadingUserStats={isLoadingUserStats}
-                priceFormat={reversedPrices ? 'usdc-to-token' : 'token-to-usdc'}
-
-              />
-              <Grid sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-
-                <div className={classes.arrowIcon} onClick={togglePriceDirection}>
-                  <span className={`${classes.reverseText} reverseText`}>Reverse token</span>
-                  <img src={swapArrowClean} alt='swap' />
-                </div>
-
-              </Grid>
-            </Box>
-
-          </Grid>
-          <BuyComponent
-            nativeBalance={nativeBalance}
-            isPublic={isPublic}
-            currentRound={round}
-            saleDidNotStart={saleDidNotStart}
-            saleEnded={saleEnded}
-            saleSoldOut={saleSoldOut}
-            isEligible={!!proofOfInclusion}
-            whitelistWalletLimit={whitelistWalletLimit}
-            userDepositedAmount={deposited}
-            isActive={isActive}
-            progress={progress}
-            isLoading={isLoadingSaleStats}
-            targetAmount={targetAmount}
-            currentAmount={currentAmount}
-            mintDecimals={mintDecimals}
-            startTimestamp={startTimestamp}
-            tokens={tokens}
-            walletStatus={walletStatus}
-            alertBox={getAlertBoxText()}
-            isBalanceLoading={isBalanceLoading}
-            tokenIndex={tokenIndex}
-            onConnectWallet={() => {
-              dispatch(walletActions.connect(false))
-            }}
-            onDisconnectWallet={() => {
-              dispatch(walletActions.disconnect())
-            }}
-            onBuyClick={amount => {
-              if (tokenIndex === null) {
-                return
-              }
-              if (progress === 'none') {
-                setProgress('progress')
-              }
-
-              dispatch(
-                actions.depositSale({
-                  amount,
-                  mint,
-                  proofOfInclusion
-                })
-              )
-            }}
-          />
-        </Box>
-
+            <Grid className={classes.reverseContainer}>
+              <div className={classes.arrowIcon} onClick={togglePriceDirection}>
+                <span className={`${classes.reverseText} reverseText`}>Reverse token</span>
+                <img src={swapArrowClean} alt='swap' />
+              </div>
+            </Grid>
+          </Box>
+        </Grid>
+        <BuyComponent
+          nativeBalance={nativeBalance}
+          isPublic={isPublic}
+          currentRound={round}
+          saleDidNotStart={saleDidNotStart}
+          saleEnded={saleEnded}
+          saleSoldOut={saleSoldOut}
+          isEligible={!!proofOfInclusion}
+          whitelistWalletLimit={whitelistWalletLimit}
+          userDepositedAmount={deposited}
+          isActive={isActive}
+          progress={progress}
+          isLoading={isLoadingSaleStats}
+          targetAmount={targetAmount}
+          currentAmount={currentAmount}
+          mintDecimals={mintDecimals}
+          startTimestamp={startTimestamp}
+          tokens={tokens}
+          walletStatus={walletStatus}
+          alertBox={getAlertBoxText()}
+          isBalanceLoading={isBalanceLoading}
+          tokenIndex={tokenIndex}
+          onConnectWallet={() => {
+            dispatch(walletActions.connect(false))
+          }}
+          onDisconnectWallet={() => {
+            dispatch(walletActions.disconnect())
+          }}
+          onBuyClick={amount => {
+            if (tokenIndex === null) {
+              return
+            }
+            if (progress === 'none') {
+              setProgress('progress')
+            }
+            dispatch(
+              actions.depositSale({
+                amount,
+                mint,
+                proofOfInclusion
+              })
+            )
+          }}
+        />
       </Box>
-
       <Box className={classes.sectionTitle}>
-        <Typography
-          sx={{ ...typography.heading1, textAlign: 'center', color: colors.invariant.text }}>
-          Invariant by the Numbers
-        </Typography>
-
-        <Box className={classes.animatedCardsContainer}>
-          <Grid
-            container
-            spacing={{ xs: 2, md: 3 }}
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              marginTop: '24px',
-              position: 'relative',
-              zIndex: 1
-            }}>
-            <Box className={classes.animatedCardWrapper}>
-              <Grid item xs={12} className={classes.animatedCardItem}>
-                <AnimatedPreSaleCard
-                  title='~1M Users'
-                  gradientPrimaryColor={`${colors.invariant.green}`}
-                  subtitle='who have ever interacted with Invariant'
-                  delay={100}
-                />
-              </Grid>
-              <Grid item xs={12} className={classes.animatedCardItem}>
-                <AnimatedPreSaleCard
-                  title='~$5 Billion'
-                  gradientDirection='to bottom'
-                  subtitle='in cumulative swap volume'
-                  delay={300}
-                />
-              </Grid>
-            </Box>
-            <Box className={classes.animatedCardWrapper}>
-              <Grid item xs={12} className={classes.animatedCardItem}>
-                <AnimatedPreSaleCard
-                  title='4 Hackatons'
-                  subtitle='won by Invariant team'
-                  delay={500}
-                />
-              </Grid>
-              <Grid item xs={12} className={classes.animatedCardItem}>
-                <AnimatedPreSaleCard
-                  title=' $200K+'
-                  gradientPrimaryColor={`${colors.invariant.green}`}
-                  gradientDirection='to bottom'
-                  subtitle='earned in hackathon prizes'
-                  delay={700}
-                />
-              </Grid>
-            </Box>
+        <Typography className={classes.sectionTitleText}>Invariant by the Numbers</Typography>
+        <Grid container className={classes.animatedCardsContainer}>
+          <Grid item className={classes.animatedCardItem}>
+            <AnimatedPreSaleCard
+              title='~1M Users'
+              gradientPrimaryColor={`${colors.invariant.green}`}
+              subtitle='who have ever interacted with Invariant'
+              delay={100}
+            />
           </Grid>
-        </Box>
+          <Grid item className={classes.animatedCardItem}>
+            <AnimatedPreSaleCard
+              title='~$5 Billion'
+              gradientDirection='to bottom'
+              subtitle='in cumulative swap volume'
+              delay={300}
+            />
+          </Grid>
+          <Grid item className={classes.animatedCardItem}>
+            <AnimatedPreSaleCard title='4 Hackatons' subtitle='won by Invariant team' delay={500} />
+          </Grid>
+          <Grid item className={classes.animatedCardItem}>
+            <AnimatedPreSaleCard
+              title=' $200K+'
+              gradientPrimaryColor={`${colors.invariant.green}`}
+              gradientDirection='to bottom'
+              subtitle='earned in hackathon prizes'
+              delay={700}
+            />
+          </Grid>
+        </Grid>
       </Box>
-
       <Box className={classes.sectionTitle}>
-        <Typography
-          sx={{ ...typography.heading1, textAlign: 'center', color: colors.invariant.text }}>
-          The most capital-efficient DEX
-        </Typography>
+        <Typography className={classes.sectionTitleText}>The most capital-efficient DEX</Typography>
         <Box className={classes.dexChartContainer}>
-
           <DEXChart />
         </Box>
       </Box>
-
-
       <Box className={classes.sectionTitle}>
-        <Typography
-          sx={{ ...typography.heading1, textAlign: 'center', color: colors.invariant.text }}>
-          The Invariant Journey
-        </Typography>
-
+        <Typography className={classes.sectionTitleText}>The Invariant Journey</Typography>
         <Box className={classes.cardsContainer}>
           <Slider
             speed={500}
@@ -590,7 +535,6 @@ export const PreSaleWrapper = () => {
             slidesToScroll={1}
             arrows={true}
             draggable={true}
-            centerMode={true}
             className={classes.slider}
             autoplay={true}
             autoplaySpeed={10000}
@@ -623,30 +567,26 @@ export const PreSaleWrapper = () => {
             />
             <EventsCard
               title={'Eclipse Hackathon Win'}
-              link="https://x.com/invariant_labs/status/1839676182884663721"
+              link='https://x.com/invariant_labs/status/1839676182884663721'
               description={`Third time's the charm. Invariant wins the opening hackathon on Eclipse, earns $15k, and steps into the spotlight.`}
               heroImage={EclipseHackatonHero}
             />
-
             <EventsCard
               title={'Eclipse Mainnet Launch'}
-              link="https://x.com/invariant_labs/status/1849106452259991654"
+              link='https://x.com/invariant_labs/status/1849106452259991654'
               borderColor={'pink'}
               description={
                 'Invariant expands to new SVMs. After being the first app on Eclipse testnet and tested by thousands, Invariant launches on mainnet.'
               }
               heroImage={EclipseMainNetHero}
             />
-
-
             <EventsCard
               title={'$8MLN TVL'}
-              link="https://x.com/invariant_labs/status/1890092960815149087"
+              link='https://x.com/invariant_labs/status/1890092960815149087'
               borderColor={'green'}
               description={'In just four months, TVL on Eclipse surpasses 8 million dollars.'}
               heroImage={TVLHero}
             />
-
             <EventsCard
               title={'250k+ users on Eclipse'}
               link='https://x.com/invariant_labs/status/1912589859811913986'
@@ -655,21 +595,18 @@ export const PreSaleWrapper = () => {
               }
               heroImage={UsersHero}
             />
-
             <EventsCard
               title={'Sonic Mobius Hackaton'}
-              link="https://x.com/SonicSVM/status/1910590750024147382"
+              link='https://x.com/SonicSVM/status/1910590750024147382'
               borderColor={'green'}
               description={
                 'Invariant wins the Sonic hackathon with its breakthrough AutoSwap feature. A new era of liquidity provision begins.'
               }
               heroImage={SonicHacktonHero}
             />
-
-
             <EventsCard
               title={'AutoSwap Launch'}
-              link="https://x.com/invariant_labs/status/1912894700614271377"
+              link='https://x.com/invariant_labs/status/1912894700614271377'
               description={
                 'AutoSwap launches on Eclipse. In its first week, it improves the experience for countless users who create thousands of positions with its help.'
               }
@@ -686,76 +623,52 @@ export const PreSaleWrapper = () => {
           </Slider>
         </Box>
       </Box>
-
       <Box className={classes.sectionTitle}>
-        <Typography
-          sx={{ ...typography.heading1, textAlign: 'center', color: colors.invariant.text }}>
-          Tokenomics
-        </Typography>
-        <Box sx={{ width: '100%', marginTop: '24px', position: 'relative' }}>
-
-          <Tokenomics />
-        </Box>
+        <Typography className={classes.sectionTitleText}>Tokenomics</Typography>
+        <Tokenomics />
       </Box>
-
-
       <Box className={classes.sectionTitle}>
-        <Typography
-          sx={{ ...typography.heading1, textAlign: 'center', color: colors.invariant.text }}>
-          Audited By
-        </Typography>
-        <img src={auditByLogoIcon} alt='Audit' style={{ marginTop: '24px' }} width={289} />
+        <Typography className={classes.sectionTitleText}>Audited By</Typography>
+        <img src={auditByLogoIcon} alt='Audit' width={289} />
       </Box>
-
-      <Box className={classes.faqContainer}>
-        <Typography
-          sx={{
-            ...typography.heading1,
-            textAlign: 'center',
-            color: colors.invariant.text,
-            marginBottom: '32px'
-          }}>
-          Frequently Asked Questions
-        </Typography>
-
-        <Box>
-          <Faq
-            faqData={[
-              {
-                question: '1. How can I participate in the public sale?',
-                answer:
-                  'To participate, simply scroll up to the presale section, connect your crypto wallet, enter the amount you’d like to invest, and click Buy Now. Tokens will be transferred after purchase.'
-              },
-              {
-                question: '2. What is the initial token price?',
-                answer:
-                  'The initial price is set at <span style="color: #2EE09A; font-weight: bold;">0.10$</span> during Round 1, with a gradual increase in each subsequent round.'
-              },
-              {
-                question: '3. When can I claim my tokens?',
-                answer: `
+      <Box className={classes.sectionTitle}>
+        <Typography className={classes.sectionTitleText}>Frequently Asked Questions</Typography>
+        <Faq
+          faqData={[
+            {
+              question: '1. How can I participate in the public sale?',
+              answer:
+                'To participate, simply scroll up to the presale section, connect your crypto wallet, enter the amount you’d like to invest, and click Buy Now. Tokens will be transferred after purchase.'
+            },
+            {
+              question: '2. What is the initial token price?',
+              answer:
+                'The initial price is set at <span style="color: #2EE09A; font-weight: bold;">0.10$</span> during Round 1, with a gradual increase in each subsequent round.'
+            },
+            {
+              question: '3. When can I claim my tokens?',
+              answer: `
                   Purchased tokens will be available to claim during the <span style="color: #2EE09A; font-weight: bold;">Token Generation Event (TGE)</span>.
                 `
-              },
-              {
-                question: '4. When is the TGE?',
-                answer:
-                  'The TGE will take place shortly after the public sale ends. We’ll announce the exact date on our official social media channels.'
-              },
-              {
-                question: '5. How do I know if I’m whitelisted?',
-                answer: `You can check your whitelist status and the round you're eligible for using the <span style="color: #2EE09A; font-weight: bold;">Whitelist Checker</span> at the top of the page. </br>
+            },
+            {
+              question: '4. When is the TGE?',
+              answer:
+                'The TGE will take place shortly after the public sale ends. We’ll announce the exact date on our official social media channels.'
+            },
+            {
+              question: '5. How do I know if I’m whitelisted?',
+              answer: `You can check your whitelist status and the round you're eligible for using the <span style="color: #2EE09A; font-weight: bold;">Whitelist Checker</span> at the top of the page. </br>
                 
                 If you're not whitelisted, don't worry — you’ll be able to participate in <span style="color: #2EE09A; font-weight: bold;">Round 4</span>, which is open to everyone.
                 `
-              },
-              {
-                question: `6. How can I contact the Invariant team?`,
-                answer: `Feel free to reach out to us on Discord or through any of our official channels: <b> </br> <ul><li><a href="https://discord.com/invite/w6hTeWTJvG" style="color: #2EE09A" target="_blank">Discord</a></li><li><a href="mailto:contact@invariant.app" style="color: #2EE09A">Email</a></li><li><a href="https://x.com/invariant_labs" style="color: #2EE09A" target="_blank">X</a></li></ul><p>The Terms and Conditions of the Invariant Points Program are available <a href="https://docs.invariant.app/docs/points_terms" style="color: #2EE09A" target="_blank">here.</a></p> </b>`
-              }
-            ]}
-          />
-        </Box>
+            },
+            {
+              question: `6. How can I contact the Invariant team?`,
+              answer: `Feel free to reach out to us on Discord or through any of our official channels: <b> </br> <ul><li><a href="https://discord.com/invite/w6hTeWTJvG" style="color: #2EE09A" target="_blank">Discord</a></li><li><a href="mailto:contact@invariant.app" style="color: #2EE09A">Email</a></li><li><a href="https://x.com/invariant_labs" style="color: #2EE09A" target="_blank">X</a></li></ul><p>The Terms and Conditions of the Invariant Points Program are available <a href="https://docs.invariant.app/docs/points_terms" style="color: #2EE09A" target="_blank">here.</a></p> </b>`
+            }
+          ]}
+        />
       </Box>
     </Grid>
   )

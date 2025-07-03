@@ -37,19 +37,11 @@ const useStyles = makeStyles<{ percentage: number; isActive?: boolean }>()(
         color: colors.invariant.yellow
       }
     },
-
     alertBox: {
       display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
       borderRadius: '12px',
       marginBottom: '16px',
-      padding: '10px'
-    },
-    alertBoxContent: {
-      display: 'flex',
-      width: '100%',
-      gap: '8px',
+      padding: '10px',
       alignItems: 'center',
       justifyContent: 'center'
     },
@@ -73,18 +65,19 @@ const useStyles = makeStyles<{ percentage: number; isActive?: boolean }>()(
     },
     egibilityCheckerWrapper: {
       display: 'flex',
-      flexDirection: 'column',
+      flexDirection: 'row',
       width: '100%',
       paddingBottom: '8px',
       marginBottom: '16px',
       justifyContent: 'space-between',
-      alignItems: 'center'
+      alignItems: 'center',
+      gap: '8px'
     },
-    egibilityChecker: {
+    tooltipBox: {
       display: 'flex',
-      width: '100%',
-      gap: '8px',
-      alignItems: 'center'
+      flexDirection: 'column',
+      padding: 12,
+      gap: 10
     },
     egibilityCheckerText: {
       color: colors.invariant.text,

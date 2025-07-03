@@ -50,7 +50,8 @@ export const HeaderWrapper: React.FC = () => {
             itemsPerPage: leaderboardQueryParams.pageSize
           })
         )
-      } catch { }
+        dispatch(saleActions.getUserStats())
+      } catch {}
     }
 
     const eagerConnectToNightly = async () => {
@@ -78,34 +79,34 @@ export const HeaderWrapper: React.FC = () => {
       }
     }
 
-      ; (async () => {
-        try {
-          if (currentNetwork === NetworkType.Devnet) {
-            dispatch(actions.setNetwork(NetworkType.Testnet))
-            dispatch(actions.setRPCAddress(RPC.TEST))
-          }
-
-          const walletType = localStorage.getItem('WALLET_TYPE') as WalletType | null
-
-          if (walletType === WalletType.NIGHTLY) {
-            const canEagerConnect = await nightlyConnectAdapter
-              .canEagerConnect()
-              .catch((e: unknown) => {
-                const error = ensureError(e)
-                console.error('Error checking eager connect:', error)
-                return false
-              })
-            if (canEagerConnect) {
-              await eagerConnectToNightly()
-            }
-          } else if (walletType) {
-            await reconnectStaticWallet(walletType)
-          }
-        } catch (e: unknown) {
-          const error = ensureError(e)
-          console.error('Unhandled error in wallet initialization:', error)
+    ;(async () => {
+      try {
+        if (currentNetwork === NetworkType.Devnet) {
+          dispatch(actions.setNetwork(NetworkType.Testnet))
+          dispatch(actions.setRPCAddress(RPC.TEST))
         }
-      })()
+
+        const walletType = localStorage.getItem('WALLET_TYPE') as WalletType | null
+
+        if (walletType === WalletType.NIGHTLY) {
+          const canEagerConnect = await nightlyConnectAdapter
+            .canEagerConnect()
+            .catch((e: unknown) => {
+              const error = ensureError(e)
+              console.error('Error checking eager connect:', error)
+              return false
+            })
+          if (canEagerConnect) {
+            await eagerConnectToNightly()
+          }
+        } else if (walletType) {
+          await reconnectStaticWallet(walletType)
+        }
+      } catch (e: unknown) {
+        const error = ensureError(e)
+        console.error('Unhandled error in wallet initialization:', error)
+      }
+    })()
   }, [])
 
   const shouldResetRpc = useMemo(() => {

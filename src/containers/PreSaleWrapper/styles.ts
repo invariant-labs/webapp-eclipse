@@ -1,5 +1,5 @@
 import { alpha } from '@mui/material'
-import { colors, theme } from '@static/theme'
+import { colors, theme, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => ({
@@ -9,17 +9,15 @@ export const useStyles = makeStyles()(() => ({
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
-    gap: 24,
-    padding: '0 16px',
     boxSizing: 'border-box',
-    [theme.breakpoints.down('md')]: {
-      gap: 16
+    paddingInline: 40,
+    [theme.breakpoints.down('sm')]: {
+      paddingInline: 8
     }
   },
-  infoContainer: {
-    width: '100vw',
-    minHeight: '445px',
-    padding: '32px 24px',
+  contentWrapper: {
+    width: '100%',
+    minHeight: 445,
     display: 'flex',
     position: 'relative',
     zIndex: 5,
@@ -30,41 +28,28 @@ export const useStyles = makeStyles()(() => ({
       'linear-gradient(90deg, rgba(17, 25, 49, 0.1) 0%, #111931 29.21%, #111931 71%, rgba(17, 25, 49, 0.1) 100%);',
     boxSizing: 'border-box',
     overflowX: 'hidden',
-    [theme.breakpoints.down('md')]: {
-      padding: '24px 16px',
-      minHeight: 'auto'
-    },
-    [theme.breakpoints.down('sm')]: {
-      padding: '16px 8px'
-    }
-  },
-  contentWrapper: {
-    display: 'flex',
+    gap: 36,
     [theme.breakpoints.down('lg')]: {
-      flexDirection: 'column-reverse',
-      width: '100%',
-      alignItems: 'center',
-      gap: 32
+      flexDirection: 'column-reverse'
+    },
+    [theme.breakpoints.down('md')]: {
+      minHeight: 'auto'
     }
   },
   stepperContainer: {
     display: 'flex',
-    marginRight: '24px',
     minWidth: '440px',
+    gap: 24,
     [theme.breakpoints.down('lg')]: {
       minWidth: 'unset',
-      width: '100%',
       marginRight: 0,
+      width: '100%',
       flexDirection: 'column',
       alignItems: 'center'
-    },
-    [theme.breakpoints.down('sm')]: {
-      width: '100%'
     }
   },
   roundComponentContainer: {
     height: '100%',
-    marginLeft: '55px',
     display: 'flex',
     justifyContent: 'center',
     flexDirection: 'column',
@@ -75,47 +60,26 @@ export const useStyles = makeStyles()(() => ({
       width: '100%'
     }
   },
-
-  animatedPreSaleCardsWrapper: {
+  animatedCardsContainer: {
     display: 'flex',
-    width: '1280px',
-    justifyContent: 'center',
-    marginTop: '24px',
-    position: 'relative',
-    zIndex: 1,
-    [theme.breakpoints.down('lg')]: {
-      width: '100%'
-    },
+    flexWrap: 'wrap',
+    width: '100%',
+    gap: 24,
     [theme.breakpoints.down('md')]: {
-      width: '100%',
       flexDirection: 'column'
     }
   },
-  animatedCardsContainer: {
-    maxWidth: '1072px',
-    width: '100%',
-    marginTop: '24px',
-
-    [theme.breakpoints.down('md')]: {
-      marginTop: '16px'
-    }
-  },
-  animatedCardWrapper: {
-    width: '50%',
-    [theme.breakpoints.down('md')]: {
-      width: '100%'
-    }
-  },
   animatedCardItem: {
-    padding: '12px',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    maxWidth: '100%',
+
+    flex: '0 1 calc(50% - 12px)',
+    maxWidth: 'calc(50% - 12px)',
+
     [theme.breakpoints.down('md')]: {
-      padding: '8px',
-      width: '100%',
-      marginBottom: '8px'
+      flex: '0 1 100%',
+      maxWidth: '100%'
     }
   },
   slider: {
@@ -127,16 +91,8 @@ export const useStyles = makeStyles()(() => ({
       justifyContent: 'space-between'
     },
     '& .slick-list': {
-      margin: '0 -250px',
-      [theme.breakpoints.up('sm')]: {
-        margin: '0 -50px'
-      },
-      [theme.breakpoints.up('md')]: {
-        margin: '0 -100px'
-      },
-
       [theme.breakpoints.up('lg')]: {
-        margin: '0 -190px'
+        margin: '0 -100px'
       }
     },
     '& .slick-slide > div': { padding: '0' },
@@ -217,7 +173,6 @@ export const useStyles = makeStyles()(() => ({
   cardsContainer: {
     display: 'flex',
     maxWidth: '1072px',
-    marginTop: '24px',
     [theme.breakpoints.down('lg')]: {
       width: '800px'
     },
@@ -228,6 +183,12 @@ export const useStyles = makeStyles()(() => ({
       width: '300px'
     },
     width: '900px'
+  },
+  reverseContainer: {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   arrowIcon: {
     display: 'flex',
@@ -335,37 +296,32 @@ export const useStyles = makeStyles()(() => ({
     height: 64,
     borderRadius: '6px'
   },
-  faqContainer: {
-    width: '100%',
-    maxWidth: '1072px',
-    marginTop: '72px',
-    padding: '0 16px',
-    boxSizing: 'border-box',
-    [theme.breakpoints.down('md')]: {
-      marginTop: '48px'
-    }
-  },
   sectionTitle: {
-    marginTop: '72px',
+    zIndex: 90,
+    marginTop: 72,
     width: '100%',
     maxWidth: '1280px',
-    padding: '0 16px',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'column',
+    gap: 24,
     boxSizing: 'border-box',
     [theme.breakpoints.down('md')]: {
-      marginTop: '48px'
+      marginTop: 48
     }
   },
   dexChartContainer: {
     maxWidth: '1072px',
-    marginTop: '24px',
     position: 'relative',
 
     [theme.breakpoints.down('xl')]: {
       maxWidth: '100%'
     }
+  },
+  sectionTitleText: {
+    ...typography.heading1,
+    textAlign: 'center',
+    color: colors.invariant.text
   }
 }))
