@@ -20,7 +20,7 @@ import {
   ROUTES
 } from '@utils/utils'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { NetworkType } from '@store/consts/static'
+import { ES_MAIN, NetworkType } from '@store/consts/static'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { leaderboardSelectors } from '@store/selectors/leaderboard'
 import { useDispatch, useSelector } from 'react-redux'
@@ -131,7 +131,8 @@ const Card: React.FC<ICard> = ({
     }
   }, [isPromotedPoolPopoverOpen])
   const ESToken = useMemo(() => {
-    if (symbolFrom === 'ES' || symbolTo === 'ES') return true
+    if (addressFrom === ES_MAIN.address.toString() || addressTo === ES_MAIN.address.toString())
+      return true
   }, [symbolFrom, symbolTo])
   return (
     <Grid className={classes.root}>

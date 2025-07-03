@@ -594,7 +594,6 @@ export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
     USDT_MAIN.address,
     BITZ_MAIN.address,
     ES_MAIN.address,
-    TIA_MAIN.address,
     sBITZ_MAIN.address,
     TUSD_MAIN.address
   ],
@@ -878,12 +877,12 @@ export const getPopularPools = (network: NetworkType) => {
           fee: '1'
         },
         {
-          tokenX: BITZ_MAIN.address.toString, // BITZ
+          tokenX: BITZ_MAIN.address.toString(), // BITZ
           tokenY: WETH_MAIN.address.toString(), // ETH
           fee: '1'
         },
         {
-          tokenX: SOLAR_MAIN.address.toString(), // SOL
+          tokenX: SOL_MAIN.address.toString(), // SOL
           tokenY: WETH_MAIN.address.toString(), // ETH
           fee: '0.09'
         },
