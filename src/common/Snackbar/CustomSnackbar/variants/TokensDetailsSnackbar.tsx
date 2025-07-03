@@ -29,10 +29,13 @@ const arrow = (
 const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
   ikonType,
   tokenXAmount,
+  tokenBetweenAmount,
   tokenYAmount,
   tokenXIcon,
+  tokenBetweenIcon,
   tokenYIcon,
   tokenXSymbol,
+  tokenBetweenSymbol,
   tokenYSymbol,
   earnedPoints,
   handleDismiss,
@@ -80,7 +83,9 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
         return ''
     }
   }, [ikonType])
-
+  const hasXAmount = tokenXAmount !== '0'
+  const hasYAmount = tokenYAmount !== '0'
+  const hasBothAmounts = hasXAmount && hasYAmount
   return (
     <>
       <Box
@@ -131,25 +136,77 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
                 style={{ marginBottom: '2px' }}
               />
             </Grid>
-            <StyledText>{title}</StyledText>
-            <StyledText color={colors.invariant.green}>{tokenXAmount}</StyledText>
-            {tokenXIcon === '/unknownToken.svg' ? (
-              <StyledText>{tokenXSymbol}</StyledText>
-            ) : (
-              <img src={tokenXIcon} className={classes.tokenIcon} />
+            <StyledText>
+              {title} {!hasBothAmounts && 'succesfully'}
+            </StyledText>
+            {hasXAmount && (
+              <>
+                <StyledText color={colors.invariant.green}>{tokenXAmount}</StyledText>
+                {tokenXIcon === '/unknownToken.svg' ? (
+                  <StyledText>{tokenXSymbol}</StyledText>
+                ) : (
+                  <img src={tokenXIcon} className={classes.tokenIcon} />
+                )}
+              </>
             )}
             {ikonType === 'swap' || ikonType === 'unstake' || ikonType === 'stake' ? (
               arrow
+            ) : ikonType === 'claim' ? (
+              hasBothAmounts ? (
+                <StyledText>+</StyledText>
+              ) : null
             ) : (
               <StyledText>+</StyledText>
             )}
-            <StyledText color={colors.invariant.green}>{tokenYAmount}</StyledText>
-            {tokenYIcon === '/unknownToken.svg' ? (
-              <StyledText>{tokenYSymbol}</StyledText>
+            <StyledText color={colors.invariant.green}>
+              {tokenBetweenAmount ? tokenBetweenAmount : tokenYAmount}
+            </StyledText>
+            {(
+              tokenBetweenAmount
+                ? tokenBetweenIcon === '/unknownToken.svg'
+                : tokenYIcon === '/unknownToken.svg'
+            ) ? (
+              <StyledText>{tokenBetweenAmount ? tokenBetweenSymbol : tokenYSymbol}</StyledText>
             ) : (
-              <img src={tokenYIcon} className={classes.tokenIcon} />
+              <img
+                src={tokenBetweenAmount ? tokenBetweenIcon : tokenYIcon}
+                className={classes.tokenIcon}
+              />
             )}
           </Grid>
+
+          {tokenBetweenAmount && (
+            <>
+              <Separator color={colors.invariant.light} isHorizontal margin='0px 8px 0px 20px' />
+              <Grid className={classes.wrapper} gap={0.5}>
+                <Grid
+                  position='relative'
+                  display='flex'
+                  alignItems='center'
+                  width={ikonType === 'swap' || ikonType === 'claim' ? 18 : 22}>
+                  <img
+                    src={icon}
+                    height={ikonType === 'swap' || ikonType === 'claim' ? 15 : 18}
+                    style={{ marginBottom: '2px' }}
+                  />
+                </Grid>
+                <StyledText>{title}</StyledText>
+                <StyledText color={colors.invariant.green}>{tokenBetweenAmount}</StyledText>
+                {tokenBetweenIcon === '/unknownToken.svg' ? (
+                  <StyledText>{tokenBetweenSymbol}</StyledText>
+                ) : (
+                  <img src={tokenBetweenIcon} className={classes.tokenIcon} />
+                )}
+                {ikonType === 'swap' ? arrow : <StyledText>+</StyledText>}
+                <StyledText color={colors.invariant.green}>{tokenYAmount}</StyledText>
+                {tokenYIcon === '/unknownToken.svg' ? (
+                  <StyledText>{tokenYSymbol}</StyledText>
+                ) : (
+                  <img src={tokenYIcon} className={classes.tokenIcon} />
+                )}
+              </Grid>
+            </>
+          )}
 
           {earnedPoints && (
             <>

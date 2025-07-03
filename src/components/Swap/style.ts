@@ -304,7 +304,11 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
 
   exchangeRoot: {
+    width: '100%',
     position: 'relative',
+    display: 'flex',
+    flexShrink: 1,
+    justifyContent: 'space-between',
     background: colors.invariant.newDark,
     borderRadius: 20
   },
@@ -396,12 +400,14 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     marginTop: 12,
     width: '100%',
     display: 'flex',
+    flexDirection: 'column',
     alignItems: 'center',
     transition: 'all 0.3s ease',
     gap: 12
   },
   unknownWarning: {
     width: '100%',
+    height: 'fit-content',
     background: alpha(colors.invariant.Error, 0.25),
     border: `1px solid ${colors.invariant.Error}`,
     ...typography.caption2,
@@ -494,6 +500,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     position: 'relative'
   },
   mobileChangeWrapper: {
+    width: '100%',
     display: 'flex',
     flexDirection: 'column',
     [theme.breakpoints.down('sm')]: {
