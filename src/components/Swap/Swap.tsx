@@ -277,7 +277,8 @@ export const Swap: React.FC<ISwap> = ({
   const [wasIsFetchingNewPoolRun, setWasIsFetchingNewPoolRun] = useState(false)
   const [wasSwapIsLoadingRun, setWasSwapIsLoadingRun] = useState(false)
   const [isReversingTokens, setIsReversingTokens] = useState(false)
-  const shortenText = useMediaQuery(theme.breakpoints.down(460))
+  const shortenText = useMediaQuery(theme.breakpoints.down(500))
+  const shortenTextXS = useMediaQuery(theme.breakpoints.down(340))
   useEffect(() => {
     if (lastEdited && tokenFromIndex !== null && tokenToIndex !== null) {
       setInputRef(lastEdited === 'from' ? inputTarget.FROM : inputTarget.TO)
@@ -1156,7 +1157,7 @@ export const Swap: React.FC<ISwap> = ({
       <Collapse in={wrappedETHAccountExist} className={classes.collapseWrapper}>
         <Grid className={classes.unwrapContainer}>
           {shortenText
-            ? 'You have wrapped ETH'
+            ? `You have ${!shortenTextXS ? 'wrapped' : ''} ${formatNumberWithoutSuffix(printBN(wrappedETHBalance, WETH_MAIN.decimals))} ${shortenTextXS ? 'W' : ''}ETH`
             : `          You currently hold ${formatNumberWithoutSuffix(printBN(wrappedETHBalance, WETH_MAIN.decimals))} wrapped Ether in your
           wallet`}
           <span className={classes.unwrapNowButton} onClick={unwrapWETH}>
