@@ -262,6 +262,10 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     },
     transition: '300ms'
   },
+  collapseWrapper: {
+    maxWidth: 510,
+    width: '100%'
+  },
   transactionDetailsWrapper: {
     display: 'flex',
     flexDirection: 'row',
@@ -386,16 +390,35 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     marginBottom: 8
   },
   unwrapContainer: {
-    background: colors.invariant.component,
-    color: colors.white.main,
-    borderRadius: 8,
-    padding: 4,
-    paddingInline: 12,
+    width: '100%',
+    minHeight: 48,
+    background: 'rgba(239, 208, 99, 0.2)',
+    border: `2px solid ${colors.invariant.yellow}`,
+    borderRadius: 18,
+    color: colors.invariant.yellow,
+    paddingInline: 24,
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    transition: 'height 300ms',
+    [theme.breakpoints.down('sm')]: {
+      paddingInline: 16
+    },
     marginBottom: 16
   },
   unwrapNowButton: {
-    cursor: 'pointer'
+    background: 'rgba(239, 209, 99, 0.11)',
+    paddingInline: 12,
+    borderRadius: 8,
+    cursor: 'pointer',
+    transition: 'transform .15s ease, box-shadow .15s ease',
+    '&:hover': {
+      transform: 'translateY(-1px)',
+
+      boxShadow: '0 0 1px 1px rgba(239, 209, 99, 0.45)'
+    }
   },
+
   unknownWarningContainer: {
     marginTop: 12,
     width: '100%',
