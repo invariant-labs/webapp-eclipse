@@ -5,7 +5,8 @@ import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { infoIcon } from '@static/icons'
 import bitzIcon from '@static/png/bitz.png'
 import sBitzIcon from '@static/png/sBitz.png'
-import { theme } from '@static/theme'
+import { colors, theme } from '@static/theme'
+import { Separator } from '@common/Separator/Separator'
 
 export interface IApyTooltip {
   stakeDataLoading: boolean
@@ -58,44 +59,60 @@ const ApyTooltip: React.FC<IApyTooltip> = ({ stakeDataLoading, sBitzBitzMonthlyA
       increasePadding>
       <Stack direction='row' spacing={1} className={classes.row}>
         {!isSm && (
-          <Box className={classes.valueWrapper}>
+          <>
+            <Box className={classes.valueWrapper}>
+              <Typography className={classes.greenValue} textAlign='center'>
+                {' '}
+                monthly
+              </Typography>
+              <Box className={classes.value}>
+                <img src={bitzIcon} width={12} height={12} />
+                <Typography className={classes.crossedValue}>
+                  {bitzMonthly.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                  })}
+                </Typography>
+                <img src={sBitzIcon} width={12} height={12} />
+                <Typography className={classes.greenValue}>
+                  {sbitzMonthly.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                  })}
+                  %
+                </Typography>
+              </Box>
+            </Box>
+            <Separator size={'50%'} width={1} isHorizontal={false} color={colors.invariant.light} />
+          </>
+        )}
+
+        <Box className={classes.valueWrapper}>
+          <Typography className={classes.greenValue} textAlign='center'>
+            {' '}
+            yearly
+          </Typography>
+
+          <Box className={classes.value}>
             <img src={bitzIcon} width={12} height={12} />
             <Typography className={classes.crossedValue}>
-              {bitzMonthly.toLocaleString(undefined, {
+              {bitzAnnual.toLocaleString(undefined, {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
               })}
             </Typography>
             <img src={sBitzIcon} width={12} height={12} />
             <Typography className={classes.greenValue}>
-              {sbitzMonthly.toLocaleString(undefined, {
+              {sbitzAnnual.toLocaleString(undefined, {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
               })}
-              % /mo
+              %
             </Typography>
           </Box>
-        )}
-
-        <Box className={classes.valueWrapper}>
-          <img src={bitzIcon} width={12} height={12} />
-          <Typography className={classes.crossedValue}>
-            {bitzAnnual.toLocaleString(undefined, {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2
-            })}
-          </Typography>
-          <img src={sBitzIcon} width={12} height={12} />
-          <Typography className={classes.greenValue}>
-            {sbitzAnnual.toLocaleString(undefined, {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2
-            })}
-            % /yr
-          </Typography>
         </Box>
 
-        <img src={infoIcon} width={12} height={12} />
+        <img src={infoIcon} width={12} height={12} style={{ marginRight: '4px' }} />
       </Stack>
     </TooltipHover>
   )

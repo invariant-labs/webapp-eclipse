@@ -34,6 +34,12 @@ const useStyles = makeStyles()(() => ({
   },
   valueWrapper: {
     display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    padding: '2px 4px'
+  },
+  value: {
+    display: 'flex',
     gap: 2,
     alignItems: 'center'
   },
