@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 import { Box, Skeleton, Typography, useMediaQuery } from '@mui/material'
 import useStyles from './style'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
