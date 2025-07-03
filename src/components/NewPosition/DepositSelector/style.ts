@@ -63,7 +63,7 @@ export const useStyles = makeStyles()(theme => {
       alignItems: 'center',
       gap: 12,
       marginLeft: 16,
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down(370)]: {
         gap: 4
       }
     },
@@ -248,7 +248,7 @@ export const useStyles = makeStyles()(theme => {
       height: 28,
       borderRadius: 9,
       backgroundColor: colors.invariant.light,
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down(370)]: {
         width: 79
       }
     },
@@ -263,7 +263,7 @@ export const useStyles = makeStyles()(theme => {
       padding: '5px 8px',
       borderRadius: 9,
       textWrap: 'nowrap',
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down(370)]: {
         maxWidth: 79,
         padding: '5px 6px'
       }
@@ -280,7 +280,7 @@ export const useStyles = makeStyles()(theme => {
       paddingInline: 8,
       borderRadius: 9,
       textWrap: 'nowrap',
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down(370)]: {
         maxWidth: 79,
         padding: '5px 6px'
       }
@@ -371,7 +371,7 @@ export const useStyles = makeStyles()(theme => {
       justifyContent: 'center',
       alignItems: 'center',
       gap: 12,
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down(370)]: {
         gap: 4
       }
     }

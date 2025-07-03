@@ -222,7 +222,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
 }) => {
   const { classes, cx } = useStyles()
 
-  const isSm = useMediaQuery(theme.breakpoints.down('sm'))
+  const isSm = useMediaQuery(theme.breakpoints.down(370))
 
   const { value: valueA } = tokenAInputState
   const { value: valueB } = tokenBInputState
