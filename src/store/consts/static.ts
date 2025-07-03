@@ -831,6 +831,19 @@ export const walletNames = {
 
 export const defaultImages: string[] = [dog1Icon, dog2Icon, cat1Icon, cat2Icon]
 
+export const disabledPools = [
+  {
+    tokenX: sBITZ_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    feeTiers: ['0.01']
+  },
+  {
+    tokenX: BITZ_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    feeTiers: ['0.01']
+  }
+]
+
 export const getPopularPools = (network: NetworkType) => {
   switch (network) {
     case NetworkType.Mainnet:
