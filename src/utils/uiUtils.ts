@@ -1,7 +1,6 @@
 import { BN } from '@coral-xyz/anchor'
 import { formatDate, printBN, trimDecimalZeros, trimZeros } from './utils'
 import { PublicKey } from '@solana/web3.js'
-import { FormatNumberThreshold } from '@store/consts/types'
 import { Intervals, MONTH_NAMES } from '@store/consts/static'
 
 export const toBlur = 'global-blur'
@@ -132,34 +131,6 @@ export const formatLargeNumber = (number: number) => {
   return `${trimZeros(scaledNumber.toFixed(1))}${suffixes[suffixIndex]}`
 }
 
-export const thresholdsWithTokenDecimal = (decimals: number): FormatNumberThreshold[] => [
-  {
-    value: 10,
-    decimals
-  },
-  {
-    value: 10000,
-    decimals: 6
-  },
-  {
-    value: 100000,
-    decimals: 4
-  },
-  {
-    value: 1000000,
-    decimals: 3
-  },
-  {
-    value: 1000000000,
-    decimals: 2,
-    divider: 1000000
-  },
-  {
-    value: Infinity,
-    decimals: 2,
-    divider: 1000000000
-  }
-]
 export const shortenDate = (timestamp: number | string): string => {
   if (typeof timestamp === 'string') {
     return timestamp.slice(0, 6) + timestamp.slice(-2)
@@ -200,7 +171,7 @@ export const formatPlotDataLabels = (
   time: number,
   entries: number,
   interval: Intervals,
-  isMobile: boolean = false
+  reduceLabels: boolean = false
 ): string => {
   const date = new Date(time)
   const day = date.getDate()
@@ -213,7 +184,7 @@ export const formatPlotDataLabels = (
     }
     case Intervals.Daily: {
       const dayMod =
-        Math.floor(time / (1000 * 60 * 60 * 24)) % (entries >= 8 ? (isMobile ? 4 : 2) : 1)
+        Math.floor(time / (1000 * 60 * 60 * 24)) % (entries >= 8 ? (reduceLabels ? 4 : 2) : 1)
       return dayMod === 0 ? `${day < 10 ? '0' : ''}${day}/${month < 10 ? '0' : ''}${month}` : ''
     }
     case Intervals.Weekly: {
@@ -223,7 +194,7 @@ export const formatPlotDataLabels = (
       weekStart.setDate(date.getDate() + mondayOffset)
 
       const weekNumber = Math.floor(weekStart.getTime() / (1000 * 60 * 60 * 24 * 7))
-      const weekMod = weekNumber % (entries >= 8 ? (isMobile ? 4 : 2) : 1)
+      const weekMod = weekNumber % (entries >= 8 ? (reduceLabels ? 4 : 2) : 1)
 
       if (weekMod !== 0) return ''
 
@@ -304,22 +275,4 @@ export const getLabelDate = (
   }
 
   return `${day < 10 ? '0' : ''}${day} ${monthName}`
-}
-
-export function getLimitingTimestamp(): number {
-  const now = new Date()
-
-  const currentYear = now.getUTCFullYear()
-  const currentMonth = now.getUTCMonth()
-  const currentDate = now.getUTCDate()
-
-  // Cron job runs every day at 11:30 UTC, give it 30mins to finish
-  const todayCronTime = new Date(Date.UTC(currentYear, currentMonth, currentDate, 12, 0, 0, 0))
-
-  if (now >= todayCronTime) {
-    return Date.now()
-  }
-
-  const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000)
-  return yesterday.getTime()
 }

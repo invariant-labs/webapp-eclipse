@@ -40,7 +40,6 @@ interface LeaderboardProps {
   lastSnapTimestamp: string
   userStats: CurrentUser
   estimated24hPoints: BN
-  isLoadingList: boolean
   currentNetwork: NetworkType
   copyAddressHandler: (message: string, variant: VariantType) => void
   promotedPoolsData: ExtendedPoolStatsDataWithPoints[]
@@ -72,6 +71,7 @@ interface LeaderboardProps {
   isLoadingLeaderboardList: boolean
   hasTETHPosition: boolean
   contentProgramDates: { start: string; end: string }
+  isLoadingDebounced: boolean
 }
 
 export const Leaderboard: React.FC<LeaderboardProps> = ({
@@ -80,7 +80,6 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
   lastSnapTimestamp,
   userStats,
   estimated24hPoints,
-  isLoadingList,
   currentNetwork,
   copyAddressHandler,
   promotedPoolsData,
@@ -103,7 +102,8 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
   userAddress,
   isLoadingLeaderboardList,
   hasTETHPosition,
-  contentProgramDates
+  contentProgramDates,
+  isLoadingDebounced
 }) => {
   const { classes } = useStyles()
 
@@ -166,13 +166,13 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
             userContentPoints={userContentPoints}
             userStats={userStats.total}
             estimated24hPoints={estimated24hPoints}
-            isLoadingList={isLoadingList || isLoadingLeaderboardList}
+            isLoadingList={isLoadingDebounced}
             totalItems={totalItems}
             isConnected={isConnected}
             contentProgramDates={contentProgramDates}
           />
           <EcosystemExposure
-            isLoading={isLoadingLeaderboardList || isLoadingList}
+            isLoading={isLoadingDebounced}
             isConnected={isConnected}
             userStats={userStats.total}
             hasTETHPosition={hasTETHPosition}

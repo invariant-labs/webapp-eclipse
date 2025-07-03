@@ -1,26 +1,27 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 import { ResponsiveLine } from '@nivo/line'
 import { linearGradientDef } from '@nivo/core'
-import { colors, typography } from '@static/theme'
+import { colors, theme, typography } from '@static/theme'
 import { useStyles } from './style'
 import { TimeData } from '@store/reducers/stats'
-import { Grid, Typography } from '@mui/material'
+import { Grid, Typography, useMediaQuery } from '@mui/material'
 import { formatNumberWithoutSuffix, trimZeros } from '@utils/utils'
 import {
   formatLargeNumber,
   formatPlotDataLabels,
   getLabelDate,
-  getLimitingTimestamp,
-  mapIntervalToPrecision
+  mapIntervalToPrecision,
+  mapIntervalToString
 } from '@utils/uiUtils'
-import useIsMobile from '@store/hooks/isMobile'
 import { Intervals as IntervalsKeys } from '@store/consts/static'
+
 interface LiquidityInterface {
   liquidityVolume: number | null
   data: TimeData[]
   className?: string
   isLoading: boolean
   interval: IntervalsKeys
+  lastStatsTimestamp: number
 }
 
 const Liquidity: React.FC<LiquidityInterface> = ({
@@ -28,28 +29,26 @@ const Liquidity: React.FC<LiquidityInterface> = ({
   data,
   className,
   isLoading,
-  interval
+  interval,
+  lastStatsTimestamp
 }) => {
   const { classes, cx } = useStyles()
 
+  const intervalSuffix = mapIntervalToString(interval)
+
   liquidityVolume = liquidityVolume ?? 0
 
-  const isMobile = useIsMobile()
-  const latestTimestamp = useMemo(
-    () =>
-      Math.max(
-        ...data
-          .map(d => d.timestamp)
-          .concat(interval !== IntervalsKeys.Daily ? getLimitingTimestamp() : 0)
-      ),
-    [data, interval]
-  )
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
+  const isMdUp = useMediaQuery(theme.breakpoints.up('md'))
+  const isLgDown = useMediaQuery(theme.breakpoints.down('lg'))
+
+  const isTablet = isMdUp && isLgDown
 
   return (
     <Grid className={cx(classes.container, className)}>
       <Grid className={classes.liquidityContainer}>
         <Grid container justifyContent={'space-between'} alignItems='center'>
-          <Typography className={classes.liquidityHeader}>Liquidity</Typography>
+          <Typography className={classes.liquidityHeader}>Liquidity {intervalSuffix}</Typography>
         </Grid>
         <Grid className={classes.volumePercentHeader}>
           <Typography className={classes.volumeLiquidityHeader}>
@@ -117,7 +116,9 @@ const Liquidity: React.FC<LiquidityInterface> = ({
             tickPadding: 10,
             tickRotation: 0,
             format: time =>
-              isLoading ? '' : formatPlotDataLabels(time, data.length, interval, isMobile),
+              isLoading
+                ? ''
+                : formatPlotDataLabels(time, data.length, interval, isMobile || isTablet),
             tickValues: isLoading ? [] : mapIntervalToPrecision(interval)
           }}
           axisLeft={{
@@ -176,10 +177,36 @@ const Liquidity: React.FC<LiquidityInterface> = ({
           fill={[{ match: '*', id: 'gradient' }]}
           crosshairType='bottom'
           tooltip={({ point }) => {
-            const date = getLabelDate(interval, (point.data.x as Date).getTime(), latestTimestamp)
+            const date = getLabelDate(
+              interval,
+              (point.data.x as Date).getTime(),
+              lastStatsTimestamp
+            )
+
+            const pointIndex = point.index
+
+            const totalPoints = data.length
+            const relativePosition = pointIndex / (totalPoints - 1)
+
+            let transformStyle
+
+            if (relativePosition < 0.1) {
+              transformStyle = 'translateX(40%)'
+            } else if (relativePosition > 0.85) {
+              transformStyle = 'translateX(-40%)'
+            }
 
             return (
-              <Grid className={classes.tooltip}>
+              <Grid
+                className={classes.tooltip}
+                style={
+                  relativePosition < 0.1 || (relativePosition > 0.85 && isMobile)
+                    ? {
+                        transform: transformStyle,
+                        position: 'relative'
+                      }
+                    : {}
+                }>
                 <Typography className={classes.tooltipDate}>{date}</Typography>
                 <Typography className={classes.tooltipValue}>
                   ${formatNumberWithoutSuffix(point.data.y as number)}

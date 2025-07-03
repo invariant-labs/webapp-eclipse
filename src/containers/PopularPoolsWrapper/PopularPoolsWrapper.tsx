@@ -1,10 +1,8 @@
-import React, { useEffect, useMemo } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import React, { useMemo } from 'react'
+import { useSelector } from 'react-redux'
 import PopularPools from '@components/PopularPools/PopularPools'
 import { isLoading, poolsStatsWithTokensDetails } from '@store/selectors/stats'
 import { unknownTokenIcon } from '@static/icons'
-import { actions } from '@store/reducers/stats'
-import { Grid } from '@mui/material'
 import { network } from '@store/selectors/solanaConnection'
 import { getPopularPools, Intervals } from '@store/consts/static'
 import { PublicKey } from '@solana/web3.js'
@@ -31,9 +29,15 @@ export interface PopularPoolData {
   isUnknownTo?: boolean
 }
 
-export const PopularPoolsWrapper: React.FC = () => {
-  const dispatch = useDispatch()
+interface IPopularPoolsWrapper {
+  updateInterval: (interval: Intervals) => void
+  lastUsedInterval: Intervals | null
+}
 
+export const PopularPoolsWrapper: React.FC<IPopularPoolsWrapper> = ({
+  lastUsedInterval,
+  updateInterval
+}) => {
   const currentNetwork = useSelector(network)
   const isLoadingStats = useSelector(isLoading)
   const poolsList = useSelector(poolsStatsWithTokensDetails)
@@ -43,14 +47,12 @@ export const PopularPoolsWrapper: React.FC = () => {
 
     let popularPools = getPopularPools(currentNetwork)
     if (popularPools.length === 0) {
-      popularPools = poolsList
-        .sort((a, b) => b.volume24 - a.volume24)
-        .slice(0, 4)
-        .map(pool => ({
-          tokenX: pool.tokenX.toString(),
-          tokenY: pool.tokenY.toString(),
-          fee: pool.fee.toString()
-        }))
+      //mock data for skeleton loading
+      popularPools = poolsList.slice(0, 4).map(pool => ({
+        tokenX: pool.tokenX.toString(),
+        tokenY: pool.tokenY.toString(),
+        fee: pool.fee.toString()
+      }))
     }
 
     popularPools.map(pool => {
@@ -83,16 +85,23 @@ export const PopularPoolsWrapper: React.FC = () => {
         })
       } else {
         data.push({
-          iconFrom: getNetworkTokensList(currentNetwork)[pool.tokenX].logoURI ?? unknownTokenIcon,
-          iconTo: getNetworkTokensList(currentNetwork)[pool.tokenY].logoURI ?? unknownTokenIcon,
-          symbolFrom: getNetworkTokensList(currentNetwork)[pool.tokenX].symbol ?? pool.tokenX,
-          symbolTo: getNetworkTokensList(currentNetwork)[pool.tokenY].symbol ?? pool.tokenY,
-          addressFrom: pool.tokenX,
-          addressTo: pool.tokenY,
-          TVL: 0,
-          fee: +pool.fee,
+          symbolFrom: '-',
+          symbolTo: '-',
+          iconFrom: unknownTokenIcon,
+          iconTo: unknownTokenIcon,
           volume: 0,
-          apy: 0
+          TVL: 0,
+          fee: 0,
+          addressFrom: pool.tokenX.toString(),
+          addressTo: pool.tokenY.toString(),
+          apy: 0,
+          apyData: {
+            fees: 0,
+            accumulatedFarmsSingleTick: 0,
+            accumulatedFarmsAvg: 0
+          },
+          isUnknownFrom: false,
+          isUnknownTo: false
         })
       }
     })
@@ -103,19 +112,15 @@ export const PopularPoolsWrapper: React.FC = () => {
     return list.some(pool => pool.apy !== 0)
   }, [list])
 
-  useEffect(() => {
-    dispatch(actions.getCurrentIntervalStats({ interval: Intervals.Daily }))
-  }, [])
-
   return (
-    <Grid container>
-      <PopularPools
-        pools={list}
-        isLoading={isLoadingStats}
-        network={currentNetwork}
-        showAPY={showAPY}
-      />
-    </Grid>
+    <PopularPools
+      pools={list}
+      isLoading={isLoadingStats}
+      network={currentNetwork}
+      showAPY={showAPY}
+      lastUsedInterval={lastUsedInterval}
+      updateInterval={updateInterval}
+    />
   )
 }
 

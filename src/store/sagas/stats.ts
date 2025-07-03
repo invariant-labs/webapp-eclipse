@@ -1,5 +1,5 @@
 import { actions } from '@store/reducers/stats'
-import { call, put, select, takeLatest } from 'typed-redux-saga'
+import { all, call, put, select, spawn, takeLatest } from 'typed-redux-saga'
 import { network } from '@store/selectors/solanaConnection'
 import { PublicKey } from '@solana/web3.js'
 import { handleRpcError } from './connection'
@@ -67,6 +67,8 @@ export function* getIntervalStats(action: PayloadAction<{ interval: Intervals }>
 
     const parsedFullSnap = {
       ...fullSnap,
+      // @ts-expect-error FIXME: Interface missmatch.
+      lastSnapTimestamp: fullSnap.timestamp,
       volumePlot: fullSnap.volumePlot.reverse(),
       liquidityPlot: fullSnap.liquidityPlot.reverse(),
       tokensData: fullSnap.tokensData.map(token => ({
@@ -103,4 +105,8 @@ export function* getIntervalStats(action: PayloadAction<{ interval: Intervals }>
 
 export function* intervalStatsHandler(): Generator {
   yield* takeLatest(actions.getCurrentIntervalStats, getIntervalStats)
+}
+
+export function* statsSaga(): Generator {
+  yield* all([intervalStatsHandler].map(spawn))
 }

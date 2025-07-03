@@ -6,7 +6,7 @@ import { useStyles } from './style'
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import { formatNumberWithSuffix } from '@utils/utils'
 import { Intervals, ITEMS_PER_PAGE, NetworkType, SortTypeTokenList } from '@store/consts/static'
-import { newTabBtnIcon, unknownTokenIcon, warningIcon } from '@static/icons'
+import { newTabBtnIcon, star, starFill, unknownTokenIcon } from '@static/icons'
 import { mapIntervalToString, shortenAddress } from '@utils/uiUtils'
 import { VariantType } from 'notistack'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
@@ -30,6 +30,8 @@ interface IProps {
   network?: NetworkType
   copyAddressHandler?: (message: string, variant: VariantType) => void
   interval?: Intervals
+  isFavourite?: boolean
+  switchFavouriteTokens?: (tokenAddress: string) => void
 }
 
 const TokenListItem: React.FC<IProps> = ({
@@ -45,15 +47,17 @@ const TokenListItem: React.FC<IProps> = ({
   sortType,
   onSort,
   address,
-  isUnknown,
   network,
   interval = Intervals.Daily,
-  copyAddressHandler
+  isFavourite = false,
+  copyAddressHandler,
+  switchFavouriteTokens
 }) => {
   const { classes } = useStyles()
   // const isNegative = priceChange < 0
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
   const isXs = useMediaQuery(theme.breakpoints.down('xs'))
+  const isMd = useMediaQuery(theme.breakpoints.down('md'))
 
   const networkUrl = useMemo(() => {
     switch (network) {
@@ -95,17 +99,38 @@ const TokenListItem: React.FC<IProps> = ({
                 ? `1px solid ${colors.invariant.light}`
                 : `2px solid ${colors.invariant.light}`
           }}>
-          {!isXs && !isSm && <Typography component='p'>{itemNumber}</Typography>}
-          <Grid className={classes.tokenName}>
+          <Box className={classes.tokenIndexContainer}>
+            {!isMd && (
+              <Box className={classes.tokenIndex}>
+                <Typography>{itemNumber}</Typography>
+              </Box>
+            )}
             <img
-              className={classes.tokenIcon}
-              src={icon}
-              alt='Token icon'
-              onError={e => {
-                e.currentTarget.src = unknownTokenIcon
+              className={classes.favouriteButton}
+              src={isFavourite ? starFill : star}
+              onClick={e => {
+                if (address && switchFavouriteTokens) {
+                  switchFavouriteTokens(address)
+                }
+
+                e.stopPropagation()
               }}
             />
-            {isUnknown && <img className={classes.warningIcon} src={warningIcon} />}
+          </Box>{' '}
+          <Grid className={classes.tokenName}>
+            {icon === '/src/static/svg/unknownToken.svg' && isSm ? (
+              <Typography>{symbol}</Typography>
+            ) : (
+              <img
+                className={classes.tokenIcon}
+                src={icon}
+                alt='Token icon'
+                onError={e => {
+                  e.currentTarget.src = unknownTokenIcon
+                }}
+              />
+            )}
+
             {shouldShowText && (
               <Typography>
                 {isXs ? shortenAddress(symbol) : name.length < 25 ? name : name.slice(0, 40)}
@@ -158,11 +183,10 @@ const TokenListItem: React.FC<IProps> = ({
                 : `px solid ${colors.invariant.light}`
           }}
           classes={{ container: classes.container, root: classes.header }}>
-          {!isXs && !isSm && (
-            <Typography style={{ lineHeight: '12px' }}>
-              N<sup>o</sup>
-            </Typography>
-          )}
+          <Typography style={{ lineHeight: '12px' }}>
+            N<sup>o</sup>
+          </Typography>
+
           <Typography
             style={{ cursor: 'pointer' }}
             onClick={() => {
@@ -172,7 +196,7 @@ const TokenListItem: React.FC<IProps> = ({
                 onSort?.(SortTypeTokenList.NAME_ASC)
               }
             }}>
-            Name
+            Token
             {sortType === SortTypeTokenList.NAME_ASC ? (
               <ArrowDropUpIcon className={classes.icon} />
             ) : sortType === SortTypeTokenList.NAME_DESC ? (

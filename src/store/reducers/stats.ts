@@ -35,6 +35,11 @@ export interface PoolStatsData {
   lockedY: number
 }
 
+export interface CumulativeValue {
+  value: number
+  change: number | null
+}
+
 export interface IStatsStore {
   volumePlot: TimeData[]
   liquidityPlot: TimeData[]
@@ -47,9 +52,12 @@ export interface IStatsStore {
   tokensData: TokenStatsData[]
   poolsData: PoolStatsData[]
   isLoading: boolean
+  lastSnapTimestamp: number
   lastTimestamp: number
   lastInterval: Intervals | null
   currentInterval: Intervals | null
+  cumulativeVolume: CumulativeValue
+  cumulativeFees: CumulativeValue
 }
 
 export const defaultState: IStatsStore = {
@@ -83,8 +91,17 @@ export const defaultState: IStatsStore = {
   poolsData: [],
   isLoading: false,
   lastTimestamp: 0,
+  lastSnapTimestamp: 0,
   lastInterval: null,
-  currentInterval: null
+  currentInterval: null,
+  cumulativeVolume: {
+    value: 0,
+    change: null
+  },
+  cumulativeFees: {
+    value: 0,
+    change: null
+  }
 }
 
 export const statsSliceName = 'stats'

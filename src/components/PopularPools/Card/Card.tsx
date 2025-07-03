@@ -19,16 +19,17 @@ import {
   parseFeeToPathFee,
   ROUTES
 } from '@utils/utils'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { NetworkType } from '@store/consts/static'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { leaderboardSelectors } from '@store/selectors/leaderboard'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { BN } from '@coral-xyz/anchor'
 import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
 import { Button } from '@common/Button/Button'
 import { ReverseTokensIcon } from '@static/componentIcon/ReverseTokensIcon'
+import { actions } from '@store/reducers/navigation'
 
 export interface ICard extends PopularPoolData {
   isLoading: boolean
@@ -57,7 +58,8 @@ const Card: React.FC<ICard> = ({
 }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
-
+  const location = useLocation()
+  const dispatch = useDispatch()
   const airdropIconRef = useRef<HTMLDivElement>(null)
   const popoverContainerRef = useRef<HTMLDivElement>(null)
 
@@ -83,6 +85,7 @@ const Card: React.FC<ICard> = ({
 
   const handleOpenPosition = () => {
     if (fee === undefined) return
+    dispatch(actions.setNavigation({ address: location.pathname }))
 
     navigate(
       ROUTES.getNewPositionRoute(
@@ -134,7 +137,7 @@ const Card: React.FC<ICard> = ({
     <Grid className={classes.root}>
       {ESToken && <img className={classes.horn} src={Horn} />}
 
-      {isLoading ? (
+      {isLoading || !poolAddress?.toString() ? (
         <Skeleton variant='rounded' animation='wave' className={classes.skeleton} />
       ) : (
         <Grid>

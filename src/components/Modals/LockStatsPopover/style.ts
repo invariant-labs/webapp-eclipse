@@ -14,18 +14,21 @@ const useStyles = makeStyles()((theme: Theme) => {
       display: 'flex',
       alignItems: 'center',
       [theme.breakpoints.down('sm')]: {
-        width: 300
+        width: 'auto'
       }
     },
     leftWrapper: {
       display: 'flex',
       width: '38%',
       gap: '16px',
+      marginRight: '16px',
       [theme.breakpoints.down('sm')]: {
-        width: '100%'
+        width: '100%',
+        marginRight: 0
       }
     },
     leftInnerWrapper: {
+      width: '100%',
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
@@ -75,6 +78,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       gap: 16
     },
     chartTitle: {
+      width: '100%',
       textAlign: 'center',
       ...typography.body1,
       color: colors.invariant.text

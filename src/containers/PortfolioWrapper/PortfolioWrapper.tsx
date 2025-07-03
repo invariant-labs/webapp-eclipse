@@ -1,4 +1,5 @@
 import {
+  DEFAULT_STRATEGY,
   Intervals,
   NetworkType,
   POSITIONS_PER_PAGE,
@@ -27,22 +28,33 @@ import {
   prices,
   shouldDisable
 } from '@store/selectors/positions'
-import { address, balanceLoading, status, swapTokens, balance } from '@store/selectors/solanaWallet'
+import {
+  address,
+  balanceLoading,
+  status,
+  swapTokens,
+  balance,
+  overviewSwitch
+} from '@store/selectors/solanaWallet'
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { calcYPerXPriceBySqrtPrice, ensureError, printBN, ROUTES } from '@utils/utils'
+import { calcYPerXPriceBySqrtPrice, ensureError, findStrategy, printBN, ROUTES } from '@utils/utils'
 import { network } from '@store/selectors/solanaConnection'
 import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import { actions as actionsStats } from '@store/reducers/stats'
 import { actions as lockerActions } from '@store/reducers/locker'
 import { actions as snackbarActions } from '@store/reducers/snackbars'
+import { actions as navigationActions } from '@store/reducers/navigation'
 import { Grid, useMediaQuery } from '@mui/material'
 import { theme } from '@static/theme'
 import useStyles from './styles'
 import Portfolio from '@components/Portfolio/Portfolio'
 import { VariantType } from 'notistack'
 import { IPositionItem } from '@store/consts/types'
+import { portfolioSearch } from '@store/selectors/navigation'
+import { ISearchToken } from '@common/FilterSearch/FilterSearch'
+import { useProcessedTokens } from '@store/hooks/userOverview/useProcessedToken'
 
 const PortfolioWrapper = () => {
   const BANNER_STORAGE_KEY = 'invariant-es-banner-state'
@@ -77,9 +89,28 @@ const PortfolioWrapper = () => {
   })
   const disabledButton = useSelector(shouldDisable)
   const positionListAlignment = useSelector(positionListSwitcher)
+  const overviewSelectedTab = useSelector(overviewSwitch)
+  const searchParamsToken = useSelector(portfolioSearch)
+  const { processedTokens, isProcesing } = useProcessedTokens(
+    tokensList,
+    isBalanceLoading,
+    currentNetwork
+  )
+
+  const [maxToken] = [...processedTokens].sort((a, b) => b.value - a.value)
 
   const navigate = useNavigate()
   const dispatch = useDispatch()
+
+  const setSearchTokensValue = (tokens: ISearchToken[]) => {
+    dispatch(
+      navigationActions.setSearch({
+        section: 'portfolioTokens',
+        type: 'filteredTokens',
+        filteredTokens: tokens
+      })
+    )
+  }
 
   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
 
@@ -392,21 +423,37 @@ const PortfolioWrapper = () => {
     dispatch(leaderboardActions.getLeaderboardConfig())
   }, [dispatch])
 
+  const onAddPositionClick = () => {
+    dispatch(navigationActions.setNavigation({ address: location.pathname }))
+    if (maxToken) {
+      const strategy = findStrategy(maxToken.id.toString())
+      navigate(
+        ROUTES.getNewPositionRoute(strategy.tokenAddressA, strategy.tokenAddressB, strategy.feeTier)
+      )
+    } else
+      navigate(
+        ROUTES.getNewPositionRoute(
+          DEFAULT_STRATEGY.tokenA,
+          DEFAULT_STRATEGY.tokenB,
+          DEFAULT_STRATEGY.feeTier
+        )
+      )
+  }
+
   return isConnected ? (
     <Portfolio
       handleCloseBanner={handleBannerClose}
       showBanner={showBanner}
       isHiding={isHiding}
+      selectedFilters={searchParamsToken.filteredTokens}
+      setSelectedFilters={setSearchTokensValue}
       shouldDisable={disabledButton}
-      tokensList={tokensList}
       isBalanceLoading={isBalanceLoading}
       handleSnackbar={handleSnackbar}
       initialPage={lastPage}
       setLastPage={setLastPage}
       handleRefresh={handleRefresh}
-      onAddPositionClick={() => {
-        navigate(ROUTES.NEW_POSITION)
-      }}
+      onAddPositionClick={onAddPositionClick}
       currentNetwork={currentNetwork}
       data={data}
       lockedData={lockedData}
@@ -422,7 +469,6 @@ const PortfolioWrapper = () => {
       }}
       length={list.length}
       lockedLength={lockedList.length}
-      noInitialPositions={list.length === 0 && lockedList.length === 0}
       handleLockPosition={handleLockPosition}
       handleClosePosition={handleClosePosition}
       handleClaimFee={handleClaimFee}
@@ -430,6 +476,10 @@ const PortfolioWrapper = () => {
       setPositionListAlignment={(positionType: LiquidityPools) =>
         dispatch(actions.setPositionListSwitcher(positionType))
       }
+      overviewSelectedTab={overviewSelectedTab}
+      handleOverviewSwitch={option => dispatch(walletActions.setOverviewSwitch(option))}
+      processedTokens={processedTokens}
+      isProcesing={isProcesing}
     />
   ) : (
     <Grid className={classes.emptyContainer}>
