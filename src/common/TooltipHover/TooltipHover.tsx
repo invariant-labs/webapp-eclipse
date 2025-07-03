@@ -28,6 +28,7 @@ export const TooltipHover = ({
   right,
   bottom,
   fullSpan = false,
+  removeOnMobile,
   gradient = false,
   increasePadding = false,
   allowEnterTooltip = true,
@@ -135,6 +136,9 @@ export const TooltipHover = ({
         className={classes.tooltipSpan}
         onClick={e => {
           if (isMobile) {
+            if (removeOnMobile) {
+              return
+            }
             e.stopPropagation()
             setOpen(true)
           }
@@ -147,6 +151,9 @@ export const TooltipHover = ({
         }}
         onMouseDown={() => {
           if (allowEnterTooltip && isMobile) {
+            if (removeOnMobile) {
+              return
+            }
             setChildrenHover(true)
             setOpen(true)
           }
