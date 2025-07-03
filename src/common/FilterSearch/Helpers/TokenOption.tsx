@@ -29,7 +29,7 @@ export const TokenOption: React.FC<{
             alt={option.symbol}
             className={classes.searchResultIcon}
           />
-          {option.isUnkown && <img className={classes.warningIcon} src={warningIcon} />}
+          {option.isUnknown && <img className={classes.warningIcon} src={warningIcon} />}
         </Box>
 
         <Box className={classes.tokenData}>

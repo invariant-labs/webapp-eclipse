@@ -10,7 +10,7 @@ interface ISearchToken {
   address: string
   balance: any
   decimals: number
-  isUnkown: boolean
+  isUnknown: boolean
 }
 
 export const TokenChip: React.FC<{
@@ -30,7 +30,7 @@ export const TokenChip: React.FC<{
           className={classes.avatarChip}
           alt={option.symbol}
         />
-        <img className={classes.warningChipIcon} src={warningIcon} />
+        {option.isUnknown && <img className={classes.warningChipIcon} src={warningIcon} />}{' '}
       </Box>
       <Typography className={classes.typographyChip}>{shortenAddress(option.symbol)}</Typography>
       <img

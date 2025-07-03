@@ -41,7 +41,7 @@ export interface ISearchToken {
   balance: BN
   decimals: number
   balanceUSD?: number
-  isUnkown: boolean
+  isUnknown: boolean
 }
 interface ITokenBalance {
   address: PublicKey
@@ -141,7 +141,7 @@ export const FilterSearch: React.FC<IFilterSearch> = memo(
             balanceUSD: balanceUSD,
             balance: tokenFromList ? tokenFromList.balance : 0,
             decimals: tokenFromList ? tokenFromList.decimals : 0,
-            isUnkown: tokenData.tokenDetails.isUnknown ?? false
+            isUnknown: details?.isUnknown ?? false
           }
         })
         .sort((a, b) => {
