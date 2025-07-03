@@ -873,28 +873,28 @@ export const getPopularPools = (network: NetworkType) => {
           fee: '0.09'
         },
         {
-          tokenX: 'So11111111111111111111111111111111111111112', // ETH
-          tokenY: 'sBTZcSwRZhRq3JcjFh1xwxgCxmsN7MreyU3Zx8dA8uF', // sBITZ
+          tokenX: WETH_MAIN.address.toString(), // ETH
+          tokenY: sBITZ_MAIN.address.toString(), // sBITZ
           fee: '1'
         },
         {
-          tokenX: '64mggk2nXg6vHC1qCdsZdEFzd5QGN4id54Vbho4PswCF', // BITZ
-          tokenY: 'So11111111111111111111111111111111111111112', // ETH
+          tokenX: BITZ_MAIN.address.toString, // BITZ
+          tokenY: WETH_MAIN.address.toString(), // ETH
           fee: '1'
         },
         {
-          tokenX: 'BeRUj3h7BqkbdfFU7FBNYbodgf8GCHodzKvF9aVjNNfL', // SOL
-          tokenY: 'So11111111111111111111111111111111111111112', // ETH
+          tokenX: SOLAR_MAIN.address.toString(), // SOL
+          tokenY: WETH_MAIN.address.toString(), // ETH
           fee: '0.09'
         },
         {
-          tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE', // USDC
-          tokenY: 'BeRUj3h7BqkbdfFU7FBNYbodgf8GCHodzKvF9aVjNNfL', // SOL
+          tokenX: USDC_MAIN.address.toString(), // USDC
+          tokenY: SOL_MAIN.address.toString(), // SOL
           fee: '0.09'
         },
         {
-          tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE', // USDC
-          tokenY: '27Kkn8PWJbKJsRZrxbsYDdedpUQKnJ5vNfserCxNEJ3R', // tUSD
+          tokenX: USDC_MAIN.address.toString(), // USDC
+          tokenY: TUSD_MAIN.address.toString(), // tUSD
           fee: '0.01'
         },
         {

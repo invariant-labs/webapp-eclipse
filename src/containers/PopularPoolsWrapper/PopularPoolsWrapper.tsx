@@ -6,7 +6,6 @@ import { unknownTokenIcon } from '@static/icons'
 import { network } from '@store/selectors/solanaConnection'
 import { getPopularPools, Intervals } from '@store/consts/static'
 import { PublicKey } from '@solana/web3.js'
-import { getNetworkTokensList } from '@utils/utils'
 
 export interface PopularPoolData {
   poolAddress?: PublicKey
