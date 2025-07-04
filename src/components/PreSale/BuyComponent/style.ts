@@ -248,6 +248,13 @@ const useStyles = makeStyles<{ percentage: number; isActive?: boolean }>()(
     tokenAmount: {
       ...typography.heading2,
       color: colors.invariant.text
+    },
+    link: {
+      ...typography.body2,
+      color: colors.invariant.green,
+      textDecoration: 'underline',
+      cursor: 'pointer',
+      textAlign: 'center'
     }
   })
 )
