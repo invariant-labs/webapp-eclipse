@@ -10,6 +10,7 @@ import React from 'react'
 import { ROUTES } from '@utils/utils'
 import { useNavigate } from 'react-router-dom'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
+import { ES_MAIN, USDC_MAIN } from '@store/consts/static'
 
 interface IECBanner {
   isCloseButton?: boolean
@@ -52,7 +53,7 @@ export const ECBanner: React.FC<IECBanner> = ({
   )
   const breakpoint = page === 'points' ? theme.breakpoints.values.lg : 1200
   const changeDirection = useMediaQuery(theme.breakpoints.down(breakpoint))
-  const { classes } = useStyles({ page, breakpoint, isHiding })
+  const { classes } = useStyles({ breakpoint, isHiding })
   return (
     <Grid className={classes.mainWrapper}>
       {isCloseButton && (
@@ -71,7 +72,7 @@ export const ECBanner: React.FC<IECBanner> = ({
           official Eclipse claim site. You are just one click away from it!
         </Typography>
         <Button
-          onClick={() => window.open('http://claim.eclipse.xyz/')}
+          onClick={() => window.open('http://claims.eclipse.xyz/')}
           scheme='green'
           gap={8}
           width={200}
@@ -86,12 +87,11 @@ export const ECBanner: React.FC<IECBanner> = ({
           {changeDirection ? (
             <Grid>
               <Typography className={classes.header}>Use ECLS tokens to earn trading</Typography>{' '}
-              <Typography className={classes.header}>
-                fees and points{' '}
-                <TooltipHover gradient title={earnTooltipTitle} top={1}>
-                  <img src={infoCircleIcon} />
-                </TooltipHover>
-              </Typography>
+              <TooltipHover center gradient title={earnTooltipTitle} top={1}>
+                <Typography className={classes.header}>
+                  fees and points <img src={infoCircleIcon} />
+                </Typography>
+              </TooltipHover>
             </Grid>
           ) : (
             <Typography className={classes.header}>
@@ -106,7 +106,9 @@ export const ECBanner: React.FC<IECBanner> = ({
             USDC {changeDirection && <br />} position and enjoy your never ending fees!
           </Typography>
           <Button
-            onClick={() => navigate(ROUTES.getNewPositionRoute('ES', 'USDC', '0_09'))}
+            onClick={() =>
+              navigate(ROUTES.getNewPositionRoute(ES_MAIN.symbol, USDC_MAIN.symbol, '0_1'))
+            }
             scheme='pink'
             gap={8}
             width={200}

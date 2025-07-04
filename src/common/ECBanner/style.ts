@@ -2,16 +2,15 @@ import { colors, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 interface StyleProps {
-  page: 'overview' | 'points'
   breakpoint: number
   isHiding: boolean
 }
 
-export const useStyles = makeStyles<StyleProps>()((theme, { page, breakpoint, isHiding }) => ({
+export const useStyles = makeStyles<StyleProps>()((theme, { breakpoint, isHiding }) => ({
   mainWrapper: {
     position: 'relative',
     display: 'flex',
-    maxWidth: page === 'points' ? 1072 : 1210,
+    maxWidth: 1210,
     width: '100%',
     height: isHiding ? 0 : 239,
     overflow: 'hidden',

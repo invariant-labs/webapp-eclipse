@@ -863,7 +863,7 @@ export const getPopularPools = (network: NetworkType) => {
         {
           tokenX: ES_MAIN.address.toString(),
           tokenY: USDC_MAIN.address.toString(),
-          fee: '0.09'
+          fee: '0.1'
         },
         {
           tokenX: USDC_MAIN.address.toString(),
