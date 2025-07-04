@@ -18,7 +18,6 @@ const useStyles = makeStyles<{ percentage: number; isActive: boolean }>()(
 
     progressCard: {
       borderRadius: '12px',
-      height: '128px',
       marginTop: '24px'
     },
     progressHeader: {

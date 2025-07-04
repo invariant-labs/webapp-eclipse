@@ -119,75 +119,67 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
           </Typography>
         </Box>
       )}
-      {!isLastRound && (
-        <Box className={classes.progressCard}>
-          <Box className={classes.progressHeader}>
-            {isActive ? (
-              <>
-                <Box className={classes.darkBackground}>
-                  <Box
-                    className={classNames(
-                      classes.gradientProgress,
-                      walletStatus === Status.Initialized
-                        ? classes.activeProgress
-                        : classes.inactiveProgress
-                    )}
-                  />
-                </Box>
-                <Grid container className={classes.barWrapper}>
-                  <Typography className={classes.amountBought}>
-                    {renderFormattedNumberWithSkeleton(
-                      amountDeposited,
-                      mintDecimals,
-                      '$',
-                      '',
-                      '80px'
-                    )}
-                  </Typography>
-                  <Typography className={classes.amountLeft}>
-                    {renderFormattedNumberWithSkeleton(amountNeeded, mintDecimals, '$', '', '80px')}
-                  </Typography>
-                </Grid>
-              </>
-            ) : (
-              <>
-                <Box className={classes.infoRow}>
-                  <Typography className={classes.infoLabel}>Deposited:</Typography>
+      <Box className={classes.progressCard}>
+        <Box className={classes.progressHeader}>
+          {isActive ? (
+            <>
+              <Box className={classes.darkBackground}>
+                <Box
+                  className={classNames(
+                    classes.gradientProgress,
+                    walletStatus === Status.Initialized
+                      ? classes.activeProgress
+                      : classes.inactiveProgress
+                  )}
+                />
+              </Box>
+              <Grid container className={classes.barWrapper}>
+                <Typography className={classes.amountBought}>
                   {renderFormattedNumberWithSkeleton(
                     amountDeposited,
                     mintDecimals,
                     '$',
                     '',
-                    '100px'
+                    '80px'
                   )}
-                </Box>
-                <Box className={classes.infoRow}>
-                  <Typography className={classes.infoLabel}>Target deposit:</Typography>
-                  {renderFormattedNumberWithSkeleton(targetAmount, mintDecimals, '$', '', '100px')}
-                </Box>
-                <Box className={classes.infoRow}>
-                  <Typography className={classes.infoLabel}>Maximal deposit:</Typography>
-                  {renderFormattedNumberWithSkeleton(
-                    targetAmount.mul(EFFECTIVE_TARGET_MULTIPLIER),
-                    mintDecimals,
-                    '$',
-                    '',
-                    '100px'
-                  )}
-                </Box>
-              </>
-            )}
-          </Box>
-          {isActive && (
-            <Box className={classes.priceIncreaseBox}>
-              <Typography className={classes.priceIncreaseText}>
-                AMOUNT TILL PRICE INCREASE:
-              </Typography>
-              {renderFormattedNumberWithSkeleton(amountLeft, mintDecimals, '$', '', '100px')}
-            </Box>
+                </Typography>
+                <Typography className={classes.amountLeft}>
+                  {renderFormattedNumberWithSkeleton(amountNeeded, mintDecimals, '$', '', '80px')}
+                </Typography>
+              </Grid>
+            </>
+          ) : (
+            <>
+              <Box className={classes.infoRow}>
+                <Typography className={classes.infoLabel}>Deposited:</Typography>
+                {renderFormattedNumberWithSkeleton(amountDeposited, mintDecimals, '$', '', '100px')}
+              </Box>
+              <Box className={classes.infoRow}>
+                <Typography className={classes.infoLabel}>Target deposit:</Typography>
+                {renderFormattedNumberWithSkeleton(targetAmount, mintDecimals, '$', '', '100px')}
+              </Box>
+              <Box className={classes.infoRow}>
+                <Typography className={classes.infoLabel}>Maximal deposit:</Typography>
+                {renderFormattedNumberWithSkeleton(
+                  targetAmount.mul(EFFECTIVE_TARGET_MULTIPLIER),
+                  mintDecimals,
+                  '$',
+                  '',
+                  '100px'
+                )}
+              </Box>
+            </>
           )}
         </Box>
-      )}
+        {isActive && (
+          <Box className={classes.priceIncreaseBox}>
+            <Typography className={classes.priceIncreaseText}>
+              {roundNumber === 4 ? 'AMOUNT LEFT:' : 'AMOUNT TILL PRICE INCREASE:'}
+            </Typography>
+            {renderFormattedNumberWithSkeleton(amountLeft, mintDecimals, '$', '', '100px')}
+          </Box>
+        )}
+      </Box>
       <Box className={classes.infoCard}>
         {isActive && (
           <>
@@ -253,7 +245,7 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
 
         {!isLastRound && (
           <Box className={classes.infoRow}>
-            <Typography className={classes.secondaryLabel}>Your remaining allocation: </Typography>
+            <Typography className={classes.secondaryLabel}>Your remaining deposit:</Typography>
             {!saleDidNotStart && walletStatus === Status.Initialized && !!proofOfInclusion ? (
               <Typography className={classes.value}>
                 {renderFormattedNumberWithSkeleton(
