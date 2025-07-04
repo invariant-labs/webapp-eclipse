@@ -422,6 +422,7 @@ export const PreSaleWrapper = () => {
       <Hidden lgDown>
         <OverlayWrapper />
       </Hidden>
+
       <Box className={classes.contentWrapper}>
         <Grid className={classes.stepperContainer}>
           <SaleStepper isLoading={isLoadingSaleStats} currentStep={round - 1} steps={stepLabels} />
