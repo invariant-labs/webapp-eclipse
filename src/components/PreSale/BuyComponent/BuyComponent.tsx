@@ -19,6 +19,7 @@ import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButt
 import { WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_MAIN, WRAPPED_ETH_ADDRESS } from '@store/consts/static'
 import { createButtonActions } from '@utils/uiUtils'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
+import { Link } from 'react-router-dom'
 
 interface IProps {
   nativeBalance: BN
@@ -159,173 +160,185 @@ export const BuyComponent: React.FC<IProps> = ({
   }, [alertBox])
 
   return (
-    <Box className={classes.container}>
-      <Box sx={{ minHeight: '206px' }}>
-        <Box className={classes.headingContainer}>
-          <Box sx={{ height: '60px', width: '100%' }}>
-            {alertBox && isActive && walletStatus !== Status.Uninitialized ? (
-              <Box className={`${classes.alertBox} ${getAlerBoxColorVariant()}`}>
-                <TooltipHover
-                  gradient
-                  title={
-                    alertBox.variant !== 'warning' ? (
-                      ''
-                    ) : (
-                      <Box className={classes.tooltipBox}>
-                        <Typography>Eligibility was granted for:</Typography>
-                        <Typography>- Participating in the Invariant Points Program</Typography>
-                        <Typography>- Staking $BITZ on Invariant</Typography>
-                      </Box>
-                    )
-                  }
-                  placement='bottom'>
-                  <Typography className={classes.alertBoxText}>{alertBox.text}</Typography>
-                </TooltipHover>
-              </Box>
-            ) : walletStatus !== Status.Initialized && isActive ? (
-              <Box className={classes.egibilityCheckerWrapper}>
-                <Typography className={classes.egibilityCheckerText}>
-                  To participate in sale, check your eligibility
-                </Typography>
-                <ChangeWalletButton
-                  width={'40%'}
-                  height={36}
-                  name='Check eligibility'
-                  onConnect={onConnectWallet}
-                  connected={false}
-                  onDisconnect={onDisconnectWallet}
-                />
-              </Box>
-            ) : saleDidNotStart ? (
-              <Typography className={classes.presaleTitle}>Presale starts in:</Typography>
-            ) : null}
-          </Box>
-          <Box className={classes.sectionDivider} />
-          {!saleDidNotStart && (
-            <>
-              <Typography className={classes.titleText}>
-                <Typography className={classes.pinkText}>INVARIANT</Typography>
-                <Typography className={classes.headingText}>TOKEN PRESALE</Typography>
-                <Typography className={classes.greenText}>$INVT</Typography>
-              </Typography>
-              <Typography className={classes.raisedInfo}>
-                <Typography className={classes.greyText}>Raised:</Typography>
-                {isLoading ? (
-                  <Skeleton variant='rounded' width={150} height={24} sx={{ ml: 1 }} />
-                ) : (
-                  <>
-                    <Typography className={classes.greenBodyText}>
-                      ${formatNumberWithCommas(printBNandTrimZeros(currentAmount, mintDecimals, 2))}
-                    </Typography>
-                    {' / '}$
-                    {formatNumberWithCommas(printBNandTrimZeros(targetAmount, mintDecimals, 2))}
-                  </>
-                )}
-              </Typography>
-            </>
-          )}
-        </Box>
-
-        {saleDidNotStart ? (
-          <Box className={classes.timerContainer}>
-            <Timer hours={hours} minutes={minutes} seconds={seconds} />
-          </Box>
-        ) : (
-          <Box className={classes.barContainer}>
-            {isLoading ? (
-              <Skeleton variant='rounded' width={'100%'} height={49} sx={{ marginTop: '8px' }} />
-            ) : (
-              <>
-                <Box className={classes.darkBackground}>
-                  <Box className={classes.gradientProgress} />
+    <Box>
+      <Box className={classes.container}>
+        <Box sx={{ minHeight: '206px' }}>
+          <Box className={classes.headingContainer}>
+            <Box sx={{ height: '60px', width: '100%' }}>
+              {alertBox && isActive && walletStatus !== Status.Uninitialized ? (
+                <Box className={`${classes.alertBox} ${getAlerBoxColorVariant()}`}>
+                  <TooltipHover
+                    gradient
+                    title={
+                      alertBox.variant !== 'warning' ? (
+                        ''
+                      ) : (
+                        <Box className={classes.tooltipBox}>
+                          <Typography>Eligibility was granted for:</Typography>
+                          <Typography>- Participating in the Invariant Points Program</Typography>
+                          <Typography>- Staking $BITZ on Invariant</Typography>
+                        </Box>
+                      )
+                    }
+                    placement='bottom'>
+                    <Typography className={classes.alertBoxText}>{alertBox.text}</Typography>
+                  </TooltipHover>
                 </Box>
-                <Grid container className={classes.barWrapper}>
-                  <Typography className={classes.sliderLabel}>0%</Typography>
-                  <Typography className={classes.sliderLabel}>
-                    {filledPercentage.toFixed(2)}%
+              ) : walletStatus !== Status.Initialized && isActive ? (
+                <Box className={classes.egibilityCheckerWrapper}>
+                  <Typography className={classes.egibilityCheckerText}>
+                    To participate in sale, check your eligibility
                   </Typography>
-                  <Typography className={classes.sliderLabel}>100%</Typography>
-                </Grid>
+                  <ChangeWalletButton
+                    width={'40%'}
+                    height={36}
+                    name='Check eligibility'
+                    onConnect={onConnectWallet}
+                    connected={false}
+                    onDisconnect={onDisconnectWallet}
+                  />
+                </Box>
+              ) : saleDidNotStart ? (
+                <Typography className={classes.presaleTitle}>Presale starts in:</Typography>
+              ) : null}
+            </Box>
+            <Box className={classes.sectionDivider} />
+            {!saleDidNotStart && (
+              <>
+                <Typography className={classes.titleText}>
+                  <Typography className={classes.pinkText}>INVARIANT</Typography>
+                  <Typography className={classes.headingText}>TOKEN PRESALE</Typography>
+                  <Typography className={classes.greenText}>$INVT</Typography>
+                </Typography>
+                <Typography className={classes.raisedInfo}>
+                  <Typography className={classes.greyText}>Raised:</Typography>
+                  {isLoading ? (
+                    <Skeleton variant='rounded' width={150} height={24} sx={{ ml: 1 }} />
+                  ) : (
+                    <>
+                      <Typography className={classes.greenBodyText}>
+                        $
+                        {formatNumberWithCommas(
+                          printBNandTrimZeros(currentAmount, mintDecimals, 2)
+                        )}
+                      </Typography>
+                      {' / '}$
+                      {formatNumberWithCommas(printBNandTrimZeros(targetAmount, mintDecimals, 2))}
+                    </>
+                  )}
+                </Typography>
               </>
             )}
           </Box>
-        )}
-      </Box>
-      <Box className={classes.sectionDivider} />
-      <Box>
-        <Box className={classes.inputContainer}>
-          <DepositAmountInput
-            tokenPrice={1}
-            setValue={value => setValue(value)}
-            limit={1e14}
-            decimalsLimit={mintDecimals}
-            currency={tokenIndex !== null ? tokens[tokenIndex].symbol : null}
-            currencyIconSrc={tokenIndex !== null ? tokens[tokenIndex].logoURI : undefined}
-            currencyIsUnknown={tokenIndex !== null ? tokens[tokenIndex].isUnknown ?? false : false}
-            disableBackgroundColor
-            placeholder='0.0'
-            actionButtons={[
-              {
-                label: 'Max',
-                onClick: () => {
-                  actions.maxSale(
-                    tokenIndex,
-                    currentRound,
-                    userDepositedAmount,
-                    whitelistWalletLimit,
-                    currentAmount,
-                    targetAmount,
-                    isPublic
-                  )
-                },
-                variant: 'max'
-              }
-            ]}
-            balanceValue={
-              tokenIndex !== null
-                ? printBNandTrimZeros(tokens[tokenIndex].balance, tokens[tokenIndex].decimals)
-                : ''
-            }
-            onBlur={() => {}}
-            value={value}
-            isBalanceLoading={isBalanceLoading}
-            walletUninitialized={walletStatus !== Status.Initialized}
-          />
-        </Box>
-        <Box className={classes.receiveBox}>
-          <Typography className={classes.receiveLabel}>You'll receive</Typography>
-          {isLoading ? (
-            <Skeleton variant='rounded' width={80} height={24} sx={{ ml: 1 }} />
+
+          {saleDidNotStart ? (
+            <Box className={classes.timerContainer}>
+              <Timer hours={hours} minutes={minutes} seconds={seconds} />
+            </Box>
           ) : (
-            <Typography className={classes.tokenAmount}>
-              {printBNandTrimZeros(receive, REWARD_SCALE)} $INVT
-            </Typography>
+            <Box className={classes.barContainer}>
+              {isLoading ? (
+                <Skeleton variant='rounded' width={'100%'} height={49} sx={{ marginTop: '8px' }} />
+              ) : (
+                <>
+                  <Box className={classes.darkBackground}>
+                    <Box className={classes.gradientProgress} />
+                  </Box>
+                  <Grid container className={classes.barWrapper}>
+                    <Typography className={classes.sliderLabel}>0%</Typography>
+                    <Typography className={classes.sliderLabel}>
+                      {filledPercentage.toFixed(2)}%
+                    </Typography>
+                    <Typography className={classes.sliderLabel}>100%</Typography>
+                  </Grid>
+                </>
+              )}
+            </Box>
           )}
         </Box>
+        <Box className={classes.sectionDivider} />
+        <Box>
+          <Box className={classes.inputContainer}>
+            <DepositAmountInput
+              tokenPrice={1}
+              setValue={value => setValue(value)}
+              limit={1e14}
+              decimalsLimit={mintDecimals}
+              currency={tokenIndex !== null ? tokens[tokenIndex].symbol : null}
+              currencyIconSrc={tokenIndex !== null ? tokens[tokenIndex].logoURI : undefined}
+              currencyIsUnknown={
+                tokenIndex !== null ? (tokens[tokenIndex].isUnknown ?? false) : false
+              }
+              disableBackgroundColor
+              placeholder='0.0'
+              actionButtons={[
+                {
+                  label: 'Max',
+                  onClick: () => {
+                    actions.maxSale(
+                      tokenIndex,
+                      currentRound,
+                      userDepositedAmount,
+                      whitelistWalletLimit,
+                      currentAmount,
+                      targetAmount,
+                      isPublic
+                    )
+                  },
+                  variant: 'max'
+                }
+              ]}
+              balanceValue={
+                tokenIndex !== null
+                  ? printBNandTrimZeros(tokens[tokenIndex].balance, tokens[tokenIndex].decimals)
+                  : ''
+              }
+              onBlur={() => {}}
+              value={value}
+              isBalanceLoading={isBalanceLoading}
+              walletUninitialized={walletStatus !== Status.Initialized}
+            />
+          </Box>
+          <Box className={classes.receiveBox}>
+            <Typography className={classes.receiveLabel}>You'll receive</Typography>
+            {isLoading ? (
+              <Skeleton variant='rounded' width={80} height={24} sx={{ ml: 1 }} />
+            ) : (
+              <Typography className={classes.tokenAmount}>
+                {printBNandTrimZeros(receive, REWARD_SCALE)} $INVT
+              </Typography>
+            )}
+          </Box>
+        </Box>
+        {walletStatus !== Status.Initialized ? (
+          <ChangeWalletButton
+            width={'100%'}
+            height={48}
+            name='Connect wallet'
+            defaultVariant='green'
+            onConnect={onConnectWallet}
+            connected={false}
+            onDisconnect={onDisconnectWallet}
+          />
+        ) : (
+          <AnimatedButton
+            className={classes.greenButton}
+            onClick={() => {
+              if (progress === 'none' && tokenIndex !== null) {
+                onBuyClick(convertBalanceToBN(value, mintDecimals))
+              }
+            }}
+            disabled={getButtonMessage() !== 'Buy $INVT' || !isActive}
+            content={getButtonMessage()}
+            progress={progress}
+          />
+        )}
       </Box>
-      {walletStatus !== Status.Initialized ? (
-        <ChangeWalletButton
-          width={'100%'}
-          height={48}
-          name='Connect wallet'
-          defaultVariant='green'
-          onConnect={onConnectWallet}
-          connected={false}
-          onDisconnect={onDisconnectWallet}
-        />
-      ) : (
-        <AnimatedButton
-          className={classes.greenButton}
-          onClick={() => {
-            if (progress === 'none' && tokenIndex !== null) {
-              onBuyClick(convertBalanceToBN(value, mintDecimals))
-            }
-          }}
-          disabled={getButtonMessage() !== 'Buy $INVT' || !isActive}
-          content={getButtonMessage()}
-          progress={progress}
-        />
-      )}
+      <Box mt={'24px'}>
+        <Link to='https://docs.invariant.app/docs/' target='_blank' className={classes.link}>
+          Terms and Conditions
+        </Link>
+      </Box>
     </Box>
   )
 }
