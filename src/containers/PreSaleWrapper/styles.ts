@@ -31,7 +31,8 @@ export const useStyles = makeStyles()(() => ({
     overflowX: 'hidden',
     gap: 36,
     [theme.breakpoints.down('lg')]: {
-      flexDirection: 'column-reverse'
+      flexDirection: 'column-reverse',
+      padding: 0
     },
     [theme.breakpoints.down('md')]: {
       minHeight: 'auto'
