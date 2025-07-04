@@ -23,18 +23,32 @@ import {
 import { closeSnackbar } from 'notistack'
 import { actions as connectionActions, RpcStatus } from '@store/reducers/solanaConnection'
 import { REWARD_SCALE } from '@invariant-labs/sale-sdk'
+import { BN } from '@coral-xyz/anchor'
 
 export function* fetchUserStats() {
   try {
     const networkType = yield* select(network)
     const rpc = yield* select(rpcAddress)
     const wallet = yield* call(getWallet)
+
     if (!wallet || !wallet.publicKey || wallet.publicKey.equals(DEFAULT_PUBLICKEY)) {
+      yield* put(actions.setUserStats(null))
       return
     }
+
     const sale = yield* call(getSaleProgram, networkType, rpc, wallet as IWallet)
 
-    const userBalance = yield* call([sale, sale.getUserBalance], wallet.publicKey)
+    let userBalance
+    try {
+      userBalance = yield* call([sale, sale.getUserBalance], wallet.publicKey)
+    } catch (raw: unknown) {
+      if (raw instanceof Error && raw.message.includes('AccountDoesNotExist')) {
+        userBalance = { deposited: new BN(0), received: new BN(0) }
+      } else {
+        throw raw
+      }
+    }
+
     const userStats: IUserStats = {
       deposited: userBalance.deposited,
       received: userBalance.received
@@ -42,6 +56,7 @@ export function* fetchUserStats() {
 
     yield* put(actions.setUserStats({ ...userStats }))
   } catch (error) {
+    yield* put(actions.setUserStats(null))
     yield* put(actions.setSaleStats(null))
     console.log(error)
     yield* call(handleRpcError, (error as Error).message)
