@@ -30,6 +30,7 @@ export function* fetchUserStats() {
     const rpc = yield* select(rpcAddress)
     const wallet = yield* call(getWallet)
     if (!wallet || !wallet.publicKey || wallet.publicKey.equals(DEFAULT_PUBLICKEY)) {
+      yield* put(actions.setUserStats(null))
       return
     }
     const sale = yield* call(getSaleProgram, networkType, rpc, wallet as IWallet)
@@ -42,7 +43,7 @@ export function* fetchUserStats() {
 
     yield* put(actions.setUserStats({ ...userStats }))
   } catch (error) {
-    yield* put(actions.setSaleStats(null))
+    yield* put(actions.setUserStats(null))
     console.log(error)
     yield* call(handleRpcError, (error as Error).message)
   }
