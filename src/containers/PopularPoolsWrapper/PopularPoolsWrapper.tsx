@@ -107,7 +107,6 @@ export const PopularPoolsWrapper: React.FC<IPopularPoolsWrapper> = ({
 
     return data
   }, [poolsList])
-
   const showAPY = useMemo(() => {
     return list.some(pool => pool.apy !== 0)
   }, [list])
