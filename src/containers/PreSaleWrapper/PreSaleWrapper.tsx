@@ -550,11 +550,14 @@ export const PreSaleWrapper = () => {
             slidesToScroll={1}
             arrows={true}
             draggable={true}
+            dotsClass={`slick-dots ${classes.dots}`}
+            dots={isSmallMobile}
+            appendDots={dots => <ul>{dots}</ul>}
             className={classes.slider}
             autoplay={true}
             autoplaySpeed={10000}
-            nextArrow={<SampleNextArrow />}
-            prevArrow={<SamplePrevArrow />}
+            nextArrow={isSmallMobile ? null : <SampleNextArrow />}
+            prevArrow={isSmallMobile ? null : <SamplePrevArrow />}
             rows={1}>
             <EventsCard
               title={'Solana Riptide Hackaton'}
@@ -638,7 +641,7 @@ export const PreSaleWrapper = () => {
           </Slider>
         </Box>
       </Box>
-      <Box className={classes.sectionTitle}>
+      <Box className={classes.sectionTokenomics}>
         <Typography className={classes.sectionTitleText}>Tokenomics</Typography>
         <Tokenomics />
       </Box>

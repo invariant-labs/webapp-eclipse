@@ -87,25 +87,8 @@ export const useStyles = makeStyles()(() => ({
     }
   },
   slider: {
-    minWidth: '100%',
-    zIndex: 5,
-    gap: '46px',
-    '& .slick-track': {
-      display: 'flex',
-      justifyContent: 'space-between'
-    },
-    '& .slick-list': {
-      [theme.breakpoints.up('lg')]: {
-        margin: '0 -100px'
-      }
-    },
-    '& .slick-slide > div': { padding: '0' },
-
     '& .slick-slide': {
       display: 'flex',
-      [theme.breakpoints.down('sm')]: {
-        margin: '0'
-      },
       justifyContent: 'center'
     },
     '& .slick-arrow': {
@@ -118,75 +101,80 @@ export const useStyles = makeStyles()(() => ({
         boxShadow: '0 0 0 4px rgba(80, 207, 61, 1)'
       },
       color: colors.invariant.textGrey,
-      transition: 'color 0.3s ease',
+      transition: 'color 0.3s ease'
+    },
+
+    '& .slick-list': {
+      padding: '0 16px',
       [theme.breakpoints.down('sm')]: {
-        fontSize: '34px'
+        padding: 0
       }
     },
-    '& .slick-arrow:hover::before': {
-      color: colors.invariant.text
-    },
-    '& .slick-arrow:focus::before, & .slick-arrow:active::before': {
-      color: colors.invariant.textGrey
-    },
-    '@media (hover: hover)': {
-      '& .slick-arrow:hover::before': {
-        color: colors.invariant.text
-      }
-    },
-    '& .slick-prev': {
-      left: -150,
-      [theme.breakpoints.down('lg')]: {
-        left: -40
-      },
-      [theme.breakpoints.down('md')]: {
-        left: -20
-      },
+    '& .slick-track': {
       [theme.breakpoints.down('sm')]: {
-        left: -30,
-        zIndex: 3
-      }
-    },
-    '& .slick-next': {
-      right: -150,
-      [theme.breakpoints.down('lg')]: {
-        right: -40
-      },
-      [theme.breakpoints.down('md')]: {
-        right: -10
-      },
-      [theme.breakpoints.down('sm')]: {
-        right: -30,
-        zIndex: 3
-      }
-    },
-    [theme.breakpoints.down('lg')]: {
-      '& .slick-list': {
-        padding: '0 16px'
-      }
-    },
-    [theme.breakpoints.down('sm')]: {
-      '& .slick-list': {
-        padding: '0 8px'
-      },
-      '& .slick-track': {
         margin: '0 auto'
       }
     }
   },
   cardsContainer: {
+    width: '100%',
     display: 'flex',
-    maxWidth: '1072px',
-    [theme.breakpoints.down('lg')]: {
-      width: '800px'
-    },
-    [theme.breakpoints.down('md')]: {
-      width: '500px'
-    },
-    [theme.breakpoints.down('sm')]: {
-      width: '300px'
-    },
-    width: '900px'
+    flexWrap: 'nowrap'
+  },
+  dots: {
+    position: 'absolute',
+    bottom: -40,
+    '& li': {
+      borderRadius: '50%',
+      height: 12,
+      width: 12,
+      margin: '0 8px',
+      border: `2px solid transparent`,
+      transition: 'all 0.3s ease',
+      position: 'relative',
+      '&.slick-active': {
+        background: colors.invariant.component,
+        border: 'none',
+        '&::after': {
+          content: '""',
+          position: 'absolute',
+          top: -1,
+          left: -1,
+          right: -1,
+          bottom: -1,
+          borderRadius: '50%',
+          background: `linear-gradient(to bottom, ${colors.invariant.green}, ${colors.invariant.pink})`,
+          zIndex: -1
+        }
+      },
+      '&': {
+        background: colors.invariant.component,
+        border: 'none',
+        '&::after': {
+          content: '""',
+          position: 'absolute',
+          top: -1,
+          left: -1,
+          right: -1,
+          bottom: -1,
+          borderRadius: '50%',
+          background: alpha(colors.invariant.lightGrey, 0.3),
+          zIndex: -1
+        }
+      },
+      '& button': {
+        opacity: 0,
+        height: '100%',
+        width: '100%',
+        background: 'transparent',
+        border: 'none',
+        outline: 'none',
+        cursor: 'pointer'
+      },
+      '& button::before': {
+        content: '""'
+      }
+    }
   },
   reverseContainer: {
     width: '100%',
@@ -313,6 +301,24 @@ export const useStyles = makeStyles()(() => ({
     boxSizing: 'border-box',
     [theme.breakpoints.down('md')]: {
       marginTop: 48
+    }
+  },
+  sectionTokenomics: {
+    zIndex: 90,
+    marginTop: 72,
+    width: '100%',
+    maxWidth: '1280px',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'column',
+    gap: 24,
+    boxSizing: 'border-box',
+    [theme.breakpoints.down('md')]: {
+      marginTop: 48
+    },
+    [theme.breakpoints.down('sm')]: {
+      marginTop: 88
     }
   },
   dexChartContainer: {
