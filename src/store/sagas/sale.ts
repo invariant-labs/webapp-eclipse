@@ -23,19 +23,27 @@ import {
 import { closeSnackbar } from 'notistack'
 import { actions as connectionActions, RpcStatus } from '@store/reducers/solanaConnection'
 import { REWARD_SCALE } from '@invariant-labs/sale-sdk'
+import { BN } from '@coral-xyz/anchor'
 
 export function* fetchUserStats() {
   try {
+    console.log('saas')
     const networkType = yield* select(network)
     const rpc = yield* select(rpcAddress)
     const wallet = yield* call(getWallet)
     if (!wallet || !wallet.publicKey || wallet.publicKey.equals(DEFAULT_PUBLICKEY)) {
-      yield* put(actions.setUserStats(null))
+      yield* put(
+        actions.setUserStats({
+          deposited: new BN(0),
+          received: new BN(0)
+        })
+      )
       return
     }
     const sale = yield* call(getSaleProgram, networkType, rpc, wallet as IWallet)
 
     const userBalance = yield* call([sale, sale.getUserBalance], wallet.publicKey)
+    console.log(userBalance.deposited.toString())
     const userStats: IUserStats = {
       deposited: userBalance.deposited,
       received: userBalance.received
@@ -44,7 +52,12 @@ export function* fetchUserStats() {
     yield* put(actions.setUserStats({ ...userStats }))
   } catch (error) {
     yield* put(actions.setSaleStats(null))
-    yield* put(actions.setUserStats(null))
+    yield* put(
+      actions.setUserStats({
+        deposited: new BN(0),
+        received: new BN(0)
+      })
+    )
     console.log(error)
     yield* call(handleRpcError, (error as Error).message)
   }
