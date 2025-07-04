@@ -27,7 +27,6 @@ import { BN } from '@coral-xyz/anchor'
 
 export function* fetchUserStats() {
   try {
-    console.log('saas')
     const networkType = yield* select(network)
     const rpc = yield* select(rpcAddress)
     const wallet = yield* call(getWallet)
@@ -43,7 +42,6 @@ export function* fetchUserStats() {
     const sale = yield* call(getSaleProgram, networkType, rpc, wallet as IWallet)
 
     const userBalance = yield* call([sale, sale.getUserBalance], wallet.publicKey)
-    console.log(userBalance.deposited.toString())
     const userStats: IUserStats = {
       deposited: userBalance.deposited,
       received: userBalance.received
