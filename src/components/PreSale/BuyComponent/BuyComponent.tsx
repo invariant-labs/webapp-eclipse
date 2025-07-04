@@ -46,6 +46,7 @@ interface IProps {
   onBuyClick: (amount: BN) => void
   onConnectWallet: () => void
   onDisconnectWallet: () => void
+  isLoadingUserStats: boolean
 }
 
 export const BuyComponent: React.FC<IProps> = ({
@@ -72,7 +73,8 @@ export const BuyComponent: React.FC<IProps> = ({
   onBuyClick,
   onConnectWallet,
   onDisconnectWallet,
-  alertBox
+  alertBox,
+  isLoadingUserStats
 }) => {
   const targetDate = useMemo(() => new Date(startTimestamp.toNumber() * 1000), [startTimestamp])
   const { hours, minutes, seconds } = useCountdown({
@@ -153,7 +155,7 @@ export const BuyComponent: React.FC<IProps> = ({
   })
 
   const getAlerBoxColorVariant = useCallback(() => {
-    if (alertBox?.variant === 'warning') {
+    if (alertBox?.variant === 'warning' || alertBox?.variant === 'limit') {
       return classes.alertBoxYellow
     }
     return classes.alerBoxGreen
@@ -166,24 +168,28 @@ export const BuyComponent: React.FC<IProps> = ({
           <Box className={classes.headingContainer}>
             <Box sx={{ height: '60px', width: '100%' }}>
               {alertBox && isActive && walletStatus !== Status.Uninitialized ? (
-                <Box className={`${classes.alertBox} ${getAlerBoxColorVariant()}`}>
-                  <TooltipHover
-                    gradient
-                    title={
-                      alertBox.variant !== 'warning' ? (
-                        ''
-                      ) : (
-                        <Box className={classes.tooltipBox}>
-                          <Typography>Eligibility was granted for:</Typography>
-                          <Typography>- Participating in the Invariant Points Program</Typography>
-                          <Typography>- Staking $BITZ on Invariant</Typography>
-                        </Box>
-                      )
-                    }
-                    placement='bottom'>
-                    <Typography className={classes.alertBoxText}>{alertBox.text}</Typography>
-                  </TooltipHover>
-                </Box>
+                isLoadingUserStats ? (
+                  <Skeleton className={classes.skeletonBanner} />
+                ) : (
+                  <Box className={`${classes.alertBox} ${getAlerBoxColorVariant()}`}>
+                    <TooltipHover
+                      gradient
+                      title={
+                        alertBox.variant !== 'warning' ? (
+                          ''
+                        ) : (
+                          <Box className={classes.tooltipBox}>
+                            <Typography>Eligibility was granted for:</Typography>
+                            <Typography>- Participating in the Invariant Points Program</Typography>
+                            <Typography>- Staking $BITZ on Invariant</Typography>
+                          </Box>
+                        )
+                      }
+                      placement='bottom'>
+                      <Typography className={classes.alertBoxText}>{alertBox.text}</Typography>
+                    </TooltipHover>
+                  </Box>
+                )
               ) : walletStatus !== Status.Initialized && isActive ? (
                 <Box className={classes.egibilityCheckerWrapper}>
                   <Typography className={classes.egibilityCheckerText}>
@@ -267,7 +273,7 @@ export const BuyComponent: React.FC<IProps> = ({
               currency={tokenIndex !== null ? tokens[tokenIndex].symbol : null}
               currencyIconSrc={tokenIndex !== null ? tokens[tokenIndex].logoURI : undefined}
               currencyIsUnknown={
-                tokenIndex !== null ? (tokens[tokenIndex].isUnknown ?? false) : false
+                tokenIndex !== null ? tokens[tokenIndex].isUnknown ?? false : false
               }
               disableBackgroundColor
               placeholder='0.0'

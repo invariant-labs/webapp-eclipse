@@ -9,6 +9,11 @@ const useStyles = makeStyles<{ percentage: number; isActive?: boolean }>()(
       backgroundHover: colors.invariant.greenLinearGradient,
       boxShadow: 'rgba(46, 224, 154, 0.5)'
     },
+    skeletonBanner: {
+      height: 74,
+      marginTop: -16,
+      borderRadius: '12px'
+    },
     container: {
       backgroundColor: colors.invariant.component,
       borderRadius: '20px',

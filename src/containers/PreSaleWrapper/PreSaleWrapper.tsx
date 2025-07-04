@@ -56,6 +56,7 @@ import { DEFAULT_PUBLICKEY } from '@store/consts/static'
 import { auditByLogoIcon, swapArrowClean } from '@static/icons'
 import { Tokenomics } from '@components/PreSale/Tokenomics/Tokenomics'
 import { DEXChart } from '@components/PreSale/DEXChart/DEXChart'
+import { getCurrentSolanaConnection } from '@utils/web3/connection'
 
 function SampleNextArrow(props) {
   const { className, style, onClick } = props
@@ -181,6 +182,7 @@ export const PreSaleWrapper = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
   const isSmallMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const isTablet = useMediaQuery(theme.breakpoints.down('lg'))
+  const connection = getCurrentSolanaConnection()
 
   const dispatch = useDispatch()
   const isLoadingSaleStats = useSelector(saleSelectors.isLoadingSaleStats)
@@ -314,7 +316,18 @@ export const PreSaleWrapper = () => {
       return getProof(wallet.publicKey.toString())
   }, [walletStatus, isPublic, nativeBalance])
 
+  const isLimitExceed = useMemo(
+    () => deposited.gte(whitelistWalletLimit) && !isPublic,
+    [round, deposited, connection]
+  )
+
   const getAlertBoxText = useCallback(() => {
+    if (isLimitExceed) {
+      return {
+        text: 'Your deposit exceed limit',
+        variant: 'limit'
+      }
+    }
     if (!isPublic && !!proofOfInclusion) {
       return { text: 'You are eligible for this round of sale' }
     }
@@ -330,7 +343,7 @@ export const PreSaleWrapper = () => {
     if (!isActive) {
       return { text: 'Sale not active' }
     }
-  }, [isPublic, proofOfInclusion])
+  }, [isPublic, proofOfInclusion, isLimitExceed])
 
   useEffect(() => {
     dispatch(actions.getSaleStats())
@@ -464,6 +477,7 @@ export const PreSaleWrapper = () => {
           walletStatus={walletStatus}
           alertBox={getAlertBoxText()}
           isBalanceLoading={isBalanceLoading}
+          isLoadingUserStats={isLoadingUserStats}
           tokenIndex={tokenIndex}
           onConnectWallet={() => {
             dispatch(walletActions.connect(false))
