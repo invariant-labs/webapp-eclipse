@@ -60,12 +60,9 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
   priceFormat,
   userReceivededAmount
 }) => {
-  const isLastRound = useMemo(() => roundNumber === 4, [roundNumber])
-
   const { classes } = useStyles({
     percentage: Number(printBNandTrimZeros(percentageFilled, PERCENTAGE_SCALE, 3)),
-    isActive,
-    isLastRound
+    isActive
   })
 
   const renderPriceWithSkeleton = (
@@ -86,6 +83,8 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
       return <>1 INVT = {printBNandTrimZeros(amount, decimals, 4)}$</>
     }
   }
+
+  const isLastRound = useMemo(() => roundNumber === 4, [roundNumber])
 
   const renderFormattedNumberWithSkeleton = (
     amount: BN,
@@ -122,7 +121,7 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
       )}
       <Box className={classes.progressCard}>
         <Box className={classes.progressHeader}>
-          {isActive && !isLastRound ? (
+          {isActive ? (
             <>
               <Box className={classes.darkBackground}>
                 <Box
@@ -172,10 +171,10 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
             </>
           )}
         </Box>
-        {isActive && !isLastRound && (
+        {isActive && (
           <Box className={classes.priceIncreaseBox}>
             <Typography className={classes.priceIncreaseText}>
-              AMOUNT TILL PRICE INCREASE:
+              {roundNumber === 4 ? 'AMOUNT LEFT:' : 'AMOUNT TILL PRICE INCREASE:'}
             </Typography>
             {renderFormattedNumberWithSkeleton(amountLeft, mintDecimals, '$', '', '100px')}
           </Box>
