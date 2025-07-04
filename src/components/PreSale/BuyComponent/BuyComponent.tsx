@@ -273,7 +273,7 @@ export const BuyComponent: React.FC<IProps> = ({
               currency={tokenIndex !== null ? tokens[tokenIndex].symbol : null}
               currencyIconSrc={tokenIndex !== null ? tokens[tokenIndex].logoURI : undefined}
               currencyIsUnknown={
-                tokenIndex !== null ? tokens[tokenIndex].isUnknown ?? false : false
+                tokenIndex !== null ? (tokens[tokenIndex].isUnknown ?? false) : false
               }
               disableBackgroundColor
               placeholder='0.0'
@@ -341,7 +341,10 @@ export const BuyComponent: React.FC<IProps> = ({
         )}
       </Box>
       <Box mt={'24px'}>
-        <Link to='https://docs.invariant.app/docs/' target='_blank' className={classes.link}>
+        <Link
+          to='https://eclipse.invariant.app/termsAndConditions.pdf'
+          target='_blank'
+          className={classes.link}>
           Terms and Conditions
         </Link>
       </Box>
