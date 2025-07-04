@@ -1,4 +1,4 @@
-import { Box, Grid, Skeleton, Typography } from '@mui/material'
+import { Box, Grid, Skeleton, Typography, useMediaQuery } from '@mui/material'
 import useStyles from './style'
 import DepositAmountInput from '@components/Inputs/DepositAmountInput/DepositAmountInput'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
@@ -20,6 +20,7 @@ import { WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_MAIN, WRAPPED_ETH_ADDRESS } from '@st
 import { createButtonActions } from '@utils/uiUtils'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { Link } from 'react-router-dom'
+import { theme } from '@static/theme'
 
 interface IProps {
   nativeBalance: BN
@@ -80,7 +81,7 @@ export const BuyComponent: React.FC<IProps> = ({
   const { hours, minutes, seconds } = useCountdown({
     targetDate
   })
-
+  const truncateText = useMediaQuery(theme.breakpoints.down(470))
   const [value, setValue] = useState<string>('0')
 
   const [receive, setReceive] = useState<BN>(new BN(0))
@@ -196,9 +197,8 @@ export const BuyComponent: React.FC<IProps> = ({
                     To participate in sale, check your eligibility
                   </Typography>
                   <ChangeWalletButton
-                    width={'40%'}
                     height={36}
-                    name='Check eligibility'
+                    name={truncateText ? 'Check' : 'Check eligibility'}
                     onConnect={onConnectWallet}
                     connected={false}
                     onDisconnect={onDisconnectWallet}
@@ -212,9 +212,13 @@ export const BuyComponent: React.FC<IProps> = ({
             {!saleDidNotStart && (
               <>
                 <Typography className={classes.titleText}>
-                  <Typography className={classes.pinkText}>INVARIANT</Typography>
-                  <Typography className={classes.headingText}>TOKEN PRESALE</Typography>
-                  <Typography className={classes.greenText}>$INVT</Typography>
+                  <Typography component='h4' className={classes.pinkText}>
+                    INVARIANT
+                  </Typography>
+                  <Typography component='h4'>TOKEN PRESALE</Typography>
+                  <Typography component='h4' className={classes.greenText}>
+                    $INVT
+                  </Typography>
                 </Typography>
                 <Typography className={classes.raisedInfo}>
                   <Typography className={classes.greyText}>Raised:</Typography>
@@ -273,7 +277,7 @@ export const BuyComponent: React.FC<IProps> = ({
               currency={tokenIndex !== null ? tokens[tokenIndex].symbol : null}
               currencyIconSrc={tokenIndex !== null ? tokens[tokenIndex].logoURI : undefined}
               currencyIsUnknown={
-                tokenIndex !== null ? (tokens[tokenIndex].isUnknown ?? false) : false
+                tokenIndex !== null ? tokens[tokenIndex].isUnknown ?? false : false
               }
               disableBackgroundColor
               placeholder='0.0'

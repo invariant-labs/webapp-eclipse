@@ -69,14 +69,14 @@ const useStyles = makeStyles<{ percentage: number; isActive?: boolean }>()(
       border: `2px solid ${colors.invariant.green}`
     },
     egibilityCheckerWrapper: {
+      height: 44,
       display: 'flex',
-      flexDirection: 'row',
       width: '100%',
       paddingBottom: '8px',
       marginBottom: '16px',
       justifyContent: 'space-between',
-      alignItems: 'center',
-      gap: '8px'
+      flexShrink: 0,
+      alignItems: 'center'
     },
     tooltipBox: {
       width: '100%',
@@ -89,12 +89,15 @@ const useStyles = makeStyles<{ percentage: number; isActive?: boolean }>()(
       color: colors.invariant.text,
       textAlign: 'left',
       ...typography.body2,
-      whiteSpace: 'nowrap',
       marginRight: '16px',
-      width: '70%',
       [theme.breakpoints.down('md')]: {
-        marginRight: '0px',
-        whiteSpace: 'normal'
+        marginRight: '0px'
+      },
+      [theme.breakpoints.down('sm')]: {
+        textWrap: 'wrap'
+      },
+      [theme.breakpoints.down(392)]: {
+        maxWidth: 150
       }
     },
 
@@ -109,7 +112,13 @@ const useStyles = makeStyles<{ percentage: number; isActive?: boolean }>()(
       display: 'flex',
       gap: '6px',
       marginTop: '16px',
-      color: colors.invariant.text
+      color: colors.invariant.text,
+      '& h4': {
+        ...typography.heading4,
+        [theme.breakpoints.down(352)]: {
+          fontSize: 18
+        }
+      }
     },
     presaleTitle: {
       width: '100%',
@@ -122,15 +131,10 @@ const useStyles = makeStyles<{ percentage: number; isActive?: boolean }>()(
       color: colors.invariant.text
     },
     pinkText: {
-      color: colors.invariant.pink,
-      ...typography.heading4
-    },
-    headingText: {
-      ...typography.heading4
+      color: colors.invariant.pink
     },
     greenText: {
-      color: colors.invariant.green,
-      ...typography.heading4
+      color: colors.invariant.green
     },
     raisedInfo: {
       display: 'flex',
