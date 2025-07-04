@@ -95,7 +95,6 @@ const useStyles = makeStyles<{ percentage: number; isActive?: boolean }>()(
 
     headingContainer: {
       display: 'flex',
-      // minHeight: '40px',
       justifyContent: 'space-between',
       alignItems: 'center',
       flexDirection: 'column',
@@ -105,6 +104,16 @@ const useStyles = makeStyles<{ percentage: number; isActive?: boolean }>()(
       display: 'flex',
       gap: '6px',
       marginTop: '16px',
+      color: colors.invariant.text
+    },
+    presaleTitle: {
+      width: '100%',
+      height: '100%',
+      textAlign: 'center',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      ...typography.heading4,
       color: colors.invariant.text
     },
     pinkText: {
@@ -159,7 +168,19 @@ const useStyles = makeStyles<{ percentage: number; isActive?: boolean }>()(
       justifyContent: 'space-between',
       marginTop: theme.spacing(1)
     },
+    timerContainer: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginTop: '32px',
+      width: '100%'
+    },
+    barContainer: {
+      height: 49
+    },
     sectionDivider: {
+      height: '1px',
+      width: '100%',
       borderTop: `1px solid ${colors.invariant.light}`
     },
     sectionHeading: {

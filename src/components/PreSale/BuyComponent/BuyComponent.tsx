@@ -150,6 +150,7 @@ export const BuyComponent: React.FC<IProps> = ({
     minAmount: WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_MAIN,
     onAmountSet: setValue
   })
+
   const getAlerBoxColorVariant = useCallback(() => {
     if (alertBox?.variant === 'warning') {
       return classes.alertBoxYellow
@@ -181,7 +182,7 @@ export const BuyComponent: React.FC<IProps> = ({
                   <Typography className={classes.alertBoxText}>{alertBox.text}</Typography>
                 </TooltipHover>
               </Box>
-            ) : walletStatus !== Status.Initialized ? (
+            ) : walletStatus !== Status.Initialized && isActive ? (
               <Box className={classes.egibilityCheckerWrapper}>
                 <Typography className={classes.egibilityCheckerText}>
                   To participate in sale, check your eligibility
@@ -195,11 +196,11 @@ export const BuyComponent: React.FC<IProps> = ({
                   onDisconnect={onDisconnectWallet}
                 />
               </Box>
+            ) : saleDidNotStart ? (
+              <Typography className={classes.presaleTitle}>Presale starts in:</Typography>
             ) : null}
           </Box>
-          <Box sx={{ height: '1px', width: '100%' }}>
-            <Box className={classes.sectionDivider} />
-          </Box>
+          <Box className={classes.sectionDivider} />
           {!saleDidNotStart && (
             <>
               <Typography className={classes.titleText}>
@@ -224,46 +225,33 @@ export const BuyComponent: React.FC<IProps> = ({
             </>
           )}
         </Box>
-        <Box sx={{ height: saleDidNotStart ? 'auto' : '49px' }}>
-          <>
-            {isLoading && !saleDidNotStart ? (
+
+        {saleDidNotStart ? (
+          <Box className={classes.timerContainer}>
+            <Timer hours={hours} minutes={minutes} seconds={seconds} />
+          </Box>
+        ) : (
+          <Box className={classes.barContainer}>
+            {isLoading ? (
               <Skeleton variant='rounded' width={'100%'} height={49} sx={{ marginTop: '8px' }} />
             ) : (
               <>
-                {!saleDidNotStart && (
-                  <>
-                    <Box className={classes.darkBackground}>
-                      <Box className={classes.gradientProgress} />
-                    </Box>
-                    <Grid container className={classes.barWrapper}>
-                      <Typography className={classes.sliderLabel}>0%</Typography>
-                      <Typography className={classes.sliderLabel}>
-                        {filledPercentage.toFixed(2)}%
-                      </Typography>
-                      <Typography className={classes.sliderLabel}>100%</Typography>
-                    </Grid>
-                  </>
-                )}
+                <Box className={classes.darkBackground}>
+                  <Box className={classes.gradientProgress} />
+                </Box>
+                <Grid container className={classes.barWrapper}>
+                  <Typography className={classes.sliderLabel}>0%</Typography>
+                  <Typography className={classes.sliderLabel}>
+                    {filledPercentage.toFixed(2)}%
+                  </Typography>
+                  <Typography className={classes.sliderLabel}>100%</Typography>
+                </Grid>
               </>
             )}
-          </>
-        </Box>
-
-        {saleDidNotStart && (
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginTop: '32px',
-              width: '100%'
-            }}>
-            <Timer hours={hours} minutes={minutes} seconds={seconds} />
           </Box>
         )}
       </Box>
       <Box className={classes.sectionDivider} />
-
       <Box>
         <Box className={classes.inputContainer}>
           <DepositAmountInput
