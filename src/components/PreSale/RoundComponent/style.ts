@@ -1,8 +1,8 @@
 import { colors, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
-const useStyles = makeStyles<{ percentage: number; isActive: boolean }>()(
-  (theme, { percentage, isActive }) => ({
+const useStyles = makeStyles<{ percentage: number; isActive: boolean; isLastRound: boolean }>()(
+  (theme, { percentage, isActive, isLastRound }) => ({
     container: {
       [theme.breakpoints.up('lg')]: {
         minWidth: '380px'
@@ -18,16 +18,15 @@ const useStyles = makeStyles<{ percentage: number; isActive: boolean }>()(
 
     progressCard: {
       borderRadius: '12px',
-      height: '128px',
       marginTop: '24px'
     },
     progressHeader: {
       background: colors.invariant.light,
       padding: '12px',
-      height: isActive ? '56px' : 'auto',
+      height: isActive && !isLastRound ? '56px' : 'auto',
       borderTopLeftRadius: '12px',
       borderTopRightRadius: '12px',
-      ...(!isActive
+      ...(!isActive || isLastRound
         ? {
             borderRadius: 12
           }
