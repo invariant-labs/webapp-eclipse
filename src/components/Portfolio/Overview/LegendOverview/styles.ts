@@ -38,7 +38,8 @@ export const useStyles = makeStyles()((_theme: Theme) => ({
   },
   logoContainer: {
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
+    position: 'relative'
   },
   logo: {
     width: '24px',
@@ -49,5 +50,11 @@ export const useStyles = makeStyles()((_theme: Theme) => ({
     ...typography.heading4,
     color: colors.invariant.text,
     textAlign: 'right'
+  },
+  warningIcon: {
+    width: 12,
+    position: 'absolute',
+    bottom: -3,
+    left: 16
   }
 }))
