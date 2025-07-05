@@ -30,17 +30,13 @@ export const YourStakeProgress: React.FC<YourProgressProps> = ({
   yield24
 }) => {
   const { classes } = useStyles({})
-  const isMobile = useMediaQuery(theme.breakpoints.down(500));
+  const isMobile = useMediaQuery(theme.breakpoints.down(500))
   return (
     <Grid className={classes.mainWrapper}>
-      <Typography className={classes.portfolioHeader}>
-        Portfolio
-      </Typography>
+      <Typography className={classes.portfolioHeader}>Portfolio</Typography>
       <Grid className={classes.boxWrapper}>
         <Grid className={classes.section}>
-
           <Grid className={classes.pointsColumn}>
-
             <ProgressItem
               bgImage={top}
               label={
@@ -50,10 +46,14 @@ export const YourStakeProgress: React.FC<YourProgressProps> = ({
                 </Box>
               }
               isLoading={isLoading}
-              value={formatNumberWithSuffix((+printBN(sBitzBalance, sBITZ_MAIN.decimals)).toFixed(4), { decimalsAfterDot: 4 })}
+              value={formatNumberWithSuffix(
+                (+printBN(sBitzBalance, sBITZ_MAIN.decimals)).toFixed(4),
+                { decimalsAfterDot: 4 }
+              )}
             />
-            {!isMobile && <Separator color={colors.invariant.light} isHorizontal margin='0px 8px 0px 8px' />}
-
+            {!isMobile && (
+              <Separator color={colors.invariant.light} isHorizontal margin='0px 8px 0px 8px' />
+            )}
 
             <ProgressItem
               bgImage={mid}
@@ -61,32 +61,45 @@ export const YourStakeProgress: React.FC<YourProgressProps> = ({
               label={
                 <Box className={classes.boxLabel}>
                   <img src={BITZ} width={20} height={20} />
-                  <Typography>Redeemable BITZ</Typography> {' '}
+                  <Typography>Redeemable BITZ</Typography>{' '}
                 </Box>
               }
               isLoading={isLoading}
               value={`${formatNumberWithSuffix(
-                (+printBN(bitzToWithdraw, BITZ_MAIN.decimals)).toFixed(4), { decimalsAfterDot: 4 })}`}
+                (+printBN(bitzToWithdraw, BITZ_MAIN.decimals)).toFixed(4),
+                { decimalsAfterDot: 4 }
+              )}`}
             />
-            {!isMobile && <Separator color={colors.invariant.light} isHorizontal margin='0px 8px 0px 8px' />}
+            {!isMobile && (
+              <Separator color={colors.invariant.light} isHorizontal margin='0px 8px 0px 8px' />
+            )}
 
             <ProgressItem
               isLoading={isLoading}
               bgImage={mid}
-              tooltip={<>Estimated BITZ rewards earned from holding sBITZ over the next 24 hours. Staking rewards don't increase your sBITZ amount. Instead, the same amount of sBITZ gradually becomes redeemable for more BITZ over time.</>}
+              tooltip={
+                <>
+                  Estimated BITZ rewards earned from holding sBITZ over the next 24 hours. Staking
+                  rewards don't increase your sBITZ amount. Instead, the same amount of sBITZ
+                  gradually becomes redeemable for more BITZ over time.
+                </>
+              }
               label={
                 <Box className={classes.boxLabel}>
                   <img src={BITZ} width={20} height={20} />
                   <Typography>24H BITZ Rewards</Typography>
                 </Box>
               }
-              value={yield24 > 0 && yield24 < 0.0001
-                ? "<0.0001"
-                : formatNumberWithSuffix(yield24.toFixed(4), { decimalsAfterDot: 4 })}
+              value={
+                yield24 > 0 && yield24 < 0.0001
+                  ? '<0.0001'
+                  : formatNumberWithSuffix(yield24.toFixed(4), { decimalsAfterDot: 4 })
+              }
             />
 
-            {!isMobile && <Separator color={colors.invariant.light} isHorizontal margin='0px 8px 0px 8px' />}
-
+            {!isMobile && (
+              <Separator color={colors.invariant.light} isHorizontal margin='0px 8px 0px 8px' />
+            )}
 
             <ProgressItem
               isLoading={isLoading}

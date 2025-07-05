@@ -4,7 +4,7 @@ import ExchangeAmountInput from '@components/Inputs/ExchangeAmountInput/Exchange
 import Slippage from '@components/Modals/Slippage/Slippage'
 import Refresher from '@common/Refresher/Refresher'
 import { BN } from '@coral-xyz/anchor'
-import { Box, Button, Grid, Typography } from '@mui/material'
+import { Box, Button, Grid, Typography, useMediaQuery } from '@mui/material'
 import {
   DEFAULT_TOKEN_DECIMAL,
   NetworkType,
@@ -42,12 +42,13 @@ import { DECIMAL, fromFee, SimulationStatus } from '@invariant-labs/sdk-eclipse/
 import { PoolWithAddress } from '@store/reducers/pools'
 import { PublicKey } from '@solana/web3.js'
 import { Tick, Tickmap, Market } from '@invariant-labs/sdk-eclipse/lib/market'
-import { auditIcon, refreshIcon, settingIcon, swapArrowsIcon } from '@static/icons'
+import { auditIcon, refreshIcon, settingIcon, swapArrowsIcon, warningIcon } from '@static/icons'
 import SwapPointsPopover from '@components/Modals/SwapPointsPopover/SwapPointsPopover'
 import AnimatedWaves from './AnimatedWaves/AnimatedWaves'
 import { EstimatedPointsLabel } from './EstimatedPointsLabel/EstimatedPointsLabel'
 import { useNavigate } from 'react-router-dom'
 import { FetcherRecords, Pair, SimulationTwoHopResult } from '@invariant-labs/sdk-eclipse'
+import { theme } from '@static/theme'
 
 export interface Pools {
   tokenX: PublicKey
@@ -232,6 +233,9 @@ export const Swap: React.FC<ISwap> = ({
   const [hideUnknownTokens, setHideUnknownTokens] = React.useState<boolean>(
     initialHideUnknownTokensValue
   )
+  const txDown = useMediaQuery(theme.breakpoints.down(483))
+  const txDown2 = useMediaQuery(theme.breakpoints.down(360))
+
   const [pointsForSwap, setPointsForSwap] = React.useState<BN | null>(null)
   const [simulateResult, setSimulateResult] = React.useState<{
     amountOut: BN
@@ -1073,11 +1077,11 @@ export const Swap: React.FC<ISwap> = ({
 
   const unknownFrom = tokens[tokenFromIndex ?? '']?.isUnknown
   const unknownTo = tokens[tokenToIndex ?? '']?.isUnknown
-  const hasUnknown = unknownFrom || unknownTo
+  const isUnkown = unknownFrom || unknownTo
   const showOracle = oraclePriceDiffPercentage >= 10 && errorVisible
   const showImpact = priceImpact > 5 && oraclePriceDiffPercentage < 10 && errorVisible
 
-  const warningsCount = [showOracle, showImpact, hasUnknown].filter(Boolean).length
+  const warningsCount = [showOracle, showImpact, isUnkown].filter(Boolean).length
 
   return (
     <Grid container className={classes.swapWrapper} alignItems='center'>
@@ -1366,13 +1370,15 @@ export const Swap: React.FC<ISwap> = ({
           <Box
             className={classes.unknownWarningContainer}
             style={{
-              height: errorVisible ? `${warningsCount === 1 ? 34 : warningsCount * 46}px` : '0px'
+              height: errorVisible
+                ? `${warningsCount === 1 ? 34 : warningsCount * 34 + warningsCount * 4}px`
+                : '0px'
             }}>
             {oraclePriceDiffPercentage >= 10 && errorVisible && (
               <TooltipHover title='This swap price my differ from market price' top={100} fullSpan>
                 <Box className={classes.unknownWarning}>
-                  Potential loss resulting from a {oraclePriceDiffPercentage.toFixed(2)}% price
-                  difference.
+                  Potential loss {!txDown2 && 'resulting'} from a{' '}
+                  {oraclePriceDiffPercentage.toFixed(2)}% price difference.
                 </Box>
               </TooltipHover>
             )}
@@ -1380,17 +1386,18 @@ export const Swap: React.FC<ISwap> = ({
               <TooltipHover title='Your trade size might be too large' top={100} fullSpan>
                 <Box className={classes.unknownWarning}>
                   High price impact: {priceImpact < 0.01 ? '<0.01%' : `${priceImpact.toFixed(2)}%`}!
-                  This swap will cause a significant price movement.
+                  {!txDown && ' This swap will cause a significant price movement.'}
                 </Box>
               </TooltipHover>
             )}
-            <Grid width={1} gap={1} display='flex'>
+            <Grid className={classes.unverfiedWrapper}>
               {tokens[tokenFromIndex ?? '']?.isUnknown && (
                 <TooltipHover
                   title={`${tokens[tokenFromIndex ?? ''].symbol} is unknown, make sure address is correct before trading`}
                   top={100}
                   fullSpan>
                   <Box className={classes.unknownWarning}>
+                    <img width={16} src={warningIcon} />
                     {tokens[tokenFromIndex ?? ''].symbol} is not verified
                   </Box>
                 </TooltipHover>
@@ -1401,6 +1408,7 @@ export const Swap: React.FC<ISwap> = ({
                   top={100}
                   fullSpan>
                   <Box className={classes.unknownWarning}>
+                    <img width={16} src={warningIcon} />
                     {tokens[tokenToIndex ?? ''].symbol} is not verified
                   </Box>
                 </TooltipHover>

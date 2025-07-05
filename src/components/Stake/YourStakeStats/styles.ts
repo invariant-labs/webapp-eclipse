@@ -171,9 +171,11 @@ const useStyles = makeStyles<{ bgImage?: string }>()((_theme, params = {}) => {
     },
     blur: {
       width: 120,
-      minHeight: 30,
-      marginTop: '16px',
-      borderRadius: 16
+      minHeight: 32,
+      borderRadius: 16,
+      [theme.breakpoints.up(500)]: {
+        marginTop: 16
+      }
     },
     button: {
       minWidth: '39px',

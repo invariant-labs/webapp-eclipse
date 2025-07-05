@@ -14,7 +14,8 @@ import {
   newTabBtnIcon,
   plusIcon,
   unknownTokenIcon,
-  plusDisabled
+  plusDisabled,
+  warningIcon
 } from '@static/icons'
 import {
   disabledPools,
@@ -334,42 +335,36 @@ const PoolListItem: React.FC<IProps> = ({
             />
           </Box>
           <Grid className={classes.imageContainer}>
-            {(tokenAData.icon === '/src/static/svg/unknownToken.svg' || tokenAData.isUnknown) &&
-            isSm ? (
-              <Typography paddingRight={20} margin={0} minWidth={23}>
-                {tokenAData.symbol}
-              </Typography>
-            ) : (
-              <img
-                className={classes.tokenIcon}
-                src={tokenAData.icon}
-                alt='Token from'
-                onError={e => {
-                  e.currentTarget.src = unknownTokenIcon
-                }}
-              />
-            )}
-            {!isSm &&
-              (tokenAData.icon === '/src/static/svg/unknownToken.svg' || tokenAData.isUnknown) &&
-              (tokenBData.icon === '/src/static/svg/unknownToken.svg' || tokenBData.isUnknown) &&
-              ' / '}
+            <Grid className={classes.symbolsWrapper}>
+              <Grid className={classes.imageWrapper}>
+                <img
+                  className={classes.tokenIcon}
+                  src={tokenAData.icon}
+                  alt='Token from'
+                  onError={e => {
+                    e.currentTarget.src = unknownTokenIcon
+                  }}
+                />
+                {tokenAData.isUnknown && tokenAData.icon !== '/unknownToken.svg' && (
+                  <img className={classes.warningIcon} src={warningIcon} />
+                )}
+              </Grid>
 
-            {(tokenBData.icon === '/src/static/svg/unknownToken.svg' || tokenBData.isUnknown) &&
-            isSm ? (
-              <Typography paddingRight={20} margin={0} minWidth={23}>
-                {tokenBData.symbol}
-              </Typography>
-            ) : (
-              <img
-                className={classes.tokenIcon}
-                src={tokenBData.icon}
-                alt='Token from'
-                onError={e => {
-                  e.currentTarget.src = unknownTokenIcon
-                }}
-              />
-            )}
+              <Grid className={classes.imageToWrapper}>
+                <img
+                  className={classes.tokenIcon}
+                  src={tokenBData.icon}
+                  alt='Token from'
+                  onError={e => {
+                    e.currentTarget.src = unknownTokenIcon
+                  }}
+                />
 
+                {tokenBData.isUnknown && tokenBData.icon !== '/unknownToken.svg' && (
+                  <img className={classes.warningIcon} src={warningIcon} />
+                )}
+              </Grid>
+            </Grid>
             {!isSm && !hideInterval && (
               <Typography>
                 {shortenAddress(tokenAData.symbol ?? '')}/{shortenAddress(tokenBData.symbol ?? '')}

@@ -140,7 +140,7 @@ export function* fetchUnknownTokensAccounts(): Generator {
   const connection = yield* call(getConnection)
   const wallet = yield* call(getWallet)
 
-  yield put(actions.setIsUnkownBlanceLoading(true))
+  yield put(actions.setIsUnknownBlanceLoading(true))
 
   const { splTokensAccounts, token2022TokensAccounts } = yield* all({
     splTokensAccounts: call(
@@ -190,7 +190,7 @@ export function* fetchUnknownTokensAccounts(): Generator {
   }
 
   yield put(poolsActions.addTokens(unknownTokens))
-  yield put(actions.setIsUnkownBlanceLoading(false))
+  yield put(actions.setIsUnknownBlanceLoading(false))
 }
 
 export function* handleAirdrop(): Generator {
