@@ -6,7 +6,7 @@ import { useStyles } from './style'
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import { formatNumberWithSuffix } from '@utils/utils'
 import { Intervals, ITEMS_PER_PAGE, NetworkType, SortTypeTokenList } from '@store/consts/static'
-import { newTabBtnIcon, star, starFill, unknownTokenIcon } from '@static/icons'
+import { newTabBtnIcon, star, starFill, unknownTokenIcon, warningIcon } from '@static/icons'
 import { mapIntervalToString, shortenAddress } from '@utils/uiUtils'
 import { VariantType } from 'notistack'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
@@ -50,6 +50,7 @@ const TokenListItem: React.FC<IProps> = ({
   network,
   interval = Intervals.Daily,
   isFavourite = false,
+  isUnknown,
   copyAddressHandler,
   switchFavouriteTokens
 }) => {
@@ -121,14 +122,17 @@ const TokenListItem: React.FC<IProps> = ({
             {icon === '/src/static/svg/unknownToken.svg' && isSm ? (
               <Typography>{symbol}</Typography>
             ) : (
-              <img
-                className={classes.tokenIcon}
-                src={icon}
-                alt='Token icon'
-                onError={e => {
-                  e.currentTarget.src = unknownTokenIcon
-                }}
-              />
+              <Grid className={classes.imageContainer}>
+                <img
+                  className={classes.tokenIcon}
+                  src={icon}
+                  alt='Token icon'
+                  onError={e => {
+                    e.currentTarget.src = unknownTokenIcon
+                  }}
+                />
+                {isUnknown && <img className={classes.warningIcon} src={warningIcon} />}
+              </Grid>
             )}
 
             {shouldShowText && (
