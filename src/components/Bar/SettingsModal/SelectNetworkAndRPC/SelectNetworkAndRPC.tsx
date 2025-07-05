@@ -27,7 +27,7 @@ export const SelectNetworkAndRPC = ({ rpcs, activeNetwork, activeRPC, onNetworkC
 
   const networks = [
     NetworkType.Mainnet,
-    ...(process.env.NODE_ENV === 'development' ? [NetworkType.Testnet] : [])
+    ...(process.env.REACT_APP_NODE_ENV !== 'production' ? [NetworkType.Testnet] : [])
   ]
 
   return (
