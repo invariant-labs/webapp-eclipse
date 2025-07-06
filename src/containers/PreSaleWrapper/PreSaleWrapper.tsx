@@ -254,23 +254,29 @@ export const PreSaleWrapper = () => {
     [deposited, whitelistWalletLimit]
   )
 
-  const amountNeeded = useMemo(
-    () => getCurrentTierLimit(currentAmount, targetAmount),
-    [currentAmount, targetAmount]
-  )
+  const amountNeeded = useMemo(() => {
+    if (targetAmount.isZero()) return new BN(0)
+    if (round === 4) return targetAmount.mul(EFFECTIVE_TARGET_MULTIPLIER)
+    return getCurrentTierLimit(currentAmount, targetAmount)
+  }, [currentAmount, targetAmount])
 
-  const filledPercentage = useMemo(
-    () =>
-      !amountNeeded.isZero()
-        ? currentAmount.muln(100).mul(PERCENTAGE_DENOMINATOR).div(amountNeeded)
-        : 0,
-    [currentAmount, amountNeeded]
-  )
+  const filledPercentage = useMemo(() => {
+    if (targetAmount.isZero()) return new BN(0)
+    if (round === 4)
+      return currentAmount
+        .muln(100)
+        .mul(PERCENTAGE_DENOMINATOR)
+        .div(targetAmount.mul(EFFECTIVE_TARGET_MULTIPLIER))
+    return !amountNeeded.isZero()
+      ? currentAmount.muln(100).mul(PERCENTAGE_DENOMINATOR).div(amountNeeded)
+      : new BN(0)
+  }, [currentAmount, amountNeeded, round])
 
-  const amountLeft = useMemo(
-    () => getAmountTillNextPriceIncrease(currentAmount, targetAmount),
-    [currentAmount, targetAmount]
-  )
+  const amountLeft = useMemo(() => {
+    if (targetAmount.isZero()) return new BN(0)
+    if (round === 4) return targetAmount.mul(EFFECTIVE_TARGET_MULTIPLIER).sub(currentAmount)
+    return getAmountTillNextPriceIncrease(currentAmount, targetAmount)
+  }, [currentAmount, targetAmount])
 
   const mintDecimals = useMemo(
     () => (tokenIndex !== null ? tokens[tokenIndex].decimals : 0),
@@ -422,6 +428,7 @@ export const PreSaleWrapper = () => {
       <Hidden lgDown>
         <OverlayWrapper />
       </Hidden>
+
       <Box className={classes.contentWrapper}>
         <Grid className={classes.stepperContainer}>
           <SaleStepper isLoading={isLoadingSaleStats} currentStep={round - 1} steps={stepLabels} />
@@ -550,11 +557,14 @@ export const PreSaleWrapper = () => {
             slidesToScroll={1}
             arrows={true}
             draggable={true}
+            dotsClass={`slick-dots ${classes.dots}`}
+            dots={isSmallMobile}
+            appendDots={dots => <ul>{dots}</ul>}
             className={classes.slider}
             autoplay={true}
             autoplaySpeed={10000}
-            nextArrow={<SampleNextArrow />}
-            prevArrow={<SamplePrevArrow />}
+            nextArrow={isSmallMobile ? null : <SampleNextArrow />}
+            prevArrow={isSmallMobile ? null : <SamplePrevArrow />}
             rows={1}>
             <EventsCard
               title={'Solana Riptide Hackaton'}
@@ -638,7 +648,7 @@ export const PreSaleWrapper = () => {
           </Slider>
         </Box>
       </Box>
-      <Box className={classes.sectionTitle}>
+      <Box className={classes.sectionTokenomics}>
         <Typography className={classes.sectionTitleText}>Tokenomics</Typography>
         <Tokenomics />
       </Box>
