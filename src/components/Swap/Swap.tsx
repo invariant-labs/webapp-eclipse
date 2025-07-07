@@ -707,9 +707,9 @@ export const Swap: React.FC<ISwap> = ({
       setBestAmount(
         inputRef === inputTarget.FROM
           ? simulateWithHopResult.simulation.swapHopTwo.accumulatedAmountOut
-          : simulateWithHopResult.simulation.swapHopOne.accumulatedAmountIn
-              .add(simulateWithHopResult.simulation.swapHopOne.accumulatedFee)
-              .toString()
+          : simulateWithHopResult.simulation.swapHopOne.accumulatedAmountIn.add(
+              simulateWithHopResult.simulation.swapHopOne.accumulatedFee
+            )
       )
       setSwapType(SwapType.WithHop)
     } else {
@@ -747,7 +747,7 @@ export const Swap: React.FC<ISwap> = ({
 
   const updateEstimatedAmount = () => {
     if (
-      bestAmount.gt(new BN(0)) &&
+      bestAmount?.gt(new BN(0)) &&
       tokenFromIndex !== null &&
       tokenToIndex !== null &&
       inputRef === inputTarget.FROM
