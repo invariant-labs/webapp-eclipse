@@ -345,7 +345,7 @@ export const PreSaleWrapper = () => {
       }
     }
     if (isPublic) {
-      return { text: 'Sale is currently in public state' }
+      return { text: 'Sale is in public phase' }
     }
     if (!isActive) {
       return { text: 'Sale not active' }
