@@ -225,24 +225,6 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
           )}
         </Box>
 
-        <Box className={classes.infoRow}>
-          <Typography className={classes.secondaryLabel}>Your allocation: </Typography>
-          {!saleDidNotStart && walletStatus === Status.Initialized ? (
-            <Typography className={classes.value}>
-              {renderFormattedNumberWithSkeleton(
-                userReceivededAmount,
-                REWARD_SCALE,
-                '',
-                ' INVT',
-                '80px',
-                isLoadingUserStats
-              )}
-            </Typography>
-          ) : (
-            <Typography className={classes.value}>-</Typography>
-          )}
-        </Box>
-
         {!isLastRound && (
           <Box className={classes.infoRow}>
             <Typography className={classes.secondaryLabel}>Your remaining deposit:</Typography>
@@ -262,6 +244,24 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
             )}
           </Box>
         )}
+
+        <Box className={classes.infoRow}>
+          <Typography className={classes.secondaryLabel}>Your allocation: </Typography>
+          {!saleDidNotStart && walletStatus === Status.Initialized ? (
+            <Typography className={classes.value}>
+              {renderFormattedNumberWithSkeleton(
+                userReceivededAmount,
+                REWARD_SCALE,
+                '',
+                ' INVT',
+                '80px',
+                isLoadingUserStats
+              )}
+            </Typography>
+          ) : (
+            <Typography className={classes.value}>-</Typography>
+          )}
+        </Box>
       </Box>
     </Box>
   )
