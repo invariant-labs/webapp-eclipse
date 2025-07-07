@@ -2,7 +2,6 @@ import { BN } from '@coral-xyz/anchor'
 import { formatDate, printBN, trimDecimalZeros, trimZeros } from './utils'
 import { PublicKey } from '@solana/web3.js'
 import { Intervals, MONTH_NAMES } from '@store/consts/static'
-import { EFFECTIVE_TARGET_MULTIPLIER } from '@invariant-labs/sale-sdk'
 
 export const toBlur = 'global-blur'
 export const addressTickerMap: { [key: string]: string } = {
@@ -93,16 +92,9 @@ export const createButtonActions = (config: MaxButtonConfig) => {
       deposited: number,
       whitelistWalletLimit: BN,
       currentAmount?: BN,
-      targetAmount?: BN,
-      isPublicSale?: boolean
+      targetAmount?: BN
     ) => {
       if (tokenIndex === null || currentRound === undefined || currentRound === null) {
-        return
-      }
-
-      if (isPublicSale) {
-        const amount = calculateAmount(tokenIndex)
-        config.onAmountSet(trimDecimalZeros(printBN(amount, config.tokens[tokenIndex].decimals)))
         return
       }
 
@@ -112,8 +104,9 @@ export const createButtonActions = (config: MaxButtonConfig) => {
 
       if (currentRound <= 3) {
         maxAllowedAmount = whitelistWalletLimit.sub(new BN(deposited))
+        console.log(maxAllowedAmount.toString())
       } else {
-        maxAllowedAmount = targetAmount.mul(EFFECTIVE_TARGET_MULTIPLIER).sub(currentAmount)
+        maxAllowedAmount = targetAmount.sub(currentAmount)
       }
 
       const finalAmount = BN.min(amount, maxAllowedAmount)
