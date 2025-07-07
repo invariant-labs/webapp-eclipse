@@ -638,6 +638,14 @@ export const PreSaleWrapper = () => {
               heroImage={AutoswapHero}
             />
             <EventsCard
+              title={'Launch of sBITZ'}
+              borderColor={'pink'}
+              description={
+                'Invariant introduces Liquid Staking on Eclipse. The sBITZ token is launched to solve BITZ liquidity issues and offer users significantly higher yields'
+              }
+              heroImage={'https://eclipse.invariant.app/sBitz.png'}
+            />
+            <EventsCard
               title={'Public Sale Begins'}
               borderColor={'pink'}
               description={
