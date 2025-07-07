@@ -25,7 +25,11 @@ const useStyles = makeStyles<{ percentage: number; isActive?: boolean }>()(
       padding: '24px',
       display: 'flex',
       flexDirection: 'column',
-      gap: '24px'
+      gap: '24px',
+      [theme.breakpoints.down('sm')]: {
+        padding: '16px 8px',
+        width: 'calc(100% - 16px)'
+      }
     },
 
     alerBoxGreen: {
