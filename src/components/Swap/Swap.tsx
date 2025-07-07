@@ -472,7 +472,6 @@ export const Swap: React.FC<ISwap> = ({
     amountFrom,
     inputRef,
     isReversingTokens,
-    amountTo,
     swapIsLoading,
     swapAccounts,
     slippTolerance,
@@ -495,7 +494,6 @@ export const Swap: React.FC<ISwap> = ({
     amountTo,
     inputRef,
     isReversingTokens,
-    amountFrom,
     swapIsLoading,
     swapAccounts,
     slippTolerance,
@@ -948,21 +946,6 @@ export const Swap: React.FC<ISwap> = ({
   const handleOpenTransactionDetails = () => {
     setDetailsOpen(!detailsOpen)
   }
-  useEffect(() => {
-    if (
-      lastEdited &&
-      tokenFromIndex !== null &&
-      tokenToIndex !== null &&
-      (amountFrom !== '' || amountTo !== '') &&
-      !swapIsLoading &&
-      swapAccounts &&
-      Object.keys(swapAccounts.pools || {}).length > 0
-    ) {
-      setInputRef(lastEdited === 'from' ? inputTarget.FROM : inputTarget.TO)
-      console.log('Triggering simulation from lastEdited useEffect')
-      simulateWithTimeout()
-    }
-  }, [lastEdited, tokenFromIndex, tokenToIndex, amountFrom, amountTo, swapIsLoading, swapAccounts])
   useEffect(() => {
     let timeoutId: NodeJS.Timeout
 
