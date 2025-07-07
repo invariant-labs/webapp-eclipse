@@ -104,7 +104,6 @@ export const createButtonActions = (config: MaxButtonConfig) => {
 
       if (currentRound <= 3) {
         maxAllowedAmount = whitelistWalletLimit.sub(new BN(deposited))
-        console.log(maxAllowedAmount.toString())
       } else {
         maxAllowedAmount = targetAmount.sub(currentAmount)
       }
