@@ -929,7 +929,7 @@ export enum OverviewSwitcher {
 export const STATS_CACHE_TIME = 30 * 60 * 1000
 export const LEADERBOARD_API_URL = 'https://api.invariant.app/api'
 export const PRICE_API_URL = 'https://api.invariant.app/price'
-export const CHECKER_API_URL = 'https://api.invariant.app/checker'
+export const CHECKER_API_URL = 'https://api.invariant.app/check'
 
 export enum AutoswapCustomError {
   FetchError = 0
