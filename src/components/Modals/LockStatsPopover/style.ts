@@ -4,13 +4,6 @@ import { makeStyles } from 'tss-react/mui'
 
 const useStyles = makeStyles()((theme: Theme) => {
   return {
-    popover: {
-      pointerEvents: 'none',
-      [theme.breakpoints.down('sm')]: {
-        width: '100%',
-        padding: '16px'
-      }
-    },
     chart: {
       height: '100px',
       width: '160px'
@@ -18,16 +11,24 @@ const useStyles = makeStyles()((theme: Theme) => {
     backgroundContainer: {
       background: colors.invariant.component,
       width: 652,
-      [theme.breakpoints.down(671)]: {
-        maxWidth: '100vw'
+      display: 'flex',
+      alignItems: 'center',
+      [theme.breakpoints.down('sm')]: {
+        width: 'auto'
       }
     },
     leftWrapper: {
       display: 'flex',
       width: '38%',
-      gap: '16px'
+      gap: '16px',
+      marginRight: '16px',
+      [theme.breakpoints.down('sm')]: {
+        width: '100%',
+        marginRight: 0
+      }
     },
     leftInnerWrapper: {
+      width: '100%',
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
@@ -40,7 +41,10 @@ const useStyles = makeStyles()((theme: Theme) => {
       gap: '16px',
 
       [theme.breakpoints.down(671)]: {
-        flexDirection: 'column'
+        width: '100%',
+        flexDirection: 'column',
+        alignItems: 'center',
+        padding: 8
       }
     },
     paper: {
@@ -74,6 +78,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       gap: 16
     },
     chartTitle: {
+      width: '100%',
       textAlign: 'center',
       ...typography.body1,
       color: colors.invariant.text
@@ -91,7 +96,10 @@ const useStyles = makeStyles()((theme: Theme) => {
       display: 'flex',
       flexDirection: 'column',
       gap: '10px',
-      width: '50%'
+      width: '50%',
+      [theme.breakpoints.down('sm')]: {
+        width: '100%'
+      }
     },
     chartsWrapper: {
       display: 'flex',

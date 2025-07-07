@@ -9,21 +9,20 @@ export const useStyles = makeStyles()(() => ({
   },
   container: {
     display: 'flex',
-    flexDirection: 'column',
     gap: 16,
-
-    [theme.breakpoints.up(1040)]: {
-      flexDirection: 'row'
+    flexDirection: 'row',
+    [theme.breakpoints.down(1040)]: {
+      flexDirection: 'column'
     }
   },
   navigation: {
     display: 'flex',
-    flexDirection: 'column',
     justifyContent: 'space-between',
     gap: 8,
-
-    [theme.breakpoints.up(432)]: {
-      flexDirection: 'row'
+    flexDirection: 'row',
+    [theme.breakpoints.down(432)]: {
+      flexDirection: 'column',
+      height: 'auto'
     }
   },
   navigationSide: {
@@ -36,9 +35,9 @@ export const useStyles = makeStyles()(() => ({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-
-    [theme.breakpoints.up(1040)]: {
-      width: 464
+    width: 464,
+    [theme.breakpoints.down(1040)]: {
+      width: 'auto'
     }
   },
   lowerContainer: {
@@ -46,15 +45,18 @@ export const useStyles = makeStyles()(() => ({
     justifyContent: 'space-between',
     alignItems: 'center',
     gap: 8,
-
-    [theme.breakpoints.up(688)]: {
-      flexGrow: 1
+    flexGrow: 1,
+    [theme.breakpoints.down(688)]: {
+      flexGrow: 'none'
     }
   },
   wrapper: {
     display: 'flex',
     alignItems: 'center',
     gap: 8
+  },
+  tickerWrapper: {
+    flex: 1
   },
   navigationWrapper: {
     display: 'flex',
@@ -74,18 +76,17 @@ export const useStyles = makeStyles()(() => ({
   },
   iconContainer: { display: 'flex', alignItems: 'center', gap: 3 },
   icon: {
-    height: 28,
-    width: 28,
     borderRadius: '100%',
-
-    [theme.breakpoints.up(1040)]: {
-      height: 36,
-      width: 36
+    height: 36,
+    width: 36,
+    [theme.breakpoints.down(1040)]: {
+      height: 28,
+      width: 28
     }
   },
   reverseTokensIcon: {
     cursor: 'pointer',
-
+    color: colors.invariant.lightGrey,
     '&:hover': {
       filter: 'brightness(1.4)',
       '@media (hover: none)': {
@@ -93,12 +94,16 @@ export const useStyles = makeStyles()(() => ({
       }
     }
   },
+  tickersContainer: {
+    flex: 1,
+    display: 'flex',
+    alignItems: 'center'
+  },
   tickerContainer: {
-    ...typography.heading4,
     color: colors.white.main,
-
-    [theme.breakpoints.up(1040)]: {
-      ...typography.heading3
+    ...typography.heading3,
+    [theme.breakpoints.down(1040)]: {
+      ...typography.heading4
     }
   },
   feeContainer: {
@@ -119,7 +124,8 @@ export const useStyles = makeStyles()(() => ({
   },
 
   airdropIcon: {
-    height: 24
+    height: 24,
+    marginRight: 8
   },
   airdropIconInActive: {
     filter: 'grayscale(100%)'
@@ -144,5 +150,12 @@ export const useStyles = makeStyles()(() => ({
     '& a': {
       lineHeight: 0
     }
+  },
+  tabletNavigation: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 8,
+    width: 'calc(100% - 480px)'
   }
 }))

@@ -13,9 +13,15 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
 
   pairNameCell: {
-    width: '25%',
+    width: '27%',
     textAlign: 'left',
-    padding: '14px 41px 14px 22px !important'
+    padding: '14px 22px 14px 22px !important'
+  },
+  warningIcon: {
+    position: 'absolute',
+    width: 16,
+    bottom: -3,
+    right: -6
   },
   airdropIcon: {
     flexShrink: '0',
@@ -25,7 +31,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     filter: 'grayscale(1)'
   },
   itemCellContainer: {
-    width: 100,
+    width: '100%',
     justifyContent: 'space-between',
     alignItems: 'center',
     flexWrap: 'nowrap',
@@ -50,7 +56,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   tokenRatioCell: {
     paddingLeft: '15px',
 
-    width: '18%',
+    width: '19%',
     '& > .MuiTypography-root': {
       margin: '0 auto',
       maxWidth: '90%'
@@ -59,7 +65,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
 
   valueCell: {
     paddingLeft: 0,
-    width: '10%',
+    width: '11%',
     '& .MuiGrid-root': {
       margin: '0 auto',
       justifyContent: 'center'
@@ -81,7 +87,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
 
   actionCell: {
-    width: '8%',
+    width: '6%',
     padding: '14px 8px',
     '& > .MuiButton-root': {
       margin: '0 auto'
@@ -90,9 +96,8 @@ export const useStyles = makeStyles()((theme: Theme) => ({
 
   iconsAndNames: {
     flexWrap: 'nowrap',
-    width: 'fit-content',
-    display: 'flex',
-    alignItems: 'center'
+    width: '100%',
+    display: 'flex'
   },
 
   tokenIcon: {
@@ -150,15 +155,18 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     }
   },
 
+  tickersContainer: {
+    width: 'fit-content',
+    display: 'flex',
+    alignItems: 'center'
+  },
+
   names: {
-    textOverflow: 'ellipsis',
-    overflow: 'hidden',
     ...typography.heading2,
     color: colors.invariant.text,
     lineHeight: '40px',
     textAlign: 'left',
     whiteSpace: 'nowrap',
-    width: 180,
     [theme.breakpoints.down('xl')]: {
       ...typography.heading2
     },

@@ -94,13 +94,10 @@ export const useStyles = makeStyles()(() => ({
   },
   connectWalletButton: {
     height: '44px !important',
-    borderRadius: '16px',
-    width: '200px',
-    marginTop: '32px',
-    fontSize: '14px',
-    [theme.breakpoints.down('sm')]: {
-      width: '100%'
-    },
+    borderRadius: 16,
+    width: 200,
+    marginTop: 32,
+    fontSize: 14,
     fontWeight: 400
   },
   button: {

@@ -4,9 +4,9 @@ import { makeStyles } from 'tss-react/mui'
 export const useStyles = makeStyles()(() => ({
   infoContainer: {
     width: '100vw',
-    marginTop: '72px',
+    marginTop: '56px',
     minHeight: '264px',
-    padding: '25px max(9%, 20px)',
+    padding: '25px max(3%, 20px)',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
@@ -23,7 +23,7 @@ export const useStyles = makeStyles()(() => ({
       padding: '25px 8px'
     },
     '&>div': {
-      maxWidth: 1072,
+      maxWidth: 1210,
       [theme.breakpoints.down('lg')]: {
         maxWidth: 800
       }

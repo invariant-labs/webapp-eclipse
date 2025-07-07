@@ -10,15 +10,28 @@ const useStyles = makeStyles()(() => {
       alignItems: 'center',
       flexDirection: 'row',
       gap: 24,
-      [theme.breakpoints.down('lg')]: {
+      [theme.breakpoints.down('md')]: {
         flexDirection: 'column'
+      }
+    },
+    innerSectionContent: {
+      display: 'flex',
+      gap: 24,
+      [theme.breakpoints.down('sm')]: {
+        flexDirection: 'column'
+      },
+
+      [theme.breakpoints.up('lg')]: {
+        width: '100%',
+        justifyContent: 'space-between',
+        marginInline: 48
       }
     },
     headerBigText: {
       ...typography.heading1,
       color: colors.invariant.text,
       [theme.breakpoints.down('lg')]: {
-        ...typography.heading2
+        ...typography.heading3
       }
     },
     headerWrapper: {
@@ -26,7 +39,7 @@ const useStyles = makeStyles()(() => {
       justifyContent: 'center',
       alignItems: 'center',
       flexDirection: 'column',
-      width: '100%',
+      width: 'fit-content',
       textWrap: 'nowrap'
     },
     headerSmallText: {
@@ -38,16 +51,21 @@ const useStyles = makeStyles()(() => {
       textOverflow: 'ellipsis'
     },
     leaderboardHeaderSectionTitle: {
-      ...typography.heading3,
+      textAlign: 'left',
+      width: '100%',
+      ...typography.heading4,
       color: colors.white.main,
-      marginTop: '24px'
+      marginTop: '56px'
     },
     topScorersItem: {
-      width: '100%',
+      width: 284,
       display: 'flex',
       alignItems: 'center',
       flexDirection: 'column',
-      gap: 24
+      gap: 24,
+      [theme.breakpoints.up('lg')]: {
+        width: 316
+      }
     },
     topScorersItemBox: {
       display: 'flex',
@@ -55,16 +73,20 @@ const useStyles = makeStyles()(() => {
       justifyContent: 'center',
       gap: 8,
       borderRadius: 12,
-      width: 267,
+      width: 248,
       border: '2px solid #EF84F580',
       paddingTop: 12,
       paddingBottom: 12,
-      paddingLeft: 24,
-      paddingRight: 24,
+      paddingLeft: 16,
+      paddingRight: 16,
       background: colors.invariant.component,
       [theme.breakpoints.down('sm')]: {
         boxSizing: 'border-box',
         width: '100%'
+      },
+      [theme.breakpoints.up('lg')]: {
+        paddingLeft: 32,
+        paddingRight: 32
       }
     },
     skeleton: {

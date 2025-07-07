@@ -35,15 +35,6 @@ const ImageWithPlaceholder: React.FC<ImageWithPlaceholderProps> = ({ src, alt, s
             left: 0,
             right: 0,
             bottom: 0,
-            animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-            '@keyframes pulse': {
-              '0%, 100%': {
-                opacity: 1
-              },
-              '50%': {
-                opacity: 0.5
-              }
-            },
             width: style?.width || '100%',
             height: style?.height || '100%'
           }}
@@ -55,8 +46,7 @@ const ImageWithPlaceholder: React.FC<ImageWithPlaceholderProps> = ({ src, alt, s
         alt={alt}
         sx={{
           ...style,
-          opacity: isLoading ? 0 : 1,
-          transition: 'opacity 300ms'
+          opacity: isLoading ? 0 : 1
         }}
         onLoad={() => setIsLoading(false)}
         rel='preload'

@@ -29,6 +29,7 @@ import { checkDataDelay, ensureError, hexToDate } from '@utils/utils'
 import {
   BANNER_HIDE_DURATION,
   BANNER_STORAGE_KEY,
+  Intervals,
   LEADERBOARD_DECIMAL,
   LeaderBoardType,
   SNAP_TIME_DELAY,
@@ -67,6 +68,22 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = () => {
   const [showWarningBanner, setShowWarningBanner] = React.useState(true)
   const [selectedOption, setSelectedOption] = useState<LeaderBoardType>('Total')
 
+  const [isLoadingDebounced, setIsLoadingDebounced] = useState(true)
+
+  useEffect(() => {
+    let timeout: NodeJS.Timeout
+
+    if (isLoadingList || isLoadingLeaderboardList) {
+      setIsLoadingDebounced(true)
+    } else {
+      timeout = setTimeout(() => {
+        setIsLoadingDebounced(false)
+      }, 400)
+    }
+
+    return () => clearTimeout(timeout)
+  }, [isLoadingList, isLoadingLeaderboardList])
+
   useEffect(() => {
     if (selectedOption === 'Liquidity') {
       handlePageChange(Math.min(currentPage, Math.ceil(totalItemsObject.lp / itemsPerPage)))
@@ -76,6 +93,7 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = () => {
       handlePageChange(currentPage)
     }
   }, [selectedOption])
+
   const isDelayWarning = useMemo(() => {
     if (!lastSnapTimestamp) return false
     const snapTime = hexToDate(lastSnapTimestamp)
@@ -167,9 +185,8 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = () => {
     }
   }, [dispatch, isConnected, userAddress])
   useEffect(() => {
-    dispatch(actions.getLeaderboardData({ page: 1, itemsPerPage }))
     dispatch(actions.getLeaderboardConfig())
-    dispatch(statsActions.getCurrentStats())
+    dispatch(statsActions.getCurrentIntervalStats({ interval: Intervals.Daily }))
 
     dispatch(positionListActions.getPositionsList())
   }, [dispatch, itemsPerPage])
@@ -209,7 +226,6 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = () => {
       copyAddressHandler={copyAddressHandler}
       currentNetwork={currentNetwork}
       estimated24hPoints={estimated24hPoints}
-      isLoadingList={isLoadingList}
       isDelayWarning={isDelayWarning}
       lastSnapTimestamp={lastSnapTimestamp}
       leaderboardType={leaderboardType}
@@ -233,6 +249,7 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = () => {
       walletStatus={walletStatus}
       isLoadingLeaderboardList={isLoadingLeaderboardList}
       contentProgramDates={contentProgramDates}
+      isLoadingDebounced={isLoadingDebounced}
     />
   )
 }

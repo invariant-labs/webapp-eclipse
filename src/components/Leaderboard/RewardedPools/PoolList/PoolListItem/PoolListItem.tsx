@@ -2,7 +2,7 @@ import React from 'react'
 import { theme } from '@static/theme'
 import { useStyles } from './style'
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { plusIcon, unknownTokenIcon } from '@static/icons'
 import { NetworkType } from '@store/consts/static'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
@@ -21,6 +21,8 @@ import { VariantType } from 'notistack'
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
 
 import { BN } from '@coral-xyz/anchor'
+import { useDispatch } from 'react-redux'
+import { actions } from '@store/reducers/navigation'
 
 export interface IProps {
   fee?: number
@@ -69,7 +71,9 @@ const PoolListItem: React.FC<IProps> = ({
   showAPY
 }) => {
   const { classes, cx } = useStyles()
+  const location = useLocation()
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
 
@@ -83,6 +87,7 @@ const PoolListItem: React.FC<IProps> = ({
       ? addressToTicker(network, addressTo ?? '')
       : addressToTicker(network, addressFrom ?? '')
 
+    dispatch(actions.setNavigation({ address: location.pathname }))
     navigate(
       ROUTES.getNewPositionRoute(
         tokenA,
@@ -183,11 +188,10 @@ const PoolListItem: React.FC<IProps> = ({
           </Grid>
           {!isSm && showAPY ? (
             <Typography className={classes.row}>
-              {`${convertedApr > 1000 ? '>1000%' : convertedApr === 0 ? '-' : Math.abs(convertedApr).toFixed(2) + '%'}`}
-              <span
-                className={
-                  classes.apy
-                }>{`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '' : Math.abs(convertedApy).toFixed(2) + '%'}`}</span>
+              {`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '' : Math.abs(convertedApy).toFixed(2) + '%'}`}
+              <span className={classes.apy}>
+                {`${convertedApr > 1000 ? '>1000%' : convertedApr === 0 ? '-' : Math.abs(convertedApr).toFixed(2) + '%'}`}
+              </span>
             </Typography>
           ) : null}
           <Typography>{fee}%</Typography>
@@ -222,7 +226,7 @@ const PoolListItem: React.FC<IProps> = ({
           <Typography style={{ cursor: 'pointer' }}>Name</Typography>
           {!isSm && showAPY ? (
             <Typography className={classes.row} style={{ cursor: 'pointer' }}>
-              APR <span className={classes.apy}>APY</span>
+              APY<span className={classes.apy}>APR</span>
             </Typography>
           ) : null}
           <Typography style={{ cursor: 'pointer' }}>Fee</Typography>

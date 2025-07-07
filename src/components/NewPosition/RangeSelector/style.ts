@@ -20,7 +20,9 @@ const useStyles = makeStyles()(theme => {
     headerContainer: {
       justifyContent: 'space-between',
       marginBottom: 12,
-      flexDirection: 'row'
+      flexDirection: 'row',
+      minHeight: 65,
+      flexWrap: 'nowrap'
     },
     header: {
       ...typography.heading4,
@@ -226,11 +228,18 @@ const useStyles = makeStyles()(theme => {
       height: 60,
       marginLeft: 16
     },
+    currentPriceContainer: {
+      marginTop: 23,
+      textWrap: 'nowrap',
+      minWidth: 'fit-content'
+    },
     currentPrice: {
       display: 'inline-block',
       color: colors.invariant.yellow,
+
       ...typography.caption2
     },
+
     usdcCurrentPrice: {
       display: 'inline-block',
       color: colors.invariant.text,
@@ -250,13 +259,16 @@ const useStyles = makeStyles()(theme => {
     subheaderWrapper: {
       justifyContent: 'space-between',
       alignItems: 'center',
-      minHeight: 36
+      minHeight: 36,
+      rowGap: 16
     },
     priceRangeContainer: {
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'flex-start',
-      justifyContent: 'space-between'
+      minHeight: 87,
+      flexWrap: 'nowrap',
+      flexShrink: 1
     },
     rangeConcentration: {
       display: 'flex',

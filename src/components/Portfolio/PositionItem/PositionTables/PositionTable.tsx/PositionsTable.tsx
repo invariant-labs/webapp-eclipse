@@ -9,12 +9,14 @@ import {
   TableHead,
   TableRow
 } from '@mui/material'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
 import { generatePositionTableLoadingData, ROUTES } from '@utils/utils'
 import { IPositionItem } from '@store/consts/types'
 import { usePositionTableStyle } from './style'
 import { PositionTableRow } from '../PositionTableRow/PositionsTableRow'
+import { actions } from '@store/reducers/navigation'
+import { useDispatch } from 'react-redux'
 
 interface IPositionsTableProps {
   positions: Array<IPositionItem>
@@ -24,6 +26,7 @@ interface IPositionsTableProps {
   handleLockPosition: (index: number) => void
   handleClosePosition: (index: number) => void
   handleClaimFee: (index: number, isLocked: boolean) => void
+  createNewPosition: (element: IPositionItem) => void
   shouldDisable: boolean
 }
 
@@ -35,11 +38,13 @@ export const PositionsTable: React.FC<IPositionsTableProps> = ({
   handleLockPosition,
   handleClosePosition,
   handleClaimFee,
+  createNewPosition,
   shouldDisable
 }) => {
   const { classes } = usePositionTableStyle({ isScrollHide: positions.length <= 5 || isLoading })
   const navigate = useNavigate()
-
+  const dispatch = useDispatch()
+  const location = useLocation()
   const displayData = isLoading ? generatePositionTableLoadingData() : positions
 
   return (
@@ -86,6 +91,8 @@ export const PositionsTable: React.FC<IPositionsTableProps> = ({
               <TableRow
                 onClick={e => {
                   if (!isLoading && !(e.target as HTMLElement).closest('.action-button')) {
+                    dispatch(actions.setNavigation({ address: location.pathname }))
+
                     navigate(ROUTES.getPositionRoute(position.id))
                   }
                 }}
@@ -98,6 +105,7 @@ export const PositionsTable: React.FC<IPositionsTableProps> = ({
                   handleLockPosition={handleLockPosition}
                   handleClosePosition={handleClosePosition}
                   handleClaimFee={handleClaimFee}
+                  createNewPosition={() => createNewPosition(position)}
                 />
               </TableRow>
             ))}

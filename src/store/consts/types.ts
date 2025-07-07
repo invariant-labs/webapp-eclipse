@@ -130,6 +130,7 @@ export enum Chain {
   Solana = 'Solana',
   AlephZero = 'Aleph Zero',
   Eclipse = 'Eclipse',
+  Sonic = 'Sonic',
   Vara = 'Vara'
 }
 
@@ -255,6 +256,8 @@ export interface Reward {
 export interface IPositionItem {
   tokenXName: string
   tokenYName: string
+  isUnknownX: boolean
+  isUnknownY: boolean
   tokenXIcon: string
   tokenYIcon: string
   tokenXLiq: number
@@ -275,7 +278,7 @@ export interface IPositionItem {
   isLocked: boolean
   poolData: PoolWithAddressAndIndex
   liquidity: BN
-  unclaimedFeesInUSD: { value: number; loading: boolean }
+  unclaimedFeesInUSD: { value: number; loading: boolean; isClaimAvailable: boolean }
 }
 
 export interface ILiquidityToken {
@@ -286,4 +289,28 @@ export interface ILiquidityToken {
   claimValue: number
   balance: number
   usdValue?: number
+}
+
+export interface INavigatePosition {
+  tokenXName: string
+  tokenYName: string
+  tokenXIcon: string
+  tokenYIcon: string
+  fee: number
+  id: string
+}
+export interface TokenSerialized {
+  symbol: string
+  address: string
+  decimals: number
+  name: string
+  logoURI: string
+  coingeckoId?: string
+  isUnknown?: boolean
+  tokenProgram?: string
+}
+
+export enum StakeSwitch {
+  Stake = 'Stake',
+  Unstake = 'Unstake'
 }

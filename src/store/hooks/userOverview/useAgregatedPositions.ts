@@ -12,6 +12,7 @@ interface TokenPosition {
     name: string
     assetAddress: PublicKey
     logoURI: string
+    isUnknown?: boolean
   }
   tokenY: {
     symbol: string
@@ -19,6 +20,7 @@ interface TokenPosition {
     decimals: number
     assetAddress: PublicKey
     logoURI: string
+    isUnknown?: boolean
   }
   liquidity: number
   upperTickIndex: number
@@ -53,17 +55,18 @@ const calculateTokenValue = (
 const createPositionEntry = (
   position: TokenPosition,
   isTokenX: boolean,
-  value: number
+  value: number,
+  isPriceWarning: boolean
 ): TokenPositionEntry => {
   const token = isTokenX ? position.tokenX : position.tokenY
-
   return {
     token: token.symbol,
     value,
     name: token.name,
     logo: token.logoURI,
     positionId: position.id,
-    isPriceWarning: false
+    isPriceWarning: isPriceWarning,
+    isUnknown: token.isUnknown ?? false
   }
 }
 
@@ -84,8 +87,15 @@ const updateOrCreatePosition = (
       !prices?.[token.assetAddress.toString()] && +amountBN.toString() > 0
     return positions
   }
-
-  return [...positions, createPositionEntry(position, isTokenX, value)]
+  return [
+    ...positions,
+    createPositionEntry(
+      position,
+      isTokenX,
+      value,
+      !prices?.[token.assetAddress.toString()] && +amountBN.toString() > 0
+    )
+  ]
 }
 
 export const useAgregatedPositions = (

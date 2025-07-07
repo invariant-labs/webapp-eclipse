@@ -5,10 +5,12 @@ import { makeStyles } from 'tss-react/mui'
 export const useStyles = makeStyles()(_theme => ({
   container: {
     flexDirection: 'column',
-    maxWidth: 1072,
+    maxWidth: 1210,
     flexWrap: 'nowrap',
     position: 'relative',
-    overflow: 'hidden'
+    overflow: 'hidden',
+    backgroundColor: colors.invariant.component,
+    borderRadius: '24px'
   },
   pagination: {
     padding: 0,

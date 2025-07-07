@@ -4,7 +4,7 @@ import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles<{ isXs: boolean }>()((theme: Theme, { isXs }) => ({
   wrapper: {
-    maxWidth: 1072,
+    maxWidth: 1210,
     minHeight: '100%'
   },
   subheader: {
@@ -26,22 +26,6 @@ export const useStyles = makeStyles<{ isXs: boolean }>()((theme: Theme, { isXs }
     width: 150,
     height: 150,
     margin: 'auto'
-  },
-  plot: {
-    width: 524,
-
-    '&:first-child': {
-      marginRight: 24
-    },
-
-    [theme.breakpoints.down('sm')]: {
-      width: '100%',
-
-      '&:first-child': {
-        marginRight: 0,
-        marginBottom: 24
-      }
-    }
   },
 
   rowContainer: {
@@ -71,6 +55,49 @@ export const useStyles = makeStyles<{ isXs: boolean }>()((theme: Theme, { isXs }
       background: colors.invariant.light,
       borderRadius: 6
     }
+  },
+
+  headerContainer: {
+    display: 'flex',
+    gap: 14,
+
+    [theme.breakpoints.down('sm')]: {
+      width: '100%'
+    }
+  },
+
+  showFavouritesButton: {
+    height: 40,
+    background: colors.invariant.component,
+    padding: '6px 8px',
+    borderRadius: 9,
+    display: 'flex',
+    alignItems: 'center',
+    textAlign: 'right',
+    gap: 8,
+    textTransform: 'none',
+    width: 155,
+
+    '&:hover': {
+      background: colors.invariant.componentDark,
+      boxShadow: 'none'
+    },
+
+    '& .MuiTouchRipple-root .MuiTouchRipple-child': {
+      backgroundColor: colors.invariant.lightGrey
+    },
+
+    [theme.breakpoints.down('md')]: {
+      minWidth: 40,
+      width: 40
+    }
+  },
+
+  showFavouritesText: {
+    ...typography.body2,
+    color: colors.invariant.textGrey,
+    marginTop: 2,
+    width: 108
   }
 }))
 

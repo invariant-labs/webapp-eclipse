@@ -5,6 +5,7 @@ import {
   calcTicksAmountInRange,
   calculateConcentration,
   formatNumberWithoutSuffix,
+  formatNumberWithSuffix,
   numberToString,
   spacingMultiplicityGte,
   truncateString
@@ -39,6 +40,7 @@ export interface ISinglePositionPlot {
     token: string
     price?: number
   } | null
+  positionId: string
 }
 
 const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
@@ -57,7 +59,8 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
   hasTicksError,
   reloadHandler,
   isFullRange,
-  usdcPrice
+  usdcPrice,
+  positionId
 }) => {
   const { classes } = useStyles()
 
@@ -78,6 +81,10 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
 
   //Proportion between middle of price range and right range in ratio to middle of price range and plotMax
   const [zoomScale, setZoomScale] = useState(0.7)
+
+  useEffect(() => {
+    if (!isInitialLoad) setIsInitialLoad(true)
+  }, [positionId])
 
   useEffect(() => {
     const initSideDist = Math.abs(
@@ -214,8 +221,16 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
     setPlotMax(midPrice.x + diff / 2)
   }
 
-  const minPercentage = (min / currentPrice - 1) * 100
-  const maxPercentage = (max / currentPrice - 1) * 100
+  const centerToRange = () => {
+    const diff = plotMax - plotMin
+    const rangeCenter = (leftRange.x + rightRange.x) / 2
+
+    setPlotMin(rangeCenter - diff / 2)
+    setPlotMax(rangeCenter + diff / 2)
+  }
+
+  const minPercentage = ((+min - currentPrice) / currentPrice) * 100
+  const maxPercentage = ((+max - currentPrice) / currentPrice) * 100
   const concentration = calculateConcentration(leftRange.index, rightRange.index)
 
   return (
@@ -232,7 +247,7 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
               {usdcPrice.token} ${formatNumberWithoutSuffix(usdcPrice.price)}
             </Typography>
           ) : (
-            <Box minHeight={17} />
+            <Box minHeight={20} />
           )}
         </Grid>
         <Grid display='flex' flexDirection={'column'} gap={1}>
@@ -249,25 +264,25 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
         </Grid>
       </Box>
       <PriceRangePlot
-        data={data}
-        plotMin={plotMin}
-        plotMax={plotMax}
+        plotData={data}
+        plotMinData={plotMin}
+        plotMaxData={plotMax}
         zoomMinus={zoomMinus}
         zoomPlus={zoomPlus}
         moveLeft={moveLeft}
         moveRight={moveRight}
         centerChart={centerChart}
+        centerToRange={centerToRange}
         disabled
-        leftRange={leftRange}
-        rightRange={rightRange}
-        midPrice={midPrice}
+        leftRangeData={leftRange}
+        rightRangeData={rightRange}
+        midPriceData={midPrice}
         className={classes.plot}
         loading={ticksLoading}
         isXtoY={xToY}
-        tickSpacing={tickSpacing}
+        spacing={tickSpacing}
         xDecimal={tokenX.decimal}
         yDecimal={tokenY.decimal}
-        coverOnLoading
         hasError={hasTicksError}
         reloadHandler={reloadHandler}
       />
@@ -368,7 +383,12 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
                     color: minPercentage < 0 ? colors.invariant.Error : colors.invariant.green
                   }}>
                   {minPercentage > 0 && '+'}
-                  {minPercentage.toFixed(2)}%
+                  {formatNumberWithSuffix(minPercentage.toString(), {
+                    decimalsAfterDot: 2,
+                    noSubNumbers: true,
+                    alternativeConfig: true
+                  })}
+                  %
                 </Typography>
               </Box>
             }
@@ -386,7 +406,12 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
                     color: maxPercentage < 0 ? colors.invariant.Error : colors.invariant.green
                   }}>
                   {maxPercentage > 0 && '+'}
-                  {maxPercentage.toFixed(2)}%
+                  {formatNumberWithSuffix(maxPercentage.toString(), {
+                    decimalsAfterDot: 2,
+                    noSubNumbers: true,
+                    alternativeConfig: true
+                  })}
+                  %
                 </Typography>
               </Box>
             }

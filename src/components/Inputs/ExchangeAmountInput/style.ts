@@ -3,12 +3,18 @@ import { colors, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()((theme: Theme) => ({
+  root: {
+    background: colors.invariant.newDark,
+    borderRadius: 20,
+    width: '100%'
+  },
   amountInput: {
     background: colors.invariant.newDark,
     color: colors.invariant.light,
     borderRadius: 20,
     ...typography.heading2,
     width: '100%',
+    maxWidth: 200,
     textAlign: 'right',
     transition: 'all .3s',
     '& ::placeholder': {
@@ -115,6 +121,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     height: 65,
     padding: `10px 15px 0 15px `,
     display: 'flex',
+    width: '100%',
     justifyContent: 'space-between',
     alignItems: 'center'
   },

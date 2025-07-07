@@ -12,10 +12,9 @@ import {
   Grid
 } from '@mui/material'
 import { WalletToken } from '@store/types/userOverview'
-import { DEFAULT_FEE_TIER, STRATEGIES } from '@store/consts/userStrategies'
 import { unknownTokenIcon, warning2Icon, warningIcon } from '@static/icons'
 import { NetworkType } from '@store/consts/static'
-import { addressToTicker, formatNumberWithoutSuffix } from '@utils/utils'
+import { findStrategy, formatNumberWithoutSuffix } from '@utils/utils'
 import { useStyles } from './styles'
 import { MobileCard } from './MobileCard'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
@@ -52,30 +51,6 @@ export const YourWallet: React.FC<YourWalletProps> = ({
 
     return { value, isPriceWarning }
   }, [sortedTokens])
-
-  const findStrategy = (poolAddress: string) => {
-    const poolTicker = addressToTicker(currentNetwork, poolAddress)
-    let strategy = STRATEGIES.find(s => {
-      const tickerA = addressToTicker(currentNetwork, s.tokenAddressA)
-      const tickerB = s.tokenAddressB ? addressToTicker(currentNetwork, s.tokenAddressB) : undefined
-      return tickerA === poolTicker || tickerB === poolTicker
-    })
-
-    if (!strategy) {
-      strategy = {
-        tokenAddressA: poolAddress,
-        feeTier: DEFAULT_FEE_TIER
-      }
-    }
-
-    return {
-      ...strategy,
-      tokenSymbolA: addressToTicker(currentNetwork, strategy.tokenAddressA),
-      tokenSymbolB: strategy.tokenAddressB
-        ? addressToTicker(currentNetwork, strategy.tokenAddressB)
-        : '-'
-    }
-  }
 
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
     e.currentTarget.src = unknownTokenIcon
@@ -137,16 +112,18 @@ export const YourWallet: React.FC<YourWalletProps> = ({
                     <TableRow key={pool.id.toString()}>
                       <TableCell className={classes.tableCell}>
                         <Box className={classes.tokenContainer}>
-                          <Box className={classes.tokenInfo} sx={{ position: 'relative' }}>
-                            <img
-                              src={pool.icon}
-                              className={classes.tokenIcon}
-                              onError={handleImageError}
-                              alt={pool.symbol}
-                            />
-                            {pool.isUnknown && (
-                              <img className={classes.warningIcon} src={warningIcon} />
-                            )}
+                          <Box className={classes.tokenInfo}>
+                            <Box display='flex' position='relative'>
+                              <img
+                                src={pool.icon}
+                                className={classes.tokenIcon}
+                                onError={handleImageError}
+                                alt={pool.symbol}
+                              />
+                              {pool.isUnknown && (
+                                <img className={classes.warningIcon} src={warningIcon} />
+                              )}
+                            </Box>
 
                             <Typography className={classes.tokenSymbol}>
                               {pool.symbol.length <= 6

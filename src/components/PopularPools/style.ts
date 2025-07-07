@@ -1,19 +1,19 @@
 import { colors, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
-export const useStyles = makeStyles<{ showSlider: boolean }>()((theme, { showSlider }) => ({
+export const useStyles = makeStyles()(theme => ({
   title: {
-    color: colors.invariant.text,
     ...typography.heading4,
-    fontWeight: 700
+    color: colors.white.main,
+    textWrap: 'nowrap'
   },
   cardsContainer: {
     width: '100%',
     display: 'flex',
     flexDirection: 'row',
-    padding: showSlider ? '0 48px 24px 48px' : '0 4px 24px 4px',
+    padding: '0 51px 24px 51px',
     flexWrap: 'nowrap',
-    borderRadius: 32,
+    borderRadius: 24,
     background: colors.invariant.component,
 
     [theme.breakpoints.down('sm')]: {
@@ -58,7 +58,7 @@ export const useStyles = makeStyles<{ showSlider: boolean }>()((theme, { showSli
       }
     },
     '& .slick-prev': {
-      left: -50,
+      left: -38,
       [theme.breakpoints.down('lg')]: {
         left: -40
       },
@@ -68,7 +68,7 @@ export const useStyles = makeStyles<{ showSlider: boolean }>()((theme, { showSli
       }
     },
     '& .slick-next': {
-      right: -30,
+      right: -18,
       [theme.breakpoints.down('lg')]: {
         right: -20
       },
@@ -84,7 +84,6 @@ export const useStyles = makeStyles<{ showSlider: boolean }>()((theme, { showSli
     overflow: 'visible',
     zIndex: 10,
 
-    '& li.slick-active button::before': {},
     '& li': {
       borderRadius: '50%',
       height: 12,

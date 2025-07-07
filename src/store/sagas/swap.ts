@@ -11,12 +11,16 @@ import {
   Keypair,
   PublicKey,
   sendAndConfirmRawTransaction,
+  SendTransactionError,
   Transaction,
   TransactionExpiredTimeoutError,
   TransactionInstruction,
   VersionedTransaction
 } from '@solana/web3.js'
 import {
+  APPROVAL_DENIED_MESSAGE,
+  COMMON_ERROR_MESSAGE,
+  ErrorCodeExtractionKeys,
   LEADERBOARD_DECIMAL,
   MAX_CROSSES_IN_SINGLE_TX,
   MAX_CROSSES_IN_SINGLE_TX_WITH_LUTS,
@@ -30,9 +34,15 @@ import { closeSnackbar } from 'notistack'
 import {
   calculatePoints,
   createLoaderKey,
+  ensureApprovalDenied,
   ensureError,
+  extractErrorCode,
+  extractRuntimeErrorCode,
   formatNumberWithoutSuffix,
-  printBN
+  getAmountFromSwapInstruction,
+  mapErrorCodeToMessage,
+  printBN,
+  SwapTokenType
 } from '@utils/utils'
 import { getMarketProgram } from '@utils/web3/programs/amm'
 import {
@@ -51,8 +61,6 @@ import {
 import { PoolWithAddress } from '@store/reducers/pools'
 import nacl from 'tweetnacl'
 import { BN } from '@coral-xyz/anchor'
-import { ParsedInstruction } from '@solana/web3.js'
-import { NATIVE_MINT } from '@solana/spl-token'
 import { config, priceFeeds } from '@store/selectors/leaderboard'
 import { computeUnitsInstruction } from '@invariant-labs/sdk-eclipse/src'
 
@@ -328,35 +336,49 @@ export function* handleSwapWithETH(): Generator {
     //     })
     //   )
     // } else {
-    yield put(
-      snackbarsActions.add({
-        message: 'Tokens swapped successfully',
-        variant: 'success',
-        persist: false,
-        txid: initialTxid
-      })
-    )
 
     const txDetails = yield* call([connection, connection.getParsedTransaction], initialTxid, {
       maxSupportedTransactionVersion: 0
     })
 
     if (txDetails) {
+      if (txDetails.meta?.err) {
+        if (txDetails.meta.logMessages) {
+          const errorLog = txDetails.meta.logMessages.find(log =>
+            log.includes(ErrorCodeExtractionKeys.ErrorNumber)
+          )
+          const errorCode = errorLog
+            ?.split(ErrorCodeExtractionKeys.ErrorNumber)[1]
+            .split(ErrorCodeExtractionKeys.Dot)[0]
+            .trim()
+          const message = mapErrorCodeToMessage(Number(errorCode))
+          yield put(swapActions.setSwapSuccess(false))
+
+          closeSnackbar(loaderSwappingTokens)
+          yield put(snackbarsActions.remove(loaderSwappingTokens))
+
+          yield put(
+            snackbarsActions.add({
+              message,
+              variant: 'error',
+              persist: false
+            })
+          )
+          return
+        }
+      }
+      yield put(
+        snackbarsActions.add({
+          message: 'Tokens swapped successfully',
+          variant: 'success',
+          persist: false,
+          txid: initialTxid
+        })
+      )
+
       const meta = txDetails.meta
       if (meta?.innerInstructions && meta.innerInstructions) {
         try {
-          const nativeAmount = (
-            meta.innerInstructions[0].instructions.find(
-              ix => (ix as ParsedInstruction).parsed.info.amount
-            ) as ParsedInstruction
-          ).parsed.info.amount
-
-          const splAmount = (
-            meta.innerInstructions[0].instructions.find(
-              ix => (ix as ParsedInstruction).parsed.info.tokenAmount !== undefined
-            ) as ParsedInstruction
-          ).parsed.info.tokenAmount.amount
-
           const tokenIn = isXtoY
             ? allTokens[swapPool.tokenX.toString()]
             : allTokens[swapPool.tokenY.toString()]
@@ -364,20 +386,28 @@ export function* handleSwapWithETH(): Generator {
             ? allTokens[swapPool.tokenY.toString()]
             : allTokens[swapPool.tokenX.toString()]
 
-          const nativeIn = isXtoY
-            ? swapPool.tokenX.equals(NATIVE_MINT)
-            : swapPool.tokenY.equals(NATIVE_MINT)
-
-          const amountIn = nativeIn ? nativeAmount : splAmount
-          const amountOut = nativeIn ? splAmount : nativeAmount
+          const amountIn = getAmountFromSwapInstruction(
+            meta,
+            marketProgram.programAuthority.address.toString(),
+            tokenIn.address.toString(),
+            SwapTokenType.TokenIn
+          )
+          const amountOut = getAmountFromSwapInstruction(
+            meta,
+            marketProgram.programAuthority.address.toString(),
+            tokenOut.address.toString(),
+            SwapTokenType.TokenOut
+          )
 
           let points = new BN(0)
           try {
             if (
               leaderboardConfig.swapPairs.some(
                 item =>
-                  new PublicKey(item.tokenX).equals(swapPool.tokenX) &&
-                  new PublicKey(item.tokenY).equals(swapPool.tokenY)
+                  (new PublicKey(item.tokenX).equals(swapPool.tokenX) &&
+                    new PublicKey(item.tokenY).equals(swapPool.tokenY)) ||
+                  (new PublicKey(item.tokenX).equals(swapPool.tokenY) &&
+                    new PublicKey(item.tokenY).equals(swapPool.tokenX))
               )
             ) {
               const feed = feeds[tokenFrom.toString()]
@@ -404,6 +434,8 @@ export function* handleSwapWithETH(): Generator {
                 tokenYAmount: formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals)),
                 tokenXIcon: tokenIn.logoURI,
                 tokenYIcon: tokenOut.logoURI,
+                tokenXSymbol: tokenIn.symbol ?? tokenIn.address.toString(),
+                tokenYSymbol: tokenOut.symbol ?? tokenOut.address.toString(),
                 earnedPoints: points.eqn(0)
                   ? undefined
                   : formatNumberWithoutSuffix(printBN(points, LEADERBOARD_DECIMAL))
@@ -411,10 +443,20 @@ export function* handleSwapWithETH(): Generator {
               persist: false
             })
           )
-        } catch {
+        } catch (e) {
+          console.log(e)
           // Should never be triggered
         }
       }
+    } else {
+      yield put(
+        snackbarsActions.add({
+          message: 'Tokens swapped successfully',
+          variant: 'success',
+          persist: false,
+          txid: initialTxid
+        })
+      )
     }
     // }
 
@@ -453,7 +495,25 @@ export function* handleSwapWithETH(): Generator {
     yield put(snackbarsActions.remove(loaderSwappingTokens))
   } catch (e: unknown) {
     const error = ensureError(e)
-    console.log(error)
+    let msg: string = ''
+    if (error instanceof SendTransactionError) {
+      const err = error.transactionError
+      try {
+        const errorCode = extractRuntimeErrorCode(err)
+        msg = mapErrorCodeToMessage(errorCode)
+      } catch {
+        const errorCode = extractErrorCode(error)
+        msg = mapErrorCodeToMessage(errorCode)
+      }
+    } else {
+      try {
+        const errorCode = extractErrorCode(error)
+        msg = mapErrorCodeToMessage(errorCode)
+      } catch (e: unknown) {
+        const error = ensureError(e)
+        msg = ensureApprovalDenied(error) ? APPROVAL_DENIED_MESSAGE : COMMON_ERROR_MESSAGE
+      }
+    }
 
     yield put(swapActions.setSwapSuccess(false))
 
@@ -476,7 +536,7 @@ export function* handleSwapWithETH(): Generator {
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Failed to send. Please try again',
+          message: msg,
           variant: 'error',
           persist: false
         })
@@ -716,14 +776,7 @@ export function* handleTwoHopSwapWithETH(): Generator {
     //     })
     //   )
     // } else {
-    yield put(
-      snackbarsActions.add({
-        message: 'Tokens swapped successfully',
-        variant: 'success',
-        persist: false,
-        txid
-      })
-    )
+
     // }
 
     const txDetails = yield* call([connection, connection.getParsedTransaction], txid, {
@@ -731,38 +784,72 @@ export function* handleTwoHopSwapWithETH(): Generator {
     })
 
     if (txDetails) {
+      if (txDetails.meta?.err) {
+        if (txDetails.meta.logMessages) {
+          const errorLog = txDetails.meta.logMessages.find(log =>
+            log.includes(ErrorCodeExtractionKeys.ErrorNumber)
+          )
+          const errorCode = errorLog
+            ?.split(ErrorCodeExtractionKeys.ErrorNumber)[1]
+            .split(ErrorCodeExtractionKeys.Dot)[0]
+            .trim()
+          const message = mapErrorCodeToMessage(Number(errorCode))
+          yield put(swapActions.setSwapSuccess(false))
+
+          closeSnackbar(loaderSwappingTokens)
+          yield put(snackbarsActions.remove(loaderSwappingTokens))
+          closeSnackbar(loaderSigningTx)
+          yield put(snackbarsActions.remove(loaderSigningTx))
+
+          yield put(
+            snackbarsActions.add({
+              message,
+              variant: 'error',
+              persist: false
+            })
+          )
+          return
+        }
+      }
+      yield put(
+        snackbarsActions.add({
+          message: 'Tokens swapped successfully',
+          variant: 'success',
+          persist: false,
+          txid
+        })
+      )
       const meta = txDetails.meta
       if (meta?.innerInstructions && meta.innerInstructions) {
         try {
-          const nativeAmount = (
-            meta.innerInstructions[0].instructions.find(
-              ix => (ix as ParsedInstruction).parsed.info.amount
-            ) as ParsedInstruction
-          ).parsed.info.amount
-
-          const splTranfsers = meta.innerInstructions[0].instructions.filter(
-            ix => (ix as ParsedInstruction).parsed.info.tokenAmount !== undefined
-          )
-
           const tokenIn = firstXtoY
             ? allTokens[firstPool.tokenX.toString()]
             : allTokens[firstPool.tokenY.toString()]
+          const tokenBetween = secondXtoY
+            ? allTokens[secondPool.tokenX.toString()]
+            : allTokens[secondPool.tokenY.toString()]
           const tokenOut = secondXtoY
             ? allTokens[secondPool.tokenY.toString()]
             : allTokens[secondPool.tokenX.toString()]
 
-          const nativeIn = tokenIn.address.equals(NATIVE_MINT)
-
-          const splAmount = (
-            splTranfsers.find(ix =>
-              (ix as ParsedInstruction).parsed.info.mint === nativeIn
-                ? tokenOut.address.toString()
-                : tokenIn.address.toString()
-            ) as ParsedInstruction
-          ).parsed.info.tokenAmount.amount
-
-          const amountIn = nativeIn ? nativeAmount : splAmount
-          const amountOut = nativeIn ? splAmount : nativeAmount
+          const amountIn = getAmountFromSwapInstruction(
+            meta,
+            marketProgram.programAuthority.address.toString(),
+            tokenIn.address.toString(),
+            SwapTokenType.TokenIn
+          )
+          const amountBetween = getAmountFromSwapInstruction(
+            meta,
+            marketProgram.programAuthority.address.toString(),
+            tokenBetween.address.toString(),
+            SwapTokenType.TokenBetween
+          )
+          const amountOut = getAmountFromSwapInstruction(
+            meta,
+            marketProgram.programAuthority.address.toString(),
+            tokenOut.address.toString(),
+            SwapTokenType.TokenOut
+          )
 
           let points = new BN(0)
 
@@ -770,8 +857,10 @@ export function* handleTwoHopSwapWithETH(): Generator {
             if (
               leaderboardConfig.swapPairs.some(
                 item =>
-                  new PublicKey(item.tokenX).equals(firstPool.tokenX) &&
-                  new PublicKey(item.tokenY).equals(firstPool.tokenY)
+                  (new PublicKey(item.tokenX).equals(firstPool.tokenX) &&
+                    new PublicKey(item.tokenY).equals(firstPool.tokenY)) ||
+                  (new PublicKey(item.tokenX).equals(firstPool.tokenY) &&
+                    new PublicKey(item.tokenY).equals(firstPool.tokenX))
               )
             ) {
               const feed = feeds[tokenFrom.toString()]
@@ -791,22 +880,13 @@ export function* handleTwoHopSwapWithETH(): Generator {
             if (
               leaderboardConfig.swapPairs.some(
                 item =>
-                  new PublicKey(item.tokenX).equals(secondPool.tokenX) &&
-                  new PublicKey(item.tokenY).equals(secondPool.tokenY)
+                  (new PublicKey(item.tokenX).equals(secondPool.tokenX) &&
+                    new PublicKey(item.tokenY).equals(secondPool.tokenY)) ||
+                  (new PublicKey(item.tokenX).equals(secondPool.tokenY) &&
+                    new PublicKey(item.tokenY).equals(secondPool.tokenX))
               )
             ) {
-              const tokenBetween = secondXtoY
-                ? allTokens[secondPool.tokenX.toString()]
-                : allTokens[secondPool.tokenY.toString()]
-
               const feed = feeds[tokenBetween.address.toString()]
-
-              const amountBetween = (
-                splTranfsers.find(
-                  ix =>
-                    (ix as ParsedInstruction).parsed.info.mint === tokenBetween.address.toString()
-                ) as ParsedInstruction
-              ).parsed.info.tokenAmount.amount
 
               if (feed && feed.price) {
                 points = points.add(
@@ -830,9 +910,16 @@ export function* handleTwoHopSwapWithETH(): Generator {
               tokensDetails: {
                 ikonType: 'swap',
                 tokenXAmount: formatNumberWithoutSuffix(printBN(amountIn, tokenIn.decimals)),
+                tokenBetweenAmount: formatNumberWithoutSuffix(
+                  printBN(amountBetween, tokenBetween.decimals)
+                ),
                 tokenYAmount: formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals)),
                 tokenXIcon: tokenIn.logoURI,
+                tokenBetweenIcon: tokenBetween.logoURI,
                 tokenYIcon: tokenOut.logoURI,
+                tokenXSymbol: tokenIn.symbol ?? tokenIn.address.toString(),
+                tokenBetweenSymbol: tokenBetween.symbol ?? tokenBetween.address.toString(),
+                tokenYSymbol: tokenOut.symbol ?? tokenOut.address.toString(),
                 earnedPoints: points.eqn(0)
                   ? undefined
                   : formatNumberWithoutSuffix(printBN(points, LEADERBOARD_DECIMAL))
@@ -844,6 +931,15 @@ export function* handleTwoHopSwapWithETH(): Generator {
           // Should never be triggered
         }
       }
+    } else {
+      yield put(
+        snackbarsActions.add({
+          message: 'Tokens swapped successfully',
+          variant: 'success',
+          persist: false,
+          txid
+        })
+      )
     }
 
     // const unwrapTxid = yield* call(
@@ -881,7 +977,26 @@ export function* handleTwoHopSwapWithETH(): Generator {
     yield put(snackbarsActions.remove(loaderSwappingTokens))
   } catch (e: unknown) {
     const error = ensureError(e)
-    console.log(error)
+
+    let msg: string = ''
+    if (error instanceof SendTransactionError) {
+      const err = error.transactionError
+      try {
+        const errorCode = extractRuntimeErrorCode(err)
+        msg = mapErrorCodeToMessage(errorCode)
+      } catch {
+        const errorCode = extractErrorCode(error)
+        msg = mapErrorCodeToMessage(errorCode)
+      }
+    } else {
+      try {
+        const errorCode = extractErrorCode(error)
+        msg = mapErrorCodeToMessage(errorCode)
+      } catch (e: unknown) {
+        const error = ensureError(e)
+        msg = ensureApprovalDenied(error) ? APPROVAL_DENIED_MESSAGE : COMMON_ERROR_MESSAGE
+      }
+    }
 
     yield put(swapActions.setSwapSuccess(false))
 
@@ -904,7 +1019,7 @@ export function* handleTwoHopSwapWithETH(): Generator {
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Failed to send. Please try again',
+          message: msg,
           variant: 'error',
           persist: false
         })
@@ -1087,143 +1202,165 @@ export function* handleTwoHopSwap(): Generator {
         })
       )
     } else {
-      yield put(
-        snackbarsActions.add({
-          message: 'Tokens swapped successfully',
-          variant: 'success',
-          persist: false,
-          txid
-        })
-      )
       const txDetails = yield* call([connection, connection.getParsedTransaction], txid, {
         maxSupportedTransactionVersion: 0
       })
 
       if (txDetails) {
-        const meta = txDetails.meta
-        if (meta?.preTokenBalances && meta.postTokenBalances) {
-          const accountInPredicate = entry =>
-            entry.mint === firstXtoY
-              ? firstPool.tokenX.toString()
-              : firstPool.tokenY.toString() && entry.owner === wallet.publicKey.toString()
-          const accountBetweenPredicate = entry =>
-            entry.mint === firstXtoY
-              ? firstPool.tokenY.toString()
-              : firstPool.tokenX.toString() &&
-                entry.owner === marketProgram.programAuthority.address.toString()
-          const accountOutPredicate = entry =>
-            entry.mint === secondXtoY
-              ? secondPool.tokenY.toString()
-              : secondPool.tokenX.toString() && entry.owner === wallet.publicKey.toString()
+        if (txDetails.meta?.err) {
+          if (txDetails.meta.logMessages) {
+            const errorLog = txDetails.meta.logMessages.find(log =>
+              log.includes(ErrorCodeExtractionKeys.ErrorNumber)
+            )
+            const errorCode = errorLog
+              ?.split(ErrorCodeExtractionKeys.ErrorNumber)[1]
+              .split(ErrorCodeExtractionKeys.Dot)[0]
+              .trim()
+            const message = mapErrorCodeToMessage(Number(errorCode))
+            yield put(swapActions.setSwapSuccess(false))
 
-          const preAccoutnIn = meta.preTokenBalances.find(accountInPredicate)
-          const postAccountIn = meta.postTokenBalances.find(accountInPredicate)
-          const preAccountBetween = meta.preTokenBalances.find(accountBetweenPredicate)
-          const postAccountBetween = meta.postTokenBalances.find(accountBetweenPredicate)
-          const preAccountOut = meta.preTokenBalances.find(accountOutPredicate)
-          const postAccountOut = meta.postTokenBalances.find(accountOutPredicate)
+            closeSnackbar(loaderSwappingTokens)
+            yield put(snackbarsActions.remove(loaderSwappingTokens))
+            closeSnackbar(loaderSigningTx)
+            yield put(snackbarsActions.remove(loaderSigningTx))
 
-          if (preAccoutnIn && postAccountIn && preAccountOut && postAccountOut) {
-            const preAmountIn = preAccoutnIn.uiTokenAmount.amount
-            const preAmountOut = preAccountOut.uiTokenAmount.amount
-
-            const postAmountIn = postAccountIn.uiTokenAmount.amount
-            const postAmountOut = postAccountOut.uiTokenAmount.amount
-
-            const amountIn = new BN(preAmountIn).sub(new BN(postAmountIn))
-
-            const amountOut = new BN(preAmountOut).sub(new BN(postAmountOut))
-
-            try {
-              const tokenIn =
-                allTokens[firstXtoY ? firstPool.tokenX.toString() : firstPool.tokenY.toString()]
-
-              const tokenOut =
-                allTokens[secondXtoY ? secondPool.tokenY.toString() : secondPool.tokenX.toString()]
-
-              let points = new BN(0)
-              try {
-                if (preAccountBetween && postAccountBetween) {
-                  const betweenAmountPre = new BN(preAccountBetween.uiTokenAmount.amount)
-                  const betweenAmountPost = new BN(postAccountBetween.uiTokenAmount.amount)
-
-                  const amountBetween = betweenAmountPost.gt(betweenAmountPre)
-                    ? betweenAmountPost.sub(betweenAmountPre)
-                    : betweenAmountPre.sub(betweenAmountPost)
-
-                  const tokenBetween =
-                    allTokens[
-                      secondXtoY ? firstPool.tokenX.toString() : firstPool.tokenY.toString()
-                    ]
-
-                  if (
-                    leaderboardConfig.swapPairs.some(
-                      item =>
-                        new PublicKey(item.tokenX).equals(firstPool.tokenX) &&
-                        new PublicKey(item.tokenY).equals(firstPool.tokenY)
-                    )
-                  ) {
-                    const feed = feeds[tokenFrom.toString()]
-
-                    if (feed && feed.price) {
-                      points = calculatePoints(
-                        amountIn,
-                        tokenIn.decimals,
-                        firstPool.fee,
-                        feed.price,
-                        feed.priceDecimals,
-                        new BN(leaderboardConfig.pointsPerUsd, 'hex')
-                      ).muln(Number(leaderboardConfig.swapMultiplier))
-                    }
-                  }
-
-                  if (
-                    leaderboardConfig.swapPairs.some(
-                      item =>
-                        new PublicKey(item.tokenX).equals(secondPool.tokenX) &&
-                        new PublicKey(item.tokenY).equals(secondPool.tokenY)
-                    )
-                  ) {
-                    const feed = feeds[tokenBetween.toString()]
-
-                    if (feed && feed.price) {
-                      points = points.add(
-                        calculatePoints(
-                          amountBetween,
-                          tokenBetween.decimals,
-                          secondPool.fee,
-                          feed.price,
-                          feed.priceDecimals,
-                          new BN(leaderboardConfig.pointsPerUsd, 'hex')
-                        ).muln(Number(leaderboardConfig.swapMultiplier))
-                      )
-                    }
-                  }
-                }
-              } catch {
-                // Should never be triggered
-              }
-
-              yield put(
-                snackbarsActions.add({
-                  tokensDetails: {
-                    ikonType: 'swap',
-                    tokenXAmount: formatNumberWithoutSuffix(printBN(amountIn, tokenIn.decimals)),
-                    tokenYAmount: formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals)),
-                    tokenXIcon: tokenIn.logoURI,
-                    tokenYIcon: tokenOut.logoURI,
-                    earnedPoints: points.eqn(0)
-                      ? undefined
-                      : formatNumberWithoutSuffix(printBN(points, LEADERBOARD_DECIMAL))
-                  },
-                  persist: false
-                })
-              )
-            } catch {
-              // Sanity wrapper, should never be triggered
-            }
+            yield put(
+              snackbarsActions.add({
+                message,
+                variant: 'error',
+                persist: false
+              })
+            )
+            return
           }
         }
+
+        yield put(
+          snackbarsActions.add({
+            message: 'Tokens swapped successfully',
+            variant: 'success',
+            persist: false,
+            txid
+          })
+        )
+
+        const meta = txDetails.meta
+        if (meta?.innerInstructions) {
+          try {
+            const tokenIn =
+              allTokens[firstXtoY ? firstPool.tokenX.toString() : firstPool.tokenY.toString()]
+            const tokenBetween =
+              allTokens[secondXtoY ? secondPool.tokenX.toString() : secondPool.tokenY.toString()]
+            const tokenOut =
+              allTokens[secondXtoY ? secondPool.tokenY.toString() : secondPool.tokenX.toString()]
+
+            const amountIn = getAmountFromSwapInstruction(
+              meta,
+              marketProgram.programAuthority.address.toString(),
+              tokenIn.address.toString(),
+              SwapTokenType.TokenIn
+            )
+            const amountBetween = getAmountFromSwapInstruction(
+              meta,
+              marketProgram.programAuthority.address.toString(),
+              tokenBetween.address.toString(),
+              SwapTokenType.TokenBetween
+            )
+            const amountOut = getAmountFromSwapInstruction(
+              meta,
+              marketProgram.programAuthority.address.toString(),
+              tokenOut.address.toString(),
+              SwapTokenType.TokenOut
+            )
+
+            let points = new BN(0)
+            try {
+              if (
+                leaderboardConfig.swapPairs.some(
+                  item =>
+                    (new PublicKey(item.tokenX).equals(firstPool.tokenX) &&
+                      new PublicKey(item.tokenY).equals(firstPool.tokenY)) ||
+                    (new PublicKey(item.tokenX).equals(firstPool.tokenY) &&
+                      new PublicKey(item.tokenY).equals(firstPool.tokenX))
+                )
+              ) {
+                const feed = feeds[tokenFrom.toString()]
+
+                if (feed && feed.price) {
+                  points = calculatePoints(
+                    new BN(amountIn),
+                    tokenIn.decimals,
+                    firstPool.fee,
+                    feed.price,
+                    feed.priceDecimals,
+                    new BN(leaderboardConfig.pointsPerUsd, 'hex')
+                  ).muln(Number(leaderboardConfig.swapMultiplier))
+                }
+              }
+
+              if (
+                leaderboardConfig.swapPairs.some(
+                  item =>
+                    (new PublicKey(item.tokenX).equals(secondPool.tokenX) &&
+                      new PublicKey(item.tokenY).equals(secondPool.tokenY)) ||
+                    (new PublicKey(item.tokenX).equals(secondPool.tokenY) &&
+                      new PublicKey(item.tokenY).equals(secondPool.tokenX))
+                )
+              ) {
+                const feed = feeds[tokenBetween.address.toString()]
+
+                if (feed && feed.price) {
+                  points = points.add(
+                    calculatePoints(
+                      new BN(amountBetween),
+                      tokenBetween.decimals,
+                      secondPool.fee,
+                      feed.price,
+                      feed.priceDecimals,
+                      new BN(leaderboardConfig.pointsPerUsd, 'hex')
+                    ).muln(Number(leaderboardConfig.swapMultiplier))
+                  )
+                }
+              }
+            } catch {
+              // Should never be triggered
+            }
+
+            yield put(
+              snackbarsActions.add({
+                tokensDetails: {
+                  ikonType: 'swap',
+                  tokenXAmount: formatNumberWithoutSuffix(printBN(amountIn, tokenIn.decimals)),
+                  tokenBetweenAmount: formatNumberWithoutSuffix(
+                    printBN(amountBetween, tokenBetween.decimals)
+                  ),
+                  tokenYAmount: formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals)),
+                  tokenXIcon: tokenIn.logoURI,
+                  tokenBetweenIcon: tokenBetween.logoURI,
+                  tokenYIcon: tokenOut.logoURI,
+                  tokenXSymbol: tokenIn.symbol ?? tokenIn.address.toString(),
+                  tokenBetweenSymbol: tokenBetween.symbol ?? tokenBetween.address.toString(),
+                  tokenYSymbol: tokenOut.symbol ?? tokenOut.address.toString(),
+                  earnedPoints: points.eqn(0)
+                    ? undefined
+                    : formatNumberWithoutSuffix(printBN(points, LEADERBOARD_DECIMAL))
+                },
+                persist: false
+              })
+            )
+          } catch {
+            // Sanity wrapper, should never be triggered
+          }
+        }
+      } else {
+        yield put(
+          snackbarsActions.add({
+            message: 'Tokens swapped successfully',
+            variant: 'success',
+            persist: false,
+            txid
+          })
+        )
       }
     }
 
@@ -1231,7 +1368,25 @@ export function* handleTwoHopSwap(): Generator {
     yield put(snackbarsActions.remove(loaderSwappingTokens))
   } catch (e: unknown) {
     const error = ensureError(e)
-    console.log(error)
+    let msg: string = ''
+    if (error instanceof SendTransactionError) {
+      const err = error.transactionError
+      try {
+        const errorCode = extractRuntimeErrorCode(err)
+        msg = mapErrorCodeToMessage(errorCode)
+      } catch {
+        const errorCode = extractErrorCode(error)
+        msg = mapErrorCodeToMessage(errorCode)
+      }
+    } else {
+      try {
+        const errorCode = extractErrorCode(error)
+        msg = mapErrorCodeToMessage(errorCode)
+      } catch (e: unknown) {
+        const error = ensureError(e)
+        msg = ensureApprovalDenied(error) ? APPROVAL_DENIED_MESSAGE : COMMON_ERROR_MESSAGE
+      }
+    }
 
     yield put(swapActions.setSwapSuccess(false))
 
@@ -1254,7 +1409,7 @@ export function* handleTwoHopSwap(): Generator {
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Failed to send. Please try again',
+          message: msg,
           variant: 'error',
           persist: false
         })
@@ -1469,97 +1624,127 @@ export function* handleSwap(): Generator {
         })
       )
     } else {
-      yield put(
-        snackbarsActions.add({
-          message: 'Tokens swapped successfully',
-          variant: 'success',
-          persist: false,
-          txid
-        })
-      )
       const txDetails = yield* call([connection, connection.getParsedTransaction], txid, {
         maxSupportedTransactionVersion: 0
       })
+
       if (txDetails) {
-        const meta = txDetails.meta
-        if (meta?.preTokenBalances && meta.postTokenBalances) {
-          const accountXPredicate = entry =>
-            entry.mint === swapPool.tokenX.toString() && entry.owner === wallet.publicKey.toString()
-          const accountYPredicate = entry =>
-            entry.mint === swapPool.tokenY.toString() && entry.owner === wallet.publicKey.toString()
+        if (txDetails.meta?.err) {
+          if (txDetails.meta.logMessages) {
+            const errorLog = txDetails.meta.logMessages.find(log =>
+              log.includes(ErrorCodeExtractionKeys.ErrorNumber)
+            )
+            const errorCode = errorLog
+              ?.split(ErrorCodeExtractionKeys.ErrorNumber)[1]
+              .split(ErrorCodeExtractionKeys.Dot)[0]
+              .trim()
+            const message = mapErrorCodeToMessage(Number(errorCode))
+            yield put(swapActions.setSwapSuccess(false))
 
-          const preAccountX = meta.preTokenBalances.find(accountXPredicate)
-          const postAccountX = meta.postTokenBalances.find(accountXPredicate)
-          const preAccountY = meta.preTokenBalances.find(accountYPredicate)
-          const postAccountY = meta.postTokenBalances.find(accountYPredicate)
+            closeSnackbar(loaderSwappingTokens)
+            yield put(snackbarsActions.remove(loaderSwappingTokens))
+            closeSnackbar(loaderSigningTx)
+            yield put(snackbarsActions.remove(loaderSigningTx))
 
-          if (preAccountX && postAccountX && preAccountY && postAccountY) {
-            const preAmountX = preAccountX.uiTokenAmount.amount
-            const preAmountY = preAccountY.uiTokenAmount.amount
-            const postAmountX = postAccountX.uiTokenAmount.amount
-            const postAmountY = postAccountY.uiTokenAmount.amount
-            const { amountIn, amountOut } = isXtoY
-              ? {
-                  amountIn: new BN(preAmountX).sub(new BN(postAmountX)),
-                  amountOut: new BN(postAmountY).sub(new BN(preAmountY))
-                }
-              : {
-                  amountIn: new BN(preAmountY).sub(new BN(postAmountY)),
-                  amountOut: new BN(postAmountX).sub(new BN(preAmountX))
-                }
-
-            try {
-              const tokenIn =
-                allTokens[isXtoY ? swapPool.tokenX.toString() : swapPool.tokenY.toString()]
-              const tokenOut =
-                allTokens[isXtoY ? swapPool.tokenY.toString() : swapPool.tokenX.toString()]
-
-              let points = new BN(0)
-              try {
-                if (
-                  leaderboardConfig.swapPairs.some(
-                    item =>
-                      new PublicKey(item.tokenX).equals(swapPool.tokenX) &&
-                      new PublicKey(item.tokenY).equals(swapPool.tokenY)
-                  )
-                ) {
-                  const feed = feeds[tokenFrom.toString()]
-
-                  if (feed && feed.price) {
-                    points = calculatePoints(
-                      amountIn,
-                      tokenIn.decimals,
-                      swapPool.fee,
-                      feed.price,
-                      feed.priceDecimals,
-                      new BN(leaderboardConfig.pointsPerUsd, 'hex')
-                    ).muln(Number(leaderboardConfig.swapMultiplier))
-                  }
-                }
-              } catch {
-                // Sanity check in case some leaderboard config is missing
-              }
-
-              yield put(
-                snackbarsActions.add({
-                  tokensDetails: {
-                    ikonType: 'swap',
-                    tokenXAmount: formatNumberWithoutSuffix(printBN(amountIn, tokenIn.decimals)),
-                    tokenYAmount: formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals)),
-                    tokenXIcon: tokenIn.logoURI,
-                    tokenYIcon: tokenOut.logoURI,
-                    earnedPoints: points.eqn(0)
-                      ? undefined
-                      : formatNumberWithoutSuffix(printBN(points, LEADERBOARD_DECIMAL))
-                  },
-                  persist: false
-                })
-              )
-            } catch {
-              // Sanity wrapper, should never be triggered
-            }
+            yield put(
+              snackbarsActions.add({
+                message,
+                variant: 'error',
+                persist: false
+              })
+            )
+            return
           }
         }
+
+        yield put(
+          snackbarsActions.add({
+            message: 'Tokens swapped successfully',
+            variant: 'success',
+            persist: false,
+            txid
+          })
+        )
+
+        const meta = txDetails.meta
+        if (meta?.innerInstructions) {
+          try {
+            const tokenIn =
+              allTokens[isXtoY ? swapPool.tokenX.toString() : swapPool.tokenY.toString()]
+            const tokenOut =
+              allTokens[isXtoY ? swapPool.tokenY.toString() : swapPool.tokenX.toString()]
+
+            const amountIn = getAmountFromSwapInstruction(
+              meta,
+              marketProgram.programAuthority.address.toString(),
+              tokenIn.address.toString(),
+              SwapTokenType.TokenIn
+            )
+            const amountOut = getAmountFromSwapInstruction(
+              meta,
+              marketProgram.programAuthority.address.toString(),
+              tokenOut.address.toString(),
+              SwapTokenType.TokenOut
+            )
+
+            let points = new BN(0)
+            try {
+              if (
+                leaderboardConfig.swapPairs.some(
+                  item =>
+                    (new PublicKey(item.tokenX).equals(swapPool.tokenX) &&
+                      new PublicKey(item.tokenY).equals(swapPool.tokenY)) ||
+                    (new PublicKey(item.tokenX).equals(swapPool.tokenY) &&
+                      new PublicKey(item.tokenY).equals(swapPool.tokenX))
+                )
+              ) {
+                const feed = feeds[tokenFrom.toString()]
+
+                if (feed && feed.price) {
+                  points = calculatePoints(
+                    new BN(amountIn),
+                    tokenIn.decimals,
+                    swapPool.fee,
+                    feed.price,
+                    feed.priceDecimals,
+                    new BN(leaderboardConfig.pointsPerUsd, 'hex')
+                  ).muln(Number(leaderboardConfig.swapMultiplier))
+                }
+              }
+            } catch {
+              // Sanity check in case some leaderboard config is missing
+            }
+
+            yield put(
+              snackbarsActions.add({
+                tokensDetails: {
+                  ikonType: 'swap',
+                  tokenXAmount: formatNumberWithoutSuffix(printBN(amountIn, tokenIn.decimals)),
+                  tokenYAmount: formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals)),
+                  tokenXIcon: tokenIn.logoURI,
+                  tokenYIcon: tokenOut.logoURI,
+                  tokenXSymbol: tokenIn.symbol ?? tokenIn.address.toString(),
+                  tokenYSymbol: tokenOut.symbol ?? tokenOut.address.toString(),
+                  earnedPoints: points.eqn(0)
+                    ? undefined
+                    : formatNumberWithoutSuffix(printBN(points, LEADERBOARD_DECIMAL))
+                },
+                persist: false
+              })
+            )
+          } catch {
+            // Sanity wrapper, should never be triggered
+          }
+        }
+      } else {
+        yield put(
+          snackbarsActions.add({
+            message: 'Tokens swapped successfully',
+            variant: 'success',
+            persist: false,
+            txid
+          })
+        )
       }
     }
 
@@ -1568,6 +1753,26 @@ export function* handleSwap(): Generator {
   } catch (e: unknown) {
     const error = ensureError(e)
     console.log(error)
+
+    let msg: string = ''
+    if (error instanceof SendTransactionError) {
+      const err = error.transactionError
+      try {
+        const errorCode = extractRuntimeErrorCode(err)
+        msg = mapErrorCodeToMessage(errorCode)
+      } catch {
+        const errorCode = extractErrorCode(error)
+        msg = mapErrorCodeToMessage(errorCode)
+      }
+    } else {
+      try {
+        const errorCode = extractErrorCode(error)
+        msg = mapErrorCodeToMessage(errorCode)
+      } catch (e: unknown) {
+        const error = ensureError(e)
+        msg = ensureApprovalDenied(error) ? APPROVAL_DENIED_MESSAGE : COMMON_ERROR_MESSAGE
+      }
+    }
 
     yield put(swapActions.setSwapSuccess(false))
 
@@ -1590,7 +1795,7 @@ export function* handleSwap(): Generator {
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Failed to send. Please try again',
+          message: msg,
           variant: 'error',
           persist: false
         })

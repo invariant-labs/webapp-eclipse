@@ -1,5 +1,5 @@
 import { Box, Typography } from '@mui/material'
-import { newTabIcon, unknownTokenIcon } from '@static/icons'
+import { newTabIcon, unknownTokenIcon, warningIcon } from '@static/icons'
 import { shortenAddress } from '@utils/uiUtils'
 import { formatNumberWithSuffix, printBN } from '@utils/utils'
 import { useStyles } from './style'
@@ -18,29 +18,33 @@ export const TokenOption: React.FC<{
   return (
     <Box className={classes.tokenContainer}>
       <Box className={classes.leftSide}>
-        <img
-          width={isSmall ? 32 : 24}
-          src={option?.icon ?? unknownTokenIcon}
-          onError={e => {
-            e.currentTarget.onerror = null
-            e.currentTarget.src = unknownTokenIcon
-          }}
-          alt={option.symbol}
-          className={classes.searchResultIcon}
-        />
+        <Box display='flex' position='relative'>
+          <img
+            width={isSmall ? 32 : 24}
+            src={option?.icon ?? unknownTokenIcon}
+            onError={e => {
+              e.currentTarget.onerror = null
+              e.currentTarget.src = unknownTokenIcon
+            }}
+            alt={option.symbol}
+            className={classes.searchResultIcon}
+          />
+          {option.isUnknown && <img className={classes.warningIcon} src={warningIcon} />}
+        </Box>
+
         <Box className={classes.tokenData}>
           <Box className={classes.symbolAndAddress}>
             <Typography className={classes.tokenLabel}>{shortenAddress(option.symbol)}</Typography>
             <Box className={classes.tokenAddress}>
-              <Typography className={classes.truncatedAddress}>
-                {shortenAddress(option.address)}
-              </Typography>
               <a
                 className={classes.addressLink}
                 href={`https://eclipsescan.xyz/token/${option.address.toString()}${networkUrl}`}
                 target='_blank'
                 rel='noopener noreferrer'
                 onClick={event => event.stopPropagation()}>
+                <Typography className={classes.truncatedAddress}>
+                  {shortenAddress(option.address)}
+                </Typography>
                 <img className={classes.newTabIcon} src={newTabIcon} alt='Token address' />
               </a>
             </Box>

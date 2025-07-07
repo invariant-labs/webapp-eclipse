@@ -7,6 +7,7 @@ import {
   DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_SWAP,
   DEFAULT_AUTOSWAP_MIN_UTILIZATION,
   DEFAULT_NEW_POSITION_SLIPPAGE,
+  Intervals,
   LEADERBOARD_DECIMAL,
   autoSwapPools,
   commonTokensForNetworks
@@ -58,6 +59,7 @@ import { PoolStructure } from '@invariant-labs/sdk-eclipse/lib/market'
 import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import { actions as statsActions } from '@store/reducers/stats'
 import { isLoading, poolsStatsWithTokensDetails } from '@store/selectors/stats'
+import { address } from '@store/selectors/navigation'
 
 export interface IProps {
   initialTokenFrom: string
@@ -77,6 +79,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   const dispatch = useDispatch()
   const connection = getCurrentSolanaConnection()
   const ethBalance = useSelector(balance)
+  const locationHistory = useSelector(address)
   const tokens = useSelector(poolTokens)
   const walletStatus = useSelector(status)
   const allPools = useSelector(poolsArraySortedByFees)
@@ -170,6 +173,11 @@ export const NewPositionWrapper: React.FC<IProps> = ({
 
   const canNavigate = connection !== null && !isPathTokensLoading && !block
 
+  const handleBack = () => {
+    const path = locationHistory === ROUTES.ROOT ? ROUTES.PORTFOLIO : locationHistory
+    navigate(path)
+  }
+
   useEffect(() => {
     if (canNavigate) {
       const tokenAIndex = tokens.findIndex(token => token.address.toString() === initialTokenFrom)
@@ -239,7 +247,9 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   useEffect(() => {
     const path = constructNavigationPath()
     if (path) {
-      urlUpdateTimeoutRef.current = setTimeout(() => navigate(path), 500)
+      urlUpdateTimeoutRef.current = setTimeout(() => {
+        navigate(path)
+      }, 500)
     }
   }, [tokens, canNavigate])
 
@@ -691,7 +701,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     }
 
     return promotedPools.some(pool => pool.address === allPools[poolIndex].address.toString())
-  }, [promotedPools, poolIndex, allPools])
+  }, [promotedPools.length, poolIndex, allPools.length])
 
   const estimatedPointsPerDay: BN = useMemo(() => {
     const poolAddress = poolIndex !== null ? allPools[poolIndex]?.address.toString() : ''
@@ -711,7 +721,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     )
 
     return estimatedPoints as BN
-  }, [liquidity, poolIndex, isPromotedPool])
+  }, [liquidity.toString(), poolIndex, isPromotedPool])
 
   const estimatedPointsForScale = (
     currentConcentration: number,
@@ -773,10 +783,13 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   const isLoadingStats = useSelector(isLoading)
 
   useEffect(() => {
-    dispatch(statsActions.getCurrentStats())
+    dispatch(statsActions.getCurrentIntervalStats({ interval: Intervals.Daily }))
   }, [])
 
   const { feeTiersWithTvl, totalTvl } = useMemo(() => {
+    if (tokenAIndex === null || tokenBIndex === null) {
+      return { feeTiersWithTvl: {}, totalTvl: 0 }
+    }
     const feeTiersWithTvl: Record<number, number> = {}
     let totalTvl = 0
 
@@ -837,6 +850,54 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     }
   }, [autoSwapPoolData])
 
+  const suggestedPrice = useMemo(() => {
+    if (tokenAIndex === null || tokenBIndex === null) {
+      return 0
+    }
+
+    const feeTiersTVLValues = Object.values(feeTiersWithTvl)
+    const bestFee = feeTiersTVLValues.length > 0 ? Math.max(...feeTiersTVLValues) : 0
+    const bestTierIndex = ALL_FEE_TIERS_DATA.findIndex(tier => {
+      return feeTiersWithTvl[+printBN(tier.tier.fee, DECIMAL - 2)] === bestFee && bestFee > 0
+    })
+
+    if (bestTierIndex === -1) {
+      return 0
+    }
+
+    const poolIndex = allPools.findIndex(
+      pool =>
+        pool.fee.eq(ALL_FEE_TIERS_DATA[bestTierIndex].tier.fee) &&
+        ((pool.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
+          pool.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
+          (pool.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
+            pool.tokenY.equals(tokens[tokenAIndex].assetAddress)))
+    )
+
+    if (poolIndex === -1) {
+      dispatch(
+        poolsActions.getPoolData(
+          new Pair(tokens[tokenAIndex].assetAddress, tokens[tokenBIndex].assetAddress, {
+            fee: ALL_FEE_TIERS_DATA[bestTierIndex].tier.fee,
+            tickSpacing: ALL_FEE_TIERS_DATA[bestTierIndex].tier.tickSpacing
+          })
+        )
+      )
+      return 0
+    }
+
+    return poolIndex !== -1
+      ? calcPriceBySqrtPrice(allPools[poolIndex].sqrtPrice, isXtoY, xDecimal, yDecimal)
+      : 0
+  }, [tokenAIndex, tokenBIndex, allPools.length, currentPairReversed])
+
+  const oraclePrice = useMemo(() => {
+    if (!tokenAPriceData || !tokenBPriceData) {
+      return null
+    }
+    return tokenAPriceData.price / tokenBPriceData.price
+  }, [tokenAPriceData, tokenBPriceData, isXtoY])
+
   return (
     <NewPosition
       initialTokenFrom={initialTokenFrom}
@@ -890,6 +951,12 @@ export const NewPositionWrapper: React.FC<IProps> = ({
               setCurrentPairReversed(currentPairReversed === null ? true : !currentPairReversed)
             }
           }
+
+          let poolExists = false
+          if (currentPoolAddress) {
+            poolExists = allPools.some(pool => pool.address.equals(currentPoolAddress))
+          }
+
           if (index !== -1 && index !== poolIndex) {
             dispatch(
               actions.getCurrentPlotTicks({
@@ -898,12 +965,12 @@ export const NewPositionWrapper: React.FC<IProps> = ({
               })
             )
             setPoolIndex(index)
-          } else if (
-            !(
-              tokenAIndex === tokenB &&
-              tokenBIndex === tokenA &&
-              fee.eq(ALL_FEE_TIERS_DATA[feeTierIndex].tier.fee)
-            )
+          }
+
+          if (
+            ((tokenAIndex !== tokenB && tokenBIndex !== tokenA) ||
+              !fee.eq(ALL_FEE_TIERS_DATA[feeTierIndex].tier.fee)) &&
+            (!poolExists || index === -1)
           ) {
             dispatch(
               poolsActions.getPoolData(
@@ -1089,7 +1156,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       feeTiersWithTvl={feeTiersWithTvl}
       totalTvl={totalTvl}
       isLoadingStats={isLoadingStats}
-      autoSwapPoolData={!!autoSwapPoolData ? (autoSwapPoolData ?? null) : null}
+      autoSwapPoolData={autoSwapPoolData ?? null}
       autoSwapTickmap={autoSwapTickMap}
       autoSwapTicks={autoSwapTicks}
       initialMaxPriceImpact={initialMaxPriceImpact}
@@ -1100,6 +1167,9 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       initialMaxSlippageToleranceSwap={initialMaxSlippageToleranceSwap}
       onMaxSlippageToleranceCreatePositionChange={onMaxSlippageToleranceCreatePositionChange}
       initialMaxSlippageToleranceCreatePosition={initialMaxSlippageToleranceCreatePosition}
+      suggestedPrice={suggestedPrice}
+      handleBack={handleBack}
+      oraclePrice={oraclePrice}
     />
   )
 }

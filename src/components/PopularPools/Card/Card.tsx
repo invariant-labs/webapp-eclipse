@@ -5,13 +5,7 @@ import GradientBorder from '@common/GradientBorder/GradientBorder'
 import { colors, theme } from '@static/theme'
 import cardBackgroundBottom from '@static/png/cardBackground1.png'
 import cardBackgroundTop from '@static/png/cardBackground2.png'
-import {
-  airdropRainbowIcon,
-  backIcon,
-  revertIcon,
-  unknownTokenIcon,
-  warningIcon
-} from '@static/icons'
+import { airdropRainbowIcon, backIcon, unknownTokenIcon, warningIcon } from '@static/icons'
 import { shortenAddress } from '@utils/uiUtils'
 import StatsLabel from './StatsLabel/StatsLabel'
 import {
@@ -22,15 +16,17 @@ import {
   parseFeeToPathFee,
   ROUTES
 } from '@utils/utils'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { NetworkType } from '@store/consts/static'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { leaderboardSelectors } from '@store/selectors/leaderboard'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { BN } from '@coral-xyz/anchor'
 import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
 import { Button } from '@common/Button/Button'
+import { ReverseTokensIcon } from '@static/componentIcon/ReverseTokensIcon'
+import { actions } from '@store/reducers/navigation'
 
 export interface ICard extends PopularPoolData {
   isLoading: boolean
@@ -59,7 +55,8 @@ const Card: React.FC<ICard> = ({
 }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
-
+  const location = useLocation()
+  const dispatch = useDispatch()
   const airdropIconRef = useRef<HTMLDivElement>(null)
   const popoverContainerRef = useRef<HTMLDivElement>(null)
 
@@ -85,6 +82,7 @@ const Card: React.FC<ICard> = ({
 
   const handleOpenPosition = () => {
     if (fee === undefined) return
+    dispatch(actions.setNavigation({ address: location.pathname }))
 
     navigate(
       ROUTES.getNewPositionRoute(
@@ -132,7 +130,7 @@ const Card: React.FC<ICard> = ({
 
   return (
     <Grid className={classes.root}>
-      {isLoading ? (
+      {isLoading || !poolAddress?.toString() ? (
         <Skeleton variant='rounded' animation='wave' className={classes.skeleton} />
       ) : (
         <Grid>
@@ -166,7 +164,7 @@ const Card: React.FC<ICard> = ({
                   />
                   {isUnknownFrom && <img className={classes.warningIcon} src={warningIcon} />}
                 </Box>
-                <img className={classes.swapIcon} src={revertIcon} alt='Token from' />
+                <ReverseTokensIcon className={classes.swapIcon} />
                 <Box className={classes.iconContainer}>
                   <img
                     className={classes.tokenIcon}

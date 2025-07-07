@@ -1,16 +1,24 @@
 import { Box, Typography, useMediaQuery } from '@mui/material'
 import { useStyles } from './style'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
-import { airdropRainbowIcon, backArrowIcon, newTabIcon, reverseTokensIcon } from '@static/icons'
+import { airdropRainbowIcon, backIcon, newTabIcon } from '@static/icons'
 import { theme } from '@static/theme'
 import MarketIdLabel from '@components/NewPosition/MarketIdLabel/MarketIdLabel'
 import { VariantType } from 'notistack'
 import Refresher from '@common/Refresher/Refresher'
 import { REFRESHER_INTERVAL } from '@store/consts/static'
 import { useEffect, useMemo, useState } from 'react'
-import { truncateString } from '@utils/utils'
+import { ROUTES } from '@utils/utils'
 import { LockButton } from './LockButton'
 import { Button } from '@common/Button/Button'
+import { INavigatePosition } from '@store/consts/types'
+import { MobileNavigation } from '../Navigation/MobileNavigation/MobileNavigation'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { ReverseTokensIcon } from '@static/componentIcon/ReverseTokensIcon'
+import { actions } from '@store/reducers/navigation'
+import { useDispatch } from 'react-redux'
+import { ReactFitty } from 'react-fitty'
+import classNames from 'classnames'
 
 type Props = {
   tokenA: {
@@ -38,6 +46,8 @@ type Props = {
   copyPoolAddressHandler: (message: string, variant: VariantType) => void
   isPreview: boolean
   isClosing: boolean
+  previousPosition: INavigatePosition | null
+  nextPosition: INavigatePosition | null
 }
 
 export const PositionHeader = ({
@@ -59,14 +69,19 @@ export const PositionHeader = ({
   onLockClick,
   copyPoolAddressHandler,
   isPreview,
-  isClosing
+  isClosing,
+  previousPosition,
+  nextPosition
 }: Props) => {
   const { classes, cx } = useStyles()
   const isSmDown = useMediaQuery(theme.breakpoints.down(688))
   const isMdDown = useMediaQuery(theme.breakpoints.down(1040))
-  const isMdUp = useMediaQuery(theme.breakpoints.up(1040))
+  const isLgDown = useMediaQuery(theme.breakpoints.down('lg'))
   const [refresherTime, setRefresherTime] = useState(REFRESHER_INTERVAL)
 
+  const navigate = useNavigate()
+  const location = useLocation()
+  const dispatch = useDispatch()
   useEffect(() => {
     const timeout = setTimeout(() => {
       if (refresherTime > 0) {
@@ -159,44 +174,104 @@ export const PositionHeader = ({
     </TooltipHover>
   )
 
+  const tooltipText = useMemo(() => {
+    if (isLocked) {
+      return (
+        <p>
+          This position is <b>locked</b> and <b>will not</b> earn points.
+          <br />
+          <br />A locked position does not generate points, even if it is active and the pool is
+          generating points.
+        </p>
+      )
+    } else if (isPromoted) {
+      return 'This pool distributes points'
+    } else {
+      return "This pool doesn't distribute points"
+    }
+  }, [isLocked, isPromoted])
+
   return (
     <Box className={classes.headerContainer}>
       <Box className={classes.navigation}>
         <Box className={cx(classes.wrapper, classes.backContainer)} onClick={() => onGoBackClick()}>
-          <img src={backArrowIcon} alt='Back arrow' />
-          <Typography className={classes.backText}>Back to portfolio</Typography>
+          <img src={backIcon} alt='Back arrow' />
+          <Typography className={classes.backText}>Back</Typography>
         </Box>
         {isMdDown && (
           <Box className={classes.navigationSide}>
             {marketIdLabel} {refresher}
           </Box>
         )}
+        {!isMdDown && isLgDown && (previousPosition || nextPosition) && (
+          <Box className={classes.tabletNavigation}>
+            <MobileNavigation
+              position={previousPosition}
+              direction='left'
+              onClick={() => {
+                if (previousPosition) {
+                  dispatch(actions.setNavigation({ address: location.pathname }))
+                  navigate(ROUTES.getPositionRoute(previousPosition.id))
+                }
+              }}
+            />
+            <MobileNavigation
+              position={nextPosition}
+              direction='right'
+              onClick={() => {
+                if (nextPosition) {
+                  dispatch(actions.setNavigation({ address: location.pathname }))
+                  navigate(ROUTES.getPositionRoute(nextPosition.id))
+                }
+              }}
+            />
+          </Box>
+        )}
       </Box>
+      {isMdDown && (previousPosition || nextPosition) && (
+        <Box display='flex' gap={1}>
+          <MobileNavigation
+            position={previousPosition}
+            direction='left'
+            onClick={() => {
+              if (previousPosition) {
+                navigate(ROUTES.getPositionRoute(previousPosition.id))
+              }
+            }}
+          />
+          <MobileNavigation
+            position={nextPosition}
+            direction='right'
+            onClick={() => {
+              if (nextPosition) {
+                navigate(ROUTES.getPositionRoute(nextPosition.id))
+              }
+            }}
+          />
+        </Box>
+      )}
       <Box className={classes.container}>
         <Box className={classes.upperContainer}>
-          <Box className={classes.wrapper}>
+          <Box className={classNames(classes.wrapper, classes.tickerWrapper)}>
             <Box className={classes.iconContainer}>
               <img className={classes.icon} src={tokenA.icon} alt={tokenA.ticker} />
               <TooltipHover title='Reverse tokens'>
-                <img
+                <ReverseTokensIcon
                   className={classes.reverseTokensIcon}
-                  src={reverseTokensIcon}
-                  alt='Reverse tokens'
                   onClick={() => onReverseTokensClick()}
                 />
               </TooltipHover>
               <img className={classes.icon} src={tokenB.icon} alt={tokenB.ticker} />
             </Box>
-            <Typography className={classes.tickerContainer}>
-              {truncateString(tokenA.ticker, 4)} - {truncateString(tokenB.ticker, 4)}
-            </Typography>
-            <TooltipHover
-              title={
-                isPromoted ? 'This pool distributes points' : "This pool doesn't distribute points"
-              }>
+            <Box className={classes.tickersContainer}>
+              <Typography className={classes.tickerContainer} component={ReactFitty} maxSize={24}>
+                {tokenA.ticker} - {tokenB.ticker}
+              </Typography>
+            </Box>
+            <TooltipHover title={tooltipText}>
               <img
                 className={cx(classes.airdropIcon, {
-                  [classes.airdropIconInActive]: !isPromoted
+                  [classes.airdropIconInActive]: !(isPromoted && isActive && !isLocked)
                 })}
                 src={airdropRainbowIcon}
                 alt='Points'
@@ -218,8 +293,7 @@ export const PositionHeader = ({
                   </>
                 )
               }
-              placement='top'
-              increasePadding>
+              placement='top'>
               <Box
                 className={cx(classes.feeContainer, {
                   [classes.feeContainerIsActive]: isActive
@@ -241,7 +315,7 @@ export const PositionHeader = ({
             )}
           </Box>
         </Box>
-        {(isSmDown || isMdUp) && (
+        {(isSmDown || !isMdDown) && (
           <Box className={classes.lowerContainer}>
             {!isMdDown ? (
               <>

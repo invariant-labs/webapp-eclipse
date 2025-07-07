@@ -1,7 +1,8 @@
-import { Grid, Typography } from '@mui/material'
+import { Box, Grid, Typography } from '@mui/material'
 import useStyles from './styles'
 import GradientBorder from '@common/GradientBorder/GradientBorder'
 import { airdropRainbowIcon, checkIcon, newTabIcon } from '@static/icons'
+import React from 'react'
 interface task {
   footerDescription: string
   description: React.ReactNode | string
@@ -30,7 +31,7 @@ export const ExposureTooltipTitle: React.FC<ExposureTooltipTitleProps> = ({
     <Grid className={classes.tooltipWrapper}>
       {tasks.map((task, index) => {
         return (
-          <>
+          <React.Fragment key={index}>
             <Grid className={classes.header}>
               <img height={50} src={img} alt='project logo' />
               <Grid className={classes.title}>
@@ -61,7 +62,7 @@ export const ExposureTooltipTitle: React.FC<ExposureTooltipTitleProps> = ({
                 </Grid>
               </Grid>
             </Grid>
-            <Typography className={classes.description}>{task.description}</Typography>
+            <Box className={classes.description}>{task.description}</Box>
             <Grid width='fit-content'>
               <GradientBorder borderWidth={1} borderRadius={8}>
                 <Grid className={classes.footer}>
@@ -72,7 +73,7 @@ export const ExposureTooltipTitle: React.FC<ExposureTooltipTitleProps> = ({
             </Grid>
 
             {tasks.length > 1 && index < tasks.length - 1 && <Grid className={classes.separator} />}
-          </>
+          </React.Fragment>
         )
       })}
     </Grid>

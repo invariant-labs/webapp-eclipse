@@ -1,8 +1,7 @@
 import RangeInput from '@components/Inputs/RangeInput/RangeInput'
 import SimpleInput from '@components/Inputs/SimpleInput/SimpleInput'
-import { Button, Grid, Typography } from '@mui/material'
+import { Box, Button, Grid, Typography } from '@mui/material'
 import {
-  calcPriceBySqrtPrice,
   calcPriceByTickIndex,
   calculateConcentration,
   calculateConcentrationRange,
@@ -11,6 +10,7 @@ import {
   formatNumberWithSuffix,
   getConcentrationIndex,
   nearestTickIndex,
+  printBN,
   toMaxNumericPlaces,
   trimZeros,
   validConcentrationMidPriceTick
@@ -19,9 +19,14 @@ import React, { useEffect, useMemo, useState } from 'react'
 import useStyles from './style'
 import { PositionOpeningMethod } from '@store/consts/types'
 import ConcentrationSlider from '../ConcentrationSlider/ConcentrationSlider'
-import { MINIMAL_POOL_INIT_PRICE } from '@store/consts/static'
+import { ALL_FEE_TIERS_DATA, MINIMAL_POOL_INIT_PRICE } from '@store/consts/static'
 import AnimatedNumber from '@common/AnimatedNumber/AnimatedNumber'
-import { calculateTickDelta, getMaxTick, getMinTick } from '@invariant-labs/sdk-eclipse/lib/utils'
+import {
+  calculateTickDelta,
+  DECIMAL,
+  getMaxTick,
+  getMinTick
+} from '@invariant-labs/sdk-eclipse/lib/utils'
 import { BN } from '@coral-xyz/anchor'
 import { priceToTickInRange } from '@invariant-labs/sdk-eclipse/src/tick'
 import { boostPointsIcon } from '@static/icons'
@@ -46,8 +51,10 @@ export interface IPoolInit {
   concentrationArray: number[]
   minimumSliderIndex: number
   currentFeeIndex: number
+  suggestedPrice: number
   wasRefreshed: boolean
   setWasRefreshed: (wasRefreshed: boolean) => void
+  bestFeeIndex: number
 }
 
 export const PoolInit: React.FC<IPoolInit> = ({
@@ -61,7 +68,6 @@ export const PoolInit: React.FC<IPoolInit> = ({
   yDecimal,
   tickSpacing,
   midPriceIndex,
-  midPriceSqrtPrice,
   onChangeMidPrice,
   currentPairReversed,
   positionOpeningMethod,
@@ -70,8 +76,10 @@ export const PoolInit: React.FC<IPoolInit> = ({
   concentrationArray,
   minimumSliderIndex,
   currentFeeIndex,
+  suggestedPrice,
   wasRefreshed,
-  setWasRefreshed
+  setWasRefreshed,
+  bestFeeIndex
 }) => {
   const minTick = getMinTick(tickSpacing)
   const maxTick = getMaxTick(tickSpacing)
@@ -90,37 +98,6 @@ export const PoolInit: React.FC<IPoolInit> = ({
 
   const [leftInputRounded, setLeftInputRounded] = useState((+leftInput).toFixed(12))
   const [rightInputRounded, setRightInputRounded] = useState((+rightInput).toFixed(12))
-
-  const [midPriceInput, setMidPriceInput] = useState(
-    calcPriceBySqrtPrice(midPriceSqrtPrice, isXtoY, xDecimal, yDecimal).toFixed(8)
-  )
-
-  const handleUpdateConcentrationFromURL = (concentrationValue: number) => {
-    const mappedIndex = getConcentrationIndex(concentrationArray, concentrationValue)
-
-    const validIndex = Math.max(
-      minimumSliderIndex,
-      Math.min(mappedIndex, concentrationArray.length - 1)
-    )
-
-    setConcentrationIndex(validIndex)
-    const { leftRange, rightRange } = calculateConcentrationRange(
-      tickSpacing,
-      concentrationArray[validIndex],
-      2,
-      midPriceIndex,
-      isXtoY
-    )
-
-    changeRangeHandler(leftRange, rightRange)
-  }
-
-  useEffect(() => {
-    if (tokenASymbol !== 'ABC' && tokenBSymbol !== 'XYZ') {
-      const concentrationValue = +initialConcentration
-      handleUpdateConcentrationFromURL(concentrationValue)
-    }
-  }, [currentFeeIndex, tokenASymbol, tokenBSymbol])
 
   const validConcentrationMidPrice = (midPrice: string) => {
     const minTick = getMinTick(tickSpacing)
@@ -158,6 +135,68 @@ export const PoolInit: React.FC<IPoolInit> = ({
 
     return Number(midPrice)
   }
+
+  const validateMidPriceInput = (midPriceInput: string) => {
+    if (positionOpeningMethod === 'concentration') {
+      const validatedMidPrice = validConcentrationMidPrice(midPriceInput)
+
+      const validatedPrice =
+        validatedMidPrice < MINIMAL_POOL_INIT_PRICE ? MINIMAL_POOL_INIT_PRICE : validatedMidPrice
+
+      return trimZeros(validatedPrice.toFixed(8))
+    } else {
+      const minPriceFromTick = isXtoY
+        ? calcPriceByTickIndex(minTick, isXtoY, xDecimal, yDecimal)
+        : calcPriceByTickIndex(maxTick, isXtoY, xDecimal, yDecimal)
+
+      const maxPriceFromTick = isXtoY
+        ? calcPriceByTickIndex(maxTick, isXtoY, xDecimal, yDecimal)
+        : calcPriceByTickIndex(minTick, isXtoY, xDecimal, yDecimal)
+
+      const minimalAllowedInput =
+        minPriceFromTick < MINIMAL_POOL_INIT_PRICE ? MINIMAL_POOL_INIT_PRICE : minPriceFromTick
+
+      const numericMidPriceInput = parseFloat(midPriceInput)
+
+      const validatedMidPrice = Math.min(
+        Math.max(numericMidPriceInput, minimalAllowedInput),
+        maxPriceFromTick
+      )
+
+      return trimZeros(validatedMidPrice.toFixed(8))
+    }
+  }
+
+  const [midPriceInput, setMidPriceInput] = useState(
+    validateMidPriceInput(suggestedPrice.toString() || '')
+  )
+
+  const handleUpdateConcentrationFromURL = (concentrationValue: number) => {
+    const mappedIndex = getConcentrationIndex(concentrationArray, concentrationValue)
+
+    const validIndex = Math.max(
+      minimumSliderIndex,
+      Math.min(mappedIndex, concentrationArray.length - 1)
+    )
+
+    setConcentrationIndex(validIndex)
+    const { leftRange, rightRange } = calculateConcentrationRange(
+      tickSpacing,
+      concentrationArray[validIndex],
+      2,
+      midPriceIndex,
+      isXtoY
+    )
+
+    changeRangeHandler(leftRange, rightRange)
+  }
+
+  useEffect(() => {
+    if (tokenASymbol !== 'ABC' && tokenBSymbol !== 'XYZ') {
+      const concentrationValue = +initialConcentration
+      handleUpdateConcentrationFromURL(concentrationValue)
+    }
+  }, [currentFeeIndex, tokenASymbol, tokenBSymbol])
 
   useEffect(() => {
     if (!wasRefreshed) {
@@ -255,37 +294,6 @@ export const PoolInit: React.FC<IPoolInit> = ({
     }
   }, [midPriceInput, concentrationArray, midPriceIndex])
 
-  const validateMidPriceInput = (midPriceInput: string) => {
-    if (positionOpeningMethod === 'concentration') {
-      const validatedMidPrice = validConcentrationMidPrice(midPriceInput)
-
-      const validatedPrice =
-        validatedMidPrice < MINIMAL_POOL_INIT_PRICE ? MINIMAL_POOL_INIT_PRICE : validatedMidPrice
-
-      return trimZeros(validatedPrice.toFixed(8))
-    } else {
-      const minPriceFromTick = isXtoY
-        ? calcPriceByTickIndex(minTick, isXtoY, xDecimal, yDecimal)
-        : calcPriceByTickIndex(maxTick, isXtoY, xDecimal, yDecimal)
-
-      const maxPriceFromTick = isXtoY
-        ? calcPriceByTickIndex(maxTick, isXtoY, xDecimal, yDecimal)
-        : calcPriceByTickIndex(minTick, isXtoY, xDecimal, yDecimal)
-
-      const minimalAllowedInput =
-        minPriceFromTick < MINIMAL_POOL_INIT_PRICE ? MINIMAL_POOL_INIT_PRICE : minPriceFromTick
-
-      const numericMidPriceInput = parseFloat(midPriceInput)
-
-      const validatedMidPrice = Math.min(
-        Math.max(numericMidPriceInput, minimalAllowedInput),
-        maxPriceFromTick
-      )
-
-      return trimZeros(validatedMidPrice.toFixed(8))
-    }
-  }
-
   useEffect(() => {
     if (currentPairReversed !== null) {
       const validatedMidPrice = validateMidPriceInput((1 / +midPriceInput).toString())
@@ -319,8 +327,8 @@ export const PoolInit: React.FC<IPoolInit> = ({
         <Typography className={classes.header}>Starting price</Typography>
         <Grid className={classes.infoWrapper}>
           <Typography className={classes.info}>
-            This pool does not exist yet. To create it, select the fee tier, initial price, and
-            enter the amount of tokens. The estimated cost of creating a pool is ~0.001 ETH.
+            This pool has not been created yet. To set it up, choose a fee tier, define the initial
+            price, and enter the token amounts. Creating the pool is estimated to cost ~0.001 ETH
           </Typography>
         </Grid>
 
@@ -333,6 +341,44 @@ export const PoolInit: React.FC<IPoolInit> = ({
           onBlur={e => {
             setMidPriceInput(validateMidPriceInput(e.target.value || '0'))
           }}
+          formatterFunction={validateMidPriceInput}
+          suggestedPrice={suggestedPrice}
+          tooltipTitle={
+            bestFeeIndex !== -1 && suggestedPrice ? (
+              <Box className={classes.tooltipContainer}>
+                <span className={classes.suggestedPriceTooltipText}>
+                  {midPriceInput?.toString() ===
+                  validateMidPriceInput(suggestedPrice.toString()) ? (
+                    <p>
+                      Initial pool price applied based on the price from the most liquid existing
+                      market,{' '}
+                      <span className={classes.boldedText}>
+                        {tokenASymbol}/{tokenBSymbol}{' '}
+                        {Number(
+                          printBN(ALL_FEE_TIERS_DATA[bestFeeIndex].tier.fee, DECIMAL - 2)
+                        ).toFixed(2)}
+                        %{' '}
+                      </span>
+                    </p>
+                  ) : (
+                    <p>
+                      Set the initial pool price based on the price from the most liquid existing
+                      market,{' '}
+                      <span className={classes.boldedText}>
+                        {tokenASymbol}/{tokenBSymbol}{' '}
+                        {Number(
+                          printBN(ALL_FEE_TIERS_DATA[bestFeeIndex].tier.fee, DECIMAL - 2)
+                        ).toFixed(2)}
+                        %{' '}
+                      </span>
+                    </p>
+                  )}
+                </span>
+              </Box>
+            ) : (
+              ''
+            )
+          }
         />
 
         <Grid className={classes.priceWrapper} container>

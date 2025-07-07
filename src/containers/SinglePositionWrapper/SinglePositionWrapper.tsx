@@ -20,8 +20,10 @@ import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
 import { network, timeoutError } from '@store/selectors/solanaConnection'
 import {
   isLoadingPositionsList,
+  lockedPositionsNavigationData,
   plotTicks,
   positionData,
+  positionsNavigationData,
   positionWithPoolData,
   shouldDisable,
   singlePositionData,
@@ -31,7 +33,7 @@ import { balance, status } from '@store/selectors/solanaWallet'
 import { VariantType } from 'notistack'
 import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import useStyles from './style'
 import { TokenPriceData } from '@store/consts/types'
 import { getX, getY } from '@invariant-labs/sdk-eclipse/lib/math'
@@ -40,13 +42,14 @@ import { calculateClaimAmount } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { lockerState } from '@store/selectors/locker'
 import { theme } from '@static/theme'
 import { actions as statsActions } from '@store/reducers/stats'
-import { isLoading, poolsStatsWithTokensDetails } from '@store/selectors/stats'
+import { isLoading, lastInterval, poolsStatsWithTokensDetails } from '@store/selectors/stats'
 import { getPromotedPools, isLoading as promotedLoading } from '@store/selectors/leaderboard'
 import { actions as leaderboardActions } from '@store/reducers/leaderboard'
-import { estimatePointsForUserPositions } from '@invariant-labs/points-sdk'
 import { BN } from '@coral-xyz/anchor'
-import { LEADERBOARD_DECIMAL } from '@store/consts/static'
+import { Intervals, LEADERBOARD_DECIMAL } from '@store/consts/static'
 import { poolsArraySortedByFees } from '@store/selectors/pools'
+import { estimatePointsForUserPositions } from '@invariant-labs/points-sdk'
+import { address } from '@store/selectors/navigation'
 
 export interface IProps {
   id: string
@@ -65,7 +68,8 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
 
   const dispatch = useDispatch()
   const navigate = useNavigate()
-
+  const location = useLocation()
+  const locationHistory = useSelector(address)
   const isFeesLoading = useSelector(storeFeesLoader)
   const currentNetwork = useSelector(network)
   const singlePosition = useSelector(singlePositionData(id))
@@ -90,6 +94,9 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   const walletStatus = useSelector(status)
   const ethBalance = useSelector(balance)
 
+  const navigationData = useSelector(positionsNavigationData)
+  const lockedNavigationData = useSelector(lockedPositionsNavigationData)
+  const poolStatsInterval = useSelector(lastInterval)
   const isTimeoutError = useSelector(timeoutError)
 
   const [showFeesLoader, setShowFeesLoader] = useState(true)
@@ -100,6 +107,67 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   const [isClosingPosition, setIsClosingPosition] = useState(false)
 
   const isLoadingStats = useSelector(isLoading)
+
+  const previousPosition = useMemo(() => {
+    const data = position?.isLocked ? lockedNavigationData : navigationData
+
+    if (data.length < 2) {
+      return null
+    }
+
+    const currentIndex = data.findIndex(position => position.id.toString() === id)
+
+    if (currentIndex === -1) {
+      return null
+    }
+
+    return data[currentIndex - 1] ?? null
+  }, [position?.isLocked, lockedNavigationData, navigationData, id])
+
+  const nextPosition = useMemo(() => {
+    const data = position?.isLocked ? lockedNavigationData : navigationData
+
+    if (data.length < 2) {
+      return null
+    }
+
+    const currentIndex = data.findIndex(position => position.id.toString() === id)
+
+    if (currentIndex === -1) {
+      return null
+    }
+
+    return data[currentIndex + 1] ?? null
+  }, [position?.isLocked, lockedNavigationData, navigationData, id])
+
+  const lastPosition = useMemo(() => {
+    const data = position?.isLocked ? lockedNavigationData : navigationData
+
+    if (data.length < 2) {
+      return null
+    }
+
+    return data[data.length - 1]
+  }, [position?.isLocked, lockedNavigationData, navigationData, id])
+
+  const paginationData = useMemo(() => {
+    const data = position?.isLocked ? lockedNavigationData : navigationData
+
+    const currentIndex = data.findIndex(position => position.id.toString() === id)
+    return {
+      totalPages: data.length,
+      currentPage: currentIndex + 1
+    }
+  }, [position?.isLocked, lockedNavigationData, navigationData])
+
+  const handleChangePagination = (currentIndex: number) => {
+    const data = position?.isLocked ? lockedNavigationData : navigationData
+    const targetIdx = currentIndex - 1
+    if (targetIdx < 0 || targetIdx >= data.length) return
+
+    const navigateToData = data[targetIdx]
+    navigate(ROUTES.getPositionRoute(navigateToData.id))
+  }
 
   useEffect(() => {
     if (position?.id) {
@@ -187,7 +255,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
             position.tokenY.decimals
           )
         : 0,
-    [position?.lowerTickIndex]
+    [position?.lowerTickIndex, position?.id.toString()]
   )
   const max = useMemo(
     () =>
@@ -198,7 +266,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
             position.tokenY.decimals
           )
         : 0,
-    [position?.upperTickIndex]
+    [position?.upperTickIndex, position?.id.toString()]
   )
   const current = useMemo(
     () =>
@@ -210,7 +278,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
             position.tokenY.decimals
           )
         : 0,
-    [position]
+    [position, position?.id.toString()]
   )
 
   const tokenXLiquidity = useMemo(() => {
@@ -289,7 +357,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     }
 
     return ticksData
-  }, [ticksData, ticksLoading, position?.id])
+  }, [ticksData, ticksLoading, position?.id.toString()])
 
   const [triggerFetchPrice, setTriggerFetchPrice] = useState(false)
 
@@ -401,7 +469,14 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       if (position?.positionIndex === undefined && isClosingPosition) {
         setIsClosingPosition(false)
         dispatch(connectionActions.setTimeoutError(false))
-        navigate(ROUTES.PORTFOLIO)
+
+        if (nextPosition) {
+          navigate(ROUTES.getPositionRoute(nextPosition.id))
+        } else if (previousPosition) {
+          navigate(ROUTES.getPositionRoute(previousPosition.id))
+        } else {
+          navigate(ROUTES.PORTFOLIO)
+        }
       } else {
         dispatch(connectionActions.setTimeoutError(false))
         onRefresh()
@@ -410,7 +485,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   }, [isLoadingList])
 
   useEffect(() => {
-    dispatch(statsActions.getCurrentStats())
+    dispatch(statsActions.getCurrentIntervalStats({ interval: Intervals.Daily }))
   }, [])
 
   const poolDetails = useMemo(() => {
@@ -431,7 +506,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       apy: pool.apy,
       fee: pool.fee
     }
-  }, [poolsList])
+  }, [poolsList, position])
 
   useEffect(() => {
     dispatch(leaderboardActions.getLeaderboardConfig())
@@ -452,13 +527,26 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       pool => pool.address === position?.poolData.address.toString()
     )?.pointsPerSecond
 
-    return estimatePointsForUserPositions(
-      [position],
-      position.poolData,
-      new BN(pointsPerSecond, 'hex').mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL)))
+    try {
+      return estimatePointsForUserPositions(
+        [position],
+        position.poolData,
+        new BN(pointsPerSecond, 'hex').mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL)))
+      )
+    } catch {
+      return 0
+    }
+  }
+  const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
+
+  const points24 = calculatePoints24()
+  const handleBack = (isConnected: boolean) => {
+    const path = locationHistory === ROUTES.ROOT ? ROUTES.PORTFOLIO : locationHistory
+    const isNavigatingFromNewPosition = path === location.pathname
+    navigate(
+      isConnected ? (isNavigatingFromNewPosition ? ROUTES.PORTFOLIO : path) : ROUTES.LIQUIDITY
     )
   }
-  const points24 = calculatePoints24()
 
   if (position) {
     return (
@@ -467,6 +555,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         tokenXAddress={position.tokenX.assetAddress}
         tokenYAddress={position.tokenY.assetAddress}
         poolAddress={position.poolData.address}
+        interval={poolStatsInterval || Intervals.Daily}
         copyPoolAddressHandler={copyPoolAddressHandler}
         detailsData={data}
         midPrice={midPrice}
@@ -492,7 +581,13 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
             actions.closePosition({
               positionIndex: position.positionIndex,
               onSuccess: () => {
-                navigate(ROUTES.PORTFOLIO)
+                if (lastPosition && nextPosition) {
+                  navigate(ROUTES.getPositionRoute(lastPosition.id), { replace: true })
+                } else if (previousPosition) {
+                  navigate(ROUTES.getPositionRoute(previousPosition.id), { replace: true })
+                } else {
+                  navigate(ROUTES.PORTFOLIO)
+                }
               },
               claimFarmRewards
             })
@@ -546,7 +641,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         inProgress={inProgress}
         ethBalance={ethBalance}
         poolDetails={poolDetails}
-        onGoBackClick={() => navigate(ROUTES.PORTFOLIO)}
+        onGoBackClick={() => handleBack(isConnected)}
         showPoolDetailsLoader={isLoadingStats}
         isPromoted={isPromoted}
         points24={points24}
@@ -554,6 +649,11 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         showPositionLoader={position.ticksLoading}
         isPromotedLoading={isPromotedLoading}
         pricesLoading={pricesLoading}
+        previousPosition={previousPosition}
+        nextPosition={nextPosition}
+        positionId={id}
+        paginationData={paginationData}
+        handleChangePagination={handleChangePagination}
       />
     )
   }
@@ -579,10 +679,8 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
           themeDark
           style={isMobile ? { paddingTop: 8 } : {}}
           roundedCorners={true}
-          mainTitle='Wallet is not connected
-'
-          desc='No liquidity positions to show
-'
+          mainTitle='Wallet is not connected'
+          desc='No liquidity positions to show'
           withButton={false}
           connectButton={true}
           onAction2={() => dispatch(walletActions.connect(false))}

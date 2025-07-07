@@ -2,7 +2,7 @@ import { BN } from '@coral-xyz/anchor'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { PublicKey } from '@solana/web3.js'
 import { PayloadType } from '@store/consts/types'
-import { DEFAULT_PUBLICKEY } from '@store/consts/static'
+import { DEFAULT_PUBLICKEY, OverviewSwitcher } from '@store/consts/static'
 
 export enum Status {
   Uninitialized = 'uninitialized',
@@ -40,6 +40,7 @@ export interface ISolanaWallet {
   tokenBalanceLoading: boolean
   unkownTokenBalanceLoading: boolean
   thankYouModalShown: boolean
+  overviewSwitch: OverviewSwitcher
 }
 
 export const defaultState: ISolanaWallet = {
@@ -50,7 +51,8 @@ export const defaultState: ISolanaWallet = {
   ethBalanceLoading: false,
   tokenBalanceLoading: false,
   unkownTokenBalanceLoading: false,
-  thankYouModalShown: false
+  thankYouModalShown: false,
+  overviewSwitch: OverviewSwitcher.Overview
 }
 
 export const solanaWalletSliceName = 'solanaWallet'
@@ -115,13 +117,17 @@ const solanaWalletSlice = createSlice({
       state.tokenBalanceLoading = action.payload
       return state
     },
-    setIsUnkownBlanceLoading(state, action: PayloadAction<boolean>) {
+    setIsUnknownBlanceLoading(state, action: PayloadAction<boolean>) {
       state.unkownTokenBalanceLoading = action.payload
       return state
     },
     rescanTokens() {},
     airdrop() {},
     connect(state, _action: PayloadAction<boolean>) {
+      return state
+    },
+    setOverviewSwitch(state, action: PayloadAction<OverviewSwitcher>) {
+      state.overviewSwitch = action.payload
       return state
     },
     disconnect() {},

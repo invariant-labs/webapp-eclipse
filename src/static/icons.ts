@@ -66,6 +66,7 @@ import mainnetGlowIcon from './svg/mainnetGlow.svg'
 import testnetGlowIcon from './svg/testnetGlow.svg'
 import active2Icon from './svg/active2.svg'
 import solanaGlowIcon from './svg/solanaGlow.svg'
+import sonicGlowIcon from './svg/sonicGlow.svg'
 import eclipseGlowIcon from './svg/eclipseGlow.svg'
 import liquidityEmptyIcon from './svg/liqudity_empty.svg'
 import assetsEmptyIcon from './svg/assets_empty.svg'
@@ -82,26 +83,37 @@ import disconnectIcon from '@static/svg/disconnect.svg'
 import refreshIcon from '@static/svg/refresh.svg'
 import backIcon from '@static/svg/back-arrow.svg'
 import settingIcon from '@static/svg/settings.svg'
-import revertIcon from '@static/svg/revert.svg'
 import unlockIcon from '@static/svg/unlock.svg'
 import swapPositionIcon from '@static/svg/swap-position.svg'
 import handleMaxIcon from '@static/svg/narrowChartMaxHandle.svg'
 import handleMinIcon from '@static/svg/narrowChartMinHandle.svg'
 import zoomInIcon from '@static/svg/zoom-in-icon.svg'
 import zoomOutIcon from '@static/svg/zoom-out-icon.svg'
-import reverseTokensIcon from './svg/reverse-tokens.svg'
-import backArrowIcon from '@static/svg/back-arrow.svg'
 import lockIcon2 from '@static/svg/lock.svg'
 import boostPointsBoldIcon from '@static/svg/boostPointsBold.svg'
 import eyeYellowIcon from './svg/eyeYellow.svg'
 import closeYellowIcon from './svg/closeYellow.svg'
 import scrollArrowIcon from './svg/scrollArrow.svg'
 import snackbarSwapIcon from './svg/snackbarSwap.svg'
+import stakeIcon from './svg/stakeIcon.svg'
+import unstakeIcon from './svg/unstakeIcon.svg'
 import circleDolarIcon from './svg/circleDolar.svg'
 import depositIcon from './svg/depositIcon.svg'
 import withdrawIcon from './svg/withdrawIcon.svg'
+import centerToRangeIcon from './svg/centerToRange.svg'
+import warning3 from './svg/warning3.svg'
+import connectWalletIcon from './svg/connectWalletIcon.svg'
+import star from './svg/star.svg'
+import starFill from './svg/star-fill.svg'
+import swapArrowIcon from './svg/swapArrow.svg'
+import lqStakingIcon from './svg/lqStakingIcon.svg'
+import warningStroke from './svg/warningStroke.svg'
+import plusDisabled from './svg/plusDisabled.svg'
 
 export {
+  warningStroke,
+  plusDisabled,
+  lqStakingIcon,
   logoTitleIcon,
   logoShortIcon,
   arrowIcon,
@@ -169,6 +181,7 @@ export {
   testnetGlowIcon,
   active2Icon,
   solanaGlowIcon,
+  sonicGlowIcon,
   eclipseGlowIcon,
   liquidityEmptyIcon,
   assetsEmptyIcon,
@@ -186,29 +199,35 @@ export {
   refreshIcon,
   backIcon,
   settingIcon,
-  revertIcon,
   unlockIcon,
   swapPositionIcon,
   handleMaxIcon,
   handleMinIcon,
   zoomInIcon,
   zoomOutIcon,
-  reverseTokensIcon,
-  backArrowIcon,
   lockIcon2,
   boostPointsBoldIcon,
   eyeYellowIcon,
   scrollArrowIcon,
   goldenInfoIcon,
   snackbarSwapIcon,
+  stakeIcon,
+  unstakeIcon,
   circleDolarIcon,
   depositIcon,
-  withdrawIcon
+  withdrawIcon,
+  centerToRangeIcon,
+  warning3,
+  connectWalletIcon,
+  star,
+  starFill,
+  swapArrowIcon
 }
 
 export const chainIcons = {
   eclipseGlow: eclipseGlowIcon,
-  solanaGlow: solanaGlowIcon
+  solanaGlow: solanaGlowIcon,
+  sonicGlow: sonicGlowIcon
 }
 
 export const netowrkIcons = {

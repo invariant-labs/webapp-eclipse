@@ -18,13 +18,11 @@ import {
 } from '@mui/material'
 import { theme } from '@static/theme'
 import { NetworkType, OverviewSwitcher } from '@store/consts/static'
-import { ROUTES } from '@utils/utils'
+import { addressToTicker, initialXtoY, parseFeeToPathFee, ROUTES } from '@utils/utils'
 import { useEffect, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useStyles } from './style'
-
-import { SwapToken } from '@store/selectors/solanaWallet'
-import { useProcessedTokens } from '@store/hooks/userOverview/useProcessedToken'
+import { ProcessedToken } from '@store/hooks/userOverview/useProcessedToken'
 import { Overview } from './Overview/Overview/Overview'
 import { YourWallet } from './Overview/YourWallet/YourWallet'
 import { VariantType } from 'notistack'
@@ -35,6 +33,9 @@ import { PositionItemMobile } from './PositionItem/PositionMobileCard/PositionIt
 import { refreshIcon } from '@static/icons'
 import { PositionListSwitcher } from './PositionListSwitcher/PositionListSwitcher'
 import { LiquidityPools } from '@store/reducers/positions'
+import { unblurContent } from '@utils/uiUtils'
+import { useDispatch } from 'react-redux'
+import { actions } from '@store/reducers/navigation'
 
 interface IProps {
   initialPage: number
@@ -48,7 +49,6 @@ interface IProps {
   handleRefresh: () => void
   length: number
   lockedLength: number
-  noInitialPositions: boolean
   lockedData: IPositionItem[]
   currentNetwork: NetworkType
   handleLockPosition: (index: number) => void
@@ -56,14 +56,21 @@ interface IProps {
   handleClaimFee: (index: number, isLocked: boolean) => void
   handleSnackbar: (message: string, variant: VariantType) => void
   isBalanceLoading: boolean
-  tokensList: SwapToken[]
   shouldDisable: boolean
   positionListAlignment: LiquidityPools
   setPositionListAlignment: (val: LiquidityPools) => void
+  overviewSelectedTab: OverviewSwitcher
+  handleOverviewSwitch: (panel: OverviewSwitcher) => void
+  setSelectedFilters: (token: ISearchToken[]) => void
+  selectedFilters: ISearchToken[]
+  isProcesing: boolean
+  processedTokens: ProcessedToken[]
 }
 
 const Portfolio: React.FC<IProps> = ({
   isBalanceLoading,
+  setSelectedFilters,
+  selectedFilters,
   shouldDisable,
   handleSnackbar,
   data,
@@ -72,30 +79,28 @@ const Portfolio: React.FC<IProps> = ({
   showNoConnected = false,
   noConnectedBlockerProps,
   handleRefresh,
-  noInitialPositions,
   lockedData,
   currentNetwork,
   handleLockPosition,
   handleClosePosition,
   handleClaimFee,
-  tokensList,
   lockedLength,
   positionListAlignment,
-  setPositionListAlignment
+  setPositionListAlignment,
+  overviewSelectedTab,
+  handleOverviewSwitch,
+  isProcesing,
+  processedTokens
 }) => {
   const { classes, cx } = useStyles()
 
   const navigate = useNavigate()
-  const [selectedFilters, setSelectedFilters] = useState<ISearchToken[]>([])
+  const dispatch = useDispatch()
+  const location = useLocation()
   const isLg = useMediaQuery('@media (max-width: 1360px)')
   const isDownLg = useMediaQuery(theme.breakpoints.down('lg'))
   const isMb = useMediaQuery(theme.breakpoints.down('sm'))
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
-  const { processedTokens, isProcesing } = useProcessedTokens(
-    tokensList,
-    isBalanceLoading,
-    currentNetwork
-  )
 
   const setLiquidityPoolsAlignment = (val: LiquidityPools) => {
     setAlignment(val)
@@ -111,15 +116,14 @@ const Portfolio: React.FC<IProps> = ({
     }
   }, [lockedLength, loading])
 
-  const [activePanel, setActivePanel] = useState<OverviewSwitcher>(OverviewSwitcher.Overview)
+  const handleToggleChange = (
+    _event: React.MouseEvent<HTMLElement>,
+    newValue: OverviewSwitcher
+  ) => {
+    if (newValue === null) return
+    handleOverviewSwitch(newValue)
+  }
 
-  const handleToggleChange =
-    <T,>(setter: React.Dispatch<React.SetStateAction<T>>) =>
-    (_: React.MouseEvent<HTMLElement>, newValue: T | null) => {
-      if (newValue !== null) {
-        setter(newValue)
-      }
-    }
   const initialHideUnknownTokensValue =
     localStorage.getItem('HIDE_UNKNOWN_TOKENS') === 'true' ||
     localStorage.getItem('HIDE_UNKNOWN_TOKENS') === null
@@ -193,12 +197,13 @@ const Portfolio: React.FC<IProps> = ({
   )
 
   const hidePlus = useMediaQuery(theme.breakpoints.down(350))
-  const currentData = useMemo(() => {
+
+  const { currentData, noInitialPositions } = useMemo(() => {
     if (alignment === LiquidityPools.Standard) {
-      return data
+      return { currentData: data, noInitialPositions: length === 0 }
     }
-    return lockedData
-  }, [alignment, data, lockedData])
+    return { currentData: lockedData, noInitialPositions: lockedLength === 0 }
+  }, [alignment, data, lockedData, length, lockedLength])
 
   const filteredData = useMemo(() => {
     if (selectedFilters.length === 0) return currentData
@@ -225,6 +230,24 @@ const Portfolio: React.FC<IProps> = ({
     })
   }, [currentData, selectedFilters])
 
+  const createNewPosition = (element: IPositionItem) => {
+    const address1 = addressToTicker(currentNetwork, element.tokenXName)
+    const address2 = addressToTicker(currentNetwork, element.poolData.tokenY.toString())
+    const parsedFee = parseFeeToPathFee(element.poolData.fee)
+    const isXtoY = initialXtoY(
+      element.poolData.tokenX.toString(),
+      element.poolData.tokenY.toString()
+    )
+
+    const tokenA = isXtoY ? address1 : address2
+    const tokenB = isXtoY ? address2 : address1
+
+    unblurContent()
+
+    dispatch(actions.setNavigation({ address: location.pathname }))
+    navigate(ROUTES.getNewPositionRoute(tokenA, tokenB, parsedFee))
+  }
+
   const [allowPropagation, setAllowPropagation] = useState(true)
   const renderContent = () => {
     if (showNoConnected) {
@@ -242,6 +265,7 @@ const Portfolio: React.FC<IProps> = ({
           handleLockPosition={handleLockPosition}
           handleClosePosition={handleClosePosition}
           handleClaimFee={handleClaimFee}
+          createNewPosition={createNewPosition}
         />
       )
     } else if (isLg && loading) {
@@ -269,6 +293,7 @@ const Portfolio: React.FC<IProps> = ({
       <Grid
         onClick={() => {
           if (allowPropagation) {
+            dispatch(actions.setNavigation({ address: location.pathname }))
             navigate(ROUTES.getPositionRoute(element.id))
           }
         }}
@@ -282,6 +307,9 @@ const Portfolio: React.FC<IProps> = ({
           handleLockPosition={handleLockPosition}
           handleClosePosition={handleClosePosition}
           handleClaimFee={handleClaimFee}
+          createNewPosition={() => {
+            createNewPosition(element)
+          }}
         />
       </Grid>
     ))
@@ -291,7 +319,7 @@ const Portfolio: React.FC<IProps> = ({
     <>
       <Box className={classes.overviewContainer}>
         <Box>
-          <Grid display={'flex'} marginBottom={isDownLg ? '12px' : '20px'}>
+          <Grid display={'flex'} marginBottom={isDownLg ? '12px' : '16px'}>
             <Typography className={classes.overviewHeaderTitle}>Overview</Typography>
           </Grid>
         </Box>
@@ -342,19 +370,21 @@ const Portfolio: React.FC<IProps> = ({
                 <Box
                   className={classes.switchPoolsMarker}
                   sx={{
-                    left: activePanel === OverviewSwitcher.Overview ? 0 : '50%'
+                    left: overviewSelectedTab === OverviewSwitcher.Overview ? 0 : '50%'
                   }}
                 />
                 <ToggleButtonGroup
-                  value={activePanel}
+                  value={overviewSelectedTab}
                   exclusive
-                  onChange={handleToggleChange(setActivePanel)}
+                  onChange={handleToggleChange}
                   className={classes.switchPoolsButtonsGroupOverview}>
                   <ToggleButton
                     value={OverviewSwitcher.Overview}
                     disableRipple
                     className={classes.switchPoolsButtonOverview}
-                    style={{ fontWeight: activePanel === OverviewSwitcher.Overview ? 700 : 400 }}>
+                    style={{
+                      fontWeight: overviewSelectedTab === OverviewSwitcher.Overview ? 700 : 400
+                    }}>
                     Liquidity
                   </ToggleButton>
                   <ToggleButton
@@ -362,7 +392,9 @@ const Portfolio: React.FC<IProps> = ({
                     disableRipple
                     className={classes.switchPoolsButtonOverview}
                     classes={{ disabled: classes.disabledSwitchButton }}
-                    style={{ fontWeight: activePanel === OverviewSwitcher.Wallet ? 700 : 400 }}>
+                    style={{
+                      fontWeight: overviewSelectedTab === OverviewSwitcher.Wallet ? 700 : 400
+                    }}>
                     Your Wallet
                   </ToggleButton>
                 </ToggleButtonGroup>
@@ -370,7 +402,7 @@ const Portfolio: React.FC<IProps> = ({
             </Grid>
 
             <Box>
-              {activePanel === OverviewSwitcher.Overview && (
+              {overviewSelectedTab === OverviewSwitcher.Overview && (
                 <>
                   <Overview poolAssets={data} />
                   <Box className={classes.footer}>
@@ -378,7 +410,7 @@ const Portfolio: React.FC<IProps> = ({
                   </Box>
                 </>
               )}
-              {activePanel === OverviewSwitcher.Wallet && (
+              {overviewSelectedTab === OverviewSwitcher.Wallet && (
                 <>
                   <YourWallet
                     handleSnackbar={handleSnackbar}
@@ -500,7 +532,7 @@ const Portfolio: React.FC<IProps> = ({
                     </Grid>
                   </TooltipHover>
                   <Button scheme='pink' onClick={onAddPositionClick}>
-                    <span className={classes.buttonText}>+ Add Position</span>
+                    <span className={classes.buttonText}>+ Add position</span>
                   </Button>
                 </Grid>
               </Grid>
@@ -538,7 +570,7 @@ const Portfolio: React.FC<IProps> = ({
                       </TooltipHover>
                     </Grid>
                     <Button scheme='pink' onClick={onAddPositionClick}>
-                      <span className={classes.buttonText}>{!hidePlus && '+ '}Add Position</span>
+                      <span className={classes.buttonText}>{!hidePlus && '+ '}Add position</span>
                     </Button>
                   </Grid>
                 </Grid>

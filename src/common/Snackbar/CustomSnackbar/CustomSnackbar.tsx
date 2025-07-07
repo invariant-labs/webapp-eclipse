@@ -2,7 +2,6 @@ import React, { useCallback, useMemo } from 'react'
 import { CustomContentProps, useSnackbar } from 'notistack'
 import { useDispatch } from 'react-redux'
 import { Grid } from '@mui/material'
-
 import { actions } from '@store/reducers/snackbars'
 import { NetworkType } from '@store/consts/static'
 import { colors } from '@static/theme'
@@ -53,8 +52,7 @@ const CustomSnackbar = React.forwardRef<HTMLDivElement, CustomContentProps & Cus
       className,
       tokensDetails,
       style,
-      id,
-      ...rest
+      id
     } = props
 
     const domId = id !== undefined ? String(id) : undefined
@@ -154,13 +152,7 @@ const CustomSnackbar = React.forwardRef<HTMLDivElement, CustomContentProps & Cus
       )
 
     return (
-      <StyledSnackbarContent
-        ref={ref}
-        role='alert'
-        id={domId}
-        style={style}
-        className={className}
-        {...rest}>
+      <StyledSnackbarContent ref={ref} role='alert' id={domId} style={style} className={className}>
         <StyledBackground borderColor={borderColor} />
         <StyledHideContainer>
           <Content />

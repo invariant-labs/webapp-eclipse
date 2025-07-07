@@ -6,7 +6,7 @@ import SegmentFragmentTooltip from '../SegmentFragmentTooltip/SegmentFragmentToo
 import { useStyles } from './styles'
 import MobileOverviewSkeleton from '../Overview/skeletons/MobileOverviewSkeleton'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
-import { warning2Icon } from '@static/icons'
+import { warning2Icon, warningIcon } from '@static/icons'
 export interface ChartSegment {
   start: number
   width: number
@@ -16,6 +16,7 @@ export interface ChartSegment {
   logo: string | undefined
   percentage: string
   isPriceWarning: boolean
+  isUnknown: boolean
 }
 
 interface MobileOverviewProps {
@@ -56,6 +57,7 @@ const MobileOverview: React.FC<MobileOverviewProps> = ({
         value: position.value || 0,
         logo: position.logo,
         percentage: percentage.toFixed(2),
+        isUnknown: position.isUnknown ?? false,
         isPriceWarning: position.isPriceWarning
       }
       currentPosition += percentage
@@ -88,8 +90,13 @@ const MobileOverview: React.FC<MobileOverviewProps> = ({
               <Grid className={classes.tokenGrid}>
                 {segments.map(segment => (
                   <Grid item container key={segment.token} className={classes.tokenGridItem}>
-                    <Grid xs={4} className={classes.tokenLogoContainer}>
-                      <img src={segment.logo} alt={'Token logo'} className={classes.tokenLogo} />
+                    <Grid item xs={4} className={classes.tokenLogoContainer}>
+                      <Grid display='flex' position='relative'>
+                        <img src={segment.logo} alt={'Token logo'} className={classes.tokenLogo} />
+                        {segment.isUnknown && (
+                          <img className={classes.warningIcon} src={warningIcon} />
+                        )}
+                      </Grid>
                       <Typography className={classes.tokenSymbol} sx={{ color: segment.color }}>
                         {segment.token}:
                       </Typography>

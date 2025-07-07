@@ -4,7 +4,7 @@ import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()((theme: Theme) => ({
   wrapper: {
-    maxWidth: 1072,
+    maxWidth: 1210,
     minHeight: '100%',
     flexDirection: 'column'
   },
@@ -15,42 +15,17 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
   subheader: {
     ...typography.heading4,
-    color: colors.white.main,
-    marginBottom: 24
-  },
-  plotsRow: {
-    flexWrap: 'nowrap',
-    marginBottom: 24,
-    flexDirection: 'row',
-
-    [theme.breakpoints.down('sm')]: {
-      flexDirection: 'column'
-    }
+    color: colors.white.main
   },
   row: {
-    marginBottom: 16
+    marginBottom: 72
   },
   loading: {
     width: 150,
     height: 150,
     margin: 'auto'
   },
-  plot: {
-    width: 524,
 
-    '&:first-child': {
-      marginRight: 24
-    },
-
-    [theme.breakpoints.down('sm')]: {
-      width: '100%',
-
-      '&:first-child': {
-        marginRight: 0,
-        marginBottom: 24
-      }
-    }
-  },
   searchBar: {
     width: 221,
     height: 32,
@@ -77,6 +52,49 @@ export const useStyles = makeStyles()((theme: Theme) => ({
       flexDirection: 'column',
       alignItems: 'flex-start'
     }
+  },
+
+  headerContainer: {
+    display: 'flex',
+    gap: 14,
+
+    [theme.breakpoints.down('sm')]: {
+      width: '100%'
+    }
+  },
+
+  showFavouritesButton: {
+    height: 40,
+    background: colors.invariant.component,
+    padding: '6px 8px',
+    borderRadius: 9,
+    display: 'flex',
+    alignItems: 'center',
+    gap: 8,
+    textTransform: 'none',
+    width: 155,
+    textAlign: 'right',
+
+    '&:hover': {
+      background: colors.invariant.componentDark,
+      boxShadow: 'none'
+    },
+
+    '& .MuiTouchRipple-root .MuiTouchRipple-child': {
+      backgroundColor: colors.invariant.lightGrey
+    },
+
+    [theme.breakpoints.down('md')]: {
+      minWidth: 40,
+      width: 40
+    }
+  },
+
+  showFavouritesText: {
+    ...typography.body2,
+    color: colors.invariant.textGrey,
+    marginTop: 2,
+    width: 108
   }
 }))
 

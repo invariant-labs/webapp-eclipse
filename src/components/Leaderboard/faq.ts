@@ -47,10 +47,12 @@ export const faqData = [
       Pools currently distributing points: <br></br>
        <ul>
        <li><span style="color: #2EE09A; font-weight: bold;">ETH/USDC</span> (<b>0.09%</b> fee tier)</li>
+        <li><span style="color: #2EE09A; font-weight: bold;">sBITZ/ETH</span> (<b>1%</b> fee tier)</li>
          <li><span style="color: #2EE09A; font-weight: bold;">BITZ/ETH</span> (<b>1%</b> fee tier)</li>
          <li><span style="color: #2EE09A; font-weight: bold;">SOL/ETH</span> (<b>0.09%</b> fee tier)</li>
          <li><span style="color: #2EE09A; font-weight: bold;">tETH/ETH</span> (<b>0.01%</b> fee tier)</li>
          <li><span style="color: #2EE09A; font-weight: bold;">SOL/USDC</span> (<b>0.09%</b> fee tier)</li>
+         <li><span style="color: #2EE09A; font-weight: bold;">tUSD/USDC</span> (<b>0.01%</b> fee tier)</li>
 
        </ul>
       <br></br>

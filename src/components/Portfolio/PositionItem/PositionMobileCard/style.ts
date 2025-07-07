@@ -23,6 +23,17 @@ export const useMobileStyles = makeStyles()((theme: Theme) => ({
     },
     transition: '300ms'
   },
+  warningIcon: {
+    position: 'absolute',
+    width: 16,
+    bottom: -3,
+    right: -6,
+    [theme.breakpoints.down('sm')]: {
+      width: 12,
+      bottom: -1,
+      right: -5
+    }
+  },
   actionButton: {
     display: 'flex',
     justifyContent: 'center',
@@ -93,15 +104,17 @@ export const useMobileStyles = makeStyles()((theme: Theme) => ({
     },
     transition: '300ms'
   },
+  tickersContainer: {
+    flex: 1,
+    display: 'flex',
+    alignItems: 'center'
+  },
   names: {
-    textOverflow: 'ellipsis',
-    overflow: 'hidden',
     ...typography.heading2,
     color: colors.invariant.text,
     lineHeight: '40px',
     textAlign: 'left',
     whiteSpace: 'nowrap',
-    width: 180,
     [theme.breakpoints.down('xl')]: {
       ...typography.heading2
     },

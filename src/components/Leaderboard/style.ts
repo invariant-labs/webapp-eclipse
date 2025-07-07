@@ -22,14 +22,19 @@ const useStyles = makeStyles()((theme: Theme) => {
       }
     },
     leaderboardHeaderSectionTitle: {
-      ...typography.heading3,
-      color: colors.white.main
+      textAlign: 'left',
+      width: '100%',
+      ...typography.heading4,
+      color: colors.white.main,
+      [theme.breakpoints.down('lg')]: {
+        maxWidth: 605
+      }
     },
     rewardedPoolsWrapper: {
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
-      gap: theme.spacing(3),
+      gap: theme.spacing(2),
       width: '100%'
     },
     leaderBoardWrapper: {
@@ -37,19 +42,19 @@ const useStyles = makeStyles()((theme: Theme) => {
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
-      gap: '24px',
-      maxWidth: '1072px',
+      gap: '16px',
+      maxWidth: 1210,
 
       [theme.breakpoints.up('lg')]: {
-        width: '1072px'
+        width: 1210
       },
 
       [theme.breakpoints.between('md', 'lg')]: {
-        width: '800px'
+        width: '100%'
       },
 
       [theme.breakpoints.down('md')]: {
-        width: '85vw'
+        width: '100%'
       },
       [theme.breakpoints.down('sm')]: {
         width: '100%'

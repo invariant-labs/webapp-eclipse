@@ -4,7 +4,7 @@ import { theme } from '@static/theme'
 import { useNavigate } from 'react-router-dom'
 import useStyles from './styles'
 import { ROUTES } from '@utils/utils'
-import { BITZ_MAIN, WETH_MAIN } from '@store/consts/static'
+import { sBITZ_MAIN, WETH_MAIN } from '@store/consts/static'
 
 interface INormalBannerProps {
   onClose: () => void
@@ -22,12 +22,12 @@ export const NormalBanner = ({ onClose, isHiding }: INormalBannerProps) => {
 
   const text = (
     <span>
-      {!isSmallDevice && `Invariant Points are live!`} BITZ/ETH is now the next pool distributing
+      {!isSmallDevice && `Invariant Points are live!`} sBITZ/ETH is now the next pool distributing
       points! Check it out
       <span
         className={classes.text}
         onClick={() => {
-          navigate(ROUTES.getNewPositionRoute(BITZ_MAIN.symbol, WETH_MAIN.symbol, '1_00'))
+          navigate(ROUTES.getNewPositionRoute(sBITZ_MAIN.symbol, WETH_MAIN.symbol, '1_00'))
 
           if (isSmallDevice) {
             onClose()

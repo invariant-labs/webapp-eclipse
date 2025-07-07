@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useMobileStyles } from './style'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { initialXtoY, tickerToAddress } from '@utils/utils'
-import { airdropRainbowIcon, swapListIcon, warning2Icon } from '@static/icons'
+import { airdropRainbowIcon, swapListIcon, warning2Icon, warningIcon } from '@static/icons'
 import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
 import { BN } from '@coral-xyz/anchor'
 import { usePromotedPool } from '@store/hooks/positionList/usePromotedPool'
@@ -22,12 +22,14 @@ import { ISinglePositionData } from '@components/Portfolio/Overview/Overview/Ove
 import { IPositionItem } from '@store/consts/types'
 import { InactivePoolsPopover } from '../components/InactivePoolsPopover/InactivePoolsPopover'
 import { MinMaxChart } from '../components/MinMaxChart/MinMaxChart'
+import { ReactFitty } from 'react-fitty'
 
 interface IPositionItemMobile extends IPositionItem {
   setAllowPropagation: React.Dispatch<React.SetStateAction<boolean>>
   handleLockPosition: (index: number) => void
   handleClosePosition: (index: number) => void
   handleClaimFee: (index: number, isLocked: boolean) => void
+  createNewPosition: () => void
   shouldDisable: boolean
 }
 
@@ -35,6 +37,8 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
   tokenXName,
   tokenYName,
   tokenXIcon,
+  isUnknownX,
+  isUnknownY,
   poolAddress,
   tokenYIcon,
   fee,
@@ -50,11 +54,12 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
   tokenXLiq,
   tokenYLiq,
   network,
-  unclaimedFeesInUSD = { value: 0, loading: false },
+  unclaimedFeesInUSD = { value: 0, loading: false, isClaimAvailable: false },
   handleLockPosition,
   handleClosePosition,
   handleClaimFee,
-  shouldDisable
+  shouldDisable,
+  createNewPosition
 }) => {
   const { classes, cx } = useMobileStyles()
   const airdropIconRef = useRef<any>(null)
@@ -140,7 +145,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
     setAllowPropagation(!isLockPositionModalOpen)
   }, [isLockPositionModalOpen])
   const promotedIconFragment = useMemo(() => {
-    if (isPromoted && isActive) {
+    if (isPromoted && isActive && !positionSingleData?.isLocked) {
       return (
         <>
           <PromotedPoolPopover
@@ -169,7 +174,10 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
 
     return (
       <>
-        <InactivePoolsPopover isActive={isActive} isPromoted={isPromoted}>
+        <InactivePoolsPopover
+          isActive={isActive}
+          isPromoted={isPromoted}
+          isLocked={positionSingleData?.isLocked ?? false}>
           <div
             className={classes.actionButton}
             onClick={() => {
@@ -435,7 +443,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
         handleClose={handleClose}
         open={isActionPopoverOpen}
         isLocked={positionSingleData?.isLocked ?? false}
-        unclaimedFeesInUSD={unclaimedFeesInUSD.value}
+        unclaimedFeesInUSD={unclaimedFeesInUSD}
         claimFee={() =>
           handleClaimFee(
             positionSingleData?.positionIndex ?? 0,
@@ -444,16 +452,22 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
         }
         closePosition={() => handleClosePosition(positionSingleData?.positionIndex ?? 0)}
         onLockPosition={() => setIsLockPositionModalOpen(true)}
+        createPosition={createNewPosition}
       />
       <Grid container item className={classes.mdTop}>
         <Grid container item className={classes.iconsAndNames}>
-          <Box display='flex' alignItems={'center'}>
+          <Box display='flex' alignItems={'center'} flex='1'>
             <Grid container item className={classes.icons}>
-              <img
-                className={classes.tokenIcon}
-                src={xToY ? tokenXIcon : tokenYIcon}
-                alt={xToY ? tokenXName : tokenYName}
-              />
+              <Grid display='flex' position='relative'>
+                <img
+                  className={classes.tokenIcon}
+                  src={xToY ? tokenXIcon : tokenYIcon}
+                  alt={xToY ? tokenXName : tokenYName}
+                />
+                {(xToY ? isUnknownX : isUnknownY) && (
+                  <img className={classes.warningIcon} src={warningIcon} />
+                )}
+              </Grid>
               <TooltipHover title='Reverse tokens'>
                 <img
                   className={classes.arrows}
@@ -465,15 +479,22 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
                   }}
                 />
               </TooltipHover>
-              <img
-                className={classes.tokenIcon}
-                src={xToY ? tokenYIcon : tokenXIcon}
-                alt={xToY ? tokenYName : tokenXName}
-              />
+              <Grid display='flex' position='relative'>
+                <img
+                  className={classes.tokenIcon}
+                  src={xToY ? tokenYIcon : tokenXIcon}
+                  alt={xToY ? tokenYName : tokenXName}
+                />
+                {(xToY ? isUnknownY : isUnknownX) && (
+                  <img className={classes.warningIcon} src={warningIcon} />
+                )}
+              </Grid>
             </Grid>
-            <Typography className={classes.names}>
-              {xToY ? tokenXName : tokenYName} - {xToY ? tokenYName : tokenXName}
-            </Typography>
+            <Box className={classes.tickersContainer}>
+              <Typography className={classes.names} component={ReactFitty} maxSize={28}>
+                {xToY ? tokenXName : tokenYName} - {xToY ? tokenYName : tokenXName}
+              </Typography>
+            </Box>
           </Box>
 
           <Box ref={airdropIconRef} className={classes.actionButtonContainer}>

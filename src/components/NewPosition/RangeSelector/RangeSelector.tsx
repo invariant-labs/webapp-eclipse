@@ -1,6 +1,6 @@
 import RangeInput from '@components/Inputs/RangeInput/RangeInput'
 import PriceRangePlot, { TickPlotPositionData } from '@common/PriceRangePlot/PriceRangePlot'
-import { Box, Button, Grid, Typography } from '@mui/material'
+import { Button, Grid, Typography } from '@mui/material'
 import loader from '@static/gif/loader.gif'
 import {
   calcPriceByTickIndex,
@@ -13,12 +13,14 @@ import {
   toMaxNumericPlaces
 } from '@utils/utils'
 import { PlotTickData } from '@store/reducers/positions'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import ConcentrationSlider from '../ConcentrationSlider/ConcentrationSlider'
 import useStyles from './style'
 import { PositionOpeningMethod } from '@store/consts/types'
 import { getMaxTick, getMinTick } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { boostPointsIcon } from '@static/icons'
+import PriceWarning from './PriceWarning/PriceWarning'
+
 export interface IRangeSelector {
   updatePath: (concIndex: number) => void
   initialConcentration: string
@@ -61,6 +63,10 @@ export interface IRangeSelector {
     token: string
     price?: number
   } | null
+  suggestedPrice: number
+  oraclePrice: number | null
+  currentFeeIndex: number
+  bestFeeIndex: number
 }
 
 export const RangeSelector: React.FC<IRangeSelector> = ({
@@ -94,7 +100,11 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
   unblockUpdatePriceRange,
   // onlyUserPositions,
   // setOnlyUserPositions,
-  usdcPrice
+  usdcPrice,
+  suggestedPrice,
+  oraclePrice,
+  currentFeeIndex,
+  bestFeeIndex
 }) => {
   const { classes } = useStyles()
 
@@ -146,7 +156,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     }
 
     setInitReset(true)
-  }, [poolIndex])
+  }, [poolIndex, minimumSliderIndex])
 
   useEffect(() => {
     isMountedRef.current = true
@@ -494,6 +504,27 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     autoZoomHandler(leftRange, rightRange, true)
   }, [tokenASymbol, tokenBSymbol])
 
+  const oracleDiffPercentage = useMemo(() => {
+    if (oraclePrice === null || midPrice.x === 0) {
+      return 0
+    }
+    return Math.abs((oraclePrice - midPrice.x) / midPrice.x) * 100
+  }, [oraclePrice, midPrice.x])
+
+  const oraclePriceWarning = useMemo(
+    () => oraclePrice !== 0 && oracleDiffPercentage > 10,
+    [oracleDiffPercentage]
+  )
+
+  const diffPercentage = useMemo(() => {
+    return Math.abs((suggestedPrice - midPrice.x) / midPrice.x) * 100
+  }, [suggestedPrice, midPrice.x])
+
+  const showPriceWarning = useMemo(
+    () => (diffPercentage > 10 && !oraclePrice) || (diffPercentage > 10 && oraclePriceWarning),
+    [diffPercentage, oraclePriceWarning, oraclePrice]
+  )
+
   return (
     <Grid container className={classes.wrapper}>
       <Grid className={classes.topInnerWrapper}>
@@ -506,20 +537,27 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
                 {formatNumberWithoutSuffix(midPrice.x)} {tokenBSymbol} per {tokenASymbol}
               </Typography>
             )}
-            {poolIndex !== null && usdcPrice !== null && usdcPrice.price ? (
+            {poolIndex !== null && usdcPrice !== null && usdcPrice.price && (
               <Typography className={classes.usdcCurrentPrice}>
                 {usdcPrice.token} ${formatNumberWithoutSuffix(usdcPrice.price)}
               </Typography>
-            ) : (
-              <Box minHeight={17} />
+            )}
+            {(showPriceWarning || oraclePriceWarning) && !blocked && !isLoadingTicksOrTickmap && (
+              <PriceWarning
+                bestFeeIndex={bestFeeIndex}
+                currentFeeIndex={currentFeeIndex}
+                oraclePrice={oraclePrice}
+                suggestedPrice={suggestedPrice}
+                tokenASymbol={tokenASymbol}
+                tokenBSymbol={tokenBSymbol}
+                diffPercentage={diffPercentage}
+                showPriceWarning={showPriceWarning}
+                oracleDiffPercentage={oracleDiffPercentage}
+                oraclePriceWarning={oraclePriceWarning}
+              />
             )}
           </Grid>
-          <Grid
-            display='flex'
-            flexDirection={'row'}
-            alignItems={'center'}
-            alignSelf={'flex-end'}
-            mb={'18px'}>
+          <Grid className={classes.currentPriceContainer}>
             <Typography className={classes.currentPrice} mb={0}>
               Current price
             </Typography>
@@ -530,24 +568,24 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
         </Grid>
         <PriceRangePlot
           className={classes.plot}
-          data={data}
+          plotData={data}
           onChangeRange={changeRangeHandler}
-          leftRange={{
+          leftRangeData={{
             index: leftRange,
             x: calcPriceByTickIndex(leftRange, isXtoY, xDecimal, yDecimal)
           }}
-          rightRange={{
+          rightRangeData={{
             index: rightRange,
             x: calcPriceByTickIndex(rightRange, isXtoY, xDecimal, yDecimal)
           }}
-          midPrice={midPrice}
-          plotMin={plotMin}
-          plotMax={plotMax}
+          midPriceData={midPrice}
+          plotMinData={plotMin}
+          plotMaxData={plotMax}
           zoomMinus={zoomMinus}
           zoomPlus={zoomPlus}
-          loading={isLoadingTicksOrTickmap}
+          loading={isLoadingTicksOrTickmap && !blocked}
           isXtoY={isXtoY}
-          tickSpacing={tickSpacing}
+          spacing={tickSpacing}
           xDecimal={xDecimal}
           yDecimal={yDecimal}
           disabled={positionOpeningMethod === 'concentration'}

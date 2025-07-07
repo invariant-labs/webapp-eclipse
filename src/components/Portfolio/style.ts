@@ -23,12 +23,11 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
   titleBar: {
     display: 'flex',
-    marginBottom: 20
+    marginBottom: 16
   },
   title: {
     color: colors.invariant.text,
-    ...typography.heading4,
-    fontWeight: 500
+    ...typography.heading4
   },
   positionsNumber: {
     width: 28,
@@ -239,7 +238,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   overviewContainer: {
     display: 'flex',
     flexDirection: 'column',
-    marginBottom: '24px',
+    marginBottom: '72px',
     width: '100%'
   },
   switchPoolsContainerOverview: {
@@ -254,8 +253,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
   overviewHeaderTitle: {
     color: colors.invariant.text,
-    ...typography.heading4,
-    fontWeight: 500
+    ...typography.heading4
   },
 
   switchPoolsButtonsGroupOverview: {

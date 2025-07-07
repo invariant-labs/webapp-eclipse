@@ -16,7 +16,7 @@ import {
   Typography,
   useMediaQuery
 } from '@mui/material'
-import { forwardRef, useMemo, useState, useCallback, memo, useEffect } from 'react'
+import React, { forwardRef, useMemo, useState, useCallback, memo, useEffect } from 'react'
 import { commonTokensForNetworks, NetworkType } from '@store/consts/static'
 import { theme, typography } from '@static/theme'
 import useStyles from './styles'
@@ -41,6 +41,7 @@ export interface ISearchToken {
   balance: BN
   decimals: number
   balanceUSD?: number
+  isUnknown: boolean
 }
 interface ITokenBalance {
   address: PublicKey
@@ -50,7 +51,7 @@ interface ITokenBalance {
 interface IFilterSearch {
   networkType: NetworkType
   selectedFilters: ISearchToken[]
-  setSelectedFilters: React.Dispatch<React.SetStateAction<ISearchToken[]>>
+  setSelectedFilters: (tokens: ISearchToken[]) => void
   filtersAmount: number
   bp?: Breakpoint
   loading?: boolean
@@ -119,7 +120,7 @@ export const FilterSearch: React.FC<IFilterSearch> = memo(
       fetchPrices()
     }, [tokensListDetails])
 
-    const mappedTokens = useMemo(() => {
+    const mappedTokens: ISearchToken[] = useMemo(() => {
       return tokensListDetails
         .map(tokenData => {
           const details = tokenData.tokenDetails
@@ -139,7 +140,8 @@ export const FilterSearch: React.FC<IFilterSearch> = memo(
             address: tokenAddress,
             balanceUSD: balanceUSD,
             balance: tokenFromList ? tokenFromList.balance : 0,
-            decimals: tokenFromList ? tokenFromList.decimals : 0
+            decimals: tokenFromList ? tokenFromList.decimals : 0,
+            isUnknown: details?.isUnknown ?? false
           }
         })
         .sort((a, b) => {
@@ -182,7 +184,8 @@ export const FilterSearch: React.FC<IFilterSearch> = memo(
 
     const handleRemoveToken = useCallback(
       (tokenToRemove: ISearchToken) => {
-        setSelectedFilters(prev => prev.filter(token => token.address !== tokenToRemove.address))
+        const result = selectedFilters.filter(token => token.address !== tokenToRemove.address)
+        setSelectedFilters(result)
       },
       [setSelectedFilters]
     )
@@ -213,7 +216,11 @@ export const FilterSearch: React.FC<IFilterSearch> = memo(
         _ownerState: AutocompleteOwnerState<ISearchToken, true, false, false, 'div'>
       ): React.ReactNode => {
         return (
-          <Box component='li' {...optionProps} sx={{ padding: '0 !important' }}>
+          <Box
+            component='li'
+            {...optionProps}
+            key={option.address.toString()}
+            sx={{ padding: '0 !important' }}>
             <TokenOption option={option} networkUrl={networkUrl} isSmall={isSmall} />
           </Box>
         )
@@ -224,7 +231,9 @@ export const FilterSearch: React.FC<IFilterSearch> = memo(
     const renderTags = useCallback(
       (value: ISearchToken[], getTagProps: AutocompleteRenderGetTagProps) =>
         value.map((option, index) => (
-          <TokenChip option={option} onRemove={handleRemoveToken} {...getTagProps({ index })} />
+          <React.Fragment key={option.address.toString()}>
+            <TokenChip option={option} onRemove={handleRemoveToken} {...getTagProps({ index })} />
+          </React.Fragment>
         )),
       [handleRemoveToken]
     )

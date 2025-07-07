@@ -1,10 +1,10 @@
-import { Grid, TableRow, TableCell, Typography, useMediaQuery, Box, Skeleton } from '@mui/material'
+import { Grid, TableCell, Typography, useMediaQuery, Box, Skeleton } from '@mui/material'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { MinMaxChart } from '../../components/MinMaxChart/MinMaxChart'
 import { colors, theme } from '@static/theme'
 import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
 import { BN } from '@coral-xyz/anchor'
-import { airdropRainbowIcon, swapListIcon, warning2Icon } from '@static/icons'
+import { airdropRainbowIcon, swapListIcon, warning2Icon, warningIcon } from '@static/icons'
 import { initialXtoY, tickerToAddress, formatNumberWithoutSuffix } from '@utils/utils'
 import { useSelector } from 'react-redux'
 import { usePromotedPool } from '@store/hooks/positionList/usePromotedPool'
@@ -22,6 +22,7 @@ import { IPositionItem } from '@store/consts/types'
 import { useStyles } from './style'
 import { useSkeletonStyle } from '../skeletons/skeletons'
 import { ILiquidityToken } from '@store/consts/types'
+import { ReactFitty } from 'react-fitty'
 
 interface ILoadingStates {
   pairName?: boolean
@@ -40,12 +41,15 @@ interface IPositionsTableRow extends IPositionItem {
   handleLockPosition: (index: number) => void
   handleClosePosition: (index: number) => void
   handleClaimFee: (index: number, isLocked: boolean) => void
+  createNewPosition: () => void
   shouldDisable: boolean
 }
 
 export const PositionTableRow: React.FC<IPositionsTableRow> = ({
   tokenXName,
   tokenYName,
+  isUnknownX,
+  isUnknownY,
   tokenXIcon,
   poolAddress,
   tokenYIcon,
@@ -64,10 +68,11 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
   tokenYLiq,
   network,
   loading,
-  unclaimedFeesInUSD = { value: 0, loading: false },
+  unclaimedFeesInUSD = { value: 0, loading: false, isClaimAvailable: false },
   handleClaimFee,
   handleLockPosition,
   handleClosePosition,
+  createNewPosition,
   shouldDisable
 }) => {
   const { classes, cx } = useStyles()
@@ -125,11 +130,17 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
     return (
       <Grid container item className={classes.iconsAndNames}>
         <Grid container item className={classes.iconsShared}>
-          <img
-            className={classes.tokenIcon}
-            src={xToY ? tokenXIcon : tokenYIcon}
-            alt={xToY ? tokenXName : tokenYName}
-          />
+          <Grid display='flex' position='relative'>
+            <img
+              className={classes.tokenIcon}
+              src={xToY ? tokenXIcon : tokenYIcon}
+              alt={xToY ? tokenXName : tokenYName}
+            />
+            {(xToY ? isUnknownX : isUnknownY) && (
+              <img className={classes.warningIcon} src={warningIcon} />
+            )}
+          </Grid>
+
           <TooltipHover title='Reverse tokens'>
             <img
               className={classes.arrowsShared}
@@ -141,16 +152,23 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
               }}
             />
           </TooltipHover>
-          <img
-            className={classes.tokenIcon}
-            src={xToY ? tokenYIcon : tokenXIcon}
-            alt={xToY ? tokenYName : tokenXName}
-          />
+          <Grid display='flex' position='relative'>
+            <img
+              className={classes.tokenIcon}
+              src={xToY ? tokenYIcon : tokenXIcon}
+              alt={xToY ? tokenYName : tokenXName}
+            />
+            {(xToY ? isUnknownY : isUnknownX) && (
+              <img className={classes.warningIcon} src={warningIcon} />
+            )}
+          </Grid>
         </Grid>
 
-        <Typography className={classes.names}>
-          {xToY ? tokenXName : tokenYName} - {xToY ? tokenYName : tokenXName}
-        </Typography>
+        <Box className={classes.tickersContainer}>
+          <Typography className={classes.names} component={ReactFitty} maxSize={28}>
+            {xToY ? tokenXName : tokenYName} - {xToY ? tokenYName : tokenXName}
+          </Typography>
+        </Box>
       </Grid>
     )
   }, [loading, xToY, tokenXIcon, tokenYIcon, tokenXName, tokenYName])
@@ -308,7 +326,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
   }, [loading])
 
   const promotedIconContent = useMemo(() => {
-    if (isPromoted && isActive) {
+    if (isPromoted && isActive && !positionSingleData?.isLocked) {
       return (
         <>
           <PromotedPoolPopover
@@ -339,7 +357,13 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
 
     return (
       <TooltipHover
-        title={<PositionStatusTooltip isActive={isActive} isPromoted={isPromoted} />}
+        title={
+          <PositionStatusTooltip
+            isActive={isActive}
+            isPromoted={isPromoted}
+            isLocked={positionSingleData?.isLocked ?? false}
+          />
+        }
         placement='top'
         increasePadding>
         <div style={{ display: 'flex', justifyContent: 'center' }}>
@@ -381,7 +405,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
   const { success, inProgress } = useSelector(lockerState)
 
   return (
-    <TableRow>
+    <>
       <LockLiquidityModal
         open={isLockPositionModalOpen}
         onClose={() => setIsLockPositionModalOpen(false)}
@@ -403,7 +427,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
         handleClose={handleClose}
         open={isActionPopoverOpen}
         isLocked={positionSingleData?.isLocked ?? false}
-        unclaimedFeesInUSD={unclaimedFeesInUSD.value}
+        unclaimedFeesInUSD={unclaimedFeesInUSD}
         claimFee={() =>
           handleClaimFee(
             positionSingleData?.positionIndex ?? 0,
@@ -412,6 +436,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
         }
         closePosition={() => handleClosePosition(positionSingleData?.positionIndex ?? 0)}
         onLockPosition={() => setIsLockPositionModalOpen(true)}
+        createPosition={createNewPosition}
       />
       <TableCell className={`${classes.pairNameCell} ${classes.cellBase}`}>
         {pairNameContent}
@@ -437,6 +462,6 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
       <TableCell className={`${classes.cellBase} ${classes.actionCell} action-button`}>
         {actionsFragment}
       </TableCell>
-    </TableRow>
+    </>
   )
 }

@@ -8,7 +8,7 @@ import {
 import { formatNumberWithoutSuffix } from '@utils/utils'
 import { useStyles } from './styles'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
-import { warning2Icon } from '@static/icons'
+import { warning2Icon, warningIcon } from '@static/icons'
 import { TokenPositionEntry } from '@store/types/userOverview'
 
 interface LegendOverviewProps {
@@ -52,6 +52,7 @@ export const LegendOverview: React.FC<LegendOverviewProps> = ({
             <Grid item container className={classes.tokenRow} key={token.token}>
               <Grid item xs={2} alignContent='center' className={classes.logoContainer}>
                 <img src={token.logo} alt={`${token.token} logo`} className={classes.logo} />
+                {token.isUnknown && <img className={classes.warningIcon} src={warningIcon} />}{' '}
               </Grid>
 
               <Grid item xs={3} alignContent='center'>
@@ -60,7 +61,13 @@ export const LegendOverview: React.FC<LegendOverviewProps> = ({
                 </Typography>
               </Grid>
 
-              <Grid container justifyContent='flex-end' xs={7} alignContent='center' gap={'8px'}>
+              <Grid
+                display='flex'
+                item
+                justifyContent='flex-end'
+                xs={7}
+                alignContent='center'
+                gap={'8px'}>
                 <Typography className={classes.valueText}>
                   ${formatNumberWithoutSuffix(token.value, { twoDecimals: true })}
                 </Typography>

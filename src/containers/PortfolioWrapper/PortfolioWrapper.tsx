@@ -1,4 +1,6 @@
 import {
+  DEFAULT_STRATEGY,
+  Intervals,
   NetworkType,
   POSITIONS_PER_PAGE,
   WETH_CLOSE_POSITION_LAMPORTS_MAIN,
@@ -26,22 +28,33 @@ import {
   prices,
   shouldDisable
 } from '@store/selectors/positions'
-import { address, balanceLoading, status, swapTokens, balance } from '@store/selectors/solanaWallet'
+import {
+  address,
+  balanceLoading,
+  status,
+  swapTokens,
+  balance,
+  overviewSwitch
+} from '@store/selectors/solanaWallet'
 import { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { calcYPerXPriceBySqrtPrice, printBN, ROUTES } from '@utils/utils'
+import { calcYPerXPriceBySqrtPrice, findStrategy, printBN, ROUTES } from '@utils/utils'
 import { network } from '@store/selectors/solanaConnection'
 import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import { actions as actionsStats } from '@store/reducers/stats'
 import { actions as lockerActions } from '@store/reducers/locker'
 import { actions as snackbarActions } from '@store/reducers/snackbars'
+import { actions as navigationActions } from '@store/reducers/navigation'
 import { Grid, useMediaQuery } from '@mui/material'
 import { theme } from '@static/theme'
 import useStyles from './styles'
 import Portfolio from '@components/Portfolio/Portfolio'
 import { VariantType } from 'notistack'
 import { IPositionItem } from '@store/consts/types'
+import { portfolioSearch } from '@store/selectors/navigation'
+import { ISearchToken } from '@common/FilterSearch/FilterSearch'
+import { useProcessedTokens } from '@store/hooks/userOverview/useProcessedToken'
 
 const PortfolioWrapper = () => {
   const { classes } = useStyles()
@@ -60,9 +73,28 @@ const PortfolioWrapper = () => {
   const ethBalance = useSelector(balance)
   const disabledButton = useSelector(shouldDisable)
   const positionListAlignment = useSelector(positionListSwitcher)
+  const overviewSelectedTab = useSelector(overviewSwitch)
+  const searchParamsToken = useSelector(portfolioSearch)
+  const { processedTokens, isProcesing } = useProcessedTokens(
+    tokensList,
+    isBalanceLoading,
+    currentNetwork
+  )
+
+  const [maxToken] = [...processedTokens].sort((a, b) => b.value - a.value)
 
   const navigate = useNavigate()
   const dispatch = useDispatch()
+
+  const setSearchTokensValue = (tokens: ISearchToken[]) => {
+    dispatch(
+      navigationActions.setSearch({
+        section: 'portfolioTokens',
+        type: 'filteredTokens',
+        filteredTokens: tokens
+      })
+    )
+  }
 
   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
 
@@ -85,7 +117,7 @@ const PortfolioWrapper = () => {
   }
 
   useEffect(() => {
-    dispatch(actionsStats.getCurrentStats())
+    dispatch(actionsStats.getCurrentIntervalStats({ interval: Intervals.Daily }))
   }, [])
 
   const handleLockPosition = (index: number) => {
@@ -140,7 +172,11 @@ const PortfolioWrapper = () => {
       (pricesData.data[position.tokenY.assetAddress.toString()] ?? 0)
 
     const unclaimedFeesInUSD = xValue + yValue
-    return unclaimedFeesInUSD
+    return {
+      usdValue: unclaimedFeesInUSD,
+      isClaimAvailable:
+        +printBN(bnX, position.tokenX.decimals) > 0 || +printBN(bnY, position.tokenY.decimals) > 0
+    }
   }
 
   const data: IPositionItem[] = useMemo(
@@ -202,9 +238,11 @@ const PortfolioWrapper = () => {
         const valueX = tokenXLiq + tokenYLiq / currentPrice
         const valueY = tokenYLiq + tokenXLiq * currentPrice
 
-        const unclaimedFeesInUSD = calculateUnclaimedFees(position)
+        const { usdValue, isClaimAvailable } = calculateUnclaimedFees(position)
         return {
           tokenXName: position.tokenX.symbol,
+          isUnknownX: position.tokenX.isUnknown ?? false,
+          isUnknownY: position.tokenY.isUnknown ?? false,
           tokenYName: position.tokenY.symbol,
           tokenXIcon: position.tokenX.logoURI,
           tokenYIcon: position.tokenY.logoURI,
@@ -226,7 +264,7 @@ const PortfolioWrapper = () => {
           network: currentNetwork,
           isFullRange: position.lowerTickIndex === minTick && position.upperTickIndex === maxTick,
           isLocked: position.isLocked,
-          unclaimedFeesInUSD: { value: unclaimedFeesInUSD, loading: position.ticksLoading }
+          unclaimedFeesInUSD: { value: usdValue, loading: position.ticksLoading, isClaimAvailable }
         }
       }),
     [list, pricesData]
@@ -291,10 +329,12 @@ const PortfolioWrapper = () => {
         const valueX = tokenXLiq + tokenYLiq / currentPrice
         const valueY = tokenYLiq + tokenXLiq * currentPrice
 
-        const unclaimedFeesInUSD = calculateUnclaimedFees(position)
+        const { usdValue, isClaimAvailable } = calculateUnclaimedFees(position)
         return {
           tokenXName: position.tokenX.symbol,
           tokenYName: position.tokenY.symbol,
+          isUnknownX: position.tokenX.isUnknown ?? false,
+          isUnknownY: position.tokenY.isUnknown ?? false,
           tokenXIcon: position.tokenX.logoURI,
           tokenYIcon: position.tokenY.logoURI,
           fee: +printBN(position.poolData.fee, DECIMAL - 2),
@@ -315,7 +355,7 @@ const PortfolioWrapper = () => {
           network: currentNetwork,
           isFullRange: position.lowerTickIndex === minTick && position.upperTickIndex === maxTick,
           isLocked: position.isLocked,
-          unclaimedFeesInUSD: { value: unclaimedFeesInUSD, loading: position.ticksLoading }
+          unclaimedFeesInUSD: { value: usdValue, loading: position.ticksLoading, isClaimAvailable }
         }
       }),
     [lockedList, pricesData]
@@ -333,18 +373,34 @@ const PortfolioWrapper = () => {
     dispatch(leaderboardActions.getLeaderboardConfig())
   }, [dispatch])
 
+  const onAddPositionClick = () => {
+    dispatch(navigationActions.setNavigation({ address: location.pathname }))
+    if (maxToken) {
+      const strategy = findStrategy(maxToken.id.toString())
+      navigate(
+        ROUTES.getNewPositionRoute(strategy.tokenAddressA, strategy.tokenAddressB, strategy.feeTier)
+      )
+    } else
+      navigate(
+        ROUTES.getNewPositionRoute(
+          DEFAULT_STRATEGY.tokenA,
+          DEFAULT_STRATEGY.tokenB,
+          DEFAULT_STRATEGY.feeTier
+        )
+      )
+  }
+
   return isConnected ? (
     <Portfolio
+      selectedFilters={searchParamsToken.filteredTokens}
+      setSelectedFilters={setSearchTokensValue}
       shouldDisable={disabledButton}
-      tokensList={tokensList}
       isBalanceLoading={isBalanceLoading}
       handleSnackbar={handleSnackbar}
       initialPage={lastPage}
       setLastPage={setLastPage}
       handleRefresh={handleRefresh}
-      onAddPositionClick={() => {
-        navigate(ROUTES.NEW_POSITION)
-      }}
+      onAddPositionClick={onAddPositionClick}
       currentNetwork={currentNetwork}
       data={data}
       lockedData={lockedData}
@@ -360,7 +416,6 @@ const PortfolioWrapper = () => {
       }}
       length={list.length}
       lockedLength={lockedList.length}
-      noInitialPositions={list.length === 0 && lockedList.length === 0}
       handleLockPosition={handleLockPosition}
       handleClosePosition={handleClosePosition}
       handleClaimFee={handleClaimFee}
@@ -368,6 +423,10 @@ const PortfolioWrapper = () => {
       setPositionListAlignment={(positionType: LiquidityPools) =>
         dispatch(actions.setPositionListSwitcher(positionType))
       }
+      overviewSelectedTab={overviewSelectedTab}
+      handleOverviewSwitch={option => dispatch(walletActions.setOverviewSwitch(option))}
+      processedTokens={processedTokens}
+      isProcesing={isProcesing}
     />
   ) : (
     <Grid className={classes.emptyContainer}>

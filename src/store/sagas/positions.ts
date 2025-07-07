@@ -23,10 +23,14 @@ import {
   TransactionExpiredTimeoutError,
   VersionedTransaction,
   PublicKey,
-  ParsedInstruction
+  ParsedInstruction,
+  SendTransactionError
 } from '@solana/web3.js'
 import {
+  APPROVAL_DENIED_MESSAGE,
   autoSwapPools,
+  COMMON_ERROR_MESSAGE,
+  ErrorCodeExtractionKeys,
   LEADERBOARD_DECIMAL,
   SIGNING_SNACKBAR_CONFIG,
   TIMEOUT_ERROR_MESSAGE,
@@ -47,13 +51,22 @@ import {
   createLiquidityPlot,
   createLoaderKey,
   createPlaceholderLiquidityPlot,
+  ensureApprovalDenied,
   ensureError,
+  extractErrorCode,
+  extractRuntimeErrorCode,
   formatNumberWithoutSuffix,
+  getAmountFromInitPositionInstruction,
   getLiquidityTicksByPositionsList,
   getPositionByIdAndPoolAddress,
   getPositionsAddressesFromRange,
   getTicksFromAddresses,
-  printBN
+  TokenType,
+  mapErrorCodeToMessage,
+  printBN,
+  getAmountFromClaimFeeInstruction,
+  getAmountFromClosePositionInstruction,
+  getTokenProgramId
 } from '@utils/utils'
 import { actions as connectionActions } from '@store/reducers/solanaConnection'
 import {
@@ -67,9 +80,10 @@ import { ClaimAllFee } from '@invariant-labs/sdk-eclipse/lib/market'
 import nacl from 'tweetnacl'
 import { BN } from '@coral-xyz/anchor'
 import { parseTick, Position } from '@invariant-labs/sdk-eclipse/lib/market'
-import { NATIVE_MINT } from '@solana/spl-token'
+import { getAssociatedTokenAddressSync, NATIVE_MINT } from '@solana/spl-token'
 import { unknownTokenIcon } from '@static/icons'
 import { config, priceFeeds } from '@store/selectors/leaderboard'
+
 function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionData>): Generator {
   const data = action.payload
 
@@ -248,6 +262,34 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
       )
 
       if (txDetails) {
+        if (txDetails.meta?.err) {
+          if (txDetails.meta.logMessages) {
+            const errorLog = txDetails.meta.logMessages.find(log =>
+              log.includes(ErrorCodeExtractionKeys.ErrorNumber)
+            )
+            const errorCode = errorLog
+              ?.split(ErrorCodeExtractionKeys.ErrorNumber)[1]
+              .split(ErrorCodeExtractionKeys.Dot)[0]
+              .trim()
+            const message = mapErrorCodeToMessage(Number(errorCode))
+            yield put(actions.setInitPositionSuccess(false))
+
+            closeSnackbar(loaderCreatePool)
+            yield put(snackbarsActions.remove(loaderCreatePool))
+            closeSnackbar(loaderSigningTx)
+            yield put(snackbarsActions.remove(loaderSigningTx))
+
+            yield put(
+              snackbarsActions.add({
+                message,
+                variant: 'error',
+                persist: false
+              })
+            )
+            return
+          }
+        }
+
         const meta = txDetails.meta
         if (meta?.innerInstructions && meta.innerInstructions) {
           try {
@@ -257,11 +299,12 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
               ) as ParsedInstruction
             ).parsed.info.amount
 
-            const splAmount = (
-              meta.innerInstructions[0].instructions.find(
-                ix => (ix as ParsedInstruction).parsed.info.tokenAmount !== undefined
-              ) as ParsedInstruction
-            ).parsed.info.tokenAmount.amount
+            const splIx = meta.innerInstructions[0].instructions.find(
+              ix =>
+                (ix as ParsedInstruction).parsed.info.tokenAmount !== undefined ||
+                (ix as ParsedInstruction).parsed.info.amount !== undefined
+            ) as ParsedInstruction
+            const splAmount = splIx.parsed.info.tokenAmount.amount || splIx.parsed.info.amount
 
             const tokenX = allTokens[pair.tokenX.toString()]
             const tokenY = allTokens[pair.tokenY.toString()]
@@ -278,7 +321,9 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
                   tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals)),
                   tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals)),
                   tokenXIcon: tokenX.logoURI,
-                  tokenYIcon: tokenY.logoURI
+                  tokenYIcon: tokenY.logoURI,
+                  tokenXSymbol: tokenX.symbol ?? tokenX.address.toString(),
+                  tokenYSymbol: tokenY.symbol ?? tokenY.address.toString()
                 },
                 persist: false
               })
@@ -329,6 +374,26 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
     const error = ensureError(e)
     console.log(error)
 
+    let msg: string = ''
+    if (error instanceof SendTransactionError) {
+      const err = error.transactionError
+      try {
+        const errorCode = extractRuntimeErrorCode(err)
+        msg = mapErrorCodeToMessage(errorCode)
+      } catch {
+        const errorCode = extractErrorCode(error)
+        msg = mapErrorCodeToMessage(errorCode)
+      }
+    } else {
+      try {
+        const errorCode = extractErrorCode(error)
+        msg = mapErrorCodeToMessage(errorCode)
+      } catch (e: unknown) {
+        const error = ensureError(e)
+        msg = ensureApprovalDenied(error) ? APPROVAL_DENIED_MESSAGE : COMMON_ERROR_MESSAGE
+      }
+    }
+
     yield put(actions.setInitPositionSuccess(false))
 
     closeSnackbar(loaderCreatePool)
@@ -350,7 +415,7 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Failed to send. Please try again',
+          message: msg,
           variant: 'error',
           persist: false
         })
@@ -543,30 +608,42 @@ function* handleInitPositionWithETH(action: PayloadAction<InitPositionData>): Ge
       )
       const txDetails = yield* call([connection, connection.getParsedTransaction], txId)
       if (txDetails) {
+        if (txDetails.meta?.err) {
+          if (txDetails.meta.logMessages) {
+            const errorLog = txDetails.meta.logMessages.find(log =>
+              log.includes(ErrorCodeExtractionKeys.ErrorNumber)
+            )
+            const errorCode = errorLog
+              ?.split(ErrorCodeExtractionKeys.ErrorNumber)[1]
+              .split(ErrorCodeExtractionKeys.Dot)[0]
+              .trim()
+            const message = mapErrorCodeToMessage(Number(errorCode))
+            yield put(actions.setInitPositionSuccess(false))
+
+            closeSnackbar(loaderCreatePosition)
+            yield put(snackbarsActions.remove(loaderCreatePosition))
+            closeSnackbar(loaderSigningTx)
+            yield put(snackbarsActions.remove(loaderSigningTx))
+
+            yield put(
+              snackbarsActions.add({
+                message,
+                variant: 'error',
+                persist: false
+              })
+            )
+            return
+          }
+        }
+
         const meta = txDetails.meta
         if (meta?.innerInstructions && meta.innerInstructions) {
           try {
-            const targetInner = meta.innerInstructions[2] ?? meta.innerInstructions[0]
-
-            const nativeAmount = (
-              targetInner.instructions.find(
-                ix => (ix as ParsedInstruction).parsed.info.amount
-              ) as ParsedInstruction
-            ).parsed.info.amount
-
-            const splAmount = (
-              targetInner.instructions.find(
-                ix => (ix as ParsedInstruction).parsed.info.tokenAmount !== undefined
-              ) as ParsedInstruction
-            ).parsed.info.tokenAmount.amount
+            const amountX = getAmountFromInitPositionInstruction(meta, TokenType.TokenX)
+            const amountY = getAmountFromInitPositionInstruction(meta, TokenType.TokenY)
 
             const tokenX = allTokens[pair.tokenX.toString()]
             const tokenY = allTokens[pair.tokenY.toString()]
-
-            const nativeX = pair.tokenX.equals(NATIVE_MINT)
-
-            const amountX = nativeX ? nativeAmount : splAmount
-            const amountY = nativeX ? splAmount : nativeAmount
 
             yield put(
               snackbarsActions.add({
@@ -575,7 +652,9 @@ function* handleInitPositionWithETH(action: PayloadAction<InitPositionData>): Ge
                   tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals)),
                   tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals)),
                   tokenXIcon: tokenX.logoURI,
-                  tokenYIcon: tokenY.logoURI
+                  tokenYIcon: tokenY.logoURI,
+                  tokenXSymbol: tokenX.symbol ?? tokenX.address.toString(),
+                  tokenYSymbol: tokenY.symbol ?? tokenY.address.toString()
                 },
                 persist: false
               })
@@ -596,6 +675,26 @@ function* handleInitPositionWithETH(action: PayloadAction<InitPositionData>): Ge
   } catch (e: unknown) {
     const error = ensureError(e)
     console.log(error)
+
+    let msg: string = ''
+    if (error instanceof SendTransactionError) {
+      const err = error.transactionError
+      try {
+        const errorCode = extractRuntimeErrorCode(err)
+        msg = mapErrorCodeToMessage(errorCode)
+      } catch {
+        const errorCode = extractErrorCode(error)
+        msg = mapErrorCodeToMessage(errorCode)
+      }
+    } else {
+      try {
+        const errorCode = extractErrorCode(error)
+        msg = mapErrorCodeToMessage(errorCode)
+      } catch (e: unknown) {
+        const error = ensureError(e)
+        msg = ensureApprovalDenied(error) ? APPROVAL_DENIED_MESSAGE : COMMON_ERROR_MESSAGE
+      }
+    }
 
     yield put(actions.setInitPositionSuccess(false))
 
@@ -618,7 +717,7 @@ function* handleInitPositionWithETH(action: PayloadAction<InitPositionData>): Ge
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Failed to send. Please try again',
+          message: msg,
           variant: 'error',
           persist: false
         })
@@ -828,8 +927,35 @@ export function* handleSwapAndInitPositionWithETH(
       })
 
       if (txDetails) {
+        if (txDetails.meta?.err) {
+          if (txDetails.meta.logMessages) {
+            const errorLog = txDetails.meta.logMessages.find(log =>
+              log.includes(ErrorCodeExtractionKeys.ErrorNumber)
+            )
+            const errorCode = errorLog
+              ?.split(ErrorCodeExtractionKeys.ErrorNumber)[1]
+              .split(ErrorCodeExtractionKeys.Dot)[0]
+              .trim()
+            const message = mapErrorCodeToMessage(Number(errorCode))
+            yield put(actions.setInitPositionSuccess(false))
+
+            closeSnackbar(loaderCreatePosition)
+            yield put(snackbarsActions.remove(loaderCreatePosition))
+            closeSnackbar(loaderSigningTx)
+            yield put(snackbarsActions.remove(loaderSigningTx))
+
+            yield put(
+              snackbarsActions.add({
+                message,
+                variant: 'error',
+                persist: false
+              })
+            )
+            return
+          }
+        }
+
         const meta = txDetails.meta
-        console.log(txDetails)
         if (meta?.innerInstructions && meta.innerInstructions) {
           try {
             const index = meta.innerInstructions.length
@@ -855,9 +981,6 @@ export function* handleSwapAndInitPositionWithETH(
               (depositInstructions[xToY ? 1 : 0] as ParsedInstruction).parsed?.info?.amount ??
               (depositInstructions[xToY ? 1 : 0] as ParsedInstruction).parsed?.info?.tokenAmount
                 ?.amount
-
-            console.log(tokenXDeposit)
-            console.log(tokenYDeposit)
 
             const match = autoSwapPools.find(
               ({ pair }) =>
@@ -898,6 +1021,8 @@ export function* handleSwapAndInitPositionWithETH(
                   tokenYAmount: formatNumberWithoutSuffix(printBN(tokenYDeposit, tokenY.decimals)),
                   tokenXIcon: tokenX.logoURI,
                   tokenYIcon: tokenY.logoURI,
+                  tokenXSymbol: tokenX.symbol ?? tokenX.address.toString(),
+                  tokenYSymbol: tokenY.symbol ?? tokenY.address.toString(),
                   tokenXAmountAutoSwap: formatNumberWithoutSuffix(
                     printBN(fromExchangeAmount, tokenX.decimals)
                   ),
@@ -925,8 +1050,29 @@ export function* handleSwapAndInitPositionWithETH(
 
     closeSnackbar(loaderCreatePosition)
     yield put(snackbarsActions.remove(loaderCreatePosition))
-  } catch (error) {
+  } catch (e: unknown) {
+    const error = ensureError(e)
     console.log(error)
+
+    let msg: string = ''
+    if (error instanceof SendTransactionError) {
+      const err = error.transactionError
+      try {
+        const errorCode = extractRuntimeErrorCode(err)
+        msg = mapErrorCodeToMessage(errorCode)
+      } catch {
+        const errorCode = extractErrorCode(error)
+        msg = mapErrorCodeToMessage(errorCode)
+      }
+    } else {
+      try {
+        const errorCode = extractErrorCode(error)
+        msg = mapErrorCodeToMessage(errorCode)
+      } catch (e: unknown) {
+        const error = ensureError(e)
+        msg = ensureApprovalDenied(error) ? APPROVAL_DENIED_MESSAGE : COMMON_ERROR_MESSAGE
+      }
+    }
 
     yield put(actions.setInitPositionSuccess(false))
 
@@ -949,7 +1095,7 @@ export function* handleSwapAndInitPositionWithETH(
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Failed to send. Please try again.',
+          message: msg,
           variant: 'error',
           persist: false
         })
@@ -1125,6 +1271,34 @@ export function* handleSwapAndInitPosition(
         maxSupportedTransactionVersion: 0
       })
       if (txDetails) {
+        if (txDetails.meta?.err) {
+          if (txDetails.meta.logMessages) {
+            const errorLog = txDetails.meta.logMessages.find(log =>
+              log.includes(ErrorCodeExtractionKeys.ErrorNumber)
+            )
+            const errorCode = errorLog
+              ?.split(ErrorCodeExtractionKeys.ErrorNumber)[1]
+              .split(ErrorCodeExtractionKeys.Dot)[0]
+              .trim()
+            const message = mapErrorCodeToMessage(Number(errorCode))
+            yield put(actions.setInitPositionSuccess(false))
+
+            closeSnackbar(loaderCreatePosition)
+            yield put(snackbarsActions.remove(loaderCreatePosition))
+            closeSnackbar(loaderSigningTx)
+            yield put(snackbarsActions.remove(loaderSigningTx))
+
+            yield put(
+              snackbarsActions.add({
+                message,
+                variant: 'error',
+                persist: false
+              })
+            )
+            return
+          }
+        }
+
         const meta = txDetails.meta
         const tokenX = xToY
           ? allTokens[swapPair.tokenX.toString()]
@@ -1208,6 +1382,8 @@ export function* handleSwapAndInitPosition(
                   tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenYDecimal)),
                   tokenXIcon: tokenX.logoURI,
                   tokenYIcon: tokenY.logoURI,
+                  tokenXSymbol: tokenX.symbol ?? tokenX.address.toString(),
+                  tokenYSymbol: tokenY.symbol ?? tokenY.address.toString(),
                   tokenXAmountAutoSwap: formatNumberWithoutSuffix(
                     printBN(tokenXExchange, tokenX.decimals)
                   ),
@@ -1235,8 +1411,29 @@ export function* handleSwapAndInitPosition(
 
     closeSnackbar(loaderCreatePosition)
     yield put(snackbarsActions.remove(loaderCreatePosition))
-  } catch (error) {
+  } catch (e: unknown) {
+    const error = ensureError(e)
     console.log(error)
+
+    let msg: string = ''
+    if (error instanceof SendTransactionError) {
+      const err = error.transactionError
+      try {
+        const errorCode = extractRuntimeErrorCode(err)
+        msg = mapErrorCodeToMessage(errorCode)
+      } catch {
+        const errorCode = extractErrorCode(error)
+        msg = mapErrorCodeToMessage(errorCode)
+      }
+    } else {
+      try {
+        const errorCode = extractErrorCode(error)
+        msg = mapErrorCodeToMessage(errorCode)
+      } catch (e: unknown) {
+        const error = ensureError(e)
+        msg = ensureApprovalDenied(error) ? APPROVAL_DENIED_MESSAGE : COMMON_ERROR_MESSAGE
+      }
+    }
 
     yield put(actions.setInitPositionSuccess(false))
 
@@ -1259,7 +1456,7 @@ export function* handleSwapAndInitPosition(
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Failed to send. Please try again.',
+          message: msg,
           variant: 'error',
           persist: false
         })
@@ -1461,42 +1658,59 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
       const txDetails = yield* call([connection, connection.getParsedTransaction], txid)
 
       if (txDetails) {
+        if (txDetails.meta?.err) {
+          if (txDetails.meta.logMessages) {
+            const errorLog = txDetails.meta.logMessages.find(log =>
+              log.includes(ErrorCodeExtractionKeys.ErrorNumber)
+            )
+            const errorCode = errorLog
+              ?.split(ErrorCodeExtractionKeys.ErrorNumber)[1]
+              .split(ErrorCodeExtractionKeys.Dot)[0]
+              .trim()
+            const message = mapErrorCodeToMessage(Number(errorCode))
+            yield put(actions.setInitPositionSuccess(false))
+
+            closeSnackbar(loaderCreatePosition)
+            yield put(snackbarsActions.remove(loaderCreatePosition))
+            closeSnackbar(loaderSigningTx)
+            yield put(snackbarsActions.remove(loaderSigningTx))
+
+            yield put(
+              snackbarsActions.add({
+                message,
+                variant: 'error',
+                persist: false
+              })
+            )
+            return
+          }
+        }
+
         const meta = txDetails.meta
-        if (meta?.preTokenBalances && meta.postTokenBalances) {
-          const accountXPredicate = entry =>
-            entry.mint === pair.tokenX.toString() && entry.owner === wallet.publicKey.toString()
-          const accountYPredicate = entry =>
-            entry.mint === pair.tokenY.toString() && entry.owner === wallet.publicKey.toString()
+        if (meta?.innerInstructions && meta.innerInstructions) {
+          try {
+            const amountX = getAmountFromInitPositionInstruction(meta, TokenType.TokenX)
+            const amountY = getAmountFromInitPositionInstruction(meta, TokenType.TokenY)
 
-          const preAccountX = meta.preTokenBalances.find(accountXPredicate)
-          const postAccountX = meta.postTokenBalances.find(accountXPredicate)
-          const preAccountY = meta.preTokenBalances.find(accountYPredicate)
-          const postAccountY = meta.postTokenBalances.find(accountYPredicate)
+            const tokenX = allTokens[pair.tokenX.toString()]
+            const tokenY = allTokens[pair.tokenY.toString()]
 
-          if (preAccountX && postAccountX && preAccountY && postAccountY) {
-            const preAmountX = preAccountX.uiTokenAmount.amount
-            const preAmountY = preAccountY.uiTokenAmount.amount
-            const postAmountX = postAccountX.uiTokenAmount.amount
-            const postAmountY = postAccountY.uiTokenAmount.amount
-            const amountX = new BN(preAmountX).sub(new BN(postAmountX))
-            const amountY = new BN(preAmountY).sub(new BN(postAmountY))
-            try {
-              const tokenX = allTokens[pair.tokenX.toString()]
-              const tokenY = allTokens[pair.tokenY.toString()]
-
-              yield put(
-                snackbarsActions.add({
-                  tokensDetails: {
-                    ikonType: 'deposit',
-                    tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals)),
-                    tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals)),
-                    tokenXIcon: tokenX.logoURI,
-                    tokenYIcon: tokenY.logoURI
-                  },
-                  persist: false
-                })
-              )
-            } catch {}
+            yield put(
+              snackbarsActions.add({
+                tokensDetails: {
+                  ikonType: 'deposit',
+                  tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals)),
+                  tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals)),
+                  tokenXIcon: tokenX.logoURI,
+                  tokenYIcon: tokenY.logoURI,
+                  tokenXSymbol: tokenX.symbol ?? tokenX.address.toString(),
+                  tokenYSymbol: tokenY.symbol ?? tokenY.address.toString()
+                },
+                persist: false
+              })
+            )
+          } catch {
+            // Should never be triggered
           }
         }
       }
@@ -1509,6 +1723,26 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
   } catch (e: unknown) {
     const error = ensureError(e)
     console.log(error)
+
+    let msg: string = ''
+    if (error instanceof SendTransactionError) {
+      const err = error.transactionError
+      try {
+        const errorCode = extractRuntimeErrorCode(err)
+        msg = mapErrorCodeToMessage(errorCode)
+      } catch {
+        const errorCode = extractErrorCode(error)
+        msg = mapErrorCodeToMessage(errorCode)
+      }
+    } else {
+      try {
+        const errorCode = extractErrorCode(error)
+        msg = mapErrorCodeToMessage(errorCode)
+      } catch (e: unknown) {
+        const error = ensureError(e)
+        msg = ensureApprovalDenied(error) ? APPROVAL_DENIED_MESSAGE : COMMON_ERROR_MESSAGE
+      }
+    }
 
     yield put(actions.setInitPositionSuccess(false))
 
@@ -1531,7 +1765,7 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Failed to send. Please try again',
+          message: msg,
           variant: 'error',
           persist: false
         })
@@ -1932,25 +2166,11 @@ export function* handleClaimFeeWithETH({ index, isLocked }: { index: number; isL
         const meta = txDetails.meta
         if (meta?.innerInstructions && meta.innerInstructions) {
           try {
-            const nativeAmount = (
-              meta.innerInstructions[0].instructions.find(
-                ix => (ix as ParsedInstruction).parsed.info.amount
-              ) as ParsedInstruction
-            ).parsed.info.amount
-
-            const splAmount = (
-              meta.innerInstructions[0].instructions.find(
-                ix => (ix as ParsedInstruction).parsed.info.tokenAmount !== undefined
-              ) as ParsedInstruction
-            ).parsed.info.tokenAmount.amount
+            const amountX = getAmountFromClaimFeeInstruction(meta, TokenType.TokenX)
+            const amountY = getAmountFromClaimFeeInstruction(meta, TokenType.TokenY)
 
             const tokenX = allTokens[pair.tokenX.toString()]
             const tokenY = allTokens[pair.tokenY.toString()]
-
-            const nativeX = pair.tokenX.equals(NATIVE_MINT)
-
-            const amountX = nativeX ? nativeAmount : splAmount
-            const amountY = nativeX ? splAmount : nativeAmount
 
             yield put(
               snackbarsActions.add({
@@ -1959,7 +2179,9 @@ export function* handleClaimFeeWithETH({ index, isLocked }: { index: number; isL
                   tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals)),
                   tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals)),
                   tokenXIcon: tokenX.logoURI,
-                  tokenYIcon: tokenY.logoURI
+                  tokenYIcon: tokenY.logoURI,
+                  tokenXSymbol: tokenX.symbol ?? tokenX.address.toString(),
+                  tokenYSymbol: tokenY.symbol ?? tokenY.address.toString()
                 },
                 persist: false
               })
@@ -1981,6 +2203,26 @@ export function* handleClaimFeeWithETH({ index, isLocked }: { index: number; isL
     console.log(error)
     yield put(actions.setFeesLoader(false))
 
+    let msg: string = ''
+    if (error instanceof SendTransactionError) {
+      const err = error.transactionError
+      try {
+        const errorCode = extractRuntimeErrorCode(err)
+        msg = mapErrorCodeToMessage(errorCode)
+      } catch {
+        const errorCode = extractErrorCode(error)
+        msg = mapErrorCodeToMessage(errorCode)
+      }
+    } else {
+      try {
+        const errorCode = extractErrorCode(error)
+        msg = mapErrorCodeToMessage(errorCode)
+      } catch (e: unknown) {
+        const error = ensureError(e)
+        msg = ensureApprovalDenied(error) ? APPROVAL_DENIED_MESSAGE : COMMON_ERROR_MESSAGE
+      }
+    }
+
     closeSnackbar(loaderClaimFee)
     yield put(snackbarsActions.remove(loaderClaimFee))
     closeSnackbar(loaderSigningTx)
@@ -2000,7 +2242,7 @@ export function* handleClaimFeeWithETH({ index, isLocked }: { index: number; isL
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Failed to send. Please try again',
+          message: msg,
           variant: 'error',
           persist: false
         })
@@ -2146,40 +2388,29 @@ export function* handleClaimFee(action: PayloadAction<{ index: number; isLocked:
       if (txDetails) {
         const meta = txDetails.meta
         if (meta?.preTokenBalances && meta.postTokenBalances) {
-          const accountXPredicate = entry =>
-            entry.mint === pair.tokenX.toString() && entry.owner === wallet.publicKey.toString()
-          const accountYPredicate = entry =>
-            entry.mint === pair.tokenY.toString() && entry.owner === wallet.publicKey.toString()
+          try {
+            const amountX = getAmountFromClaimFeeInstruction(meta, TokenType.TokenX)
+            const amountY = getAmountFromClaimFeeInstruction(meta, TokenType.TokenY)
 
-          const preAccountX = meta.preTokenBalances.find(accountXPredicate)
-          const postAccountX = meta.postTokenBalances.find(accountXPredicate)
-          const preAccountY = meta.preTokenBalances.find(accountYPredicate)
-          const postAccountY = meta.postTokenBalances.find(accountYPredicate)
+            const tokenX = allTokens[pair.tokenX.toString()]
+            const tokenY = allTokens[pair.tokenY.toString()]
 
-          if (preAccountX && postAccountX && preAccountY && postAccountY) {
-            const preAmountX = preAccountX.uiTokenAmount.amount
-            const preAmountY = preAccountY.uiTokenAmount.amount
-            const postAmountX = postAccountX.uiTokenAmount.amount
-            const postAmountY = postAccountY.uiTokenAmount.amount
-            const amountX = new BN(postAmountX).sub(new BN(preAmountX))
-            const amountY = new BN(postAmountY).sub(new BN(preAmountY))
-            try {
-              const tokenX = allTokens[pair.tokenX.toString()]
-              const tokenY = allTokens[pair.tokenY.toString()]
-
-              yield put(
-                snackbarsActions.add({
-                  tokensDetails: {
-                    ikonType: 'claim',
-                    tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals)),
-                    tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals)),
-                    tokenXIcon: tokenX.logoURI,
-                    tokenYIcon: tokenY.logoURI
-                  },
-                  persist: false
-                })
-              )
-            } catch {}
+            yield put(
+              snackbarsActions.add({
+                tokensDetails: {
+                  ikonType: 'claim',
+                  tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals)),
+                  tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals)),
+                  tokenXIcon: tokenX.logoURI,
+                  tokenYIcon: tokenY.logoURI,
+                  tokenXSymbol: tokenX.symbol ?? tokenX.address.toString(),
+                  tokenYSymbol: tokenY.symbol ?? tokenY.address.toString()
+                },
+                persist: false
+              })
+            )
+          } catch {
+            // Should never be triggered
           }
         }
       }
@@ -2194,6 +2425,26 @@ export function* handleClaimFee(action: PayloadAction<{ index: number; isLocked:
     const error = ensureError(e)
     console.log(error)
     yield put(actions.setFeesLoader(false))
+    let msg: string = ''
+    if (error instanceof SendTransactionError) {
+      const err = error.transactionError
+      try {
+        const errorCode = extractRuntimeErrorCode(err)
+        msg = mapErrorCodeToMessage(errorCode)
+      } catch {
+        const errorCode = extractErrorCode(error)
+        msg = mapErrorCodeToMessage(errorCode)
+      }
+    } else {
+      try {
+        const errorCode = extractErrorCode(error)
+        msg = mapErrorCodeToMessage(errorCode)
+      } catch (e: unknown) {
+        const error = ensureError(e)
+        msg = ensureApprovalDenied(error) ? APPROVAL_DENIED_MESSAGE : COMMON_ERROR_MESSAGE
+      }
+    }
+
     closeSnackbar(loaderClaimFee)
     yield put(snackbarsActions.remove(loaderClaimFee))
     closeSnackbar(loaderSigningTx)
@@ -2214,7 +2465,7 @@ export function* handleClaimFee(action: PayloadAction<{ index: number; isLocked:
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Failed to send. Please try again',
+          message: msg,
           variant: 'error',
           persist: false
         })
@@ -2287,6 +2538,37 @@ export function* handleClaimAllFees() {
       upperTickIndex: position.upperTickIndex
     }))
 
+    const accountToMint = {}
+
+    for (const position of formattedPositions) {
+      const tokenX = position.pair.tokenX
+      const tokenY = position.pair.tokenY
+      if (!accountToMint[tokenX.toString()]) {
+        const tokenAccountX = tokensAccounts[tokenX.toString()]
+        if (tokenAccountX) {
+          accountToMint[tokenAccountX.address.toString()] = tokenX.toString()
+        } else {
+          const programId =
+            allTokens[tokenX.toString()].tokenProgram ??
+            (yield* call(getTokenProgramId, connection, tokenX))
+          const ataX = getAssociatedTokenAddressSync(tokenX, wallet.publicKey, false, programId)
+          accountToMint[ataX.toString()] = tokenX.toString()
+        }
+      }
+      if (!accountToMint[tokenY.toString()]) {
+        const tokenAccountY = tokensAccounts[tokenY.toString()]
+        if (tokenAccountY) {
+          accountToMint[tokenAccountY.address.toString()] = tokenY.toString()
+        } else {
+          const programId =
+            allTokens[tokenY.toString()].tokenProgram ??
+            (yield* call(getTokenProgramId, connection, tokenY))
+          const ataY = getAssociatedTokenAddressSync(tokenY, wallet.publicKey, false, programId)
+          accountToMint[ataY.toString()] = tokenY.toString()
+        }
+      }
+    }
+
     const txs = yield* call([marketProgram, marketProgram.claimAllFeesTxs], {
       owner: wallet.publicKey,
       positions: formattedPositions
@@ -2332,30 +2614,40 @@ export function* handleClaimAllFees() {
               const nativeAmount = nativeTransfer ? nativeTransfer.parsed.info.amount : 0
 
               const splTransfers = metaInstructions.instructions.filter(
-                ix => (ix as ParsedInstruction).parsed.info.tokenAmount !== undefined
+                ix =>
+                  (ix as ParsedInstruction).parsed.info.tokenAmount !== undefined ||
+                  (ix as ParsedInstruction).parsed.info.amount !== undefined
               ) as ParsedInstruction[]
 
               let tokenXAmount = '0'
               let tokenYAmount = '0'
               let tokenXIcon = unknownTokenIcon
               let tokenYIcon = unknownTokenIcon
+              let tokenXSymbol = 'Unknown'
+              let tokenYSymbol = 'Unknown'
 
               if (nativeTransfer) {
                 tokenXAmount = formatNumberWithoutSuffix(
                   printBN(nativeAmount, allTokens[NATIVE_MINT.toString()].decimals)
                 )
                 tokenXIcon = allTokens[NATIVE_MINT.toString()].logoURI
+                tokenXSymbol = allTokens[NATIVE_MINT.toString()].symbol ?? NATIVE_MINT.toString()
               }
 
               splTransfers.map((transfer, index) => {
-                const token = allTokens[transfer.parsed.info.mint]
-                const amount = transfer.parsed.info.tokenAmount.amount
+                const token =
+                  allTokens[
+                    transfer.parsed.info?.mint || accountToMint[transfer.parsed.info?.destination]
+                  ]
+                const amount =
+                  transfer.parsed.info?.tokenAmount?.amount || transfer.parsed.info.amount
                 if (index === 0) {
                   tokenYAmount = formatNumberWithoutSuffix(printBN(amount, token.decimals))
                   tokenYIcon = token.logoURI
                 } else if (index === 1 && !nativeTransfer) {
                   tokenXAmount = formatNumberWithoutSuffix(printBN(amount, token.decimals))
                   tokenXIcon = token.logoURI
+                  tokenYSymbol = token.symbol ?? token.address.toString()
                 }
               })
 
@@ -2366,7 +2658,9 @@ export function* handleClaimAllFees() {
                     tokenXAmount: tokenXAmount,
                     tokenYAmount: tokenYAmount,
                     tokenXIcon: tokenXIcon,
-                    tokenYIcon: tokenYIcon
+                    tokenYIcon: tokenYIcon,
+                    tokenXSymbol: tokenXSymbol,
+                    tokenYSymbol: tokenYSymbol
                   },
                   persist: false
                 })
@@ -2416,6 +2710,26 @@ export function* handleClaimAllFees() {
     const error = ensureError(e)
     console.log(error)
     yield* put(actions.setAllClaimLoader(false))
+    let msg: string = ''
+    if (error instanceof SendTransactionError) {
+      const err = error.transactionError
+      try {
+        const errorCode = extractRuntimeErrorCode(err)
+        msg = mapErrorCodeToMessage(errorCode)
+      } catch {
+        const errorCode = extractErrorCode(error)
+        msg = mapErrorCodeToMessage(errorCode)
+      }
+    } else {
+      try {
+        const errorCode = extractErrorCode(error)
+        msg = mapErrorCodeToMessage(errorCode)
+      } catch (e: unknown) {
+        const error = ensureError(e)
+        msg = ensureApprovalDenied(error) ? APPROVAL_DENIED_MESSAGE : COMMON_ERROR_MESSAGE
+      }
+    }
+
     closeSnackbar(loaderClaimAllFees)
     yield put(snackbarsActions.remove(loaderClaimAllFees))
     closeSnackbar(loaderSigningTx)
@@ -2434,7 +2748,7 @@ export function* handleClaimAllFees() {
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Failed to claim fees. Please try again.',
+          message: msg,
           variant: 'error',
           persist: false
         })
@@ -2573,25 +2887,11 @@ export function* handleClosePositionWithETH(data: ClosePositionData) {
         const meta = txDetails.meta
         if (meta?.innerInstructions && meta.innerInstructions) {
           try {
-            const nativeAmount = (
-              meta.innerInstructions[0].instructions.find(
-                ix => (ix as ParsedInstruction).parsed.info.amount
-              ) as ParsedInstruction
-            ).parsed.info.amount
-
-            const splAmount = (
-              meta.innerInstructions[0].instructions.find(
-                ix => (ix as ParsedInstruction).parsed.info.tokenAmount !== undefined
-              ) as ParsedInstruction
-            ).parsed.info.tokenAmount.amount
+            const amountX = getAmountFromClosePositionInstruction(meta, TokenType.TokenX)
+            const amountY = getAmountFromClosePositionInstruction(meta, TokenType.TokenY)
 
             const tokenX = allTokens[pair.tokenX.toString()]
             const tokenY = allTokens[pair.tokenY.toString()]
-
-            const nativeX = pair.tokenX.equals(NATIVE_MINT)
-
-            const amountX = nativeX ? nativeAmount : splAmount
-            const amountY = nativeX ? splAmount : nativeAmount
 
             yield put(
               snackbarsActions.add({
@@ -2600,7 +2900,9 @@ export function* handleClosePositionWithETH(data: ClosePositionData) {
                   tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals)),
                   tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals)),
                   tokenXIcon: tokenX.logoURI,
-                  tokenYIcon: tokenY.logoURI
+                  tokenYIcon: tokenY.logoURI,
+                  tokenXSymbol: tokenX.symbol ?? tokenX.address.toString(),
+                  tokenYSymbol: tokenY.symbol ?? tokenY.address.toString()
                 },
                 persist: false
               })
@@ -2622,7 +2924,25 @@ export function* handleClosePositionWithETH(data: ClosePositionData) {
   } catch (e: unknown) {
     const error = ensureError(e)
     console.log(error)
-
+    let msg: string = ''
+    if (error instanceof SendTransactionError) {
+      const err = error.transactionError
+      try {
+        const errorCode = extractRuntimeErrorCode(err)
+        msg = mapErrorCodeToMessage(errorCode)
+      } catch {
+        const errorCode = extractErrorCode(error)
+        msg = mapErrorCodeToMessage(errorCode)
+      }
+    } else {
+      try {
+        const errorCode = extractErrorCode(error)
+        msg = mapErrorCodeToMessage(errorCode)
+      } catch (e: unknown) {
+        const error = ensureError(e)
+        msg = ensureApprovalDenied(error) ? APPROVAL_DENIED_MESSAGE : COMMON_ERROR_MESSAGE
+      }
+    }
     yield put(actions.setShouldDisable(false))
 
     closeSnackbar(loaderClosePosition)
@@ -2644,7 +2964,7 @@ export function* handleClosePositionWithETH(data: ClosePositionData) {
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Failed to send. Please try again',
+          message: msg,
           variant: 'error',
           persist: false
         })
@@ -2771,42 +3091,29 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
 
       if (txDetails) {
         const meta = txDetails.meta
-        if (meta?.preTokenBalances && meta.postTokenBalances) {
-          const accountXPredicate = entry =>
-            entry.mint === pair.tokenX.toString() && entry.owner === wallet.publicKey.toString()
-          const accountYPredicate = entry =>
-            entry.mint === pair.tokenY.toString() && entry.owner === wallet.publicKey.toString()
+        if (meta?.innerInstructions && meta.innerInstructions) {
+          try {
+            const amountX = getAmountFromClosePositionInstruction(meta, TokenType.TokenX)
+            const amountY = getAmountFromClosePositionInstruction(meta, TokenType.TokenY)
 
-          const preAccountX = meta.preTokenBalances.find(accountXPredicate)
-          const postAccountX = meta.postTokenBalances.find(accountXPredicate)
-          const preAccountY = meta.preTokenBalances.find(accountYPredicate)
-          const postAccountY = meta.postTokenBalances.find(accountYPredicate)
+            const tokenX = allTokens[pair.tokenX.toString()]
+            const tokenY = allTokens[pair.tokenY.toString()]
 
-          if (preAccountX && postAccountX && preAccountY && postAccountY) {
-            const preAmountX = preAccountX.uiTokenAmount.amount
-            const preAmountY = preAccountY.uiTokenAmount.amount
-            const postAmountX = postAccountX.uiTokenAmount.amount
-            const postAmountY = postAccountY.uiTokenAmount.amount
-            const amountX = new BN(postAmountX).sub(new BN(preAmountX))
-            const amountY = new BN(postAmountY).sub(new BN(preAmountY))
-            try {
-              const tokenX = allTokens[pair.tokenX.toString()]
-              const tokenY = allTokens[pair.tokenY.toString()]
-
-              yield put(
-                snackbarsActions.add({
-                  tokensDetails: {
-                    ikonType: 'withdraw',
-                    tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals)),
-                    tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals)),
-                    tokenXIcon: tokenX.logoURI,
-                    tokenYIcon: tokenY.logoURI
-                  },
-                  persist: false
-                })
-              )
-            } catch {}
-          }
+            yield put(
+              snackbarsActions.add({
+                tokensDetails: {
+                  ikonType: 'withdraw',
+                  tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals)),
+                  tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals)),
+                  tokenXIcon: tokenX.logoURI,
+                  tokenYIcon: tokenY.logoURI,
+                  tokenXSymbol: tokenX.symbol ?? tokenX.address.toString(),
+                  tokenYSymbol: tokenY.symbol ?? tokenY.address.toString()
+                },
+                persist: false
+              })
+            )
+          } catch {}
         }
       }
     }
@@ -2821,6 +3128,26 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
   } catch (e: unknown) {
     const error = ensureError(e)
     console.log(error)
+
+    let msg: string = ''
+    if (error instanceof SendTransactionError) {
+      const err = error.transactionError
+      try {
+        const errorCode = extractRuntimeErrorCode(err)
+        msg = mapErrorCodeToMessage(errorCode)
+      } catch {
+        const errorCode = extractErrorCode(error)
+        msg = mapErrorCodeToMessage(errorCode)
+      }
+    } else {
+      try {
+        const errorCode = extractErrorCode(error)
+        msg = mapErrorCodeToMessage(errorCode)
+      } catch (e: unknown) {
+        const error = ensureError(e)
+        msg = ensureApprovalDenied(error) ? APPROVAL_DENIED_MESSAGE : COMMON_ERROR_MESSAGE
+      }
+    }
 
     closeSnackbar(loaderClosePosition)
     yield put(actions.setShouldDisable(false))
@@ -2843,7 +3170,7 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Failed to send. Please try again',
+          message: msg,
           variant: 'error',
           persist: false
         })
