@@ -298,7 +298,7 @@ export const PreSaleWrapper = () => {
   )
 
   const saleEnded = useMemo(() => {
-    return !currentTimestamp.gt(endtimestamp)
+    return currentTimestamp.gt(endtimestamp)
   }, [endtimestamp, currentTimestamp])
 
   const saleDidNotStart = useMemo(() => {
