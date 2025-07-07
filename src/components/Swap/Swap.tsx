@@ -707,9 +707,9 @@ export const Swap: React.FC<ISwap> = ({
       setBestAmount(
         inputRef === inputTarget.FROM
           ? simulateWithHopResult.simulation.swapHopTwo.accumulatedAmountOut
-          : simulateWithHopResult.simulation.swapHopOne.accumulatedAmountIn
-              .add(simulateWithHopResult.simulation.swapHopOne.accumulatedFee)
-              .toString()
+          : simulateWithHopResult.simulation.swapHopOne.accumulatedAmountIn.add(
+              simulateWithHopResult.simulation.swapHopOne.accumulatedFee
+            )
       )
       setSwapType(SwapType.WithHop)
     } else {
