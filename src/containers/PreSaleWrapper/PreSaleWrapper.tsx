@@ -483,7 +483,7 @@ export const PreSaleWrapper = () => {
           isActive={isActive}
           progress={progress}
           isLoading={isLoadingSaleStats}
-          targetAmount={targetAmount}
+          targetAmount={round === 4 ? targetAmount.mul(EFFECTIVE_TARGET_MULTIPLIER) : targetAmount}
           currentAmount={currentAmount}
           mintDecimals={mintDecimals}
           startTimestamp={startTimestamp}

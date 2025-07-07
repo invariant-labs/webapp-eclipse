@@ -145,7 +145,7 @@ export const BuyComponent: React.FC<IProps> = ({
       return 'Enter token amount'
     }
 
-    return 'Buy $INVT'
+    return 'Buy INVT'
   }, [tokenIndex, tokens, isLoading, value])
 
   const actions = createButtonActions({
@@ -217,7 +217,7 @@ export const BuyComponent: React.FC<IProps> = ({
                   </Typography>
                   <Typography component='h4'>TOKEN PRESALE</Typography>
                   <Typography component='h4' className={classes.greenText}>
-                    $INVT
+                    INVT
                   </Typography>
                 </Typography>
                 <Typography className={classes.raisedInfo}>
@@ -277,7 +277,7 @@ export const BuyComponent: React.FC<IProps> = ({
               currency={tokenIndex !== null ? tokens[tokenIndex].symbol : null}
               currencyIconSrc={tokenIndex !== null ? tokens[tokenIndex].logoURI : undefined}
               currencyIsUnknown={
-                tokenIndex !== null ? tokens[tokenIndex].isUnknown ?? false : false
+                tokenIndex !== null ? (tokens[tokenIndex].isUnknown ?? false) : false
               }
               disableBackgroundColor
               placeholder='0.0'
@@ -291,8 +291,7 @@ export const BuyComponent: React.FC<IProps> = ({
                       userDepositedAmount,
                       whitelistWalletLimit,
                       currentAmount,
-                      targetAmount,
-                      isPublic
+                      targetAmount
                     )
                   },
                   variant: 'max'
@@ -315,7 +314,7 @@ export const BuyComponent: React.FC<IProps> = ({
               <Skeleton variant='rounded' width={80} height={24} sx={{ ml: 1 }} />
             ) : (
               <Typography className={classes.tokenAmount}>
-                {printBNandTrimZeros(receive, REWARD_SCALE)} $INVT
+                {printBNandTrimZeros(receive, REWARD_SCALE)} INVT
               </Typography>
             )}
           </Box>
@@ -338,7 +337,7 @@ export const BuyComponent: React.FC<IProps> = ({
                 onBuyClick(convertBalanceToBN(value, mintDecimals))
               }
             }}
-            disabled={getButtonMessage() !== 'Buy $INVT' || !isActive}
+            disabled={getButtonMessage() !== 'Buy INVT' || !isActive}
             content={getButtonMessage()}
             progress={progress}
           />
