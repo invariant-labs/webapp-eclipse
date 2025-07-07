@@ -941,6 +941,8 @@ export const NewPosition: React.FC<INewPosition> = ({
 
   const onAddLiquidity = async () => {
     if (isPriceWarningVisible) {
+      console.log('ss')
+      blurContent()
       const ok = await confirm()
       if (!ok) return
     }
@@ -973,6 +975,7 @@ export const NewPosition: React.FC<INewPosition> = ({
     minUtilizationPercentage
   ) => {
     if (isPriceWarningVisible) {
+      blurContent()
       const ok = await confirm()
       if (!ok) return
     }

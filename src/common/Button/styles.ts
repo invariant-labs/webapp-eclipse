@@ -1,6 +1,7 @@
 import { colors, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 import { FontData } from './Button'
+import { alpha } from '@mui/material'
 
 type StyleProps = {
   scheme: 'normal' | 'green' | 'pink' | 'rainbow' | 'grey'
@@ -43,7 +44,9 @@ const getStyles = (scheme: 'normal' | 'green' | 'pink' | 'rainbow' | 'grey') => 
     case 'grey':
       return {
         background: colors.invariant.greyLinearGradinet,
-        color: colors.invariant.dark
+        color: colors.invariant.dark,
+        backgroundHover: colors.invariant.greyLinearGradinet,
+        boxShadow: alpha('#A9B6BF', 0.25)
       }
   }
 }

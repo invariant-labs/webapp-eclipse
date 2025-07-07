@@ -3,13 +3,17 @@ import { Dialog, Grid, Typography } from '@mui/material'
 import { Button } from '@common/Button/Button'
 import useStyles from './style'
 import { closeSmallIcon, warning3 } from '@static/icons'
+import { unblurContent } from '@utils/uiUtils'
 
 export const useConfirm = (title: string, msg: string | React.ReactNode) => {
   const [state, setState] = useState<{ resolve: (v: boolean) => void } | null>(null)
 
   const confirm = useCallback(() => new Promise<boolean>(resolve => setState({ resolve })), [])
 
-  const handleClose = useCallback(() => setState(null), [])
+  const handleClose = useCallback(() => {
+    setState(null)
+    unblurContent()
+  }, [])
   const handleCancel = useCallback(() => {
     state?.resolve(false)
     handleClose()
