@@ -51,6 +51,7 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
       case 'swap':
         return snackbarSwapIcon
       case 'deposit':
+      case 'purchase':
         return depositIcon
       case 'withdraw':
         return withdrawIcon
@@ -71,6 +72,8 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
         return 'Swapped'
       case 'deposit':
         return 'Deposited'
+      case 'purchase':
+        return 'Purchased'
       case 'withdraw':
         return 'Withdrawn'
       case 'claim':
@@ -151,7 +154,10 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
             )}
             {!!tokenYAmount && (
               <>
-                {ikonType === 'swap' || ikonType === 'unstake' || ikonType === 'stake' ? (
+                {ikonType === 'swap' ||
+                ikonType === 'unstake' ||
+                ikonType === 'stake' ||
+                ikonType === 'purchase' ? (
                   arrow
                 ) : ikonType === 'claim' ? (
                   hasBothAmounts ? (

@@ -33,6 +33,9 @@ import { actions as connectionActions, RpcStatus } from '@store/reducers/solanaC
 import { REWARD_SCALE } from '@invariant-labs/sale-sdk'
 import { BN } from '@coral-xyz/anchor'
 
+import { logoShortIcon } from '@static/icons'
+import { userStats } from '@store/selectors/sale'
+
 export function* fetchUserStats() {
   try {
     const networkType = yield* select(network)
@@ -110,6 +113,7 @@ export function* depositSale(action: PayloadAction<IDepositSale>) {
     const rpc = yield* select(rpcAddress)
     const connection = getSolanaConnection(rpc)
     const wallet = yield* call(getWallet)
+    const state = yield* select(userStats)
     const sale = yield* call(getSaleProgram, networkType, rpc, wallet as IWallet)
     const { amount, mint, proofOfInclusion } = action.payload
 
@@ -148,13 +152,19 @@ export function* depositSale(action: PayloadAction<IDepositSale>) {
         })
       )
     } else {
+      const userBalances = yield* call([sale, sale.getUserBalance], wallet.publicKey)
+      const outputAmount = userBalances.received.sub(state?.received ?? new BN(0))
+
       yield put(
         snackbarsActions.add({
           tokensDetails: {
-            ikonType: 'deposit',
-            tokenXAmount: formatNumberWithoutSuffix(printBN(amount, REWARD_SCALE)),
+            ikonType: 'purchase',
+            tokenXAmount: formatNumberWithoutSuffix(printBN(amount, USDC_MAIN.decimals)),
             tokenXIcon: USDC_MAIN.logoURI,
-            tokenXSymbol: USDC_MAIN.symbol
+            tokenXSymbol: USDC_MAIN.symbol,
+            tokenYAmount: formatNumberWithoutSuffix(printBN(outputAmount, REWARD_SCALE)),
+            tokenYIcon: logoShortIcon,
+            tokenYSymbol: 'INVT'
           },
           persist: false,
           txid
