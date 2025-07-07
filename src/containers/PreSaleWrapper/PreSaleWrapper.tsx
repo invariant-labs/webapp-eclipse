@@ -182,7 +182,6 @@ export const PreSaleWrapper = () => {
   const isSmallMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const isTablet = useMediaQuery(theme.breakpoints.down('lg'))
   const connection = getCurrentSolanaConnection()
-
   const dispatch = useDispatch()
   const isLoadingSaleStats = useSelector(saleSelectors.isLoadingSaleStats)
   const isLoadingUserStats = useSelector(saleSelectors.isLoadingUserStats)
