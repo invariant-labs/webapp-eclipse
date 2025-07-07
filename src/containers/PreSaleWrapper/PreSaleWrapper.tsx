@@ -6,7 +6,7 @@ import { RoundComponent } from '@components/PreSale/RoundComponent/RoundComponen
 import { useDispatch, useSelector } from 'react-redux'
 import { actions } from '@store/reducers/sale'
 import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
-import { proofOfInclusion, saleSelectors } from '@store/selectors/sale'
+import { isLoadingProof, proofOfInclusion, saleSelectors } from '@store/selectors/sale'
 import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
 import { printBNandTrimZeros } from '@utils/utils'
@@ -186,6 +186,7 @@ export const PreSaleWrapper = () => {
   const dispatch = useDispatch()
   const isLoadingSaleStats = useSelector(saleSelectors.isLoadingSaleStats)
   const isLoadingUserStats = useSelector(saleSelectors.isLoadingUserStats)
+  const isLoadingProofOfInclusion = useSelector(isLoadingProof)
   const saleStats = useSelector(saleSelectors.saleStats)
   const userStats = useSelector(saleSelectors.userStats)
   const { success, inProgress } = useSelector(saleSelectors.deposit)
@@ -476,7 +477,7 @@ export const PreSaleWrapper = () => {
           userDepositedAmount={deposited}
           isActive={isActive}
           progress={progress}
-          isLoading={isLoadingSaleStats}
+          isLoading={isLoadingSaleStats || isLoadingProofOfInclusion}
           targetAmount={round === 4 ? targetAmount.mul(EFFECTIVE_TARGET_MULTIPLIER) : targetAmount}
           currentAmount={currentAmount}
           mintDecimals={mintDecimals}
