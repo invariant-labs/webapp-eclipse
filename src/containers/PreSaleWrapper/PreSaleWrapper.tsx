@@ -298,7 +298,7 @@ export const PreSaleWrapper = () => {
   )
 
   const saleEnded = useMemo(() => {
-    return currentTimestamp.gt(endtimestamp)
+    return !currentTimestamp.gt(endtimestamp)
   }, [endtimestamp, currentTimestamp])
 
   const saleDidNotStart = useMemo(() => {
@@ -476,7 +476,7 @@ export const PreSaleWrapper = () => {
           isActive={isActive}
           progress={progress}
           isLoading={isLoadingSaleStats}
-          targetAmount={targetAmount}
+          targetAmount={round === 4 ? targetAmount.mul(EFFECTIVE_TARGET_MULTIPLIER) : targetAmount}
           currentAmount={currentAmount}
           mintDecimals={mintDecimals}
           startTimestamp={startTimestamp}
