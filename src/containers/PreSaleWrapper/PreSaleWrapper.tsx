@@ -293,12 +293,12 @@ export const PreSaleWrapper = () => {
   const endtimestamp = useMemo(() => startTimestamp.add(duration), [startTimestamp, duration])
 
   const saleSoldOut = useMemo(
-    () => currentAmount.eq(targetAmount.mul(EFFECTIVE_TARGET_MULTIPLIER)),
+    () => currentAmount.toString() === targetAmount.mul(EFFECTIVE_TARGET_MULTIPLIER).toString(),
     [targetAmount, currentAmount]
   )
 
   const saleEnded = useMemo(() => {
-    return currentTimestamp.gt(endtimestamp)
+    return currentTimestamp.toNumber() > endtimestamp.toNumber()
   }, [endtimestamp, currentTimestamp])
 
   useEffect(() => {
@@ -331,7 +331,7 @@ export const PreSaleWrapper = () => {
   }, [walletStatus, isPublic, nativeBalance])
 
   const isLimitExceed = useMemo(
-    () => deposited.gte(whitelistWalletLimit) && !isPublic,
+    () => deposited.toNumber() >= whitelistWalletLimit.toNumber() && !isPublic,
     [round, deposited, connection]
   )
 
