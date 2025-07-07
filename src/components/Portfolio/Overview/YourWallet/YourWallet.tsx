@@ -112,16 +112,18 @@ export const YourWallet: React.FC<YourWalletProps> = ({
                     <TableRow key={pool.id.toString()}>
                       <TableCell className={classes.tableCell}>
                         <Box className={classes.tokenContainer}>
-                          <Box className={classes.tokenInfo} sx={{ position: 'relative' }}>
-                            <img
-                              src={pool.icon}
-                              className={classes.tokenIcon}
-                              onError={handleImageError}
-                              alt={pool.symbol}
-                            />
-                            {pool.isUnknown && (
-                              <img className={classes.warningIcon} src={warningIcon} />
-                            )}
+                          <Box className={classes.tokenInfo}>
+                            <Box display='flex' position='relative'>
+                              <img
+                                src={pool.icon}
+                                className={classes.tokenIcon}
+                                onError={handleImageError}
+                                alt={pool.symbol}
+                              />
+                              {pool.isUnknown && (
+                                <img className={classes.warningIcon} src={warningIcon} />
+                              )}
+                            </Box>
 
                             <Typography className={classes.tokenSymbol}>
                               {pool.symbol.length <= 6

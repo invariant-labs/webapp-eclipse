@@ -426,18 +426,27 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     flexDirection: 'column',
     alignItems: 'center',
     transition: 'all 0.3s ease',
+    flexShrink: 1,
     gap: 12
   },
-  unknownWarning: {
+  unverfiedWrapper: {
     width: '100%',
-    height: 'fit-content',
-    background: alpha(colors.invariant.Error, 0.25),
-    border: `1px solid ${colors.invariant.Error}`,
-    ...typography.caption2,
-    color: colors.invariant.Error,
+    gap: 8,
+    display: 'flex'
+  },
+  unknownWarning: {
+    display: 'flex',
+    width: '100%',
+    height: 16,
+    background: alpha(colors.invariant.yellow, 0.05),
+    alignItems: 'center',
+    gap: 8,
+    border: `1px solid ${alpha(colors.invariant.yellow, 0.3)}`,
+    ...typography.caption1,
+    color: colors.invariant.yellow,
     padding: 8,
     paddingInline: 8,
-    borderRadius: 10
+    borderRadius: 8
   },
   pointsBox: {
     height: 27,
