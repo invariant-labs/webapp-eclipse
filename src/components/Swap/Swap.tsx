@@ -289,7 +289,7 @@ export const Swap: React.FC<ISwap> = ({
   const [wasSwapIsLoadingRun, setWasSwapIsLoadingRun] = useState(false)
   const [isReversingTokens, setIsReversingTokens] = useState(false)
   const shortenText = useMediaQuery(theme.breakpoints.down(500))
-  const shortenTextXS = useMediaQuery(theme.breakpoints.down(340))
+  const shortenTextXS = useMediaQuery(theme.breakpoints.down(360))
   useEffect(() => {
     if (lastEdited && tokenFromIndex !== null && tokenToIndex !== null) {
       setInputRef(lastEdited === 'from' ? inputTarget.FROM : inputTarget.TO)
