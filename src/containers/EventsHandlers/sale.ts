@@ -20,7 +20,6 @@ const SaleEvents = () => {
   const location = useLocation()
 
   useEffect(() => {
-    console.log('sale event handler entry')
     if (
       networkStatus !== Status.Initialized ||
       !saleProgram ||
@@ -32,7 +31,6 @@ const SaleEvents = () => {
     const [sale] = saleProgram.getSaleAddressAndBump()
     // @ts-expect-error
     saleProgram.program.account.sale.subscribe(sale).on('change', saleState => {
-      console.log(saleState)
       const saleStats: ISaleStats = {
         whitelistWalletLimit: saleState.whitelistWalletLimit,
         currentAmount: saleState.currentAmount,
