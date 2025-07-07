@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { Box, useMediaQuery } from '@mui/material'
 import { HeaderSection } from '../HeaderSection/HeaderSection'
 import { UnclaimedSection } from '../UnclaimedSection/UnclaimedSection'
@@ -25,6 +25,8 @@ import { network } from '@store/selectors/solanaConnection'
 import { IPositionItem } from '@store/consts/types'
 import { EmptyState } from './EmptyState/EmptyState'
 import LegendSkeleton from './skeletons/LegendSkeleton'
+import html2canvas from 'html2canvas'
+import { Button } from '@common/Button/Button'
 
 interface OverviewProps {
   poolAssets: IPositionItem[]
@@ -166,9 +168,39 @@ export const Overview: React.FC<OverviewProps> = () => {
     })
   }, [sortedTokens, getAverageColor, logoColors, pendingColorLoads])
 
+  const captureRef = useRef(null)
+
+  const handleCopy = async () => {
+    const element = captureRef.current
+    if (!element) {
+      return
+    }
+
+    const canvas = await html2canvas(element)
+    canvas.toBlob(blob => {
+      if (navigator.clipboard && blob) {
+        navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })])
+      }
+    })
+  }
+
+  const handleDownload = async () => {
+    const element = captureRef.current
+    if (!element) {
+      return
+    }
+
+    const canvas = await html2canvas(element)
+    const dataUrl = canvas.toDataURL('image/png')
+    const link = document.createElement('a')
+    link.href = dataUrl
+    link.download = 'screenshot.png'
+    link.click()
+  }
+
   if (!isLoadingList && positions.length === 0) {
     return (
-      <Box className={classes.container}>
+      <Box className={classes.container} ref={captureRef}>
         <HeaderSection totalValue={{ value: 0, isPriceWarning: false }} loading={false} />
         <UnclaimedSection
           unclaimedTotal={{ totalLocked: 0, totalUnlocked: 0 }}
@@ -176,12 +208,18 @@ export const Overview: React.FC<OverviewProps> = () => {
           handleClaimAll={undefined}
         />
         <EmptyState />
+        <Button scheme='green' onClick={() => handleCopy()}>
+          Copy
+        </Button>
+        <Button scheme='green' onClick={() => handleDownload()}>
+          Download
+        </Button>
       </Box>
     )
   }
 
   return (
-    <Box className={classes.container}>
+    <Box className={classes.container} ref={captureRef}>
       <HeaderSection totalValue={totalAssets} loading={isLoadingList} />
       <UnclaimedSection
         unclaimedTotal={unclaimedFees}
@@ -215,6 +253,12 @@ export const Overview: React.FC<OverviewProps> = () => {
           </Box>
         </Box>
       )}
+      <Button scheme='green' onClick={() => handleCopy()}>
+        Copy
+      </Button>
+      <Button scheme='green' onClick={() => handleDownload()}>
+        Download
+      </Button>
     </Box>
   )
 }
