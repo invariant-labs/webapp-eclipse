@@ -301,6 +301,13 @@ export const PreSaleWrapper = () => {
     return currentTimestamp.gt(endtimestamp)
   }, [endtimestamp, currentTimestamp])
 
+  useEffect(() => {
+    console.log(`start timestamp: ${startTimestamp}`)
+    console.log(`duration: ${duration}`)
+    console.log(`end timestamp: ${endtimestamp}`)
+    console.log(`sale ended: ${saleEnded}`)
+  }, [startTimestamp, duration, endtimestamp, saleEnded])
+
   const saleDidNotStart = useMemo(() => {
     return currentTimestamp.lt(startTimestamp)
   }, [startTimestamp, currentTimestamp])
