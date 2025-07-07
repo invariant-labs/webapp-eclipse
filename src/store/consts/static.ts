@@ -790,7 +790,7 @@ export const CHAINS = [
   // { name: Chain.AlephZero, address: 'https://azero.invariant.app/exchange' },
   {
     name: Chain.Eclipse,
-    address: 'https://invariant.app/exchange',
+    address: 'https://eclipse.invariant.app/exchange',
     iconGlow: 'eclipseGlow'
   }
   // { name: Chain.Vara, address: 'https://vara.invariant.app/exchange' },
