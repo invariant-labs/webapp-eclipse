@@ -4,15 +4,7 @@ import ExchangeAmountInput from '@components/Inputs/ExchangeAmountInput/Exchange
 import Slippage from '@components/Modals/Slippage/Slippage'
 import Refresher from '@common/Refresher/Refresher'
 import { BN } from '@coral-xyz/anchor'
-import {
-  Box,
-  Button,
-  Collapse,
-  Grid,
-  Typography,
-  useMediaQuery,
-  useMediaQuery
-} from '@mui/material'
+import { Box, Button, Collapse, Grid, Typography, useMediaQuery } from '@mui/material'
 import {
   DEFAULT_TOKEN_DECIMAL,
   NetworkType,
