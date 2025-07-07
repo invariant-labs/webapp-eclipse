@@ -22,6 +22,8 @@ export interface ISaleStore {
   saleStats: ISaleStats | null
   isLoadingSaleStats: boolean
   isLoadingUserStats: boolean
+  isLoadingProof: boolean
+  proofOfInclusion: Array<number> | undefined
   deposit: {
     inProgress: boolean
     success: boolean
@@ -33,6 +35,8 @@ export const defaultState: ISaleStore = {
   saleStats: null,
   isLoadingSaleStats: false,
   isLoadingUserStats: false,
+  isLoadingProof: false,
+  proofOfInclusion: undefined,
   deposit: {
     inProgress: false,
     success: false
@@ -42,7 +46,7 @@ export const defaultState: ISaleStore = {
 export interface IDepositSale {
   amount: BN
   mint: PublicKey
-  proofOfInclusion: Uint8Array | undefined
+  proofOfInclusion: Array<number> | undefined
 }
 
 export const saleSliceName = 'sale'
@@ -101,6 +105,16 @@ const saleSlice = createSlice({
     },
     resetUserStats(state) {
       state.userStats = null
+      return state
+    },
+    getProof(state) {
+      state.proofOfInclusion = undefined
+      state.isLoadingProof = true
+      return state
+    },
+    setProofOfInclusion(state, action: PayloadAction<Array<number> | undefined>) {
+      state.proofOfInclusion = action.payload
+      state.isLoadingProof = false
       return state
     }
   }

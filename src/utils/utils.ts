@@ -99,7 +99,8 @@ import {
   USDN_MAIN,
   WEETHS_MAIN,
   sBITZ_MAIN,
-  MAX_PLOT_VISIBLE_TICK_RANGE
+  MAX_PLOT_VISIBLE_TICK_RANGE,
+  CHECKER_API_URL
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
@@ -1452,6 +1453,11 @@ export const getNetworkStats = async (name: string): Promise<Record<string, Pool
     `https://stats.invariant.app/full/eclipse-${name}`
   )
 
+  return data
+}
+
+export const fetchProofOfInclusion = async (address: string): Promise<any> => {
+  const { data } = await axios.get(CHECKER_API_URL + `/${address}`)
   return data
 }
 

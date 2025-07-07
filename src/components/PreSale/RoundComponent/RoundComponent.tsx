@@ -31,7 +31,7 @@ interface RoundComponentProps {
   userReceivededAmount: BN
   mintDecimals: number
   roundNumber: number
-  proofOfInclusion: Uint8Array<ArrayBufferLike> | undefined
+  proofOfInclusion: Array<number> | undefined
   isLoadingUserStats: boolean
   isReversed: boolean
   isLoadingSaleStats: boolean

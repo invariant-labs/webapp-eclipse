@@ -929,6 +929,7 @@ export enum OverviewSwitcher {
 export const STATS_CACHE_TIME = 30 * 60 * 1000
 export const LEADERBOARD_API_URL = 'https://api.invariant.app/api'
 export const PRICE_API_URL = 'https://api.invariant.app/price'
+export const CHECKER_API_URL = 'https://api.invariant.app/check'
 
 export enum AutoswapCustomError {
   FetchError = 0
@@ -1088,3 +1089,6 @@ export const DEFAULT_STRATEGY = {
 export const PORTFOLIO_STAKE_STORAGE_KEY = 'STAKE_STATS_EXPANDED'
 export const PORTFOLIO_STAKE_EXPAND_DELAY = 50
 export const PORTFOLIO_STAKE_COLLAPSE_DELAY = 200
+
+export const PROOF_OF_INCLUSION_CACHE_KEY = 'PROOF_OF_INCLUSION'
+export const PROOF_OF_INCLUSION_CACHE_TTL = 1000 * 60 * 60 * 1 // 1 hour

@@ -6,7 +6,7 @@ import { RoundComponent } from '@components/PreSale/RoundComponent/RoundComponen
 import { useDispatch, useSelector } from 'react-redux'
 import { actions } from '@store/reducers/sale'
 import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
-import { saleSelectors } from '@store/selectors/sale'
+import { isLoadingProof, proofOfInclusion, saleSelectors } from '@store/selectors/sale'
 import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
 import { printBNandTrimZeros } from '@utils/utils'
@@ -25,7 +25,6 @@ import { balanceLoading, status, poolTokens, balance } from '@store/selectors/so
 import {
   getAmountTillNextPriceIncrease,
   getPrice,
-  getProof,
   getTimestampSeconds
 } from '@invariant-labs/sale-sdk/lib/utils'
 import { ProgressState } from '@common/AnimatedButton/AnimatedButton'
@@ -183,10 +182,10 @@ export const PreSaleWrapper = () => {
   const isSmallMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const isTablet = useMediaQuery(theme.breakpoints.down('lg'))
   const connection = getCurrentSolanaConnection()
-
   const dispatch = useDispatch()
   const isLoadingSaleStats = useSelector(saleSelectors.isLoadingSaleStats)
   const isLoadingUserStats = useSelector(saleSelectors.isLoadingUserStats)
+  const isLoadingProofOfInclusion = useSelector(isLoadingProof)
   const saleStats = useSelector(saleSelectors.saleStats)
   const userStats = useSelector(saleSelectors.userStats)
   const { success, inProgress } = useSelector(saleSelectors.deposit)
@@ -194,6 +193,7 @@ export const PreSaleWrapper = () => {
   const nativeBalance = useSelector(balance)
   const walletStatus = useSelector(status)
   const isBalanceLoading = useSelector(balanceLoading)
+  const proof = useSelector(proofOfInclusion)
   const [progress, setProgress] = useState<ProgressState>('none')
   const [tokenIndex, setTokenIndex] = useState<number | null>(null)
   const [currentTimestamp, setCurrentTimestamp] = useState<BN>(getTimestampSeconds())
@@ -311,16 +311,17 @@ export const PreSaleWrapper = () => {
 
   const isPublic = useMemo(() => round === 4, [round])
 
-  const proofOfInclusion = useMemo(() => {
+  useEffect(() => {
     const wallet = getEclipseWallet()
     if (
       wallet &&
       walletStatus === Status.Initialized &&
       wallet.publicKey &&
       !wallet.publicKey.equals(DEFAULT_PUBLICKEY)
-    )
-      return getProof(wallet.publicKey.toString())
-  }, [walletStatus, isPublic, nativeBalance])
+    ) {
+      dispatch(actions.getProof())
+    }
+  }, [walletStatus, isPublic])
 
   const isLimitExceed = useMemo(
     () => deposited.gte(whitelistWalletLimit) && !isPublic,
@@ -334,10 +335,10 @@ export const PreSaleWrapper = () => {
         variant: 'limit'
       }
     }
-    if (!isPublic && !!proofOfInclusion) {
+    if (!isPublic && proof?.length !== 0) {
       return { text: 'You are eligible for this round of sale' }
     }
-    if (!isPublic && !proofOfInclusion) {
+    if (!isPublic && proof?.length === 0) {
       return {
         text: 'You are not eligible for this round of sale',
         variant: 'warning'
@@ -349,7 +350,7 @@ export const PreSaleWrapper = () => {
     if (!isActive) {
       return { text: 'Sale not active' }
     }
-  }, [isPublic, proofOfInclusion, isLimitExceed])
+  }, [isPublic, proof, isLimitExceed])
 
   useEffect(() => {
     dispatch(actions.getUserStats())
@@ -442,7 +443,7 @@ export const PreSaleWrapper = () => {
               currentPrice={displayPriceInfo.currentPrice}
               walletStatus={walletStatus}
               nextPrice={displayPriceInfo.nextPrice}
-              proofOfInclusion={proofOfInclusion}
+              proofOfInclusion={proof}
               percentageFilled={filledPercentage}
               userDepositedAmount={deposited}
               userReceivededAmount={received}
@@ -469,12 +470,12 @@ export const PreSaleWrapper = () => {
           saleDidNotStart={saleDidNotStart}
           saleEnded={saleEnded}
           saleSoldOut={saleSoldOut}
-          isEligible={!!proofOfInclusion}
+          isEligible={proof?.length !== 0}
           whitelistWalletLimit={whitelistWalletLimit}
           userDepositedAmount={deposited}
           isActive={isActive}
           progress={progress}
-          isLoading={isLoadingSaleStats}
+          isLoading={isLoadingSaleStats || isLoadingProofOfInclusion}
           targetAmount={round === 4 ? targetAmount.mul(EFFECTIVE_TARGET_MULTIPLIER) : targetAmount}
           currentAmount={currentAmount}
           mintDecimals={mintDecimals}
@@ -502,7 +503,7 @@ export const PreSaleWrapper = () => {
               actions.depositSale({
                 amount,
                 mint,
-                proofOfInclusion
+                proofOfInclusion: proof
               })
             )
           }}

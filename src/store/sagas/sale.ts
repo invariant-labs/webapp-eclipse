@@ -12,10 +12,18 @@ import { actions, IDepositSale, ISaleStats, IUserStats } from '@store/reducers/s
 import { network, rpcAddress } from '@store/selectors/solanaConnection'
 import { getSaleProgram } from '@utils/web3/programs/sale'
 import { getSolanaConnection } from '@utils/web3/connection'
-import { createLoaderKey, ensureError, formatNumberWithoutSuffix, printBN } from '@utils/utils'
+import {
+  createLoaderKey,
+  ensureError,
+  fetchProofOfInclusion,
+  formatNumberWithoutSuffix,
+  printBN
+} from '@utils/utils'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import {
   DEFAULT_PUBLICKEY,
+  PROOF_OF_INCLUSION_CACHE_KEY,
+  PROOF_OF_INCLUSION_CACHE_TTL,
   SIGNING_SNACKBAR_CONFIG,
   TIMEOUT_ERROR_MESSAGE,
   USDC_MAIN
@@ -107,7 +115,7 @@ export function* depositSale(action: PayloadAction<IDepositSale>) {
 
     const ix = yield* call(
       [sale, sale.depositIx],
-      { amount, mint, proofOfInclusion },
+      { amount, mint, proofOfInclusion: Uint8Array.from(proofOfInclusion!) },
       wallet.publicKey
     )
     const tx = new Transaction().add(ix)
@@ -190,6 +198,41 @@ export function* depositSale(action: PayloadAction<IDepositSale>) {
   }
 }
 
+export function* getProof(): Generator {
+  const wallet = yield* call(getWallet)
+  const address = wallet.publicKey.toBase58()
+
+  const lsKey = `${PROOF_OF_INCLUSION_CACHE_KEY}-${address}`
+  const currentTimestamp = +Date.now()
+
+  try {
+    const cachedProof = localStorage.getItem(lsKey)
+    const cachedTimestamp = localStorage.getItem(`${lsKey}-timestamp`)
+
+    if (cachedTimestamp && +cachedTimestamp > currentTimestamp - PROOF_OF_INCLUSION_CACHE_TTL) {
+      const proof = Array.from(new Uint8Array(JSON.parse(cachedProof!)))
+      yield* put(actions.setProofOfInclusion(proof))
+      return
+    }
+  } catch {
+    // Fallback to fetching proof if localStorage read fails
+  }
+
+  const proof = yield* call(fetchProofOfInclusion, wallet.publicKey.toBase58())
+
+  try {
+    localStorage.setItem(lsKey, JSON.stringify(Array.from(proof)))
+    localStorage.setItem(`${lsKey}-timestamp`, currentTimestamp.toString())
+  } catch {
+    // Fallback to not caching proof if localStorage write fails
+  }
+
+  yield* put(actions.setProofOfInclusion(Array.from(proof)))
+}
+
+export function* getProofHandler(): Generator {
+  yield* takeLatest(actions.getProof, getProof)
+}
 export function* getUsetStatsHandler(): Generator {
   yield* takeLatest(actions.getUserStats, fetchUserStats)
 }
@@ -203,5 +246,7 @@ export function* depositSaleHandler(): Generator {
 }
 
 export function* saleSaga(): Generator {
-  yield all([getUsetStatsHandler, getSaleStatsHandler, depositSaleHandler].map(spawn))
+  yield all(
+    [getUsetStatsHandler, getSaleStatsHandler, depositSaleHandler, getProofHandler].map(spawn)
+  )
 }
