@@ -151,15 +151,15 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
           ) : (
             <>
               <Box className={classes.infoRow}>
-                <Typography className={classes.infoLabel}>Deposited:</Typography>
+                <Typography className={classes.infoLabel}>Total raised:</Typography>
                 {renderFormattedNumberWithSkeleton(amountDeposited, mintDecimals, '$', '', '100px')}
               </Box>
               <Box className={classes.infoRow}>
-                <Typography className={classes.infoLabel}>Target deposit:</Typography>
+                <Typography className={classes.infoLabel}>Target raise:</Typography>
                 {renderFormattedNumberWithSkeleton(targetAmount, mintDecimals, '$', '', '100px')}
               </Box>
               <Box className={classes.infoRow}>
-                <Typography className={classes.infoLabel}>Maximal deposit:</Typography>
+                <Typography className={classes.infoLabel}>Maximal raise:</Typography>
                 {renderFormattedNumberWithSkeleton(
                   targetAmount.mul(EFFECTIVE_TARGET_MULTIPLIER),
                   mintDecimals,
@@ -208,7 +208,7 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
         )}
 
         <Box className={classes.infoRow}>
-          <Typography className={classes.secondaryLabel}>Your deposit: </Typography>
+          <Typography className={classes.secondaryLabel}>Your contribution: </Typography>
           {!saleDidNotStart && walletStatus === Status.Initialized ? (
             <Typography className={classes.value}>
               {renderFormattedNumberWithSkeleton(
@@ -227,7 +227,7 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
 
         {!isLastRound && (
           <Box className={classes.infoRow}>
-            <Typography className={classes.secondaryLabel}>Your remaining deposit:</Typography>
+            <Typography className={classes.secondaryLabel}>Remaining limit:</Typography>
             {!saleDidNotStart && walletStatus === Status.Initialized && !!proofOfInclusion ? (
               <Typography className={classes.value}>
                 {renderFormattedNumberWithSkeleton(
