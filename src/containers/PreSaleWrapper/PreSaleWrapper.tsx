@@ -354,7 +354,6 @@ export const PreSaleWrapper = () => {
   }, [isPublic, proof, isLimitExceed])
 
   useEffect(() => {
-    dispatch(actions.getSaleStats())
     dispatch(actions.getUserStats())
   }, [dispatch])
 

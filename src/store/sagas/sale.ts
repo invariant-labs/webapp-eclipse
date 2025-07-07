@@ -57,7 +57,6 @@ export function* fetchUserStats() {
 
     yield* put(actions.setUserStats({ ...userStats }))
   } catch (error) {
-    yield* put(actions.setSaleStats(null))
     yield* put(
       actions.setUserStats({
         deposited: new BN(0),
@@ -162,13 +161,11 @@ export function* depositSale(action: PayloadAction<IDepositSale>) {
         })
       )
     }
-    yield* put(actions.getSaleStats())
     yield* put(actions.getUserStats())
     yield* put(actions.setDepositSuccess(true))
     closeSnackbar(loaderDepositSale)
     yield put(snackbarsActions.remove(loaderDepositSale))
   } catch (e) {
-    yield* put(actions.getSaleStats())
     yield* put(actions.getUserStats())
     yield* put(actions.setDepositSuccess(false))
     const error = ensureError(e)
