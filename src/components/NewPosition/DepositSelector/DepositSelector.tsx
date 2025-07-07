@@ -431,6 +431,18 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     const tokenBBalance = convertBalanceToBN(tokenBInputState.value, tokens[tokenBIndex].decimals)
 
     if (
+      (tokens[tokenAIndex].assetAddress.toString() === WRAPPED_ETH_ADDRESS &&
+        tokens[tokenAIndex].balance.lt(tokenABalance.add(WETH_MIN_FEE_LAMPORTS)) &&
+        tokenACheckbox) ||
+      (tokens[tokenBIndex].assetAddress.toString() === WRAPPED_ETH_ADDRESS &&
+        tokens[tokenBIndex].balance.lt(tokenBBalance.add(WETH_MIN_FEE_LAMPORTS)) &&
+        tokenBCheckbox) ||
+      ethBalance.lt(WETH_MIN_FEE_LAMPORTS)
+    ) {
+      return `Insufficient ETH`
+    }
+
+    if (
       ((tokenAInputState.blocked && !tokenBInputState.blocked) ||
         (!tokenAInputState.blocked && tokenBInputState.blocked)) &&
       isAutoswapOn
