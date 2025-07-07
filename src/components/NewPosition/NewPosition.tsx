@@ -57,7 +57,7 @@ import {
 import { backIcon, newTabIcon, refreshIcon, settingIcon } from '@static/icons'
 import FAQModal from '@components/Modals/FAQModal/FAQModal'
 import EstimatedPoints from './EstimatedPoints/EstimatedPoints'
-import { colors, theme } from '@static/theme'
+import { theme } from '@static/theme'
 import PointsLabel from './EstimatedPoints/PointsLabel'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { Tick, Tickmap } from '@invariant-labs/sdk-eclipse/lib/market'
@@ -266,13 +266,8 @@ export const NewPosition: React.FC<INewPosition> = ({
   )
 
   const [ConfirmDialog, confirm] = useConfirm(
-    'Are you sure?',
-    <>
-      Please ensure you're opening your position within the correct price range. Opening a position
-      in an incorrect range on this pool can result in a{' '}
-      <b style={{ color: colors.invariant.Error }}>loss of value</b> — essentially, it’s like
-      selling your tokens below the market price or buying them above it
-    </>
+    'Are you sure',
+    `Please ensure you’re opening your position within the correct price range. Opening a position in an incorrect range on this pool can result in a loss of value - essentially, it’s like selling your tokens below the market price or buying them above it.`
   )
   const [leftRange, setLeftRange] = useState(getMinTick(tickSpacing))
   const [rightRange, setRightRange] = useState(getMaxTick(tickSpacing))

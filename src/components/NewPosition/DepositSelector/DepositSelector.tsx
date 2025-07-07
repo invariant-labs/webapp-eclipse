@@ -431,18 +431,6 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     const tokenBBalance = convertBalanceToBN(tokenBInputState.value, tokens[tokenBIndex].decimals)
 
     if (
-      (tokens[tokenAIndex].assetAddress.toString() === WRAPPED_ETH_ADDRESS &&
-        tokens[tokenAIndex].balance.lt(tokenABalance.add(WETH_MIN_FEE_LAMPORTS)) &&
-        tokenACheckbox) ||
-      (tokens[tokenBIndex].assetAddress.toString() === WRAPPED_ETH_ADDRESS &&
-        tokens[tokenBIndex].balance.lt(tokenBBalance.add(WETH_MIN_FEE_LAMPORTS)) &&
-        tokenBCheckbox) ||
-      ethBalance.lt(WETH_MIN_FEE_LAMPORTS)
-    ) {
-      return `Insufficient ETH`
-    }
-
-    if (
       ((tokenAInputState.blocked && !tokenBInputState.blocked) ||
         (!tokenAInputState.blocked && tokenBInputState.blocked)) &&
       isAutoswapOn
@@ -1030,7 +1018,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             currency={tokenAIndex !== null ? tokens[tokenAIndex].symbol : null}
             currencyIconSrc={tokenAIndex !== null ? tokens[tokenAIndex].logoURI : undefined}
             currencyIsUnknown={
-              tokenAIndex !== null ? (tokens[tokenAIndex].isUnknown ?? false) : false
+              tokenAIndex !== null ? tokens[tokenAIndex].isUnknown ?? false : false
             }
             placeholder='0.0'
             actionButtons={[
@@ -1101,7 +1089,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             currency={tokenBIndex !== null ? tokens[tokenBIndex].symbol : null}
             currencyIconSrc={tokenBIndex !== null ? tokens[tokenBIndex].logoURI : undefined}
             currencyIsUnknown={
-              tokenBIndex !== null ? (tokens[tokenBIndex].isUnknown ?? false) : false
+              tokenBIndex !== null ? tokens[tokenBIndex].isUnknown ?? false : false
             }
             placeholder='0.0'
             actionButtons={[

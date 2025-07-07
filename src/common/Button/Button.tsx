@@ -6,7 +6,7 @@ export type FontData = {
   fontWeight: number
 }
 type Props = {
-  scheme: 'normal' | 'green' | 'pink' | 'rainbow'
+  scheme: 'normal' | 'green' | 'pink' | 'rainbow' | 'grey'
   disabled?: boolean
   margin?: string | number
   height?: string | number
