@@ -641,7 +641,7 @@ export const PreSaleWrapper = () => {
               title={'Launch of sBITZ'}
               borderColor={'pink'}
               description={
-                'Invariant introduces Liquid Staking on Eclipse. The sBITZ token is launched to solve BITZ liquidity issues and offer users significantly higher yields'
+                'Invariant introduces Liquid Staking on Eclipse. The sBITZ token is launched to solve BITZ liquidity issues and offer users significantly higher yields.'
               }
               heroImage={'https://eclipse.invariant.app/sBitz.png'}
             />
