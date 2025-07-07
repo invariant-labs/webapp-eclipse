@@ -158,7 +158,7 @@ export function* depositSale(action: PayloadAction<IDepositSale>) {
       yield put(
         snackbarsActions.add({
           tokensDetails: {
-            ikonType: 'deposit',
+            ikonType: 'purchase',
             tokenXAmount: formatNumberWithoutSuffix(printBN(amount, USDC_MAIN.decimals)),
             tokenXIcon: USDC_MAIN.logoURI,
             tokenXSymbol: USDC_MAIN.symbol,
