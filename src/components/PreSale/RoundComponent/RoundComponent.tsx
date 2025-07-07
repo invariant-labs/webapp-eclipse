@@ -174,7 +174,7 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
         {isActive && (
           <Box className={classes.priceIncreaseBox}>
             <Typography className={classes.priceIncreaseText}>
-              {roundNumber === 4 ? 'AMOUNT LEFT:' : 'AMOUNT TILL PRICE INCREASE:'}
+              {roundNumber === 4 ? 'REMAINING TO END OF SALE:' : 'REMAINING TO NEXT TIER:'}
             </Typography>
             {renderFormattedNumberWithSkeleton(amountLeft, mintDecimals, '$', '', '100px')}
           </Box>
