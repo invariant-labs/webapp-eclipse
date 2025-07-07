@@ -516,7 +516,7 @@ export const PreSaleWrapper = () => {
             <AnimatedPreSaleCard
               title='~1M Users'
               gradientPrimaryColor={`${colors.invariant.green}`}
-              subtitle='who have ever interacted with Invariant'
+              subtitle='who have ever interacted with Invariant (Solana + Eclipse)'
               delay={100}
             />
           </Grid>
@@ -529,14 +529,18 @@ export const PreSaleWrapper = () => {
             />
           </Grid>
           <Grid item className={classes.animatedCardItem}>
-            <AnimatedPreSaleCard title='4 Hackatons' subtitle='won by Invariant team' delay={500} />
+            <AnimatedPreSaleCard
+              title='4 Hackatons'
+              subtitle='won by Invariant team ($200k in prizes)'
+              delay={500}
+            />
           </Grid>
           <Grid item className={classes.animatedCardItem}>
             <AnimatedPreSaleCard
-              title=' $200K+'
+              title='$1M in Fees'
               gradientPrimaryColor={`${colors.invariant.green}`}
               gradientDirection='to bottom'
-              subtitle='earned in hackathon prizes'
+              subtitle='earned by liquidity providers'
               delay={700}
             />
           </Grid>
