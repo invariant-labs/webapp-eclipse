@@ -11,6 +11,7 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
     alignItems: 'flex-start',
     minHeight: '440px',
     width: '160px',
+    paddingLeft: 16,
     [theme.breakpoints.down('lg')]: {
       flexDirection: 'row',
       height: '100px',
@@ -282,7 +283,8 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
   },
 
   endStepNode: {
-    borderColor: colors.invariant.pink
+    borderColor: colors.invariant.pink,
+    boxShadow: '0px 0px 8px 4px #EF84F559'
   },
 
   startStepNode: {

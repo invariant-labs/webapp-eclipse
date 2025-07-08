@@ -37,7 +37,7 @@ interface RoundComponentProps {
   isLoadingSaleStats: boolean
   walletStatus: Status
   priceFormat: 'token-to-usdc' | 'usdc-to-token'
-  roundName: string
+  roundName?: string
 }
 
 export const RoundComponent: React.FC<RoundComponentProps> = ({
@@ -113,7 +113,7 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
     <Box className={classes.container}>
       <Box className={classes.roundTitleContainer}>
         <Typography className={classes.roundText}>Phase:</Typography>
-        <Typography className={classes.roundTitle}>{roundName.toUpperCase()}</Typography>
+        <Typography className={classes.roundTitle}>{roundName?.toUpperCase()}</Typography>
       </Box>
 
       {!isActive && (
