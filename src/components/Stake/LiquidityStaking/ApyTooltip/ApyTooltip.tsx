@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 import { Box, Skeleton, Typography, useMediaQuery } from '@mui/material'
 import useStyles from './style'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
@@ -12,15 +12,15 @@ export interface IApyTooltip {
   stakeDataLoading: boolean
 }
 
-export const ApyTooltip: React.FC<IApyTooltip> = ({ sBitzApyApr, stakeDataLoading }) => {
+export const ApyTooltip: React.FC<IApyTooltip> = ({ stakeDataLoading }) => {
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
 
   const { classes } = useStyles()
-  const additionalApy = useMemo(() => {
-    const { apr, apy } = sBitzApyApr
-    if (!apr || !apy) return 0
-    return (apy - apr).toFixed(2)
-  }, [sBitzApyApr])
+  // const _additionalApy = useMemo(() => {
+  //   const { apr, apy } = sBitzApyApr
+  //   if (!apr || !apy) return 0
+  //   return (apy - apr).toFixed(2)
+  // }, [sBitzApyApr])
 
   if (stakeDataLoading) {
     return <Skeleton width={200} height={24} />
