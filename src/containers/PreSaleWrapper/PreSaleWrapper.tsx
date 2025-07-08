@@ -56,6 +56,9 @@ import { auditByLogoIcon, swapArrowClean } from '@static/icons'
 import { Tokenomics } from '@components/PreSale/Tokenomics/Tokenomics'
 import { DEXChart } from '@components/PreSale/DEXChart/DEXChart'
 import { getCurrentSolanaConnection } from '@utils/web3/connection'
+import { Button } from '@common/Button/Button'
+import share from '@static/svg/share.svg'
+import { ShareComponent } from '@components/PreSale/ShareComponent/ShareComponent'
 
 function SampleNextArrow(props) {
   const { className, style, onClick } = props
@@ -423,11 +426,15 @@ export const PreSaleWrapper = () => {
     })
   }, [tierPrices, reversedPrices, mintDecimals])
 
+  const [isShareComponentShown, setIsShareComponentShown] = useState(false)
+
   return (
     <Grid className={classes.pageWrapper} sx={{ position: 'relative' }}>
       <Hidden lgDown>
         <OverlayWrapper />
       </Hidden>
+
+      {isShareComponentShown && <ShareComponent hide={() => setIsShareComponentShown(false)} />}
 
       <Box className={classes.contentWrapper}>
         <Grid className={classes.stepperContainer}>
@@ -455,6 +462,11 @@ export const PreSaleWrapper = () => {
               isLoadingUserStats={isLoadingUserStats}
               priceFormat={reversedPrices ? 'usdc-to-token' : 'token-to-usdc'}
             />
+            <Button width='100%' scheme='green' onClick={() => setIsShareComponentShown(true)}>
+              <div className={classes.shareContainer}>
+                Share <img src={share} alt='share icon' />
+              </div>
+            </Button>
             <Grid className={classes.reverseContainer}>
               <div className={classes.arrowIcon} onClick={togglePriceDirection}>
                 <span className={`${classes.reverseText} reverseText`}>Reverse token</span>

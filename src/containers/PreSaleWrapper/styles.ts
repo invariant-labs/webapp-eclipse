@@ -333,5 +333,9 @@ export const useStyles = makeStyles()(() => ({
     ...typography.heading1,
     textAlign: 'center',
     color: colors.invariant.text
+  },
+  shareContainer: {
+    display: 'flex',
+    gap: 4
   }
 }))
