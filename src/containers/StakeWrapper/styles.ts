@@ -337,6 +337,10 @@ export const useStyles = makeStyles()(() => ({
     [theme.breakpoints.down('md')]: {
       flexDirection: 'column-reverse'
     }
+  },
+  stakedBitzContainer: {
+    marginTop: 72,
+    width: '100%'
   }
 }))
 

@@ -26,7 +26,9 @@ import {
   stakeDataLoading,
   stakeTab,
   stakeInputVal,
-  unstakeInputVal
+  unstakeInputVal,
+  bitzMakretDataLoading,
+  bitzMarketData
 } from '@store/selectors/sBitz'
 import {
   //   // bitzStaked,
@@ -41,7 +43,6 @@ import {
 } from '@store/selectors/sbitz-stats'
 
 import { network } from '@store/selectors/solanaConnection'
-import { FAQSection } from '@components/Stake/FAQSection/FAQSection'
 // import { OverallStats } from '@components/Stake/OverallStats/OverallStats'
 import { StakeChart } from '@components/Stake/StakeChart/StakeChart'
 // import { StakedStats } from '@components/Stake/StakedStats/StakedStats'
@@ -71,6 +72,8 @@ import { refreshIcon } from '@static/icons'
 import { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 import { theme } from '@static/theme'
 import { SBitzBanner } from '@components/Stake/SBitzBanner/SBitzBanner'
+import { BitzStats } from '@components/Stake/BitzStats/BitzStats'
+import { FAQSection } from '@components/Stake/FAQSection/FAQSection'
 
 export const WrappedStake: React.FC = () => {
   const { classes } = useStyles()
@@ -86,12 +89,14 @@ export const WrappedStake: React.FC = () => {
   const isInProgress = useSelector(inProgress)
   const success = useSelector(successState)
   const isLoadingStats = useSelector(isLoading)
+  const isLoadingMarketData = useSelector(bitzMakretDataLoading)
+  const bitzMarketDataStats = useSelector(bitzMarketData)
   //   // const sbitzPlot = useSelector(sbitzSupplyPlot)
   //   // const bitzPlot = useSelector(bitzStakedPlot)
-  //   // const stakedBitzSupply = useSelector(sbitzSupply)
+  // const stakedBitzSupply = useSelector(sbitzSupply)
   //   // const backedByBitz = useSelector(bitzStaked)
   //   // const totalBitz = useSelector(totalBitzStaked)
-  //   // const supplyBitz = useSelector(bitzSupply)
+  // const supplyBitz = useSelector(bitzSupply)
   //   // const sbitzTvlPlot = useSelector(sbitzTVLPlot)
   //   // const sbitzTvl = useSelector(sBitzTVL)
   const stakedBitzData = useSelector(stakedData)
@@ -194,6 +199,7 @@ export const WrappedStake: React.FC = () => {
     dispatch(sbitzStatsActions.getCurrentStats())
     dispatch(actions.getStakedAmountAndBalance())
     fetchPrices()
+    dispatch(actions.getCurrentStats())
   }, [dispatch])
 
   const onRefresh = () => {
@@ -422,6 +428,10 @@ export const WrappedStake: React.FC = () => {
           tvlPlot={sbitzTvlPlot}
           sbitzTvl={sbitzTvl}
         /> */}
+      </Box>
+      <Box className={classes.stakedBitzContainer}>
+        <Typography className={classes.statsTitle}>BITZ staked</Typography>
+        <BitzStats isLoading={isLoadingMarketData} stats={bitzMarketDataStats} />
       </Box>
 
       <FAQSection />

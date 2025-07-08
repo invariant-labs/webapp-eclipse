@@ -12,11 +12,44 @@ export interface GetBackedByBITZPayload {
   tokenAddress?: string
 }
 
+export interface HoldersResponse {
+  data: number
+}
+export interface TokensResponse {
+  data: {
+    tokens: {
+      balance: number
+    }
+  }
+}
+export interface MarketDataResponse {
+  data: {
+    tokenInfo: {
+      decimals: number
+      supply: string
+    }
+  }
+  metadata: {
+    tokens: {
+      sBTZcSwRZhRq3JcjFh1xwxgCxmsN7MreyU3Zx8dA8uF: {
+        price_usdt: number
+      }
+    }
+  }
+}
 export interface LoadingStates {
   stakeData: boolean
   stakeOperation: boolean
+  bitzMarketData: boolean
 }
-
+export interface BitzMarketData {
+  marketCap: number | null
+  sBitzSupply: number | null
+  holders: number | null
+  totalSupply: number | null
+  sBitzAmount: number | null
+  bitzAmount: number | null
+}
 export interface ISBitz {
   inProgress: boolean
   success: boolean
@@ -29,6 +62,7 @@ export interface ISBitz {
   stakeTab: StakeSwitch
   stakeInputVal: string
   unstakeInputVal: string
+  bitzMarketData: BitzMarketData
 }
 
 const defaultStatus: ISBitz = {
@@ -36,7 +70,8 @@ const defaultStatus: ISBitz = {
   success: false,
   loadingStates: {
     stakeData: false,
-    stakeOperation: false
+    stakeOperation: false,
+    bitzMarketData: false
   },
   stakedData: {
     stakedAmount: null,
@@ -45,7 +80,15 @@ const defaultStatus: ISBitz = {
   },
   stakeTab: StakeSwitch.Stake,
   stakeInputVal: '',
-  unstakeInputVal: ''
+  unstakeInputVal: '',
+  bitzMarketData: {
+    marketCap: null,
+    sBitzSupply: null,
+    holders: null,
+    totalSupply: null,
+    sBitzAmount: null,
+    bitzAmount: null
+  }
 }
 
 export const sBitzSliceName = 'sBitz'
@@ -101,6 +144,19 @@ const sBitzSlice = createSlice({
     },
     setUnstakeInputVal(state, action: PayloadAction<{ val: string }>) {
       state.unstakeInputVal = action.payload.val
+      return state
+    },
+    getCurrentStats(state) {
+      state.loadingStates.bitzMarketData = true
+      return state
+    },
+    setLoadingStats(state, action: PayloadAction<boolean>) {
+      state.loadingStates.bitzMarketData = action.payload
+      return state
+    },
+    setCurrentStats(state, action: PayloadAction<BitzMarketData>) {
+      state.loadingStates.bitzMarketData = false
+      state.bitzMarketData = action.payload
       return state
     }
   }

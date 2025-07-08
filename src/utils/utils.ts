@@ -120,6 +120,7 @@ import { createUmi } from '@metaplex-foundation/umi-bundle-defaults'
 import { Umi } from '@metaplex-foundation/umi'
 import { StakingStatsResponse } from '@store/reducers/sbitz-stats'
 import { DEFAULT_FEE_TIER, STRATEGIES } from '@store/consts/userStrategies'
+import { HoldersResponse, MarketDataResponse, TokensResponse } from '@store/reducers/sBitz'
 
 export const transformBN = (amount: BN): string => {
   return (amount.div(new BN(1e2)).toNumber() / 1e4).toString()
@@ -2628,4 +2629,35 @@ export const getAmountFromClosePositionInstruction = (
   )[type === TokenType.TokenX ? 0 : 1] as ParsedInstruction | undefined
 
   return instruction?.parsed.info.amount || instruction?.parsed.info.tokenAmount.amount
+}
+
+export const fetchMarketBitzStats = async () => {
+  const sBITZ = sBITZ_MAIN.address.toString()
+  const BITZ = BITZ_MAIN.address.toString()
+  const TOKENS_ADDR = '5FgZ9W81khmNXG8i96HSsG7oJiwwpKnVzmHgn9ZnqQja'
+
+  const [holdersRes, sBitzRes, bitzRes, tokensRes] = await Promise.all([
+    axios.get<HoldersResponse>('https://api.eclipsescan.xyz/v1/token/holder/total', {
+      params: { address: sBITZ }
+    }),
+
+    axios.get<MarketDataResponse>('https://api.eclipsescan.xyz/v1/account', {
+      params: { address: sBITZ }
+    }),
+
+    axios.get<MarketDataResponse>('https://api.eclipsescan.xyz/v1/account', {
+      params: { address: BITZ }
+    }),
+
+    axios.get<TokensResponse>('https://api.eclipsescan.xyz/v1/account/tokens', {
+      params: { address: TOKENS_ADDR }
+    })
+  ])
+
+  return {
+    holders: holdersRes.data,
+    accountSBitz: sBitzRes.data,
+    accountBitz: bitzRes.data,
+    totalBitzSupply: tokensRes.data
+  }
 }

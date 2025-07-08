@@ -30,6 +30,7 @@ import {
   ensureError,
   extractErrorCode,
   extractRuntimeErrorCode,
+  fetchMarketBitzStats,
   formatNumberWithoutSuffix,
   mapErrorCodeToMessage,
   printBN
@@ -532,6 +533,62 @@ export function* handleGetStakedAmountAndBalance() {
   }
 }
 
+export function* getMarketBitzStats(): Generator {
+  const networkType = yield* select(network)
+  const rpc = yield* select(rpcAddress)
+  const wallet = yield* call(getWallet)
+
+  const stakingProgram = yield* call(getStakingProgram, networkType, rpc, wallet as IWallet)
+
+  try {
+    const { stakedAmount } = yield* call([
+      stakingProgram,
+      stakingProgram.getStakedAmountAndStakedTokenSupply
+    ])
+
+    const sBitzAmount = +printBN(stakedAmount, BITZ_MAIN.decimals)
+
+    const { holders, accountSBitz, accountBitz, totalBitzSupply } =
+      yield* call(fetchMarketBitzStats)
+
+    const bitzAmount = totalBitzSupply.data.tokens[0].balance - sBitzAmount
+
+    const supplySBitz = printBN(
+      accountSBitz.data.tokenInfo.supply,
+      accountSBitz.data.tokenInfo.decimals
+    )
+    const supplyBitz = printBN(
+      accountBitz.data.tokenInfo.supply,
+      accountBitz.data.tokenInfo.decimals
+    )
+    const marketCapSBitz =
+      accountSBitz.metadata.tokens.sBTZcSwRZhRq3JcjFh1xwxgCxmsN7MreyU3Zx8dA8uF.price_usdt *
+      Number(supplySBitz)
+
+    yield* put(
+      actions.setCurrentStats({
+        bitzAmount,
+        marketCap: marketCapSBitz,
+        sBitzSupply: +supplySBitz,
+        holders: holders.data,
+        totalSupply: Number(supplyBitz),
+        sBitzAmount
+      })
+    )
+  } catch (e: unknown) {
+    const error = ensureError(e)
+    console.log(error)
+
+    yield* put(actions.setLoadingStats(false))
+
+    yield* call(handleRpcError, error.message)
+  }
+}
+
+export function* marketBitzStatsHandler(): Generator {
+  yield* takeLatest(actions.getCurrentStats, getMarketBitzStats)
+}
+
 export function* stakeHandler(): Generator {
   yield* takeLatest(actions.stake, handleStake)
 }
@@ -545,5 +602,7 @@ export function* stakedAmountAndBalanceHandler(): Generator {
 }
 
 export function* stakeSaga(): Generator {
-  yield all([stakeHandler, unstakeHandler, stakedAmountAndBalanceHandler].map(spawn))
+  yield all(
+    [stakeHandler, unstakeHandler, stakedAmountAndBalanceHandler, marketBitzStatsHandler].map(spawn)
+  )
 }
