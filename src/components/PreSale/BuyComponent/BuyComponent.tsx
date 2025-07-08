@@ -2,7 +2,12 @@ import { Box, Grid, Skeleton, Typography, useMediaQuery } from '@mui/material'
 import useStyles from './style'
 import DepositAmountInput from '@components/Inputs/DepositAmountInput/DepositAmountInput'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { convertBalanceToBN, formatNumberWithCommas, printBNandTrimZeros } from '@utils/utils'
+import {
+  convertBalanceToBN,
+  formatNumberWithCommas,
+  printBN,
+  printBNandTrimZeros
+} from '@utils/utils'
 import { Timer } from '../Timer/Timer'
 import { BN } from '@coral-xyz/anchor'
 import {
@@ -37,6 +42,7 @@ interface IProps {
   currentAmount: BN
   mintDecimals: number
   startTimestamp: BN
+  minDeposit: BN
   tokens: SwapToken[]
   tokenIndex: number | null
   walletStatus: Status
@@ -75,7 +81,8 @@ export const BuyComponent: React.FC<IProps> = ({
   onConnectWallet,
   onDisconnectWallet,
   alertBox,
-  isLoadingUserStats
+  isLoadingUserStats,
+  minDeposit
 }) => {
   const targetDate = useMemo(() => new Date(startTimestamp.toNumber() * 1000), [startTimestamp])
   const { hours, minutes, seconds } = useCountdown({
@@ -126,23 +133,26 @@ export const BuyComponent: React.FC<IProps> = ({
       return 'You are not eligible'
     }
 
-    if (
-      convertBalanceToBN(value, mintDecimals).add(userDepositedAmount).gt(whitelistWalletLimit) &&
-      !isPublic
-    ) {
-      return 'Your deposit exceed limit'
-    }
-
-    if (convertBalanceToBN(value, tokens[tokenIndex].decimals).gt(tokens[tokenIndex].balance)) {
-      return `Not enough ${tokens[tokenIndex].symbol}`
-    }
-
     if (nativeBalance.lt(WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_MAIN)) {
       return `Insufficient ETH`
     }
 
+    const valueAsBN = convertBalanceToBN(value, mintDecimals)
+
     if (Number(value) === 0) {
       return 'Enter token amount'
+    }
+
+    if (valueAsBN.ltn(minDeposit)) {
+      return `Minimal deposit is ${printBN(minDeposit, mintDecimals)} ${tokens[tokenIndex].symbol}`
+    }
+
+    if (valueAsBN.add(userDepositedAmount).gt(whitelistWalletLimit) && !isPublic) {
+      return 'Your deposit exceed limit'
+    }
+
+    if (valueAsBN.gt(tokens[tokenIndex].balance)) {
+      return `Not enough ${tokens[tokenIndex].symbol}`
     }
 
     return 'Buy INVT'
@@ -277,7 +287,7 @@ export const BuyComponent: React.FC<IProps> = ({
               currency={tokenIndex !== null ? tokens[tokenIndex].symbol : null}
               currencyIconSrc={tokenIndex !== null ? tokens[tokenIndex].logoURI : undefined}
               currencyIsUnknown={
-                tokenIndex !== null ? (tokens[tokenIndex].isUnknown ?? false) : false
+                tokenIndex !== null ? tokens[tokenIndex].isUnknown ?? false : false
               }
               disableBackgroundColor
               placeholder='0.0'

@@ -215,21 +215,29 @@ export const PreSaleWrapper = () => {
     })
   }, [])
 
-  const { targetAmount, currentAmount, whitelistWalletLimit, startTimestamp, duration, mint } =
-    useMemo(
-      () =>
-        saleStats
-          ? saleStats
-          : {
-              targetAmount: new BN(0),
-              currentAmount: new BN(0),
-              whitelistWalletLimit: new BN(0),
-              startTimestamp: new BN(0),
-              duration: new BN(0),
-              mint: new PublicKey(0)
-            },
-      [saleStats]
-    )
+  const {
+    targetAmount,
+    currentAmount,
+    whitelistWalletLimit,
+    startTimestamp,
+    duration,
+    mint,
+    minDeposit
+  } = useMemo(
+    () =>
+      saleStats
+        ? saleStats
+        : {
+            targetAmount: new BN(0),
+            currentAmount: new BN(0),
+            whitelistWalletLimit: new BN(0),
+            startTimestamp: new BN(0),
+            duration: new BN(0),
+            mint: new PublicKey(0),
+            minDeposit: new BN(0)
+          },
+    [saleStats]
+  )
 
   useEffect(() => {
     const index = tokens.findIndex(token => token.assetAddress.equals(mint))
@@ -247,7 +255,7 @@ export const PreSaleWrapper = () => {
     [userStats]
   )
 
-  const round = useMemo(() => getRound(currentAmount, targetAmount), [saleStats])
+  const round = useMemo(() => getRound(currentAmount, targetAmount), [currentAmount, targetAmount])
 
   const remainingAmount = useMemo(
     () => (!whitelistWalletLimit.isZero() ? whitelistWalletLimit.sub(deposited) : new BN(0)),
@@ -464,6 +472,7 @@ export const PreSaleWrapper = () => {
           </Box>
         </Grid>
         <BuyComponent
+          minDeposit={minDeposit}
           nativeBalance={nativeBalance}
           isPublic={isPublic}
           currentRound={round}
