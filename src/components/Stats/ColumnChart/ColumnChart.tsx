@@ -13,7 +13,7 @@ import {
   mapIntervalToString
 } from '@utils/uiUtils'
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react'
-import { Switch } from '@common/Switch/Switch'
+import Switcher from '@common/Switcher/Switcher'
 
 interface StatsInterface {
   volume: number | null
@@ -272,12 +272,11 @@ const ColumnChart: React.FC<StatsInterface> = ({
           <Typography className={classes.volumeHeader}>
             {chartType === chartSwitch.volume ? 'Volume' : 'Fees'} {intervalSuffix}
           </Typography>
-          <Switch
-            items={[chartSwitch.volume, chartSwitch.fees]}
-            onChange={e => {
-              setChartType(e as chartSwitch)
-            }}
-            itemWidth={70}
+          <Switcher
+            value={chartType}
+            onChange={setChartType}
+            options={[chartSwitch.volume, chartSwitch.fees]}
+            dark
           />
         </Grid>
 
