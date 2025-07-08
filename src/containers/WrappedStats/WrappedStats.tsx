@@ -280,6 +280,7 @@ export const WrappedStats: React.FC = () => {
             tvlInterval={tvlInterval}
             cumulativeVolume={cumulativeVolumeData}
             cumulativeFees={cumulativeFeesData}
+            setChartType={e => dispatch(actions.setChartType(e))}
           />
           <Grid className={classes.rowContainer}>
             <Typography className={classes.subheader} mb={2}>

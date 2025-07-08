@@ -315,3 +315,8 @@ export enum StakeSwitch {
   Stake = 'Stake',
   Unstake = 'Unstake'
 }
+
+export enum ChartSwitch {
+  volume = 'Volume',
+  fees = 'Fees'
+}

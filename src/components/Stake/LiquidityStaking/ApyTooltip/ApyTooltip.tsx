@@ -21,7 +21,6 @@ export const ApyTooltip: React.FC<IApyTooltip> = ({ sBitzApyApr, stakeDataLoadin
     if (!apr || !apy) return 0
     return (apy - apr).toFixed(2)
   }, [sBitzApyApr])
-  console.log(additionalApy)
 
   if (stakeDataLoading) {
     return <Skeleton width={200} height={24} />

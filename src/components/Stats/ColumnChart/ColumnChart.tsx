@@ -14,6 +14,9 @@ import {
 } from '@utils/uiUtils'
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import Switcher from '@common/Switcher/Switcher'
+import { ChartSwitch } from '@store/consts/types'
+import { useSelector } from 'react-redux'
+import { columnChartType } from '@store/selectors/stats'
 
 interface StatsInterface {
   volume: number | null
@@ -24,11 +27,9 @@ interface StatsInterface {
   isLoading: boolean
   interval: IntervalsKeys
   lastStatsTimestamp: number
+  setChartType: (type: ChartSwitch) => void
 }
-enum chartSwitch {
-  volume = 'Volume',
-  fees = 'Fees'
-}
+
 const ColumnChart: React.FC<StatsInterface> = ({
   volume = 0,
   fees = 0,
@@ -37,7 +38,8 @@ const ColumnChart: React.FC<StatsInterface> = ({
   className,
   isLoading,
   interval,
-  lastStatsTimestamp
+  lastStatsTimestamp,
+  setChartType
 }) => {
   const { classes, cx } = useStyles()
   const [hoveredBar, setHoveredBar] = useState<any>(null)
@@ -45,7 +47,7 @@ const ColumnChart: React.FC<StatsInterface> = ({
     null
   )
 
-  const [chartType, setChartType] = useState<chartSwitch>(chartSwitch.volume)
+  const chartType = useSelector(columnChartType)
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const chartContainerRef = useRef<HTMLDivElement>(null)
   const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null)
@@ -258,7 +260,7 @@ const ColumnChart: React.FC<StatsInterface> = ({
   }
 
   const [data, value] = useMemo(() => {
-    if (chartType === chartSwitch.volume) {
+    if (chartType === ChartSwitch.volume) {
       return [volumeData, volume || 0]
     } else {
       return [feesData, fees || 0]
@@ -270,12 +272,12 @@ const ColumnChart: React.FC<StatsInterface> = ({
       <Box className={classes.volumeContainer}>
         <Grid container display='flex' justifyContent={'space-between'} alignItems='center'>
           <Typography className={classes.volumeHeader}>
-            {chartType === chartSwitch.volume ? 'Volume' : 'Fees'} {intervalSuffix}
+            {chartType === ChartSwitch.volume ? 'Volume' : 'Fees'} {intervalSuffix}
           </Typography>
           <Switcher
             value={chartType}
             onChange={setChartType}
-            options={[chartSwitch.volume, chartSwitch.fees]}
+            options={[ChartSwitch.volume, ChartSwitch.fees]}
             dark
           />
         </Grid>

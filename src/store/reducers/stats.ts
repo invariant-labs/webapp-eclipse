@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { PublicKey } from '@solana/web3.js'
 import { Intervals } from '@store/consts/static'
-import { PayloadType } from '@store/consts/types'
+import { ChartSwitch, PayloadType } from '@store/consts/types'
 
 export interface TimeData {
   timestamp: number
@@ -57,6 +57,7 @@ export interface IStatsStore {
   lastTimestamp: number
   lastInterval: Intervals | null
   currentInterval: Intervals | null
+  columnChartType: ChartSwitch
   cumulativeVolume: CumulativeValue
   cumulativeFees: CumulativeValue
 }
@@ -96,6 +97,7 @@ export const defaultState: IStatsStore = {
   lastSnapTimestamp: 0,
   lastInterval: null,
   currentInterval: null,
+  columnChartType: ChartSwitch.volume,
   cumulativeVolume: {
     value: 0,
     change: null
@@ -119,7 +121,8 @@ const statsSlice = createSlice({
         ...action.payload,
         isLoading: false,
         lastTimestamp: +Date.now(),
-        currentInterval: state.currentInterval
+        currentInterval: state.currentInterval,
+        columnChartType: state.columnChartType
       }
       return state
     },
@@ -138,6 +141,11 @@ const statsSlice = createSlice({
     },
     setLoadingStats(state, action: PayloadAction<boolean>) {
       state.isLoading = action.payload
+
+      return state
+    },
+    setChartType(state, action: PayloadAction<ChartSwitch>) {
+      state.columnChartType = action.payload
 
       return state
     }

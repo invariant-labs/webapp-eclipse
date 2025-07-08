@@ -9,6 +9,7 @@ import Liquidity from '../Liquidity/Liquidity'
 import VolumeBar from '../volumeBar/VolumeBar'
 import { formatNumberWithoutSuffix } from '@utils/utils'
 import ColumnChart from '../ColumnChart/ColumnChart'
+import { ChartSwitch } from '@store/consts/types'
 
 interface IOverview {
   lastUsedInterval: IntervalsKeys | null
@@ -23,6 +24,7 @@ interface IOverview {
   feesInterval: Value24H
   cumulativeVolume: CumulativeValue
   cumulativeFees: CumulativeValue
+  setChartType: (type: ChartSwitch) => void
 }
 
 const Overview: React.FC<IOverview> = ({
@@ -37,7 +39,8 @@ const Overview: React.FC<IOverview> = ({
   tvlInterval,
   feesInterval,
   cumulativeVolume,
-  cumulativeFees
+  cumulativeFees,
+  setChartType
 }) => {
   const { classes, cx } = useStyles()
 
@@ -146,6 +149,7 @@ const Overview: React.FC<IOverview> = ({
               isLoading={isLoadingStats}
               lastStatsTimestamp={lastStatsTimestamp}
               interval={lastUsedInterval ?? IntervalsKeys.Daily}
+              setChartType={setChartType}
             />
 
             <Separator

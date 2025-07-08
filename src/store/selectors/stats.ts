@@ -22,6 +22,7 @@ export const {
   lastSnapTimestamp,
   lastTimestamp,
   lastInterval,
+  columnChartType,
   currentInterval,
   cumulativeFees,
   cumulativeVolume
@@ -41,6 +42,7 @@ export const {
   'lastSnapTimestamp',
   'lastTimestamp',
   'lastInterval',
+  'columnChartType',
   'currentInterval',
   'cumulativeFees',
   'cumulativeVolume'
@@ -92,6 +94,7 @@ export const statsSelectors = {
   poolsStatsWithTokensDetails,
   tokensStatsWithTokensDetails,
   isLoading,
+  columnChartType,
   currentInterval,
   cumulativeVolume,
   cumulativeFees
