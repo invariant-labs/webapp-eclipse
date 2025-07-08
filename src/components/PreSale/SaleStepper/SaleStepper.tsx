@@ -6,6 +6,7 @@ import { typography } from '@static/theme'
 export interface StepItem {
   id: number
   label: string
+  name: string
   tokenPart?: string
   pricePart?: string
 }
@@ -106,18 +107,16 @@ export const SaleStepper: React.FC<SaleStepperProps> = ({
     return nodeClass
   }
 
-  const getStepLabelClass = (index: number): string => {
+  const getStepLabelClass = (index: number): { labelClass: string; lowerLabelClass: string } => {
     let labelClass = classes.stepLabel
+    let lowerLabelClass = classes.stepLowerLabel
 
     if (index === currentStep) {
       labelClass += ` ${classes.currentStepLabel}`
-    } else if (index < currentStep) {
-      labelClass += ` ${classes.startStepLabel}`
-    } else if (index > currentStep) {
-      labelClass += ` ${classes.pendingStepLabel}`
+      lowerLabelClass += ` ${classes.currentStepLowerLabel}`
     }
 
-    return labelClass
+    return { labelClass, lowerLabelClass }
   }
 
   return (
@@ -130,7 +129,7 @@ export const SaleStepper: React.FC<SaleStepperProps> = ({
         const horizontalConnectorClass = getHorizontalConnectorClass(index, steps, currentStep)
 
         const nodeClass = getNodeClass(index, isFirst)
-        const labelClass = getStepLabelClass(index)
+        const { labelClass, lowerLabelClass } = getStepLabelClass(index)
 
         const { tokenPart, pricePart } = splitLabel(step.label)
 
@@ -165,7 +164,10 @@ export const SaleStepper: React.FC<SaleStepperProps> = ({
                   <Typography className={classes.labelText}>{pricePart}</Typography>
                 </Box>
               ) : (
-                <Typography className={labelClass}>{step.label}</Typography>
+                <Box className={classes.stepLabelContainer}>
+                  <Typography className={labelClass}>{step.name}</Typography>
+                  <Typography className={lowerLabelClass}>{step.label}</Typography>
+                </Box>
               )}
             </Box>
 

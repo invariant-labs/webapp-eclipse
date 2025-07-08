@@ -37,6 +37,7 @@ interface RoundComponentProps {
   isLoadingSaleStats: boolean
   walletStatus: Status
   priceFormat: 'token-to-usdc' | 'usdc-to-token'
+  roundName: string
 }
 
 export const RoundComponent: React.FC<RoundComponentProps> = ({
@@ -58,7 +59,8 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
   isLoadingSaleStats,
   isLoadingUserStats,
   priceFormat,
-  userReceivededAmount
+  userReceivededAmount,
+  roundName
 }) => {
   const { classes } = useStyles({
     percentage: Number(printBNandTrimZeros(percentageFilled, PERCENTAGE_SCALE, 3)),
@@ -109,7 +111,10 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
 
   return (
     <Box className={classes.container}>
-      <Typography className={classes.roundTitle}>ROUND {roundNumber}</Typography>
+      <Box className={classes.roundTitleContainer}>
+        <Typography className={classes.roundText}>Phase:</Typography>
+        <Typography className={classes.roundTitle}>{roundName.toUpperCase()}</Typography>
+      </Box>
 
       {!isActive && (
         <Box className={classNames(classes.infoRow)} marginTop={'24px'}>
@@ -179,6 +184,12 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
             {renderFormattedNumberWithSkeleton(amountLeft, mintDecimals, '$', '', '100px')}
           </Box>
         )}
+      </Box>
+      <Box className={classes.infoCard} marginTop={'24px'}>
+        <Box className={classes.infoRow}>
+          <Typography className={classes.infoLabel}>INVT Initial Valuation:</Typography>
+          <Typography className={classes.value}>$5 MLN</Typography>
+        </Box>
       </Box>
       <Box className={classes.infoCard}>
         {isActive && (

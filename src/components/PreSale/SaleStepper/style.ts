@@ -92,13 +92,18 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
     background: colors.invariant.light
   },
 
+  stepLabelContainer: {
+    marginLeft: 10,
+    textAlign: 'left'
+  },
+
   stepLabel: {
     color: colors.invariant.text,
-    ...typography.body1,
+    ...typography.heading4,
     position: 'static',
     whiteSpace: 'nowrap',
+    textAlign: 'left',
 
-    marginLeft: 10,
     [theme.breakpoints.down('lg')]: {
       marginLeft: 0,
       textAlign: 'center',
@@ -113,6 +118,12 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
       left: '50%'
     }
   },
+
+  stepLowerLabel: {
+    ...typography.body2,
+    color: colors.invariant.text
+  },
+
   labelSkeleton: {
     marginLeft: '16px',
     [theme.breakpoints.down('lg')]: {
@@ -286,8 +297,13 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
     color: colors.invariant.pink
   },
 
+  currentStepLowerLabel: {
+    color: colors.invariant.pink,
+    fontWeight: 700
+  },
+
   pendingStepLabel: {
-    color: colors.invariant.textGrey
+    color: colors.invariant.text
   },
 
   startStepLabel: {
