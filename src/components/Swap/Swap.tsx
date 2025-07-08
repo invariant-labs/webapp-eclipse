@@ -467,7 +467,7 @@ export const Swap: React.FC<ISwap> = ({
       swapAccounts &&
       Object.keys(swapAccounts.pools || {}).length > 0
     ) {
-      console.log('Triggering timeout simulation for amountFrom change', Date.now() / 1e3)
+      
       simulateWithTimeout()
     }
   }, [
@@ -490,7 +490,7 @@ export const Swap: React.FC<ISwap> = ({
       swapAccounts &&
       Object.keys(swapAccounts.pools || {}).length > 0
     ) {
-      console.log('Triggering timeout simulation for amountTo change', Date.now() / 1e3)
+      
       simulateWithTimeout()
     }
   }, [
