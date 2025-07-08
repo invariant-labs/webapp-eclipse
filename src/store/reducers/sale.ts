@@ -14,6 +14,7 @@ export interface ISaleStats {
   startTimestamp: BN
   duration: BN
   whitelistWalletLimit: BN
+  minDeposit: BN
   mint: PublicKey
 }
 

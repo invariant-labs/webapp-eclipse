@@ -85,7 +85,8 @@ export function* fetchSaleStats() {
       targetAmount: saleState.targetAmount,
       startTimestamp: saleState.startTimestamp,
       duration: saleState.duration,
-      mint: saleState.mint
+      mint: saleState.mint,
+      minDeposit: saleState.minDeposit
     }
 
     yield* put(actions.setSaleStats({ saleStats }))

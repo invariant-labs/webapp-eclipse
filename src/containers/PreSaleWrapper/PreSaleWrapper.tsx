@@ -218,21 +218,29 @@ export const PreSaleWrapper = () => {
     })
   }, [])
 
-  const { targetAmount, currentAmount, whitelistWalletLimit, startTimestamp, duration, mint } =
-    useMemo(
-      () =>
-        saleStats
-          ? saleStats
-          : {
-              targetAmount: new BN(0),
-              currentAmount: new BN(0),
-              whitelistWalletLimit: new BN(0),
-              startTimestamp: new BN(0),
-              duration: new BN(0),
-              mint: new PublicKey(0)
-            },
-      [saleStats]
-    )
+  const {
+    targetAmount,
+    currentAmount,
+    whitelistWalletLimit,
+    startTimestamp,
+    duration,
+    mint,
+    minDeposit
+  } = useMemo(
+    () =>
+      saleStats
+        ? saleStats
+        : {
+            targetAmount: new BN(0),
+            currentAmount: new BN(0),
+            whitelistWalletLimit: new BN(0),
+            startTimestamp: new BN(0),
+            duration: new BN(0),
+            mint: new PublicKey(0),
+            minDeposit: new BN(0)
+          },
+    [saleStats]
+  )
 
   useEffect(() => {
     const index = tokens.findIndex(token => token.assetAddress.equals(mint))
@@ -250,7 +258,7 @@ export const PreSaleWrapper = () => {
     [userStats]
   )
 
-  const round = useMemo(() => getRound(currentAmount, targetAmount), [saleStats])
+  const round = useMemo(() => getRound(currentAmount, targetAmount), [currentAmount, targetAmount])
 
   const remainingAmount = useMemo(
     () => (!whitelistWalletLimit.isZero() ? whitelistWalletLimit.sub(deposited) : new BN(0)),
@@ -476,6 +484,7 @@ export const PreSaleWrapper = () => {
           </Box>
         </Grid>
         <BuyComponent
+          minDeposit={minDeposit}
           nativeBalance={nativeBalance}
           isPublic={isPublic}
           currentRound={round}
@@ -528,7 +537,7 @@ export const PreSaleWrapper = () => {
             <AnimatedPreSaleCard
               title='~1M Users'
               gradientPrimaryColor={`${colors.invariant.green}`}
-              subtitle='who have ever interacted with Invariant'
+              subtitle='who have ever interacted with Invariant (Solana + Eclipse)'
               delay={100}
             />
           </Grid>
@@ -541,14 +550,18 @@ export const PreSaleWrapper = () => {
             />
           </Grid>
           <Grid item className={classes.animatedCardItem}>
-            <AnimatedPreSaleCard title='4 Hackatons' subtitle='won by Invariant team' delay={500} />
+            <AnimatedPreSaleCard
+              title='4 Hackatons'
+              subtitle='won by Invariant team ($200k in prizes)'
+              delay={500}
+            />
           </Grid>
           <Grid item className={classes.animatedCardItem}>
             <AnimatedPreSaleCard
-              title=' $200K+'
+              title='$1M in Fees'
               gradientPrimaryColor={`${colors.invariant.green}`}
               gradientDirection='to bottom'
-              subtitle='earned in hackathon prizes'
+              subtitle='earned by liquidity providers'
               delay={700}
             />
           </Grid>
@@ -648,6 +661,14 @@ export const PreSaleWrapper = () => {
                 'AutoSwap launches on Eclipse. In its first week, it improves the experience for countless users who create thousands of positions with its help.'
               }
               heroImage={AutoswapHero}
+            />
+            <EventsCard
+              title={'Launch of sBITZ'}
+              borderColor={'pink'}
+              description={
+                'Invariant introduces Liquid Staking on Eclipse. The sBITZ token is launched to solve BITZ liquidity issues and offer users significantly higher yields.'
+              }
+              heroImage={'https://eclipse.invariant.app/sBitz.png'}
             />
             <EventsCard
               title={'Public Sale Begins'}
