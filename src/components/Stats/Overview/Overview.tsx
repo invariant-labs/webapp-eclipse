@@ -5,10 +5,10 @@ import { useStyles } from './style'
 import { Grid, Typography, Box, useMediaQuery } from '@mui/material'
 import Intervals from '../Intervals/Intervals'
 import { Separator } from '@common/Separator/Separator'
-import Volume from '../Volume/Volume'
 import Liquidity from '../Liquidity/Liquidity'
 import VolumeBar from '../volumeBar/VolumeBar'
 import { formatNumberWithoutSuffix } from '@utils/utils'
+import ColumnChart from '../ColumnChart/ColumnChart'
 
 interface IOverview {
   lastUsedInterval: IntervalsKeys | null
@@ -18,6 +18,7 @@ interface IOverview {
   isLoadingStats: boolean
   lastStatsTimestamp: number
   liquidityPlotData: TimeData[]
+  feesPlotData: TimeData[]
   tvlInterval: Value24H
   feesInterval: Value24H
   cumulativeVolume: CumulativeValue
@@ -32,6 +33,7 @@ const Overview: React.FC<IOverview> = ({
   isLoadingStats,
   lastStatsTimestamp,
   liquidityPlotData,
+  feesPlotData,
   tvlInterval,
   feesInterval,
   cumulativeVolume,
@@ -135,9 +137,11 @@ const Overview: React.FC<IOverview> = ({
             gap={'24px'}
             flexDirection={isMd ? 'column' : 'row'}
             mt={isMd ? '24px' : 0}>
-            <Volume
+            <ColumnChart
               volume={volumeInterval.value}
-              data={volumePlotData}
+              fees={feesInterval.value}
+              volumeData={volumePlotData}
+              feesData={feesPlotData}
               className={classes.plot}
               isLoading={isLoadingStats}
               lastStatsTimestamp={lastStatsTimestamp}

@@ -1,22 +1,21 @@
 import { colors, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
-export const useStyles = makeStyles()(() => {
+export const useStyles = makeStyles<{ itemWidth?: number }>()((_theme, { itemWidth }) => {
   return {
     switch: {
-      width: '100%',
       height: 32,
       borderRadius: 10,
       background: colors.invariant.newDark,
       display: 'flex'
     },
     button: {
-      width: '100%',
       borderRadius: 10,
       color: colors.invariant.textGrey,
       ...typography.body2,
       textTransform: 'none',
-
+      padding: '6px 11px',
+      width: itemWidth || 'auto',
       '&:hover': {
         background: colors.invariant.light
       }

@@ -9,6 +9,7 @@ const store = (s: AnyProps) => s[statsSliceName] as IStatsStore
 export const {
   volumePlot,
   liquidityPlot,
+  feesPlot,
   volume24,
   tvl24,
   fees24,
@@ -27,6 +28,7 @@ export const {
 } = keySelectors(store, [
   'volumePlot',
   'liquidityPlot',
+  'feesPlot',
   'volume24',
   'tvl24',
   'fees24',
@@ -76,6 +78,7 @@ export const tokensStatsWithTokensDetails = createSelector(
 export const statsSelectors = {
   volumePlot,
   liquidityPlot,
+  feesPlot,
   volume24,
   tvl24,
   fees24,

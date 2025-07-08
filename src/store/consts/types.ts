@@ -203,6 +203,7 @@ export interface FullSnap {
   poolsData: PoolStatsDataWithString[]
   volumePlot: TimeData[]
   liquidityPlot: TimeData[]
+  feesPlot: TimeData[]
 }
 
 export interface TokenStatsDataWithString {

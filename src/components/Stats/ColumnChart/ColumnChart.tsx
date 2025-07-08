@@ -12,20 +12,28 @@ import {
   getLabelDate,
   mapIntervalToString
 } from '@utils/uiUtils'
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react'
+import { Switch } from '@common/Switch/Switch'
 
 interface StatsInterface {
   volume: number | null
-  data: TimeData[]
+  fees: number | null
+  volumeData: TimeData[]
+  feesData: TimeData[]
   className?: string
   isLoading: boolean
   interval: IntervalsKeys
   lastStatsTimestamp: number
 }
-
-const Volume: React.FC<StatsInterface> = ({
-  volume,
-  data,
+enum chartSwitch {
+  volume = 'Volume',
+  fees = 'Fees'
+}
+const ColumnChart: React.FC<StatsInterface> = ({
+  volume = 0,
+  fees = 0,
+  volumeData,
+  feesData,
   className,
   isLoading,
   interval,
@@ -36,13 +44,13 @@ const Volume: React.FC<StatsInterface> = ({
   const [hoveredBarPosition, setHoveredBarPosition] = useState<{ x: number; width: number } | null>(
     null
   )
+
+  const [chartType, setChartType] = useState<chartSwitch>(chartSwitch.volume)
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const chartContainerRef = useRef<HTMLDivElement>(null)
   const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   const intervalSuffix = mapIntervalToString(interval)
-
-  volume = volume ?? 0
 
   const isXsDown = useMediaQuery(theme.breakpoints.down('xs'))
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
@@ -249,18 +257,37 @@ const Volume: React.FC<StatsInterface> = ({
     )
   }
 
+  const [data, value] = useMemo(() => {
+    if (chartType === chartSwitch.volume) {
+      return [volumeData, volume || 0]
+    } else {
+      return [feesData, fees || 0]
+    }
+  }, [chartType, volume, fees])
+
   return (
     <Grid className={cx(classes.container, className)}>
       <Box className={classes.volumeContainer}>
-        <Grid container justifyContent={'space-between'} alignItems='center'>
-          <Typography className={classes.volumeHeader}>Volume {intervalSuffix}</Typography>
+        <Grid container display='flex' justifyContent={'space-between'} alignItems='center'>
+          <Typography className={classes.volumeHeader}>
+            {chartType === chartSwitch.volume ? 'Volume' : 'Fees'} {intervalSuffix}
+          </Typography>
+          <Switch
+            items={[chartSwitch.volume, chartSwitch.fees]}
+            onChange={e => {
+              setChartType(e as chartSwitch)
+            }}
+            itemWidth={70}
+          />
         </Grid>
+
         <div className={classes.volumePercentContainer}>
           <Typography className={classes.volumePercentHeader}>
-            ${formatNumberWithoutSuffix(isLoading ? Math.random() * 10000 : volume)}
+            ${formatNumberWithoutSuffix(isLoading ? Math.random() * 10000 : value)}
           </Typography>
         </div>
       </Box>
+
       <div
         ref={chartContainerRef}
         className={classes.barContainer}
@@ -326,4 +353,4 @@ const Volume: React.FC<StatsInterface> = ({
   )
 }
 
-export default Volume
+export default ColumnChart

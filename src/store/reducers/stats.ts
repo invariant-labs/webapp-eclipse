@@ -43,6 +43,7 @@ export interface CumulativeValue {
 export interface IStatsStore {
   volumePlot: TimeData[]
   liquidityPlot: TimeData[]
+  feesPlot: TimeData[]
   volume24: Value24H
   tvl24: Value24H
   fees24: Value24H
@@ -63,6 +64,7 @@ export interface IStatsStore {
 export const defaultState: IStatsStore = {
   volumePlot: [],
   liquidityPlot: [],
+  feesPlot: [],
   volume24: {
     value: 0,
     change: 0

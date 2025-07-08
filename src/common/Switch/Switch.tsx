@@ -5,10 +5,11 @@ import { useStyles } from './style'
 type Props = {
   items: string[]
   onChange?: (item: string) => void
+  itemWidth?: number
 }
 
-export const Switch = ({ items, onChange }: Props) => {
-  const { classes, cx } = useStyles()
+export const Switch = ({ items, onChange, itemWidth }: Props) => {
+  const { classes, cx } = useStyles({ itemWidth })
 
   const [selectedItem, setSelectedItem] = useState<string>(items[0])
 
