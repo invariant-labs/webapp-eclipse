@@ -846,6 +846,7 @@ export const Swap: React.FC<ISwap> = ({
       (tokenFromIndex !== null && tokenToIndex !== null && throttle) ||
       isWaitingForNewPool ||
       swapIsLoading ||
+      isSimulationRunning ||
       isReversingTokens ||
       isError("TypeError: Cannot read properties of undefined (reading 'bitmap')")
     ) {
