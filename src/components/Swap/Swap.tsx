@@ -508,7 +508,7 @@ export const Swap: React.FC<ISwap> = ({
       setSimulateAmount().finally(() => {
         setThrottle(false)
       })
-    }, 500)
+    }, 1000)
     timeoutRef.current = timeout as unknown as number
   }
 
