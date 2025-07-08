@@ -602,11 +602,17 @@ export const Swap: React.FC<ISwap> = ({
   const setSimulateAmount = async () => {
     if (swapIsLoading) {
       setPendingSimulation(true)
-      setAddBlur(true)
+      if (!addBlur) {
+        setAddBlur(true)
+      }
       return
     }
 
-    if (!swapIsLoading) {
+    if (addBlur && !pendingSimulation) {
+      return
+    }
+
+    if (!addBlur) {
       setAddBlur(true)
     }
 
@@ -693,6 +699,7 @@ export const Swap: React.FC<ISwap> = ({
       error: boolean
     }
   ) => {
+    console.log('Upadting simulation with results:', Date.now())
     let useTwoHop = false
 
     const isSimulateError =
