@@ -4,12 +4,13 @@ import ExchangeAmountInput from '@components/Inputs/ExchangeAmountInput/Exchange
 import Slippage from '@components/Modals/Slippage/Slippage'
 import Refresher from '@common/Refresher/Refresher'
 import { BN } from '@coral-xyz/anchor'
-import { Box, Button, Grid, Typography, useMediaQuery } from '@mui/material'
+import { Box, Button, Collapse, Grid, Typography, useMediaQuery } from '@mui/material'
 import {
   DEFAULT_TOKEN_DECIMAL,
   NetworkType,
   REFRESHER_INTERVAL,
   SwapType,
+  WETH_MAIN,
   WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_MAIN,
   WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_TEST,
   WRAPPED_ETH_ADDRESS
@@ -19,6 +20,7 @@ import {
   calculatePoints,
   convertBalanceToBN,
   findPairs,
+  formatNumberWithoutSuffix,
   handleSimulate,
   handleSimulateWithHop,
   initialXtoY,
@@ -137,6 +139,7 @@ export interface ISwap {
   amountFrom: string
   amountTo: string
   lastEdited: string | null
+  wrappedETHBalance: BN | null
 }
 
 export type SimulationPath = {
@@ -183,6 +186,7 @@ export const Swap: React.FC<ISwap> = ({
   ethBalance,
   unwrapWETH,
   wrappedETHAccountExist,
+  wrappedETHBalance,
   isTimeoutError,
   deleteTimeoutError,
   canNavigate,
@@ -276,7 +280,8 @@ export const Swap: React.FC<ISwap> = ({
   const [wasIsFetchingNewPoolRun, setWasIsFetchingNewPoolRun] = useState(false)
   const [wasSwapIsLoadingRun, setWasSwapIsLoadingRun] = useState(false)
   const [isReversingTokens, setIsReversingTokens] = useState(false)
-
+  const shortenText = useMediaQuery(theme.breakpoints.down(500))
+  const shortenTextXS = useMediaQuery(theme.breakpoints.down(360))
   useEffect(() => {
     if (lastEdited && tokenFromIndex !== null && tokenToIndex !== null) {
       setInputRef(lastEdited === 'from' ? inputTarget.FROM : inputTarget.TO)
@@ -1085,15 +1090,6 @@ export const Swap: React.FC<ISwap> = ({
 
   return (
     <Grid container className={classes.swapWrapper} alignItems='center'>
-      {wrappedETHAccountExist && (
-        <Box className={classes.unwrapContainer}>
-          You have wrapped ETH.{' '}
-          <u className={classes.unwrapNowButton} onClick={unwrapWETH}>
-            Unwrap now.
-          </u>
-        </Box>
-      )}
-
       <Grid container className={classes.header}>
         <Box className={classes.leftSection}>
           <Typography component='h1'>Swap tokens</Typography>
@@ -1161,7 +1157,17 @@ export const Swap: React.FC<ISwap> = ({
           />
         </Grid>
       </Grid>
-
+      <Collapse in={wrappedETHAccountExist} className={classes.collapseWrapper}>
+        <Grid className={classes.unwrapContainer}>
+          {shortenText
+            ? `You have ${!shortenTextXS ? 'wrapped' : ''} ${formatNumberWithoutSuffix(printBN(wrappedETHBalance, WETH_MAIN.decimals))} ${shortenTextXS ? 'W' : ''}ETH`
+            : `          You currently hold ${formatNumberWithoutSuffix(printBN(wrappedETHBalance, WETH_MAIN.decimals))} wrapped Ether in your
+          wallet`}
+          <span className={classes.unwrapNowButton} onClick={unwrapWETH}>
+            Unwrap now
+          </span>
+        </Grid>
+      </Collapse>
       <Box
         className={cx(
           classes.borderContainer,
