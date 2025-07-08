@@ -853,6 +853,10 @@ export const Swap: React.FC<ISwap> = ({
       swapIsLoading ||
       isSimulationRunning ||
       isReversingTokens ||
+      rateLoading ||
+      isFetchingNewPool ||
+      addBlur ||
+      lockAnimation ||
       isError("TypeError: Cannot read properties of undefined (reading 'bitmap')")
     ) {
       return 'Loading'
@@ -1333,7 +1337,7 @@ export const Swap: React.FC<ISwap> = ({
 
                   setInputRef(inputTarget.FROM)
                   setAmountFrom(tmpAmount)
-                }, 50)
+                }, 10)
               }}>
               <Box
                 className={cx(
