@@ -699,7 +699,6 @@ export const Swap: React.FC<ISwap> = ({
       error: boolean
     }
   ) => {
-    console.log('Upadting simulation with results:', Date.now())
     let useTwoHop = false
 
     const isSimulateError =
@@ -838,6 +837,7 @@ export const Swap: React.FC<ISwap> = ({
       (tokenFromIndex !== null && tokenToIndex !== null && throttle) ||
       isWaitingForNewPool ||
       swapIsLoading ||
+      isReversingTokens ||
       isError("TypeError: Cannot read properties of undefined (reading 'bitmap')")
     ) {
       return 'Loading'
