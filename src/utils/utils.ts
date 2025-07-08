@@ -86,6 +86,7 @@ import {
   BITZ_MAIN,
   PRICE_API_URL,
   Intervals,
+  SALE_TEST,
   ERROR_CODE_TO_MESSAGE,
   COMMON_ERROR_MESSAGE,
   ErrorCodeExtractionKeys,
@@ -98,7 +99,8 @@ import {
   USDN_MAIN,
   WEETHS_MAIN,
   sBITZ_MAIN,
-  MAX_PLOT_VISIBLE_TICK_RANGE
+  MAX_PLOT_VISIBLE_TICK_RANGE,
+  CHECKER_API_URL
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
@@ -124,6 +126,10 @@ import { DEFAULT_FEE_TIER, STRATEGIES } from '@store/consts/userStrategies'
 export const transformBN = (amount: BN): string => {
   return (amount.div(new BN(1e2)).toNumber() / 1e4).toString()
 }
+export const printBNandTrimZeros = (amount: BN, decimals: number, decimalPlaces?: number) => {
+  return trimZeros(Number(printBN(amount, decimals)).toFixed(decimalPlaces ?? decimals))
+}
+
 export const printBN = (amount: BN, decimals: number): string => {
   if (!amount) {
     return '0'
@@ -934,6 +940,7 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
       }
     case NetworkType.Testnet:
       return {
+        [SALE_TEST.address.toString()]: SALE_TEST,
         [USDC_TEST.address.toString()]: USDC_TEST,
         [BTC_TEST.address.toString()]: BTC_TEST,
         [WETH_TEST.address.toString()]: WETH_TEST,
@@ -1446,6 +1453,11 @@ export const getNetworkStats = async (name: string): Promise<Record<string, Pool
     `https://stats.invariant.app/full/eclipse-${name}`
   )
 
+  return data
+}
+
+export const fetchProofOfInclusion = async (address: string): Promise<any> => {
+  const { data } = await axios.get(CHECKER_API_URL + `/${address}`)
   return data
 }
 
@@ -2301,6 +2313,7 @@ export const ROUTES = {
   EXCHANGE_WITH_PARAMS: '/exchange/:item1?/:item2?',
   LIQUIDITY: '/liquidity',
   STATISTICS: '/statistics',
+  SALE: '/presale',
   NEW_POSITION: '/newPosition',
   NEW_POSITION_WITH_PARAMS: '/newPosition/:item1?/:item2?/:item3?',
   POSITION: '/position',

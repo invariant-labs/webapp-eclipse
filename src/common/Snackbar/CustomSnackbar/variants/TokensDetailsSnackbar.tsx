@@ -51,6 +51,7 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
       case 'swap':
         return snackbarSwapIcon
       case 'deposit':
+      case 'purchase':
         return depositIcon
       case 'withdraw':
         return withdrawIcon
@@ -71,6 +72,8 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
         return 'Swapped'
       case 'deposit':
         return 'Deposited'
+      case 'purchase':
+        return 'Purchased'
       case 'withdraw':
         return 'Withdrawn'
       case 'claim':
@@ -149,29 +152,36 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
                 )}
               </>
             )}
-            {ikonType === 'swap' || ikonType === 'unstake' || ikonType === 'stake' ? (
-              arrow
-            ) : ikonType === 'claim' ? (
-              hasBothAmounts ? (
-                <StyledText>+</StyledText>
-              ) : null
-            ) : (
-              <StyledText>+</StyledText>
-            )}
-            <StyledText color={colors.invariant.green}>
-              {tokenBetweenAmount ? tokenBetweenAmount : tokenYAmount}
-            </StyledText>
-            {(
-              tokenBetweenAmount
-                ? tokenBetweenIcon === '/unknownToken.svg'
-                : tokenYIcon === '/unknownToken.svg'
-            ) ? (
-              <StyledText>{tokenBetweenAmount ? tokenBetweenSymbol : tokenYSymbol}</StyledText>
-            ) : (
-              <img
-                src={tokenBetweenAmount ? tokenBetweenIcon : tokenYIcon}
-                className={classes.tokenIcon}
-              />
+            {!!tokenYAmount && (
+              <>
+                {ikonType === 'swap' ||
+                ikonType === 'unstake' ||
+                ikonType === 'stake' ||
+                ikonType === 'purchase' ? (
+                  arrow
+                ) : ikonType === 'claim' ? (
+                  hasBothAmounts ? (
+                    <StyledText>+</StyledText>
+                  ) : null
+                ) : (
+                  <StyledText>+</StyledText>
+                )}
+                <StyledText color={colors.invariant.green}>
+                  {tokenBetweenAmount ? tokenBetweenAmount : tokenYAmount}
+                </StyledText>
+                {(
+                  tokenBetweenAmount
+                    ? tokenBetweenIcon === '/unknownToken.svg'
+                    : tokenYIcon === '/unknownToken.svg'
+                ) ? (
+                  <StyledText>{tokenBetweenAmount ? tokenBetweenSymbol : tokenYSymbol}</StyledText>
+                ) : (
+                  <img
+                    src={tokenBetweenAmount ? tokenBetweenIcon : tokenYIcon}
+                    className={classes.tokenIcon}
+                  />
+                )}
+              </>
             )}
           </Grid>
 
@@ -197,6 +207,7 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
                 ) : (
                   <img src={tokenBetweenIcon} className={classes.tokenIcon} />
                 )}
+
                 {ikonType === 'swap' ? arrow : <StyledText>+</StyledText>}
                 <StyledText color={colors.invariant.green}>{tokenYAmount}</StyledText>
                 {tokenYIcon === '/unknownToken.svg' ? (
