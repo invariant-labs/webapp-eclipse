@@ -334,6 +334,10 @@ export const useStyles = makeStyles()(() => ({
     textAlign: 'center',
     color: colors.invariant.text
   },
+  shareButtonContainer: {
+    width: '100%',
+    marginTop: 24
+  },
   shareContainer: {
     display: 'flex',
     gap: 4

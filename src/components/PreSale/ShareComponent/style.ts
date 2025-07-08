@@ -6,6 +6,11 @@ type IProps = {
 }
 
 const useStyles = makeStyles<IProps>()((theme, { backgroundImage }) => ({
+  popoverRoot: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
   background: {
     position: 'fixed',
     inset: 0,
@@ -23,18 +28,22 @@ const useStyles = makeStyles<IProps>()((theme, { backgroundImage }) => ({
     pointerEvents: 'none'
   },
   rootScreenshot: {
+    width: 10000,
+    height: 10000,
+    top: -10000,
+    left: -10000,
+    bottom: 0,
+    right: 0,
     zIndex: -1
   },
   container: {
-    width: '100%',
-    maxWidth: 480,
+    width: 480,
     background: `
       radial-gradient(circle at top, rgba(239, 132, 245, 0.25), transparent 75%),
       radial-gradient(circle at bottom, rgba(46, 224, 154, 0.25), transparent 75%),
     #202946
     `,
     padding: 32,
-    borderRadius: 24,
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -42,6 +51,7 @@ const useStyles = makeStyles<IProps>()((theme, { backgroundImage }) => ({
     position: 'relative',
     pointerEvents: 'all',
     margin: '0 16px',
+    boxShadow: 'none',
 
     '&::before': {
       content: "''",
@@ -58,6 +68,11 @@ const useStyles = makeStyles<IProps>()((theme, { backgroundImage }) => ({
       pointerEvents: 'none'
     }
   },
+  containerDisplay: {
+    width: '100%',
+    maxWidth: 480,
+    borderRadius: 24
+  },
   titleContainer: {
     display: 'flex',
     flexDirection: 'column',
@@ -70,7 +85,7 @@ const useStyles = makeStyles<IProps>()((theme, { backgroundImage }) => ({
     lineHeight: '72px',
     color: colors.invariant.pink
   },
-  titleMobile: {
+  titleDisplay: {
     [theme.breakpoints.down('sm')]: {
       fontSize: 32,
       lineHeight: '36px'
@@ -81,7 +96,7 @@ const useStyles = makeStyles<IProps>()((theme, { backgroundImage }) => ({
     color: colors.invariant.text,
     textAlign: 'center'
   },
-  descriptionMobile: {
+  descriptionDisplay: {
     [theme.breakpoints.down('sm')]: {
       ...typography.heading4
     }
@@ -104,7 +119,7 @@ const useStyles = makeStyles<IProps>()((theme, { backgroundImage }) => ({
     justifyContent: 'center',
     alignItems: 'center'
   },
-  allocationWrapperMobile: {
+  allocationWrapperDisplay: {
     [theme.breakpoints.down('sm')]: {
       height: 64
     }
@@ -115,7 +130,7 @@ const useStyles = makeStyles<IProps>()((theme, { backgroundImage }) => ({
     lineHeight: '36px',
     color: colors.invariant.text
   },
-  allocationMobile: {
+  allocationDisplay: {
     [theme.breakpoints.down('sm')]: {
       fontSize: 24,
       lineHeight: '28px'

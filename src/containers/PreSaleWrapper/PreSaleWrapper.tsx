@@ -59,6 +59,8 @@ import { getCurrentSolanaConnection } from '@utils/web3/connection'
 import { Button } from '@common/Button/Button'
 import share from '@static/svg/share.svg'
 import { ShareComponent } from '@components/PreSale/ShareComponent/ShareComponent'
+import { blurContent, unblurContent } from '@utils/uiUtils'
+import { actions as snackbarsActions } from '@store/reducers/snackbars'
 
 function SampleNextArrow(props) {
   const { className, style, onClick } = props
@@ -436,13 +438,54 @@ export const PreSaleWrapper = () => {
 
   const [isShareComponentShown, setIsShareComponentShown] = useState(false)
 
+  useEffect(() => {
+    if (progress === 'success') {
+      setIsShareComponentShown(true)
+    }
+  }, [progress])
+
+  useEffect(() => {
+    if (isShareComponentShown) {
+      blurContent()
+    } else {
+      unblurContent()
+    }
+  }, [isShareComponentShown])
+
+  const addDownloadSnackbar = () => {
+    dispatch(
+      snackbarsActions.add({
+        message: 'Successfully downloaded',
+        variant: 'success',
+        persist: false
+      })
+    )
+  }
+
+  const addCopySnackbar = () => {
+    dispatch(
+      snackbarsActions.add({
+        message: 'Successfully copied to clipboard',
+        variant: 'success',
+        persist: false
+      })
+    )
+  }
+
   return (
     <Grid className={classes.pageWrapper} sx={{ position: 'relative' }}>
       <Hidden lgDown>
         <OverlayWrapper />
       </Hidden>
 
-      {isShareComponentShown && <ShareComponent hide={() => setIsShareComponentShown(false)} />}
+      <ShareComponent
+        open={isShareComponentShown}
+        allocation={received}
+        mintDecimals={mintDecimals}
+        onClose={() => setIsShareComponentShown(false)}
+        addDownloadSnackbar={addDownloadSnackbar}
+        addCopySnackbar={addCopySnackbar}
+      />
 
       <Box className={classes.contentWrapper}>
         <Grid className={classes.stepperContainer}>
@@ -470,11 +513,13 @@ export const PreSaleWrapper = () => {
               isLoadingUserStats={isLoadingUserStats}
               priceFormat={reversedPrices ? 'usdc-to-token' : 'token-to-usdc'}
             />
-            <Button width='100%' scheme='green' onClick={() => setIsShareComponentShown(true)}>
-              <div className={classes.shareContainer}>
-                Share <img src={share} alt='share icon' />
-              </div>
-            </Button>
+            <Box className={classes.shareButtonContainer}>
+              <Button width='100%' scheme='green' onClick={() => setIsShareComponentShown(true)}>
+                <div className={classes.shareContainer}>
+                  Share <img src={share} alt='share icon' />
+                </div>
+              </Button>
+            </Box>
             <Grid className={classes.reverseContainer}>
               <div className={classes.arrowIcon} onClick={togglePriceDirection}>
                 <span className={`${classes.reverseText} reverseText`}>Reverse token</span>
