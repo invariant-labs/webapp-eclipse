@@ -37,7 +37,8 @@ const SaleEvents = () => {
         targetAmount: saleState.targetAmount,
         startTimestamp: saleState.startTimestamp,
         duration: saleState.duration,
-        mint: saleState.mint
+        mint: saleState.mint,
+        minDeposit: saleState.minDeposit
       }
       dispatch(actions.setSaleStats({ saleStats }))
     })
