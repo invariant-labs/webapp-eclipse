@@ -10,7 +10,7 @@ interface StyleProps {
 const useStyles = makeStyles<StyleProps>()((theme, { dark, fullWidth }) => ({
   container: {
     backgroundColor: dark ? colors.invariant.newDark : colors.invariant.component,
-    borderRadius: 8,
+    borderRadius: 10,
     boxSizing: 'border-box',
     width: fullWidth ? '100%' : 'auto',
     marginLeft: 'auto'
@@ -20,14 +20,14 @@ const useStyles = makeStyles<StyleProps>()((theme, { dark, fullWidth }) => ({
     flexDirection: 'column',
     alignItems: 'center',
     gap: '24px',
-    width: '100%'
+    width: fullWidth ? '100%' : 'auto'
   },
   switchWrapper: {
     display: 'flex',
     position: 'relative',
     justifyContent: 'center',
     alignItems: 'center',
-    width: '100%',
+    width: fullWidth ? '100%' : 'auto',
     flexWrap: 'wrap-reverse'
   },
   switchPoolsContainer: {
