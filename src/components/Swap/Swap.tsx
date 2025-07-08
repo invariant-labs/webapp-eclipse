@@ -234,6 +234,7 @@ export const Swap: React.FC<ISwap> = ({
     initialHideUnknownTokensValue
   )
   const [pointsForSwap, setPointsForSwap] = React.useState<BN | null>(null)
+  const [isSimulationRunning, setIsSimulationRunning] = useState(false)
   const [simulateResult, setSimulateResult] = React.useState<{
     amountOut: BN
     poolIndex: number
@@ -616,6 +617,10 @@ export const Swap: React.FC<ISwap> = ({
       setAddBlur(true)
     }
 
+    if (isSimulationRunning) {
+      return
+    }
+
     if (tokenFromIndex !== null && tokenToIndex !== null && !swapIsLoading) {
       if (!swapAccounts || Object.keys(swapAccounts.pools || {}).length === 0) {
         return
@@ -623,6 +628,7 @@ export const Swap: React.FC<ISwap> = ({
 
       try {
         if (inputRef === inputTarget.FROM) {
+          setIsSimulationRunning(true)
           const [simulateValue, simulateWithHopValue] = await Promise.all([
             handleSimulate(
               pools,
@@ -647,7 +653,9 @@ export const Swap: React.FC<ISwap> = ({
           updateSimulation(simulateValue, simulateWithHopValue)
           setSimulateResult(simulateValue)
           setSimulateWithHopResult(simulateWithHopValue)
+          setIsSimulationRunning(false)
         } else if (inputRef === inputTarget.TO) {
+          setIsSimulationRunning(true)
           const [simulateValue, simulateWithHopValue] = await Promise.all([
             handleSimulate(
               pools,
@@ -672,6 +680,7 @@ export const Swap: React.FC<ISwap> = ({
           updateSimulation(simulateValue, simulateWithHopValue)
           setSimulateResult(simulateValue)
           setSimulateWithHopResult(simulateWithHopValue)
+          setIsSimulationRunning(false)
         }
       } catch (error) {
         console.error('Simulation failed:', error)
@@ -1303,8 +1312,8 @@ export const Swap: React.FC<ISwap> = ({
                 (isFirstPairGivingPoints || isSecondPairGivingPoints) && classes.darkBackground
               )}
               onClick={() => {
-                if (lockAnimation) return
                 setIsReversingTokens(true)
+                if (lockAnimation) return
                 setRateLoading(true)
                 setLockAnimation(!lockAnimation)
                 setRotates(rotates + 1)
