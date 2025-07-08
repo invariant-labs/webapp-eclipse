@@ -88,6 +88,7 @@ export const colors = {
     lightBlue: '#00D9FF',
     errorTransparent: 'rgba(251, 85, 95, 0.2)',
     greenLinearGradient: 'linear-gradient(180deg, #2EE09A 0%, #21A47C 100%)',
+    greyLinearGradinet: 'linear-gradient(180deg,#A9B6BF 0%, #3A466B 100%)',
     greenLinearGradientOpacity:
       'linear-gradient(180deg, rgba(46, 224, 154, 0.8) 0%, rgba(33, 164, 124, 0.8) 100%)',
     pinkLinearGradient: 'linear-gradient(180deg, #EF84F5 0%, #9C3EBD 100%)',
