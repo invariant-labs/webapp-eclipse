@@ -467,6 +467,7 @@ export const Swap: React.FC<ISwap> = ({
       swapAccounts &&
       Object.keys(swapAccounts.pools || {}).length > 0
     ) {
+      console.log('Triggering timeout simulation for amountFrom change', Date.now() / 1e3)
       simulateWithTimeout()
     }
   }, [
@@ -489,6 +490,7 @@ export const Swap: React.FC<ISwap> = ({
       swapAccounts &&
       Object.keys(swapAccounts.pools || {}).length > 0
     ) {
+      console.log('Triggering timeout simulation for amountTo change', Date.now() / 1e3)
       simulateWithTimeout()
     }
   }, [
@@ -575,10 +577,13 @@ export const Swap: React.FC<ISwap> = ({
 
   useEffect(() => {
     if (inputRef !== inputTarget.DEFAULT) {
-      const temp: string = amountFrom
-      setAmountFrom(amountTo)
-      setAmountTo(temp)
-      setInputRef(inputRef === inputTarget.FROM ? inputTarget.TO : inputTarget.FROM)
+      if (inputRef === inputTarget.FROM) {
+        setInputRef(inputTarget.TO)
+        setAmountTo(amountFrom)
+      } else if (inputRef === inputTarget.TO) {
+        setInputRef(inputTarget.FROM)
+        setAmountFrom(amountTo)
+      }
     }
   }, [swap])
 
