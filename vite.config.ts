@@ -38,7 +38,15 @@ export default defineConfig({
   },
   server: {
     host: 'localhost',
-    port: 3000
+    port: 3000,
+    proxy: {
+      '/eclipse-api': {
+        target: 'https://api.eclipsescan.xyz',
+        changeOrigin: true,
+        secure: true,
+        rewrite: path => path.replace(/^\/eclipse-api/, '')
+      }
+    }
   },
   build: {
     target: 'es2020',

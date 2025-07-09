@@ -2637,19 +2637,19 @@ export const fetchMarketBitzStats = async () => {
   const TOKENS_ADDR = '5FgZ9W81khmNXG8i96HSsG7oJiwwpKnVzmHgn9ZnqQja'
 
   const [holdersRes, sBitzRes, bitzRes, tokensRes] = await Promise.all([
-    axios.get<HoldersResponse>('https://api.eclipsescan.xyz/v1/token/holder/total', {
+    axios.get<HoldersResponse>('/eclipse-api/v1/token/holder/total', {
       params: { address: sBITZ }
     }),
 
-    axios.get<MarketDataResponse>('https://api.eclipsescan.xyz/v1/account', {
+    axios.get<MarketDataResponse>('/eclipse-api/v1/account', {
       params: { address: sBITZ }
     }),
 
-    axios.get<MarketDataResponse>('https://api.eclipsescan.xyz/v1/account', {
+    axios.get<MarketDataResponse>('/eclipse-api/v1/account', {
       params: { address: BITZ }
     }),
 
-    axios.get<TokensResponse>('https://api.eclipsescan.xyz/v1/account/tokens', {
+    axios.get<TokensResponse>('/eclipse-api/v1/account/tokens', {
       params: { address: TOKENS_ADDR }
     })
   ])
