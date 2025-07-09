@@ -1,7 +1,6 @@
 import TokenListItem from '../TokenListItem/TokenListItem'
 import React, { useEffect, useMemo, useState } from 'react'
 import { colors, theme } from '@static/theme'
-import useStyles from './style'
 import { Grid, useMediaQuery } from '@mui/material'
 import {
   BTC_TEST,
@@ -19,6 +18,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { tokenSearch } from '@store/selectors/navigation'
 import { actions } from '@store/reducers/navigation'
 import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
+import { useStyles } from './style'
 
 export interface ITokensListData {
   icon: string
@@ -213,13 +213,15 @@ const TokensList: React.FC<ITokensList> = ({
               ))}
           </>
         ) : (
-          <EmptyPlaceholder
-            height={initialDataLength < ITEMS_PER_PAGE ? initialDataLength * 69 : 688}
-            newVersion
-            mainTitle={`You don't have any favourite tokens yet...`}
-            desc={'You can add them by clicking the star icon next to the token!'}
-            withButton={false}
-          />
+          <Grid container className={classes.emptyContainer}>
+            <EmptyPlaceholder
+              height={initialDataLength < ITEMS_PER_PAGE ? initialDataLength * 69 : 688}
+              newVersion
+              mainTitle={`You don't have any favourite tokens yet...`}
+              desc={'You can add them by clicking the star icon next to the token!'}
+              withButton={false}
+            />
+          </Grid>
         )}
         <Grid
           className={classes.pagination}
