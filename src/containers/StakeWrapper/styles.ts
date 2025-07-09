@@ -159,24 +159,30 @@ export const useStyles = makeStyles()(() => ({
     width: '100%',
     height: '27px',
     maxWidth: 510,
-    [theme.breakpoints.down('md')]: {
-      maxWidth: '100%'
-    },
     marginBottom: '16px',
     justifyContent: 'space-between',
     alignItems: 'center',
-    gap: 12
+    gap: 12,
+    [theme.breakpoints.down('sm')]: {
+      gap: 8
+    }
   },
 
   titleTextWrapper: {
     display: 'flex',
     alignItems: 'center',
     gap: '16px',
+    [theme.breakpoints.down('sm')]: {
+      gap: 8
+    },
     '& h1': {
       ...typography.heading4,
       whiteSpace: 'nowrap',
       color: colors.invariant.text,
-      margin: 0
+      margin: 0,
+      [theme.breakpoints.down('sm')]: {
+        whiteSpace: 'wrap'
+      }
     }
   },
   refreshIcon: {
@@ -236,7 +242,6 @@ export const useStyles = makeStyles()(() => ({
 
     [theme.breakpoints.down('md')]: {
       transform: 'none !important',
-      maxWidth: '410px',
       width: '100%'
     }
   },
@@ -333,6 +338,7 @@ export const useStyles = makeStyles()(() => ({
   },
   stakingContentWrapper: {
     display: 'flex',
+    maxWidth: '510px',
     width: '100%',
     [theme.breakpoints.down('md')]: {
       flexDirection: 'column-reverse'

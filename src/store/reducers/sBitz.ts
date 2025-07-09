@@ -24,7 +24,7 @@ export interface ISBitz {
   stakedData: {
     stakedAmount: BN | null
     stakedTokenSupply: BN | null
-    bitzTotalBalance?: BN | null
+    bitzTotalBalance: BN | null
   }
   stakeTab: StakeSwitch
   stakeInputVal: string
