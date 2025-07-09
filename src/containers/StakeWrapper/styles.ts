@@ -165,18 +165,27 @@ export const useStyles = makeStyles()(() => ({
     marginBottom: '16px',
     justifyContent: 'space-between',
     alignItems: 'center',
-    gap: 12
+    gap: 12,
+    [theme.breakpoints.down('sm')]: {
+      gap: 8
+    }
   },
 
   titleTextWrapper: {
     display: 'flex',
     alignItems: 'center',
     gap: '16px',
+    [theme.breakpoints.down('sm')]: {
+      gap: 8
+    },
     '& h1': {
       ...typography.heading4,
       whiteSpace: 'nowrap',
       color: colors.invariant.text,
-      margin: 0
+      margin: 0,
+      [theme.breakpoints.down('sm')]: {
+        whiteSpace: 'wrap'
+      }
     }
   },
   refreshIcon: {

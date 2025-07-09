@@ -117,6 +117,7 @@ export const WrappedStake: React.FC = () => {
 
   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
+  const truncateText = useMediaQuery(theme.breakpoints.down(348))
   const sBitzBalance = useMemo(() => {
     return new BN(tokensList.find(token => token.address.equals(sBITZ_MAIN.address))?.balance || 0)
   }, [tokensList])
@@ -367,7 +368,7 @@ export const WrappedStake: React.FC = () => {
                   to='https://docs.invariant.app/docs/sbitz'
                   target='_blank'
                   className={classes.learnMoreLink}>
-                  <span> {isSm ? 'More' : 'Learn More'}</span>{' '}
+                  {!truncateText && <span> {isSm ? 'More' : 'Learn More'}</span>}
                   <LaunchIcon classes={{ root: classes.clipboardIcon }} />
                 </Link>
               </Box>

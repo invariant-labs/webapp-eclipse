@@ -62,7 +62,7 @@ const ApyTooltip: React.FC<IApyTooltip> = ({ stakeDataLoading, sBitzBitzMonthlyA
           <>
             <Box className={classes.valueWrapper}>
               <Box className={classes.value}>
-                <img src={bitzIcon} width={12} height={12} />
+                <img style={{ marginRight: 4 }} src={bitzIcon} width={12} height={12} />
                 <Typography className={classes.crossedValue}>
                   {bitzMonthly.toLocaleString(undefined, {
                     minimumFractionDigits: 2,
@@ -70,7 +70,7 @@ const ApyTooltip: React.FC<IApyTooltip> = ({ stakeDataLoading, sBitzBitzMonthlyA
                   })}
                 </Typography>
                 <Typography className={classes.arrow}>→</Typography>
-                <img src={sBitzIcon} width={12} height={12} />
+                <img style={{ marginRight: 4 }} src={sBitzIcon} width={12} height={12} />
                 <Typography className={classes.greenValue}>
                   {sbitzMonthly.toLocaleString(undefined, {
                     minimumFractionDigits: 2,
@@ -86,7 +86,7 @@ const ApyTooltip: React.FC<IApyTooltip> = ({ stakeDataLoading, sBitzBitzMonthlyA
 
         <Box className={classes.valueWrapper}>
           <Box className={classes.value}>
-            <img src={bitzIcon} width={12} height={12} />
+            <img style={{ marginRight: 4 }} src={bitzIcon} width={12} height={12} />
             <Typography className={classes.crossedValue}>
               {bitzAnnual.toLocaleString(undefined, {
                 minimumFractionDigits: 2,
@@ -94,7 +94,7 @@ const ApyTooltip: React.FC<IApyTooltip> = ({ stakeDataLoading, sBitzBitzMonthlyA
               })}
             </Typography>
             <Typography className={classes.arrow}>→</Typography>
-            <img src={sBitzIcon} width={12} height={12} />
+            <img style={{ marginRight: 4 }} src={sBitzIcon} width={12} height={12} />
             <Typography className={classes.greenValue}>
               {sbitzAnnual.toLocaleString(undefined, {
                 minimumFractionDigits: 2,

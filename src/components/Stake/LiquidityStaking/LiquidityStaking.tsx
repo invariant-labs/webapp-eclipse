@@ -229,13 +229,15 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
         rotateRight={currentStakeTab === StakeSwitch.Stake}
         isRotating={isRotating}
       />
-      <Box mb={'16px'} display='flex' justifyContent='space-between' alignItems='center'>
+      <Box className={classes.apyWrapper}>
         <Typography className={classes.title}>You receive</Typography>
-        {currentStakeTab === StakeSwitch.Stake && (
+        {currentStakeTab === StakeSwitch.Stake ? (
           <ApyTooltip
             sBitzBitzMonthlyAnnual={sBitzBitzMonthlyAnnual}
             stakeDataLoading={stakeDataLoading}
           />
+        ) : (
+          <Grid className={classes.placeholder} />
         )}
       </Box>
 

@@ -1,4 +1,4 @@
-import { colors, typography } from '@static/theme'
+import { colors, theme, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 const useStyles = makeStyles()(() => ({
@@ -29,12 +29,17 @@ const useStyles = makeStyles()(() => ({
     lineHeight: '24px'
   },
   row: {
-    flexWrap: 'nowrap',
+    marginInline: 8,
+    display: 'flex',
     alignItems: 'center',
     backgroundColor: colors.invariant.newDark,
     padding: '5px 8px',
     gap: 4,
-    borderRadius: 8
+    borderRadius: 8,
+    [theme.breakpoints.between('sm', 'md')]: {
+      justifyContent: 'center',
+      width: 312
+    }
   },
   valueWrapper: {
     display: 'flex',
