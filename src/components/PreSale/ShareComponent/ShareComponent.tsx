@@ -36,9 +36,8 @@ export const ShareComponent: React.FC<IProps> = ({
 
     const clonedElement = element.cloneNode(true) as HTMLDivElement
     document.body.appendChild(clonedElement)
-
     const canvas = await html2canvas(clonedElement)
-
+    document.body.removeChild(clonedElement)
     const dataUrl = canvas.toDataURL('image/png')
     const link = document.createElement('a')
     link.href = dataUrl
@@ -56,8 +55,8 @@ export const ShareComponent: React.FC<IProps> = ({
 
     const clonedElement = element.cloneNode(true) as HTMLDivElement
     document.body.appendChild(clonedElement)
-
     const canvas = await html2canvas(clonedElement)
+    document.body.removeChild(clonedElement)
     canvas.toBlob(blob => {
       if (navigator.clipboard && blob) {
         navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })])
