@@ -196,7 +196,11 @@ export const ExchangeAmountInput: React.FC<IProps> = ({
             }}
             onBlur={() => {
               if (value) {
-                setValue(trimDecimalZeros(value))
+                const trimmed = trimDecimalZeros(value)
+
+                if (trimmed !== value) {
+                  setValue(trimDecimalZeros(value))
+                }
               }
             }}
           />
