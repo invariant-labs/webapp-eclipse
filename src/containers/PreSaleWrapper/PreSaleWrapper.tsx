@@ -21,7 +21,7 @@ import {
   TIER3,
   TIER4
 } from '@invariant-labs/sale-sdk'
-import { balanceLoading, status, poolTokens, balance } from '@store/selectors/solanaWallet'
+import { balanceLoading, status, poolTokens, balance, address } from '@store/selectors/solanaWallet'
 import {
   getAmountTillNextPriceIncrease,
   getPrice,
@@ -50,7 +50,6 @@ import ArrowLeft from '@static/png/presale/arrow_left.png'
 import ArrowRight from '@static/png/presale/arrow_right.png'
 import { useEffect, useState, useRef, useMemo, useCallback } from 'react'
 import { OverlayWrapper } from '@components/PreSale/Overlay/Overlay'
-import { getEclipseWallet } from '@utils/web3/wallet'
 import { DEFAULT_PUBLICKEY } from '@store/consts/static'
 import { auditByLogoIcon, swapArrowClean } from '@static/icons'
 import { Tokenomics } from '@components/PreSale/Tokenomics/Tokenomics'
@@ -199,6 +198,7 @@ export const PreSaleWrapper = () => {
   const [currentTimestamp, setCurrentTimestamp] = useState<BN>(getTimestampSeconds())
   const initialReversePrices = localStorage.getItem('INVARIANT_SALE_REVERSE_PRICES') === 'true'
   const [reversedPrices, setReversedPrices] = useState(initialReversePrices)
+  const walletAddress = useSelector(address)
 
   const slidesToShow = useMemo(() => {
     if (isSmallMobile) return 1
@@ -320,16 +320,14 @@ export const PreSaleWrapper = () => {
   const isPublic = useMemo(() => round === 4, [round])
 
   useEffect(() => {
-    const wallet = getEclipseWallet()
     if (
-      wallet &&
       walletStatus === Status.Initialized &&
-      wallet.publicKey &&
-      !wallet.publicKey.equals(DEFAULT_PUBLICKEY)
+      walletAddress &&
+      !walletAddress.equals(DEFAULT_PUBLICKEY)
     ) {
       dispatch(actions.getProof())
     }
-  }, [walletStatus, isPublic])
+  }, [walletStatus, isPublic, walletAddress])
 
   const isLimitExceed = useMemo(
     () => deposited.gte(whitelistWalletLimit) && !isPublic,
