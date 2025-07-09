@@ -432,7 +432,7 @@ export const WrappedStake: React.FC = () => {
       <Box className={classes.stakedBitzContainer}>
         <Typography className={classes.statsTitle}>BITZ staked</Typography>
         <BitzStats
-          isLoading={isLoadingMarketData || isBalanceLoading}
+          isLoading={isLoadingMarketData || isBalanceLoading || isLoadingStats}
           stats={bitzMarketDataStats}
         />
       </Box>

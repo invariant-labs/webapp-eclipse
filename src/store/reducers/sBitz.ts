@@ -156,7 +156,16 @@ const sBitzSlice = createSlice({
     },
     setCurrentStats(state, action: PayloadAction<BitzMarketData>) {
       state.loadingStates.bitzMarketData = false
-      state.bitzMarketData = action.payload
+      state.bitzMarketData.bitzAmount = action.payload.bitzAmount
+      state.bitzMarketData.marketCap = action.payload.marketCap
+      state.bitzMarketData.sBitzAmount = action.payload.sBitzAmount
+      state.bitzMarketData.sBitzSupply = action.payload.sBitzSupply
+      state.bitzMarketData.totalSupply = action.payload.totalSupply
+      return state
+    },
+
+    setHolders(state, action: PayloadAction<number | null>) {
+      state.bitzMarketData.holders = action.payload
       return state
     }
   }

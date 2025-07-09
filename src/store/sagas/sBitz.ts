@@ -45,7 +45,6 @@ import {
 } from '@solana/spl-token'
 import { accounts } from '@store/selectors/solanaWallet'
 import { BN } from '@coral-xyz/anchor'
-import { SBITZ_MINT } from '@invariant-labs/sbitz/lib/consts'
 import { getBitzSupply } from '@invariant-labs/sbitz'
 export function* handleStake(action: PayloadAction<StakeLiquidityPayload>) {
   const loaderStaking = createLoaderKey()
@@ -543,31 +542,14 @@ export function* getMarketBitzStats(): Generator {
   const connection = yield* call(getConnection)
   const price = yield* call(getTokenPrice, sBITZ_MAIN.address.toString(), networkType)
   const stakingProgram = yield* call(getStakingProgram, networkType, rpc, wallet as IWallet)
-
+  const { holders } = yield* select(s => s.sBitz.bitzMarketData)
   try {
     const { stakedAmount, stakedTokenSupply } = yield* call([
       stakingProgram,
       stakingProgram.getStakedAmountAndStakedTokenSupply
     ])
-    const owners = new Set<string>()
 
     const bitzSupply = yield* call(getBitzSupply, connection)
-    const accs = yield* call([connection, connection.getProgramAccounts], TOKEN_2022_PROGRAM_ID, {
-      filters: [
-        {
-          memcmp: { offset: 0, bytes: SBITZ_MINT.toBase58() }
-        }
-      ]
-    })
-
-    for (const { account } of accs) {
-      const data = AccountLayout.decode(account.data)
-      const amount = BigInt(data.amount.toString())
-
-      if (amount > 0n) {
-        owners.add(data.owner.toBase58())
-      }
-    }
 
     const programAddress = new PublicKey('5FgZ9W81khmNXG8i96HSsG7oJiwwpKnVzmHgn9ZnqQja')
 
@@ -614,7 +596,7 @@ export function* getMarketBitzStats(): Generator {
         bitzAmount,
         marketCap: marketCapSBitz,
         sBitzSupply: stakedTokenSupplyAmount,
-        holders: owners.size,
+        holders,
         totalSupply: bitzSupplyAmount,
         sBitzAmount
       })
