@@ -21,7 +21,7 @@ import {
   TIER3,
   TIER4
 } from '@invariant-labs/sale-sdk'
-import { balanceLoading, status, poolTokens, balance } from '@store/selectors/solanaWallet'
+import { balanceLoading, status, poolTokens, balance, address } from '@store/selectors/solanaWallet'
 import {
   getAmountTillNextPriceIncrease,
   getPrice,
@@ -199,6 +199,7 @@ export const PreSaleWrapper = () => {
   const [currentTimestamp, setCurrentTimestamp] = useState<BN>(getTimestampSeconds())
   const initialReversePrices = localStorage.getItem('INVARIANT_SALE_REVERSE_PRICES') === 'true'
   const [reversedPrices, setReversedPrices] = useState(initialReversePrices)
+  const walletAddress = useSelector(address)
 
   const slidesToShow = useMemo(() => {
     if (isSmallMobile) return 1
@@ -320,16 +321,14 @@ export const PreSaleWrapper = () => {
   const isPublic = useMemo(() => round === 4, [round])
 
   useEffect(() => {
-    const wallet = getEclipseWallet()
     if (
-      wallet &&
       walletStatus === Status.Initialized &&
-      wallet.publicKey &&
-      !wallet.publicKey.equals(DEFAULT_PUBLICKEY)
+      walletAddress &&
+      !walletAddress.equals(DEFAULT_PUBLICKEY)
     ) {
       dispatch(actions.getProof())
     }
-  }, [walletStatus, isPublic])
+  }, [walletStatus, isPublic, walletAddress])
 
   const isLimitExceed = useMemo(
     () => deposited.gte(whitelistWalletLimit) && !isPublic,
