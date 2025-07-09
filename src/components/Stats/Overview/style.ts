@@ -30,7 +30,7 @@ export const useStyles = makeStyles()(() => ({
       inset: 0,
       backgroundColor: alpha(colors.invariant.newDark, 0.7),
       backdropFilter: 'blur(4px)',
-      zIndex: 1,
+      zIndex: 10,
       pointerEvents: 'none',
       borderRadius: '24px'
     }
