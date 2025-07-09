@@ -543,6 +543,7 @@ export function* getMarketBitzStats(): Generator {
   const connection = yield* call(getConnection)
   const price = yield* call(getTokenPrice, sBITZ_MAIN.address.toString(), networkType)
   const stakingProgram = yield* call(getStakingProgram, networkType, rpc, wallet as IWallet)
+
   try {
     const { stakedAmount, stakedTokenSupply } = yield* call([
       stakingProgram,
@@ -569,13 +570,12 @@ export function* getMarketBitzStats(): Generator {
     }
 
     const programAddress = new PublicKey('5FgZ9W81khmNXG8i96HSsG7oJiwwpKnVzmHgn9ZnqQja')
-    const tokenMint = new PublicKey('64mggk2nXg6vHC1qCdsZdEFzd5QGN4id54Vbho4PswCF')
 
     const tokenAccounts = yield* call(
       [connection, connection.getTokenAccountsByOwner],
       programAddress,
       {
-        mint: tokenMint
+        mint: BITZ_MAIN.address
       }
     )
 
