@@ -29,7 +29,7 @@ const ApyTooltip: React.FC<IApyTooltip> = ({ stakeDataLoading, sBitzBitzMonthlyA
   )
 
   if (stakeDataLoading) {
-    return <Skeleton width={isSm ? 175 : 317} className={classes.skeleton} variant='rounded' />
+    return <Skeleton className={classes.skeleton} variant='rounded' />
   }
 
   return (

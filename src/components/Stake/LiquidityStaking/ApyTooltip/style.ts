@@ -66,9 +66,18 @@ const useStyles = makeStyles()(() => ({
     ...typography.body2
   },
   skeleton: {
+    marginInline: 8,
+    width: 317,
     height: 34,
     opacity: 0.7,
-    borderRadius: 8
+    borderRadius: 8,
+    [theme.breakpoints.down('md')]: {
+      justifyContent: 'center',
+      width: 328
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: 165
+    }
   }
 }))
 

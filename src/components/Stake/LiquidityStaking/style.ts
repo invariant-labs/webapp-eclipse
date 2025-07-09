@@ -13,7 +13,8 @@ export const useStyles = makeStyles()((theme: Theme) => ({
 
     padding: '16px 24px 22px 24px',
     [theme.breakpoints.down('sm')]: {
-      padding: '12px 8px'
+      padding: '12px 8px',
+      maxWidth: 'auto'
     }
   },
   title: {
