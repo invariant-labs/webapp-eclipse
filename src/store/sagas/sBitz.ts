@@ -17,6 +17,7 @@ import {
   TIMEOUT_ERROR_MESSAGE
 } from '@store/consts/static'
 import {
+  PublicKey,
   sendAndConfirmRawTransaction,
   SendTransactionError,
   Transaction,
@@ -30,20 +31,22 @@ import {
   ensureError,
   extractErrorCode,
   extractRuntimeErrorCode,
-  fetchMarketBitzStats,
   formatNumberWithoutSuffix,
+  getTokenPrice,
   mapErrorCodeToMessage,
   printBN
 } from '@utils/utils'
 import { closeSnackbar } from 'notistack'
 import {
+  AccountLayout,
   getAssociatedTokenAddressSync,
   TOKEN_2022_PROGRAM_ID,
   TOKEN_PROGRAM_ID
 } from '@solana/spl-token'
 import { accounts } from '@store/selectors/solanaWallet'
 import { BN } from '@coral-xyz/anchor'
-
+import { SBITZ_MINT } from '@invariant-labs/sbitz/lib/consts'
+import { getBitzSupply } from '@invariant-labs/sbitz'
 export function* handleStake(action: PayloadAction<StakeLiquidityPayload>) {
   const loaderStaking = createLoaderKey()
   const loaderSigningTx = createLoaderKey()
@@ -537,41 +540,82 @@ export function* getMarketBitzStats(): Generator {
   const networkType = yield* select(network)
   const rpc = yield* select(rpcAddress)
   const wallet = yield* call(getWallet)
-
+  const connection = yield* call(getConnection)
+  const price = yield* call(getTokenPrice, sBITZ_MAIN.address.toString(), networkType)
   const stakingProgram = yield* call(getStakingProgram, networkType, rpc, wallet as IWallet)
-
   try {
-    const { stakedAmount } = yield* call([
+    const { stakedAmount, stakedTokenSupply } = yield* call([
       stakingProgram,
       stakingProgram.getStakedAmountAndStakedTokenSupply
     ])
+    const owners = new Set<string>()
 
+    const bitzSupply = yield* call(getBitzSupply, connection)
+    const accs = yield* call([connection, connection.getProgramAccounts], TOKEN_2022_PROGRAM_ID, {
+      filters: [
+        {
+          memcmp: { offset: 0, bytes: SBITZ_MINT.toBase58() }
+        }
+      ]
+    })
+
+    for (const { account } of accs) {
+      const data = AccountLayout.decode(account.data)
+      const amount = BigInt(data.amount.toString())
+
+      if (amount > 0n) {
+        owners.add(data.owner.toBase58())
+      }
+    }
+
+    const programAddress = new PublicKey('5FgZ9W81khmNXG8i96HSsG7oJiwwpKnVzmHgn9ZnqQja')
+    const tokenMint = new PublicKey('64mggk2nXg6vHC1qCdsZdEFzd5QGN4id54Vbho4PswCF')
+
+    const tokenAccounts = yield* call(
+      [connection, connection.getTokenAccountsByOwner],
+      programAddress,
+      {
+        mint: tokenMint
+      }
+    )
+
+    let totalBalance = 0n
+    for (const { account } of tokenAccounts.value) {
+      const data = AccountLayout.decode(account.data)
+      totalBalance += BigInt(data.amount.toString())
+    }
+
+    const stakedTokenSupplyAmount = +printBN(stakedTokenSupply, BITZ_MAIN.decimals)
     const sBitzAmount = +printBN(stakedAmount, BITZ_MAIN.decimals)
+    const totalBitzSupply = +printBN(totalBalance, BITZ_MAIN.decimals)
+    const bitzSupplyAmount = +printBN(bitzSupply, BITZ_MAIN.decimals)
+    // const { holders, accountSBitz, accountBitz ,totalBitzSupply  } =
+    //   yield* call(fetchMarketBitzStats)
 
-    const { holders, accountSBitz, accountBitz, totalBitzSupply } =
-      yield* call(fetchMarketBitzStats)
+    // const bitzAmount = totalBitzSupply.data.tokens[0].balance - sBitzAmount
+    const bitzAmount = totalBitzSupply - sBitzAmount
 
-    const bitzAmount = totalBitzSupply.data.tokens[0].balance - sBitzAmount
+    // const supplySBitz = printBN(
+    //   accountSBitz.data.tokenInfo.supply,
+    //   accountSBitz.data.tokenInfo.decimals
+    // )
+    // const supplyBitz = printBN(
+    //   accountBitz.data.tokenInfo.supply,
+    //   accountBitz.data.tokenInfo.decimals
+    // )
+    // const marketCapSBitz =
+    //   accountSBitz.metadata.tokens.sBTZcSwRZhRq3JcjFh1xwxgCxmsN7MreyU3Zx8dA8uF.price_usdt *
+    //   Number(supplySBitz)
 
-    const supplySBitz = printBN(
-      accountSBitz.data.tokenInfo.supply,
-      accountSBitz.data.tokenInfo.decimals
-    )
-    const supplyBitz = printBN(
-      accountBitz.data.tokenInfo.supply,
-      accountBitz.data.tokenInfo.decimals
-    )
-    const marketCapSBitz =
-      accountSBitz.metadata.tokens.sBTZcSwRZhRq3JcjFh1xwxgCxmsN7MreyU3Zx8dA8uF.price_usdt *
-      Number(supplySBitz)
+    const marketCapSBitz = (price ?? 0) * stakedTokenSupplyAmount
 
     yield* put(
       actions.setCurrentStats({
         bitzAmount,
         marketCap: marketCapSBitz,
-        sBitzSupply: +supplySBitz,
-        holders: holders.data,
-        totalSupply: Number(supplyBitz),
+        sBitzSupply: stakedTokenSupplyAmount,
+        holders: owners.size,
+        totalSupply: bitzSupplyAmount,
         sBitzAmount
       })
     )
