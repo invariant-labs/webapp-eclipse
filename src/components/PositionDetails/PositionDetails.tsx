@@ -41,6 +41,7 @@ import { DesktopNavigation } from './Navigation/DesktopNavigation/DesktopNavigat
 import { PaginationList } from '@common/Pagination/Pagination/Pagination'
 import { useDispatch } from 'react-redux'
 import { actions } from '@store/reducers/navigation'
+import { ChangeLiquidityModal } from '@components/Modals/ChangeLiquidityModal/ChangeLiquidityModal'
 
 interface IProps {
   tokenXAddress: PublicKey
@@ -284,6 +285,17 @@ const PositionDetails: React.FC<IProps> = ({
     }
   }, [midPrice.x, pricesLoading])
 
+  const [isChangeLiquidityModalShown, setIsChangeLiquidityModalShown] = useState(false)
+  const [isAddLiquidity, setIsAddLiquidity] = useState(true)
+
+  useEffect(() => {
+    if (isChangeLiquidityModalShown) {
+      blurContent()
+    } else {
+      unblurContent()
+    }
+  }, [isChangeLiquidityModalShown])
+
   return (
     <Box display='flex' flexDirection={'column'} flex={1}>
       <Information mb={3} transitionTimeout={300} shouldOpen={showPreviewInfo}>
@@ -345,6 +357,23 @@ const PositionDetails: React.FC<IProps> = ({
             swapHandler={() => setXToY(!xToY)}
             success={success}
             inProgress={inProgress}
+          />
+          <ChangeLiquidityModal
+            open={isChangeLiquidityModalShown}
+            isAddLiquidity={isAddLiquidity}
+            setIsAddLiquidity={setIsAddLiquidity}
+            tokenX={tokenX}
+            tokenY={tokenY}
+            xToY={xToY}
+            inRange={min <= currentPrice && currentPrice <= max}
+            min={xToY ? min : 1 / max}
+            max={xToY ? max : 1 / min}
+            tvl={
+              tokenX.liqValue * (tokenXPriceData?.price ?? 0) +
+              tokenY.liqValue * (tokenYPriceData?.price ?? 0)
+            }
+            currentPrice={currentPrice ** (xToY ? 1 : -1)}
+            onClose={() => setIsChangeLiquidityModalShown(false)}
           />
           <PositionHeader
             isClosing={shouldDisable}
@@ -418,6 +447,10 @@ const PositionDetails: React.FC<IProps> = ({
                 isClosing={shouldDisable}
                 interval={interval}
                 isLocked={isLocked}
+                showChangeLiquidityModal={value => {
+                  setIsChangeLiquidityModalShown(true)
+                  setIsAddLiquidity(value)
+                }}
               />
             </Box>
             <Box className={classes.rightSide}>
