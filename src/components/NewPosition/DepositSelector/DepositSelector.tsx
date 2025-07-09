@@ -9,7 +9,6 @@ import {
   Skeleton,
   ToggleButton,
   ToggleButtonGroup,
-  Tooltip,
   Typography,
   useMediaQuery
 } from '@mui/material'
@@ -59,8 +58,8 @@ import {
   toDecimal
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import DepoSitOptionsModal from '@components/Modals/DepositOptionsModal/DepositOptionsModal'
-import { theme } from '@static/theme'
 import loadingAnimation from '@static/gif/loading.gif'
+import { theme } from '@static/theme'
 
 export interface InputState {
   value: string
@@ -223,9 +222,9 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   updateLiquidity
 }) => {
   const { classes, cx } = useStyles()
-  const breakpoint630Down = useMediaQuery(theme.breakpoints.down(630))
-  const brekpoint1270to1350 = useMediaQuery(theme.breakpoints.between(1270, 1350))
-  const breakpointMdTo1000 = useMediaQuery(theme.breakpoints.between('md', 1000))
+
+  const isSm = useMediaQuery(theme.breakpoints.down(370))
+
   const { value: valueA } = tokenAInputState
   const { value: valueB } = tokenBInputState
   const [priceImpact, setPriceImpact] = useState<string>(initialMaxPriceImpact)
@@ -606,7 +605,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
 
   const renderSwitcher = useCallback(
     () => (
-      <>
+      <Box className={classes.switchDepositContainer}>
         <Box className={classes.switchDepositTypeContainer}>
           <Box
             className={classes.switchDepositTypeMarker}
@@ -637,41 +636,45 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
                 classes.autoButton,
                 isAutoswapOn ? classes.switchSelected : classes.switchNotSelected
               )}>
-              <span className={classes.autoText}>Auto</span>
-              <Tooltip
+              <TooltipHover
                 title={
                   'AutoSwap allows you to create a position using any token ratio. Simply choose the amount you currently hold in your wallet, and it will be automatically swapped in the most optimal way.'
                 }
-                classes={{ tooltip: classes.tooltip }}>
-                <span className={classes.tooltipIconWrapper}>
-                  <img src={infoIcon} alt='' width={'12px'} height={'12px'} />
-                </span>
-              </Tooltip>
+                increasePadding
+                removeOnMobile>
+                <span>Auto</span>
+              </TooltipHover>
             </ToggleButton>
           </ToggleButtonGroup>
         </Box>
-        <Tooltip
+        <TooltipHover
           title={
             !isAutoswapOn
-              ? 'Autoswap related settings, accesable only when autoswap is turned on.'
+              ? 'Autoswap related settings, accessible only when autoswap is turned on.'
               : ''
-          }
-          classes={{ tooltip: classes.tooltip }}>
-          <div>
+          }>
+          <Box
+            display='flex'
+            alignItems='center'
+            onClick={() => {
+              if (isAutoswapOn) {
+                handleClickDepositOptions()
+              }
+            }}
+            style={{ cursor: 'pointer' }}>
             <Button
-              onClick={handleClickDepositOptions}
               className={classes.optionsIconBtn}
               disableRipple
-              disabled={!isAutoswapOn}>
+              style={!isAutoswapOn ? { pointerEvents: 'none' } : {}}>
               <img
                 src={settingIcon}
                 className={!isAutoswapOn ? classes.grayscaleIcon : classes.whiteIcon}
                 alt='options'
               />
             </Button>
-          </div>
-        </Tooltip>
-      </>
+          </Box>
+        </TooltipHover>
+      </Box>
     ),
     [isAutoSwapAvailable, alignment]
   )
@@ -692,9 +695,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     if (isSimulationStatus(SwapAndCreateSimulationStatus.PerfectRatio)) {
       return (
         <Box className={classes.unknownWarning}>
-          <Tooltip
-            title={'You already have enough tokens to open position'}
-            classes={{ tooltip: classes.tooltip }}>
+          <TooltipHover title={'You already have enough tokens to open position'}>
             <img
               src={infoIcon}
               alt=''
@@ -702,7 +703,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
               style={{ marginRight: '4px', marginBottom: '-1.5px' }}
               className={classes.grayscaleIcon}
             />
-          </Tooltip>
+          </TooltipHover>
           No swap required
         </Box>
       )
@@ -711,9 +712,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     if (isSimulationStatus(SwapAndCreateSimulationStatus.LiquidityTooLow)) {
       return (
         <Box className={classes.errorWarning}>
-          <Tooltip
-            title={'There is not enough liquidity to perform the swap'}
-            classes={{ tooltip: classes.tooltip }}>
+          <TooltipHover title={'There is not enough liquidity to perform the swap'}>
             <img
               src={infoIcon}
               alt=''
@@ -721,7 +720,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
               style={{ marginRight: '4px', marginBottom: '-1.5px' }}
               className={classes.errorIcon}
             />
-          </Tooltip>
+          </TooltipHover>
           Insufficient liquidity
         </Box>
       )
@@ -772,14 +771,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             </>
           }>
           <Box display='flex' alignItems='center'>
-            <img
-              src={infoIcon}
-              alt=''
-              width='12px'
-              style={{ marginRight: '4px', marginBottom: '-1.5px' }}
-              className={isPriceImpact ? classes.errorIcon : classes.grayscaleIcon}
-            />
-            Price impact:{' '}
+            {isSm ? 'Impact:' : 'Price impact:'}{' '}
             {simulation.swapSimulation!.priceImpact.gt(new BN(MINIMUM_PRICE_IMPACT))
               ? Number(
                   printBN(new BN(simulation.swapSimulation!.priceImpact), DECIMAL - 2)
@@ -790,7 +782,16 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
         </TooltipHover>
       </Box>
     )
-  }, [isSimulating, simulation, alignment, tokenACheckbox, tokenBCheckbox, throttle, isPriceImpact])
+  }, [
+    isSimulating,
+    simulation,
+    alignment,
+    tokenACheckbox,
+    tokenBCheckbox,
+    throttle,
+    isPriceImpact,
+    isSm
+  ])
 
   const simulateAutoSwapResult = async () => {
     setIsSimulating(true)
@@ -1000,24 +1001,16 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       </Grid>
       <Grid container className={classes.depositHeader}>
         <Box className={classes.depositHeaderContainer}>
-          <Typography className={classes.subsectionTitle}>Deposit Amount</Typography>
+          <Typography className={classes.subsectionTitle}>Amounts</Typography>
 
           <Box className={classes.depositOptions}>
-            {!breakpoint630Down &&
-              !breakpointMdTo1000 &&
-              !brekpoint1270to1350 &&
-              isAutoswapOn &&
+            {isAutoswapOn &&
               isAutoSwapAvailable &&
               (tokenACheckbox || tokenBCheckbox) &&
               renderWarning()}
             {renderSwitcher()}
           </Box>
         </Box>
-        {(breakpoint630Down || breakpointMdTo1000 || brekpoint1270to1350) &&
-          isAutoswapOn &&
-          isAutoSwapAvailable && (
-            <Box className={classes.depositHeaderContainer}>{renderWarning()}</Box>
-          )}
       </Grid>
       <Grid container className={classes.sectionWrapper}>
         <Box className={cx(classes.inputWrapper, classes.inputFirst)}>
@@ -1027,20 +1020,19 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
               width: isAutoswapOn ? '31px' : '0px',
               opacity: isAutoswapOn ? 1 : 0
             }}>
-            <Tooltip
+            <TooltipHover
               title={
                 tokenACheckbox
                   ? 'Unmark to exclude this token as liquidity available for use in the new position'
                   : 'Mark to include this token as liquidity available for use in the new position'
-              }
-              classes={{ tooltip: classes.tooltip }}>
+              }>
               <Checkbox
                 checked={tokenACheckbox}
                 onChange={e => setTokenACheckbox(e.target.checked)}
                 className={classes.checkbox}
                 icon={<span className={classes.customIcon} />}
               />
-            </Tooltip>
+            </TooltipHover>
           </Box>
           <DepositAmountInput
             tokenPrice={priceA}
@@ -1096,13 +1088,12 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
               opacity: isAutoswapOn ? 1 : 0
             }}>
             {' '}
-            <Tooltip
+            <TooltipHover
               title={
                 tokenBCheckbox
                   ? 'Unmark to exclude this token as liquidity available for use in the new position'
                   : 'Mark to include this token as liquidity available for use in the new position'
-              }
-              classes={{ tooltip: classes.tooltip }}>
+              }>
               <Checkbox
                 checked={tokenBCheckbox}
                 onChange={e => {
@@ -1111,7 +1102,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
                 className={classes.checkbox}
                 icon={<span className={classes.customIcon} />}
               />
-            </Tooltip>
+            </TooltipHover>
           </Box>
           <DepositAmountInput
             tokenPrice={priceB}

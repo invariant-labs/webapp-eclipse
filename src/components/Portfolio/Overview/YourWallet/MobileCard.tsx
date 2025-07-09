@@ -17,9 +17,11 @@ export const MobileCard: React.FC<{
   return (
     <Box className={classes.mobileCard}>
       <Box className={classes.mobileCardHeader}>
-        <Box className={classes.mobileTokenInfo} sx={{ position: 'relative' }}>
-          <img src={pool.icon} className={classes.tokenIcon} alt={pool.symbol} />
-          {pool.isUnknown && <img className={classes.warningIcon} src={warningIcon} />}
+        <Box className={classes.mobileTokenInfo}>
+          <Box display='flex' position='relative'>
+            <img src={pool.icon} className={classes.tokenIcon} alt={pool.symbol} />
+            {pool.isUnknown && <img className={classes.warningIcon} src={warningIcon} />}
+          </Box>
 
           <Typography className={classes.tokenSymbol}>{pool.symbol}</Typography>
         </Box>

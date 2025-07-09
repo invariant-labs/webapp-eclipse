@@ -117,7 +117,7 @@ const solanaWalletSlice = createSlice({
       state.tokenBalanceLoading = action.payload
       return state
     },
-    setIsUnkownBlanceLoading(state, action: PayloadAction<boolean>) {
+    setIsUnknownBlanceLoading(state, action: PayloadAction<boolean>) {
       state.unkownTokenBalanceLoading = action.payload
       return state
     },

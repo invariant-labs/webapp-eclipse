@@ -97,14 +97,10 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     }
   },
   imageContainer: {
-    minWidth: 28,
-    maxWidth: 28,
-    height: 28,
-    marginRight: 8,
     position: 'relative',
-    display: 'flex',
-    alignItems: 'center'
+    display: 'flex'
   },
+
   tokenIcon: {
     minWidth: 28,
     maxWidth: 28,
@@ -115,9 +111,8 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   warningIcon: {
     position: 'absolute',
     width: 12,
-    height: 12,
-    bottom: -6,
-    right: -6
+    bottom: -3,
+    right: 3
   },
   action: {
     display: 'flex',

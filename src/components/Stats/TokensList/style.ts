@@ -13,11 +13,15 @@ export const useStyles = makeStyles()(_theme => ({
     borderRadius: '24px'
   },
   pagination: {
-    padding: 0,
     maxWidth: '100%',
     backgroundColor: colors.invariant.component,
     borderBottomLeftRadius: '24px',
     borderBottomRightRadius: '24px'
+  },
+  emptyContainer: {
+    background: colors.invariant.component,
+    borderBottom: `2px solid ${colors.invariant.light}`,
+    boxSizing: 'border-box'
   },
   loadingOverlay: {
     position: 'relative',
@@ -32,12 +36,9 @@ export const useStyles = makeStyles()(_theme => ({
       borderRadius: '24px'
     }
   },
-
   emptyRow: {
     height: 69,
     background: colors.invariant.component,
     boxSizing: 'border-box'
   }
 }))
-
-export default useStyles
