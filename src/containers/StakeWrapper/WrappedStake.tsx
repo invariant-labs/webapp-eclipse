@@ -48,6 +48,11 @@ import { StakeChart } from '@components/Stake/StakeChart/StakeChart'
 import { BN } from '@coral-xyz/anchor'
 import { calculateTokensForWithdraw, computeBitzSbitzRewards } from '@invariant-labs/sbitz'
 import {
+  calculateTokensForWithdraw,
+  computeBitzAprApy,
+  computeBitzSbitzRewards
+} from '@invariant-labs/sbitz'
+import {
   sBITZ_MAIN,
   BITZ_MAIN,
   PORTFOLIO_STAKE_EXPAND_DELAY,
@@ -378,7 +383,17 @@ export const WrappedStake: React.FC = () => {
                 className={classes.statsExpanderButton}
                 onClick={() => toggleExpand()}
                 disabled={!isConnected}>
+              <Button
+                className={classes.statsExpanderButton}
+                onClick={() => toggleExpand()}
+                disabled={!isConnected}>
                 <p>
+                  <img
+                    src={isExpanded ? EyeHide : EyeShow}
+                    width={20}
+                    height={20}
+                    style={{ opacity: isConnected ? 1 : 0.3 }}
+                  />
                   <img
                     src={isExpanded ? EyeHide : EyeShow}
                     width={20}

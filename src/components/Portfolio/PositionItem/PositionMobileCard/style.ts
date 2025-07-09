@@ -23,6 +23,17 @@ export const useMobileStyles = makeStyles()((theme: Theme) => ({
     },
     transition: '300ms'
   },
+  warningIcon: {
+    position: 'absolute',
+    width: 16,
+    bottom: -3,
+    right: -6,
+    [theme.breakpoints.down('sm')]: {
+      width: 12,
+      bottom: -1,
+      right: -5
+    }
+  },
   actionButton: {
     display: 'flex',
     justifyContent: 'center',

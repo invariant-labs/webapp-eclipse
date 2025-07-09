@@ -241,6 +241,8 @@ const PortfolioWrapper = () => {
         const { usdValue, isClaimAvailable } = calculateUnclaimedFees(position)
         return {
           tokenXName: position.tokenX.symbol,
+          isUnknownX: position.tokenX.isUnknown ?? false,
+          isUnknownY: position.tokenY.isUnknown ?? false,
           tokenYName: position.tokenY.symbol,
           tokenXIcon: position.tokenX.logoURI,
           tokenYIcon: position.tokenY.logoURI,
@@ -331,6 +333,8 @@ const PortfolioWrapper = () => {
         return {
           tokenXName: position.tokenX.symbol,
           tokenYName: position.tokenY.symbol,
+          isUnknownX: position.tokenX.isUnknown ?? false,
+          isUnknownY: position.tokenY.isUnknown ?? false,
           tokenXIcon: position.tokenX.logoURI,
           tokenYIcon: position.tokenY.logoURI,
           fee: +printBN(position.poolData.fee, DECIMAL - 2),

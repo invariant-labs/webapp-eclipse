@@ -237,7 +237,8 @@ export const useStyles = makeStyles()(() => ({
     backfaceVisibility: 'hidden',
     transform: 'translateZ(0)',
     zIndex: 2,
-    width: '510px',
+    maxWidth: '510px',
+    width: '100%',
 
     [theme.breakpoints.down('md')]: {
       transform: 'none !important',
@@ -246,7 +247,7 @@ export const useStyles = makeStyles()(() => ({
   },
   liquidityStakingExpanded: {
     transform: 'translateX(-80px)',
-    width: '510px'
+    maxWidth: '510px'
   },
   yourStatsWrapper: {
     position: 'absolute',

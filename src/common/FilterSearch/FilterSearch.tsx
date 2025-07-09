@@ -41,6 +41,7 @@ export interface ISearchToken {
   balance: BN
   decimals: number
   balanceUSD?: number
+  isUnknown: boolean
 }
 interface ITokenBalance {
   address: PublicKey
@@ -119,7 +120,7 @@ export const FilterSearch: React.FC<IFilterSearch> = memo(
       fetchPrices()
     }, [tokensListDetails])
 
-    const mappedTokens = useMemo(() => {
+    const mappedTokens: ISearchToken[] = useMemo(() => {
       return tokensListDetails
         .map(tokenData => {
           const details = tokenData.tokenDetails
@@ -139,7 +140,8 @@ export const FilterSearch: React.FC<IFilterSearch> = memo(
             address: tokenAddress,
             balanceUSD: balanceUSD,
             balance: tokenFromList ? tokenFromList.balance : 0,
-            decimals: tokenFromList ? tokenFromList.decimals : 0
+            decimals: tokenFromList ? tokenFromList.decimals : 0,
+            isUnknown: details?.isUnknown ?? false
           }
         })
         .sort((a, b) => {
