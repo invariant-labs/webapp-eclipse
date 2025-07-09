@@ -176,7 +176,7 @@ const AnimatedPreSaleCard = ({
 }
 
 export const PreSaleWrapper = () => {
-  const { classes } = useStyles()
+  const { classes, cx } = useStyles()
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
   const isSmallMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const isTablet = useMediaQuery(theme.breakpoints.down('lg'))
@@ -411,6 +411,8 @@ export const PreSaleWrapper = () => {
     }
   }, [price, nextPrice, round, reversedPrices])
 
+  const stepNames = ['Early Bird', 'Phase 2', 'Phase 3', 'Final Phase']
+
   const stepLabels = useMemo(() => {
     return tierPrices.map((price, idx) => {
       if (reversedPrices && !price.isZero()) {
@@ -418,16 +420,22 @@ export const PreSaleWrapper = () => {
         const inverted = baseValue.mul(baseValue).div(price)
         return {
           id: idx + 1,
-          label: `1$ = ${printBNandTrimZeros(inverted, mintDecimals, 2)} INVT`
+          label: `1$ = ${printBNandTrimZeros(inverted, mintDecimals, 2)} INVT`,
+          name: stepNames[idx]
         }
       } else {
         return {
           id: idx + 1,
-          label: `1 INVT = ${printBNandTrimZeros(price, mintDecimals, 4)}$`
+          label: `1 INVT = ${printBNandTrimZeros(price, mintDecimals, 4)}$`,
+          name: stepNames[idx]
         }
       }
     })
   }, [tierPrices, reversedPrices, mintDecimals])
+
+  const roundName = useMemo(() => {
+    return stepNames[round - 1]
+  }, [round])
 
   return (
     <Grid className={classes.pageWrapper} sx={{ position: 'relative' }}>
@@ -460,6 +468,7 @@ export const PreSaleWrapper = () => {
               isLoadingSaleStats={isLoadingSaleStats}
               isLoadingUserStats={isLoadingUserStats}
               priceFormat={reversedPrices ? 'usdc-to-token' : 'token-to-usdc'}
+              roundName={roundName}
             />
             <Grid className={classes.reverseContainer}>
               <div className={classes.arrowIcon} onClick={togglePriceDirection}>
@@ -533,6 +542,14 @@ export const PreSaleWrapper = () => {
               gradientDirection='to bottom'
               subtitle='in cumulative swap volume'
               delay={300}
+            />
+          </Grid>
+          <Grid item className={cx(classes.animatedCardItem, classes.animatedCardItemWide)}>
+            <AnimatedPreSaleCard
+              gradientPrimaryColor={colors.invariant.component}
+              title='$5 MLN'
+              subtitle='valuation of Invariant during the public sale'
+              delay={400}
             />
           </Grid>
           <Grid item className={classes.animatedCardItem}>

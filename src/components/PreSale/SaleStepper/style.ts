@@ -11,6 +11,7 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
     alignItems: 'flex-start',
     minHeight: '440px',
     width: '160px',
+    paddingLeft: 16,
     [theme.breakpoints.down('lg')]: {
       flexDirection: 'row',
       height: '100px',
@@ -92,13 +93,18 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
     background: colors.invariant.light
   },
 
+  stepLabelContainer: {
+    marginLeft: 10,
+    textAlign: 'left'
+  },
+
   stepLabel: {
     color: colors.invariant.text,
-    ...typography.body1,
+    ...typography.heading4,
     position: 'static',
     whiteSpace: 'nowrap',
+    textAlign: 'left',
 
-    marginLeft: 10,
     [theme.breakpoints.down('lg')]: {
       marginLeft: 0,
       textAlign: 'center',
@@ -113,6 +119,12 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
       left: '50%'
     }
   },
+
+  stepLowerLabel: {
+    ...typography.body2,
+    color: colors.invariant.text
+  },
+
   labelSkeleton: {
     marginLeft: '16px',
     [theme.breakpoints.down('lg')]: {
@@ -271,7 +283,8 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
   },
 
   endStepNode: {
-    borderColor: colors.invariant.pink
+    borderColor: colors.invariant.pink,
+    boxShadow: '0px 0px 8px 4px #EF84F559'
   },
 
   startStepNode: {
@@ -286,8 +299,13 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
     color: colors.invariant.pink
   },
 
+  currentStepLowerLabel: {
+    color: colors.invariant.pink,
+    fontWeight: 700
+  },
+
   pendingStepLabel: {
-    color: colors.invariant.textGrey
+    color: colors.invariant.text
   },
 
   startStepLabel: {
