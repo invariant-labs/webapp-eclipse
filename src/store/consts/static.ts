@@ -1073,6 +1073,7 @@ export const DEFAULT_STRATEGY = {
   tokenB: 'USDC',
   feeTier: '0_09'
 }
+export const BITZ_TOKENS_ADDR = '5FgZ9W81khmNXG8i96HSsG7oJiwwpKnVzmHgn9ZnqQja'
 
 export const PORTFOLIO_STAKE_STORAGE_KEY = 'STAKE_STATS_EXPANDED'
 export const PORTFOLIO_STAKE_EXPAND_DELAY = 50

@@ -98,7 +98,8 @@ import {
   USDN_MAIN,
   WEETHS_MAIN,
   sBITZ_MAIN,
-  MAX_PLOT_VISIBLE_TICK_RANGE
+  MAX_PLOT_VISIBLE_TICK_RANGE,
+  BITZ_TOKENS_ADDR
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
@@ -2634,7 +2635,6 @@ export const getAmountFromClosePositionInstruction = (
 export const fetchMarketBitzStats = async () => {
   const sBITZ = sBITZ_MAIN.address.toString()
   const BITZ = BITZ_MAIN.address.toString()
-  const TOKENS_ADDR = '5FgZ9W81khmNXG8i96HSsG7oJiwwpKnVzmHgn9ZnqQja'
 
   const [holdersRes, sBitzRes, bitzRes, tokensRes] = await Promise.all([
     axios.get<HoldersResponse>('https://api.eclipsescan.xyz/v1/token/holder/total', {
@@ -2650,7 +2650,7 @@ export const fetchMarketBitzStats = async () => {
     }),
 
     axios.get<TokensResponse>('https://api.eclipsescan.xyz/v1/account/tokens', {
-      params: { address: TOKENS_ADDR }
+      params: { address: BITZ_TOKENS_ADDR }
     })
   ])
 

@@ -10,6 +10,7 @@ import { actions as RPCAction, RpcStatus } from '@store/reducers/solanaConnectio
 import {
   APPROVAL_DENIED_MESSAGE,
   BITZ_MAIN,
+  BITZ_TOKENS_ADDR,
   COMMON_ERROR_MESSAGE,
   ErrorCodeExtractionKeys,
   sBITZ_MAIN,
@@ -542,7 +543,6 @@ export function* getMarketBitzStats(): Generator {
   const connection = yield* call(getConnection)
   const price = yield* call(getTokenPrice, sBITZ_MAIN.address.toString(), networkType)
   const stakingProgram = yield* call(getStakingProgram, networkType, rpc, wallet as IWallet)
-  const { holders } = yield* select(s => s.sBitz.bitzMarketData)
   try {
     const { stakedAmount, stakedTokenSupply } = yield* call([
       stakingProgram,
@@ -551,11 +551,9 @@ export function* getMarketBitzStats(): Generator {
 
     const bitzSupply = yield* call(getBitzSupply, connection)
 
-    const programAddress = new PublicKey('5FgZ9W81khmNXG8i96HSsG7oJiwwpKnVzmHgn9ZnqQja')
-
     const tokenAccounts = yield* call(
       [connection, connection.getTokenAccountsByOwner],
-      programAddress,
+      new PublicKey(BITZ_TOKENS_ADDR),
       {
         mint: BITZ_MAIN.address
       }
@@ -596,7 +594,6 @@ export function* getMarketBitzStats(): Generator {
         bitzAmount,
         marketCap: marketCapSBitz,
         sBitzSupply: stakedTokenSupplyAmount,
-        holders,
         totalSupply: bitzSupplyAmount,
         sBitzAmount
       })

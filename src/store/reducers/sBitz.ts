@@ -50,6 +50,15 @@ export interface BitzMarketData {
   sBitzAmount: number | null
   bitzAmount: number | null
 }
+
+export interface BitzMarketDataPayload {
+  marketCap: number | null
+  sBitzSupply: number | null
+  totalSupply: number | null
+  sBitzAmount: number | null
+  bitzAmount: number | null
+}
+
 export interface ISBitz {
   inProgress: boolean
   success: boolean
@@ -154,7 +163,7 @@ const sBitzSlice = createSlice({
       state.loadingStates.bitzMarketData = action.payload
       return state
     },
-    setCurrentStats(state, action: PayloadAction<BitzMarketData>) {
+    setCurrentStats(state, action: PayloadAction<BitzMarketDataPayload>) {
       state.loadingStates.bitzMarketData = false
       state.bitzMarketData.bitzAmount = action.payload.bitzAmount
       state.bitzMarketData.marketCap = action.payload.marketCap
