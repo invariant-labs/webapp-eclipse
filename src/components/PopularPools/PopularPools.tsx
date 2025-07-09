@@ -47,6 +47,7 @@ const PopularPools: React.FC<IPopularPools> = ({
         <Typography className={classes.title}>Popular pools</Typography>
         <Intervals
           interval={lastUsedInterval ?? IntervalsKeys.Daily}
+          intervals={[IntervalsKeys.Daily, IntervalsKeys.Weekly, IntervalsKeys.Monthly]}
           setInterval={updateInterval}
         />
       </Box>

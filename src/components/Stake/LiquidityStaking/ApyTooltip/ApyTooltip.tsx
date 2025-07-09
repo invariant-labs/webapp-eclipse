@@ -16,7 +16,7 @@ export const ApyTooltip: React.FC<IApyTooltip> = ({ stakeDataLoading }) => {
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
 
   const { classes } = useStyles()
-  // const _additionalApy = useMemo(() => {
+  // const additionalApy = useMemo(() => {
   //   const { apr, apy } = sBitzApyApr
   //   if (!apr || !apy) return 0
   //   return (apy - apr).toFixed(2)
