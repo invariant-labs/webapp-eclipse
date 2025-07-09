@@ -333,16 +333,18 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
 
   const allAccounts = useSelector(solanaAccounts)
 
-  const wrappedETHAccountExist = useMemo(() => {
+  const [wrappedETHAccountExist, wrappedETHBalance] = useMemo(() => {
     let wrappedETHAccountExist = false
+    let wrappedETHBalance
 
     Object.entries(allAccounts).map(([address, token]) => {
       if (address === WRAPPED_ETH_ADDRESS && token.balance.gt(new BN(0))) {
         wrappedETHAccountExist = true
+        wrappedETHBalance = token.balance
       }
     })
 
-    return wrappedETHAccountExist
+    return [wrappedETHAccountExist, wrappedETHBalance]
   }, [allAccounts])
 
   const unwrapWETH = () => {
@@ -456,6 +458,7 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
       network={networkType}
       unwrapWETH={unwrapWETH}
       wrappedETHAccountExist={wrappedETHAccountExist}
+      wrappedETHBalance={wrappedETHBalance}
       isTimeoutError={isTimeoutError}
       deleteTimeoutError={() => {
         dispatch(connectionActions.setTimeoutError(false))
