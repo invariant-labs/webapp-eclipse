@@ -1114,4 +1114,3 @@ export const POOLS_TO_HIDE_POINTS_PER_24H: string[] = [
   '6ciuuX2AZ3RFU6fJh2XrzJurZdRWuDeMonNsb7xzztp1',
   '8gSs6K4NVZSh4Rd5ABcNTos5sJ6wVRTR4xr5LgNLMt58'
 ]
-export const POINTS_HIDDEN_SIGN = '???'

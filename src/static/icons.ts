@@ -109,11 +109,13 @@ import swapArrowIcon from './svg/swapArrow.svg'
 import lqStakingIcon from './svg/lqStakingIcon.svg'
 import warningStroke from './svg/warningStroke.svg'
 import plusDisabled from './svg/plusDisabled.svg'
+import pointsQMarkIcon from './svg/pointsQmark.svg'
 
 export {
   warningStroke,
   plusDisabled,
   lqStakingIcon,
+  pointsQMarkIcon,
   logoTitleIcon,
   logoShortIcon,
   arrowIcon,
