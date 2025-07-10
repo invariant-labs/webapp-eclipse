@@ -1,9 +1,10 @@
 import { colors, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 import { FontData } from './Button'
+import { alpha } from '@mui/material'
 
 type StyleProps = {
-  scheme: 'normal' | 'green' | 'pink' | 'rainbow'
+  scheme: 'normal' | 'green' | 'pink' | 'rainbow' | 'grey'
   height?: string | number
   width?: string | number
   fontData?: FontData
@@ -13,7 +14,7 @@ type StyleProps = {
   gap?: string | number
 }
 
-const getStyles = (scheme: 'normal' | 'green' | 'pink' | 'rainbow') => {
+const getStyles = (scheme: 'normal' | 'green' | 'pink' | 'rainbow' | 'grey') => {
   switch (scheme) {
     case 'normal':
       return {
@@ -40,6 +41,13 @@ const getStyles = (scheme: 'normal' | 'green' | 'pink' | 'rainbow') => {
       return {
         color: colors.invariant.text,
         boxShadow: colors.invariant.light
+      }
+    case 'grey':
+      return {
+        background: colors.invariant.greyLinearGradinet,
+        color: colors.invariant.dark,
+        backgroundHover: colors.invariant.greyLinearGradinet,
+        boxShadow: alpha('#A9B6BF', 0.25)
       }
   }
 }

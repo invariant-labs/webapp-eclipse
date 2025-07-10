@@ -4,7 +4,7 @@ import { MinMaxChart } from '../../components/MinMaxChart/MinMaxChart'
 import { colors, theme } from '@static/theme'
 import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
 import { BN } from '@coral-xyz/anchor'
-import { airdropRainbowIcon, swapListIcon, warning2Icon } from '@static/icons'
+import { airdropRainbowIcon, swapListIcon, warning2Icon, warningIcon } from '@static/icons'
 import { initialXtoY, tickerToAddress, formatNumberWithoutSuffix } from '@utils/utils'
 import { useSelector } from 'react-redux'
 import { usePromotedPool } from '@store/hooks/positionList/usePromotedPool'
@@ -48,6 +48,8 @@ interface IPositionsTableRow extends IPositionItem {
 export const PositionTableRow: React.FC<IPositionsTableRow> = ({
   tokenXName,
   tokenYName,
+  isUnknownX,
+  isUnknownY,
   tokenXIcon,
   poolAddress,
   tokenYIcon,
@@ -128,11 +130,17 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
     return (
       <Grid container item className={classes.iconsAndNames}>
         <Grid container item className={classes.iconsShared}>
-          <img
-            className={classes.tokenIcon}
-            src={xToY ? tokenXIcon : tokenYIcon}
-            alt={xToY ? tokenXName : tokenYName}
-          />
+          <Grid display='flex' position='relative'>
+            <img
+              className={classes.tokenIcon}
+              src={xToY ? tokenXIcon : tokenYIcon}
+              alt={xToY ? tokenXName : tokenYName}
+            />
+            {(xToY ? isUnknownX : isUnknownY) && (
+              <img className={classes.warningIcon} src={warningIcon} />
+            )}
+          </Grid>
+
           <TooltipHover title='Reverse tokens'>
             <img
               className={classes.arrowsShared}
@@ -144,11 +152,16 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
               }}
             />
           </TooltipHover>
-          <img
-            className={classes.tokenIcon}
-            src={xToY ? tokenYIcon : tokenXIcon}
-            alt={xToY ? tokenYName : tokenXName}
-          />
+          <Grid display='flex' position='relative'>
+            <img
+              className={classes.tokenIcon}
+              src={xToY ? tokenYIcon : tokenXIcon}
+              alt={xToY ? tokenYName : tokenXName}
+            />
+            {(xToY ? isUnknownY : isUnknownX) && (
+              <img className={classes.warningIcon} src={warningIcon} />
+            )}
+          </Grid>
         </Grid>
 
         <Box className={classes.tickersContainer}>

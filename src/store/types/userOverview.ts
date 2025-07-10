@@ -61,4 +61,5 @@ export interface TokenPositionEntry {
   logo: string
   positionId: string
   isPriceWarning: boolean
+  isUnknown?: boolean
 }
