@@ -5,7 +5,13 @@ import GradientBorder from '@common/GradientBorder/GradientBorder'
 import { colors, theme } from '@static/theme'
 import cardBackgroundBottom from '@static/png/cardBackground1.png'
 import cardBackgroundTop from '@static/png/cardBackground2.png'
-import { airdropRainbowIcon, backIcon, unknownTokenIcon, warningIcon } from '@static/icons'
+import {
+  airdropRainbowIcon,
+  backIcon,
+  hornsUSDC,
+  unknownTokenIcon,
+  warningIcon
+} from '@static/icons'
 import cardESTop from '@static/png/ESWavesTop.png'
 import cardESBottom from '@static/png/ESWavesBottom.png'
 import Horn from '@static/png/turboHorn.png'
@@ -24,7 +30,8 @@ import {
   ES_ETH_POOLS,
   ES_MAIN,
   NetworkType,
-  POOLS_TO_HIDE_POINTS_PER_24H
+  POOLS_TO_HIDE_POINTS_PER_24H,
+  USDC_MAIN
 } from '@store/consts/static'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { leaderboardSelectors } from '@store/selectors/leaderboard'
@@ -70,6 +77,9 @@ const Card: React.FC<ICard> = ({
   const popoverContainerRef = useRef<HTMLDivElement>(null)
 
   const flipHorns = poolAddress?.equals(new PublicKey(ES_ETH_POOLS['0_03'])) ?? false
+  const isUSDC =
+    addressFrom === USDC_MAIN.address.toString() || addressTo === USDC_MAIN.address.toString()
+  console.log(isUSDC)
   const { classes } = useStyles({ flipHorns })
   const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
   const { promotedPools } = useSelector(leaderboardSelectors.config)
@@ -144,7 +154,7 @@ const Card: React.FC<ICard> = ({
   }, [symbolFrom, symbolTo])
   return (
     <Grid className={classes.root}>
-      {ESToken && !isLoading && <img className={classes.horn} src={Horn} />}
+      {ESToken && !isLoading && <img className={classes.horn} src={isUSDC ? hornsUSDC : Horn} />}
 
       {isLoading || !poolAddress?.toString() ? (
         <Skeleton variant='rounded' animation='wave' className={classes.skeleton} />

@@ -110,8 +110,10 @@ import lqStakingIcon from './svg/lqStakingIcon.svg'
 import warningStroke from './svg/warningStroke.svg'
 import plusDisabled from './svg/plusDisabled.svg'
 import pointsQMarkIcon from './svg/pointsQmark.svg'
+import hornsUSDC from './svg/hornsUSDC.svg'
 
 export {
+  hornsUSDC,
   warningStroke,
   plusDisabled,
   lqStakingIcon,
