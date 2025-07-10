@@ -320,3 +320,9 @@ export enum ChartSwitch {
   volume = 'Volume',
   fees = 'Fees'
 }
+
+export enum PoolChartSwitch {
+  volume = 'Volume',
+  tvl = 'TVL',
+  fees = 'Fees'
+}

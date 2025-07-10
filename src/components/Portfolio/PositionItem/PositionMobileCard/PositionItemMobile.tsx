@@ -30,6 +30,7 @@ interface IPositionItemMobile extends IPositionItem {
   handleClosePosition: (index: number) => void
   handleClaimFee: (index: number, isLocked: boolean) => void
   createNewPosition: () => void
+  openPoolDetails: () => void
   shouldDisable: boolean
 }
 
@@ -59,7 +60,8 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
   handleClosePosition,
   handleClaimFee,
   shouldDisable,
-  createNewPosition
+  createNewPosition,
+  openPoolDetails
 }) => {
   const { classes, cx } = useMobileStyles()
   const airdropIconRef = useRef<any>(null)
@@ -453,6 +455,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
         closePosition={() => handleClosePosition(positionSingleData?.positionIndex ?? 0)}
         onLockPosition={() => setIsLockPositionModalOpen(true)}
         createPosition={createNewPosition}
+        openPoolDetails={openPoolDetails}
       />
       <Grid container item className={classes.mdTop}>
         <Grid container item className={classes.iconsAndNames}>

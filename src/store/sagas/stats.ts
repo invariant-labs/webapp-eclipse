@@ -3,7 +3,7 @@ import { all, call, put, select, spawn, takeLatest } from 'typed-redux-saga'
 import { network } from '@store/selectors/solanaConnection'
 import { PublicKey } from '@solana/web3.js'
 import { handleRpcError } from './connection'
-import { ensureError, getIntervalsFullSnap } from '@utils/utils'
+import { ensureError, getIntervalsFullSnap, getIntervalsPoolSnap } from '@utils/utils'
 import { lastInterval, lastTimestamp } from '@store/selectors/stats'
 import { Intervals, STATS_CACHE_TIME } from '@store/consts/static'
 import { PayloadAction } from '@reduxjs/toolkit'
@@ -104,10 +104,53 @@ export function* getIntervalStats(action: PayloadAction<{ interval: Intervals }>
   }
 }
 
+export function* getIntervalPoolStats(
+  action: PayloadAction<{ interval: Intervals; poolAddress: string }>
+): Generator {
+  try {
+    const currentNetwork = yield* select(network)
+
+    const poolSnap = yield* call(
+      getIntervalsPoolSnap,
+      currentNetwork.toLowerCase(),
+      action.payload.interval,
+      action.payload.poolAddress
+    )
+    console.log(action.payload.interval)
+    console.log(action.payload.poolAddress)
+
+    const parsedPoolSnap = {
+      ...poolSnap,
+      volumePlot: poolSnap.volumePlot.reverse(),
+      liquidityPlot: poolSnap.liquidityPlot.reverse(),
+      feesPlot: poolSnap.feesPlot.reverse()
+    }
+    console.log(parsedPoolSnap.volume)
+    console.log(parsedPoolSnap.volume)
+    const payload = {
+      ...parsedPoolSnap,
+      lastInterval: action.payload.interval
+    }
+
+    yield* put(actions.setPoolStats(payload))
+  } catch (e: unknown) {
+    const error = ensureError(e)
+    console.log(error)
+
+    yield* put(actions.setLoadingStats(false))
+
+    yield* call(handleRpcError, error.message)
+  }
+}
+
 export function* intervalStatsHandler(): Generator {
   yield* takeLatest(actions.getCurrentIntervalStats, getIntervalStats)
 }
 
+export function* intervalPoolStatsHandler(): Generator {
+  yield* takeLatest(actions.getCurrentIntervalPoolStats, getIntervalPoolStats)
+}
+
 export function* statsSaga(): Generator {
-  yield* all([intervalStatsHandler].map(spawn))
+  yield* all([intervalStatsHandler, intervalPoolStatsHandler].map(spawn))
 }
