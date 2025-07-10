@@ -56,6 +56,7 @@ const useStyles = makeStyles<StyleProps>()(
   (_theme, { scheme, height, width, borderRadius, padding, margin, fontData, gap }) => ({
     button: {
       zIndex: 1,
+      gap: gap ?? 0,
       height: height ?? 40,
       width: width ?? 'auto',
       minWidth: 0,
@@ -73,16 +74,7 @@ const useStyles = makeStyles<StyleProps>()(
 
       '&.Mui-disabled': {
         pointerEvents: 'auto',
-        color: colors.invariant.textGrey
-      },
-      gap: gap ?? 0
-    },
-    buttonDisabled: {
-      color: colors.invariant.textGrey,
-      background: colors.invariant.light,
-      cursor: 'not-allowed',
-
-      '&:hover': {
+        color: colors.invariant.textGrey,
         boxShadow: 'none',
         background: colors.invariant.light,
         cursor: 'not-allowed'
