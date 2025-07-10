@@ -86,6 +86,19 @@ export const useStyles = makeStyles()(() => ({
       maxWidth: '100%'
     }
   },
+  animatedCardItemWide: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+
+    flex: '0 1 100%',
+    maxWidth: '100%',
+
+    [theme.breakpoints.down('md')]: {
+      flex: '0 1 100%',
+      maxWidth: '100%'
+    }
+  },
   slider: {
     '& .slick-slide': {
       display: 'flex',

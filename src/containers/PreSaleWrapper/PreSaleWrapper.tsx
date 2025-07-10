@@ -21,7 +21,7 @@ import {
   TIER3,
   TIER4
 } from '@invariant-labs/sale-sdk'
-import { balanceLoading, status, poolTokens, balance } from '@store/selectors/solanaWallet'
+import { balanceLoading, status, poolTokens, balance, address } from '@store/selectors/solanaWallet'
 import {
   getAmountTillNextPriceIncrease,
   getPrice,
@@ -50,7 +50,6 @@ import ArrowLeft from '@static/png/presale/arrow_left.png'
 import ArrowRight from '@static/png/presale/arrow_right.png'
 import { useEffect, useState, useRef, useMemo, useCallback } from 'react'
 import { OverlayWrapper } from '@components/PreSale/Overlay/Overlay'
-import { getEclipseWallet } from '@utils/web3/wallet'
 import { DEFAULT_PUBLICKEY } from '@store/consts/static'
 import { auditByLogoIcon, swapArrowClean } from '@static/icons'
 import { Tokenomics } from '@components/PreSale/Tokenomics/Tokenomics'
@@ -182,7 +181,7 @@ const AnimatedPreSaleCard = ({
 }
 
 export const PreSaleWrapper = () => {
-  const { classes } = useStyles()
+  const { classes, cx } = useStyles()
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
   const isSmallMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const isTablet = useMediaQuery(theme.breakpoints.down('lg'))
@@ -204,6 +203,7 @@ export const PreSaleWrapper = () => {
   const [currentTimestamp, setCurrentTimestamp] = useState<BN>(getTimestampSeconds())
   const initialReversePrices = localStorage.getItem('INVARIANT_SALE_REVERSE_PRICES') === 'true'
   const [reversedPrices, setReversedPrices] = useState(initialReversePrices)
+  const walletAddress = useSelector(address)
 
   const slidesToShow = useMemo(() => {
     if (isSmallMobile) return 1
@@ -325,16 +325,14 @@ export const PreSaleWrapper = () => {
   const isPublic = useMemo(() => round === 4, [round])
 
   useEffect(() => {
-    const wallet = getEclipseWallet()
     if (
-      wallet &&
       walletStatus === Status.Initialized &&
-      wallet.publicKey &&
-      !wallet.publicKey.equals(DEFAULT_PUBLICKEY)
+      walletAddress &&
+      !walletAddress.equals(DEFAULT_PUBLICKEY)
     ) {
       dispatch(actions.getProof())
     }
-  }, [walletStatus, isPublic])
+  }, [walletStatus, isPublic, walletAddress])
 
   const isLimitExceed = useMemo(
     () => deposited.gte(whitelistWalletLimit) && !isPublic,
@@ -418,6 +416,8 @@ export const PreSaleWrapper = () => {
     }
   }, [price, nextPrice, round, reversedPrices])
 
+  const stepNames = ['Early Bird', 'Phase 2', 'Phase 3', 'Final Phase']
+
   const stepLabels = useMemo(() => {
     return tierPrices.map((price, idx) => {
       if (reversedPrices && !price.isZero()) {
@@ -425,12 +425,14 @@ export const PreSaleWrapper = () => {
         const inverted = baseValue.mul(baseValue).div(price)
         return {
           id: idx + 1,
-          label: `1$ = ${printBNandTrimZeros(inverted, mintDecimals, 2)} INVT`
+          label: `1$ = ${printBNandTrimZeros(inverted, mintDecimals, 2)} INVT`,
+          name: stepNames[idx]
         }
       } else {
         return {
           id: idx + 1,
-          label: `1 INVT = ${printBNandTrimZeros(price, mintDecimals, 4)}$`
+          label: `1 INVT = ${printBNandTrimZeros(price, mintDecimals, 4)}$`,
+          name: stepNames[idx]
         }
       }
     })
@@ -472,6 +474,10 @@ export const PreSaleWrapper = () => {
     )
   }
 
+  const roundName = useMemo(() => {
+    return stepNames[round - 1]
+  }, [round])
+
   return (
     <Grid className={classes.pageWrapper} sx={{ position: 'relative' }}>
       <Hidden lgDown>
@@ -512,6 +518,7 @@ export const PreSaleWrapper = () => {
               isLoadingSaleStats={isLoadingSaleStats}
               isLoadingUserStats={isLoadingUserStats}
               priceFormat={reversedPrices ? 'usdc-to-token' : 'token-to-usdc'}
+              roundName={roundName}
             />
             <Box className={classes.shareButtonContainer}>
               <Button width='100%' scheme='green' onClick={() => setIsShareComponentShown(true)}>
@@ -592,6 +599,14 @@ export const PreSaleWrapper = () => {
               gradientDirection='to bottom'
               subtitle='in cumulative swap volume'
               delay={300}
+            />
+          </Grid>
+          <Grid item className={cx(classes.animatedCardItem, classes.animatedCardItemWide)}>
+            <AnimatedPreSaleCard
+              gradientPrimaryColor={colors.invariant.component}
+              title='$5 MLN'
+              subtitle='valuation of Invariant during the public sale'
+              delay={400}
             />
           </Grid>
           <Grid item className={classes.animatedCardItem}>

@@ -10,6 +10,20 @@ const useStyles = makeStyles<{ percentage: number; isActive: boolean }>()(
       width: '100%'
     },
 
+    roundTitleContainer: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center'
+    },
+
+    roundText: {
+      fontSize: 24,
+      lineHeight: '28px',
+      letterSpacing: '-3%',
+      fontWeight: 400,
+      color: colors.invariant.textGrey
+    },
+
     roundTitle: {
       ...typography.heading2,
       color: colors.invariant.text,
