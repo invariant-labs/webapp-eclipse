@@ -136,7 +136,7 @@ const Card: React.FC<ICard> = ({
   }, [symbolFrom, symbolTo])
   return (
     <Grid className={classes.root}>
-      {ESToken && <img className={classes.horn} src={Horn} />}
+      {ESToken && !isLoading && <img className={classes.horn} src={Horn} />}
 
       {isLoading || !poolAddress?.toString() ? (
         <Skeleton variant='rounded' animation='wave' className={classes.skeleton} />
