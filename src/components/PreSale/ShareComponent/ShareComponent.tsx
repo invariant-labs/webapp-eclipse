@@ -34,10 +34,7 @@ export const ShareComponent: React.FC<IProps> = ({
       return
     }
 
-    const clonedElement = element.cloneNode(true) as HTMLDivElement
-    document.body.appendChild(clonedElement)
-    const canvas = await html2canvas(clonedElement)
-    document.body.removeChild(clonedElement)
+    const canvas = await html2canvas(element)
     const dataUrl = canvas.toDataURL('image/png')
     const link = document.createElement('a')
     link.href = dataUrl
@@ -53,10 +50,7 @@ export const ShareComponent: React.FC<IProps> = ({
       return
     }
 
-    const clonedElement = element.cloneNode(true) as HTMLDivElement
-    document.body.appendChild(clonedElement)
-    const canvas = await html2canvas(clonedElement)
-    document.body.removeChild(clonedElement)
+    const canvas = await html2canvas(element)
     canvas.toBlob(blob => {
       if (navigator.clipboard && blob) {
         navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })])
@@ -116,7 +110,6 @@ export const ShareComponent: React.FC<IProps> = ({
           <Box className={classes.allocationContainer}>
             <Box className={classes.allocationWrapper}>
               <Typography className={classes.allocation}>
-                {' '}
                 {formatNumberWithoutSuffix(printBN(allocation, mintDecimals))} INVT
               </Typography>
             </Box>

@@ -32,8 +32,8 @@ const useStyles = makeStyles<IProps>()((theme, { backgroundImage }) => ({
     height: 10000,
     top: -10000,
     left: -10000,
-    bottom: 0,
-    right: 0,
+    bottom: -9000,
+    right: -9000,
     zIndex: -1
   },
   container: {
