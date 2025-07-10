@@ -376,7 +376,7 @@ const PositionDetails: React.FC<IProps> = ({
             onClose={() => setIsChangeLiquidityModalShown(false)}
             tokenXAddress={tokenXAddress.toString()}
             tokenYAddress={tokenYAddress.toString()}
-            fee={(+printBN(fee, DECIMAL - 2)).toFixed(2).replace('.', '_')}
+            fee={fee}
             leftRange={leftRange.index}
             rightRange={rightRange.index}
           />

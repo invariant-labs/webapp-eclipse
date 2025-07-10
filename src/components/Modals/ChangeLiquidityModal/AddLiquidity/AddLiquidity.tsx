@@ -21,29 +21,24 @@ import {
   WRAPPED_ETH_ADDRESS,
   autoSwapPools
 } from '@store/consts/static'
-import { PositionOpeningMethod, TokenPriceData } from '@store/consts/types'
+import { TokenPriceData } from '@store/consts/types'
 import {
   calcPriceBySqrtPrice,
   calcPriceByTickIndex,
-  calculateConcentration,
-  calculateConcentrationRange,
   convertBalanceToBN,
   createPlaceholderLiquidityPlot,
   determinePositionTokenBlock,
   formatNumberWithoutSuffix,
-  getConcentrationIndex,
   getMockedTokenPrice,
   getScaleFromString,
   getTokenPrice,
-  parsePathFeeToFeeString,
   PositionTokenBlock,
   printBN,
   simulateAutoSwap,
   simulateAutoSwapOnTheSamePool,
   tickerToAddress,
   trimDecimalZeros,
-  trimLeadingZeros,
-  validConcentrationMidPriceTick
+  trimLeadingZeros
 } from '@utils/utils'
 import { BN } from '@coral-xyz/anchor'
 import { actions as poolsActions } from '@store/reducers/pools'
@@ -68,7 +63,6 @@ import {
   DECIMAL,
   feeToTickSpacing,
   fromFee,
-  getConcentrationArray,
   getMaxTick,
   getMinTick,
   SimulateSwapAndCreatePositionSimulation,
@@ -107,9 +101,7 @@ import { InputState } from '@components/NewPosition/DepositSelector/DepositSelec
 export interface IProps {
   initialTokenFrom: string
   initialTokenTo: string
-  initialFee: string
-  initialConcentration: string
-  initialIsRange: boolean | null
+  initialFee: BN
   leftRange: number
   rightRange: number
 }
@@ -118,8 +110,6 @@ export const AddLiquidity: React.FC<IProps> = ({
   initialTokenFrom,
   initialTokenTo,
   initialFee,
-  initialConcentration,
-  initialIsRange,
   leftRange,
   rightRange
 }) => {
@@ -138,7 +128,6 @@ export const AddLiquidity: React.FC<IProps> = ({
   const isBalanceLoading = useSelector(balanceLoading)
   const currentNetwork = useSelector(network)
   const { success, inProgress } = useSelector(initPosition)
-  // const [onlyUserPositions, setOnlyUserPositions] = useState(false)
   const { allData: ticksData, loading: ticksLoading } = useSelector(plotTicks)
 
   const isFetchingNewPool = useSelector(isLoadingLatestPoolsForTransaction)
@@ -156,27 +145,12 @@ export const AddLiquidity: React.FC<IProps> = ({
   const [tokenAIndex, setTokenAIndex] = useState<number | null>(null)
   const [tokenBIndex, setTokenBIndex] = useState<number | null>(null)
 
-  const [currentPairReversed, setCurrentPairReversed] = useState<boolean | null>(null)
   const [initialLoader, setInitialLoader] = useState(true)
   const isMountedRef = useRef(false)
   const isTimeoutError = useSelector(timeoutError)
   const isPathTokensLoading = useSelector(isLoadingPathTokens)
   const { state } = useLocation()
   const [block, setBlock] = useState(state?.referer === 'stats')
-
-  const initialIsConcentrationOpening =
-    localStorage.getItem('OPENING_METHOD') === 'concentration' ||
-    localStorage.getItem('OPENING_METHOD') === null
-
-  const [initialOpeningPositionMethod] = useState<PositionOpeningMethod>(
-    initialIsRange !== null
-      ? initialIsRange
-        ? 'range'
-        : 'concentration'
-      : initialIsConcentrationOpening
-        ? 'concentration'
-        : 'range'
-  )
 
   useEffect(() => {
     const pathTokens: string[] = []
@@ -252,9 +226,7 @@ export const AddLiquidity: React.FC<IProps> = ({
         dispatch(
           actions.getCurrentPlotTicks({
             poolIndex,
-            isXtoY: allPools[poolIndex].tokenX.equals(
-              tokens[currentPairReversed === true ? tokenBIndex : tokenAIndex].assetAddress
-            ),
+            isXtoY: allPools[poolIndex].tokenX.equals(tokens[tokenAIndex].assetAddress),
             disableLoading: true
           })
         )
@@ -305,7 +277,9 @@ export const AddLiquidity: React.FC<IProps> = ({
     return 0
   }, [tokenAIndex, tokenBIndex])
 
-  const [feeIndex, setFeeIndex] = useState(0)
+  const feeIndex = ALL_FEE_TIERS_DATA.findIndex(
+    feeTierData => feeTierData.tier.fee.toString() === initialFee.toString()
+  )
 
   const fee = useMemo(() => ALL_FEE_TIERS_DATA[feeIndex].tier.fee, [feeIndex])
   const tickSpacing = useMemo(
@@ -401,12 +375,8 @@ export const AddLiquidity: React.FC<IProps> = ({
       return createPlaceholderLiquidityPlot(isXtoY, 10, tickSpacing, xDecimal, yDecimal)
     }
 
-    if (currentPairReversed === true) {
-      return ticksData.map(tick => ({ ...tick, x: 1 / tick.x })).reverse()
-    }
-
     return ticksData
-  }, [ticksData, ticksLoading, isXtoY, tickSpacing, xDecimal, yDecimal, currentPairReversed])
+  }, [ticksData, ticksLoading, isXtoY, tickSpacing, xDecimal, yDecimal])
 
   useEffect(() => {
     if (
@@ -576,9 +546,7 @@ export const AddLiquidity: React.FC<IProps> = ({
         dispatch(
           actions.getCurrentPlotTicks({
             poolIndex,
-            isXtoY: allPools[poolIndex].tokenX.equals(
-              tokens[currentPairReversed === true ? tokenBIndex : tokenAIndex].assetAddress
-            )
+            isXtoY: allPools[poolIndex].tokenX.equals(tokens[tokenAIndex].assetAddress)
           })
         )
       }
@@ -711,7 +679,7 @@ export const AddLiquidity: React.FC<IProps> = ({
     return poolIndex !== -1
       ? calcPriceBySqrtPrice(allPools[poolIndex].sqrtPrice, isXtoY, xDecimal, yDecimal)
       : 0
-  }, [tokenAIndex, tokenBIndex, allPools.length, currentPairReversed])
+  }, [tokenAIndex, tokenBIndex, allPools.length])
 
   const oraclePrice = useMemo(() => {
     if (!tokenAPriceData || !tokenBPriceData) {
@@ -721,8 +689,6 @@ export const AddLiquidity: React.FC<IProps> = ({
   }, [tokenAPriceData, tokenBPriceData, isXtoY])
 
   const [isAutoSwapAvailable, setIsAutoSwapAvailable] = useState(false)
-
-  const [positionOpeningMethod] = useState<PositionOpeningMethod>(initialOpeningPositionMethod)
 
   const [tokenADeposit, setTokenADeposit] = useState<string>('')
   const [tokenBDeposit, setTokenBDeposit] = useState<string>('')
@@ -734,24 +700,7 @@ export const AddLiquidity: React.FC<IProps> = ({
 
   const [slippTolerance] = React.useState<string>(initialSlippage)
 
-  const [minimumSliderIndex, setMinimumSliderIndex] = useState<number>(0)
   const [refresherTime, setRefresherTime] = React.useState<number>(REFRESHER_INTERVAL)
-
-  const concentrationArray: number[] = useMemo(() => {
-    const validatedMidPrice = validConcentrationMidPriceTick(midPrice.index, isXtoY, tickSpacing)
-
-    const array = getConcentrationArray(tickSpacing, 2, validatedMidPrice).sort((a, b) => a - b)
-    const maxConcentrationArray = [...array, calculateConcentration(0, tickSpacing)]
-
-    return maxConcentrationArray
-  }, [tickSpacing, midPrice.index])
-
-  const [concentrationIndex] = useState(
-    getConcentrationIndex(
-      concentrationArray,
-      +initialConcentration < 2 ? 2 : initialConcentration ? +initialConcentration : 34
-    )
-  )
 
   const isCurrentPoolExisting = currentPoolAddress
     ? allPools.some(pool => pool.address.equals(currentPoolAddress))
@@ -834,17 +783,9 @@ export const AddLiquidity: React.FC<IProps> = ({
   }
 
   const onChangeRange = (left: number, right: number) => {
-    let leftRange: number
-    let rightRange: number
-
-    if (positionOpeningMethod === 'range') {
-      const { leftInRange, rightInRange } = getTicksInsideRange(left, right, isXtoY)
-      leftRange = leftInRange
-      rightRange = rightInRange
-    } else {
-      leftRange = left
-      rightRange = right
-    }
+    const { leftInRange, rightInRange } = getTicksInsideRange(left, right, isXtoY)
+    const leftRange = leftInRange
+    const rightRange = rightInRange
 
     if (
       tokenAIndex !== null &&
@@ -884,49 +825,13 @@ export const AddLiquidity: React.FC<IProps> = ({
     }
   }
 
-  const getMinSliderIndex = () => {
-    let minimumSliderIndex = 0
-
-    for (let index = 0; index < concentrationArray.length; index++) {
-      const value = concentrationArray[index]
-
-      const { leftRange, rightRange } = calculateConcentrationRange(
-        tickSpacing,
-        value,
-        2,
-        midPrice.index,
-        isXtoY
-      )
-
-      const { leftInRange, rightInRange } = getTicksInsideRange(leftRange, rightRange, isXtoY)
-
-      if (leftInRange !== leftRange || rightInRange !== rightRange) {
-        minimumSliderIndex = index + 1
-      } else {
-        break
-      }
-    }
-
-    return minimumSliderIndex
-  }
-
-  useEffect(() => {
-    if (positionOpeningMethod === 'concentration') {
-      const minimumSliderIndex = getMinSliderIndex()
-
-      setMinimumSliderIndex(minimumSliderIndex)
-    }
-  }, [poolIndex, positionOpeningMethod, midPrice.index])
-
   const currentPriceSqrt =
     poolIndex !== null && !!allPools[poolIndex]
       ? allPools[poolIndex].sqrtPrice
       : calculatePriceSqrt(midPrice.index)
 
   useEffect(() => {
-    if (positionOpeningMethod === 'range') {
-      onChangeRange(leftRange, rightRange)
-    }
+    onChangeRange(leftRange, rightRange)
   }, [midPrice.index, leftRange, rightRange, currentPriceSqrt.toString()])
 
   useEffect(() => {
@@ -953,14 +858,12 @@ export const AddLiquidity: React.FC<IProps> = ({
 
   const blockedToken = useMemo(
     () =>
-      positionOpeningMethod === 'range'
-        ? determinePositionTokenBlock(
-            currentPriceSqrt,
-            Math.min(leftRange, rightRange),
-            Math.max(leftRange, rightRange),
-            isXtoY
-          )
-        : false,
+      determinePositionTokenBlock(
+        currentPriceSqrt,
+        Math.min(leftRange, rightRange),
+        Math.max(leftRange, rightRange),
+        isXtoY
+      ),
     [leftRange, rightRange, currentPriceSqrt]
   )
 
@@ -1306,15 +1209,6 @@ export const AddLiquidity: React.FC<IProps> = ({
       ) {
         if (isMountedRef.current) {
           setPoolIndex(index !== -1 ? index : null)
-          setCurrentPairReversed(null)
-        }
-      } else if (
-        tokenAIndex === tokenB &&
-        tokenBIndex === tokenA &&
-        fee.eq(ALL_FEE_TIERS_DATA[feeTierIndex].tier.fee)
-      ) {
-        if (isMountedRef.current) {
-          setCurrentPairReversed(currentPairReversed === null ? true : !currentPairReversed)
         }
       }
 
@@ -1351,12 +1245,7 @@ export const AddLiquidity: React.FC<IProps> = ({
 
     setTokenAIndex(tokenA)
     setTokenBIndex(tokenB)
-    setFeeIndex(feeTierIndex)
   }
-
-  const currentFeeIndex = feeIndex
-
-  const isGetLiquidityError = false
 
   const onConnectWallet = () => {
     dispatch(walletActions.connect(false))
@@ -1365,8 +1254,6 @@ export const AddLiquidity: React.FC<IProps> = ({
   const onDisconnectWallet = () => {
     dispatch(walletActions.disconnect())
   }
-
-  const autoSwapTickmap = autoSwapTickMap
 
   const { classes, cx } = useStyles()
 
@@ -1521,10 +1408,9 @@ export const AddLiquidity: React.FC<IProps> = ({
       tokenAIndexFromPath = tokenFromIndex
       tokenBIndexFromPath = tokenToIndex
     }
-    const parsedFee = parsePathFeeToFeeString(initialFee)
 
     ALL_FEE_TIERS_DATA.forEach((feeTierData, index) => {
-      if (feeTierData.tier.fee.toString() === parsedFee) {
+      if (feeTierData.tier.fee.toString() === initialFee.toString()) {
         feeTierIndexFromPath = index
       }
     })
@@ -1567,8 +1453,6 @@ export const AddLiquidity: React.FC<IProps> = ({
       }
     }
   }, [wasRunTokenA, wasRunTokenB, canNavigate, tokens.length])
-
-  const feeTierIndex = currentFeeIndex
 
   const getButtonMessage = useCallback(() => {
     if (isLoadingTicksOrTickmap || throttle || isSimulating) {
@@ -1621,16 +1505,6 @@ export const AddLiquidity: React.FC<IProps> = ({
 
     if (isAutoswapOn && !tokenACheckbox && !tokenBCheckbox) {
       return 'At least one checkbox needs to be marked'
-    }
-
-    if (positionOpeningMethod === 'concentration' && concentrationIndex < minimumSliderIndex) {
-      return concentrationArray[minimumSliderIndex]
-        ? `Set concentration to at least ${concentrationArray[minimumSliderIndex].toFixed(0)}x`
-        : 'Set higher fee tier'
-    }
-
-    if (isGetLiquidityError) {
-      return 'Provide a smaller amount'
     }
 
     if (
@@ -1716,10 +1590,7 @@ export const AddLiquidity: React.FC<IProps> = ({
     tokenAInputState,
     tokenBInputState,
     tokens,
-    positionOpeningMethod,
-    concentrationIndex,
-    feeTierIndex,
-    minimumSliderIndex,
+    feeIndex,
     isLoadingTicksOrTickmap
   ])
 
@@ -1838,7 +1709,7 @@ export const AddLiquidity: React.FC<IProps> = ({
               )}>
               <TooltipHover
                 title={
-                  'AutoSwap allows you to create a position using any token ratio. Simply choose the amount you currently hold in your wallet, and it will be automatically swapped in the most optimal way.'
+                  'AutoSwap allows you to add liquidity to a position using any token ratio. Simply choose the amount you currently hold in your wallet, and it will be automatically swapped in the most optimal way.'
                 }
                 increasePadding
                 removeOnMobile>
@@ -1957,11 +1828,11 @@ export const AddLiquidity: React.FC<IProps> = ({
           title={
             <>
               The price impact resulting from a swap that rebalances the token ratio before a
-              position is opened.
+              liquidity is added to the position.
               {isPriceImpact ? (
                 <>
                   {' '}
-                  In order to create position you have to either:
+                  In order to add liquidity to position you have to either:
                   <p>1. Open several smaller positions rather than a single large one.</p>
                   <p>2. Change swap price impact tolerance in the settings.</p>
                 </>
@@ -2003,7 +1874,7 @@ export const AddLiquidity: React.FC<IProps> = ({
       setIsSimulating(false)
       return
     }
-    if (!autoSwapPoolData || !autoSwapTicks || !autoSwapTickmap || !simulationParams.price) {
+    if (!autoSwapPoolData || !autoSwapTicks || !autoSwapTickMap || !simulationParams.price) {
       setAutoswapCustomError(AutoswapCustomError.FetchError)
       setSimulation(null)
       setIsSimulating(false)
@@ -2031,7 +1902,7 @@ export const AddLiquidity: React.FC<IProps> = ({
         amountY,
         autoSwapPoolData,
         autoSwapTicks,
-        autoSwapTickmap,
+        autoSwapTickMap,
         toDecimal(+Number(slippageToleranceSwap).toFixed(4), 2),
         simulationParams.lowerTickIndex,
         simulationParams.upperTickIndex,
@@ -2043,7 +1914,7 @@ export const AddLiquidity: React.FC<IProps> = ({
         amountY,
         autoSwapPoolData,
         autoSwapTicks,
-        autoSwapTickmap,
+        autoSwapTickMap,
         toDecimal(+Number(slippageToleranceSwap).toFixed(4), 2),
         toDecimal(+Number(slippageToleranceCreatePosition).toFixed(4), 2),
         simulationParams.lowerTickIndex,
@@ -2083,7 +1954,7 @@ export const AddLiquidity: React.FC<IProps> = ({
     tokenACheckbox,
     tokenBCheckbox,
     autoSwapPoolData,
-    autoSwapTickmap,
+    autoSwapTickMap,
     autoSwapTicks,
     isLoadingTicksOrTickmap,
     priceImpact,
@@ -2094,13 +1965,8 @@ export const AddLiquidity: React.FC<IProps> = ({
     valueB
   ])
 
-  const priceA = tokenAPriceData?.price
-  const priceB = tokenBPriceData?.price
-
-  const className = classes.deposit
-
   return (
-    <Grid container className={cx(classes.wrapper, className)}>
+    <Grid container className={cx(classes.wrapper, classes.deposit)}>
       <DepoSitOptionsModal
         initialMaxPriceImpact={initialMaxPriceImpact}
         setMaxPriceImpact={setMaxPriceImpact}
@@ -2137,8 +2003,8 @@ export const AddLiquidity: React.FC<IProps> = ({
             <TooltipHover
               title={
                 tokenACheckbox
-                  ? 'Unmark to exclude this token as liquidity available for use in the new position'
-                  : 'Mark to include this token as liquidity available for use in the new position'
+                  ? 'Unmark to exclude this token as liquidity available for use'
+                  : 'Mark to include this token as liquidity available for use'
               }>
               <Checkbox
                 checked={tokenACheckbox}
@@ -2149,7 +2015,7 @@ export const AddLiquidity: React.FC<IProps> = ({
             </TooltipHover>
           </Box>
           <DepositAmountInput
-            tokenPrice={priceA}
+            tokenPrice={tokenAPriceData?.price}
             currency={tokenAIndex !== null ? tokens[tokenAIndex].symbol : null}
             currencyIconSrc={tokenAIndex !== null ? tokens[tokenAIndex].logoURI : undefined}
             currencyIsUnknown={
@@ -2205,8 +2071,8 @@ export const AddLiquidity: React.FC<IProps> = ({
             <TooltipHover
               title={
                 tokenBCheckbox
-                  ? 'Unmark to exclude this token as liquidity available for use in the new position'
-                  : 'Mark to include this token as liquidity available for use in the new position'
+                  ? 'Unmark to exclude this token as liquidity available for use'
+                  : 'Mark to include this token as liquidity available for use'
               }>
               <Checkbox
                 checked={tokenBCheckbox}
@@ -2219,7 +2085,7 @@ export const AddLiquidity: React.FC<IProps> = ({
             </TooltipHover>
           </Box>
           <DepositAmountInput
-            tokenPrice={priceB}
+            tokenPrice={tokenBPriceData?.price}
             currency={tokenBIndex !== null ? tokens[tokenBIndex].symbol : null}
             currencyIconSrc={tokenBIndex !== null ? tokens[tokenBIndex].logoURI : undefined}
             currencyIsUnknown={
@@ -2271,7 +2137,8 @@ export const AddLiquidity: React.FC<IProps> = ({
         <Typography className={classes.totalDepositContent}>
           $
           {formatNumberWithoutSuffix(
-            (priceA ?? 0) * +tokenAInputState.value + (priceB ?? 0) * +tokenBInputState.value
+            (tokenAPriceData?.price ?? 0) * +tokenAInputState.value +
+              (tokenBPriceData?.price ?? 0) * +tokenBInputState.value
           )}
         </Typography>
       </Box>

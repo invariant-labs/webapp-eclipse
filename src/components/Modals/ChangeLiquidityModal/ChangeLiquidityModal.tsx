@@ -16,6 +16,7 @@ import {
 } from '@utils/utils'
 import { ILiquidityToken } from '@store/consts/types'
 import AddLiquidity from './AddLiquidity/AddLiquidity'
+import { BN } from '@coral-xyz/anchor'
 
 export interface IChangeLiquidityModal {
   open: boolean
@@ -32,7 +33,7 @@ export interface IChangeLiquidityModal {
   onClose: () => void
   tokenXAddress: string
   tokenYAddress: string
-  fee: string
+  fee: BN
   leftRange: number
   rightRange: number
 }
@@ -165,8 +166,6 @@ export const ChangeLiquidityModal: React.FC<IChangeLiquidityModal> = ({
               initialTokenFrom={tokenXAddress}
               initialTokenTo={tokenYAddress}
               initialFee={fee}
-              initialConcentration='0'
-              initialIsRange={true}
               leftRange={leftRange}
               rightRange={rightRange}
             />
