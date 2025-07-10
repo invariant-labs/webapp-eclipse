@@ -326,3 +326,10 @@ export enum PoolChartSwitch {
   tvl = 'TVL',
   fees = 'Fees'
 }
+
+export interface TokenReserve {
+  amount: string
+  decimals: number
+  uiAmount: number
+  uiAmountString: string
+}

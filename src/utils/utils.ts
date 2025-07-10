@@ -109,7 +109,8 @@ import {
   IPriceData,
   PoolSnapshot,
   Token,
-  TokenPriceData
+  TokenPriceData,
+  TokenReserve
 } from '@store/consts/types'
 import { sqrt } from '@invariant-labs/sdk-eclipse/lib/math'
 import { apyToApr } from './uiUtils'
@@ -2650,4 +2651,25 @@ export const getAmountFromClosePositionInstruction = (
   )[type === TokenType.TokenX ? 0 : 1] as ParsedInstruction | undefined
 
   return instruction?.parsed.info.amount || instruction?.parsed.info.tokenAmount.amount
+}
+
+export const getTokenReserve = async (
+  address: PublicKey,
+  connection: Connection
+): Promise<TokenReserve | null> => {
+  try {
+    const result = await connection.getTokenAccountBalance(address)
+
+    if (!result?.value) return null
+
+    return {
+      amount: result.value.amount,
+      decimals: result.value.decimals,
+      uiAmount: result.value.uiAmount ?? 0,
+      uiAmountString: result.value.uiAmountString || ''
+    }
+  } catch (error) {
+    console.error('Failed to fetch token reserve:', error)
+    return null
+  }
 }

@@ -8,7 +8,14 @@ import {
 } from '@store/selectors/pools'
 import { network } from '@store/selectors/solanaConnection'
 import { poolTokens, SwapToken } from '@store/selectors/solanaWallet'
-import { parseFeeToPathFee, parsePathFeeToFeeString, ROUTES, tickerToAddress } from '@utils/utils'
+import {
+  getTokenPrice,
+  getTokenReserve,
+  parseFeeToPathFee,
+  parsePathFeeToFeeString,
+  ROUTES,
+  tickerToAddress
+} from '@utils/utils'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { actions as poolsActions, PoolWithAddress } from '@store/reducers/pools'
@@ -29,6 +36,9 @@ import { Intervals as IntervalsKeys } from '@store/consts/static'
 import { VariantType } from 'notistack'
 import { useNavigate } from 'react-router-dom'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
+import { getCurrentSolanaConnection } from '@utils/web3/connection'
+import { Connection, PublicKey } from '@solana/web3.js'
+import { TokenReserve } from '@store/consts/types'
 
 export interface IProps {
   initialTokenFrom: string
@@ -74,7 +84,62 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
   const [tokenA, setTokenA] = useState<SwapToken | null>(null)
   const [tokenB, setTokenB] = useState<SwapToken | null>(null)
 
+  const [tokenAReserve, setTokenAReserve] = useState<TokenReserve | null>(null)
+  const [tokenBReserve, setTokenBReserve] = useState<TokenReserve | null>(null)
+
+  const [prices, setPrices] = useState<{ tokenA: number; tokenB: number }>({
+    tokenA: 0,
+    tokenB: 0
+  })
+
   const [poolData, setPoolData] = useState<PoolWithAddress | null>(null)
+
+  const fetchTokensReserves = async (
+    tokenX: PublicKey,
+    tokenY: PublicKey,
+    connection: Connection
+  ) => {
+    const [tokenXReserve, tokenYReserve] = await Promise.all([
+      getTokenReserve(tokenX, connection),
+      getTokenReserve(tokenY, connection)
+    ])
+
+    return { tokenXReserve, tokenYReserve }
+  }
+
+  useEffect(() => {
+    const connection = getCurrentSolanaConnection()
+    if (poolData && connection) {
+      fetchTokensReserves(poolData.tokenXReserve, poolData.tokenYReserve, connection)
+        .then(({ tokenXReserve, tokenYReserve }) => {
+          setTokenAReserve(tokenXReserve)
+          setTokenBReserve(tokenYReserve)
+        })
+        .catch(err => {
+          console.error('Error fetching reserves:', err)
+        })
+    }
+  }, [poolData])
+
+  useEffect(() => {
+    const loadPrices = async () => {
+      if (!tokenA || !tokenB) return
+      const priceResults = await Promise.all([
+        await getTokenPrice(tokenA?.assetAddress.toString(), currentNetwork),
+        await getTokenPrice(tokenB?.assetAddress.toString(), currentNetwork)
+      ])
+
+      const tokenAPrice = priceResults[0]
+      const tokenBPrice = priceResults[1]
+
+      setPrices({
+        tokenA: tokenAPrice ?? 0,
+        tokenB: tokenBPrice ?? 0
+      })
+    }
+
+    loadPrices()
+  }, [tokenA, tokenB])
 
   const isPoolDataLoading = useMemo(() => {
     if (poolData !== null) {

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Grid } from '@mui/material'
 import useStyles from './style'
 import Chart from './Chart/Chart'
@@ -10,6 +10,7 @@ import { PoolWithAddress } from '@store/reducers/pools'
 import { Intervals as IntervalsKeys } from '@store/consts/static'
 import { PoolChartSwitch } from '@store/consts/types'
 import { VariantType } from 'notistack'
+import { getTokenReserve } from '@utils/utils'
 
 export interface IProps {
   network: NetworkType
