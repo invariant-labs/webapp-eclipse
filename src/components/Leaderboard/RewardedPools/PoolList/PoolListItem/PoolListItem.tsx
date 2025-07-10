@@ -4,7 +4,7 @@ import { useStyles } from './style'
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { plusIcon, unknownTokenIcon } from '@static/icons'
-import { NetworkType } from '@store/consts/static'
+import { NetworkType, POINTS_HIDDEN_SIGN, POOLS_TO_HIDE_POINTS_PER_24H } from '@store/consts/static'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import {
   addressToTicker,
@@ -196,9 +196,13 @@ const PoolListItem: React.FC<IProps> = ({
           ) : null}
           <Typography>{fee}%</Typography>
           <Typography>
-            {formatNumberWithCommas(
-              printBN(new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60), 0)
-            )}
+            {poolAddress
+              ? POOLS_TO_HIDE_POINTS_PER_24H.includes(poolAddress)
+                ? POINTS_HIDDEN_SIGN
+                : formatNumberWithCommas(
+                    printBN(new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60), 0)
+                  )
+              : POINTS_HIDDEN_SIGN}
           </Typography>
 
           {!isSm && (

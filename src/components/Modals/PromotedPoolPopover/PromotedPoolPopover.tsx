@@ -2,7 +2,7 @@ import { BN } from '@coral-xyz/anchor'
 import useStyles from './style'
 import { Typography } from '@mui/material'
 import { formatNumberWithCommas, printBN, removeAdditionalDecimals } from '@utils/utils'
-import { LEADERBOARD_DECIMAL } from '@store/consts/static'
+import { LEADERBOARD_DECIMAL, POINTS_HIDDEN_SIGN } from '@store/consts/static'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 export interface IPromotedPoolPopover {
   isActive?: boolean
@@ -44,7 +44,7 @@ export const PromotedPoolPopover = ({
         {typeof pointsLabel !== 'string' ? pointsLabel : null}
       </Typography>
       <Typography className={classes.whiteText}>
-        {formatNumberWithCommas(printBN(points, 0))}
+        {points.eqn(0) ? POINTS_HIDDEN_SIGN : formatNumberWithCommas(printBN(points, 0))}
       </Typography>
     </div>
   )

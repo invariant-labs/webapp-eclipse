@@ -20,7 +20,7 @@ import {
   ROUTES
 } from '@utils/utils'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { ES_MAIN, NetworkType } from '@store/consts/static'
+import { ES_MAIN, NetworkType, POOLS_TO_HIDE_POINTS_PER_24H } from '@store/consts/static'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { leaderboardSelectors } from '@store/selectors/leaderboard'
 import { useDispatch, useSelector } from 'react-redux'
@@ -198,7 +198,11 @@ const Card: React.FC<ICard> = ({
                     <PromotedPoolPopover
                       apr={convertedApr ?? 0}
                       apy={convertedApy ?? 0}
-                      points={new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60)}>
+                      points={
+                        POOLS_TO_HIDE_POINTS_PER_24H.includes(poolAddress.toString())
+                          ? new BN(0)
+                          : new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60)
+                      }>
                       <div
                         className={classes.actionButton}
                         onPointerEnter={() => {

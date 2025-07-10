@@ -74,7 +74,7 @@ const PortfolioWrapper = () => {
   const pricesData = useSelector(prices)
   const ethBalance = useSelector(balance)
   const [isHiding, setIsHiding] = useState(false)
-  const [showBanner, setShowBanner] = useState(() => {
+  const [_showBanner, setShowBanner] = useState(() => {
     const storedData = localStorage.getItem(BANNER_STORAGE_KEY)
     if (storedData) {
       try {
@@ -447,7 +447,7 @@ const PortfolioWrapper = () => {
   return isConnected ? (
     <Portfolio
       handleCloseBanner={handleBannerClose}
-      showBanner={showBanner}
+      showBanner={false /*showBanner*/}
       isHiding={isHiding}
       selectedFilters={searchParamsToken.filteredTokens}
       setSelectedFilters={setSearchTokensValue}

@@ -405,7 +405,7 @@ export const KYSOL_MAIN: Token = {
 export const ES_MAIN: Token = {
   symbol: 'ES',
   address: new PublicKey('GnBAskb2SQjrLgpTjtgatz4hEugUsYV7XrWU1idV3oqW'),
-  decimals: 9,
+  decimals: 6,
   name: 'Eclipse',
   logoURI: 'https://assets.coingecko.com/coins/images/54958/standard/image_%2832%29.png?1742979704',
   coingeckoId: 'eclipse-3'
@@ -581,6 +581,16 @@ export const promotedTiers = [
     tokenX: WETH_MAIN.address,
     tokenY: sBITZ_MAIN.address,
     index: 6
+  },
+  {
+    tokenX: ES_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    index: 5
+  },
+  {
+    tokenX: USDC_MAIN.address,
+    tokenY: ES_MAIN.address,
+    index: 5
   }
 ]
 
@@ -862,8 +872,13 @@ export const getPopularPools = (network: NetworkType) => {
       return [
         {
           tokenX: ES_MAIN.address.toString(),
-          tokenY: USDC_MAIN.address.toString(),
-          fee: '0.1'
+          tokenY: WETH_MAIN.address.toString(),
+          fee: '0.3'
+        },
+        {
+          tokenX: USDC_MAIN.address.toString(),
+          tokenY: ES_MAIN.address.toString(),
+          fee: '0.3'
         },
         {
           tokenX: USDC_MAIN.address.toString(),
@@ -1094,3 +1109,9 @@ export const DEFAULT_STRATEGY = {
 export const PORTFOLIO_STAKE_STORAGE_KEY = 'STAKE_STATS_EXPANDED'
 export const PORTFOLIO_STAKE_EXPAND_DELAY = 50
 export const PORTFOLIO_STAKE_COLLAPSE_DELAY = 200
+
+export const POOLS_TO_HIDE_POINTS_PER_24H: string[] = [
+  '6ciuuX2AZ3RFU6fJh2XrzJurZdRWuDeMonNsb7xzztp1',
+  '8gSs6K4NVZSh4Rd5ABcNTos5sJ6wVRTR4xr5LgNLMt58'
+]
+export const POINTS_HIDDEN_SIGN = '???'
