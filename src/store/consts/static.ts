@@ -1110,7 +1110,10 @@ export const PORTFOLIO_STAKE_STORAGE_KEY = 'STAKE_STATS_EXPANDED'
 export const PORTFOLIO_STAKE_EXPAND_DELAY = 50
 export const PORTFOLIO_STAKE_COLLAPSE_DELAY = 200
 
+export const ES_ETH_POOLS = {
+  '0_03': '6ciuuX2AZ3RFU6fJh2XrzJurZdRWuDeMonNsb7xzztp1'
+}
 export const POOLS_TO_HIDE_POINTS_PER_24H: string[] = [
-  '6ciuuX2AZ3RFU6fJh2XrzJurZdRWuDeMonNsb7xzztp1',
+  ES_ETH_POOLS['0_03'],
   '8gSs6K4NVZSh4Rd5ABcNTos5sJ6wVRTR4xr5LgNLMt58'
 ]

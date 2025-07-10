@@ -20,7 +20,12 @@ import {
   ROUTES
 } from '@utils/utils'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { ES_MAIN, NetworkType, POOLS_TO_HIDE_POINTS_PER_24H } from '@store/consts/static'
+import {
+  ES_ETH_POOLS,
+  ES_MAIN,
+  NetworkType,
+  POOLS_TO_HIDE_POINTS_PER_24H
+} from '@store/consts/static'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { leaderboardSelectors } from '@store/selectors/leaderboard'
 import { useDispatch, useSelector } from 'react-redux'
@@ -30,6 +35,7 @@ import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/Promoted
 import { Button } from '@common/Button/Button'
 import { ReverseTokensIcon } from '@static/componentIcon/ReverseTokensIcon'
 import { actions } from '@store/reducers/navigation'
+import { PublicKey } from '@solana/web3.js'
 
 export interface ICard extends PopularPoolData {
   isLoading: boolean
@@ -56,13 +62,15 @@ const Card: React.FC<ICard> = ({
   network,
   showAPY
 }) => {
-  const { classes } = useStyles()
   const navigate = useNavigate()
   const location = useLocation()
   const dispatch = useDispatch()
+
   const airdropIconRef = useRef<HTMLDivElement>(null)
   const popoverContainerRef = useRef<HTMLDivElement>(null)
 
+  const flipHorns = poolAddress?.equals(new PublicKey(ES_ETH_POOLS['0_03'])) ?? false
+  const { classes } = useStyles({ flipHorns })
   const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
   const { promotedPools } = useSelector(leaderboardSelectors.config)
 

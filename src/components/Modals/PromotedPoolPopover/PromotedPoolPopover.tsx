@@ -28,7 +28,8 @@ export const PromotedPoolPopover = ({
   showEstPointsFirst = false,
   children
 }: IPromotedPoolPopover) => {
-  const { classes } = useStyles()
+  const center = points.eqn(0)
+  const { classes } = useStyles({ center })
 
   const isLessThanMinimal = (value: BN) => {
     const minimalValue = new BN(1).mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL - 2)))
@@ -46,7 +47,7 @@ export const PromotedPoolPopover = ({
       </Typography>
       <Typography className={classes.whiteText}>
         {points.eqn(0) ? (
-          <QuestionMark height={'24px'} />
+          <QuestionMark marginTop={8} height={'24px'} />
         ) : (
           formatNumberWithCommas(printBN(points, 0))
         )}
