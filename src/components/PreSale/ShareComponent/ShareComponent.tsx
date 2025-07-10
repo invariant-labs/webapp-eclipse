@@ -87,8 +87,8 @@ export const ShareComponent: React.FC<IProps> = ({
           </Box>
         </Box>
         <Box className={classes.buttonsContainer}>
-          <Button scheme='pink' width='100%'>
-            <div className={classes.buttonContainer} onClick={() => handleDownload()}>
+          <Button scheme='pink' width='100%' onClick={() => handleDownload()}>
+            <div className={classes.buttonContainer}>
               Download <img src={download} alt='download icon' />
             </div>
           </Button>

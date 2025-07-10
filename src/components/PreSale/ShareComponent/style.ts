@@ -28,12 +28,8 @@ const useStyles = makeStyles<IProps>()((theme, { backgroundImage }) => ({
     pointerEvents: 'none'
   },
   rootScreenshot: {
-    width: 10000,
-    height: 10000,
     top: -10000,
     left: -10000,
-    bottom: -9000,
-    right: -9000,
     zIndex: -1
   },
   container: {
