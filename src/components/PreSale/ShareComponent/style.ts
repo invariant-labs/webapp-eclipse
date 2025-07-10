@@ -9,14 +9,14 @@ const useStyles = makeStyles<IProps>()((theme, { backgroundImage }) => ({
   popoverRoot: {
     display: 'flex',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    zIndex: 0
   },
   background: {
     position: 'fixed',
     inset: 0,
     background: colors.invariant.black,
-    opacity: 0.7,
-    zIndex: 101
+    opacity: 0.7
   },
   root: {
     position: 'fixed',
@@ -24,7 +24,6 @@ const useStyles = makeStyles<IProps>()((theme, { backgroundImage }) => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 101,
     pointerEvents: 'none'
   },
   rootScreenshot: {
