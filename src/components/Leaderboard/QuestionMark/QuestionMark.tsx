@@ -1,12 +1,13 @@
 import { pointsQMarkIcon } from '@static/icons'
 interface Props {
   height: string
+  marginLeft?: string
 }
-export const QuestionMark = ({ height }: Props) => {
+export const QuestionMark = ({ height, marginLeft }: Props) => {
   return (
     <img
       src={pointsQMarkIcon}
-      style={{ marginLeft: '15%', height: `${height}` }}
+      style={{ marginLeft: marginLeft || '15%', height: `${height}` }}
       alt='Points Question Mark'
     />
   )
