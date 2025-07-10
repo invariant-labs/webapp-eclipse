@@ -27,17 +27,17 @@ interface ITotalLeaderboardResponse {
   leaderboard: ITotalEntry[]
   totalItems: number
 }
-interface IConfigResponse {
-  refreshTime: number
-  pointsDecimal: number
-  promotedPools: IPromotedPool[]
-  pointsPerUSD: number
-  lastSnapTimestamp: string
-  swapPairs: { tokenX: string; tokenY: string }[]
-  swapMultiplier: string
-  contentProgramDateStart: string
-  contentProgramDateEnd: string
-}
+// interface IConfigResponse {
+//   refreshTime: number
+//   pointsDecimal: number
+//   promotedPools: IPromotedPool[]
+//   pointsPerUSD: number
+//   lastSnapTimestamp: string
+//   swapPairs: { tokenX: string; tokenY: string }[]
+//   swapMultiplier: string
+//   contentProgramDateStart: string
+//   contentProgramDateEnd: string
+// }
 interface IFetchContentPointsResponse {
   startTimestamp: number
   endTimestamp: number
@@ -273,7 +273,9 @@ export function* getLeaderboardConfig(): Generator {
         pointsDecimal,
         refreshTime,
         promotedPools,
+        // @ts-expect-error tmp fix
         lastSnapTimestamp,
+        // @ts-expect-error tmp fix
         pointsPerUSD,
         swapPairs,
         swapMultiplier,
