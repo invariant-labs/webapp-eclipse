@@ -15,7 +15,7 @@ import {
   numberToString
 } from '@utils/utils'
 import { ILiquidityToken } from '@store/consts/types'
-import ChangeLiquidityNewPositionWrapper from './AddLiquidityNewPositionWrapper/AddLiquidityNewPositionWrapper'
+import AddLiquidity from './AddLiquidity/AddLiquidity'
 
 export interface IChangeLiquidityModal {
   open: boolean
@@ -161,7 +161,7 @@ export const ChangeLiquidityModal: React.FC<IChangeLiquidityModal> = ({
         </Box>
         <Box className={classes.wrapper}>
           {isAddLiquidity ? (
-            <ChangeLiquidityNewPositionWrapper
+            <AddLiquidity
               initialTokenFrom={tokenXAddress}
               initialTokenTo={tokenYAddress}
               initialFee={fee}

@@ -382,6 +382,14 @@ export const useStyles = makeStyles()(theme => {
     totalDepositContent: {
       ...typography.body2,
       color: colors.invariant.textGrey
+    },
+    deposit: {
+      marginRight: 24,
+
+      [theme.breakpoints.down('md')]: {
+        marginBottom: 24,
+        marginRight: 0
+      }
     }
   }
 })

@@ -1,0 +1,2373 @@
+import AnimatedButton, { ProgressState } from '@common/AnimatedButton/AnimatedButton'
+import {
+  ALL_FEE_TIERS_DATA,
+  AutoswapCustomError,
+  DEFAULT_AUTOSWAP_MAX_PRICE_IMPACT,
+  DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_CREATE_POSITION,
+  DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_SWAP,
+  DEFAULT_AUTOSWAP_MIN_UTILIZATION,
+  DEFAULT_NEW_POSITION_SLIPPAGE,
+  DepositOptions,
+  Intervals,
+  MINIMUM_PRICE_IMPACT,
+  NetworkType,
+  REFRESHER_INTERVAL,
+  WETH_POOL_INIT_LAMPORTS_MAIN,
+  WETH_POOL_INIT_LAMPORTS_TEST,
+  WETH_POSITION_INIT_LAMPORTS_MAIN,
+  WETH_POSITION_INIT_LAMPORTS_TEST,
+  WETH_SWAP_AND_POSITION_INIT_LAMPORTS_MAIN,
+  WETH_SWAP_AND_POSITION_INIT_LAMPORTS_TEST,
+  WRAPPED_ETH_ADDRESS,
+  autoSwapPools
+} from '@store/consts/static'
+import { PositionOpeningMethod, TokenPriceData } from '@store/consts/types'
+import {
+  calcPriceBySqrtPrice,
+  calcPriceByTickIndex,
+  calculateConcentration,
+  calculateConcentrationRange,
+  convertBalanceToBN,
+  createPlaceholderLiquidityPlot,
+  determinePositionTokenBlock,
+  formatNumberWithoutSuffix,
+  getConcentrationIndex,
+  getMockedTokenPrice,
+  getScaleFromString,
+  getTokenPrice,
+  parsePathFeeToFeeString,
+  PositionTokenBlock,
+  printBN,
+  simulateAutoSwap,
+  simulateAutoSwapOnTheSamePool,
+  tickerToAddress,
+  trimDecimalZeros,
+  trimLeadingZeros,
+  validConcentrationMidPriceTick
+} from '@utils/utils'
+import { BN } from '@coral-xyz/anchor'
+import { actions as poolsActions } from '@store/reducers/pools'
+import { actions, actions as positionsActions } from '@store/reducers/positions'
+import { actions as connectionActions } from '@store/reducers/solanaConnection'
+import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
+import { network, timeoutError } from '@store/selectors/solanaConnection'
+import poolsSelectors, {
+  autoSwapTicksAndTickMap,
+  isLoadingLatestPoolsForTransaction,
+  isLoadingPathTokens,
+  poolsArraySortedByFees
+} from '@store/selectors/pools'
+import { initPosition, plotTicks } from '@store/selectors/positions'
+import { balanceLoading, status, balance, poolTokens } from '@store/selectors/solanaWallet'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useLocation } from 'react-router-dom'
+import { getCurrentSolanaConnection, networkTypetoProgramNetwork } from '@utils/web3/connection'
+import { PublicKey } from '@solana/web3.js'
+import {
+  DECIMAL,
+  feeToTickSpacing,
+  fromFee,
+  getConcentrationArray,
+  getMaxTick,
+  getMinTick,
+  SimulateSwapAndCreatePositionSimulation,
+  SwapAndCreateSimulationStatus,
+  toDecimal
+} from '@invariant-labs/sdk-eclipse/lib/utils'
+import { InitMidPrice } from '@common/PriceRangePlot/PriceRangePlot'
+import { getMarketAddress, Pair } from '@invariant-labs/sdk-eclipse'
+import { getLiquidityByX, getLiquidityByY } from '@invariant-labs/sdk-eclipse/lib/math'
+import { calculatePriceSqrt } from '@invariant-labs/sdk-eclipse/src'
+import { actions as leaderboardActions } from '@store/reducers/leaderboard'
+import { actions as statsActions } from '@store/reducers/stats'
+import { poolsStatsWithTokensDetails } from '@store/selectors/stats'
+import {
+  Box,
+  Button,
+  Checkbox,
+  Grid,
+  Skeleton,
+  ToggleButton,
+  ToggleButtonGroup,
+  Typography,
+  useMediaQuery
+} from '@mui/material'
+import { blurContent, createButtonActions, unblurContent } from '@utils/uiUtils'
+import { useStyles } from './style'
+import { theme } from '@static/theme'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
+import { infoIcon, settingIcon } from '@static/icons'
+import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
+import DepoSitOptionsModal from '@components/Modals/DepositOptionsModal/DepositOptionsModal'
+import DepositAmountInput from '@components/Inputs/DepositAmountInput/DepositAmountInput'
+import loadingAnimation from '@static/gif/loading.gif'
+import { InputState } from '@components/NewPosition/DepositSelector/DepositSelector'
+
+export interface IProps {
+  initialTokenFrom: string
+  initialTokenTo: string
+  initialFee: string
+  initialConcentration: string
+  initialIsRange: boolean | null
+  leftRange: number
+  rightRange: number
+}
+
+export const AddLiquidity: React.FC<IProps> = ({
+  initialTokenFrom,
+  initialTokenTo,
+  initialFee,
+  initialConcentration,
+  initialIsRange,
+  leftRange,
+  rightRange
+}) => {
+  const dispatch = useDispatch()
+  const connection = getCurrentSolanaConnection()
+  const ethBalance = useSelector(balance)
+  const tokens = useSelector(poolTokens)
+  const walletStatus = useSelector(status)
+  const allPools = useSelector(poolsArraySortedByFees)
+  const autoSwapPoolData = useSelector(poolsSelectors.autoSwapPool)
+  const { ticks: autoSwapTicks, tickmap: autoSwapTickMap } = useSelector(autoSwapTicksAndTickMap)
+  const isLoadingAutoSwapPool = useSelector(poolsSelectors.isLoadingAutoSwapPool)
+  const isLoadingAutoSwapPoolTicksOrTickMap = useSelector(
+    poolsSelectors.isLoadingAutoSwapPoolTicksOrTickMap
+  )
+  const isBalanceLoading = useSelector(balanceLoading)
+  const currentNetwork = useSelector(network)
+  const { success, inProgress } = useSelector(initPosition)
+  // const [onlyUserPositions, setOnlyUserPositions] = useState(false)
+  const { allData: ticksData, loading: ticksLoading } = useSelector(plotTicks)
+
+  const isFetchingNewPool = useSelector(isLoadingLatestPoolsForTransaction)
+
+  const isLoadingTicksOrTickmap = useMemo(
+    () => ticksLoading || isLoadingAutoSwapPoolTicksOrTickMap || isLoadingAutoSwapPool,
+    [ticksLoading, isLoadingAutoSwapPoolTicksOrTickMap, isLoadingAutoSwapPool]
+  )
+  const [liquidity, setLiquidity] = useState<BN>(new BN(0))
+
+  const [poolIndex, setPoolIndex] = useState<number | null>(null)
+
+  const [progress, setProgress] = useState<ProgressState>('none')
+
+  const [tokenAIndex, setTokenAIndex] = useState<number | null>(null)
+  const [tokenBIndex, setTokenBIndex] = useState<number | null>(null)
+
+  const [currentPairReversed, setCurrentPairReversed] = useState<boolean | null>(null)
+  const [initialLoader, setInitialLoader] = useState(true)
+  const isMountedRef = useRef(false)
+  const isTimeoutError = useSelector(timeoutError)
+  const isPathTokensLoading = useSelector(isLoadingPathTokens)
+  const { state } = useLocation()
+  const [block, setBlock] = useState(state?.referer === 'stats')
+
+  const initialIsConcentrationOpening =
+    localStorage.getItem('OPENING_METHOD') === 'concentration' ||
+    localStorage.getItem('OPENING_METHOD') === null
+
+  const [initialOpeningPositionMethod] = useState<PositionOpeningMethod>(
+    initialIsRange !== null
+      ? initialIsRange
+        ? 'range'
+        : 'concentration'
+      : initialIsConcentrationOpening
+        ? 'concentration'
+        : 'range'
+  )
+
+  useEffect(() => {
+    const pathTokens: string[] = []
+
+    if (
+      initialTokenFrom !== '' &&
+      tokens.findIndex(
+        token =>
+          token.address.toString() === (tickerToAddress(currentNetwork, initialTokenFrom) ?? '')
+      ) === -1
+    ) {
+      pathTokens.push(initialTokenFrom)
+    }
+
+    if (
+      initialTokenTo !== '' &&
+      tokens.findIndex(
+        token =>
+          token.address.toString() === (tickerToAddress(currentNetwork, initialTokenTo) ?? '')
+      ) === -1
+    ) {
+      pathTokens.push(initialTokenTo)
+    }
+
+    if (pathTokens.length) {
+      dispatch(poolsActions.getPathTokens(pathTokens))
+    }
+
+    setBlock(false)
+  }, [tokens])
+
+  const canNavigate = connection !== null && !isPathTokensLoading && !block
+
+  useEffect(() => {
+    if (canNavigate) {
+      const tokenAIndex = tokens.findIndex(token => token.address.toString() === initialTokenFrom)
+      if (tokenAIndex !== -1) {
+        setTokenAIndex(tokenAIndex)
+      }
+
+      const tokenBIndex = tokens.findIndex(token => token.address.toString() === initialTokenTo)
+      if (tokenBIndex !== -1) {
+        setTokenBIndex(tokenBIndex)
+      }
+    }
+  }, [canNavigate])
+
+  const urlUpdateTimeoutRef = useRef<NodeJS.Timeout>()
+
+  clearTimeout(urlUpdateTimeoutRef.current)
+
+  useEffect(() => {
+    isMountedRef.current = true
+
+    dispatch(leaderboardActions.getLeaderboardConfig())
+    return () => {
+      isMountedRef.current = false
+    }
+  }, [])
+
+  useEffect(() => {
+    setProgress('none')
+  }, [poolIndex])
+
+  useEffect(() => {
+    let timeoutId1: NodeJS.Timeout
+    let timeoutId2: NodeJS.Timeout
+
+    if (!inProgress && progress === 'progress') {
+      setProgress(success ? 'approvedWithSuccess' : 'approvedWithFail')
+
+      if (poolIndex !== null && tokenAIndex !== null && tokenBIndex !== null) {
+        dispatch(
+          actions.getCurrentPlotTicks({
+            poolIndex,
+            isXtoY: allPools[poolIndex].tokenX.equals(
+              tokens[currentPairReversed === true ? tokenBIndex : tokenAIndex].assetAddress
+            ),
+            disableLoading: true
+          })
+        )
+      }
+
+      timeoutId1 = setTimeout(() => {
+        setProgress(success ? 'success' : 'failed')
+      }, 500)
+
+      timeoutId2 = setTimeout(() => {
+        setProgress('none')
+        dispatch(actions.setInitPositionSuccess(false))
+      }, 1800)
+    }
+
+    return () => {
+      clearTimeout(timeoutId1)
+      clearTimeout(timeoutId2)
+    }
+  }, [success, inProgress])
+
+  const isXtoY = useMemo(() => {
+    if (tokenAIndex !== null && tokenBIndex !== null) {
+      return (
+        tokens[tokenAIndex].assetAddress.toString() < tokens[tokenBIndex].assetAddress.toString()
+      )
+    }
+    return true
+  }, [tokenAIndex, tokenBIndex])
+
+  const xDecimal = useMemo(() => {
+    if (tokenAIndex !== null && tokenBIndex !== null) {
+      return tokens[tokenAIndex].assetAddress.toString() <
+        tokens[tokenBIndex].assetAddress.toString()
+        ? tokens[tokenAIndex].decimals
+        : tokens[tokenBIndex].decimals
+    }
+    return 0
+  }, [tokenAIndex, tokenBIndex])
+
+  const yDecimal = useMemo(() => {
+    if (tokenAIndex !== null && tokenBIndex !== null) {
+      return tokens[tokenAIndex].assetAddress.toString() <
+        tokens[tokenBIndex].assetAddress.toString()
+        ? tokens[tokenBIndex].decimals
+        : tokens[tokenAIndex].decimals
+    }
+    return 0
+  }, [tokenAIndex, tokenBIndex])
+
+  const [feeIndex, setFeeIndex] = useState(0)
+
+  const fee = useMemo(() => ALL_FEE_TIERS_DATA[feeIndex].tier.fee, [feeIndex])
+  const tickSpacing = useMemo(
+    () =>
+      ALL_FEE_TIERS_DATA[feeIndex].tier.tickSpacing ??
+      feeToTickSpacing(ALL_FEE_TIERS_DATA[feeIndex].tier.fee),
+    [feeIndex]
+  )
+  const [midPrice, setMidPrice] = useState<InitMidPrice>({
+    index: 0,
+    x: 1,
+    sqrtPrice: new BN(0)
+  })
+
+  const currentPoolAddress = useMemo(() => {
+    if (tokenAIndex === null || tokenBIndex === null) return null
+    const net = networkTypetoProgramNetwork(currentNetwork)
+    const marketAddress = new PublicKey(getMarketAddress(net))
+    try {
+      return new Pair(tokens[tokenAIndex].assetAddress, tokens[tokenBIndex].assetAddress, {
+        fee,
+        tickSpacing
+      }).getAddress(marketAddress)
+    } catch (e) {
+      return PublicKey.default
+    }
+  }, [tokenAIndex, tokenBIndex, fee, tickSpacing, currentNetwork])
+
+  const isWaitingForNewPool = useMemo(() => {
+    if (poolIndex !== null) {
+      return false
+    }
+
+    return isFetchingNewPool
+  }, [isFetchingNewPool, poolIndex])
+
+  useEffect(() => {
+    if (initialLoader && !isWaitingForNewPool) {
+      setInitialLoader(false)
+    }
+  }, [isWaitingForNewPool])
+
+  useEffect(() => {
+    if (
+      !isWaitingForNewPool &&
+      tokenAIndex !== null &&
+      tokenBIndex !== null &&
+      tokenAIndex !== tokenBIndex
+    ) {
+      const index = allPools.findIndex(
+        pool =>
+          pool.fee.eq(fee) &&
+          ((pool.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
+            pool.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
+            (pool.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
+              pool.tokenY.equals(tokens[tokenAIndex].assetAddress)))
+      )
+      setPoolIndex(index !== -1 ? index : null)
+
+      if (index !== -1) {
+        dispatch(
+          actions.getCurrentPlotTicks({
+            poolIndex: index,
+            isXtoY: allPools[index].tokenX.equals(tokens[tokenAIndex].assetAddress)
+          })
+        )
+      }
+    }
+  }, [isWaitingForNewPool, allPools.length])
+
+  useEffect(() => {
+    if (poolIndex !== null && !!allPools[poolIndex]) {
+      setMidPrice({
+        index: allPools[poolIndex].currentTickIndex,
+        x: calcPriceBySqrtPrice(allPools[poolIndex].sqrtPrice, isXtoY, xDecimal, yDecimal),
+        sqrtPrice: allPools[poolIndex].sqrtPrice
+      })
+    }
+  }, [poolIndex, isXtoY, xDecimal, yDecimal, allPools])
+
+  useEffect(() => {
+    if (poolIndex === null) {
+      setMidPrice({
+        index: 0,
+        x: calcPriceByTickIndex(0, isXtoY, xDecimal, yDecimal),
+        sqrtPrice: new BN(0)
+      })
+    }
+  }, [poolIndex, isXtoY, xDecimal, yDecimal])
+
+  const data = useMemo(() => {
+    if (ticksLoading) {
+      return createPlaceholderLiquidityPlot(isXtoY, 10, tickSpacing, xDecimal, yDecimal)
+    }
+
+    if (currentPairReversed === true) {
+      return ticksData.map(tick => ({ ...tick, x: 1 / tick.x })).reverse()
+    }
+
+    return ticksData
+  }, [ticksData, ticksLoading, isXtoY, tickSpacing, xDecimal, yDecimal, currentPairReversed])
+
+  useEffect(() => {
+    if (
+      tokenAIndex !== null &&
+      tokenBIndex !== null &&
+      poolIndex === null &&
+      progress === 'approvedWithSuccess'
+    ) {
+      dispatch(
+        poolsActions.getPoolData(
+          new Pair(tokens[tokenAIndex].assetAddress, tokens[tokenBIndex].assetAddress, {
+            fee,
+            tickSpacing
+          })
+        )
+      )
+    }
+  }, [progress])
+
+  useEffect(() => {
+    if (
+      tokenAIndex !== null &&
+      tokenBIndex !== null &&
+      poolIndex !== null &&
+      !allPools[poolIndex]
+    ) {
+      dispatch(
+        poolsActions.getPoolData(
+          new Pair(tokens[tokenAIndex].assetAddress, tokens[tokenBIndex].assetAddress, {
+            fee,
+            tickSpacing
+          })
+        )
+      )
+    }
+  }, [poolIndex])
+
+  const [triggerFetchPrice, setTriggerFetchPrice] = useState(false)
+
+  const [tokenAPriceData, setTokenAPriceData] = useState<TokenPriceData | undefined>(undefined)
+
+  const [priceALoading, setPriceALoading] = useState(false)
+  useEffect(() => {
+    if (tokenAIndex === null || (tokenAIndex !== null && !tokens[tokenAIndex])) {
+      return
+    }
+
+    const addr = tokens[tokenAIndex].address.toString()
+    setPriceALoading(true)
+    getTokenPrice(addr, currentNetwork)
+      .then(data => setTokenAPriceData({ price: data ?? 0 }))
+      .catch(() =>
+        setTokenAPriceData(getMockedTokenPrice(tokens[tokenAIndex].symbol, currentNetwork))
+      )
+      .finally(() => setPriceALoading(false))
+  }, [tokenAIndex, tokens, triggerFetchPrice])
+
+  const [tokenBPriceData, setTokenBPriceData] = useState<TokenPriceData | undefined>(undefined)
+  const [priceBLoading, setPriceBLoading] = useState(false)
+  useEffect(() => {
+    if (tokenBIndex === null || (tokenBIndex !== null && !tokens[tokenBIndex])) {
+      return
+    }
+
+    const addr = tokens[tokenBIndex].address.toString()
+    setPriceBLoading(true)
+    getTokenPrice(addr, currentNetwork)
+      .then(data => setTokenBPriceData({ price: data ?? 0 }))
+      .catch(() =>
+        setTokenBPriceData(getMockedTokenPrice(tokens[tokenBIndex].symbol, currentNetwork))
+      )
+      .finally(() => setPriceBLoading(false))
+  }, [tokenBIndex, tokens, triggerFetchPrice])
+
+  const initialSlippage =
+    localStorage.getItem('INVARIANT_NEW_POSITION_SLIPPAGE') ?? DEFAULT_NEW_POSITION_SLIPPAGE
+
+  const initialMaxPriceImpact =
+    localStorage.getItem('INVARIANT_AUTOSWAP_MAX_PRICE_IMPACT') ?? DEFAULT_AUTOSWAP_MAX_PRICE_IMPACT
+
+  const onMaxPriceImpactChange = (priceImpact: string) => {
+    localStorage.setItem('INVARIANT_AUTOSWAP_MAX_PRICE_IMPACT', priceImpact)
+  }
+
+  const initialMinUtilization =
+    localStorage.getItem('INVARIANT_AUTOSWAP_MIN_UTILIZATION') ?? DEFAULT_AUTOSWAP_MIN_UTILIZATION
+
+  const onMinUtilizationChange = (utilization: string) => {
+    localStorage.setItem('INVARIANT_AUTOSWAP_MIN_UTILIZATION', utilization)
+  }
+
+  const initialMaxSlippageToleranceSwap =
+    localStorage.getItem('INVARIANT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_SWAP') ??
+    DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_SWAP
+
+  const onMaxSlippageToleranceSwapChange = (slippageToleranceSwap: string) => {
+    localStorage.setItem('INVARIANT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_SWAP', slippageToleranceSwap)
+  }
+
+  const initialMaxSlippageToleranceCreatePosition =
+    localStorage.getItem('INVARIANT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_CREATE_POSITION') ??
+    DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_CREATE_POSITION
+
+  const onMaxSlippageToleranceCreatePositionChange = (slippageToleranceCreatePosition: string) => {
+    localStorage.setItem(
+      'INVARIANT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_CREATE_POSITION',
+      slippageToleranceCreatePosition
+    )
+  }
+
+  const calcAmount = (amount: BN, left: number, right: number, tokenAddress: PublicKey) => {
+    if (tokenAIndex === null || tokenBIndex === null || isNaN(left) || isNaN(right)) {
+      return { amount: new BN(0), liquidity: new BN(0) }
+    }
+
+    const byX = tokenAddress.equals(
+      isXtoY ? tokens[tokenAIndex].assetAddress : tokens[tokenBIndex].assetAddress
+    )
+    const lowerTick = Math.min(left, right)
+    const upperTick = Math.max(left, right)
+
+    try {
+      if (byX) {
+        const result = getLiquidityByX(
+          amount,
+          lowerTick,
+          upperTick,
+          poolIndex !== null ? allPools[poolIndex].sqrtPrice : midPrice.sqrtPrice,
+          true
+        )
+        return { amount: result.y, liquidity: result.liquidity }
+      } else {
+        const result = getLiquidityByY(
+          amount,
+          lowerTick,
+          upperTick,
+          poolIndex !== null ? allPools[poolIndex].sqrtPrice : midPrice.sqrtPrice,
+          true
+        )
+        return { amount: result.x, liquidity: result.liquidity }
+      }
+    } catch {
+      return { amount: new BN(0), liquidity: new BN(0) }
+    }
+  }
+
+  const onRefresh = () => {
+    if (!success) {
+      dispatch(positionsActions.setShouldNotUpdateRange(true))
+    }
+
+    setTriggerFetchPrice(!triggerFetchPrice)
+
+    if (tokenAIndex !== null && tokenBIndex !== null) {
+      dispatch(walletActions.getBalance())
+
+      dispatch(
+        poolsActions.getPoolData(
+          new Pair(tokens[tokenAIndex].assetAddress, tokens[tokenBIndex].assetAddress, {
+            fee,
+            tickSpacing
+          })
+        )
+      )
+
+      if (poolIndex !== null) {
+        dispatch(
+          actions.getCurrentPlotTicks({
+            poolIndex,
+            isXtoY: allPools[poolIndex].tokenX.equals(
+              tokens[currentPairReversed === true ? tokenBIndex : tokenAIndex].assetAddress
+            )
+          })
+        )
+      }
+      if (autoSwapPool) {
+        poolsActions.getAutoSwapPoolData(
+          new Pair(tokens[tokenAIndex].assetAddress, tokens[tokenBIndex].assetAddress, {
+            fee: ALL_FEE_TIERS_DATA[autoSwapPool.swapPool.feeIndex].tier.fee,
+            tickSpacing:
+              ALL_FEE_TIERS_DATA[autoSwapPool.swapPool.feeIndex].tier.tickSpacing ??
+              feeToTickSpacing(ALL_FEE_TIERS_DATA[autoSwapPool.swapPool.feeIndex].tier.fee)
+          })
+        )
+      }
+    }
+  }
+
+  useEffect(() => {
+    if (isTimeoutError) {
+      void onRefresh()
+      dispatch(connectionActions.setTimeoutError(false))
+    }
+  }, [isTimeoutError])
+
+  const poolsList = useSelector(poolsStatsWithTokensDetails)
+
+  useEffect(() => {
+    dispatch(statsActions.getCurrentIntervalStats({ interval: Intervals.Daily }))
+  }, [])
+
+  const { feeTiersWithTvl } = useMemo(() => {
+    if (tokenAIndex === null || tokenBIndex === null) {
+      return { feeTiersWithTvl: {}, totalTvl: 0 }
+    }
+    const feeTiersWithTvl: Record<number, number> = {}
+    let totalTvl = 0
+
+    poolsList.forEach(pool => {
+      const xMatch =
+        pool.tokenX.equals(tokens[tokenAIndex ?? 0].assetAddress) &&
+        pool.tokenY.equals(tokens[tokenBIndex ?? 0].assetAddress)
+      const yMatch =
+        pool.tokenX.equals(tokens[tokenBIndex ?? 0].assetAddress) &&
+        pool.tokenY.equals(tokens[tokenAIndex ?? 0].assetAddress)
+
+      if (xMatch || yMatch) {
+        feeTiersWithTvl[pool.fee] = pool.tvl
+        totalTvl += pool.tvl
+      }
+    })
+
+    return { feeTiersWithTvl, totalTvl }
+  }, [poolsList, tokenAIndex, tokenBIndex])
+
+  const autoSwapPool = useMemo(
+    () =>
+      tokenAIndex !== null && tokenBIndex !== null
+        ? autoSwapPools.find(
+            item =>
+              (item.pair.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
+                item.pair.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
+              (item.pair.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
+                item.pair.tokenY.equals(tokens[tokenAIndex].assetAddress))
+          )
+        : undefined,
+    [tokenAIndex, tokenBIndex]
+  )
+
+  useEffect(() => {
+    if (tokenAIndex === null || tokenBIndex === null || !autoSwapPool) return
+    dispatch(
+      poolsActions.getAutoSwapPoolData(
+        new Pair(tokens[tokenAIndex].assetAddress, tokens[tokenBIndex].assetAddress, {
+          fee: ALL_FEE_TIERS_DATA[autoSwapPool.swapPool.feeIndex].tier.fee,
+          tickSpacing:
+            ALL_FEE_TIERS_DATA[autoSwapPool.swapPool.feeIndex].tier.tickSpacing ??
+            feeToTickSpacing(ALL_FEE_TIERS_DATA[autoSwapPool.swapPool.feeIndex].tier.fee)
+        })
+      )
+    )
+  }, [autoSwapPool])
+
+  useEffect(() => {
+    if (autoSwapPoolData && tokenAIndex !== null && tokenBIndex !== null) {
+      dispatch(
+        poolsActions.getTicksAndTickMapForAutoSwap({
+          tokenFrom: tokens[tokenAIndex].assetAddress,
+          tokenTo: tokens[tokenBIndex].assetAddress,
+          autoSwapPool: autoSwapPoolData
+        })
+      )
+    }
+  }, [autoSwapPoolData])
+
+  const suggestedPrice = useMemo(() => {
+    if (tokenAIndex === null || tokenBIndex === null) {
+      return 0
+    }
+
+    const feeTiersTVLValues = Object.values(feeTiersWithTvl)
+    const bestFee = feeTiersTVLValues.length > 0 ? Math.max(...feeTiersTVLValues) : 0
+    const bestTierIndex = ALL_FEE_TIERS_DATA.findIndex(tier => {
+      return feeTiersWithTvl[+printBN(tier.tier.fee, DECIMAL - 2)] === bestFee && bestFee > 0
+    })
+
+    if (bestTierIndex === -1) {
+      return 0
+    }
+
+    const poolIndex = allPools.findIndex(
+      pool =>
+        pool.fee.eq(ALL_FEE_TIERS_DATA[bestTierIndex].tier.fee) &&
+        ((pool.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
+          pool.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
+          (pool.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
+            pool.tokenY.equals(tokens[tokenAIndex].assetAddress)))
+    )
+
+    if (poolIndex === -1) {
+      dispatch(
+        poolsActions.getPoolData(
+          new Pair(tokens[tokenAIndex].assetAddress, tokens[tokenBIndex].assetAddress, {
+            fee: ALL_FEE_TIERS_DATA[bestTierIndex].tier.fee,
+            tickSpacing: ALL_FEE_TIERS_DATA[bestTierIndex].tier.tickSpacing
+          })
+        )
+      )
+      return 0
+    }
+
+    return poolIndex !== -1
+      ? calcPriceBySqrtPrice(allPools[poolIndex].sqrtPrice, isXtoY, xDecimal, yDecimal)
+      : 0
+  }, [tokenAIndex, tokenBIndex, allPools.length, currentPairReversed])
+
+  const oraclePrice = useMemo(() => {
+    if (!tokenAPriceData || !tokenBPriceData) {
+      return null
+    }
+    return tokenAPriceData.price / tokenBPriceData.price
+  }, [tokenAPriceData, tokenBPriceData, isXtoY])
+
+  const [isAutoSwapAvailable, setIsAutoSwapAvailable] = useState(false)
+
+  const [positionOpeningMethod] = useState<PositionOpeningMethod>(initialOpeningPositionMethod)
+
+  const [tokenADeposit, setTokenADeposit] = useState<string>('')
+  const [tokenBDeposit, setTokenBDeposit] = useState<string>('')
+
+  const [tokenACheckbox, setTokenACheckbox] = useState<boolean>(true)
+  const [tokenBCheckbox, setTokenBCheckbox] = useState<boolean>(true)
+
+  const [alignment, setAlignment] = useState<DepositOptions>(DepositOptions.Basic)
+
+  const [slippTolerance] = React.useState<string>(initialSlippage)
+
+  const [minimumSliderIndex, setMinimumSliderIndex] = useState<number>(0)
+  const [refresherTime, setRefresherTime] = React.useState<number>(REFRESHER_INTERVAL)
+
+  const concentrationArray: number[] = useMemo(() => {
+    const validatedMidPrice = validConcentrationMidPriceTick(midPrice.index, isXtoY, tickSpacing)
+
+    const array = getConcentrationArray(tickSpacing, 2, validatedMidPrice).sort((a, b) => a - b)
+    const maxConcentrationArray = [...array, calculateConcentration(0, tickSpacing)]
+
+    return maxConcentrationArray
+  }, [tickSpacing, midPrice.index])
+
+  const [concentrationIndex] = useState(
+    getConcentrationIndex(
+      concentrationArray,
+      +initialConcentration < 2 ? 2 : initialConcentration ? +initialConcentration : 34
+    )
+  )
+
+  const isCurrentPoolExisting = currentPoolAddress
+    ? allPools.some(pool => pool.address.equals(currentPoolAddress))
+    : false
+
+  useEffect(() => {
+    if (isLoadingTicksOrTickmap || isWaitingForNewPool) return
+    setIsAutoSwapAvailable(
+      tokenAIndex !== null &&
+        tokenBIndex !== null &&
+        autoSwapPools.some(
+          item =>
+            (item.pair.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
+              item.pair.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
+            (item.pair.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
+              item.pair.tokenY.equals(tokens[tokenAIndex].assetAddress))
+        ) &&
+        isCurrentPoolExisting
+    )
+  }, [
+    tokenAIndex,
+    tokenBIndex,
+    isCurrentPoolExisting,
+    isWaitingForNewPool,
+    isLoadingTicksOrTickmap
+  ])
+
+  const isAutoswapOn = useMemo(
+    () =>
+      isAutoSwapAvailable && (tokenACheckbox || tokenBCheckbox) && alignment == DepositOptions.Auto,
+    [isAutoSwapAvailable, tokenACheckbox, tokenBCheckbox, alignment]
+  )
+
+  useEffect(() => {
+    if (isAutoSwapAvailable) {
+      setAlignment(DepositOptions.Auto)
+    } else if (!isAutoSwapAvailable && alignment === DepositOptions.Auto) {
+      setAlignment(DepositOptions.Basic)
+    }
+  }, [isAutoSwapAvailable])
+
+  const poolAddress = poolIndex !== null ? allPools[poolIndex].address.toString() : ''
+
+  const isAutoSwapOnTheSamePool = useMemo(
+    () =>
+      poolAddress.length > 0 &&
+      autoSwapPools.some(item => item.swapPool.address.toString() === poolAddress),
+    [poolAddress]
+  )
+
+  const updateLiquidity = (lq: BN) => setLiquidity(lq)
+
+  const getOtherTokenAmount = (amount: BN, left: number, right: number, byFirst: boolean) => {
+    const printIndex = byFirst ? tokenBIndex : tokenAIndex
+    const calcIndex = byFirst ? tokenAIndex : tokenBIndex
+    if (printIndex === null || calcIndex === null) {
+      return '0.0'
+    }
+    const result = calcAmount(amount, left, right, tokens[calcIndex].assetAddress)
+    updateLiquidity(result.liquidity)
+    return trimLeadingZeros(printBN(result.amount, tokens[printIndex].decimals))
+  }
+
+  const getTicksInsideRange = (left: number, right: number, isXtoY: boolean) => {
+    const leftMax = isXtoY ? getMinTick(tickSpacing) : getMaxTick(tickSpacing)
+    const rightMax = isXtoY ? getMaxTick(tickSpacing) : getMinTick(tickSpacing)
+
+    let leftInRange: number
+    let rightInRange: number
+
+    if (isXtoY) {
+      leftInRange = left < leftMax ? leftMax : left
+      rightInRange = right > rightMax ? rightMax : right
+    } else {
+      leftInRange = left > leftMax ? leftMax : left
+      rightInRange = right < rightMax ? rightMax : right
+    }
+
+    return { leftInRange, rightInRange }
+  }
+
+  const onChangeRange = (left: number, right: number) => {
+    let leftRange: number
+    let rightRange: number
+
+    if (positionOpeningMethod === 'range') {
+      const { leftInRange, rightInRange } = getTicksInsideRange(left, right, isXtoY)
+      leftRange = leftInRange
+      rightRange = rightInRange
+    } else {
+      leftRange = left
+      rightRange = right
+    }
+
+    if (
+      tokenAIndex !== null &&
+      tokenADeposit !== '0' &&
+      (isXtoY ? rightRange > midPrice.index : rightRange < midPrice.index)
+    ) {
+      const deposit = tokenADeposit
+      const amount = isAutoswapOn
+        ? tokenBDeposit
+        : getOtherTokenAmount(
+            convertBalanceToBN(deposit, tokens[tokenAIndex].decimals),
+            leftRange,
+            rightRange,
+            true
+          )
+
+      if (tokenBIndex !== null && +deposit !== 0) {
+        setTokenADeposit(deposit)
+        setTokenBDeposit(amount)
+        return
+      }
+    } else if (tokenBIndex !== null) {
+      const deposit = tokenBDeposit
+      const amount = isAutoswapOn
+        ? tokenADeposit
+        : getOtherTokenAmount(
+            convertBalanceToBN(deposit, tokens[tokenBIndex].decimals),
+            leftRange,
+            rightRange,
+            false
+          )
+
+      if (tokenAIndex !== null && +deposit !== 0) {
+        setTokenBDeposit(deposit)
+        setTokenADeposit(amount)
+      }
+    }
+  }
+
+  const getMinSliderIndex = () => {
+    let minimumSliderIndex = 0
+
+    for (let index = 0; index < concentrationArray.length; index++) {
+      const value = concentrationArray[index]
+
+      const { leftRange, rightRange } = calculateConcentrationRange(
+        tickSpacing,
+        value,
+        2,
+        midPrice.index,
+        isXtoY
+      )
+
+      const { leftInRange, rightInRange } = getTicksInsideRange(leftRange, rightRange, isXtoY)
+
+      if (leftInRange !== leftRange || rightInRange !== rightRange) {
+        minimumSliderIndex = index + 1
+      } else {
+        break
+      }
+    }
+
+    return minimumSliderIndex
+  }
+
+  useEffect(() => {
+    if (positionOpeningMethod === 'concentration') {
+      const minimumSliderIndex = getMinSliderIndex()
+
+      setMinimumSliderIndex(minimumSliderIndex)
+    }
+  }, [poolIndex, positionOpeningMethod, midPrice.index])
+
+  const currentPriceSqrt =
+    poolIndex !== null && !!allPools[poolIndex]
+      ? allPools[poolIndex].sqrtPrice
+      : calculatePriceSqrt(midPrice.index)
+
+  useEffect(() => {
+    if (positionOpeningMethod === 'range') {
+      onChangeRange(leftRange, rightRange)
+    }
+  }, [midPrice.index, leftRange, rightRange, currentPriceSqrt.toString()])
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (refresherTime > 0 && isCurrentPoolExisting) {
+        setRefresherTime(refresherTime - 1)
+      } else if (isCurrentPoolExisting) {
+        onRefresh()
+        setRefresherTime(REFRESHER_INTERVAL)
+      }
+    }, 1000)
+
+    return () => clearTimeout(timeout)
+  }, [refresherTime, poolIndex])
+
+  const [lastPoolIndex, setLastPoolIndex] = useState<number | null>(poolIndex)
+
+  useEffect(() => {
+    if (poolIndex != lastPoolIndex) {
+      setLastPoolIndex(lastPoolIndex)
+      setRefresherTime(REFRESHER_INTERVAL)
+    }
+  }, [poolIndex])
+
+  const blockedToken = useMemo(
+    () =>
+      positionOpeningMethod === 'range'
+        ? determinePositionTokenBlock(
+            currentPriceSqrt,
+            Math.min(leftRange, rightRange),
+            Math.max(leftRange, rightRange),
+            isXtoY
+          )
+        : false,
+    [leftRange, rightRange, currentPriceSqrt]
+  )
+
+  const simulationParams = useMemo(() => {
+    return {
+      price: midPrice.sqrtPrice,
+      lowerTickIndex: Math.min(leftRange, rightRange),
+      upperTickIndex: Math.max(leftRange, rightRange)
+    }
+  }, [leftRange, rightRange, midPrice])
+
+  useEffect(() => {
+    if (tokenAIndex === null || tokenBIndex === null) return
+    if (alignment === DepositOptions.Auto) {
+      setTokenACheckbox(true)
+      setTokenBCheckbox(true)
+      return
+    }
+    if (
+      (!tokenACheckbox || Number(tokenADeposit) === 0) &&
+      (!tokenBCheckbox || Number(tokenBDeposit) === 0)
+    ) {
+      setTokenADeposit('0')
+      setTokenBDeposit('0')
+      setTokenACheckbox(true)
+      setTokenBCheckbox(true)
+      return
+    }
+    if (
+      (!tokenACheckbox || Number(tokenADeposit) === 0) &&
+      tokenBCheckbox &&
+      Number(tokenBDeposit) > 0
+    ) {
+      setTokenADeposit(
+        getOtherTokenAmount(
+          convertBalanceToBN(tokenBDeposit, tokens[tokenBIndex].decimals),
+          leftRange,
+          rightRange,
+          false
+        )
+      )
+      setTokenACheckbox(true)
+      setTokenBCheckbox(true)
+      return
+    }
+    if (
+      (!tokenBCheckbox || Number(tokenBDeposit) === 0) &&
+      tokenACheckbox &&
+      Number(tokenADeposit) > 0
+    ) {
+      setTokenBDeposit(
+        getOtherTokenAmount(
+          convertBalanceToBN(tokenADeposit, tokens[tokenAIndex].decimals),
+          leftRange,
+          rightRange,
+          true
+        )
+      )
+      setTokenACheckbox(true)
+      setTokenBCheckbox(true)
+      return
+    }
+    setTokenACheckbox(true)
+    setTokenBCheckbox(true)
+
+    const { amount: secondValueBasedOnTokenA, liquidity: liquidityBasedOnTokenA } = calcAmount(
+      convertBalanceToBN(tokenADeposit, tokens[tokenAIndex].decimals),
+      leftRange,
+      rightRange,
+      tokens[tokenAIndex].assetAddress
+    )
+    const isBalanceEnoughForFirstCase =
+      secondValueBasedOnTokenA.lt(tokens[tokenBIndex].balance) &&
+      convertBalanceToBN(tokenADeposit, tokens[tokenAIndex].decimals).lt(
+        tokens[tokenAIndex].balance
+      )
+
+    const { amount: secondValueBasedOnTokenB, liquidity: liquidityBasedOnTokenB } = calcAmount(
+      convertBalanceToBN(tokenBDeposit, tokens[tokenBIndex].decimals),
+      leftRange,
+      rightRange,
+      tokens[tokenBIndex].assetAddress
+    )
+    const isBalanceEnoughForSecondCase =
+      secondValueBasedOnTokenB.lt(tokens[tokenAIndex].balance) &&
+      convertBalanceToBN(tokenBDeposit, tokens[tokenBIndex].decimals).lt(
+        tokens[tokenBIndex].balance
+      )
+
+    if (isBalanceEnoughForFirstCase && isBalanceEnoughForSecondCase) {
+      if (liquidityBasedOnTokenA.gt(liquidityBasedOnTokenB)) {
+        setTokenBDeposit(
+          trimLeadingZeros(printBN(secondValueBasedOnTokenA, tokens[tokenBIndex].decimals))
+        )
+        updateLiquidity(liquidityBasedOnTokenA)
+        return
+      }
+      setTokenADeposit(
+        trimLeadingZeros(printBN(secondValueBasedOnTokenB, tokens[tokenAIndex].decimals))
+      )
+      updateLiquidity(liquidityBasedOnTokenB)
+      return
+    }
+    if (!isBalanceEnoughForFirstCase && !isBalanceEnoughForSecondCase) {
+      if (liquidityBasedOnTokenA.gt(liquidityBasedOnTokenB)) {
+        setTokenADeposit(
+          trimLeadingZeros(printBN(secondValueBasedOnTokenB, tokens[tokenAIndex].decimals))
+        )
+        updateLiquidity(liquidityBasedOnTokenB)
+        return
+      }
+      setTokenBDeposit(
+        trimLeadingZeros(printBN(secondValueBasedOnTokenA, tokens[tokenBIndex].decimals))
+      )
+      updateLiquidity(liquidityBasedOnTokenA)
+      return
+    }
+    if (isBalanceEnoughForFirstCase) {
+      setTokenBDeposit(
+        trimLeadingZeros(printBN(secondValueBasedOnTokenA, tokens[tokenBIndex].decimals))
+      )
+      updateLiquidity(liquidityBasedOnTokenA)
+      return
+    }
+    setTokenADeposit(
+      trimLeadingZeros(printBN(secondValueBasedOnTokenB, tokens[tokenAIndex].decimals))
+    )
+    updateLiquidity(liquidityBasedOnTokenB)
+  }, [alignment])
+
+  const oracleDiffPercentage = useMemo(() => {
+    if (oraclePrice === null || midPrice.x === 0) {
+      return 0
+    }
+    return Math.abs((oraclePrice - midPrice.x) / midPrice.x) * 100
+  }, [oraclePrice, midPrice.x])
+
+  const oraclePriceWarning = useMemo(
+    () => oraclePrice !== 0 && oracleDiffPercentage > 10,
+    [oracleDiffPercentage]
+  )
+
+  const diffPercentage = useMemo(() => {
+    return Math.abs((suggestedPrice - midPrice.x) / midPrice.x) * 100
+  }, [suggestedPrice, midPrice.x])
+
+  const showPriceWarning = useMemo(
+    () => (diffPercentage > 10 && !oraclePrice) || (diffPercentage > 10 && oraclePriceWarning),
+    [diffPercentage, oraclePriceWarning, oraclePrice]
+  )
+  const blocked =
+    tokenAIndex === null ||
+    tokenBIndex === null ||
+    tokenAIndex === tokenBIndex ||
+    data.length === 0 ||
+    isWaitingForNewPool
+
+  const isPriceWarningVisible =
+    (showPriceWarning || oraclePriceWarning) && !blocked && !isLoadingTicksOrTickmap
+
+  const addLiquidityHandler = (leftTickIndex, rightTickIndex, xAmount, yAmount, slippage) => {
+    if (tokenAIndex === null || tokenBIndex === null) {
+      return
+    }
+    if (poolIndex !== null) {
+      dispatch(positionsActions.setShouldNotUpdateRange(true))
+    }
+    if (progress === 'none') {
+      setProgress('progress')
+    }
+
+    const lowerTickIndex = Math.min(leftTickIndex, rightTickIndex)
+    const upperTickIndex = Math.max(leftTickIndex, rightTickIndex)
+
+    dispatch(
+      positionsActions.initPosition({
+        tokenX: tokens[isXtoY ? tokenAIndex : tokenBIndex].assetAddress,
+        tokenY: tokens[isXtoY ? tokenBIndex : tokenAIndex].assetAddress,
+        fee,
+        lowerTick: lowerTickIndex,
+        upperTick: upperTickIndex,
+        liquidityDelta: liquidity,
+        initPool: poolIndex === null,
+        initTick: poolIndex === null ? midPrice.index : undefined,
+        xAmount: Math.floor(xAmount),
+        yAmount: Math.floor(yAmount),
+        slippage,
+        tickSpacing,
+        knownPrice: poolIndex === null ? midPrice.sqrtPrice : allPools[poolIndex].sqrtPrice,
+        poolIndex
+      })
+    )
+  }
+
+  const onAddLiquidity = async () => {
+    if (isPriceWarningVisible) {
+      blurContent()
+      const ok = await confirm()
+      if (!ok) return
+    }
+    if (tokenAIndex !== null && tokenBIndex !== null) {
+      const tokenADecimals = tokens[tokenAIndex].decimals
+      const tokenBDecimals = tokens[tokenBIndex].decimals
+      addLiquidityHandler(
+        leftRange,
+        rightRange,
+        isXtoY
+          ? convertBalanceToBN(tokenADeposit, tokenADecimals)
+          : convertBalanceToBN(tokenBDeposit, tokenBDecimals),
+        isXtoY
+          ? convertBalanceToBN(tokenBDeposit, tokenBDecimals)
+          : convertBalanceToBN(tokenADeposit, tokenADecimals),
+        fromFee(new BN(Number(+slippTolerance * 1000)))
+      )
+    }
+  }
+
+  const swapAndAddLiquidityHandler = (
+    xAmount,
+    yAmount,
+    swapAmount,
+    xToY,
+    byAmountIn,
+    estimatedPriceAfterSwap,
+    crossedTicks,
+    swapSlippage,
+    positionSlippage,
+    minUtilizationPercentage,
+    leftTickIndex,
+    rightTickIndex
+  ) => {
+    if (
+      tokenAIndex === null ||
+      tokenBIndex === null ||
+      !autoSwapPoolData ||
+      poolIndex === null ||
+      !allPools[poolIndex] ||
+      !autoSwapTickMap ||
+      !autoSwapPool
+    ) {
+      return
+    }
+    if (poolIndex !== null) {
+      dispatch(positionsActions.setShouldNotUpdateRange(true))
+    }
+    if (progress === 'none') {
+      setProgress('progress')
+    }
+
+    const lowerTickIndex = Math.min(leftTickIndex, rightTickIndex)
+    const upperTickIndex = Math.max(leftTickIndex, rightTickIndex)
+
+    dispatch(
+      positionsActions.swapAndInitPosition({
+        xAmount,
+        yAmount,
+        tokenX: tokens[isXtoY ? tokenAIndex : tokenBIndex].assetAddress,
+        tokenY: tokens[isXtoY ? tokenBIndex : tokenAIndex].assetAddress,
+        swapAmount,
+        byAmountIn,
+        xToY,
+        swapPool: autoSwapPoolData,
+        swapPoolTickmap: autoSwapTickMap,
+        swapSlippage,
+        estimatedPriceAfterSwap,
+        crossedTicks,
+        positionPair: {
+          fee: allPools[poolIndex].fee,
+          tickSpacing: allPools[poolIndex].tickSpacing
+        },
+        positionPoolIndex: poolIndex,
+        positionPoolPrice: allPools[poolIndex].sqrtPrice,
+        positionSlippage,
+        lowerTick: lowerTickIndex,
+        upperTick: upperTickIndex,
+        liquidityDelta: liquidity,
+        minUtilizationPercentage,
+        isSamePool: allPools[poolIndex].address.equals(autoSwapPool.swapPool.address)
+      })
+    )
+  }
+
+  const onSwapAndAddLiquidity = async (
+    xAmount,
+    yAmount,
+    swapAmount,
+    xToY,
+    byAmountIn,
+    estimatedPriceAfterSwap,
+    crossedTicks,
+    swapSlippage,
+    positionSlippage,
+    minUtilizationPercentage
+  ) => {
+    if (isPriceWarningVisible) {
+      blurContent()
+      const ok = await confirm()
+      if (!ok) return
+    }
+    swapAndAddLiquidityHandler(
+      xAmount,
+      yAmount,
+      swapAmount,
+      xToY,
+      byAmountIn,
+      estimatedPriceAfterSwap,
+      crossedTicks,
+      swapSlippage,
+      positionSlippage,
+      minUtilizationPercentage,
+      leftRange,
+      rightRange
+    )
+  }
+
+  const onChangePositionTokens = (tokenA, tokenB, feeTierIndex) => {
+    if (
+      tokenA !== null &&
+      tokenB !== null &&
+      tokenA !== tokenB &&
+      !(
+        tokenAIndex === tokenA &&
+        tokenBIndex === tokenB &&
+        fee.eq(ALL_FEE_TIERS_DATA[feeTierIndex].tier.fee)
+      )
+    ) {
+      const index = allPools.findIndex(
+        pool =>
+          pool.fee.eq(ALL_FEE_TIERS_DATA[feeTierIndex].tier.fee) &&
+          ((pool.tokenX.equals(tokens[tokenA].assetAddress) &&
+            pool.tokenY.equals(tokens[tokenB].assetAddress)) ||
+            (pool.tokenX.equals(tokens[tokenB].assetAddress) &&
+              pool.tokenY.equals(tokens[tokenA].assetAddress)))
+      )
+
+      if (
+        index !== poolIndex &&
+        !(
+          tokenAIndex === tokenB &&
+          tokenBIndex === tokenA &&
+          fee.eq(ALL_FEE_TIERS_DATA[feeTierIndex].tier.fee)
+        )
+      ) {
+        if (isMountedRef.current) {
+          setPoolIndex(index !== -1 ? index : null)
+          setCurrentPairReversed(null)
+        }
+      } else if (
+        tokenAIndex === tokenB &&
+        tokenBIndex === tokenA &&
+        fee.eq(ALL_FEE_TIERS_DATA[feeTierIndex].tier.fee)
+      ) {
+        if (isMountedRef.current) {
+          setCurrentPairReversed(currentPairReversed === null ? true : !currentPairReversed)
+        }
+      }
+
+      let poolExists = false
+      if (currentPoolAddress) {
+        poolExists = allPools.some(pool => pool.address.equals(currentPoolAddress))
+      }
+
+      if (index !== -1 && index !== poolIndex) {
+        dispatch(
+          actions.getCurrentPlotTicks({
+            poolIndex: index,
+            isXtoY: allPools[index].tokenX.equals(tokens[tokenA].assetAddress)
+          })
+        )
+        setPoolIndex(index)
+      }
+
+      if (
+        ((tokenAIndex !== tokenB && tokenBIndex !== tokenA) ||
+          !fee.eq(ALL_FEE_TIERS_DATA[feeTierIndex].tier.fee)) &&
+        (!poolExists || index === -1)
+      ) {
+        dispatch(
+          poolsActions.getPoolData(
+            new Pair(tokens[tokenA].assetAddress, tokens[tokenB].assetAddress, {
+              fee: ALL_FEE_TIERS_DATA[feeTierIndex].tier.fee,
+              tickSpacing: ALL_FEE_TIERS_DATA[feeTierIndex].tier.tickSpacing
+            })
+          )
+        )
+      }
+    }
+
+    setTokenAIndex(tokenA)
+    setTokenBIndex(tokenB)
+    setFeeIndex(feeTierIndex)
+  }
+
+  const currentFeeIndex = feeIndex
+
+  const isGetLiquidityError = false
+
+  const onConnectWallet = () => {
+    dispatch(walletActions.connect(false))
+  }
+
+  const onDisconnectWallet = () => {
+    dispatch(walletActions.disconnect())
+  }
+
+  const autoSwapTickmap = autoSwapTickMap
+
+  const { classes, cx } = useStyles()
+
+  const isSm = useMediaQuery(theme.breakpoints.down(370))
+
+  const tokenAInputState = {
+    value:
+      tokenAIndex !== null &&
+      tokenBIndex !== null &&
+      !isWaitingForNewPool &&
+      blockedToken === PositionTokenBlock.A &&
+      alignment === DepositOptions.Basic
+        ? '0'
+        : tokenADeposit,
+    setValue: value => {
+      if (tokenAIndex === null) {
+        return
+      }
+
+      setTokenADeposit(value)
+      !isAutoswapOn &&
+        setTokenBDeposit(
+          getOtherTokenAmount(
+            convertBalanceToBN(value, tokens[tokenAIndex].decimals),
+            leftRange,
+            rightRange,
+            true
+          )
+        )
+    },
+    blocked:
+      (tokenAIndex !== null &&
+        tokenBIndex !== null &&
+        !isWaitingForNewPool &&
+        blockedToken === PositionTokenBlock.A &&
+        alignment === DepositOptions.Basic) ||
+      !tokenACheckbox,
+
+    blockerInfo:
+      alignment === DepositOptions.Basic
+        ? 'Range only for single-asset deposit'
+        : 'You chose not to spend this token',
+    decimalsLimit: tokenAIndex !== null ? tokens[tokenAIndex].decimals : 0
+  } as InputState
+  const { value: valueA } = tokenAInputState
+  const tokenBInputState = {
+    value:
+      tokenAIndex !== null &&
+      tokenBIndex !== null &&
+      !isWaitingForNewPool &&
+      blockedToken === PositionTokenBlock.B &&
+      alignment === DepositOptions.Basic
+        ? '0'
+        : tokenBDeposit,
+    setValue: value => {
+      if (tokenBIndex === null) {
+        return
+      }
+
+      setTokenBDeposit(value)
+      !isAutoswapOn &&
+        setTokenADeposit(
+          getOtherTokenAmount(
+            convertBalanceToBN(value, tokens[tokenBIndex].decimals),
+            leftRange,
+            rightRange,
+            false
+          )
+        )
+    },
+    blocked:
+      (tokenAIndex !== null &&
+        tokenBIndex !== null &&
+        !isWaitingForNewPool &&
+        blockedToken === PositionTokenBlock.B &&
+        alignment === DepositOptions.Basic) ||
+      !tokenBCheckbox,
+    blockerInfo:
+      alignment === DepositOptions.Basic
+        ? 'Range only for single-asset deposit'
+        : 'You chose not to spend this token',
+    decimalsLimit: tokenBIndex !== null ? tokens[tokenBIndex].decimals : 0
+  } as InputState
+  const { value: valueB } = tokenBInputState
+  const [priceImpact, setPriceImpact] = useState<string>(initialMaxPriceImpact)
+  const [isSimulating, setIsSimulating] = useState<boolean>(false)
+  const [autoswapCustomError, setAutoswapCustomError] = useState<AutoswapCustomError | null>(null)
+  const [utilization, setUtilization] = useState<string>(initialMinUtilization)
+  const [slippageToleranceSwap, setSlippageToleranceSwap] = useState<string>(
+    initialMaxSlippageToleranceSwap
+  )
+  const [slippageToleranceCreatePosition, setSlippageToleranceCreatePosition] = useState<string>(
+    initialMaxSlippageToleranceCreatePosition
+  )
+
+  const [throttle, setThrottle] = useState<boolean>(false)
+
+  const [simulation, setSimulation] = useState<SimulateSwapAndCreatePositionSimulation | null>(null)
+
+  const [settings, setSettings] = useState<boolean>(false)
+
+  const WETH_MIN_FEE_LAMPORTS = useMemo(() => {
+    if (currentNetwork === NetworkType.Testnet) {
+      if (isAutoswapOn) {
+        return WETH_SWAP_AND_POSITION_INIT_LAMPORTS_TEST
+      }
+      return isCurrentPoolExisting ? WETH_POSITION_INIT_LAMPORTS_TEST : WETH_POOL_INIT_LAMPORTS_TEST
+    } else {
+      if (isAutoswapOn) {
+        return WETH_SWAP_AND_POSITION_INIT_LAMPORTS_MAIN
+      }
+      return isCurrentPoolExisting ? WETH_POSITION_INIT_LAMPORTS_MAIN : WETH_POOL_INIT_LAMPORTS_MAIN
+    }
+  }, [currentNetwork, isCurrentPoolExisting, alignment])
+
+  const [isLoaded, setIsLoaded] = useState<boolean>(false)
+
+  const setPositionTokens = (index1, index2, fee) => {
+    setTokenAIndex(index1)
+    setTokenBIndex(index2)
+    onChangePositionTokens(index1, index2, fee)
+  }
+
+  useEffect(() => {
+    if (isLoaded || tokens.length === 0 || ALL_FEE_TIERS_DATA.length === 0) {
+      return
+    }
+    let feeTierIndexFromPath = 0
+    let tokenAIndexFromPath: null | number = null
+    let tokenBIndexFromPath: null | number = null
+    const tokenFromAddress = tickerToAddress(currentNetwork, initialTokenFrom)
+    const tokenToAddress = tickerToAddress(currentNetwork, initialTokenTo)
+
+    const tokenFromIndex = tokens.findIndex(
+      token => token.assetAddress.toString() === tokenFromAddress
+    )
+
+    const tokenToIndex = tokens.findIndex(token => token.assetAddress.toString() === tokenToAddress)
+
+    if (
+      tokenFromAddress !== null &&
+      tokenFromIndex !== -1 &&
+      (tokenToAddress === null || tokenToIndex === -1)
+    ) {
+      tokenAIndexFromPath = tokenFromIndex
+    } else if (
+      tokenFromAddress !== null &&
+      tokenToIndex !== -1 &&
+      tokenToAddress !== null &&
+      tokenFromIndex !== -1
+    ) {
+      tokenAIndexFromPath = tokenFromIndex
+      tokenBIndexFromPath = tokenToIndex
+    }
+    const parsedFee = parsePathFeeToFeeString(initialFee)
+
+    ALL_FEE_TIERS_DATA.forEach((feeTierData, index) => {
+      if (feeTierData.tier.fee.toString() === parsedFee) {
+        feeTierIndexFromPath = index
+      }
+    })
+    setTokenAIndex(tokenAIndexFromPath)
+    setTokenBIndex(tokenBIndexFromPath)
+    setPositionTokens(tokenAIndexFromPath, tokenBIndexFromPath, feeTierIndexFromPath)
+
+    if (tokenAIndexFromPath !== null && tokenBIndexFromPath !== null) {
+      setIsLoaded(true)
+    }
+  }, [tokens.length, initialTokenFrom, initialTokenTo])
+
+  const [wasRunTokenA, setWasRunTokenA] = useState(false)
+  const [wasRunTokenB, setWasRunTokenB] = useState(false)
+
+  const isPriceImpact = useMemo(
+    () =>
+      simulation &&
+      simulation.swapSimulation &&
+      simulation.swapSimulation.priceImpact.gt(toDecimal(+Number(priceImpact).toFixed(4), 2)),
+    [simulation, priceImpact]
+  )
+
+  useEffect(() => {
+    if (canNavigate) {
+      const tokenAIndex = tokens.findIndex(
+        token => token.assetAddress.toString() === tickerToAddress(currentNetwork, initialTokenFrom)
+      )
+      if (!wasRunTokenA && tokenAIndex !== -1) {
+        setTokenAIndex(tokenAIndex)
+        setWasRunTokenA(true)
+      }
+
+      const tokenBIndex = tokens.findIndex(
+        token => token.assetAddress.toString() === tickerToAddress(currentNetwork, initialTokenTo)
+      )
+      if (!wasRunTokenB && tokenBIndex !== -1) {
+        setTokenBIndex(tokenBIndex)
+        setWasRunTokenB(true)
+      }
+    }
+  }, [wasRunTokenA, wasRunTokenB, canNavigate, tokens.length])
+
+  const feeTierIndex = currentFeeIndex
+
+  const getButtonMessage = useCallback(() => {
+    if (isLoadingTicksOrTickmap || throttle || isSimulating) {
+      return 'Loading'
+    }
+
+    if (tokenAIndex === null || tokenBIndex === null) {
+      return 'Select tokens'
+    }
+
+    if (tokenAIndex === tokenBIndex) {
+      return 'Select different tokens'
+    }
+
+    if (isAutoswapOn && autoswapCustomError === AutoswapCustomError.FetchError) {
+      return 'Fetch error'
+    }
+
+    if (
+      isAutoswapOn &&
+      (isSimulationStatus(SwapAndCreateSimulationStatus.TickAccountMissing) ||
+        isSimulationStatus(SwapAndCreateSimulationStatus.InvalidSimulationParamsError))
+    ) {
+      return 'Invalid parameters'
+    }
+
+    if (
+      isAutoswapOn &&
+      (isSimulationStatus(SwapAndCreateSimulationStatus.SwapNotFound) ||
+        isSimulationStatus(SwapAndCreateSimulationStatus.InputAmountTooLow))
+    ) {
+      return 'Token amounts are too low'
+    }
+
+    if (isAutoswapOn && isSimulationStatus(SwapAndCreateSimulationStatus.LiquidityTooLow)) {
+      return 'Insufficient Liquidity'
+    }
+
+    if (isAutoswapOn && isPriceImpact) {
+      return 'Price impact reached'
+    }
+
+    if (isAutoswapOn && isSimulationStatus(SwapAndCreateSimulationStatus.PriceLimitReached)) {
+      return 'Price limit reached'
+    }
+
+    if (isAutoswapOn && isSimulationStatus(SwapAndCreateSimulationStatus.UtilizationTooLow)) {
+      return 'Minimal utilization not reached'
+    }
+
+    if (isAutoswapOn && !tokenACheckbox && !tokenBCheckbox) {
+      return 'At least one checkbox needs to be marked'
+    }
+
+    if (positionOpeningMethod === 'concentration' && concentrationIndex < minimumSliderIndex) {
+      return concentrationArray[minimumSliderIndex]
+        ? `Set concentration to at least ${concentrationArray[minimumSliderIndex].toFixed(0)}x`
+        : 'Set higher fee tier'
+    }
+
+    if (isGetLiquidityError) {
+      return 'Provide a smaller amount'
+    }
+
+    if (
+      !tokenAInputState.blocked &&
+      tokenACheckbox &&
+      convertBalanceToBN(tokenAInputState.value, tokens[tokenAIndex].decimals).gt(
+        tokens[tokenAIndex].balance
+      )
+    ) {
+      return `Not enough ${tokens[tokenAIndex].symbol}`
+    }
+
+    if (
+      !tokenBInputState.blocked &&
+      tokenBCheckbox &&
+      convertBalanceToBN(tokenBInputState.value, tokens[tokenBIndex].decimals).gt(
+        tokens[tokenBIndex].balance
+      )
+    ) {
+      return `Not enough ${tokens[tokenBIndex].symbol}`
+    }
+
+    const tokenABalance = convertBalanceToBN(tokenAInputState.value, tokens[tokenAIndex].decimals)
+    const tokenBBalance = convertBalanceToBN(tokenBInputState.value, tokens[tokenBIndex].decimals)
+
+    if (
+      (tokens[tokenAIndex].assetAddress.toString() === WRAPPED_ETH_ADDRESS &&
+        tokens[tokenAIndex].balance.lt(tokenABalance.add(WETH_MIN_FEE_LAMPORTS)) &&
+        tokenACheckbox) ||
+      (tokens[tokenBIndex].assetAddress.toString() === WRAPPED_ETH_ADDRESS &&
+        tokens[tokenBIndex].balance.lt(tokenBBalance.add(WETH_MIN_FEE_LAMPORTS)) &&
+        tokenBCheckbox) ||
+      ethBalance.lt(WETH_MIN_FEE_LAMPORTS)
+    ) {
+      return `Insufficient ETH`
+    }
+
+    if (
+      ((tokenAInputState.blocked && !tokenBInputState.blocked) ||
+        (!tokenAInputState.blocked && tokenBInputState.blocked)) &&
+      isAutoswapOn
+    ) {
+      if (
+        (tokenAInputState.blocked && +tokenBInputState.value === 0) ||
+        (tokenBInputState.blocked && +tokenAInputState.value === 0)
+      ) {
+        return 'Enter token amount'
+      }
+    }
+
+    if (
+      !tokenAInputState.blocked &&
+      +tokenAInputState.value === 0 &&
+      !tokenBInputState.blocked &&
+      +tokenBInputState.value === 0 &&
+      !isAutoswapOn
+    ) {
+      return !tokenAInputState.blocked &&
+        !tokenBInputState.blocked &&
+        +tokenAInputState.value === 0 &&
+        +tokenBInputState.value === 0
+        ? 'Enter token amounts'
+        : 'Enter token amount'
+    }
+
+    if (
+      !tokenAInputState.blocked &&
+      +tokenAInputState.value === 0 &&
+      !tokenBInputState.blocked &&
+      +tokenBInputState.value === 0 &&
+      isAutoswapOn
+    ) {
+      return 'Enter token amount'
+    }
+
+    return 'Add Liquidity'
+  }, [
+    isAutoSwapAvailable,
+    tokenACheckbox,
+    tokenBCheckbox,
+    tokenAIndex,
+    tokenBIndex,
+    tokenAInputState,
+    tokenBInputState,
+    tokens,
+    positionOpeningMethod,
+    concentrationIndex,
+    feeTierIndex,
+    minimumSliderIndex,
+    isLoadingTicksOrTickmap
+  ])
+
+  const handleClickDepositOptions = () => {
+    blurContent()
+    setSettings(true)
+  }
+
+  const handleCloseDepositOptions = () => {
+    unblurContent()
+    setSettings(false)
+  }
+
+  const setMaxPriceImpact = (priceImpact: string): void => {
+    setPriceImpact(priceImpact)
+    onMaxPriceImpactChange(priceImpact)
+  }
+
+  const setMinUtilization = (utilization: string): void => {
+    setUtilization(utilization)
+    onMinUtilizationChange(utilization)
+  }
+
+  const setMaxSlippageToleranceSwap = (slippageToleranceSwap: string): void => {
+    setSlippageToleranceSwap(slippageToleranceSwap)
+    onMaxSlippageToleranceSwapChange(slippageToleranceSwap)
+  }
+
+  const setMaxSlippageToleranceCreatePosition = (slippageToleranceCreatePosition: string): void => {
+    setSlippageToleranceCreatePosition(slippageToleranceCreatePosition)
+    onMaxSlippageToleranceCreatePositionChange(slippageToleranceCreatePosition)
+  }
+
+  useEffect(() => {
+    if (tokenAIndex !== null) {
+      if (getScaleFromString(tokenAInputState.value) > tokens[tokenAIndex].decimals) {
+        const parts = tokenAInputState.value.split('.')
+
+        tokenAInputState.setValue(parts[0] + '.' + parts[1].slice(0, tokens[tokenAIndex].decimals))
+      }
+    }
+
+    if (tokenBIndex !== null) {
+      if (getScaleFromString(tokenBInputState.value) > tokens[tokenBIndex].decimals) {
+        const parts = tokenBInputState.value.split('.')
+
+        tokenAInputState.setValue(parts[0] + '.' + parts[1].slice(0, tokens[tokenBIndex].decimals))
+      }
+    }
+  }, [poolIndex])
+
+  const handleSwitchDepositType = (
+    _: React.MouseEvent<HTMLElement>,
+    newAlignment: DepositOptions | null
+  ) => {
+    if (newAlignment !== null) {
+      if (newAlignment === DepositOptions.Basic) {
+        setSimulation(null)
+      }
+      setAlignment(newAlignment)
+    }
+  }
+
+  const actionsTokenA = createButtonActions({
+    tokens,
+    wrappedTokenAddress: WRAPPED_ETH_ADDRESS,
+    minAmount: WETH_MIN_FEE_LAMPORTS,
+    onAmountSet: tokenAInputState.setValue
+  })
+  const actionsTokenB = createButtonActions({
+    tokens,
+    wrappedTokenAddress: WRAPPED_ETH_ADDRESS,
+    minAmount: WETH_MIN_FEE_LAMPORTS,
+    onAmountSet: tokenBInputState.setValue
+  })
+
+  const isSimulationStatus = useCallback(
+    (value: SwapAndCreateSimulationStatus) => {
+      return simulation && simulation.status === value
+    },
+    [simulation]
+  )
+
+  const renderSwitcher = useCallback(
+    () => (
+      <Box className={classes.switchDepositContainer}>
+        <Box className={classes.switchDepositTypeContainer}>
+          <Box
+            className={classes.switchDepositTypeMarker}
+            sx={{
+              left: !isAutoswapOn ? 0 : '50%'
+            }}
+          />
+          <ToggleButtonGroup
+            value={alignment}
+            exclusive
+            onChange={handleSwitchDepositType}
+            className={classes.switchDepositTypeButtonsGroup}>
+            <ToggleButton
+              value={DepositOptions.Basic}
+              disableRipple
+              className={cx(
+                classes.switchDepositTypeButton,
+                !isAutoswapOn ? classes.switchSelected : classes.switchNotSelected
+              )}>
+              Basic
+            </ToggleButton>
+            <ToggleButton
+              disabled={!isAutoSwapAvailable}
+              value={DepositOptions.Auto}
+              disableRipple
+              className={cx(
+                classes.switchDepositTypeButton,
+                classes.autoButton,
+                isAutoswapOn ? classes.switchSelected : classes.switchNotSelected
+              )}>
+              <TooltipHover
+                title={
+                  'AutoSwap allows you to create a position using any token ratio. Simply choose the amount you currently hold in your wallet, and it will be automatically swapped in the most optimal way.'
+                }
+                increasePadding
+                removeOnMobile>
+                <span>Auto</span>
+              </TooltipHover>
+            </ToggleButton>
+          </ToggleButtonGroup>
+        </Box>
+        <TooltipHover
+          title={
+            !isAutoswapOn
+              ? 'Autoswap related settings, accessible only when autoswap is turned on.'
+              : ''
+          }>
+          <Box
+            display='flex'
+            alignItems='center'
+            onClick={() => {
+              if (isAutoswapOn) {
+                handleClickDepositOptions()
+              }
+            }}
+            style={{ cursor: 'pointer' }}>
+            <Button
+              className={classes.optionsIconBtn}
+              disableRipple
+              style={!isAutoswapOn ? { pointerEvents: 'none' } : {}}>
+              <img
+                src={settingIcon}
+                className={!isAutoswapOn ? classes.grayscaleIcon : classes.whiteIcon}
+                alt='options'
+              />
+            </Button>
+          </Box>
+        </TooltipHover>
+      </Box>
+    ),
+    [isAutoSwapAvailable, alignment]
+  )
+
+  const renderWarning = useCallback(() => {
+    if (isSimulating || throttle) {
+      return (
+        <Box position='relative'>
+          <Skeleton variant='rectangular' className={classes.skeleton}></Skeleton>
+          <img src={loadingAnimation} alt='Loader' className={classes.loadingAnimation} />
+        </Box>
+      )
+    }
+    if (!simulation) {
+      return <></>
+    }
+
+    if (isSimulationStatus(SwapAndCreateSimulationStatus.PerfectRatio)) {
+      return (
+        <Box className={classes.unknownWarning}>
+          <TooltipHover title={'You already have enough tokens to open position'}>
+            <img
+              src={infoIcon}
+              alt=''
+              width='12px'
+              style={{ marginRight: '4px', marginBottom: '-1.5px' }}
+              className={classes.grayscaleIcon}
+            />
+          </TooltipHover>
+          No swap required
+        </Box>
+      )
+    }
+
+    if (isSimulationStatus(SwapAndCreateSimulationStatus.LiquidityTooLow)) {
+      return (
+        <Box className={classes.errorWarning}>
+          <TooltipHover title={'There is not enough liquidity to perform the swap'}>
+            <img
+              src={infoIcon}
+              alt=''
+              width='12px'
+              style={{ marginRight: '4px', marginBottom: '-1.5px' }}
+              className={classes.errorIcon}
+            />
+          </TooltipHover>
+          Insufficient liquidity
+        </Box>
+      )
+    }
+
+    const invalidParameters =
+      isSimulationStatus(SwapAndCreateSimulationStatus.TickAccountMissing) ||
+      isSimulationStatus(SwapAndCreateSimulationStatus.InvalidSimulationParamsError) ||
+      isSimulationStatus(SwapAndCreateSimulationStatus.SwapNotFound) ||
+      isSimulationStatus(SwapAndCreateSimulationStatus.InputAmountTooLow)
+
+    if (invalidParameters) {
+      return (
+        <Box className={classes.errorWarning}>
+          <TooltipHover title={'Unable to perform autoswap and open a position'}>
+            <Box display='flex' alignItems='center'>
+              <img
+                src={infoIcon}
+                alt=''
+                width='12px'
+                style={{ marginRight: '4px', marginBottom: '-1.5px' }}
+                className={classes.errorIcon}
+              />
+              Invalid parameters
+            </Box>
+          </TooltipHover>
+        </Box>
+      )
+    }
+
+    return (
+      <Box className={isPriceImpact ? classes.errorWarning : classes.unknownWarning}>
+        <TooltipHover
+          title={
+            <>
+              The price impact resulting from a swap that rebalances the token ratio before a
+              position is opened.
+              {isPriceImpact ? (
+                <>
+                  {' '}
+                  In order to create position you have to either:
+                  <p>1. Open several smaller positions rather than a single large one.</p>
+                  <p>2. Change swap price impact tolerance in the settings.</p>
+                </>
+              ) : (
+                ''
+              )}
+            </>
+          }>
+          <Box display='flex' alignItems='center'>
+            {isSm ? 'Impact:' : 'Price impact:'}{' '}
+            {simulation.swapSimulation!.priceImpact.gt(new BN(MINIMUM_PRICE_IMPACT))
+              ? Number(
+                  printBN(new BN(simulation.swapSimulation!.priceImpact), DECIMAL - 2)
+                ).toFixed(2)
+              : `<${Number(printBN(MINIMUM_PRICE_IMPACT, DECIMAL - 2)).toFixed(2)}`}
+            %
+          </Box>
+        </TooltipHover>
+      </Box>
+    )
+  }, [
+    isSimulating,
+    simulation,
+    alignment,
+    tokenACheckbox,
+    tokenBCheckbox,
+    throttle,
+    isPriceImpact,
+    isSm
+  ])
+
+  const simulateAutoSwapResult = async () => {
+    setIsSimulating(true)
+    if (autoswapCustomError !== null) {
+      setAutoswapCustomError(null)
+    }
+    if (tokenAIndex === null || tokenBIndex === null || isLoadingTicksOrTickmap) {
+      setSimulation(null)
+      setIsSimulating(false)
+      return
+    }
+    if (!autoSwapPoolData || !autoSwapTicks || !autoSwapTickmap || !simulationParams.price) {
+      setAutoswapCustomError(AutoswapCustomError.FetchError)
+      setSimulation(null)
+      setIsSimulating(false)
+      return
+    }
+    const tokenADecimal = tokens[tokenAIndex].decimals
+    const tokenBDecimal = tokens[tokenBIndex].decimals
+    const tokenAValue = tokenACheckbox ? convertBalanceToBN(valueA, tokenADecimal) : new BN(0)
+    const tokenBValue = tokenBCheckbox ? convertBalanceToBN(valueB, tokenBDecimal) : new BN(0)
+    if (tokenAValue.eqn(0) && tokenBValue.eqn(0)) {
+      setSimulation(null)
+      setIsSimulating(false)
+      return
+    }
+    const amountX = autoSwapPoolData.tokenX.equals(tokens[tokenAIndex].assetAddress)
+      ? tokenAValue
+      : tokenBValue
+    const amountY = autoSwapPoolData.tokenY.equals(tokens[tokenBIndex].assetAddress)
+      ? tokenBValue
+      : tokenAValue
+    let result: SimulateSwapAndCreatePositionSimulation | null = null
+    if (isAutoSwapOnTheSamePool) {
+      result = await simulateAutoSwapOnTheSamePool(
+        amountX,
+        amountY,
+        autoSwapPoolData,
+        autoSwapTicks,
+        autoSwapTickmap,
+        toDecimal(+Number(slippageToleranceSwap).toFixed(4), 2),
+        simulationParams.lowerTickIndex,
+        simulationParams.upperTickIndex,
+        toDecimal(+Number(utilization).toFixed(4), 2)
+      )
+    } else {
+      result = await simulateAutoSwap(
+        amountX,
+        amountY,
+        autoSwapPoolData,
+        autoSwapTicks,
+        autoSwapTickmap,
+        toDecimal(+Number(slippageToleranceSwap).toFixed(4), 2),
+        toDecimal(+Number(slippageToleranceCreatePosition).toFixed(4), 2),
+        simulationParams.lowerTickIndex,
+        simulationParams.upperTickIndex,
+        simulationParams.price,
+        toDecimal(+Number(utilization).toFixed(4), 2)
+      )
+    }
+    if (result) {
+      updateLiquidity(result.position.liquidity)
+    }
+    setSimulation(result)
+    setIsSimulating(false)
+  }
+
+  const timeoutRef = useRef<number>(0)
+
+  const simulateWithTimeout = () => {
+    setThrottle(true)
+
+    clearTimeout(timeoutRef.current)
+    const timeout = setTimeout(() => {
+      simulateAutoSwapResult().finally(() => {
+        setThrottle(false)
+      })
+    }, 500)
+    timeoutRef.current = timeout as unknown as number
+  }
+
+  useEffect(() => {
+    if ((tokenACheckbox || tokenBCheckbox) && isAutoswapOn) {
+      simulateWithTimeout()
+    }
+  }, [
+    alignment,
+    simulationParams,
+    tokenACheckbox,
+    tokenBCheckbox,
+    autoSwapPoolData,
+    autoSwapTickmap,
+    autoSwapTicks,
+    isLoadingTicksOrTickmap,
+    priceImpact,
+    slippageToleranceCreatePosition,
+    slippageToleranceSwap,
+    utilization,
+    valueA,
+    valueB
+  ])
+
+  const priceA = tokenAPriceData?.price
+  const priceB = tokenBPriceData?.price
+
+  const className = classes.deposit
+
+  return (
+    <Grid container className={cx(classes.wrapper, className)}>
+      <DepoSitOptionsModal
+        initialMaxPriceImpact={initialMaxPriceImpact}
+        setMaxPriceImpact={setMaxPriceImpact}
+        initialMinUtilization={initialMinUtilization}
+        setMinUtilization={setMinUtilization}
+        initialMaxSlippageToleranceSwap={initialMaxSlippageToleranceSwap}
+        setMaxSlippageToleranceSwap={setMaxSlippageToleranceSwap}
+        initialMaxSlippageToleranceCreatePosition={initialMaxSlippageToleranceCreatePosition}
+        setMaxSlippageToleranceCreatePosition={setMaxSlippageToleranceCreatePosition}
+        handleClose={handleCloseDepositOptions}
+        open={settings}
+      />
+      <Grid container className={classes.depositHeader}>
+        <Box className={classes.depositHeaderContainer}>
+          <Typography className={classes.subsectionTitle}>Amount</Typography>
+
+          <Box className={classes.depositOptions}>
+            {isAutoswapOn &&
+              isAutoSwapAvailable &&
+              (tokenACheckbox || tokenBCheckbox) &&
+              renderWarning()}
+            {renderSwitcher()}
+          </Box>
+        </Box>
+      </Grid>
+      <Grid container className={classes.sectionWrapper}>
+        <Box className={classes.inputWrapper}>
+          <Box
+            className={classes.checkboxWrapper}
+            style={{
+              width: isAutoswapOn ? '31px' : '0px',
+              opacity: isAutoswapOn ? 1 : 0
+            }}>
+            <TooltipHover
+              title={
+                tokenACheckbox
+                  ? 'Unmark to exclude this token as liquidity available for use in the new position'
+                  : 'Mark to include this token as liquidity available for use in the new position'
+              }>
+              <Checkbox
+                checked={tokenACheckbox}
+                onChange={e => setTokenACheckbox(e.target.checked)}
+                className={classes.checkbox}
+                icon={<span className={classes.customIcon} />}
+              />
+            </TooltipHover>
+          </Box>
+          <DepositAmountInput
+            tokenPrice={priceA}
+            currency={tokenAIndex !== null ? tokens[tokenAIndex].symbol : null}
+            currencyIconSrc={tokenAIndex !== null ? tokens[tokenAIndex].logoURI : undefined}
+            currencyIsUnknown={
+              tokenAIndex !== null ? tokens[tokenAIndex].isUnknown ?? false : false
+            }
+            placeholder='0.0'
+            actionButtons={[
+              {
+                label: 'Max',
+                onClick: () => {
+                  actionsTokenA.max(tokenAIndex)
+                },
+                variant: 'max'
+              },
+              {
+                label: '50%',
+                variant: 'half',
+                onClick: () => {
+                  actionsTokenA.half(tokenAIndex)
+                }
+              }
+            ]}
+            balanceValue={
+              tokenAIndex !== null
+                ? printBN(tokens[tokenAIndex].balance, tokens[tokenAIndex].decimals)
+                : ''
+            }
+            onBlur={() => {
+              if (
+                tokenAIndex !== null &&
+                tokenBIndex !== null &&
+                tokenAInputState.value.length === 0
+              ) {
+                tokenAInputState.setValue('0.0')
+              }
+              tokenAInputState.setValue(trimDecimalZeros(tokenAInputState.value))
+            }}
+            {...tokenAInputState}
+            value={tokenACheckbox ? tokenAInputState.value : '0'}
+            priceLoading={priceALoading}
+            isBalanceLoading={isBalanceLoading}
+            walletUninitialized={walletStatus !== Status.Initialized}
+          />
+        </Box>
+        <Box className={classes.inputWrapper}>
+          <Box
+            className={classes.checkboxWrapper}
+            style={{
+              width: isAutoswapOn ? '31px' : '0px',
+              opacity: isAutoswapOn ? 1 : 0
+            }}>
+            {' '}
+            <TooltipHover
+              title={
+                tokenBCheckbox
+                  ? 'Unmark to exclude this token as liquidity available for use in the new position'
+                  : 'Mark to include this token as liquidity available for use in the new position'
+              }>
+              <Checkbox
+                checked={tokenBCheckbox}
+                onChange={e => {
+                  setTokenBCheckbox(e.target.checked)
+                }}
+                className={classes.checkbox}
+                icon={<span className={classes.customIcon} />}
+              />
+            </TooltipHover>
+          </Box>
+          <DepositAmountInput
+            tokenPrice={priceB}
+            currency={tokenBIndex !== null ? tokens[tokenBIndex].symbol : null}
+            currencyIconSrc={tokenBIndex !== null ? tokens[tokenBIndex].logoURI : undefined}
+            currencyIsUnknown={
+              tokenBIndex !== null ? tokens[tokenBIndex].isUnknown ?? false : false
+            }
+            placeholder='0.0'
+            actionButtons={[
+              {
+                label: 'Max',
+                variant: 'max',
+                onClick: () => {
+                  actionsTokenB.max(tokenBIndex)
+                }
+              },
+              {
+                label: '50%',
+                variant: 'half',
+                onClick: () => {
+                  actionsTokenB.half(tokenBIndex)
+                }
+              }
+            ]}
+            balanceValue={
+              tokenBIndex !== null
+                ? printBN(tokens[tokenBIndex].balance, tokens[tokenBIndex].decimals)
+                : ''
+            }
+            onBlur={() => {
+              if (
+                tokenAIndex !== null &&
+                tokenBIndex !== null &&
+                tokenBInputState.value.length === 0
+              ) {
+                tokenBInputState.setValue('0.0')
+              }
+
+              tokenBInputState.setValue(trimDecimalZeros(tokenBInputState.value))
+            }}
+            {...tokenBInputState}
+            value={tokenBCheckbox ? tokenBInputState.value : '0'}
+            priceLoading={priceBLoading}
+            isBalanceLoading={isBalanceLoading}
+            walletUninitialized={walletStatus !== Status.Initialized}
+          />
+        </Box>
+      </Grid>
+      <Box className={classes.totalDepositCard}>
+        <Typography className={classes.totalDepositTitle}>Total deposit</Typography>
+        <Typography className={classes.totalDepositContent}>
+          $
+          {formatNumberWithoutSuffix(
+            (priceA ?? 0) * +tokenAInputState.value + (priceB ?? 0) * +tokenBInputState.value
+          )}
+        </Typography>
+      </Box>
+      <Box width='100%'>
+        {walletStatus !== Status.Initialized ? (
+          <ChangeWalletButton
+            margin={'24px 0 0 0'}
+            width={'100%'}
+            height={48}
+            name='Connect wallet'
+            onConnect={onConnectWallet}
+            connected={false}
+            onDisconnect={onDisconnectWallet}
+          />
+        ) : getButtonMessage() === 'Insufficient ETH' ? (
+          <TooltipHover
+            fullSpan
+            title='More ETH is required to cover the transaction fee. Obtain more ETH to complete this transaction.'
+            top={-10}>
+            <Box width={'100%'}>
+              <AnimatedButton
+                className={cx(
+                  classes.addButton,
+                  progress === 'none' ? classes.hoverButton : undefined
+                )}
+                onClick={() => {
+                  if (progress === 'none') {
+                    onAddLiquidity()
+                  }
+                }}
+                disabled={getButtonMessage() !== 'Add Liquidity'}
+                content={getButtonMessage()}
+                progress={progress}
+              />
+            </Box>
+          </TooltipHover>
+        ) : (
+          <AnimatedButton
+            className={cx(classes.addButton, progress === 'none' ? classes.hoverButton : undefined)}
+            onClick={() => {
+              if (progress === 'none' && tokenAIndex !== null && tokenBIndex !== null) {
+                if (!isAutoswapOn) {
+                  onAddLiquidity()
+                } else if (
+                  isAutoswapOn &&
+                  isSimulationStatus(SwapAndCreateSimulationStatus.PerfectRatio)
+                ) {
+                  onAddLiquidity()
+                } else {
+                  if (
+                    (tokenACheckbox || tokenBCheckbox) &&
+                    simulation &&
+                    simulation.swapSimulation &&
+                    simulation.swapInput &&
+                    isSimulationStatus(SwapAndCreateSimulationStatus.Ok) &&
+                    !!autoSwapPoolData
+                  ) {
+                    const userMinUtilization = toDecimal(+Number(utilization).toFixed(4), 2)
+                    const tokenADecimal = tokens[tokenAIndex].decimals
+                    const tokenBDecimal = tokens[tokenBIndex].decimals
+                    const tokenAValue = tokenACheckbox
+                      ? convertBalanceToBN(valueA, tokenADecimal)
+                      : new BN(0)
+                    const tokenBValue = tokenBCheckbox
+                      ? convertBalanceToBN(valueB, tokenBDecimal)
+                      : new BN(0)
+                    const amountX = autoSwapPoolData.tokenX.equals(tokens[tokenAIndex].assetAddress)
+                      ? tokenAValue
+                      : tokenBValue
+                    const amountY = autoSwapPoolData.tokenY.equals(tokens[tokenBIndex].assetAddress)
+                      ? tokenBValue
+                      : tokenAValue
+                    onSwapAndAddLiquidity(
+                      amountX,
+                      amountY,
+                      simulation.swapInput.swapAmount,
+                      simulation.swapInput.xToY,
+                      simulation.swapInput.byAmountIn,
+                      simulation.swapSimulation.priceAfterSwap,
+                      simulation.swapSimulation.crossedTicks,
+                      toDecimal(+Number(slippageToleranceSwap).toFixed(4), 2),
+                      toDecimal(+Number(slippageToleranceCreatePosition).toFixed(4), 2),
+                      userMinUtilization
+                    )
+                  }
+                }
+              }
+            }}
+            disabled={getButtonMessage() !== 'Add Liquidity'}
+            content={getButtonMessage()}
+            progress={progress}
+          />
+        )}
+      </Box>
+    </Grid>
+  )
+}
+
+export default AddLiquidity
