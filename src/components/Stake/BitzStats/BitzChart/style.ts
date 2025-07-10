@@ -2,15 +2,25 @@ import { colors, theme, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => ({
-  wrapper: {
+  container: {
     display: 'flex',
+    flexDirection: 'column',
     width: '100%',
-    maxHeight: 280,
-    gap: 24,
-    [theme.breakpoints.down('md')]: {
-      flexDirection: 'column',
-      maxHeight: '600px'
+    [theme.breakpoints.up('md')]: {
+      flex: '0 0 593px'
+    },
+
+    '& h2': {
+      ...typography.heading4,
+      color: colors.invariant.text,
+      textAlign: 'left',
+      width: '100%',
+      marginBottom: '16px',
+      marginTop: 72
     }
+  },
+  infoIcon: {
+    width: 18
   },
 
   chartWrapper: {
@@ -19,9 +29,10 @@ export const useStyles = makeStyles()(() => ({
     borderRadius: 24,
     width: '100%',
     padding: 24,
-    minHeight: 280,
-    [theme.breakpoints.down(460)]: {
-      flexDirection: 'column'
+    maxHeight: 280,
+    [theme.breakpoints.down(530)]: {
+      flexDirection: 'column',
+      maxHeight: 'fit-content'
     }
   },
   leftWrapper: {
@@ -54,10 +65,10 @@ export const useStyles = makeStyles()(() => ({
     display: 'grid',
     rowGap: 28,
     gridTemplateColumns: `repeat( 2, 1fr)`,
-    [theme.breakpoints.down(460)]: {
+    [theme.breakpoints.down(530)]: {
       gridTemplateColumns: `repeat( 3, 1fr)`
     },
-    [theme.breakpoints.down(360)]: {
+    [theme.breakpoints.down(415)]: {
       gridTemplateColumns: `repeat( 2, 1fr)`
     }
   },

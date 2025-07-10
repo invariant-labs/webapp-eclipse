@@ -1,7 +1,24 @@
-import { colors, typography } from '@static/theme'
+import { colors, theme, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => ({
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    width: '100%',
+    [theme.breakpoints.up('md')]: {
+      flex: '1 1 0'
+    },
+
+    '& h2': {
+      ...typography.heading4,
+      color: colors.invariant.text,
+      textAlign: 'left',
+      width: '100%',
+      marginBottom: '16px',
+      marginTop: 72
+    }
+  },
   sectionWrapper: {
     height: 280,
     display: 'flex',

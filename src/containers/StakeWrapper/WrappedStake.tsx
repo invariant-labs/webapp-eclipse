@@ -400,7 +400,13 @@ export const WrappedStake: React.FC = () => {
         </Box>
       </Box>
       <Box className={classes.statsContainer}>
+        <BitzStats
+          isLoading={isLoadingMarketData || isBalanceLoading || isLoadingStats}
+          stats={bitzMarketDataStats}
+        />
+
         {/* <Box className={classes.statsContainer}> */}
+
         <Typography className={classes.statsTitle}>Earnings forecast</Typography>
         <StakeChart
           onStakedAmountChange={setStakedAmount}
@@ -428,13 +434,6 @@ export const WrappedStake: React.FC = () => {
           tvlPlot={sbitzTvlPlot}
           sbitzTvl={sbitzTvl}
         /> */}
-      </Box>
-      <Box className={classes.stakedBitzContainer}>
-        <Typography className={classes.statsTitle}>BITZ staked</Typography>
-        <BitzStats
-          isLoading={isLoadingMarketData || isBalanceLoading || isLoadingStats}
-          stats={bitzMarketDataStats}
-        />
       </Box>
 
       <FAQSection />

@@ -121,7 +121,6 @@ export const useStyles = makeStyles()(() => ({
   },
   statsContainer: {
     width: '100%',
-    marginTop: '72px',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
@@ -132,7 +131,8 @@ export const useStyles = makeStyles()(() => ({
     color: colors.invariant.text,
     textAlign: 'left',
     width: '100%',
-    marginBottom: '16px'
+    marginBottom: '16px',
+    marginTop: 72
   },
   filtersContainerOverview: {
     marginTop: '32px',
@@ -339,7 +339,6 @@ export const useStyles = makeStyles()(() => ({
     }
   },
   stakedBitzContainer: {
-    marginTop: 72,
     width: '100%'
   }
 }))

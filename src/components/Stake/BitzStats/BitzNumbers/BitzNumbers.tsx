@@ -20,32 +20,36 @@ export const BitzNumbers: React.FC<BitzNumbersProps> = ({
 }) => {
   const { classes } = useStyles()
   return (
-    <Grid className={classes.sectionWrapper}>
-      <Grid className={classes.statWrapper}>
-        <Typography component='h4'>Market Cap</Typography>
-        {isLoading ? (
-          <Skeleton height={28} variant='rounded' width={200} />
-        ) : (
-          <Typography component='h3'>${formatNumberWithCommas(marketCap.toFixed(2))}</Typography>
-        )}{' '}
-        <Separator margin='12px' size='100%' isHorizontal color={colors.invariant.light} />
-      </Grid>
-      <Grid className={classes.statWrapper}>
-        <Typography component='h4'>Supply</Typography>
-        {isLoading ? (
-          <Skeleton variant='rounded' height={28} width={200} />
-        ) : (
-          <Typography component='h3'>{formatNumberWithCommas(supply.toFixed(2))}</Typography>
-        )}
-        <Separator margin='12px' size='100%' isHorizontal color={colors.invariant.light} />
-      </Grid>
-      <Grid className={classes.statWrapper}>
-        <Typography component='h4'>Holders</Typography>
-        {isLoading ? (
-          <Skeleton height={28} variant='rounded' width={200} />
-        ) : (
-          <Typography component='h3'>{formatNumberWithCommas(holder.toString())}</Typography>
-        )}
+    <Grid className={classes.container}>
+      <Typography component='h2'>sBITZ Overview</Typography>
+
+      <Grid className={classes.sectionWrapper}>
+        <Grid className={classes.statWrapper}>
+          <Typography component='h4'>Market Cap</Typography>
+          {isLoading ? (
+            <Skeleton height={28} variant='rounded' width={200} />
+          ) : (
+            <Typography component='h3'>${formatNumberWithCommas(marketCap.toFixed(2))}</Typography>
+          )}{' '}
+          <Separator margin='12px' size='100%' isHorizontal color={colors.invariant.light} />
+        </Grid>
+        <Grid className={classes.statWrapper}>
+          <Typography component='h4'>Supply</Typography>
+          {isLoading ? (
+            <Skeleton variant='rounded' height={28} width={200} />
+          ) : (
+            <Typography component='h3'>{formatNumberWithCommas(supply.toFixed(2))}</Typography>
+          )}
+          <Separator margin='12px' size='100%' isHorizontal color={colors.invariant.light} />
+        </Grid>
+        <Grid className={classes.statWrapper}>
+          <Typography component='h4'>Holders</Typography>
+          {isLoading ? (
+            <Skeleton height={28} variant='rounded' width={200} />
+          ) : (
+            <Typography component='h3'>{formatNumberWithCommas(holder.toString())}</Typography>
+          )}
+        </Grid>
       </Grid>
     </Grid>
   )
