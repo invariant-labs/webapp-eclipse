@@ -4,6 +4,7 @@ import { usePrices } from '../userOverview/usePrices'
 import { ISinglePositionData } from '@components/Portfolio/Overview/Overview/Overview'
 import { IPositionItem } from '@store/consts/types'
 import { calculatePercentageRatio } from '@utils/utils'
+import { current } from '@reduxjs/toolkit'
 
 interface TokenValuesHook extends IPositionItem {
   positionSingleData?: ISinglePositionData

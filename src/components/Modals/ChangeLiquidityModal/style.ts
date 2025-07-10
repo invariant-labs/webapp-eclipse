@@ -116,20 +116,6 @@ export const useStyles = makeStyles()(theme => ({
   token: {
     height: 20,
     width: 20
-  },
-  totalDepositCard: {
-    padding: 12,
-    display: 'flex',
-    justifyContent: 'space-between',
-    background: colors.invariant.light,
-    borderRadius: 13
-  },
-  totalDepositTitle: {
-    ...typography.body1
-  },
-  totalDepositContent: {
-    ...typography.body2,
-    color: colors.invariant.textGrey
   }
 }))
 

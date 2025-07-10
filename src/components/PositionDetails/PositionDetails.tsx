@@ -374,6 +374,11 @@ const PositionDetails: React.FC<IProps> = ({
             }
             currentPrice={currentPrice ** (xToY ? 1 : -1)}
             onClose={() => setIsChangeLiquidityModalShown(false)}
+            tokenXAddress={tokenXAddress.toString()}
+            tokenYAddress={tokenYAddress.toString()}
+            fee={(+printBN(fee, DECIMAL - 2)).toFixed(2).replace('.', '_')}
+            leftRange={leftRange.index}
+            rightRange={rightRange.index}
           />
           <PositionHeader
             isClosing={shouldDisable}

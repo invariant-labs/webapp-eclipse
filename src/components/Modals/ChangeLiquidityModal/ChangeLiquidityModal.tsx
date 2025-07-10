@@ -7,7 +7,6 @@ import removeWhiteIcon from '@static/svg/remove-white.svg'
 import inRangeIcon from '@static/svg/in-range.svg'
 import outOfRangeIcon from '@static/svg/out-of-range.svg'
 import { useMemo } from 'react'
-import { Button as CommonButton } from '@common/Button/Button'
 import { unknownTokenIcon } from '@static/icons'
 import {
   calculatePercentageRatio,
@@ -16,6 +15,7 @@ import {
   numberToString
 } from '@utils/utils'
 import { ILiquidityToken } from '@store/consts/types'
+import ChangeLiquidityNewPositionWrapper from './AddLiquidityNewPositionWrapper/AddLiquidityNewPositionWrapper'
 
 export interface IChangeLiquidityModal {
   open: boolean
@@ -30,6 +30,11 @@ export interface IChangeLiquidityModal {
   tvl: number
   currentPrice: number
   onClose: () => void
+  tokenXAddress: string
+  tokenYAddress: string
+  fee: string
+  leftRange: number
+  rightRange: number
 }
 
 export const ChangeLiquidityModal: React.FC<IChangeLiquidityModal> = ({
@@ -44,12 +49,23 @@ export const ChangeLiquidityModal: React.FC<IChangeLiquidityModal> = ({
   max,
   tvl,
   currentPrice,
-  onClose
+  onClose,
+  tokenXAddress,
+  tokenYAddress,
+  fee,
+  leftRange,
+  rightRange
 }) => {
   const { classes, cx } = useStyles()
 
   const { tokenXPercentage, tokenYPercentage } = useMemo(
-    () => calculatePercentageRatio(tokenX.liqValue, tokenY.liqValue, currentPrice, xToY),
+    () =>
+      calculatePercentageRatio(
+        tokenX.liqValue,
+        tokenY.liqValue,
+        xToY ? currentPrice : 1 / currentPrice,
+        xToY
+      ),
     [tokenX, tokenY, currentPrice, xToY]
   )
 
@@ -144,15 +160,20 @@ export const ChangeLiquidityModal: React.FC<IChangeLiquidityModal> = ({
           </Box>
         </Box>
         <Box className={classes.wrapper}>
-          <Typography className={classes.title}>Amount</Typography>
+          {isAddLiquidity ? (
+            <ChangeLiquidityNewPositionWrapper
+              initialTokenFrom={tokenXAddress}
+              initialTokenTo={tokenYAddress}
+              initialFee={fee}
+              initialConcentration='0'
+              initialIsRange={true}
+              leftRange={leftRange}
+              rightRange={rightRange}
+            />
+          ) : (
+            <></>
+          )}
         </Box>
-        <Box className={classes.totalDepositCard}>
-          <Typography className={classes.totalDepositTitle}>Total deposit</Typography>
-          <Typography className={classes.totalDepositContent}>$1.31</Typography>
-        </Box>
-        <CommonButton scheme='pink'>
-          {isAddLiquidity ? 'Add Liquidity' : 'Remove Liquidity'}
-        </CommonButton>
       </Box>
     </Popover>
   )

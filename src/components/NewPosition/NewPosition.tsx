@@ -427,8 +427,8 @@ export const NewPosition: React.FC<INewPosition> = ({
   const estimatedScalePoints = useMemo(() => {
     return estimatedPointsForScale(
       positionOpeningMethod === 'concentration'
-        ? (concentrationArray[concentrationIndex] ??
-            concentrationArray[concentrationArray.length - 1])
+        ? concentrationArray[concentrationIndex] ??
+            concentrationArray[concentrationArray.length - 1]
         : calculateConcentration(leftRange, rightRange),
       positionOpeningMethod === 'concentration' ? concentrationArray : rangeConcentrationArray
     )
@@ -467,6 +467,7 @@ export const NewPosition: React.FC<INewPosition> = ({
 
     setLeftRange(leftRange)
     setRightRange(rightRange)
+    console.log(left, right, leftRange, rightRange)
     if (
       tokenAIndex !== null &&
       tokenADeposit !== '0' &&
@@ -549,13 +550,13 @@ export const NewPosition: React.FC<INewPosition> = ({
   const promotedPoolTierIndex =
     tokenAIndex === null || tokenBIndex === null
       ? undefined
-      : (promotedTiers.find(
+      : promotedTiers.find(
           tier =>
             (tier.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
             (tier.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenAIndex].assetAddress))
-        )?.index ?? undefined)
+        )?.index ?? undefined
 
   const getMinSliderIndex = () => {
     let minimumSliderIndex = 0
