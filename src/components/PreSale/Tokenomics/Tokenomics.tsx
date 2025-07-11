@@ -18,16 +18,16 @@ export const Tokenomics = () => {
   const tokenomicsItems: TokenomicsItem[] = [
     {
       title: 'Community',
-      percentage: 30,
+      percentage: 40,
       color: colors.invariant.green
     },
     {
       title: 'Strategic Reserve',
-      percentage: 20,
+      percentage: 25,
       color: colors.invariant.pink
     },
     {
-      title: 'Team',
+      title: 'Contributors & Grants',
       percentage: 15,
       color: colors.invariant.textGrey
     },
@@ -40,21 +40,6 @@ export const Tokenomics = () => {
       title: 'Public Sale',
       percentage: 10,
       color: colors.invariant.yellow
-    },
-    {
-      title: 'Investors',
-      percentage: 6.7,
-      color: '#F8D4B3'
-    },
-    {
-      title: 'Advisors',
-      percentage: 5,
-      color: '#E3994A'
-    },
-    {
-      title: 'Marketing',
-      percentage: 3.3,
-      color: '#404C30'
     }
   ]
 
