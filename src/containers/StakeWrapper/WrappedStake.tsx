@@ -390,7 +390,7 @@ export const WrappedStake: React.FC = () => {
                   sBitzBalance={sBitzBalance}
                   bitzToWithdraw={bitzToWithdraw}
                   bitzPrice={bitzPrice}
-                  isLoading={stakeLoading || isBalanceLoading || isLoadingStats}
+                  isLoading={stakeLoading || isBalanceLoading}
                   isConnected={isConnected}
                   yield24={estimated24Yield}
                 />

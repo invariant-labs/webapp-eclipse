@@ -32,6 +32,7 @@ import {
   ensureError,
   extractErrorCode,
   extractRuntimeErrorCode,
+  fetchMarketBitzStats,
   formatNumberWithoutSuffix,
   getTokenPrice,
   mapErrorCodeToMessage,
@@ -569,23 +570,10 @@ export function* getMarketBitzStats(): Generator {
     const sBitzAmount = +printBN(stakedAmount, BITZ_MAIN.decimals)
     const totalBitzSupply = +printBN(totalBalance, BITZ_MAIN.decimals)
     const bitzSupplyAmount = +printBN(bitzSupply, BITZ_MAIN.decimals)
-    // const { holders, accountSBitz, accountBitz ,totalBitzSupply  } =
-    //   yield* call(fetchMarketBitzStats)
+    const response = yield* call(fetchMarketBitzStats)
+    const holders = response.data[sBITZ_MAIN.address.toString()].holders
 
-    // const bitzAmount = totalBitzSupply.data.tokens[0].balance - sBitzAmount
     const bitzAmount = totalBitzSupply - sBitzAmount
-
-    // const supplySBitz = printBN(
-    //   accountSBitz.data.tokenInfo.supply,
-    //   accountSBitz.data.tokenInfo.decimals
-    // )
-    // const supplyBitz = printBN(
-    //   accountBitz.data.tokenInfo.supply,
-    //   accountBitz.data.tokenInfo.decimals
-    // )
-    // const marketCapSBitz =
-    //   accountSBitz.metadata.tokens.sBTZcSwRZhRq3JcjFh1xwxgCxmsN7MreyU3Zx8dA8uF.price_usdt *
-    //   Number(supplySBitz)
 
     const marketCapSBitz = (price ?? 0) * stakedTokenSupplyAmount
 
@@ -595,7 +583,8 @@ export function* getMarketBitzStats(): Generator {
         marketCap: marketCapSBitz,
         sBitzSupply: stakedTokenSupplyAmount,
         totalSupply: bitzSupplyAmount,
-        sBitzAmount
+        sBitzAmount,
+        holders
       })
     )
   } catch (e: unknown) {

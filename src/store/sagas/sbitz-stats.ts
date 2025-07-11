@@ -1,5 +1,4 @@
 import { actions } from '@store/reducers/sbitz-stats'
-import { actions as SBitzActions } from '@store/reducers/sBitz'
 import { all, call, put, select, spawn, takeLatest } from 'typed-redux-saga'
 import { handleRpcError } from './connection'
 import { ensureError, fetchStackedBitzStats } from '@utils/utils'
@@ -16,7 +15,6 @@ export function* getStackedBitzStats(): Generator {
 
     const fullSnap = yield* call(fetchStackedBitzStats)
     yield* put(actions.setCurrentStats(fullSnap))
-    yield* put(SBitzActions.setHolders(fullSnap.sbitzHolders))
   } catch (e: unknown) {
     const error = ensureError(e)
     console.log(error)

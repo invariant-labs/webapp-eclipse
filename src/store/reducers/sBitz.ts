@@ -11,31 +11,12 @@ export interface GetBackedByBITZPayload {
   amount: BN
   tokenAddress?: string
 }
-
+export interface HolderInfo {
+  holders: number
+}
 export interface HoldersResponse {
-  data: number
-}
-export interface TokensResponse {
-  data: {
-    tokens: {
-      balance: number
-    }
-  }
-}
-export interface MarketDataResponse {
-  data: {
-    tokenInfo: {
-      decimals: number
-      supply: string
-    }
-  }
-  metadata: {
-    tokens: {
-      sBTZcSwRZhRq3JcjFh1xwxgCxmsN7MreyU3Zx8dA8uF: {
-        price_usdt: number
-      }
-    }
-  }
+  data: Record<string, HolderInfo>
+  lastUpdateTimestamp: number
 }
 export interface LoadingStates {
   stakeData: boolean
@@ -46,14 +27,6 @@ export interface BitzMarketData {
   marketCap: number | null
   sBitzSupply: number | null
   holders: number | null
-  totalSupply: number | null
-  sBitzAmount: number | null
-  bitzAmount: number | null
-}
-
-export interface BitzMarketDataPayload {
-  marketCap: number | null
-  sBitzSupply: number | null
   totalSupply: number | null
   sBitzAmount: number | null
   bitzAmount: number | null
@@ -163,18 +136,9 @@ const sBitzSlice = createSlice({
       state.loadingStates.bitzMarketData = action.payload
       return state
     },
-    setCurrentStats(state, action: PayloadAction<BitzMarketDataPayload>) {
+    setCurrentStats(state, action: PayloadAction<BitzMarketData>) {
       state.loadingStates.bitzMarketData = false
-      state.bitzMarketData.bitzAmount = action.payload.bitzAmount
-      state.bitzMarketData.marketCap = action.payload.marketCap
-      state.bitzMarketData.sBitzAmount = action.payload.sBitzAmount
-      state.bitzMarketData.sBitzSupply = action.payload.sBitzSupply
-      state.bitzMarketData.totalSupply = action.payload.totalSupply
-      return state
-    },
-
-    setHolders(state, action: PayloadAction<number | null>) {
-      state.bitzMarketData.holders = action.payload
+      state.bitzMarketData = action.payload
       return state
     }
   }

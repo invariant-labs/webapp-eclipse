@@ -98,8 +98,7 @@ import {
   USDN_MAIN,
   WEETHS_MAIN,
   sBITZ_MAIN,
-  MAX_PLOT_VISIBLE_TICK_RANGE,
-  BITZ_TOKENS_ADDR
+  MAX_PLOT_VISIBLE_TICK_RANGE
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
@@ -121,7 +120,7 @@ import { createUmi } from '@metaplex-foundation/umi-bundle-defaults'
 import { Umi } from '@metaplex-foundation/umi'
 import { StakingStatsResponse } from '@store/reducers/sbitz-stats'
 import { DEFAULT_FEE_TIER, STRATEGIES } from '@store/consts/userStrategies'
-import { HoldersResponse, MarketDataResponse, TokensResponse } from '@store/reducers/sBitz'
+import { HoldersResponse } from '@store/reducers/sBitz'
 
 export const transformBN = (amount: BN): string => {
   return (amount.div(new BN(1e2)).toNumber() / 1e4).toString()
@@ -2634,30 +2633,9 @@ export const getAmountFromClosePositionInstruction = (
 
 export const fetchMarketBitzStats = async () => {
   const sBITZ = sBITZ_MAIN.address.toString()
-  const BITZ = BITZ_MAIN.address.toString()
 
-  const [holdersRes, sBitzRes, bitzRes, tokensRes] = await Promise.all([
-    axios.get<HoldersResponse>('https://api.eclipsescan.xyz/v1/token/holder/total', {
-      params: { address: sBITZ }
-    }),
-
-    axios.get<MarketDataResponse>('https://api.eclipsescan.xyz/v1/account', {
-      params: { address: sBITZ }
-    }),
-
-    axios.get<MarketDataResponse>('https://api.eclipsescan.xyz/v1/account', {
-      params: { address: BITZ }
-    }),
-
-    axios.get<TokensResponse>('https://api.eclipsescan.xyz/v1/account/tokens', {
-      params: { address: BITZ_TOKENS_ADDR }
-    })
-  ])
-
-  return {
-    holders: holdersRes.data,
-    accountSBitz: sBitzRes.data,
-    accountBitz: bitzRes.data,
-    totalBitzSupply: tokensRes.data
-  }
+  const { data } = await axios.get<HoldersResponse>(
+    `https://api.invariant.app/explorer/get-holders?address=${sBITZ}`
+  )
+  return data
 }
