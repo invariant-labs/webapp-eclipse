@@ -121,6 +121,7 @@ import { createUmi } from '@metaplex-foundation/umi-bundle-defaults'
 import { Umi } from '@metaplex-foundation/umi'
 import { StakingStatsResponse } from '@store/reducers/sbitz-stats'
 import { DEFAULT_FEE_TIER, STRATEGIES } from '@store/consts/userStrategies'
+import { HoldersResponse } from '@store/reducers/sBitz'
 
 export const transformBN = (amount: BN): string => {
   return (amount.div(new BN(1e2)).toNumber() / 1e4).toString()
@@ -2630,4 +2631,13 @@ export const getAmountFromClosePositionInstruction = (
   )[type === TokenType.TokenX ? 0 : 1] as ParsedInstruction | undefined
 
   return instruction?.parsed.info.amount || instruction?.parsed.info.tokenAmount.amount
+}
+
+export const fetchMarketBitzStats = async () => {
+  const sBITZ = sBITZ_MAIN.address.toString()
+
+  const { data } = await axios.get<HoldersResponse>(
+    `https://api.invariant.app/explorer/get-holders?address=${sBITZ}`
+  )
+  return data
 }
