@@ -17,6 +17,7 @@ import {
 import { ILiquidityToken } from '@store/consts/types'
 import AddLiquidity from './AddLiquidity/AddLiquidity'
 import { BN } from '@coral-xyz/anchor'
+import RemoveLiquidity from './RemoveLiquidity/RemoveLiquidity'
 
 export interface IChangeLiquidityModal {
   open: boolean
@@ -170,7 +171,15 @@ export const ChangeLiquidityModal: React.FC<IChangeLiquidityModal> = ({
               rightRange={rightRange}
             />
           ) : (
-            <></>
+            <RemoveLiquidity
+              initialTokenFrom={tokenXAddress}
+              initialTokenTo={tokenYAddress}
+              initialFee={fee}
+              leftRange={leftRange}
+              rightRange={rightRange}
+              tokenXLiquidity={tokenX.liqValue}
+              tokenYLiquidity={tokenY.liqValue}
+            />
           )}
         </Box>
       </Box>
