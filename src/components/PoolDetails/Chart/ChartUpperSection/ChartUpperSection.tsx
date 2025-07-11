@@ -15,8 +15,8 @@ export interface IProps {
   poolAddress: string
   copyAddressHandler: (message: string, variant: VariantType) => void
   network: NetworkType
-  tokenA: SwapToken | null
-  tokenB: SwapToken | null
+  tokenX: SwapToken | null
+  tokenY: SwapToken | null
   handleOpenSwap: () => void
   handleOpenPosition: () => void
   isPoolDataLoading: boolean
@@ -26,8 +26,8 @@ export const ChartUpperSection: React.FC<IProps> = ({
   poolAddress,
   copyAddressHandler,
   network,
-  tokenA,
-  tokenB,
+  tokenX,
+  tokenY,
   handleOpenSwap,
   handleOpenPosition,
   isPoolDataLoading
@@ -113,18 +113,18 @@ export const ChartUpperSection: React.FC<IProps> = ({
           )}
         </Box>
 
-        {tokenA && tokenB && (
+        {tokenX && tokenY && (
           <Box display='flex' alignItems='center' gap='8px' mt={1}>
             <Box className={classes.iconContainer}>
-              <img className={classes.icon} src={tokenA.logoURI} alt={tokenA.symbol} />
+              <img className={classes.icon} src={tokenX.logoURI} alt={tokenX.symbol} />
               <TooltipHover title='Reverse tokens'>
                 <ReverseTokensIcon className={classes.reverseTokensIcon} />
               </TooltipHover>
-              <img className={classes.icon} src={tokenB.logoURI} alt={tokenB.symbol} />
+              <img className={classes.icon} src={tokenY.logoURI} alt={tokenY.symbol} />
             </Box>
 
             <Typography className={classes.tickerContainer}>
-              {tokenA.symbol} - {tokenB.symbol}
+              {tokenX.symbol} - {tokenY.symbol}
             </Typography>
           </Box>
         )}

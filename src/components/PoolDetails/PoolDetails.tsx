@@ -10,13 +10,12 @@ import { PoolWithAddress } from '@store/reducers/pools'
 import { Intervals as IntervalsKeys } from '@store/consts/static'
 import { PoolChartSwitch, TokenReserve } from '@store/consts/types'
 import { VariantType } from 'notistack'
-import { getTokenReserve } from '@utils/utils'
 
 export interface IProps {
   network: NetworkType
   statsPoolData: PoolSnap
-  tokenA: SwapToken | null
-  tokenB: SwapToken | null
+  tokenX: SwapToken | null
+  tokenY: SwapToken | null
   handleOpenSwap: () => void
   handleOpenPosition: () => void
   poolData: PoolWithAddress | null
@@ -27,16 +26,16 @@ export interface IProps {
   setChartType: (type: PoolChartSwitch) => void
   copyAddressHandler: (message: string, variant: VariantType) => void
   updateInterval: (interval: IntervalsKeys) => void
-  tokenAReserve: TokenReserve | null
-  tokenBReserve: TokenReserve | null
-  prices: { tokenA: number; tokenB: number }
+  tokenXReserve: TokenReserve | null
+  tokenYReserve: TokenReserve | null
+  prices: { tokenX: number; tokenY: number }
 }
 
 export const PoolDetails: React.FC<IProps> = ({
   network,
   statsPoolData,
-  tokenA,
-  tokenB,
+  tokenX,
+  tokenY,
   handleOpenSwap,
   handleOpenPosition,
   poolData,
@@ -47,8 +46,8 @@ export const PoolDetails: React.FC<IProps> = ({
   setChartType,
   copyAddressHandler,
   updateInterval,
-  tokenAReserve,
-  tokenBReserve,
+  tokenXReserve,
+  tokenYReserve,
   prices
 }) => {
   const { classes } = useStyles()
@@ -61,8 +60,8 @@ export const PoolDetails: React.FC<IProps> = ({
           copyAddressHandler={copyAddressHandler}
           network={network}
           statsPoolData={statsPoolData}
-          tokenA={tokenA}
-          tokenB={tokenB}
+          tokenX={tokenX}
+          tokenY={tokenY}
           handleOpenSwap={handleOpenSwap}
           handleOpenPosition={handleOpenPosition}
           isPoolDataLoading={isPoolDataLoading}
@@ -76,10 +75,10 @@ export const PoolDetails: React.FC<IProps> = ({
           interval={interval}
           statsPoolData={statsPoolData}
           isLoadingStats={isLoadingStats}
-          tokenA={tokenA}
-          tokenB={tokenB}
-          tokenAReserve={tokenAReserve}
-          tokenBReserve={tokenBReserve}
+          tokenX={tokenX}
+          tokenY={tokenY}
+          tokenXReserve={tokenXReserve}
+          tokenYReserve={tokenYReserve}
           prices={prices}
         />
       </Grid>

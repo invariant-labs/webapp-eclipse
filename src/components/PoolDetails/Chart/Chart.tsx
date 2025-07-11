@@ -15,8 +15,8 @@ export interface IProps {
   copyAddressHandler: (message: string, variant: VariantType) => void
   network: NetworkType
   statsPoolData: PoolSnap
-  tokenA: SwapToken | null
-  tokenB: SwapToken | null
+  tokenX: SwapToken | null
+  tokenY: SwapToken | null
   handleOpenSwap: () => void
   handleOpenPosition: () => void
   isPoolDataLoading: boolean
@@ -32,8 +32,8 @@ export const Chart: React.FC<IProps> = ({
   copyAddressHandler,
   network,
   statsPoolData,
-  tokenA,
-  tokenB,
+  tokenX,
+  tokenY,
   handleOpenSwap,
   handleOpenPosition,
   isPoolDataLoading,
@@ -56,8 +56,8 @@ export const Chart: React.FC<IProps> = ({
           isPoolDataLoading={isPoolDataLoading}
           network={network}
           poolAddress={poolAddress}
-          tokenA={tokenA}
-          tokenB={tokenB}
+          tokenX={tokenX}
+          tokenY={tokenY}
         />
         <Box className={classes.separator} />
         <ChartLowerSection

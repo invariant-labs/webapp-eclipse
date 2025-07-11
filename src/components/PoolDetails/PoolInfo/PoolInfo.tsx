@@ -13,36 +13,36 @@ export interface IPros {
   interval: IntervalsKeys
   statsPoolData: PoolSnap
   isLoadingStats: boolean
-  tokenA: SwapToken | null
-  tokenB: SwapToken | null
-  tokenAReserve: TokenReserve | null
-  tokenBReserve: TokenReserve | null
-  prices: { tokenA: number; tokenB: number }
+  tokenX: SwapToken | null
+  tokenY: SwapToken | null
+  tokenXReserve: TokenReserve | null
+  tokenYReserve: TokenReserve | null
+  prices: { tokenX: number; tokenY: number }
 }
 
 export const PoolInfo: React.FC<IPros> = ({
   interval,
   statsPoolData,
   isLoadingStats,
-  tokenA,
-  tokenB,
-  tokenAReserve,
-  tokenBReserve,
+  tokenX,
+  tokenY,
+  tokenXReserve,
+  tokenYReserve,
   prices
 }) => {
   const { classes, cx } = useStyles()
-  const tokenAUsdAmount = tokenAReserve ? prices.tokenA * tokenAReserve.uiAmount : 0
-  const tokenBUsdAmount = tokenBReserve ? prices.tokenB * tokenBReserve.uiAmount : 0
-  console.log(prices.tokenA)
+  const tokenXUsdAmount = tokenXReserve ? prices.tokenX * tokenXReserve.uiAmount : 0
+  const tokenYUsdAmount = tokenYReserve ? prices.tokenY * tokenYReserve.uiAmount : 0
+  console.log(prices.tokenX)
 
-  const [tokenAPercentage, tokenBPercentage] = React.useMemo(() => {
-    if (!tokenA || !tokenB || !tokenAReserve || !tokenBReserve) return [0, 0]
+  const [tokenXPercentage, tokenYPercentage] = React.useMemo(() => {
+    if (!tokenX || !tokenY || !tokenXReserve || !tokenYReserve) return [0, 0]
 
-    const tokenAPercentage = (tokenAUsdAmount / (tokenAUsdAmount + tokenBUsdAmount)) * 100
-    const tokenBPercentage = (tokenBUsdAmount / (tokenAUsdAmount + tokenBUsdAmount)) * 100
+    const tokenXPercentage = (tokenXUsdAmount / (tokenXUsdAmount + tokenYUsdAmount)) * 100
+    const tokenYPercentage = (tokenYUsdAmount / (tokenXUsdAmount + tokenYUsdAmount)) * 100
 
-    return [tokenAPercentage, tokenBPercentage]
-  }, [tokenA, tokenB, tokenAReserve, tokenBReserve, prices])
+    return [tokenXPercentage, tokenYPercentage]
+  }, [tokenX, tokenY, tokenXReserve, tokenYReserve, prices])
 
   return (
     <Grid className={classes.wrapper}>
@@ -54,12 +54,12 @@ export const PoolInfo: React.FC<IPros> = ({
           isLoadingStats={isLoadingStats}
         />
         <Box className={classes.separator} />
-        {tokenA && tokenB && (
+        {tokenX && tokenY && (
           <PercentageScale
-            tokenA={tokenA}
-            tokenB={tokenB}
-            tokenAPercentage={tokenAPercentage}
-            tokenBPercentage={tokenBPercentage}
+            tokenX={tokenX}
+            tokenY={tokenY}
+            tokenXPercentage={tokenXPercentage}
+            tokenYPercentage={tokenYPercentage}
           />
         )}
       </Grid>

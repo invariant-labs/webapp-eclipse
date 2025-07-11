@@ -82,15 +82,15 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
     )
   )
 
-  const [tokenA, setTokenA] = useState<SwapToken | null>(null)
-  const [tokenB, setTokenB] = useState<SwapToken | null>(null)
+  const [tokenX, settokenX] = useState<SwapToken | null>(null)
+  const [tokenY, settokenY] = useState<SwapToken | null>(null)
 
-  const [tokenAReserve, setTokenAReserve] = useState<TokenReserve | null>(null)
-  const [tokenBReserve, setTokenBReserve] = useState<TokenReserve | null>(null)
+  const [tokenXReserve, settokenXReserve] = useState<TokenReserve | null>(null)
+  const [tokenYReserve, settokenYReserve] = useState<TokenReserve | null>(null)
 
-  const [prices, setPrices] = useState<{ tokenA: number; tokenB: number }>({
-    tokenA: 0,
-    tokenB: 0
+  const [prices, setPrices] = useState<{ tokenX: number; tokenY: number }>({
+    tokenX: 0,
+    tokenY: 0
   })
 
   const [poolData, setPoolData] = useState<PoolWithAddress | null>(null)
@@ -117,8 +117,8 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
     if (poolData && connection) {
       fetchTokensReserves(poolData.tokenXReserve, poolData.tokenYReserve, connection)
         .then(({ tokenXReserve, tokenYReserve }) => {
-          setTokenAReserve(tokenXReserve)
-          setTokenBReserve(tokenYReserve)
+          settokenXReserve(tokenXReserve)
+          settokenYReserve(tokenYReserve)
         })
         .catch(err => {
           console.error('Error fetching reserves:', err)
@@ -128,23 +128,23 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
 
   useEffect(() => {
     const loadPrices = async () => {
-      if (!tokenA || !tokenB) return
+      if (!tokenX || !tokenY) return
       const priceResults = await Promise.all([
-        await getTokenPrice(tokenA?.assetAddress.toString(), currentNetwork),
-        await getTokenPrice(tokenB?.assetAddress.toString(), currentNetwork)
+        await getTokenPrice(tokenX?.assetAddress.toString(), currentNetwork),
+        await getTokenPrice(tokenY?.assetAddress.toString(), currentNetwork)
       ])
 
-      const tokenAPrice = priceResults[0]
-      const tokenBPrice = priceResults[1]
+      const tokenXPrice = priceResults[0]
+      const tokenYPrice = priceResults[1]
 
       setPrices({
-        tokenA: tokenAPrice ?? 0,
-        tokenB: tokenBPrice ?? 0
+        tokenX: tokenXPrice ?? 0,
+        tokenY: tokenYPrice ?? 0
       })
     }
 
     loadPrices()
-  }, [tokenA, tokenB])
+  }, [tokenX, tokenY])
 
   const isPoolDataLoading = useMemo(() => {
     if (poolData !== null) {
@@ -152,7 +152,7 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
     }
 
     return isFetchingNewPool
-  }, [isFetchingNewPool, poolData, tokenA, tokenB])
+  }, [isFetchingNewPool, poolData, tokenX, tokenY])
 
   const getTokenIndex = (ticker: string) => {
     const address = tickerToAddress(currentNetwork, ticker)
@@ -212,17 +212,18 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
   }
 
   useEffect(() => {
-    const tokenAAddress = getTokenIndex(initialTokenFrom)
-    const tokenBAddress = getTokenIndex(initialTokenTo)
+    const tokenXAddress = getTokenIndex(initialTokenFrom)
+    const tokenYAddress = getTokenIndex(initialTokenTo)
 
-    const tokenA = tokens.find(token => token.address.toString() === tokenAAddress?.toString())
-    const tokenB = tokens.find(token => token.address.toString() === tokenBAddress?.toString())
+    const tokenX = tokens.find(token => token.address.toString() === tokenXAddress?.toString())
+    const tokenY = tokens.find(token => token.address.toString() === tokenYAddress?.toString())
 
-    if (!tokenA || !tokenB) return
+    if (!tokenX || !tokenY) return
 
-    const isXToY = tokenA.assetAddress.toString() < tokenB.assetAddress.toString()
-    setTokenA(isXToY ? tokenA : tokenB)
-    setTokenB(isXToY ? tokenB : tokenA)
+    const isXToY = tokenX.assetAddress.toString() < tokenY.assetAddress.toString()
+
+    settokenX(isXToY ? tokenX : tokenY)
+    settokenY(isXToY ? tokenY : tokenX)
   }, [tokens.length])
 
   const { fee, tickSpacing } = useMemo(() => {
@@ -238,32 +239,32 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
   }, [initialFee])
 
   useEffect(() => {
-    if (fee && tickSpacing && tokenA && tokenB) {
+    if (fee && tickSpacing && tokenX && tokenY) {
       dispatch(
         poolsActions.getPoolData(
-          new Pair(tokenA.assetAddress, tokenB.assetAddress, {
+          new Pair(tokenX.assetAddress, tokenY.assetAddress, {
             fee,
             tickSpacing
           })
         )
       )
     }
-  }, [fee, tokenA, tokenB])
+  }, [fee, tokenX, tokenY])
 
   useEffect(() => {
-    if (!isPoolDataLoading && tokenA?.assetAddress && tokenB?.assetAddress && fee) {
+    if (!isPoolDataLoading && tokenX?.assetAddress && tokenY?.assetAddress && fee) {
       const index = allPools.findIndex(
         pool =>
           pool.fee.eq(fee) &&
-          ((pool.tokenX.equals(tokenA.assetAddress) && pool.tokenY.equals(tokenB.assetAddress)) ||
-            (pool.tokenX.equals(tokenB.assetAddress) && pool.tokenY.equals(tokenA.assetAddress)))
+          ((pool.tokenX.equals(tokenX.assetAddress) && pool.tokenY.equals(tokenY.assetAddress)) ||
+            (pool.tokenX.equals(tokenY.assetAddress) && pool.tokenY.equals(tokenX.assetAddress)))
       )
       setPoolData(allPools[index])
     }
   }, [isPoolDataLoading, allPools.length])
 
   const handleOpenSwap = () => {
-    navigate(ROUTES.getExchangeRoute(tokenA?.symbol, tokenB?.symbol), {
+    navigate(ROUTES.getExchangeRoute(tokenX?.symbol, tokenY?.symbol), {
       state: { referer: 'stats' }
     })
   }
@@ -272,22 +273,20 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
     dispatch(navigationActions.setNavigation({ address: location.pathname }))
     navigate(
       ROUTES.getNewPositionRoute(
-        tokenA?.symbol,
-        tokenB?.symbol,
+        tokenX?.symbol,
+        tokenY?.symbol,
         parseFeeToPathFee(Math.round(fee * 10 ** (DECIMAL - 2)))
       ),
       { state: { referer: 'stats' } }
     )
   }
 
-  console.log(lastUsedInterval)
-  console.log(statsPoolData?.volume)
   return (
     <PoolDetails
       network={currentNetwork}
       statsPoolData={statsPoolData}
-      tokenA={tokenA}
-      tokenB={tokenB}
+      tokenX={tokenX}
+      tokenY={tokenY}
       handleOpenSwap={handleOpenSwap}
       handleOpenPosition={handleOpenPosition}
       poolData={poolData}
@@ -298,8 +297,8 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
       setChartType={e => dispatch(actions.setPoolDetailsChartType(e))}
       copyAddressHandler={copyAddressHandler}
       updateInterval={updateInterval}
-      tokenAReserve={tokenAReserve}
-      tokenBReserve={tokenBReserve}
+      tokenXReserve={tokenXReserve}
+      tokenYReserve={tokenYReserve}
       prices={prices}
     />
   )

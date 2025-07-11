@@ -6,10 +6,10 @@ import { mapIntervalToString } from '@utils/uiUtils'
 import { SwapToken } from '@store/selectors/solanaWallet'
 
 export interface IProps {
-  tokenA: SwapToken
-  tokenB: SwapToken
-  tokenAPercentage: number
-  tokenBPercentage: number
+  tokenX: SwapToken
+  tokenY: SwapToken
+  tokenXPercentage: number
+  tokenYPercentage: number
 }
 
 export const PercentageScale: React.FC<IProps> = ({}) => {
