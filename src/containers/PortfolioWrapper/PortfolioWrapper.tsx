@@ -36,10 +36,10 @@ import {
   balance,
   overviewSwitch
 } from '@store/selectors/solanaWallet'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { calcYPerXPriceBySqrtPrice, findStrategy, printBN, ROUTES } from '@utils/utils'
+import { calcYPerXPriceBySqrtPrice, ensureError, findStrategy, printBN, ROUTES } from '@utils/utils'
 import { network } from '@store/selectors/solanaConnection'
 import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import { actions as actionsStats } from '@store/reducers/stats'
@@ -57,6 +57,8 @@ import { ISearchToken } from '@common/FilterSearch/FilterSearch'
 import { useProcessedTokens } from '@store/hooks/userOverview/useProcessedToken'
 
 const PortfolioWrapper = () => {
+  const BANNER_STORAGE_KEY = 'invariant-es-banner-state'
+  const BANNER_HIDE_DURATION = 1000 * 60 * 60 * 24 // 24 hours
   const { classes } = useStyles()
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
 
@@ -71,6 +73,20 @@ const PortfolioWrapper = () => {
   const isBalanceLoading = useSelector(balanceLoading)
   const pricesData = useSelector(prices)
   const ethBalance = useSelector(balance)
+  const [isHiding, setIsHiding] = useState(false)
+  const [_showBanner, setShowBanner] = useState(() => {
+    const storedData = localStorage.getItem(BANNER_STORAGE_KEY)
+    if (storedData) {
+      try {
+        const { hiddenAt } = JSON.parse(storedData)
+        const currentTime = new Date().getTime()
+        return currentTime - hiddenAt >= BANNER_HIDE_DURATION
+      } catch {
+        return true
+      }
+    }
+    return true
+  })
   const disabledButton = useSelector(shouldDisable)
   const positionListAlignment = useSelector(positionListSwitcher)
   const overviewSelectedTab = useSelector(overviewSwitch)
@@ -111,6 +127,44 @@ const PortfolioWrapper = () => {
       setLastPage(lastPage === 1 ? 1 : lastPage - 1)
     }
   }, [list])
+
+  const handleBannerClose = () => {
+    setIsHiding(true)
+    setTimeout(() => {
+      setShowBanner(false)
+      localStorage.setItem(
+        BANNER_STORAGE_KEY,
+        JSON.stringify({
+          hiddenAt: new Date().getTime()
+        })
+      )
+      setIsHiding(false)
+    }, 400)
+  }
+
+  useLayoutEffect(() => {
+    const checkBannerState = () => {
+      const storedData = localStorage.getItem(BANNER_STORAGE_KEY)
+      if (storedData) {
+        try {
+          const { hiddenAt } = JSON.parse(storedData)
+          const currentTime = new Date().getTime()
+          if (currentTime - hiddenAt < BANNER_HIDE_DURATION) {
+            setShowBanner(false)
+          } else {
+            localStorage.removeItem(BANNER_STORAGE_KEY)
+            setShowBanner(true)
+          }
+        } catch (e: unknown) {
+          const error = ensureError(e)
+          console.error('Error parsing banner state:', error)
+          localStorage.removeItem(BANNER_STORAGE_KEY)
+        }
+      }
+    }
+
+    checkBannerState()
+  }, [])
 
   const handleRefresh = () => {
     dispatch(actions.getPositionsList())
@@ -392,6 +446,9 @@ const PortfolioWrapper = () => {
 
   return isConnected ? (
     <Portfolio
+      handleCloseBanner={handleBannerClose}
+      showBanner={false /*showBanner*/}
+      isHiding={isHiding}
       selectedFilters={searchParamsToken.filteredTokens}
       setSelectedFilters={setSearchTokensValue}
       shouldDisable={disabledButton}

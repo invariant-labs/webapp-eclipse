@@ -4,6 +4,7 @@ import { Typography } from '@mui/material'
 import { formatNumberWithCommas, printBN, removeAdditionalDecimals } from '@utils/utils'
 import { LEADERBOARD_DECIMAL } from '@store/consts/static'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
+import { QuestionMark } from '@components/Leaderboard/QuestionMark/QuestionMark'
 export interface IPromotedPoolPopover {
   isActive?: boolean
   apr?: BN
@@ -27,7 +28,8 @@ export const PromotedPoolPopover = ({
   showEstPointsFirst = false,
   children
 }: IPromotedPoolPopover) => {
-  const { classes } = useStyles()
+  const center = points.eqn(0)
+  const { classes } = useStyles({ center })
 
   const isLessThanMinimal = (value: BN) => {
     const minimalValue = new BN(1).mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL - 2)))
@@ -44,7 +46,11 @@ export const PromotedPoolPopover = ({
         {typeof pointsLabel !== 'string' ? pointsLabel : null}
       </Typography>
       <Typography className={classes.whiteText}>
-        {formatNumberWithCommas(printBN(points, 0))}
+        {points.eqn(0) ? (
+          <QuestionMark marginTop={8} height={'24px'} />
+        ) : (
+          formatNumberWithCommas(printBN(points, 0))
+        )}
       </Typography>
     </div>
   )

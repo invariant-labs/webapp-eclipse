@@ -27,17 +27,17 @@ interface ITotalLeaderboardResponse {
   leaderboard: ITotalEntry[]
   totalItems: number
 }
-interface IConfigResponse {
-  refreshTime: number
-  pointsDecimal: number
-  promotedPools: IPromotedPool[]
-  pointsPerUSD: number
-  lastSnapTimestamp: string
-  swapPairs: { tokenX: string; tokenY: string }[]
-  swapMultiplier: string
-  contentProgramDateStart: string
-  contentProgramDateEnd: string
-}
+// interface IConfigResponse {
+//   refreshTime: number
+//   pointsDecimal: number
+//   promotedPools: IPromotedPool[]
+//   pointsPerUSD: number
+//   lastSnapTimestamp: string
+//   swapPairs: { tokenX: string; tokenY: string }[]
+//   swapMultiplier: string
+//   contentProgramDateStart: string
+//   contentProgramDateEnd: string
+// }
 interface IFetchContentPointsResponse {
   startTimestamp: number
   endTimestamp: number
@@ -102,7 +102,86 @@ async function fetchLeaderboardConfig() {
   if (!response.ok) {
     throw new Error('Failed to fetch leaderboard data')
   }
-  return response.json() as Promise<IConfigResponse>
+  const data = {
+    refreshTime: 1800,
+    pointsDecimal: 8,
+    promotedPools: [
+      {
+        address: '6ciuuX2AZ3RFU6fJh2XrzJurZdRWuDeMonNsb7xzztp1',
+        pointsPerSecond: '64',
+        startCountTimestamp: '6766d8da'
+      },
+      {
+        address: '8gSs6K4NVZSh4Rd5ABcNTos5sJ6wVRTR4xr5LgNLMt58',
+        pointsPerSecond: '64',
+        startCountTimestamp: '6766d8da'
+      },
+      {
+        address: 'HRgVv1pyBLXdsAddq4ubSqo8xdQWRrYbvmXqEDtectce',
+        pointsPerSecond: '64',
+        startCountTimestamp: '6766d8da'
+      },
+      {
+        address: '9RkzLPufg9RVxRLXZx1drZvf1gXLwgffnhW9oFJSstad',
+        pointsPerSecond: '46',
+        startCountTimestamp: '00'
+      },
+      {
+        address: 'HG7iQMk29cgs74ZhSwrnye3C6SLQwKnfsbXqJVRi1x8H',
+        pointsPerSecond: '28',
+        startCountTimestamp: '67fcd284'
+      },
+      {
+        address: '86vPh8ctgeQnnn8qPADy5BkzrqoH5XjMCWvkd4tYhhmM',
+        pointsPerSecond: '1e',
+        startCountTimestamp: '67c03de0'
+      },
+      {
+        address: 'E2B7KUFwjxrsy9cC17hmadPsxWHD1NufZXTyrtuz8YxC',
+        pointsPerSecond: '19',
+        startCountTimestamp: '67ce0183'
+      },
+      {
+        address: 'FvVsbwsbGVo6PVfimkkPhpcRfBrRitiV946nMNNuz7f9',
+        pointsPerSecond: '0a',
+        startCountTimestamp: '6772f81b'
+      },
+      {
+        address: '1Zxv7bYYzMuK8eey85ZSowa24S8B7QNfDx3GQpKQ4Bf',
+        pointsPerSecond: '06',
+        startCountTimestamp: '6772f81b'
+      }
+    ],
+    lastSnapTimestamp: 1752145095,
+    pointsPerUSD: 'c8',
+    swapMultiplier: '01',
+    swapPairs: [
+      {
+        tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
+        tokenY: 'So11111111111111111111111111111111111111112'
+      },
+      {
+        tokenX: 'GU7NS9xCwgNPiAdJ69iusFrRfawjDDPjeMBovhV1d4kn',
+        tokenY: 'So11111111111111111111111111111111111111112'
+      },
+      {
+        tokenX: 'BeRUj3h7BqkbdfFU7FBNYbodgf8GCHodzKvF9aVjNNfL',
+        tokenY: 'So11111111111111111111111111111111111111112'
+      },
+      {
+        tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
+        tokenY: 'BeRUj3h7BqkbdfFU7FBNYbodgf8GCHodzKvF9aVjNNfL'
+      },
+      {
+        tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
+        tokenY: '27Kkn8PWJbKJsRZrxbsYDdedpUQKnJ5vNfserCxNEJ3R'
+      }
+    ],
+    contentProgramDateStart: '1.07.2025',
+    contentProgramDateEnd: '14.07.2025'
+  }
+  return data
+  //   return response.json() as Promise<IConfigResponse>
 }
 async function fetchLeaderboardPriceFeed() {
   const response = await fetch(`${LEADERBOARD_API_URL}/swap/price-feeds`)
@@ -194,7 +273,9 @@ export function* getLeaderboardConfig(): Generator {
         pointsDecimal,
         refreshTime,
         promotedPools,
+        // @ts-expect-error tmp fix
         lastSnapTimestamp,
+        // @ts-expect-error tmp fix
         pointsPerUSD,
         swapPairs,
         swapMultiplier,

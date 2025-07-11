@@ -107,7 +107,8 @@ export const colors = {
     darkPinkGradient:
       'linear-gradient(180deg, rgba(239, 132, 245, 0.00) 0%, rgba(239, 132, 245, 0.10) 100%), #111931',
     darkGreenGradient:
-      'linear-gradient(180deg, rgba(46, 224, 154, 0.00) 0%, rgba(46, 224, 154, 0.10) 100%), #111931'
+      'linear-gradient(180deg, rgba(46, 224, 154, 0.00) 0%, rgba(46, 224, 154, 0.10) 100%), #111931',
+    esToken: '#A0FEA0'
   }
 }
 
