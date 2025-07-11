@@ -108,6 +108,10 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
   }
 
   useEffect(() => {
+    dispatch(actions.setLoadingStats(true))
+  }, [])
+
+  useEffect(() => {
     const connection = getCurrentSolanaConnection()
     if (poolData && connection) {
       fetchTokensReserves(poolData.tokenXReserve, poolData.tokenYReserve, connection)

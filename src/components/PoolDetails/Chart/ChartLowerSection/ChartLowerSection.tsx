@@ -267,10 +267,6 @@ const ChartLowerSection: React.FC<StatsInterface> = ({
     }
   }, [chartType, statsPoolData])
 
-  console.log(interval)
-  console.log(data)
-  console.log(statsPoolData?.volumePlot)
-
   useEffect(() => {
     console.log(statsPoolData?.volume)
   }, [statsPoolData?.volume])
@@ -279,7 +275,8 @@ const ChartLowerSection: React.FC<StatsInterface> = ({
     console.log(value)
   }, [value])
 
-  console.log(value)
+  const isEmptyData = useMemo(() => data.every(item => item.value === 0), [data])
+
   return (
     <Grid className={cx(classes.container, className)}>
       <Box className={classes.volumeContainer}>
@@ -383,6 +380,7 @@ const ChartLowerSection: React.FC<StatsInterface> = ({
           fill={[{ match: '*', id: 'gradient' }]}
           colors={colors.invariant.pink}
           layers={['grid', 'axes', 'bars', 'markers', 'legends', 'annotations', CustomHoverLayer]}
+          maxValue={isEmptyData ? 1 : 'auto'}
         />
         <CustomTooltip />
       </div>

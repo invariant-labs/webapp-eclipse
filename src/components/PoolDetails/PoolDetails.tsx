@@ -46,7 +46,6 @@ export const PoolDetails: React.FC<IProps> = ({
   updateInterval
 }) => {
   const { classes } = useStyles()
-  console.log(poolData?.tokenXReserve.toString())
 
   return (
     <Grid className={classes.wrapper}>

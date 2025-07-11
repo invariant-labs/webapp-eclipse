@@ -62,9 +62,9 @@ export const ChartUpperSection: React.FC<IProps> = ({
   }
 
   return (
-    <Box display='flex' justifyContent='space-between' alignItems='center'>
+    <Box display='flex' justifyContent='space-between' alignItems='center' minHeight='71px'>
       <Box>
-        <Box display='flex' alignItems='center' gap={'6px'}>
+        <Box display='flex' alignItems='center' gap={'6px'} minHeight={'27px'}>
           <Typography sx={{ ...typography.body2, color: colors.invariant.textGrey }}>
             Pool address
           </Typography>
