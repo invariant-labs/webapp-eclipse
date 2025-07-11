@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Box, Typography } from '@mui/material'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import useStyles from './style'
 import { formatNumberWithSuffix } from '@utils/utils'
 import { colors, typography } from '@static/theme'
+import { useAverageLogoColor } from '@store/hooks/userOverview/useAverageLogoColor'
 
 export interface IProps {
   tokenX: SwapToken
@@ -18,10 +19,32 @@ export const PercentageScale: React.FC<IProps> = ({
   tokenXPercentage,
   tokenYPercentage
 }) => {
+  const { getAverageColor, getTokenColor, tokenColorOverrides } = useAverageLogoColor()
+
+  const [colorX, setColorX] = useState<string>(() =>
+    getTokenColor(tokenX.symbol, undefined, tokenColorOverrides)
+  )
+  const [colorY, setColorY] = useState<string>(() =>
+    getTokenColor(tokenY.symbol, undefined, tokenColorOverrides)
+  )
+
+  useEffect(() => {
+    let active = true
+    getAverageColor(tokenX.logoURI, tokenX.symbol).then(col => {
+      if (active) setColorX(col)
+    })
+    getAverageColor(tokenY.logoURI, tokenY.symbol).then(col => {
+      if (active) setColorY(col)
+    })
+    return () => {
+      active = false
+    }
+  }, [tokenX.logoURI, tokenX.symbol, tokenY.logoURI, tokenY.symbol, getAverageColor])
+
   const { classes, cx } = useStyles({
     leftPercentage: +tokenXPercentage.toFixed(2),
-    colorLeft: colors.invariant.black,
-    colorRight: colors.invariant.warning
+    colorLeft: colorX,
+    colorRight: colorY
   })
 
   return (
