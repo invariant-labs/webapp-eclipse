@@ -476,7 +476,6 @@ export const Swap: React.FC<ISwap> = ({
       swapAccounts &&
       Object.keys(swapAccounts.pools || {}).length > 0
     ) {
-      
       simulateWithTimeout()
     }
   }, [
@@ -499,7 +498,6 @@ export const Swap: React.FC<ISwap> = ({
       swapAccounts &&
       Object.keys(swapAccounts.pools || {}).length > 0
     ) {
-      
       simulateWithTimeout()
     }
   }, [

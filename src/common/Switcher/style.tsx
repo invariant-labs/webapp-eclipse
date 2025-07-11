@@ -5,9 +5,10 @@ interface StyleProps {
   value: string
   dark?: boolean
   fullWidth?: boolean
+  itemWidth?: number
 }
 
-const useStyles = makeStyles<StyleProps>()((theme, { dark, fullWidth }) => ({
+const useStyles = makeStyles<StyleProps>()((theme, { dark, fullWidth, itemWidth }) => ({
   container: {
     backgroundColor: dark ? colors.invariant.newDark : colors.invariant.component,
     borderRadius: 10,
@@ -65,7 +66,7 @@ const useStyles = makeStyles<StyleProps>()((theme, { dark, fullWidth }) => ({
     alignItems: 'center',
     color: 'white',
     flex: 1,
-    width: 60,
+    width: itemWidth ? itemWidth : 60,
     minWidth: 'unset',
     textTransform: 'none',
     textWrap: 'nowrap',
@@ -73,6 +74,7 @@ const useStyles = makeStyles<StyleProps>()((theme, { dark, fullWidth }) => ({
     borderRadius: 10,
     zIndex: 2,
     transition: '300ms',
+
     '&.Mui-selected': {
       backgroundColor: 'transparent'
     },
