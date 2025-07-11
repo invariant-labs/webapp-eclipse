@@ -6,6 +6,7 @@ import { PayloadType } from '@store/consts/types'
 export interface IUserStats {
   deposited: BN
   received: BN
+  canMintNft: boolean
 }
 
 export interface ISaleStats {
@@ -61,14 +62,15 @@ const saleSlice = createSlice({
       action: PayloadAction<{
         deposited: BN
         received: BN
+        canMintNft: boolean
       } | null>
     ) {
       if (!action.payload) {
         state.isLoadingUserStats = false
         return state
       }
-      const { deposited, received } = action.payload
-      state.userStats = { deposited, received }
+      const { deposited, received, canMintNft } = action.payload
+      state.userStats = { deposited, received, canMintNft }
       state.isLoadingUserStats = false
       return state
     },
@@ -116,6 +118,10 @@ const saleSlice = createSlice({
     setProofOfInclusion(state, action: PayloadAction<Array<number> | undefined>) {
       state.proofOfInclusion = action.payload
       state.isLoadingProof = false
+      return state
+    },
+    mintNft(state) {
+      state.deposit.inProgress = true
       return state
     }
   }
