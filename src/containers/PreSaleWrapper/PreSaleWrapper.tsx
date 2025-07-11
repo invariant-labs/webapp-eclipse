@@ -10,6 +10,7 @@ import { isLoadingProof, proofOfInclusion, saleSelectors } from '@store/selector
 import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
 import { printBNandTrimZeros } from '@utils/utils'
+import NftPlaceholder from '@static/png/NFT_Card.png'
 import {
   EFFECTIVE_TARGET_MULTIPLIER,
   getRound,
@@ -585,6 +586,28 @@ export const PreSaleWrapper = () => {
             )
           }}
         />
+      </Box>
+      <Box className={classes.sectionTitle}>
+        <Typography className={classes.sectionTitleText}>Invariant Contributor NFT</Typography>
+        <Box className={classes.nftWrapper}>
+          <Typography component='section'>
+            Every participant in the Invariant Public Sale who contributes at least $500 will
+            receive a special, non-transferable NFT.
+          </Typography>
+          <Typography component='h4'>Status</Typography>
+          <Typography component='h1'>
+            {userStats?.canMintNft ? 'Eligble' : 'Non-eligible'}
+          </Typography>
+          <img className={classes.nftCard} src={NftPlaceholder} />
+          <Button
+            scheme='green'
+            onClick={() => dispatch(actions.mintNft())}
+            width={185}
+            height={44}
+            disabled={!userStats?.canMintNft}>
+            Mint
+          </Button>
+        </Box>
       </Box>
       <Box className={classes.sectionTitle}>
         <Typography className={classes.sectionTitleText}>Invariant by the Numbers</Typography>
