@@ -55,6 +55,11 @@ import { auditByLogoIcon, swapArrowClean } from '@static/icons'
 import { Tokenomics } from '@components/PreSale/Tokenomics/Tokenomics'
 import { DEXChart } from '@components/PreSale/DEXChart/DEXChart'
 import { getCurrentSolanaConnection } from '@utils/web3/connection'
+import { Button } from '@common/Button/Button'
+import share from '@static/svg/share.svg'
+import { ShareComponent } from '@components/PreSale/ShareComponent/ShareComponent'
+import { blurContent, unblurContent } from '@utils/uiUtils'
+import { actions as snackbarsActions } from '@store/reducers/snackbars'
 
 function SampleNextArrow(props) {
   const { className, style, onClick } = props
@@ -433,6 +438,42 @@ export const PreSaleWrapper = () => {
     })
   }, [tierPrices, reversedPrices, mintDecimals])
 
+  const [isShareComponentShown, setIsShareComponentShown] = useState(false)
+
+  useEffect(() => {
+    if (progress === 'success') {
+      setIsShareComponentShown(true)
+    }
+  }, [progress])
+
+  useEffect(() => {
+    if (isShareComponentShown) {
+      blurContent()
+    } else {
+      unblurContent()
+    }
+  }, [isShareComponentShown])
+
+  const addDownloadSnackbar = () => {
+    dispatch(
+      snackbarsActions.add({
+        message: 'Successfully downloaded',
+        variant: 'success',
+        persist: false
+      })
+    )
+  }
+
+  const addCopySnackbar = () => {
+    dispatch(
+      snackbarsActions.add({
+        message: 'Successfully copied to clipboard',
+        variant: 'success',
+        persist: false
+      })
+    )
+  }
+
   const roundName = useMemo(() => {
     return stepNames[round - 1]
   }, [round])
@@ -442,6 +483,15 @@ export const PreSaleWrapper = () => {
       <Hidden lgDown>
         <OverlayWrapper />
       </Hidden>
+
+      <ShareComponent
+        open={isShareComponentShown}
+        allocation={received}
+        mintDecimals={mintDecimals}
+        onClose={() => setIsShareComponentShown(false)}
+        addDownloadSnackbar={addDownloadSnackbar}
+        addCopySnackbar={addCopySnackbar}
+      />
 
       <Box className={classes.contentWrapper}>
         <Grid className={classes.stepperContainer}>
@@ -470,6 +520,13 @@ export const PreSaleWrapper = () => {
               priceFormat={reversedPrices ? 'usdc-to-token' : 'token-to-usdc'}
               roundName={roundName}
             />
+            <Box className={classes.shareButtonContainer}>
+              <Button width='100%' scheme='green' onClick={() => setIsShareComponentShown(true)}>
+                <div className={classes.shareContainer}>
+                  Share <img src={share} alt='share icon' />
+                </div>
+              </Button>
+            </Box>
             <Grid className={classes.reverseContainer}>
               <div className={classes.arrowIcon} onClick={togglePriceDirection}>
                 <span className={`${classes.reverseText} reverseText`}>Reverse token</span>
