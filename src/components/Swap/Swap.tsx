@@ -476,7 +476,6 @@ export const Swap: React.FC<ISwap> = ({
       swapAccounts &&
       Object.keys(swapAccounts.pools || {}).length > 0
     ) {
-      
       simulateWithTimeout()
     }
   }, [
@@ -499,7 +498,6 @@ export const Swap: React.FC<ISwap> = ({
       swapAccounts &&
       Object.keys(swapAccounts.pools || {}).length > 0
     ) {
-      
       simulateWithTimeout()
     }
   }, [
@@ -1313,11 +1311,11 @@ export const Swap: React.FC<ISwap> = ({
               showMaxButton={true}
               showBlur={
                 (inputRef === inputTarget.TO && addBlur) ||
-                lockAnimation ||
                 (pendingSimulation && inputRef !== inputTarget.FROM) ||
-                (swapIsLoading && inputRef !== inputTarget.FROM) ||
                 (getStateMessage() === 'Loading' &&
-                  (inputRef === inputTarget.TO || inputRef === inputTarget.DEFAULT))
+                  inputRef !== inputTarget.FROM &&
+                  amountTo !== '' &&
+                  Number(amountTo) !== 0)
               }
               hiddenUnknownTokens={hideUnknownTokens}
               network={network}
@@ -1434,11 +1432,11 @@ export const Swap: React.FC<ISwap> = ({
               showMaxButton={false}
               showBlur={
                 (inputRef === inputTarget.FROM && addBlur) ||
-                lockAnimation ||
                 (pendingSimulation && inputRef !== inputTarget.TO) ||
-                (swapIsLoading && inputRef !== inputTarget.TO) ||
                 (getStateMessage() === 'Loading' &&
-                  (inputRef === inputTarget.FROM || inputRef === inputTarget.DEFAULT))
+                  inputRef !== inputTarget.TO &&
+                  amountFrom !== '' &&
+                  Number(amountFrom) !== 0)
               }
               hiddenUnknownTokens={hideUnknownTokens}
               network={network}
