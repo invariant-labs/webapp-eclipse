@@ -1,4 +1,4 @@
-import { Box, Popover, Typography } from '@mui/material'
+import { Box, Grid, Popover, Typography } from '@mui/material'
 import useStyles from './style'
 import { Link, useLocation } from 'react-router-dom'
 import { useEffect, useState } from 'react'
@@ -53,18 +53,36 @@ export const FooterNavbar = () => {
         ]
       : []),
 
-    {
-      label: 'Presale',
-      icon: saleIcon,
-      url: 'presale',
-      onClick: () => {
-        setIsMorePopupOpen(false)
-        setAnchorEl(null)
-        unblurContent()
-      },
-      isLink: true,
-      width: 25
-    },
+    ...(typeOfNetwork === NetworkType.Testnet
+      ? [
+          {
+            label: 'Creator',
+            icon: tokenCreatorIcon,
+            url: 'creator',
+            width: 25,
+            isLink: true,
+            onClick: () => {
+              setIsMorePopupOpen(false)
+              setAnchorEl(null)
+              unblurContent()
+            }
+          }
+        ]
+      : [
+          {
+            label: 'Points',
+            icon: airdropIcon,
+            url: 'points',
+            width: 22,
+            onClick: () => {
+              setIsMorePopupOpen(false)
+              setAnchorEl(null)
+              unblurContent()
+            },
+            isLink: true
+          }
+        ]),
+
     {
       label: 'Stats',
       icon: statsIcon,
@@ -101,22 +119,14 @@ export const FooterNavbar = () => {
       width: 26,
       isLink: true
     },
+    {
+      label: 'Presale',
+      icon: saleIcon,
+      url: 'presale',
 
-    typeOfNetwork === NetworkType.Testnet
-      ? {
-          label: 'Creator',
-          icon: tokenCreatorIcon,
-          url: 'creator',
-          width: 33,
-          isLink: true
-        }
-      : {
-          label: 'Points',
-          icon: airdropIcon,
-          url: 'points',
-          width: 26,
-          isLink: true
-        },
+      isLink: true,
+      width: 34
+    },
 
     {
       label: 'More',
@@ -305,16 +315,18 @@ export const FooterNavbar = () => {
                     style={{
                       background: isOptionActive ? colors.invariant.light : 'transparent'
                     }}>
-                    <img
-                      src={option.icon}
-                      width={option.width}
-                      alt={option.label}
-                      style={
-                        isOptionActive
-                          ? { filter: 'brightness(0) saturate(100%) invert(100%)' }
-                          : {}
-                      }
-                    />
+                    <Grid width={25} display='flex'>
+                      <img
+                        src={option.icon}
+                        width={option.width}
+                        alt={option.label}
+                        style={
+                          isOptionActive
+                            ? { filter: 'brightness(0) saturate(100%) invert(100%)' }
+                            : { filter: 'brightness(0) saturate(100%) invert(100%)' }
+                        }
+                      />
+                    </Grid>
                     <Typography
                       style={{ marginTop: 0 }}
                       sx={
