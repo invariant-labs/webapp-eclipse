@@ -1,4 +1,4 @@
-import { Box, Popover, Typography } from '@mui/material'
+import { Box, Grid, Popover, Typography } from '@mui/material'
 import useStyles from './style'
 import { Link, useLocation } from 'react-router-dom'
 import { useEffect, useState } from 'react'
@@ -59,7 +59,7 @@ export const FooterNavbar = () => {
             label: 'Creator',
             icon: tokenCreatorIcon,
             url: 'creator',
-            width: 33,
+            width: 25,
             isLink: true,
             onClick: () => {
               setIsMorePopupOpen(false)
@@ -315,16 +315,18 @@ export const FooterNavbar = () => {
                     style={{
                       background: isOptionActive ? colors.invariant.light : 'transparent'
                     }}>
-                    <img
-                      src={option.icon}
-                      width={option.width}
-                      alt={option.label}
-                      style={
-                        isOptionActive
-                          ? { filter: 'brightness(0) saturate(100%) invert(100%)' }
-                          : { filter: 'brightness(0) saturate(100%) invert(100%)' }
-                      }
-                    />
+                    <Grid width={25} display='flex'>
+                      <img
+                        src={option.icon}
+                        width={option.width}
+                        alt={option.label}
+                        style={
+                          isOptionActive
+                            ? { filter: 'brightness(0) saturate(100%) invert(100%)' }
+                            : { filter: 'brightness(0) saturate(100%) invert(100%)' }
+                        }
+                      />
+                    </Grid>
                     <Typography
                       style={{ marginTop: 0 }}
                       sx={
