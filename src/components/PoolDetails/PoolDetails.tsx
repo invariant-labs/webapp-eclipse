@@ -8,7 +8,7 @@ import { PoolSnap } from '@store/reducers/stats'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { Intervals as IntervalsKeys } from '@store/consts/static'
-import { PoolChartSwitch } from '@store/consts/types'
+import { PoolChartSwitch, TokenReserve } from '@store/consts/types'
 import { VariantType } from 'notistack'
 import { getTokenReserve } from '@utils/utils'
 
@@ -27,6 +27,9 @@ export interface IProps {
   setChartType: (type: PoolChartSwitch) => void
   copyAddressHandler: (message: string, variant: VariantType) => void
   updateInterval: (interval: IntervalsKeys) => void
+  tokenAReserve: TokenReserve | null
+  tokenBReserve: TokenReserve | null
+  prices: { tokenA: number; tokenB: number }
 }
 
 export const PoolDetails: React.FC<IProps> = ({
@@ -43,7 +46,10 @@ export const PoolDetails: React.FC<IProps> = ({
   lastStatsTimestamp,
   setChartType,
   copyAddressHandler,
-  updateInterval
+  updateInterval,
+  tokenAReserve,
+  tokenBReserve,
+  prices
 }) => {
   const { classes } = useStyles()
 
@@ -70,6 +76,11 @@ export const PoolDetails: React.FC<IProps> = ({
           interval={interval}
           statsPoolData={statsPoolData}
           isLoadingStats={isLoadingStats}
+          tokenA={tokenA}
+          tokenB={tokenB}
+          tokenAReserve={tokenAReserve}
+          tokenBReserve={tokenBReserve}
+          prices={prices}
         />
       </Grid>
       {/* <Transactions /> */}

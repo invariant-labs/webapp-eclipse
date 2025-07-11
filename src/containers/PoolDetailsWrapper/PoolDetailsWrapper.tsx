@@ -39,6 +39,7 @@ import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { getCurrentSolanaConnection } from '@utils/web3/connection'
 import { Connection, PublicKey } from '@solana/web3.js'
 import { TokenReserve } from '@store/consts/types'
+import { set } from 'remeda'
 
 export interface IProps {
   initialTokenFrom: string
@@ -216,13 +217,12 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
 
     const tokenA = tokens.find(token => token.address.toString() === tokenAAddress?.toString())
     const tokenB = tokens.find(token => token.address.toString() === tokenBAddress?.toString())
-    if (tokenA) {
-      setTokenA(tokenA)
-    }
 
-    if (tokenB) {
-      setTokenB(tokenB)
-    }
+    if (!tokenA || !tokenB) return
+
+    const isXToY = tokenA.assetAddress.toString() < tokenB.assetAddress.toString()
+    setTokenA(isXToY ? tokenA : tokenB)
+    setTokenB(isXToY ? tokenB : tokenA)
   }, [tokens.length])
 
   const { fee, tickSpacing } = useMemo(() => {
@@ -298,6 +298,9 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
       setChartType={e => dispatch(actions.setPoolDetailsChartType(e))}
       copyAddressHandler={copyAddressHandler}
       updateInterval={updateInterval}
+      tokenAReserve={tokenAReserve}
+      tokenBReserve={tokenBReserve}
+      prices={prices}
     />
   )
 }
