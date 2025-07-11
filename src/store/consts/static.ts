@@ -1114,6 +1114,6 @@ export const ES_ETH_POOLS = {
   '0_03': '6ciuuX2AZ3RFU6fJh2XrzJurZdRWuDeMonNsb7xzztp1'
 }
 export const POOLS_TO_HIDE_POINTS_PER_24H: string[] = [
-  ES_ETH_POOLS['0_03'],
-  '8gSs6K4NVZSh4Rd5ABcNTos5sJ6wVRTR4xr5LgNLMt58'
+  // ES_ETH_POOLS['0_03'],
+  // '8gSs6K4NVZSh4Rd5ABcNTos5sJ6wVRTR4xr5LgNLMt58'
 ]
