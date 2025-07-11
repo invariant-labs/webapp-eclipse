@@ -4,10 +4,6 @@ import { makeStyles } from 'tss-react/mui'
 export const useStyles = makeStyles()(theme => ({
   wrapper: {
     width: 500,
-    // [theme.breakpoints.down(1000)]: {
-
-    //   width: 360
-    // },
     [theme.breakpoints.down('md')]: {
       width: '100%'
     }

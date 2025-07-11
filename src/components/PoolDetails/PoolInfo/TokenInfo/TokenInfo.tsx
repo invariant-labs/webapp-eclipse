@@ -1,10 +1,8 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo } from 'react'
 import { Box, Skeleton, Typography } from '@mui/material'
 import { SwapToken } from '@store/selectors/solanaWallet'
-
 import { formatNumberWithSuffix } from '@utils/utils'
 import { colors, typography } from '@static/theme'
-import { useAverageLogoColor } from '@store/hooks/userOverview/useAverageLogoColor'
 import useStyles from './style'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { CopyIcon } from '@static/componentIcon/CopyIcon'
@@ -28,7 +26,7 @@ export const TokenInfo: React.FC<IProps> = ({
   amount,
   price
 }) => {
-  const { classes, cx } = useStyles()
+  const { classes } = useStyles()
   const address = token?.assetAddress.toString() || ''
 
   const copyToClipboard = () => {
@@ -79,57 +77,57 @@ export const TokenInfo: React.FC<IProps> = ({
         )}
       </Box>
       <Box className={classes.separator} />
-      <Box display='flex' alignItems='center' justifyContent='space-between'>
-        <Typography color={colors.invariant.textGrey} style={typography.caption1}>
-          Coin address
-        </Typography>
-        <Box display='flex' alignItems='center' gap={'3px'}>
-          <TooltipHover title='Copy'>
-            <Box
-              display='flex'
-              alignItems='center'
-              gap='3px'
-              className={classes.addressIcon}
-              onClick={copyToClipboard}>
-              <Typography
-                style={{ textDecoration: 'underline', ...typography.body2 }}
-                color={colors.invariant.text}>
-                {address.slice(0, 4)}...{address.slice(address.length - 4, address.length)}
-              </Typography>
-              <Box>
+      <Box display='flex' flexDirection='column' justifyContent='center' gap='8px'>
+        <Box display='flex' alignItems='center' justifyContent='space-between'>
+          <Typography color={colors.invariant.textGrey} style={typography.caption1}>
+            Coin address
+          </Typography>
+          <Box display='flex' alignItems='center' gap={'3px'}>
+            <TooltipHover title='Copy'>
+              <Box
+                display='flex'
+                alignItems='center'
+                gap='3px'
+                className={classes.addressIcon}
+                onClick={copyToClipboard}>
+                <Typography
+                  style={{ textDecoration: 'underline', ...typography.body2 }}
+                  color={colors.invariant.text}>
+                  {address.slice(0, 4)}...{address.slice(address.length - 4, address.length)}
+                </Typography>
                 <CopyIcon color={colors.invariant.text} height={10} />
               </Box>
-            </Box>
-          </TooltipHover>
-          <TooltipHover title='Open pool in explorer'>
-            <a
-              href={`https://eclipsescan.xyz/account/${address}${networkUrl}`}
-              target='_blank'
-              rel='noopener noreferrer'
-              onClick={event => {
-                event.stopPropagation()
-              }}
-              className={classes.addressIcon}>
-              <NewTabIcon color={colors.invariant.text} height={10} />
-            </a>
-          </TooltipHover>
+            </TooltipHover>
+            <TooltipHover title='Open pool in explorer'>
+              <a
+                href={`https://eclipsescan.xyz/account/${address}${networkUrl}`}
+                target='_blank'
+                rel='noopener noreferrer'
+                onClick={event => {
+                  event.stopPropagation()
+                }}
+                className={classes.addressIcon}>
+                <NewTabIcon color={colors.invariant.text} height={10} />
+              </a>
+            </TooltipHover>
+          </Box>
         </Box>
-      </Box>
-      <Box display='flex' alignItems='center' justifyContent='space-between'>
-        <Typography color={colors.invariant.textGrey} style={typography.caption1}>
-          Amount
-        </Typography>
-        <Typography color={colors.invariant.textGrey} style={typography.body2}>
-          {formatNumberWithSuffix(amount ?? 0)}
-        </Typography>
-      </Box>
-      <Box display='flex' alignItems='center' justifyContent='space-between'>
-        <Typography color={colors.invariant.textGrey} style={typography.caption1}>
-          Price
-        </Typography>
-        <Typography color={colors.invariant.textGrey} style={typography.body2}>
-          ${formatNumberWithSuffix(price ?? 0)} USD
-        </Typography>
+        <Box display='flex' alignItems='center' justifyContent='space-between'>
+          <Typography color={colors.invariant.textGrey} style={typography.caption1}>
+            Amount
+          </Typography>
+          <Typography color={colors.invariant.textGrey} style={typography.body2}>
+            {formatNumberWithSuffix(amount ?? 0)}
+          </Typography>
+        </Box>
+        <Box display='flex' alignItems='center' justifyContent='space-between'>
+          <Typography color={colors.invariant.textGrey} style={typography.caption1}>
+            Price
+          </Typography>
+          <Typography color={colors.invariant.textGrey} style={typography.body2}>
+            ${formatNumberWithSuffix(price ?? 0)} USD
+          </Typography>
+        </Box>
       </Box>
     </Box>
   ) : (

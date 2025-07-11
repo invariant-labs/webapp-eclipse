@@ -1,7 +1,7 @@
 import { colors } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
-export const useStyles = makeStyles()(theme => ({
+export const useStyles = makeStyles()(() => ({
   wrapper: {
     display: 'flex',
     flexDirection: 'column',
@@ -33,6 +33,9 @@ export const useStyles = makeStyles()(theme => ({
     margin: '12px 0'
   },
   addressIcon: {
+    display: 'flex',
+    alignItems: 'center',
+    height: 20,
     '&:hover': {
       cursor: 'pointer'
     }

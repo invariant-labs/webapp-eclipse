@@ -4,7 +4,6 @@ import useStyles from './style'
 import InfoUpperSection from './InfoUpperSection/InfoUpperSection'
 import { PoolSnap } from '@store/reducers/stats'
 import { Intervals as IntervalsKeys, NetworkType } from '@store/consts/static'
-
 import PercentageScale from './PercentageScale/PercentageScale'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { TokenReserve } from '@store/consts/types'
@@ -36,10 +35,9 @@ export const PoolInfo: React.FC<IPros> = ({
   copyAddressHandler,
   network
 }) => {
-  const { classes, cx } = useStyles()
+  const { classes } = useStyles()
   const tokenXUsdAmount = tokenXReserve ? prices.tokenX * tokenXReserve.uiAmount : 0
   const tokenYUsdAmount = tokenYReserve ? prices.tokenY * tokenYReserve.uiAmount : 0
-  console.log(prices.tokenX)
 
   const [tokenXPercentage, tokenYPercentage] = React.useMemo(() => {
     if (!tokenX || !tokenY || !tokenXReserve || !tokenYReserve) return [0, 0]

@@ -1,8 +1,8 @@
 import { alpha } from '@mui/material'
-import { colors, typography } from '@static/theme'
+import { colors } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
-export const useStyles = makeStyles()(theme => ({
+export const useStyles = makeStyles()(() => ({
   container: {
     display: 'flex',
     flexDirection: 'column',

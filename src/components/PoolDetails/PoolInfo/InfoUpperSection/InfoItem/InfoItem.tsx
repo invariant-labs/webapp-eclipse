@@ -1,17 +1,8 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 import { Box, Skeleton, Typography } from '@mui/material'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
-import { horizontalSwapIcon, infoIcon, plusIcon } from '@static/icons'
 import { colors, typography } from '@static/theme'
-import { NetworkType } from '@store/consts/static'
-import { NewTabIcon } from '@static/componentIcon/NewTabIcon'
-import { CopyIcon } from '@static/componentIcon/CopyIcon'
-import { ReverseTokensIcon } from '@static/componentIcon/ReverseTokensIcon'
-import { SwapToken } from '@store/selectors/solanaWallet'
-import { VariantType } from 'notistack'
 import useStyles from './style'
-import { PoolSnap } from '@store/reducers/stats'
-import { Intervals as IntervalsKeys } from '@store/consts/static'
 import { WarningIcon } from '@static/componentIcon/WarningIcon'
 
 export interface IProps {
@@ -38,7 +29,17 @@ export const InfoItem: React.FC<IProps> = ({ isLoadingStats, name, value, isGree
           </TooltipHover>
         )}
       </Box>
-      <Typography style={typography.caption2}>{value}</Typography>
+      {isLoadingStats ? (
+        <Skeleton
+          variant='rounded'
+          height={17}
+          width={80}
+          animation='wave'
+          sx={{ borderRadius: '8px' }}
+        />
+      ) : (
+        <Typography style={typography.caption2}>{value}</Typography>
+      )}
     </Box>
   )
 }

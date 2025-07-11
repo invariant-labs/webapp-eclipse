@@ -30,7 +30,7 @@ export const useStyles = makeStyles<{
   leftScale: {
     backgroundColor: colorLeft,
     height: 6,
-    width: `${leftPercentage}%`, // Fixed usage of leftPercentage
+    width: `${leftPercentage}%`,
     position: 'absolute',
     borderRadius: 6,
     left: 0,
