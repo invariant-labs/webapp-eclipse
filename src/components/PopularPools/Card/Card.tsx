@@ -8,6 +8,7 @@ import cardBackgroundTop from '@static/png/cardBackground2.png'
 import {
   airdropRainbowIcon,
   backIcon,
+  hornsETH,
   hornsUSDC,
   unknownTokenIcon,
   warningIcon
@@ -31,7 +32,8 @@ import {
   ES_MAIN,
   NetworkType,
   POOLS_TO_HIDE_POINTS_PER_24H,
-  USDC_MAIN
+  USDC_MAIN,
+  WETH_MAIN
 } from '@store/consts/static'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { leaderboardSelectors } from '@store/selectors/leaderboard'
@@ -77,9 +79,7 @@ const Card: React.FC<ICard> = ({
   const popoverContainerRef = useRef<HTMLDivElement>(null)
 
   const flipHorns = poolAddress?.equals(new PublicKey(ES_ETH_POOLS['0_03'])) ?? false
-  const isUSDC =
-    addressFrom === USDC_MAIN.address.toString() || addressTo === USDC_MAIN.address.toString()
-  console.log(isUSDC)
+
   const { classes } = useStyles({ flipHorns })
   const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
   const { promotedPools } = useSelector(leaderboardSelectors.config)
@@ -152,9 +152,27 @@ const Card: React.FC<ICard> = ({
     if (addressFrom === ES_MAIN.address.toString() || addressTo === ES_MAIN.address.toString())
       return true
   }, [symbolFrom, symbolTo])
+
+  const isUSDC = useMemo(() => {
+    return (
+      addressFrom === USDC_MAIN.address.toString() || addressTo === USDC_MAIN.address.toString()
+    )
+  }, [addressFrom, addressTo])
+  const isETH = useMemo(() => {
+    return (
+      addressFrom === WETH_MAIN.address.toString() || addressTo === WETH_MAIN.address.toString()
+    )
+  }, [addressFrom, addressTo])
+
+  const horns = useMemo(() => {
+    if (isETH) return hornsETH
+    if (isUSDC) return hornsUSDC
+    return Horn
+  }, [isETH, isUSDC])
+
   return (
     <Grid className={classes.root}>
-      {ESToken && !isLoading && <img className={classes.horn} src={isUSDC ? hornsUSDC : Horn} />}
+      {ESToken && !isLoading && <img className={classes.horn} src={horns} />}
 
       {isLoading || !poolAddress?.toString() ? (
         <Skeleton variant='rounded' animation='wave' className={classes.skeleton} />
@@ -252,16 +270,24 @@ const Card: React.FC<ICard> = ({
                 {apy !== undefined && showAPY && (
                   <StatsLabel
                     title='APY'
-                    value={`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '-' : Math.abs(convertedApy).toFixed(2) + '%'}`}
+                    value={`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '👀' : Math.abs(convertedApy).toFixed(2) + '%'}`}
+                    disableShadow={convertedApy === 0}
                   />
                 )}
                 <StatsLabel title='Fee' value={fee + '%'} />
                 {TVL !== undefined && (
                   <StatsLabel title='TVL' value={`$${formatNumberWithSuffix(TVL)}`} />
                 )}
-                {volume !== undefined && (
-                  <StatsLabel title='Volume' value={`$${formatNumberWithSuffix(volume)}`} />
-                )}
+                {
+                  <StatsLabel
+                    title='Volume'
+                    value={
+                      volume !== undefined && volume !== 0
+                        ? `$${formatNumberWithSuffix(volume)}`
+                        : 'SOON...'
+                    }
+                  />
+                }
               </Grid>
               <Grid container className={classes.footerWrapper}>
                 <Grid className={classes.back} container item onClick={handleOpenSwap}>
