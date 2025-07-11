@@ -134,11 +134,6 @@ export interface ISwap {
   tokensDict: Record<string, SwapToken>
   swapAccounts: FetcherRecords
   swapIsLoading: boolean
-  setAmountFrom: (amount: string, isUser?: boolean) => void
-  setAmountTo: (amount: string, isUser?: boolean) => void
-  amountFrom: string
-  amountTo: string
-  lastEdited: string | null
   wrappedETHBalance: BN | null
 }
 
@@ -197,12 +192,7 @@ export const Swap: React.FC<ISwap> = ({
   market,
   tokensDict,
   swapAccounts,
-  swapIsLoading,
-  setAmountFrom,
-  setAmountTo,
-  amountFrom,
-  amountTo,
-  lastEdited
+  swapIsLoading
 }) => {
   const { classes, cx } = useStyles()
   enum inputTarget {
@@ -215,6 +205,8 @@ export const Swap: React.FC<ISwap> = ({
   const [tokenToIndex, setTokenToIndex] = React.useState<number | null>(null)
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
   const [lockAnimation, setLockAnimation] = React.useState<boolean>(false)
+  const [amountFrom, setAmountFrom] = React.useState<string>('')
+  const [amountTo, setAmountTo] = React.useState<string>('')
   const [swap, setSwap] = React.useState<boolean | null>(null)
   const [rotates, setRotates] = React.useState<number>(0)
   const [slippTolerance, setSlippTolerance] = React.useState<string>(initialSlippage)
@@ -284,11 +276,7 @@ export const Swap: React.FC<ISwap> = ({
   const [isReversingTokens, setIsReversingTokens] = useState(false)
   const shortenText = useMediaQuery(theme.breakpoints.down(500))
   const shortenTextXS = useMediaQuery(theme.breakpoints.down(360))
-  useEffect(() => {
-    if (lastEdited && tokenFromIndex !== null && tokenToIndex !== null) {
-      setInputRef(lastEdited === 'from' ? inputTarget.FROM : inputTarget.TO)
-    }
-  }, [lastEdited, tokenFromIndex, tokenToIndex])
+
   const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT = useMemo(() => {
     if (network === NetworkType.Testnet) {
       return WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_TEST
@@ -476,7 +464,6 @@ export const Swap: React.FC<ISwap> = ({
       swapAccounts &&
       Object.keys(swapAccounts.pools || {}).length > 0
     ) {
-      
       simulateWithTimeout()
     }
   }, [
@@ -499,7 +486,6 @@ export const Swap: React.FC<ISwap> = ({
       swapAccounts &&
       Object.keys(swapAccounts.pools || {}).length > 0
     ) {
-      
       simulateWithTimeout()
     }
   }, [
@@ -818,14 +804,9 @@ export const Swap: React.FC<ISwap> = ({
   }
 
   const updateEstimatedAmount = () => {
-    if (
-      bestAmount.gt(new BN(0)) &&
-      tokenFromIndex !== null &&
-      tokenToIndex !== null &&
-      inputRef === inputTarget.FROM
-    ) {
+    if (tokenFromIndex !== null && tokenToIndex !== null) {
       const amount = getAmountOut(tokens[tokenToIndex])
-      setAmountTo(trimLeadingZeros(amount))
+      setAmountTo(+amount === 0 ? '' : trimLeadingZeros(amount))
     }
   }
   const isError = (error: string) => {
@@ -1041,16 +1022,7 @@ export const Swap: React.FC<ISwap> = ({
     }
   }, [wasIsFetchingNewPoolRun, wasSwapIsLoadingRun, isFetchingNewPool, swapIsLoading])
 
-  const isFirstRender = useRef(true)
-
   useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false
-      return
-    }
-
-    if (tokenFromIndex === null || tokenToIndex === null) return
-
     setRefresherTime(REFRESHER_INTERVAL)
 
     if (tokenFromIndex === tokenToIndex) {
@@ -1273,7 +1245,7 @@ export const Swap: React.FC<ISwap> = ({
               className={classes.amountInput}
               setValue={value => {
                 if (value.match(/^\d*\.?\d*$/)) {
-                  setAmountFrom(value, true)
+                  setAmountFrom(value)
                   setInputRef(inputTarget.FROM)
                 }
               }}
@@ -1394,7 +1366,7 @@ export const Swap: React.FC<ISwap> = ({
               }
               setValue={value => {
                 if (value.match(/^\d*\.?\d*$/)) {
-                  setAmountTo(value, true)
+                  setAmountTo(value)
                   setInputRef(inputTarget.TO)
                 }
               }}
