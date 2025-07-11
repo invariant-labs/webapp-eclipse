@@ -521,7 +521,11 @@ export const PreSaleWrapper = () => {
               roundName={roundName}
             />
             <Box className={classes.shareButtonContainer}>
-              <Button width='100%' scheme='green' onClick={() => setIsShareComponentShown(true)}>
+              <Button
+                width='100%'
+                scheme='green'
+                onClick={() => setIsShareComponentShown(true)}
+                disabled={received.eqn(0)}>
                 <div className={classes.shareContainer}>
                   Share <img src={share} alt='share icon' />
                 </div>
