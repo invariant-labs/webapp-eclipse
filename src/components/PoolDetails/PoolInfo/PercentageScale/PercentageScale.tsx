@@ -1,9 +1,9 @@
 import React from 'react'
-import { Box } from '@mui/material'
-import { PoolSnap } from '@store/reducers/stats'
-import { Intervals as IntervalsKeys } from '@store/consts/static'
-import { mapIntervalToString } from '@utils/uiUtils'
+import { Box, Typography } from '@mui/material'
 import { SwapToken } from '@store/selectors/solanaWallet'
+import useStyles from './style'
+import { formatNumberWithSuffix } from '@utils/utils'
+import { colors, typography } from '@static/theme'
 
 export interface IProps {
   tokenX: SwapToken
@@ -12,10 +12,56 @@ export interface IProps {
   tokenYPercentage: number
 }
 
-export const PercentageScale: React.FC<IProps> = ({}) => {
+export const PercentageScale: React.FC<IProps> = ({
+  tokenX,
+  tokenY,
+  tokenXPercentage,
+  tokenYPercentage
+}) => {
+  const { classes, cx } = useStyles({
+    leftPercentage: +tokenXPercentage.toFixed(2),
+    colorLeft: colors.invariant.black,
+    colorRight: colors.invariant.warning
+  })
+
   return (
-    <Box display='flex' alignItems='center'>
-      <Box></Box>
+    <Box
+      display='flex'
+      alignItems='center'
+      width='100%'
+      justifyContent='space-between'
+      gap={'24px'}>
+      <Box display='flex' alignItems='center' flexDirection='column' justifyContent='center'>
+        <img className={classes.icon} src={tokenX.logoURI} alt={tokenX.symbol} />
+        <Typography color={colors.invariant.text} style={typography.body2} mt={'6px'}>
+          {tokenX.symbol}
+        </Typography>
+        <Typography
+          color={colors.invariant.textGrey}
+          style={typography.caption2}
+          textAlign={'center'}
+          noWrap>
+          {formatNumberWithSuffix(tokenXPercentage, { decimalsAfterDot: 2 })} %
+        </Typography>
+      </Box>
+      <Box className={classes.scaleContainer}>
+        <div className={cx(classes.dot, classes.leftDot)} />
+        <div className={classes.leftScale} />
+        <div className={cx(classes.dot, classes.rightDot)} />
+      </Box>
+      <Box display='flex' alignItems='center' flexDirection='column' justifyContent='center'>
+        <img className={classes.icon} src={tokenY.logoURI} alt={tokenY.symbol} />
+        <Typography color={colors.invariant.text} style={typography.body2} mt={'6px'}>
+          {tokenY.symbol}
+        </Typography>
+        <Typography
+          color={colors.invariant.textGrey}
+          style={typography.caption2}
+          textAlign={'center'}
+          noWrap>
+          {formatNumberWithSuffix(tokenYPercentage, { decimalsAfterDot: 2 })} %
+        </Typography>
+      </Box>
     </Box>
   )
 }
