@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Grid } from '@mui/material'
 import useStyles from './style'
 import Chart from './Chart/Chart'
@@ -80,6 +80,8 @@ export const PoolDetails: React.FC<IProps> = ({
           tokenXReserve={tokenXReserve}
           tokenYReserve={tokenYReserve}
           prices={prices}
+          copyAddressHandler={copyAddressHandler}
+          network={network}
         />
       </Grid>
       {/* <Transactions /> */}

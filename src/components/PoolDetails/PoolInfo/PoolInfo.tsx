@@ -3,11 +3,13 @@ import { Box, Grid, Typography } from '@mui/material'
 import useStyles from './style'
 import InfoUpperSection from './InfoUpperSection/InfoUpperSection'
 import { PoolSnap } from '@store/reducers/stats'
-import { Intervals as IntervalsKeys } from '@store/consts/static'
+import { Intervals as IntervalsKeys, NetworkType } from '@store/consts/static'
 
 import PercentageScale from './PercentageScale/PercentageScale'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { TokenReserve } from '@store/consts/types'
+import TokenInfo from './TokenInfo/TokenInfo'
+import { VariantType } from 'notistack'
 
 export interface IPros {
   interval: IntervalsKeys
@@ -18,6 +20,8 @@ export interface IPros {
   tokenXReserve: TokenReserve | null
   tokenYReserve: TokenReserve | null
   prices: { tokenX: number; tokenY: number }
+  copyAddressHandler: (message: string, variant: VariantType) => void
+  network: NetworkType
 }
 
 export const PoolInfo: React.FC<IPros> = ({
@@ -28,7 +32,9 @@ export const PoolInfo: React.FC<IPros> = ({
   tokenY,
   tokenXReserve,
   tokenYReserve,
-  prices
+  prices,
+  copyAddressHandler,
+  network
 }) => {
   const { classes, cx } = useStyles()
   const tokenXUsdAmount = tokenXReserve ? prices.tokenX * tokenXReserve.uiAmount : 0
@@ -44,6 +50,8 @@ export const PoolInfo: React.FC<IPros> = ({
     return [tokenXPercentage, tokenYPercentage]
   }, [tokenX, tokenY, tokenXReserve, tokenYReserve, prices])
 
+  if (!tokenX || !tokenY) return null
+
   return (
     <Grid className={classes.wrapper}>
       <Typography className={classes.header}>Pool Info</Typography>
@@ -54,14 +62,29 @@ export const PoolInfo: React.FC<IPros> = ({
           isLoadingStats={isLoadingStats}
         />
         <Box className={classes.separator} />
-        {tokenX && tokenY && (
-          <PercentageScale
-            tokenX={tokenX}
-            tokenY={tokenY}
-            tokenXPercentage={tokenXPercentage}
-            tokenYPercentage={tokenYPercentage}
+
+        <PercentageScale
+          tokenX={tokenX}
+          tokenY={tokenY}
+          tokenXPercentage={tokenXPercentage}
+          tokenYPercentage={tokenYPercentage}
+        />
+        <Box display='flex' gap='20px' flexDirection='column' mt={'20px'}>
+          <TokenInfo
+            token={tokenX}
+            copyAddressHandler={copyAddressHandler}
+            network={network}
+            amount={tokenXReserve?.uiAmount}
+            price={prices.tokenX}
           />
-        )}
+          <TokenInfo
+            token={tokenY}
+            copyAddressHandler={copyAddressHandler}
+            network={network}
+            amount={tokenYReserve?.uiAmount}
+            price={prices.tokenY}
+          />
+        </Box>
       </Grid>
     </Grid>
   )
