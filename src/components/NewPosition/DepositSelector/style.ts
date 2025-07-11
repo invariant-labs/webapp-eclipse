@@ -269,6 +269,8 @@ export const useStyles = makeStyles()(theme => {
       }
     },
     errorWarning: {
+      display: 'flex',
+      alignItems: 'center',
       height: '100%',
       width: 'fit-content',
       maxWidth: 131,

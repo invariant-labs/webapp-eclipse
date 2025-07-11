@@ -111,6 +111,7 @@ import warningStroke from './svg/warningStroke.svg'
 import plusDisabled from './svg/plusDisabled.svg'
 import pointsQMarkIcon from './svg/pointsQmark.svg'
 import hornsUSDC from './svg/hornsUSDC.svg'
+import hornsETH from './svg/hornsETH.svg'
 
 export {
   hornsUSDC,
@@ -225,7 +226,8 @@ export {
   connectWalletIcon,
   star,
   starFill,
-  swapArrowIcon
+  swapArrowIcon,
+  hornsETH
 }
 
 export const chainIcons = {
