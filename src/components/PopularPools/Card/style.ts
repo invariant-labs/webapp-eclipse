@@ -1,8 +1,8 @@
 import { colors, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
-export const useStyles = makeStyles()(() => ({
-  root: { width: '226px' },
+export const useStyles = makeStyles<{ flipHorns: boolean }>()((_theme, { flipHorns }) => ({
+  root: { width: '226px', position: 'relative' },
   container: {
     position: 'relative',
     borderRadius: '24px',
@@ -139,5 +139,14 @@ export const useStyles = makeStyles()(() => ({
     alignItems: 'center',
     marginTop: 12,
     flexWrap: 'nowrap'
+  },
+  horn: {
+    zIndex: 2,
+    position: 'absolute',
+    transform: flipHorns ? 'scaleX(-1)' : 'none',
+
+    right: flipHorns ? 'auto' : -23,
+    left: flipHorns ? -23 : 'auto',
+    top: -30
   }
 }))

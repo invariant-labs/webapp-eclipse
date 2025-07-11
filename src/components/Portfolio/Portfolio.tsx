@@ -30,6 +30,7 @@ import { IPositionItem } from '@store/consts/types'
 import { PositionsTable } from './PositionItem/PositionTables/PositionTable.tsx/PositionsTable'
 import PositionCardsSkeletonMobile from './PositionItem/PositionTables/skeletons/PositionCardsSkeletonMobile'
 import { PositionItemMobile } from './PositionItem/PositionMobileCard/PositionItemMobile'
+import { ECBanner } from '@common/ECBanner/ECBanner'
 import { refreshIcon } from '@static/icons'
 import { PositionListSwitcher } from './PositionListSwitcher/PositionListSwitcher'
 import { LiquidityPools } from '@store/reducers/positions'
@@ -56,6 +57,9 @@ interface IProps {
   handleClaimFee: (index: number, isLocked: boolean) => void
   handleSnackbar: (message: string, variant: VariantType) => void
   isBalanceLoading: boolean
+  handleCloseBanner: () => void
+  isHiding: boolean
+  showBanner: boolean
   shouldDisable: boolean
   positionListAlignment: LiquidityPools
   setPositionListAlignment: (val: LiquidityPools) => void
@@ -69,6 +73,9 @@ interface IProps {
 
 const Portfolio: React.FC<IProps> = ({
   isBalanceLoading,
+  showBanner,
+  handleCloseBanner,
+  isHiding,
   setSelectedFilters,
   selectedFilters,
   shouldDisable,
@@ -317,6 +324,9 @@ const Portfolio: React.FC<IProps> = ({
 
   return (
     <>
+      {showBanner && (
+        <ECBanner handleCloseBanner={handleCloseBanner} isHiding={isHiding} page='overview' />
+      )}
       <Box className={classes.overviewContainer}>
         <Box>
           <Grid display={'flex'} marginBottom={isDownLg ? '12px' : '16px'}>

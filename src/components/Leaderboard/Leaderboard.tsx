@@ -30,6 +30,7 @@ import { VariantType } from 'notistack'
 import { Status } from '@store/reducers/solanaWallet'
 import { PublicKey } from '@solana/web3.js'
 import { EcosystemExposure } from './EcosystemExposure/EcosystemExposure'
+// import { ECBanner } from '@common/ECBanner/ECBanner'
 import { Faq } from '@common/Faq/Faq'
 import { faqData } from './faq'
 
@@ -157,6 +158,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
         />
       )}
       <Box className={classes.leaderBoardWrapper}>
+        {/* <ECBanner page='points' isCloseButton={false} /> */}
         <Typography className={classes.leaderboardHeaderSectionTitle}>Your Progress</Typography>
 
         <Grid className={classes.progressWrapper}>
