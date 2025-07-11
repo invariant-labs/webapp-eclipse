@@ -14,7 +14,6 @@ export function* getStackedBitzStats(): Generator {
     }
 
     const fullSnap = yield* call(fetchStackedBitzStats)
-    console.log(fullSnap)
     yield* put(actions.setCurrentStats(fullSnap))
   } catch (e: unknown) {
     const error = ensureError(e)
