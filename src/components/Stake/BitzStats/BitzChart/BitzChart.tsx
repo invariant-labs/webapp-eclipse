@@ -56,7 +56,7 @@ export const BitzChart: React.FC<TokenColors> = ({
           value: sbitzAmount,
           percent: (sbitzAmount / totalSupply) * 100,
           tooltip: true,
-          title: 'BITZ staked directly on PowPow'
+          title: 'BITZ staked directly on Invariant'
         },
         BITZ: {
           color: colors.invariant.green,
@@ -64,7 +64,7 @@ export const BitzChart: React.FC<TokenColors> = ({
           value: bitzAmount,
           percent: (bitzAmount / totalSupply) * 100,
           tooltip: true,
-          title: 'BITZ staked directly on Invariant'
+          title: 'BITZ staked directly on PowPow'
         },
         unstake: {
           color: colors.invariant.textGrey,
