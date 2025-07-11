@@ -35,6 +35,7 @@ import { BN } from '@coral-xyz/anchor'
 
 import { logoShortIcon } from '@static/icons'
 import { userStats } from '@store/selectors/sale'
+import { NFT_MINT } from '@invariant-labs/sale-sdk/lib/consts'
 
 export function* fetchUserStats() {
   try {
@@ -116,14 +117,22 @@ export function* depositSale(action: PayloadAction<IDepositSale>) {
     const wallet = yield* call(getWallet)
     const state = yield* select(userStats)
     const sale = yield* call(getSaleProgram, networkType, rpc, wallet as IWallet)
+    const hasMintedNft = yield* call([sale, sale.hasNftMinted], wallet.publicKey, NFT_MINT)
     const { amount, mint, proofOfInclusion } = action.payload
 
-    const ix = yield* call(
+    const ixs = yield* call(
       [sale, sale.depositIx],
-      { amount, mint, proofOfInclusion: Uint8Array.from(proofOfInclusion!) },
+      {
+        amount,
+        mint,
+        proofOfInclusion: Uint8Array.from(proofOfInclusion!),
+        nftMint: hasMintedNft ? undefined : NFT_MINT
+      },
       wallet.publicKey
     )
-    const tx = new Transaction().add(ix)
+
+    const tx = new Transaction().add(...ixs)
+
     const { blockhash, lastValidBlockHeight } = yield* call([
       connection,
       connection.getLatestBlockhash
