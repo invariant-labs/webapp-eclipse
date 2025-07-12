@@ -7,6 +7,7 @@ import {
   ALL_FEE_TIERS_DATA,
   autoSwapPools,
   DepositOptions,
+  ES_MAIN,
   NetworkType,
   PositionTokenBlock,
   promotedTiers,
@@ -265,6 +266,8 @@ export const NewPosition: React.FC<INewPosition> = ({
     initialOpeningPositionMethod
   )
 
+  const hasSetRangeForESUSDCPair = useRef(false)
+
   const [ConfirmDialog, confirm] = useConfirm(
     'Are you sure',
     `Please ensure you’re opening your position within the correct price range. Opening a position in an incorrect range on this pool can result in a loss of value - essentially, it’s like selling your tokens below the market price or buying them above it.`
@@ -345,15 +348,15 @@ export const NewPosition: React.FC<INewPosition> = ({
     if (isLoadingTicksOrTickmap || isWaitingForNewPool) return
     setIsAutoSwapAvailable(
       tokenAIndex !== null &&
-        tokenBIndex !== null &&
-        autoSwapPools.some(
-          item =>
-            (item.pair.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
-              item.pair.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
-            (item.pair.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
-              item.pair.tokenY.equals(tokens[tokenAIndex].assetAddress))
-        ) &&
-        isCurrentPoolExisting
+      tokenBIndex !== null &&
+      autoSwapPools.some(
+        item =>
+          (item.pair.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
+            item.pair.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
+          (item.pair.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
+            item.pair.tokenY.equals(tokens[tokenAIndex].assetAddress))
+      ) &&
+      isCurrentPoolExisting
     )
   }, [
     tokenAIndex,
@@ -428,7 +431,7 @@ export const NewPosition: React.FC<INewPosition> = ({
     return estimatedPointsForScale(
       positionOpeningMethod === 'concentration'
         ? concentrationArray[concentrationIndex] ??
-            concentrationArray[concentrationArray.length - 1]
+        concentrationArray[concentrationArray.length - 1]
         : calculateConcentration(leftRange, rightRange),
       positionOpeningMethod === 'concentration' ? concentrationArray : rangeConcentrationArray
     )
@@ -476,11 +479,11 @@ export const NewPosition: React.FC<INewPosition> = ({
       const amount = isAutoswapOn
         ? tokenBDeposit
         : getOtherTokenAmount(
-            convertBalanceToBN(deposit, tokens[tokenAIndex].decimals),
-            leftRange,
-            rightRange,
-            true
-          )
+          convertBalanceToBN(deposit, tokens[tokenAIndex].decimals),
+          leftRange,
+          rightRange,
+          true
+        )
 
       if (tokenBIndex !== null && +deposit !== 0) {
         setTokenADeposit(deposit)
@@ -492,11 +495,11 @@ export const NewPosition: React.FC<INewPosition> = ({
       const amount = isAutoswapOn
         ? tokenADeposit
         : getOtherTokenAmount(
-            convertBalanceToBN(deposit, tokens[tokenBIndex].decimals),
-            leftRange,
-            rightRange,
-            false
-          )
+          convertBalanceToBN(deposit, tokens[tokenBIndex].decimals),
+          leftRange,
+          rightRange,
+          false
+        )
 
       if (tokenAIndex !== null && +deposit !== 0) {
         setTokenBDeposit(deposit)
@@ -517,11 +520,11 @@ export const NewPosition: React.FC<INewPosition> = ({
       const amount = isAutoswapOn
         ? tokenBDeposit
         : getOtherTokenAmount(
-            convertBalanceToBN(deposit, tokens[tokenAIndex].decimals),
-            leftRange,
-            rightRange,
-            true
-          )
+          convertBalanceToBN(deposit, tokens[tokenAIndex].decimals),
+          leftRange,
+          rightRange,
+          true
+        )
       if (tokenBIndex !== null && +deposit !== 0) {
         setTokenADeposit(deposit)
         setTokenBDeposit(amount)
@@ -533,11 +536,11 @@ export const NewPosition: React.FC<INewPosition> = ({
       const amount = isAutoswapOn
         ? tokenADeposit
         : getOtherTokenAmount(
-            convertBalanceToBN(deposit, tokens[tokenBIndex].decimals),
-            leftRange,
-            rightRange,
-            false
-          )
+          convertBalanceToBN(deposit, tokens[tokenBIndex].decimals),
+          leftRange,
+          rightRange,
+          false
+        )
 
       if (tokenAIndex !== null && +deposit !== 0) {
         setTokenBDeposit(deposit)
@@ -550,12 +553,12 @@ export const NewPosition: React.FC<INewPosition> = ({
     tokenAIndex === null || tokenBIndex === null
       ? undefined
       : promotedTiers.find(
-          tier =>
-            (tier.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
-              tier.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
-            (tier.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
-              tier.tokenY.equals(tokens[tokenAIndex].assetAddress))
-        )?.index ?? undefined
+        tier =>
+          (tier.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
+            tier.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
+          (tier.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
+            tier.tokenY.equals(tokens[tokenAIndex].assetAddress))
+      )?.index ?? undefined
 
   const getMinSliderIndex = () => {
     let minimumSliderIndex = 0
@@ -714,11 +717,11 @@ export const NewPosition: React.FC<INewPosition> = ({
     () =>
       positionOpeningMethod === 'range'
         ? determinePositionTokenBlock(
-            currentPriceSqrt,
-            Math.min(leftRange, rightRange),
-            Math.max(leftRange, rightRange),
-            isXtoY
-          )
+          currentPriceSqrt,
+          Math.min(leftRange, rightRange),
+          Math.max(leftRange, rightRange),
+          isXtoY
+        )
         : false,
     [leftRange, rightRange, currentPriceSqrt]
   )
@@ -994,6 +997,31 @@ export const NewPosition: React.FC<INewPosition> = ({
     )
   }
 
+  useEffect(() => {
+    if (tokenAIndex === null || tokenBIndex === null) return
+
+    const tokenAAddress = tokens[tokenAIndex].assetAddress.toString()
+    const tokenBAddress = tokens[tokenBIndex].assetAddress.toString()
+
+    const isESUSDCPair =
+      (tokenAAddress === ES_MAIN.address.toString() && tokenBAddress === USDC_MAIN.address.toString()) ||
+      (tokenAAddress === USDC_MAIN.address.toString() && tokenBAddress === ES_MAIN.address.toString())
+
+    if (isESUSDCPair && !hasSetRangeForESUSDCPair.current) {
+      setPositionOpeningMethod('range')
+      onPositionOpeningMethodChange('range')
+      hasSetRangeForESUSDCPair.current = true
+
+      updatePath(
+        tokenAIndex,
+        tokenBIndex,
+        currentFeeIndex,
+        +concentrationArray[concentrationIndex].toFixed(0),
+        true
+      )
+    }
+  }, [tokenAIndex, tokenBIndex, tokens])
+
   return (
     <Grid container className={classes.wrapper}>
       <Grid onClick={() => handleBack()} className={classes.back} container item>
@@ -1203,10 +1231,10 @@ export const NewPosition: React.FC<INewPosition> = ({
           tokenAInputState={{
             value:
               tokenAIndex !== null &&
-              tokenBIndex !== null &&
-              !isWaitingForNewPool &&
-              blockedToken === PositionTokenBlock.A &&
-              alignment === DepositOptions.Basic
+                tokenBIndex !== null &&
+                !isWaitingForNewPool &&
+                blockedToken === PositionTokenBlock.A &&
+                alignment === DepositOptions.Basic
                 ? '0'
                 : tokenADeposit,
             setValue: value => {
@@ -1242,10 +1270,10 @@ export const NewPosition: React.FC<INewPosition> = ({
           tokenBInputState={{
             value:
               tokenAIndex !== null &&
-              tokenBIndex !== null &&
-              !isWaitingForNewPool &&
-              blockedToken === PositionTokenBlock.B &&
-              alignment === DepositOptions.Basic
+                tokenBIndex !== null &&
+                !isWaitingForNewPool &&
+                blockedToken === PositionTokenBlock.B &&
+                alignment === DepositOptions.Basic
                 ? '0'
                 : tokenBDeposit,
             setValue: value => {
@@ -1369,11 +1397,14 @@ export const NewPosition: React.FC<INewPosition> = ({
           </Grid>
         </Hidden>
         {isCurrentPoolExisting ||
-        tokenAIndex === null ||
-        tokenBIndex === null ||
-        tokenAIndex === tokenBIndex ||
-        isWaitingForNewPool ? (
+          tokenAIndex === null ||
+          tokenBIndex === null ||
+          tokenAIndex === tokenBIndex ||
+          isWaitingForNewPool ? (
           <RangeSelector
+            tokens={tokens}
+            tokenAIndex={tokenAIndex}
+            tokenBIndex={tokenBIndex}
             oracleDiffPercentage={oracleDiffPercentage}
             diffPercentage={diffPercentage}
             showPriceWarning={showPriceWarning}
@@ -1393,17 +1424,17 @@ export const NewPosition: React.FC<INewPosition> = ({
             blocked={blocked}
             blockerInfo={setRangeBlockerInfo()}
             {...(tokenAIndex === null ||
-            tokenBIndex === null ||
-            !isCurrentPoolExisting ||
-            data.length === 0 ||
-            isWaitingForNewPool
+              tokenBIndex === null ||
+              !isCurrentPoolExisting ||
+              data.length === 0 ||
+              isWaitingForNewPool
               ? noRangePlaceholderProps
               : {
-                  data,
-                  midPrice,
-                  tokenASymbol: tokens[tokenAIndex].symbol,
-                  tokenBSymbol: tokens[tokenBIndex].symbol
-                })}
+                data,
+                midPrice,
+                tokenASymbol: tokens[tokenAIndex].symbol,
+                tokenBSymbol: tokens[tokenBIndex].symbol
+              })}
             isLoadingTicksOrTickmap={isLoadingTicksOrTickmap}
             isXtoY={isXtoY}
             tickSpacing={tickSpacing}

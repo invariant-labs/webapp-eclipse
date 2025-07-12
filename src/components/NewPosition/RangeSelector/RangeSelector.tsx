@@ -20,6 +20,8 @@ import { PositionOpeningMethod } from '@store/consts/types'
 import { getMaxTick, getMinTick } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { boostPointsIcon } from '@static/icons'
 import PriceWarning from './PriceWarning/PriceWarning'
+import { ES_MAIN, USDC_MAIN } from '@store/consts/static'
+import { SwapToken } from '@store/selectors/solanaWallet'
 
 export interface IRangeSelector {
   updatePath: (concIndex: number) => void
@@ -71,6 +73,10 @@ export interface IRangeSelector {
   oraclePriceWarning: boolean
   diffPercentage: number
   oracleDiffPercentage: number
+  tokens: SwapToken[]
+
+  tokenAIndex?: number | null
+  tokenBIndex?: number | null
 }
 
 export const RangeSelector: React.FC<IRangeSelector> = ({
@@ -112,7 +118,10 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
   showPriceWarning,
   oraclePriceWarning,
   diffPercentage,
-  oracleDiffPercentage
+  oracleDiffPercentage,
+  tokens,
+  tokenAIndex,
+  tokenBIndex
 }) => {
   const { classes } = useStyles()
 
@@ -274,17 +283,19 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     setRightInputValues(calcPriceByTickIndex(rightInRange, isXtoY, xDecimal, yDecimal).toString())
     onChangeRange(leftInRange, rightInRange)
   }
-
+  useEffect(() => {
+    console.log('leftRange', leftRange, 'rightRange', rightRange)
+  }, [leftRange, rightRange])
   const resetPlot = () => {
     if (positionOpeningMethod === 'range') {
       const initSideDist = Math.abs(
         midPrice.x -
-          calcPriceByTickIndex(
-            Math.max(getMinTick(tickSpacing), midPrice.index - tickSpacing * 15),
-            isXtoY,
-            xDecimal,
-            yDecimal
-          )
+        calcPriceByTickIndex(
+          Math.max(getMinTick(tickSpacing), midPrice.index - tickSpacing * 15),
+          isXtoY,
+          xDecimal,
+          yDecimal
+        )
       )
       const higherTick = Math.max(getMinTick(tickSpacing), midPrice.index - tickSpacing * 10)
       const lowerTick = Math.min(getMaxTick(tickSpacing), midPrice.index + tickSpacing * 10)
@@ -313,12 +324,12 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     } else {
       const initSideDist = Math.abs(
         midPrice.x -
-          calcPriceByTickIndex(
-            Math.max(getMinTick(tickSpacing), midPrice.index - tickSpacing * 15),
-            isXtoY,
-            xDecimal,
-            yDecimal
-          )
+        calcPriceByTickIndex(
+          Math.max(getMinTick(tickSpacing), midPrice.index - tickSpacing * 15),
+          isXtoY,
+          xDecimal,
+          yDecimal
+        )
       )
 
       setPlotMin(midPrice.x - initSideDist)
@@ -416,21 +427,21 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     if (leftX < plotMin || rightX > plotMax || canZoomCloser) {
       const leftDist = Math.abs(
         leftX -
-          calcPriceByTickIndex(
-            isXtoY ? higherLeftIndex : lowerLeftIndex,
-            isXtoY,
-            xDecimal,
-            yDecimal
-          )
+        calcPriceByTickIndex(
+          isXtoY ? higherLeftIndex : lowerLeftIndex,
+          isXtoY,
+          xDecimal,
+          yDecimal
+        )
       )
       const rightDist = Math.abs(
         rightX -
-          calcPriceByTickIndex(
-            isXtoY ? lowerRightIndex : higherRightIndex,
-            isXtoY,
-            xDecimal,
-            yDecimal
-          )
+        calcPriceByTickIndex(
+          isXtoY ? lowerRightIndex : higherRightIndex,
+          isXtoY,
+          xDecimal,
+          yDecimal
+        )
       )
 
       let dist
@@ -511,6 +522,27 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     changeRangeHandler(leftRange, rightRange)
     autoZoomHandler(leftRange, rightRange, true)
   }, [tokenASymbol, tokenBSymbol])
+
+  useEffect(() => {
+    if (!tokens || !tokenAIndex || !tokenBIndex || tokenAIndex === null || tokenBIndex === null || !positionOpeningMethod) return;
+
+    const tokenAAddress = tokens[tokenAIndex].assetAddress.toString()
+    const tokenBAddress = tokens[tokenBIndex].assetAddress.toString()
+
+    const isESUSDCPair =
+      (tokenAAddress === ES_MAIN.address.toString() && tokenBAddress === USDC_MAIN.address.toString()) ||
+      (tokenAAddress === USDC_MAIN.address.toString() && tokenBAddress === ES_MAIN.address.toString())
+
+    if (isESUSDCPair && positionOpeningMethod === 'range' && !blocked && !isLoadingTicksOrTickmap) {
+      const MIN_TICK_FOR_04_PRICE = nearestTickIndex(0.4, tickSpacing, isXtoY, xDecimal, yDecimal)
+      const MAX_TICK_FOR_06_PRICE = nearestTickIndex(0.6, tickSpacing, isXtoY, xDecimal, yDecimal)
+
+      setTimeout(() => {
+        changeRangeHandler(MIN_TICK_FOR_04_PRICE, MAX_TICK_FOR_06_PRICE)
+        autoZoomHandler(MIN_TICK_FOR_04_PRICE, MAX_TICK_FOR_06_PRICE, true)
+      }, 100)
+    }
+  }, [tokens, tokenAIndex, tokenBIndex, positionOpeningMethod, isLoadingTicksOrTickmap, blocked])
 
   return (
     <Grid container className={classes.wrapper}>
@@ -634,13 +666,13 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
             onBlur={() => {
               const newLeft = isXtoY
                 ? Math.min(
-                    rightRange - tickSpacing,
-                    nearestTickIndex(+leftInput, tickSpacing, isXtoY, xDecimal, yDecimal)
-                  )
+                  rightRange - tickSpacing,
+                  nearestTickIndex(+leftInput, tickSpacing, isXtoY, xDecimal, yDecimal)
+                )
                 : Math.max(
-                    rightRange + tickSpacing,
-                    nearestTickIndex(+leftInput, tickSpacing, isXtoY, xDecimal, yDecimal)
-                  )
+                  rightRange + tickSpacing,
+                  nearestTickIndex(+leftInput, tickSpacing, isXtoY, xDecimal, yDecimal)
+                )
 
               changeRangeHandler(newLeft, rightRange)
               autoZoomHandler(newLeft, rightRange)
@@ -673,13 +705,13 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
             onBlur={() => {
               const newRight = isXtoY
                 ? Math.max(
-                    leftRange + tickSpacing,
-                    nearestTickIndex(+rightInput, tickSpacing, isXtoY, xDecimal, yDecimal)
-                  )
+                  leftRange + tickSpacing,
+                  nearestTickIndex(+rightInput, tickSpacing, isXtoY, xDecimal, yDecimal)
+                )
                 : Math.min(
-                    leftRange - tickSpacing,
-                    nearestTickIndex(+rightInput, tickSpacing, isXtoY, xDecimal, yDecimal)
-                  )
+                  leftRange - tickSpacing,
+                  nearestTickIndex(+rightInput, tickSpacing, isXtoY, xDecimal, yDecimal)
+                )
 
               changeRangeHandler(leftRange, newRight)
               autoZoomHandler(leftRange, newRight)
@@ -748,5 +780,4 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     </Grid>
   )
 }
-
 export default RangeSelector
