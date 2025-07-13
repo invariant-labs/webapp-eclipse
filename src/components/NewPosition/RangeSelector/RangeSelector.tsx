@@ -331,9 +331,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     onChangeRange(leftInRange, rightInRange)
 
     if (isRangeChanging) {
-      setTimeout(() => {
-        onRefresh()
-      }, 200);
+      onRefresh()
     }
   }
 
