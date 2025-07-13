@@ -13,7 +13,7 @@ import {
   toMaxNumericPlaces
 } from '@utils/utils'
 import { PlotTickData } from '@store/reducers/positions'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import ConcentrationSlider from '../ConcentrationSlider/ConcentrationSlider'
 import useStyles from './style'
 import { PositionOpeningMethod } from '@store/consts/types'
@@ -143,6 +143,19 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
   const [triggerReset, setTriggerReset] = useState(false)
 
   const isMountedRef = useRef(false)
+
+  const hasSetESUSDCRange = useRef(false)
+
+  const isESUSDCPair = useMemo(() => {
+    if (!tokens || !tokenAIndex || !tokenBIndex || tokenAIndex === null || tokenBIndex === null) return false
+
+    const tokenAAddress = tokens[tokenAIndex].assetAddress.toString()
+    const tokenBAddress = tokens[tokenBIndex].assetAddress.toString()
+
+    return (tokenAAddress === ES_MAIN.address.toString() && tokenBAddress === USDC_MAIN.address.toString()) ||
+      (tokenAAddress === USDC_MAIN.address.toString() && tokenBAddress === ES_MAIN.address.toString())
+  }, [tokens, tokenAIndex, tokenBIndex])
+
 
   const handleUpdateConcentrationFromURL = (concentrationValue: number) => {
     const mappedIndex = getConcentrationIndex(concentrationArray, concentrationValue)
@@ -275,6 +288,15 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
   }
 
   const changeRangeHandler = (left: number, right: number) => {
+    if (isESUSDCPair && positionOpeningMethod === 'range' && hasSetESUSDCRange.current) {
+      const MIN_TICK_FOR_04_PRICE = nearestTickIndex(0.4, tickSpacing, isXtoY, xDecimal, yDecimal)
+      const MAX_TICK_FOR_06_PRICE = nearestTickIndex(0.6, tickSpacing, isXtoY, xDecimal, yDecimal)
+
+      if (left !== MIN_TICK_FOR_04_PRICE || right !== MAX_TICK_FOR_06_PRICE) {
+        return
+      }
+    }
+
     const { leftInRange, rightInRange } = getTicksInsideRange(left, right, isXtoY)
 
     setLeftRange(leftInRange)
@@ -523,24 +545,22 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     autoZoomHandler(leftRange, rightRange, true)
   }, [tokenASymbol, tokenBSymbol])
 
+
   useEffect(() => {
     if (!tokens || !tokenAIndex || !tokenBIndex || tokenAIndex === null || tokenBIndex === null || !positionOpeningMethod) return;
 
-    const tokenAAddress = tokens[tokenAIndex].assetAddress.toString()
-    const tokenBAddress = tokens[tokenBIndex].assetAddress.toString()
+    if (isESUSDCPair && positionOpeningMethod === 'range' && !blocked && !isLoadingTicksOrTickmap && !hasSetESUSDCRange.current) {
+      hasSetESUSDCRange.current = true
 
-    const isESUSDCPair =
-      (tokenAAddress === ES_MAIN.address.toString() && tokenBAddress === USDC_MAIN.address.toString()) ||
-      (tokenAAddress === USDC_MAIN.address.toString() && tokenBAddress === ES_MAIN.address.toString())
-
-    if (isESUSDCPair && positionOpeningMethod === 'range' && !blocked && !isLoadingTicksOrTickmap) {
       const MIN_TICK_FOR_04_PRICE = nearestTickIndex(0.4, tickSpacing, isXtoY, xDecimal, yDecimal)
       const MAX_TICK_FOR_06_PRICE = nearestTickIndex(0.6, tickSpacing, isXtoY, xDecimal, yDecimal)
 
-      setTimeout(() => {
-        changeRangeHandler(MIN_TICK_FOR_04_PRICE, MAX_TICK_FOR_06_PRICE)
-        autoZoomHandler(MIN_TICK_FOR_04_PRICE, MAX_TICK_FOR_06_PRICE, true)
-      }, 100)
+      changeRangeHandler(MIN_TICK_FOR_04_PRICE, MAX_TICK_FOR_06_PRICE)
+      autoZoomHandler(MIN_TICK_FOR_04_PRICE, MAX_TICK_FOR_06_PRICE, true)
+    }
+
+    if (!isESUSDCPair) {
+      hasSetESUSDCRange.current = false
     }
   }, [tokens, tokenAIndex, tokenBIndex, positionOpeningMethod, isLoadingTicksOrTickmap, blocked])
 

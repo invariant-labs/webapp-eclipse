@@ -1012,13 +1012,17 @@ export const NewPosition: React.FC<INewPosition> = ({
       onPositionOpeningMethodChange('range')
       hasSetRangeForESUSDCPair.current = true
 
+      const DEST_FEE_TIER_INDEX = 5
+
+      onChangePositionTokens(tokenAIndex, tokenBIndex, DEST_FEE_TIER_INDEX)
       updatePath(
         tokenAIndex,
         tokenBIndex,
-        currentFeeIndex,
+        DEST_FEE_TIER_INDEX,
         +concentrationArray[concentrationIndex].toFixed(0),
         true
       )
+
     }
   }, [tokenAIndex, tokenBIndex, tokens])
 
