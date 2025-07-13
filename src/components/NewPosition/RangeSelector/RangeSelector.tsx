@@ -32,6 +32,7 @@ export interface IRangeSelector {
   tokenBSymbol: string
   onChangeRange: (leftIndex: number, rightIndex: number) => void
   blocked?: boolean
+  onRefresh: () => void
   blockerInfo?: string
   isLoadingTicksOrTickmap: boolean
   isXtoY: boolean
@@ -121,7 +122,8 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
   oracleDiffPercentage,
   tokens,
   tokenAIndex,
-  tokenBIndex
+  tokenBIndex,
+  onRefresh
 }) => {
   const { classes } = useStyles()
 
@@ -147,10 +149,10 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
   const hasSetESUSDCRange = useRef(false)
 
   const isPairToOveride = useMemo(() => {
-    if (!tokens || !tokenAIndex || !tokenBIndex || tokenAIndex === null || tokenBIndex === null) return false
+    if (!tokens || tokenAIndex === null || tokenBIndex === null) return false
 
-    const tokenAAddress = tokens[tokenAIndex].assetAddress.toString()
-    const tokenBAddress = tokens[tokenBIndex].assetAddress.toString()
+    const tokenAAddress = tokens[tokenAIndex ?? 0].assetAddress.toString()
+    const tokenBAddress = tokens[tokenBIndex ?? 0].assetAddress.toString()
 
     return (tokenAAddress === ES_MAIN.address.toString() && tokenBAddress === USDC_MAIN.address.toString()) ||
       (tokenAAddress === USDC_MAIN.address.toString() && tokenBAddress === ES_MAIN.address.toString()) ||
@@ -290,7 +292,10 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
   }
 
   const changeRangeHandler = (left: number, right: number) => {
-    if (isPairToOveride && tokenAIndex && tokenBIndex && positionOpeningMethod === 'range' && hasSetESUSDCRange.current) {
+    const isRangeChanging = leftRange !== left || rightRange !== right;
+
+    if (isPairToOveride && tokenAIndex && tokenBIndex && positionOpeningMethod === 'range' &&
+      hasSetESUSDCRange.current && leftRange !== 0 && rightRange !== 0) {
       const tokenAAddress = tokens[tokenAIndex].assetAddress.toString()
       const tokenBAddress = tokens[tokenBIndex].assetAddress.toString()
 
@@ -308,14 +313,15 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
           return
         }
       } else if (isESWETHPair) {
-        const MIN_TICK_FOR_WETH = nearestTickIndex(0.00013603, tickSpacing, isXtoY, xDecimal, yDecimal)
-        const MAX_TICK_FOR_WETH = nearestTickIndex(0.00020394, tickSpacing, isXtoY, xDecimal, yDecimal)
+        const MIN_TICK_FOR_WETH = nearestTickIndex(0.00013, tickSpacing, isXtoY, xDecimal, yDecimal)
+        const MAX_TICK_FOR_WETH = nearestTickIndex(0.00020, tickSpacing, isXtoY, xDecimal, yDecimal)
 
         if (left !== MIN_TICK_FOR_WETH || right !== MAX_TICK_FOR_WETH) {
           return
         }
       }
     }
+
     const { leftInRange, rightInRange } = getTicksInsideRange(left, right, isXtoY)
 
     setLeftRange(leftInRange)
@@ -323,6 +329,12 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     setLeftInputValues(calcPriceByTickIndex(leftInRange, isXtoY, xDecimal, yDecimal).toString())
     setRightInputValues(calcPriceByTickIndex(rightInRange, isXtoY, xDecimal, yDecimal).toString())
     onChangeRange(leftInRange, rightInRange)
+
+    if (isRangeChanging) {
+      setTimeout(() => {
+        onRefresh()
+      }, 200);
+    }
   }
 
   const resetPlot = () => {
@@ -564,30 +576,33 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
 
 
   useEffect(() => {
-    if (!tokens || !tokenAIndex || !tokenBIndex || tokenAIndex === null || tokenBIndex === null || !positionOpeningMethod) return;
+    console.log("leftRange", leftRange, "rightRange", rightRange)
+  }, [leftRange, rightRange])
 
-    if (currentFeeIndex === 5 && isPairToOveride && positionOpeningMethod === 'range' && !blocked && !isLoadingTicksOrTickmap && !hasSetESUSDCRange.current) {
-      hasSetESUSDCRange.current = true
+  useEffect(() => {
+    if (!tokens || tokenAIndex === null || tokenBIndex === null || !positionOpeningMethod) return;
 
-      const tokenAAddress = tokens[tokenAIndex].assetAddress.toString()
-      const tokenBAddress = tokens[tokenBIndex].assetAddress.toString()
+    if (currentFeeIndex === 5 && isPairToOveride && positionOpeningMethod === 'range' && !blocked && !isLoadingTicksOrTickmap) {
+      const tokenAAddress = tokens[tokenAIndex ?? 0].assetAddress.toString()
+      const tokenBAddress = tokens[tokenBIndex ?? 0].assetAddress.toString()
 
-      const isESUSDCPair = (tokenAAddress === ES_MAIN.address.toString() && tokenBAddress === USDC_MAIN.address.toString())
+      const isESUSDCPair = (tokenAAddress === ES_MAIN.address.toString() && tokenBAddress === USDC_MAIN.address.toString()) ||
+        (tokenBAddress === ES_MAIN.address.toString() && tokenAAddress === USDC_MAIN.address.toString())
 
-      const isESWETHPair = (tokenAAddress === ES_MAIN.address.toString() && tokenBAddress === WETH_MAIN.address.toString())
+      const isESWETHPair = (tokenAAddress === ES_MAIN.address.toString() && tokenBAddress === WETH_MAIN.address.toString()) ||
+        (tokenBAddress === ES_MAIN.address.toString() && tokenAAddress === WETH_MAIN.address.toString())
 
-      interface TickRange {
-        MIN_TICK_FOR_PRICE: number | undefined
-        MAX_TICK_FOR_PRICE: number | undefined
-      }
-      let MIN_TICK_FOR_PRICE: TickRange['MIN_TICK_FOR_PRICE'], MAX_TICK_FOR_PRICE: TickRange['MAX_TICK_FOR_PRICE']
+      let MIN_TICK_FOR_PRICE: number | undefined
+      let MAX_TICK_FOR_PRICE: number | undefined
 
       if (isESUSDCPair) {
         MIN_TICK_FOR_PRICE = nearestTickIndex(0.4, tickSpacing, isXtoY, xDecimal, yDecimal)
         MAX_TICK_FOR_PRICE = nearestTickIndex(0.6, tickSpacing, isXtoY, xDecimal, yDecimal)
+        hasSetESUSDCRange.current = true
       } else if (isESWETHPair) {
         MIN_TICK_FOR_PRICE = nearestTickIndex(0.00013603, tickSpacing, isXtoY, xDecimal, yDecimal)
         MAX_TICK_FOR_PRICE = nearestTickIndex(0.00020394, tickSpacing, isXtoY, xDecimal, yDecimal)
+        hasSetESUSDCRange.current = true
       }
 
       if (MIN_TICK_FOR_PRICE !== undefined && MAX_TICK_FOR_PRICE !== undefined) {
@@ -596,10 +611,18 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
       }
     }
 
+    // Reset the flag when not dealing with special pairs
     if (!isPairToOveride) {
       hasSetESUSDCRange.current = false
+      setTimeout(() => {
+
+        onRefresh()
+      }, 500);
+
+
     }
-  }, [tokens, tokenAIndex, tokenBIndex, positionOpeningMethod, isLoadingTicksOrTickmap, blocked])
+  }, [tokens, tokenAIndex, tokenBIndex, positionOpeningMethod, isLoadingTicksOrTickmap, blocked, tickSpacing, isXtoY, xDecimal, yDecimal, currentFeeIndex])
+
 
   return (
     <Grid container className={classes.wrapper}>

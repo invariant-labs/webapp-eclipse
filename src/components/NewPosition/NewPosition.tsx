@@ -1432,6 +1432,7 @@ export const NewPosition: React.FC<INewPosition> = ({
             initialConcentration={initialConcentration}
             poolIndex={poolIndex}
             onChangeRange={onChangeRange}
+            onRefresh={onRefresh}
             blocked={blocked}
             blockerInfo={setRangeBlockerInfo()}
             {...(tokenAIndex === null ||
