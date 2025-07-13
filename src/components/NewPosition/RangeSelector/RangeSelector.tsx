@@ -146,7 +146,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
 
   const hasSetESUSDCRange = useRef(false)
 
-  const isESUSDCPair = useMemo(() => {
+  const isPairToOveride = useMemo(() => {
     if (!tokens || !tokenAIndex || !tokenBIndex || tokenAIndex === null || tokenBIndex === null) return false
 
     const tokenAAddress = tokens[tokenAIndex].assetAddress.toString()
@@ -290,7 +290,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
   }
 
   const changeRangeHandler = (left: number, right: number) => {
-    if (isESUSDCPair && positionOpeningMethod === 'range' && hasSetESUSDCRange.current) {
+    if (isPairToOveride && positionOpeningMethod === 'range' && hasSetESUSDCRange.current) {
       const MIN_TICK_FOR_04_PRICE = nearestTickIndex(0.4, tickSpacing, isXtoY, xDecimal, yDecimal)
       const MAX_TICK_FOR_06_PRICE = nearestTickIndex(0.6, tickSpacing, isXtoY, xDecimal, yDecimal)
 
@@ -551,17 +551,15 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
   useEffect(() => {
     if (!tokens || !tokenAIndex || !tokenBIndex || tokenAIndex === null || tokenBIndex === null || !positionOpeningMethod) return;
 
-    if (currentFeeIndex === 5 && isESUSDCPair && positionOpeningMethod === 'range' && !blocked && !isLoadingTicksOrTickmap && !hasSetESUSDCRange.current) {
+    if (currentFeeIndex === 5 && isPairToOveride && positionOpeningMethod === 'range' && !blocked && !isLoadingTicksOrTickmap && !hasSetESUSDCRange.current) {
       hasSetESUSDCRange.current = true
 
       const tokenAAddress = tokens[tokenAIndex].assetAddress.toString()
       const tokenBAddress = tokens[tokenBIndex].assetAddress.toString()
 
-      const isESUSDCPair = (tokenAAddress === ES_MAIN.address.toString() && tokenBAddress === USDC_MAIN.address.toString()) ||
-        (tokenAAddress === USDC_MAIN.address.toString() && tokenBAddress === ES_MAIN.address.toString())
+      const isESUSDCPair = (tokenAAddress === ES_MAIN.address.toString() && tokenBAddress === USDC_MAIN.address.toString())
 
-      const isESWETHPair = (tokenAAddress === ES_MAIN.address.toString() && tokenBAddress === WETH_MAIN.address.toString()) ||
-        (tokenAAddress === WETH_MAIN.address.toString() && tokenBAddress === ES_MAIN.address.toString())
+      const isESWETHPair = (tokenAAddress === ES_MAIN.address.toString() && tokenBAddress === WETH_MAIN.address.toString())
 
       interface TickRange {
         MIN_TICK_FOR_PRICE: number | undefined
@@ -583,7 +581,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
       }
     }
 
-    if (!isESUSDCPair) {
+    if (!isPairToOveride) {
       hasSetESUSDCRange.current = false
     }
   }, [tokens, tokenAIndex, tokenBIndex, positionOpeningMethod, isLoadingTicksOrTickmap, blocked])

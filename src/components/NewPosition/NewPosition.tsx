@@ -13,7 +13,8 @@ import {
   promotedTiers,
   REFRESHER_INTERVAL,
   USDC_MAIN,
-  USDT_MAIN
+  USDT_MAIN,
+  WETH_MAIN
 } from '@store/consts/static'
 import {
   addressToTicker,
@@ -266,7 +267,7 @@ export const NewPosition: React.FC<INewPosition> = ({
     initialOpeningPositionMethod
   )
 
-  const hasSetRangeForESUSDCPair = useRef(false)
+  const lastSpecialPairRef = useRef<string>('')
 
   const [ConfirmDialog, confirm] = useConfirm(
     'Are you sure',
@@ -1002,15 +1003,17 @@ export const NewPosition: React.FC<INewPosition> = ({
 
     const tokenAAddress = tokens[tokenAIndex].assetAddress.toString()
     const tokenBAddress = tokens[tokenBIndex].assetAddress.toString()
+    const currentPair = [tokenAAddress, tokenBAddress].sort().join('-')
 
     const isESUSDCPair =
-      (tokenAAddress === ES_MAIN.address.toString() && tokenBAddress === USDC_MAIN.address.toString()) ||
-      (tokenAAddress === USDC_MAIN.address.toString() && tokenBAddress === ES_MAIN.address.toString())
+      (tokenAAddress === ES_MAIN.address.toString() && tokenBAddress === USDC_MAIN.address.toString())
 
-    if (isESUSDCPair && !hasSetRangeForESUSDCPair.current) {
+    const isESWETHPair =
+      (tokenAAddress === ES_MAIN.address.toString() && tokenBAddress === WETH_MAIN.address.toString())
+
+    if ((isESUSDCPair || isESWETHPair) && lastSpecialPairRef.current !== currentPair) {
       setPositionOpeningMethod('range')
       onPositionOpeningMethodChange('range')
-      hasSetRangeForESUSDCPair.current = true
 
       const DEST_FEE_TIER_INDEX = 5
 
@@ -1022,7 +1025,11 @@ export const NewPosition: React.FC<INewPosition> = ({
         +concentrationArray[concentrationIndex].toFixed(0),
         true
       )
+      lastSpecialPairRef.current = currentPair
 
+
+    } else if (!isESUSDCPair && !isESWETHPair) {
+      lastSpecialPairRef.current = ''
     }
   }, [tokenAIndex, tokenBIndex, tokens])
 
