@@ -573,9 +573,6 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
   }, [tokenASymbol, tokenBSymbol])
 
 
-  useEffect(() => {
-    console.log("leftRange", leftRange, "rightRange", rightRange)
-  }, [leftRange, rightRange])
 
   useEffect(() => {
     if (!tokens || tokenAIndex === null || tokenBIndex === null || !positionOpeningMethod) return;
