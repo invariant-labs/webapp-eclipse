@@ -20,7 +20,7 @@ import { PositionOpeningMethod } from '@store/consts/types'
 import { getMaxTick, getMinTick } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { boostPointsIcon } from '@static/icons'
 import PriceWarning from './PriceWarning/PriceWarning'
-import { ES_MAIN, USDC_MAIN } from '@store/consts/static'
+import { ES_MAIN, USDC_MAIN, WETH_MAIN } from '@store/consts/static'
 import { SwapToken } from '@store/selectors/solanaWallet'
 
 export interface IRangeSelector {
@@ -153,7 +153,9 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     const tokenBAddress = tokens[tokenBIndex].assetAddress.toString()
 
     return (tokenAAddress === ES_MAIN.address.toString() && tokenBAddress === USDC_MAIN.address.toString()) ||
-      (tokenAAddress === USDC_MAIN.address.toString() && tokenBAddress === ES_MAIN.address.toString())
+      (tokenAAddress === USDC_MAIN.address.toString() && tokenBAddress === ES_MAIN.address.toString()) ||
+      (tokenAAddress === ES_MAIN.address.toString() && tokenBAddress === WETH_MAIN.address.toString()) ||
+      (tokenAAddress === WETH_MAIN.address.toString() && tokenBAddress === ES_MAIN.address.toString())
   }, [tokens, tokenAIndex, tokenBIndex])
 
 
@@ -549,14 +551,36 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
   useEffect(() => {
     if (!tokens || !tokenAIndex || !tokenBIndex || tokenAIndex === null || tokenBIndex === null || !positionOpeningMethod) return;
 
-    if (isESUSDCPair && positionOpeningMethod === 'range' && !blocked && !isLoadingTicksOrTickmap && !hasSetESUSDCRange.current) {
+    if (currentFeeIndex === 5 && isESUSDCPair && positionOpeningMethod === 'range' && !blocked && !isLoadingTicksOrTickmap && !hasSetESUSDCRange.current) {
       hasSetESUSDCRange.current = true
 
-      const MIN_TICK_FOR_04_PRICE = nearestTickIndex(0.4, tickSpacing, isXtoY, xDecimal, yDecimal)
-      const MAX_TICK_FOR_06_PRICE = nearestTickIndex(0.6, tickSpacing, isXtoY, xDecimal, yDecimal)
+      const tokenAAddress = tokens[tokenAIndex].assetAddress.toString()
+      const tokenBAddress = tokens[tokenBIndex].assetAddress.toString()
 
-      changeRangeHandler(MIN_TICK_FOR_04_PRICE, MAX_TICK_FOR_06_PRICE)
-      autoZoomHandler(MIN_TICK_FOR_04_PRICE, MAX_TICK_FOR_06_PRICE, true)
+      const isESUSDCPair = (tokenAAddress === ES_MAIN.address.toString() && tokenBAddress === USDC_MAIN.address.toString()) ||
+        (tokenAAddress === USDC_MAIN.address.toString() && tokenBAddress === ES_MAIN.address.toString())
+
+      const isESWETHPair = (tokenAAddress === ES_MAIN.address.toString() && tokenBAddress === WETH_MAIN.address.toString()) ||
+        (tokenAAddress === WETH_MAIN.address.toString() && tokenBAddress === ES_MAIN.address.toString())
+
+      interface TickRange {
+        MIN_TICK_FOR_PRICE: number | undefined
+        MAX_TICK_FOR_PRICE: number | undefined
+      }
+      let MIN_TICK_FOR_PRICE: TickRange['MIN_TICK_FOR_PRICE'], MAX_TICK_FOR_PRICE: TickRange['MAX_TICK_FOR_PRICE']
+
+      if (isESUSDCPair) {
+        MIN_TICK_FOR_PRICE = nearestTickIndex(0.4, tickSpacing, isXtoY, xDecimal, yDecimal)
+        MAX_TICK_FOR_PRICE = nearestTickIndex(0.6, tickSpacing, isXtoY, xDecimal, yDecimal)
+      } else if (isESWETHPair) {
+        MIN_TICK_FOR_PRICE = nearestTickIndex(0.00013, tickSpacing, isXtoY, xDecimal, yDecimal)
+        MAX_TICK_FOR_PRICE = nearestTickIndex(0.00020, tickSpacing, isXtoY, xDecimal, yDecimal)
+      }
+
+      if (MIN_TICK_FOR_PRICE !== undefined && MAX_TICK_FOR_PRICE !== undefined) {
+        changeRangeHandler(MIN_TICK_FOR_PRICE, MAX_TICK_FOR_PRICE)
+        autoZoomHandler(MIN_TICK_FOR_PRICE, MAX_TICK_FOR_PRICE, true)
+      }
     }
 
     if (!isESUSDCPair) {
