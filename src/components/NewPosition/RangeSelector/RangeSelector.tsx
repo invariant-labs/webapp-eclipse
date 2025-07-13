@@ -290,15 +290,32 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
   }
 
   const changeRangeHandler = (left: number, right: number) => {
-    if (isPairToOveride && positionOpeningMethod === 'range' && hasSetESUSDCRange.current) {
-      const MIN_TICK_FOR_04_PRICE = nearestTickIndex(0.4, tickSpacing, isXtoY, xDecimal, yDecimal)
-      const MAX_TICK_FOR_06_PRICE = nearestTickIndex(0.6, tickSpacing, isXtoY, xDecimal, yDecimal)
+    if (isPairToOveride && tokenAIndex && tokenBIndex && positionOpeningMethod === 'range' && hasSetESUSDCRange.current) {
+      const tokenAAddress = tokens[tokenAIndex].assetAddress.toString()
+      const tokenBAddress = tokens[tokenBIndex].assetAddress.toString()
 
-      if (left !== MIN_TICK_FOR_04_PRICE || right !== MAX_TICK_FOR_06_PRICE) {
-        return
+      const isESUSDCPair = (tokenAAddress === ES_MAIN.address.toString() && tokenBAddress === USDC_MAIN.address.toString()) ||
+        (tokenBAddress === ES_MAIN.address.toString() && tokenAAddress === USDC_MAIN.address.toString())
+
+      const isESWETHPair = (tokenAAddress === ES_MAIN.address.toString() && tokenBAddress === WETH_MAIN.address.toString()) ||
+        (tokenBAddress === ES_MAIN.address.toString() && tokenAAddress === WETH_MAIN.address.toString())
+
+      if (isESUSDCPair) {
+        const MIN_TICK_FOR_04_PRICE = nearestTickIndex(0.4, tickSpacing, isXtoY, xDecimal, yDecimal)
+        const MAX_TICK_FOR_06_PRICE = nearestTickIndex(0.6, tickSpacing, isXtoY, xDecimal, yDecimal)
+
+        if (left !== MIN_TICK_FOR_04_PRICE || right !== MAX_TICK_FOR_06_PRICE) {
+          return
+        }
+      } else if (isESWETHPair) {
+        const MIN_TICK_FOR_WETH = nearestTickIndex(0.00013603, tickSpacing, isXtoY, xDecimal, yDecimal)
+        const MAX_TICK_FOR_WETH = nearestTickIndex(0.00020394, tickSpacing, isXtoY, xDecimal, yDecimal)
+
+        if (left !== MIN_TICK_FOR_WETH || right !== MAX_TICK_FOR_WETH) {
+          return
+        }
       }
     }
-
     const { leftInRange, rightInRange } = getTicksInsideRange(left, right, isXtoY)
 
     setLeftRange(leftInRange)
@@ -307,9 +324,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     setRightInputValues(calcPriceByTickIndex(rightInRange, isXtoY, xDecimal, yDecimal).toString())
     onChangeRange(leftInRange, rightInRange)
   }
-  useEffect(() => {
-    console.log('leftRange', leftRange, 'rightRange', rightRange)
-  }, [leftRange, rightRange])
+
   const resetPlot = () => {
     if (positionOpeningMethod === 'range') {
       const initSideDist = Math.abs(
