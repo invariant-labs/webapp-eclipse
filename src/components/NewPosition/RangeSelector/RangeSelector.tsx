@@ -573,8 +573,8 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
         MIN_TICK_FOR_PRICE = nearestTickIndex(0.4, tickSpacing, isXtoY, xDecimal, yDecimal)
         MAX_TICK_FOR_PRICE = nearestTickIndex(0.6, tickSpacing, isXtoY, xDecimal, yDecimal)
       } else if (isESWETHPair) {
-        MIN_TICK_FOR_PRICE = nearestTickIndex(0.00013, tickSpacing, isXtoY, xDecimal, yDecimal)
-        MAX_TICK_FOR_PRICE = nearestTickIndex(0.00020, tickSpacing, isXtoY, xDecimal, yDecimal)
+        MIN_TICK_FOR_PRICE = nearestTickIndex(0.00013603, tickSpacing, isXtoY, xDecimal, yDecimal)
+        MAX_TICK_FOR_PRICE = nearestTickIndex(0.00020394, tickSpacing, isXtoY, xDecimal, yDecimal)
       }
 
       if (MIN_TICK_FOR_PRICE !== undefined && MAX_TICK_FOR_PRICE !== undefined) {
