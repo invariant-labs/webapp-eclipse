@@ -291,36 +291,8 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     setRightInputRounded(val)
   }
 
-  const changeRangeHandler = (left: number, right: number) => {
+  const changeRangeHandler = (left: number, right: number, manualRefresh?: boolean) => {
     const isRangeChanging = leftRange !== left || rightRange !== right;
-
-    if (isPairToOveride && tokenAIndex && tokenBIndex && positionOpeningMethod === 'range' &&
-      hasSetSpecialPairRange.current && leftRange !== 0 && rightRange !== 0) {
-      const tokenAAddress = tokens[tokenAIndex].assetAddress.toString()
-      const tokenBAddress = tokens[tokenBIndex].assetAddress.toString()
-
-      const isESUSDCPair = (tokenAAddress === ES_MAIN.address.toString() && tokenBAddress === USDC_MAIN.address.toString()) ||
-        (tokenBAddress === ES_MAIN.address.toString() && tokenAAddress === USDC_MAIN.address.toString())
-
-      const isESWETHPair = (tokenAAddress === ES_MAIN.address.toString() && tokenBAddress === WETH_MAIN.address.toString()) ||
-        (tokenBAddress === ES_MAIN.address.toString() && tokenAAddress === WETH_MAIN.address.toString())
-
-      if (isESUSDCPair) {
-        const MIN_TICK_FOR_04_PRICE = nearestTickIndex(0.4, tickSpacing, isXtoY, xDecimal, yDecimal)
-        const MAX_TICK_FOR_06_PRICE = nearestTickIndex(0.6, tickSpacing, isXtoY, xDecimal, yDecimal)
-
-        if (left !== MIN_TICK_FOR_04_PRICE || right !== MAX_TICK_FOR_06_PRICE) {
-          return
-        }
-      } else if (isESWETHPair) {
-        const MIN_TICK_FOR_WETH = nearestTickIndex(0.00013, tickSpacing, isXtoY, xDecimal, yDecimal)
-        const MAX_TICK_FOR_WETH = nearestTickIndex(0.00020, tickSpacing, isXtoY, xDecimal, yDecimal)
-
-        if (left !== MIN_TICK_FOR_WETH || right !== MAX_TICK_FOR_WETH) {
-          return
-        }
-      }
-    }
 
     const { leftInRange, rightInRange } = getTicksInsideRange(left, right, isXtoY)
 
@@ -330,7 +302,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     setRightInputValues(calcPriceByTickIndex(rightInRange, isXtoY, xDecimal, yDecimal).toString())
     onChangeRange(leftInRange, rightInRange)
 
-    if (isRangeChanging) {
+    if (isRangeChanging && manualRefresh) {
       onRefresh()
     }
   }
@@ -601,7 +573,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
       }
 
       if (MIN_TICK_FOR_PRICE !== undefined && MAX_TICK_FOR_PRICE !== undefined) {
-        changeRangeHandler(MIN_TICK_FOR_PRICE, MAX_TICK_FOR_PRICE)
+        changeRangeHandler(MIN_TICK_FOR_PRICE, MAX_TICK_FOR_PRICE, true)
         autoZoomHandler(MIN_TICK_FOR_PRICE, MAX_TICK_FOR_PRICE, true)
       }
     }
