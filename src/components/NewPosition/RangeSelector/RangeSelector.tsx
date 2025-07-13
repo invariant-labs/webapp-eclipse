@@ -611,18 +611,11 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
       }
     }
 
-    // Reset the flag when not dealing with special pairs
     if (!isPairToOveride) {
       hasSetESUSDCRange.current = false
-      setTimeout(() => {
-
-        onRefresh()
-      }, 500);
-
 
     }
   }, [tokens, tokenAIndex, tokenBIndex, positionOpeningMethod, isLoadingTicksOrTickmap, blocked, tickSpacing, isXtoY, xDecimal, yDecimal, currentFeeIndex])
-
 
   return (
     <Grid container className={classes.wrapper}>
