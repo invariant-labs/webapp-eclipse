@@ -146,7 +146,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
 
   const isMountedRef = useRef(false)
 
-  const hasSetESUSDCRange = useRef(false)
+  const hasSetSpecialPairRange = useRef(false)
 
   const isPairToOveride = useMemo(() => {
     if (!tokens || tokenAIndex === null || tokenBIndex === null) return false
@@ -295,7 +295,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     const isRangeChanging = leftRange !== left || rightRange !== right;
 
     if (isPairToOveride && tokenAIndex && tokenBIndex && positionOpeningMethod === 'range' &&
-      hasSetESUSDCRange.current && leftRange !== 0 && rightRange !== 0) {
+      hasSetSpecialPairRange.current && leftRange !== 0 && rightRange !== 0) {
       const tokenAAddress = tokens[tokenAIndex].assetAddress.toString()
       const tokenBAddress = tokens[tokenBIndex].assetAddress.toString()
 
@@ -593,11 +593,11 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
       if (isESUSDCPair) {
         MIN_TICK_FOR_PRICE = nearestTickIndex(0.4, tickSpacing, isXtoY, xDecimal, yDecimal)
         MAX_TICK_FOR_PRICE = nearestTickIndex(0.6, tickSpacing, isXtoY, xDecimal, yDecimal)
-        hasSetESUSDCRange.current = true
+        hasSetSpecialPairRange.current = true
       } else if (isESWETHPair) {
         MIN_TICK_FOR_PRICE = nearestTickIndex(0.00013603, tickSpacing, isXtoY, xDecimal, yDecimal)
         MAX_TICK_FOR_PRICE = nearestTickIndex(0.00020394, tickSpacing, isXtoY, xDecimal, yDecimal)
-        hasSetESUSDCRange.current = true
+        hasSetSpecialPairRange.current = true
       }
 
       if (MIN_TICK_FOR_PRICE !== undefined && MAX_TICK_FOR_PRICE !== undefined) {
@@ -607,8 +607,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     }
 
     if (!isPairToOveride) {
-      hasSetESUSDCRange.current = false
-
+      hasSetSpecialPairRange.current = false
     }
   }, [tokens, tokenAIndex, tokenBIndex, positionOpeningMethod, isLoadingTicksOrTickmap, blocked, tickSpacing, isXtoY, xDecimal, yDecimal, currentFeeIndex])
 
