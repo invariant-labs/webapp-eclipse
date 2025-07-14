@@ -1032,13 +1032,7 @@ export const NewPosition: React.FC<INewPosition> = ({
       const DEST_FEE_TIER_INDEX = 5
 
       onChangePositionTokens(tokenAIndex, tokenBIndex, DEST_FEE_TIER_INDEX)
-      updatePath(
-        tokenAIndex,
-        tokenBIndex,
-        DEST_FEE_TIER_INDEX,
-        +concentrationArray[concentrationIndex].toFixed(0),
-        true
-      )
+
       lastSpecialPairRef.current = currentPair
     } else if (!isESUSDCPair && !isESWETHPair) {
       lastSpecialPairRef.current = ''
