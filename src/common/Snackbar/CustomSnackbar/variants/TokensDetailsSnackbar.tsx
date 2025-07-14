@@ -42,9 +42,10 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
   tokenXAmountAutoSwap,
   tokenYAmountAutoSwap,
   tokenXIconAutoSwap,
-  tokenYIconAutoSwap
+  tokenYIconAutoSwap,
+  roundIcon
 }) => {
-  const { classes } = useStyles()
+  const { classes } = useStyles({ roundIcon })
 
   const icon = useMemo(() => {
     switch (ikonType) {

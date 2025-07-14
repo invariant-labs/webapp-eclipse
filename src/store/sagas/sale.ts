@@ -53,13 +53,13 @@ export function* fetchUserStats() {
       return
     }
     const sale = yield* call(getSaleProgram, networkType, rpc, wallet as IWallet)
-    const canMintNft = yield* call([sale, sale.hasNftMinted], wallet.publicKey, NFT_MINT)
-    const userBalance = yield* call([sale, sale.getUserBalance], wallet.publicKey)
+    const hasNftMinted = yield* call([sale, sale.hasNftMinted], wallet.publicKey, NFT_MINT)
 
+    const userBalance = yield* call([sale, sale.getUserBalance], wallet.publicKey)
     const userStats: IUserStats = {
       deposited: userBalance.deposited,
       received: userBalance.received,
-      canMintNft: !canMintNft
+      canMintNft: !hasNftMinted
     }
 
     yield* put(actions.setUserStats({ ...userStats }))
@@ -285,7 +285,8 @@ export function* mintNft() {
             ikonType: 'claim',
             tokenXAmount: '1',
             tokenXIcon: logoShortIcon,
-            tokenXSymbol: 'INVT'
+            tokenXSymbol: 'INVT',
+            roundIcon: false
           },
           persist: false,
           txid
