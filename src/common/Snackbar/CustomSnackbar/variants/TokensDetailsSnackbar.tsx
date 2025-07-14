@@ -83,8 +83,8 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
         return ''
     }
   }, [ikonType])
-  const hasXAmount = tokenXAmount !== '0'
-  const hasYAmount = tokenYAmount !== '0'
+  const hasXAmount = !!tokenXAmount && tokenXAmount !== '0'
+  const hasYAmount = !!tokenYAmount && tokenYAmount !== '0'
   const hasBothAmounts = hasXAmount && hasYAmount
   return (
     <>
@@ -151,27 +151,32 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
             )}
             {ikonType === 'swap' || ikonType === 'unstake' || ikonType === 'stake' ? (
               arrow
-            ) : ikonType === 'claim' ? (
+            ) : ikonType === 'claim' || ikonType === 'deposit' ? (
               hasBothAmounts ? (
                 <StyledText>+</StyledText>
               ) : null
             ) : (
               <StyledText>+</StyledText>
             )}
-            <StyledText color={colors.invariant.green}>
-              {tokenBetweenAmount ? tokenBetweenAmount : tokenYAmount}
-            </StyledText>
-            {(
-              tokenBetweenAmount
-                ? tokenBetweenIcon === '/unknownToken.svg'
-                : tokenYIcon === '/unknownToken.svg'
-            ) ? (
-              <StyledText>{tokenBetweenAmount ? tokenBetweenSymbol : tokenYSymbol}</StyledText>
-            ) : (
-              <img
-                src={tokenBetweenAmount ? tokenBetweenIcon : tokenYIcon}
-                className={classes.tokenIcon}
-              />
+
+            {hasYAmount && (
+              <>
+                <StyledText color={colors.invariant.green}>
+                  {tokenBetweenAmount ? tokenBetweenAmount : tokenYAmount}
+                </StyledText>
+                {(
+                  tokenBetweenAmount
+                    ? tokenBetweenIcon === '/unknownToken.svg'
+                    : tokenYIcon === '/unknownToken.svg'
+                ) ? (
+                  <StyledText>{tokenBetweenAmount ? tokenBetweenSymbol : tokenYSymbol}</StyledText>
+                ) : (
+                  <img
+                    src={tokenBetweenAmount ? tokenBetweenIcon : tokenYIcon}
+                    className={classes.tokenIcon}
+                  />
+                )}
+              </>
             )}
           </Grid>
 
