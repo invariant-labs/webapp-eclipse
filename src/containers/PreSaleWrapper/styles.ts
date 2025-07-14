@@ -311,10 +311,7 @@ export const useStyles = makeStyles()(() => ({
     alignItems: 'center',
     flexDirection: 'column',
     gap: 24,
-    boxSizing: 'border-box',
-    [theme.breakpoints.down('md')]: {
-      marginTop: 48
-    }
+    boxSizing: 'border-box'
   },
   sectionTokenomics: {
     zIndex: 90,
@@ -345,7 +342,10 @@ export const useStyles = makeStyles()(() => ({
   sectionTitleText: {
     ...typography.heading1,
     textAlign: 'center',
-    color: colors.invariant.text
+    color: colors.invariant.text,
+    [theme.breakpoints.down('sm')]: {
+      ...typography.heading4
+    }
   },
   shareButtonContainer: {
     width: '100%',
