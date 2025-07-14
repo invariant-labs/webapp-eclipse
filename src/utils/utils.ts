@@ -123,7 +123,6 @@ import { createUmi } from '@metaplex-foundation/umi-bundle-defaults'
 import { Umi } from '@metaplex-foundation/umi'
 import { StakingStatsResponse } from '@store/reducers/sbitz-stats'
 import { DEFAULT_FEE_TIER, STRATEGIES } from '@store/consts/userStrategies'
-import { NFTStatus } from '@store/reducers/sale'
 import { HoldersResponse } from '@store/reducers/sBitz'
 
 export const transformBN = (amount: BN): string => {
@@ -2645,12 +2644,6 @@ export const getAmountFromClosePositionInstruction = (
   )[type === TokenType.TokenX ? 0 : 1] as ParsedInstruction | undefined
 
   return instruction?.parsed.info.amount || instruction?.parsed.info.tokenAmount.amount
-}
-
-export const getNftStatus = (canMintNft: boolean, hasMintedNft: boolean): NFTStatus => {
-  if (hasMintedNft) return NFTStatus.Claimed
-
-  return canMintNft ? NFTStatus.Eligible : NFTStatus.NonEligible
 }
 
 export const fetchMarketBitzStats = async () => {

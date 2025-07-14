@@ -9,7 +9,7 @@ import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
 import { isLoadingProof, proofOfInclusion, saleSelectors } from '@store/selectors/sale'
 import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
-import { getNftStatus, printBNandTrimZeros } from '@utils/utils'
+import { printBNandTrimZeros } from '@utils/utils'
 import NftPlaceholder from '@static/png/NFT_Card.png'
 import {
   EFFECTIVE_TARGET,
@@ -212,7 +212,19 @@ export const PreSaleWrapper = () => {
   }, [userStats])
 
   const nftStatus = useMemo<NFTStatus>(() => {
-    return getNftStatus(!!userStats?.canMintNft, hasMintedNft)
+    if (!userStats) {
+      return NFTStatus.NonEligible
+    }
+
+    if (userStats.canMintNft) {
+      return NFTStatus.Eligible
+    }
+
+    if (userStats.deposited.gte(MIN_DEPOSIT_FOR_NFT_MINT) && !userStats.canMintNft) {
+      return NFTStatus.Claimed
+    }
+
+    return NFTStatus.NonEligible
   }, [userStats?.canMintNft, hasMintedNft])
 
   const slidesToShow = useMemo(() => {
@@ -601,8 +613,9 @@ export const PreSaleWrapper = () => {
         <Box display='flex' alignItems='center' gap={12} className={classes.nftBackground}>
           <Box className={classes.nftWrapper}>
             <Typography component='section'>
-              Every participant in the Invariant Public Sale who contributes at least $450 will
-              receive a special, non-transferable NFT.
+              Every participant in the Invariant Public Sale who contributes at least $
+              {printBNandTrimZeros(MIN_DEPOSIT_FOR_NFT_MINT, 6)} will receive a special,
+              non-transferable NFT.
             </Typography>
             <Typography component='h4'>Status</Typography>
             <Typography component='h1'>{nftStatus}</Typography>
