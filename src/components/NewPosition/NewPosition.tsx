@@ -298,6 +298,35 @@ export const NewPosition: React.FC<INewPosition> = ({
 
   const [shouldReversePlot, setShouldReversePlot] = useState(false)
 
+  const { currentPair, isESUSDCPair, isESWETHPair } = useMemo(() => {
+    if (tokenAIndex === null || tokenBIndex === null) {
+      return {
+        tokenAAddress: '',
+        tokenBAddress: '',
+        currentPair: '',
+        isESUSDCPair: false,
+        isESWETHPair: false
+      }
+    }
+    const tokenAAddress = tokens[tokenAIndex].assetAddress.toString()
+    const tokenBAddress = tokens[tokenBIndex].assetAddress.toString()
+    const currentPair = [tokenAAddress, tokenBAddress].sort().join('-')
+
+    const isESUSDCPair =
+      (tokenAAddress === ES_MAIN.address.toString() && tokenBAddress === USDC_MAIN.address.toString()) ||
+      (tokenBAddress === ES_MAIN.address.toString() && tokenAAddress === USDC_MAIN.address.toString())
+
+    const isESWETHPair =
+      (tokenAAddress === ES_MAIN.address.toString() && tokenBAddress === WETH_MAIN.address.toString()) ||
+      (tokenBAddress === ES_MAIN.address.toString() && tokenAAddress === WETH_MAIN.address.toString())
+
+    return {
+      currentPair,
+      isESUSDCPair,
+      isESWETHPair
+    }
+  }, [tokens, tokenAIndex, tokenBIndex])
+
   const concentrationArray: number[] = useMemo(() => {
     const validatedMidPrice = validConcentrationMidPriceTick(midPrice.index, isXtoY, tickSpacing)
 
@@ -1012,18 +1041,6 @@ export const NewPosition: React.FC<INewPosition> = ({
   useEffect(() => {
     if (tokenAIndex === null || tokenBIndex === null) return
 
-    const tokenAAddress = tokens[tokenAIndex].assetAddress.toString()
-    const tokenBAddress = tokens[tokenBIndex].assetAddress.toString()
-    const currentPair = [tokenAAddress, tokenBAddress].sort().join('-')
-
-    const isESUSDCPair =
-      (tokenAAddress === ES_MAIN.address.toString() && tokenBAddress === USDC_MAIN.address.toString()) ||
-      (tokenBAddress === ES_MAIN.address.toString() && tokenAAddress === USDC_MAIN.address.toString())
-
-    const isESWETHPair =
-      (tokenAAddress === ES_MAIN.address.toString() && tokenBAddress === WETH_MAIN.address.toString()) ||
-      (tokenBAddress === ES_MAIN.address.toString() && tokenAAddress === WETH_MAIN.address.toString())
-
     if ((isESUSDCPair || isESWETHPair) && lastSpecialPairRef.current !== currentPair) {
       setPositionOpeningMethod('range')
       onPositionOpeningMethodChange('range')
@@ -1148,27 +1165,32 @@ export const NewPosition: React.FC<INewPosition> = ({
                 {tokenAIndex !== null && tokenBIndex !== null && (
                   <ConcentrationTypeSwitch
                     onSwitch={val => {
+                      console.log({ isESUSDCPair, isESWETHPair })
                       if (val) {
                         setPositionOpeningMethod('concentration')
-                        onPositionOpeningMethodChange('concentration')
-                        updatePath(
-                          tokenAIndex,
-                          tokenBIndex,
-                          currentFeeIndex,
-                          +concentrationArray[concentrationIndex].toFixed(0),
-                          false
-                        )
+                        if (!isESUSDCPair && !isESWETHPair) {
+                          onPositionOpeningMethodChange('concentration')
+                          updatePath(
+                            tokenAIndex,
+                            tokenBIndex,
+                            currentFeeIndex,
+                            +concentrationArray[concentrationIndex].toFixed(0),
+                            false
+                          )
+                        }
                       } else {
                         setPositionOpeningMethod('range')
-                        onPositionOpeningMethodChange('range')
+                        if (!isESUSDCPair && !isESWETHPair) {
+                          onPositionOpeningMethodChange('range')
+                          updatePath(
+                            tokenAIndex,
+                            tokenBIndex,
+                            currentFeeIndex,
+                            +concentrationArray[concentrationIndex].toFixed(0),
+                            true
+                          )
+                        }
 
-                        updatePath(
-                          tokenAIndex,
-                          tokenBIndex,
-                          currentFeeIndex,
-                          +concentrationArray[concentrationIndex].toFixed(0),
-                          true
-                        )
                       }
                     }}
                     className={classes.switch}
@@ -1402,10 +1424,14 @@ export const NewPosition: React.FC<INewPosition> = ({
                 onSwitch={val => {
                   if (val) {
                     setPositionOpeningMethod('concentration')
-                    onPositionOpeningMethodChange('concentration')
+                    if (!isESUSDCPair && !isESWETHPair) {
+                      onPositionOpeningMethodChange('concentration')
+                    }
                   } else {
                     setPositionOpeningMethod('range')
-                    onPositionOpeningMethodChange('range')
+                    if (!isESUSDCPair && !isESWETHPair) {
+                      onPositionOpeningMethodChange('range')
+                    }
                   }
                 }}
                 className={classes.switch}
