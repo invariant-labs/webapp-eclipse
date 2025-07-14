@@ -28,17 +28,17 @@ const volumeTvlData = [
   },
   {
     log: 'Log3',
+    value: 0.1147,
+    label: 'Umbra',
+    color: 'gradient-umbra',
+    logo: UmbraLogo
+  },
+  {
+    log: 'Log4',
     value: 0.0828,
     label: 'Solar DEX',
     color: '#FBFBFB',
     logo: SolarLogo
-  },
-  {
-    log: 'Log4',
-    value: 0.053,
-    label: 'Umbra',
-    color: 'gradient-umbra',
-    logo: UmbraLogo
   }
 ]
 
@@ -59,17 +59,17 @@ const feeTvlData = [
   },
   {
     log: 'Log3',
-    value: 0.000143,
-    label: 'Solar DEX',
-    color: colors.invariant.offWhite,
-    logo: SolarLogo
-  },
-  {
-    log: 'Log4',
-    value: 0.00004,
+    value: 0.000123,
     label: 'Umbra',
     color: 'gradient-umbra',
     logo: UmbraLogo
+  },
+  {
+    log: 'Log4',
+    value: 0.000119,
+    label: 'Solar DEX',
+    color: colors.invariant.offWhite,
+    logo: SolarLogo
   }
 ]
 
@@ -92,9 +92,9 @@ export const DEXChart = () => {
   }
 
   const chartData = alignment === SwitcherAlignment.VOLUME_TVL ? volumeTvlData : feeTvlData
-  const maxValue = alignment === SwitcherAlignment.VOLUME_TVL ? 1 : 0.001
-  const formatValue = (value: number) =>
-    alignment === SwitcherAlignment.VOLUME_TVL ? value.toFixed(2) : `${(value * 100).toFixed(2)}%`
+  const maxValue =
+    alignment === SwitcherAlignment.VOLUME_TVL ? volumeTvlData[0].value : feeTvlData[0].value
+  const formatValue = (value: number) => `${(value * 100).toFixed(2)}%`
 
   return (
     <GradientBorder
@@ -203,9 +203,7 @@ export const DEXChart = () => {
                     className={classes.leftAxisTickText}
                     textAnchor='start'
                     dominantBaseline='center'>
-                    {alignment === SwitcherAlignment.VOLUME_TVL
-                      ? value.toFixed(1)
-                      : `${(value * 100).toFixed(1)}%`}
+                    {`${(value * 100).toFixed(2)}%`}
                   </text>
                 </g>
               )
