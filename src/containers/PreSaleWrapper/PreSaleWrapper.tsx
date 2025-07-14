@@ -9,7 +9,7 @@ import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
 import { isLoadingProof, proofOfInclusion, saleSelectors } from '@store/selectors/sale'
 import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
-import { getNftStatus, printBN, printBNandTrimZeros } from '@utils/utils'
+import { getNftStatus, printBNandTrimZeros } from '@utils/utils'
 import NftPlaceholder from '@static/png/NFT_Card.png'
 import {
   EFFECTIVE_TARGET_MULTIPLIER,
@@ -20,7 +20,8 @@ import {
   TIER1,
   TIER2,
   TIER3,
-  TIER4
+  TIER4,
+  MIN_DEPOSIT_FOR_NFT_MINT
 } from '@invariant-labs/sale-sdk'
 import { balanceLoading, status, poolTokens, balance, address } from '@store/selectors/solanaWallet'
 import {
@@ -51,7 +52,7 @@ import ArrowLeft from '@static/png/presale/arrow_left.png'
 import ArrowRight from '@static/png/presale/arrow_right.png'
 import { useEffect, useState, useRef, useMemo, useCallback } from 'react'
 import { OverlayWrapper } from '@components/PreSale/Overlay/Overlay'
-import { DEFAULT_PUBLICKEY, USDC_MAIN } from '@store/consts/static'
+import { DEFAULT_PUBLICKEY } from '@store/consts/static'
 import { auditByLogoIcon, swapArrowClean } from '@static/icons'
 import { Tokenomics } from '@components/PreSale/Tokenomics/Tokenomics'
 import { DEXChart } from '@components/PreSale/DEXChart/DEXChart'
@@ -205,9 +206,8 @@ export const PreSaleWrapper = () => {
   const initialReversePrices = localStorage.getItem('INVARIANT_SALE_REVERSE_PRICES') === 'true'
   const [reversedPrices, setReversedPrices] = useState(initialReversePrices)
   const walletAddress = useSelector(address)
-
   const hasMintedNft = useMemo(() => {
-    const depositedAboveThreshold = +printBN(userStats?.deposited, USDC_MAIN.decimals) >= 450 //TODO Change to sdk const
+    const depositedAboveThreshold = userStats?.deposited.gte(MIN_DEPOSIT_FOR_NFT_MINT)
     return depositedAboveThreshold && !userStats?.canMintNft
   }, [userStats])
 
