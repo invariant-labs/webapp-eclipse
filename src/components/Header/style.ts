@@ -19,15 +19,6 @@ const useStyles = makeStyles()((theme: Theme) => {
         paddingInline: 8
       }
     },
-    networkContainer: {
-      display: 'flex',
-      flexDirection: 'row',
-      flexWrap: 'nowrap',
-      gap: 12,
-      [theme.breakpoints.down(360)]: {
-        gap: 0
-      }
-    },
     logo: {
       width: 150,
       height: 40,
@@ -84,11 +75,6 @@ const useStyles = makeStyles()((theme: Theme) => {
         marginLeft: 0,
         width: '100%',
         justifyContent: 'center'
-      },
-
-      [theme.breakpoints.down('sm')]: {
-        justifyContent: 'space-between',
-        gap: 0
       }
     },
     leftButtons: {

@@ -181,18 +181,17 @@ export const Header: React.FC<IHeader> = ({
               }
             }}
           />
-          <Grid className={classes.networkContainer}>
-            <Bar
-              rpcs={rpcs}
-              activeNetwork={typeOfNetwork}
-              activeRPC={rpc}
-              onNetworkChange={onNetworkSelect}
-              onChainChange={onChainSelect}
-              onFaucet={onFaucet}
-            />
 
-            <YourPointsButton />
-          </Grid>
+          <Bar
+            rpcs={rpcs}
+            activeNetwork={typeOfNetwork}
+            activeRPC={rpc}
+            onNetworkChange={onNetworkSelect}
+            onChainChange={onChainSelect}
+            onFaucet={onFaucet}
+          />
+
+          <YourPointsButton />
           <ChangeWalletButton
             name={
               walletConnected
