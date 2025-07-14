@@ -7,7 +7,6 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
     flexDirection: 'column',
     justifyContent: 'space-around',
     position: 'relative',
-    overflow: 'hidden',
     alignItems: 'flex-start',
     minHeight: '440px',
     width: '160px',
