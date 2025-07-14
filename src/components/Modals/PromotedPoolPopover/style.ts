@@ -1,7 +1,7 @@
 import { colors, theme, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
-const useStyles = makeStyles()(() => {
+const useStyles = makeStyles<{ center: boolean }>()((_theme, { center }) => {
   return {
     popover: {
       marginTop: '8px',
@@ -33,7 +33,7 @@ const useStyles = makeStyles()(() => {
       flexDirection: 'column',
       width: '100%',
       justifyContent: 'flex-start',
-      alignItems: 'flex-start'
+      alignItems: center ? 'center' : 'flex-start'
     },
     greyText: {
       ...typography.body2,

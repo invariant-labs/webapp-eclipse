@@ -21,6 +21,8 @@ import { IProps } from '../PoolListItem'
 import { BN } from '@coral-xyz/anchor'
 import { useDispatch } from 'react-redux'
 import { actions } from '@store/reducers/navigation'
+import { POOLS_TO_HIDE_POINTS_PER_24H } from '@store/consts/static'
+import { QuestionMark } from '@components/Leaderboard/QuestionMark/QuestionMark'
 
 export const MobilePoolListItem: React.FC<IProps> = ({
   fee = 0,
@@ -205,8 +207,16 @@ export const MobilePoolListItem: React.FC<IProps> = ({
               </Typography>
 
               <Typography style={{ ...typography.heading4, color: colors.invariant.text }}>
-                {formatNumberWithCommas(
-                  printBN(new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60), 0)
+                {poolAddress ? (
+                  POOLS_TO_HIDE_POINTS_PER_24H.includes(poolAddress) ? (
+                    <QuestionMark marginLeft={'40%'} height={'24px'} />
+                  ) : (
+                    formatNumberWithCommas(
+                      printBN(new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60), 0)
+                    )
+                  )
+                ) : (
+                  <QuestionMark marginLeft={'40%'} height={'24px'} />
                 )}
               </Typography>
             </Box>

@@ -352,7 +352,7 @@ export const PreSaleWrapper = () => {
   const getAlertBoxText = useCallback(() => {
     if (isLimitExceed) {
       return {
-        text: 'Your deposit exceed limit',
+        text: 'You have exceeded your allocation limit',
         variant: 'limit'
       }
     }
@@ -639,7 +639,7 @@ export const PreSaleWrapper = () => {
             <AnimatedPreSaleCard
               gradientPrimaryColor={colors.invariant.component}
               title='$5 MLN'
-              subtitle='valuation of Invariant during the public sale'
+              subtitle='valuation of Invariant during the sale'
               delay={400}
             />
           </Grid>
@@ -765,7 +765,7 @@ export const PreSaleWrapper = () => {
               heroImage={'https://eclipse.invariant.app/sBitz.png'}
             />
             <EventsCard
-              title={'Public Sale Begins'}
+              title={'Sale Begins'}
               borderColor={'pink'}
               description={
                 'Invariant launches on Solana mainnet. The first AMM with AutoSwap goes live.'
@@ -788,7 +788,7 @@ export const PreSaleWrapper = () => {
         <Faq
           faqData={[
             {
-              question: '1. How can I participate in the public sale?',
+              question: '1. How can I participate in the sale?',
               answer:
                 'To participate, simply scroll up to the presale section, connect your crypto wallet, enter the amount you’d like to invest, and click Buy Now. Tokens will be transferred after purchase.'
             },
@@ -806,7 +806,7 @@ export const PreSaleWrapper = () => {
             {
               question: '4. When is the TGE?',
               answer:
-                'The TGE will take place shortly after the public sale ends. We’ll announce the exact date on our official social media channels.'
+                'The TGE will take place shortly after the sale ends. We’ll announce the exact date on our official social media channels.'
             },
             {
               question: '5. How do I know if I’m whitelisted?',

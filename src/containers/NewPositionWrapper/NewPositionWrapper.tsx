@@ -9,6 +9,7 @@ import {
   DEFAULT_NEW_POSITION_SLIPPAGE,
   Intervals,
   LEADERBOARD_DECIMAL,
+  POOLS_TO_HIDE_POINTS_PER_24H,
   autoSwapPools,
   commonTokensForNetworks
 } from '@store/consts/static'
@@ -697,6 +698,10 @@ export const NewPositionWrapper: React.FC<IProps> = ({
 
   const isPromotedPool = useMemo(() => {
     if (poolIndex === null) {
+      return false
+    }
+
+    if (POOLS_TO_HIDE_POINTS_PER_24H.includes(allPools[poolIndex].address.toString())) {
       return false
     }
 

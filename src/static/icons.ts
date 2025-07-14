@@ -113,15 +113,20 @@ import moreIcon from './svg/moreIcon.svg'
 import lqStakingIcon from './svg/lqStakingIcon.svg'
 import warningStroke from './svg/warningStroke.svg'
 import plusDisabled from './svg/plusDisabled.svg'
+import pointsQMarkIcon from './svg/pointsQmark.svg'
+import hornsUSDC from './svg/hornsUSDC.svg'
+import hornsETH from './svg/hornsETH.svg'
 import virtualCardIcon from './svg/virtualCard.svg'
 import greenInfoIcon from './svg/greenInfo.svg'
 import swapArrowClean from './svg/swapArrowClean.svg'
 import saleIcon from './svg/saleIcon.svg'
 
 export {
+  hornsUSDC,
   warningStroke,
   plusDisabled,
   lqStakingIcon,
+  pointsQMarkIcon,
   moreIcon,
   logoTitleIcon,
   logoShortIcon,
@@ -235,6 +240,7 @@ export {
   star,
   starFill,
   swapArrowIcon,
+  hornsETH,
   auditByLogoIcon,
   greenInfoIcon,
   swapArrowClean
