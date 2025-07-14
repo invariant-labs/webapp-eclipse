@@ -34,7 +34,7 @@ import { REWARD_SCALE } from '@invariant-labs/sale-sdk'
 import { BN } from '@coral-xyz/anchor'
 import { logoShortIcon } from '@static/icons'
 import { userStats } from '@store/selectors/sale'
-import { NFT_MINT } from '@invariant-labs/sale-sdk/lib/consts'
+import { MIN_DEPOSIT_FOR_NFT_MINT, NFT_MINT } from '@invariant-labs/sale-sdk/lib/consts'
 
 export function* fetchUserStats() {
   try {
@@ -59,7 +59,7 @@ export function* fetchUserStats() {
     const userStats: IUserStats = {
       deposited: userBalance.deposited,
       received: userBalance.received,
-      canMintNft: !hasMintedNft
+      canMintNft: !hasMintedNft && userBalance.deposited.gte(MIN_DEPOSIT_FOR_NFT_MINT)
     }
 
     yield* put(actions.setUserStats({ ...userStats }))

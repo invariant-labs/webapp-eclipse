@@ -2647,12 +2647,6 @@ export const getAmountFromClosePositionInstruction = (
   return instruction?.parsed.info.amount || instruction?.parsed.info.tokenAmount.amount
 }
 
-export const getNftStatus = (canMintNft: boolean, hasMintedNft: boolean): NFTStatus => {
-  if (hasMintedNft) return NFTStatus.Claimed
-
-  return canMintNft ? NFTStatus.Eligible : NFTStatus.NonEligible
-}
-
 export const fetchMarketBitzStats = async () => {
   const sBITZ = sBITZ_MAIN.address.toString()
 
