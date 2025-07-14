@@ -148,7 +148,7 @@ export const BuyComponent: React.FC<IProps> = ({
     }
 
     if (valueAsBN.add(userDepositedAmount).gt(whitelistWalletLimit) && !isPublic) {
-      return 'Your deposit exceed limit'
+      return 'You have exceeded your allocation limit'
     }
 
     if (valueAsBN.gt(tokens[tokenIndex].balance)) {
