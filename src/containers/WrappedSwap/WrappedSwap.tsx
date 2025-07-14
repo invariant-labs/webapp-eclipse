@@ -28,13 +28,7 @@ import {
   balance,
   accounts as solanaAccounts
 } from '@store/selectors/solanaWallet'
-import {
-  swap as swapPool,
-  accounts,
-  isLoading,
-  amountInput,
-  lastEdited
-} from '@store/selectors/swap'
+import { swap as swapPool, accounts, isLoading } from '@store/selectors/swap'
 import { PublicKey } from '@solana/web3.js'
 import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -81,8 +75,6 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const pointsPerUsdFee = useSelector(pointsPerUsd)
   const promotedSwapPairs = useSelector(swapPairs)
   const priceFeeds = useSelector(feeds)
-  const { amountFrom, amountTo } = useSelector(amountInput)
-  const lastEditedValue = useSelector(lastEdited)
   const networkType = useSelector(network)
   const [progress, setProgress] = useState<ProgressState>('none')
   const [tokenFrom, setTokenFrom] = useState<PublicKey | null>(null)
@@ -333,16 +325,18 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
 
   const allAccounts = useSelector(solanaAccounts)
 
-  const wrappedETHAccountExist = useMemo(() => {
+  const [wrappedETHAccountExist, wrappedETHBalance] = useMemo(() => {
     let wrappedETHAccountExist = false
+    let wrappedETHBalance
 
     Object.entries(allAccounts).map(([address, token]) => {
       if (address === WRAPPED_ETH_ADDRESS && token.balance.gt(new BN(0))) {
         wrappedETHAccountExist = true
+        wrappedETHBalance = token.balance
       }
     })
 
-    return wrappedETHAccountExist
+    return [wrappedETHAccountExist, wrappedETHBalance]
   }, [allAccounts])
 
   const unwrapWETH = () => {
@@ -362,15 +356,6 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
 
   const swapAccounts = useSelector(accounts)
   const swapIsLoading = useSelector(isLoading)
-
-  const setAmountFrom = (val: string, isUser = false) => {
-    dispatch(swapActions.setInputAmount({ amountFrom: val }))
-    if (isUser) dispatch(swapActions.setLastEdited('from'))
-  }
-  const setAmountTo = (val: string, isUser = false) => {
-    dispatch(swapActions.setInputAmount({ amountTo: val }))
-    if (isUser) dispatch(swapActions.setLastEdited('to'))
-  }
 
   return (
     <Swap
@@ -456,6 +441,7 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
       network={networkType}
       unwrapWETH={unwrapWETH}
       wrappedETHAccountExist={wrappedETHAccountExist}
+      wrappedETHBalance={wrappedETHBalance}
       isTimeoutError={isTimeoutError}
       deleteTimeoutError={() => {
         dispatch(connectionActions.setTimeoutError(false))
@@ -469,11 +455,6 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
       tokensDict={tokensDict}
       swapAccounts={swapAccounts}
       swapIsLoading={swapIsLoading}
-      setAmountFrom={setAmountFrom}
-      setAmountTo={setAmountTo}
-      amountFrom={amountFrom}
-      amountTo={amountTo}
-      lastEdited={lastEditedValue}
     />
   )
 }

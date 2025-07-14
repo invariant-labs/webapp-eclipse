@@ -6,7 +6,7 @@ export type FontData = {
   fontWeight: number
 }
 type Props = {
-  scheme: 'normal' | 'green' | 'pink' | 'rainbow'
+  scheme: 'normal' | 'green' | 'pink' | 'rainbow' | 'grey'
   disabled?: boolean
   margin?: string | number
   height?: string | number
@@ -14,6 +14,7 @@ type Props = {
   width?: string | number
   borderRadius?: string | number
   padding?: string | number
+  gap?: string | number
   children: React.ReactNode
 } & ButtonProps
 
@@ -26,6 +27,7 @@ export const Button = ({
   fontData,
   borderRadius,
   padding,
+  gap,
   children,
   ...props
 }: Props) => {
@@ -36,6 +38,7 @@ export const Button = ({
     borderRadius,
     padding,
     margin,
+    gap,
     fontData
   })
 

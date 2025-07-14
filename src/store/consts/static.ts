@@ -413,6 +413,15 @@ export const KYSOL_MAIN: Token = {
   coingeckoId: ''
 }
 
+export const ES_MAIN: Token = {
+  symbol: 'ES',
+  address: new PublicKey('GnBAskb2SQjrLgpTjtgatz4hEugUsYV7XrWU1idV3oqW'),
+  decimals: 6,
+  name: 'Eclipse',
+  logoURI: 'https://assets.coingecko.com/coins/images/54958/standard/image_%2832%29.png?1742979704',
+  coingeckoId: 'eclipse-3'
+}
+
 export const TUSD_MAIN: Token = {
   tokenProgram: TOKEN_2022_PROGRAM_ID,
   symbol: 'tUSD',
@@ -546,6 +555,26 @@ export const autoSwapPools = [
       address: new PublicKey('9RkzLPufg9RVxRLXZx1drZvf1gXLwgffnhW9oFJSstad'),
       feeIndex: 6
     }
+  },
+  {
+    pair: {
+      tokenX: new PublicKey('GnBAskb2SQjrLgpTjtgatz4hEugUsYV7XrWU1idV3oqW'),
+      tokenY: new PublicKey('AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE')
+    },
+    swapPool: {
+      address: new PublicKey('8gSs6K4NVZSh4Rd5ABcNTos5sJ6wVRTR4xr5LgNLMt58'),
+      feeIndex: 5
+    }
+  },
+  {
+    pair: {
+      tokenX: new PublicKey('GnBAskb2SQjrLgpTjtgatz4hEugUsYV7XrWU1idV3oqW'),
+      tokenY: new PublicKey('So11111111111111111111111111111111111111112')
+    },
+    swapPool: {
+      address: new PublicKey('6ciuuX2AZ3RFU6fJh2XrzJurZdRWuDeMonNsb7xzztp1'),
+      feeIndex: 5
+    }
   }
 ]
 export const promotedTiers = [
@@ -583,6 +612,16 @@ export const promotedTiers = [
     tokenX: WETH_MAIN.address,
     tokenY: sBITZ_MAIN.address,
     index: 6
+  },
+  {
+    tokenX: ES_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    index: 5
+  },
+  {
+    tokenX: USDC_MAIN.address,
+    tokenY: ES_MAIN.address,
+    index: 5
   }
 ]
 
@@ -593,8 +632,8 @@ export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
     TETH_MAIN.address,
     USDC_MAIN.address,
     SOL_MAIN.address,
-    USDT_MAIN.address,
     BITZ_MAIN.address,
+    ES_MAIN.address,
     sBITZ_MAIN.address,
     TUSD_MAIN.address
   ],
@@ -744,6 +783,9 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
       DARKMOON: DARKMOON_MAIN.address.toString(),
       ORCA: ORCA_MAIN.address.toString(),
       SOLAR: SOLAR_MAIN.address.toString(),
+      KYSOL_MAIN: KYSOL_MAIN.address.toString(),
+      EZSOL_MAIN: EZSOL_MAIN.address.toString(),
+      ES: ES_MAIN.address.toString(),
       KYSOL: KYSOL_MAIN.address.toString(),
       EZSOL: EZSOL_MAIN.address.toString(),
       TUSD: TUSD_MAIN.address.toString(),
@@ -860,38 +902,48 @@ export const getPopularPools = (network: NetworkType) => {
     case NetworkType.Mainnet:
       return [
         {
-          tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE', // USDC
-          tokenY: 'So11111111111111111111111111111111111111112', // ETH
+          tokenX: ES_MAIN.address.toString(),
+          tokenY: WETH_MAIN.address.toString(),
+          fee: '0.3'
+        },
+        {
+          tokenX: USDC_MAIN.address.toString(),
+          tokenY: ES_MAIN.address.toString(),
+          fee: '0.3'
+        },
+        {
+          tokenX: USDC_MAIN.address.toString(),
+          tokenY: WETH_MAIN.address.toString(),
           fee: '0.09'
         },
         {
-          tokenX: 'So11111111111111111111111111111111111111112', // ETH
-          tokenY: 'sBTZcSwRZhRq3JcjFh1xwxgCxmsN7MreyU3Zx8dA8uF', // sBITZ
+          tokenX: WETH_MAIN.address.toString(), // ETH
+          tokenY: sBITZ_MAIN.address.toString(), // sBITZ
           fee: '1'
         },
         {
-          tokenX: '64mggk2nXg6vHC1qCdsZdEFzd5QGN4id54Vbho4PswCF', // BITZ
-          tokenY: 'So11111111111111111111111111111111111111112', // ETH
+          tokenX: BITZ_MAIN.address.toString(), // BITZ
+          tokenY: WETH_MAIN.address.toString(), // ETH
           fee: '1'
         },
         {
-          tokenX: 'BeRUj3h7BqkbdfFU7FBNYbodgf8GCHodzKvF9aVjNNfL', // SOL
-          tokenY: 'So11111111111111111111111111111111111111112', // ETH
+          tokenX: SOL_MAIN.address.toString(), // SOL
+          tokenY: WETH_MAIN.address.toString(), // ETH
           fee: '0.09'
         },
         {
-          tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE', // USDC
-          tokenY: 'BeRUj3h7BqkbdfFU7FBNYbodgf8GCHodzKvF9aVjNNfL', // SOL
+          tokenX: USDC_MAIN.address.toString(), // USDC
+          tokenY: SOL_MAIN.address.toString(), // SOL
           fee: '0.09'
         },
         {
-          tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE', // USDC
-          tokenY: '27Kkn8PWJbKJsRZrxbsYDdedpUQKnJ5vNfserCxNEJ3R', // tUSD
+          tokenX: USDC_MAIN.address.toString(), // USDC
+          tokenY: TUSD_MAIN.address.toString(), // tUSD
           fee: '0.01'
         },
         {
-          tokenX: 'GU7NS9xCwgNPiAdJ69iusFrRfawjDDPjeMBovhV1d4kn', // tETH
-          tokenY: 'So11111111111111111111111111111111111111112', // ETH
+          tokenX: TETH_MAIN.address.toString(),
+          tokenY: WETH_MAIN.address.toString(),
           fee: '0.01'
         }
       ]
@@ -1085,10 +1137,19 @@ export const DEFAULT_STRATEGY = {
   tokenB: 'USDC',
   feeTier: '0_09'
 }
+export const BITZ_TOKENS_ADDR = '5FgZ9W81khmNXG8i96HSsG7oJiwwpKnVzmHgn9ZnqQja'
 
 export const PORTFOLIO_STAKE_STORAGE_KEY = 'STAKE_STATS_EXPANDED'
 export const PORTFOLIO_STAKE_EXPAND_DELAY = 50
 export const PORTFOLIO_STAKE_COLLAPSE_DELAY = 200
+
+export const ES_ETH_POOLS = {
+  '0_03': '6ciuuX2AZ3RFU6fJh2XrzJurZdRWuDeMonNsb7xzztp1'
+}
+export const POOLS_TO_HIDE_POINTS_PER_24H: string[] = [
+  ES_ETH_POOLS['0_03'],
+  '8gSs6K4NVZSh4Rd5ABcNTos5sJ6wVRTR4xr5LgNLMt58'
+]
 
 export const PROOF_OF_INCLUSION_CACHE_KEY = 'PROOF_OF_INCLUSION'
 export const PROOF_OF_INCLUSION_CACHE_TTL = 1000 * 60 * 60 * 1 // 1 hour
