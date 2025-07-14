@@ -42,7 +42,6 @@ const useStyles = makeStyles<IProps>()((theme, { backgroundImage }) => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    gap: 32,
     position: 'relative',
     pointerEvents: 'all',
     margin: '0 16px',
@@ -100,7 +99,8 @@ const useStyles = makeStyles<IProps>()((theme, { backgroundImage }) => ({
     padding: 2,
     width: '100%',
     borderRadius: 12,
-    background: `linear-gradient(0deg, ${colors.invariant.green}, ${colors.invariant.pink})`
+    background: `linear-gradient(0deg, ${colors.invariant.green}, ${colors.invariant.pink})`,
+    marginBlock: 32
   },
   allocationWrapper: {
     height: 128,
@@ -143,6 +143,12 @@ const useStyles = makeStyles<IProps>()((theme, { backgroundImage }) => ({
   buttonContainer: {
     display: 'flex',
     gap: 4
+  },
+  closeButton: {
+    width: 14,
+    cursor: 'pointer',
+    alignSelf: 'flex-end',
+    padding: 8
   }
 }))
 
