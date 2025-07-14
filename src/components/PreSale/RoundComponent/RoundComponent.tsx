@@ -3,7 +3,7 @@ import React, { useMemo } from 'react'
 import useStyles from './style'
 import classNames from 'classnames'
 import { BN } from '@coral-xyz/anchor'
-import { formatNumberWithCommas, printBNandTrimZeros } from '@utils/utils'
+import { formatNumberWithCommas, printBN, printBNandTrimZeros } from '@utils/utils'
 import {
   EFFECTIVE_TARGET,
   PERCENTAGE_SCALE,
@@ -82,7 +82,7 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
 
     if (priceFormat === 'usdc-to-token') {
       const currentTierPrice = round >= 0 ? [TIER1, TIER2, TIER3, TIER4][Math.min(round - 1, 3)] : 0
-      return <>1$ = {printBNandTrimZeros(currentTierPrice, decimals)} INVT</>
+      return <>1$ = {printBNandTrimZeros(currentTierPrice, decimals, 4)} INVT</>
     } else {
       return <>1 INVT = {printBNandTrimZeros(amount, decimals, 4)}$</>
     }
@@ -151,7 +151,16 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
                   )}
                 </Typography>
                 <Typography className={classes.amountLeft}>
-                  {renderFormattedNumberWithSkeleton(amountNeeded, mintDecimals, '$', '', '80px')}
+                  {isLoadingSaleStats ? (
+                    <Skeleton variant='text' width={'80px'} height={24} />
+                  ) : (
+                    <Typography sx={{ color: colors.invariant.text }}>
+                      $
+                      {formatNumberWithCommas(
+                        Math.round(+printBN(amountNeeded, mintDecimals)).toString()
+                      )}
+                    </Typography>
+                  )}
                 </Typography>
               </Grid>
             </>
@@ -199,7 +208,7 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
       </Box>
       <Box className={classes.infoCard} marginTop={'24px'}>
         <Box className={classes.infoRow}>
-          <Typography className={classes.infoLabel}>INVT Initial Valuation:</Typography>
+          <Typography className={classes.infoLabel}>INVT Valuation:</Typography>
           <Typography className={classes.value}>$5 MLN</Typography>
         </Box>
       </Box>
