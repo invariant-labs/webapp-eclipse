@@ -28,7 +28,6 @@ export const useStyles = makeStyles()(() => ({
     background:
       'linear-gradient(90deg, rgba(17, 25, 49, 0.1) 0%, #111931 29.21%, #111931 71%, rgba(17, 25, 49, 0.1) 100%);',
     boxSizing: 'border-box',
-    overflowX: 'hidden',
     gap: 36,
     [theme.breakpoints.down('lg')]: {
       flexDirection: 'column-reverse',
@@ -45,7 +44,7 @@ export const useStyles = makeStyles()(() => ({
     alignItems: 'center',
     gap: 24,
     [theme.breakpoints.down('lg')]: {
-      minWidth: 'unset',
+      minWidth: 'fit-content',
       marginRight: 0,
       width: '100%',
       flexDirection: 'column',
