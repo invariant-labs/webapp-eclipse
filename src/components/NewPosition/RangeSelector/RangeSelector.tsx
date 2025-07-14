@@ -148,6 +148,25 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
 
   const hasSetSpecialPairRange = useRef(false)
 
+
+  const SPECIAL_PAIRS = {
+    ES_USDC: {
+      minPrice: 0.4,
+      maxPrice: 0.6,
+      check: (tokenAAddr: string, tokenBAddr: string) =>
+        (tokenAAddr === ES_MAIN.address.toString() && tokenBAddr === USDC_MAIN.address.toString()) ||
+        (tokenBAddr === ES_MAIN.address.toString() && tokenAAddr === USDC_MAIN.address.toString())
+    },
+    ES_WETH: {
+      minPrice: 0.00013603,
+      maxPrice: 0.00020394,
+      check: (tokenAAddr: string, tokenBAddr: string) =>
+        (tokenAAddr === ES_MAIN.address.toString() && tokenBAddr === WETH_MAIN.address.toString()) ||
+        (tokenBAddr === ES_MAIN.address.toString() && tokenAAddr === WETH_MAIN.address.toString())
+    }
+  };
+
+
   const isPairToOveride = useMemo(() => {
     if (!tokens || tokenAIndex === null || tokenBIndex === null) return false
 
@@ -544,44 +563,88 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     autoZoomHandler(leftRange, rightRange, true)
   }, [tokenASymbol, tokenBSymbol])
 
+  // Strategia 1: Rozdziel na osobne hooki z różnymi zależnościami
+  // Hook dla resetowania stanu
+  useEffect(() => {
+    if (!isPairToOveride) {
+      hasSetSpecialPairRange.current = false;
+    }
+  }, [isPairToOveride]);
 
-
+  // Hook dla głównej logiki - tylko najważniejsze zależności
   useEffect(() => {
     if (!tokens || tokenAIndex === null || tokenBIndex === null || !positionOpeningMethod) return;
 
-    if (currentFeeIndex === 5 && isPairToOveride && positionOpeningMethod === 'range' && !blocked && !isLoadingTicksOrTickmap) {
-      const tokenAAddress = tokens[tokenAIndex ?? 0].assetAddress.toString()
-      const tokenBAddress = tokens[tokenBIndex ?? 0].assetAddress.toString()
+    const isSpecialPairCondition = currentFeeIndex === 5 &&
+      isPairToOveride &&
+      positionOpeningMethod === 'range' &&
+      !blocked &&
+      !isLoadingTicksOrTickmap;
 
-      const isESUSDCPair = (tokenAAddress === ES_MAIN.address.toString() && tokenBAddress === USDC_MAIN.address.toString()) ||
-        (tokenBAddress === ES_MAIN.address.toString() && tokenAAddress === USDC_MAIN.address.toString())
+    if (isSpecialPairCondition) {
+      const tokenAAddr = tokens[tokenAIndex ?? 0].assetAddress.toString();
+      const tokenBAddr = tokens[tokenBIndex ?? 0].assetAddress.toString();
 
-      const isESWETHPair = (tokenAAddress === ES_MAIN.address.toString() && tokenBAddress === WETH_MAIN.address.toString()) ||
-        (tokenBAddress === ES_MAIN.address.toString() && tokenAAddress === WETH_MAIN.address.toString())
+      const specialPair = Object.values(SPECIAL_PAIRS).find(pair =>
+        pair.check(tokenAAddr, tokenBAddr)
+      );
 
-      let MIN_TICK_FOR_PRICE: number | undefined
-      let MAX_TICK_FOR_PRICE: number | undefined
+      if (specialPair) {
+        const MIN_TICK_FOR_PRICE = nearestTickIndex(specialPair.minPrice, tickSpacing, isXtoY, xDecimal, yDecimal);
+        const MAX_TICK_FOR_PRICE = nearestTickIndex(specialPair.maxPrice, tickSpacing, isXtoY, xDecimal, yDecimal);
 
-      if (isESUSDCPair) {
-        MIN_TICK_FOR_PRICE = nearestTickIndex(0.4, tickSpacing, isXtoY, xDecimal, yDecimal)
-        MAX_TICK_FOR_PRICE = nearestTickIndex(0.6, tickSpacing, isXtoY, xDecimal, yDecimal)
-        hasSetSpecialPairRange.current = true
-      } else if (isESWETHPair) {
-        MIN_TICK_FOR_PRICE = nearestTickIndex(0.00013603, tickSpacing, isXtoY, xDecimal, yDecimal)
-        MAX_TICK_FOR_PRICE = nearestTickIndex(0.00020394, tickSpacing, isXtoY, xDecimal, yDecimal)
-        hasSetSpecialPairRange.current = true
-      }
-
-      if (MIN_TICK_FOR_PRICE !== undefined && MAX_TICK_FOR_PRICE !== undefined) {
-        changeRangeHandler(MIN_TICK_FOR_PRICE, MAX_TICK_FOR_PRICE, true)
-        autoZoomHandler(MIN_TICK_FOR_PRICE, MAX_TICK_FOR_PRICE, true)
+        changeRangeHandler(MIN_TICK_FOR_PRICE, MAX_TICK_FOR_PRICE, true);
+        autoZoomHandler(MIN_TICK_FOR_PRICE, MAX_TICK_FOR_PRICE, true);
+        hasSetSpecialPairRange.current = true;
       }
     }
+  }, [tokens, tokenAIndex, tokenBIndex, currentFeeIndex, isPairToOveride, positionOpeningMethod, blocked, isLoadingTicksOrTickmap]);
 
+  // ===================================================================
+
+  const tokenPairKey = useMemo(() => {
+    if (!tokens || tokenAIndex === undefined || tokenAIndex === null || tokenBIndex === undefined || tokenBIndex === null) return null;
+
+    const tokenAAddr = tokens[tokenAIndex]?.assetAddress?.toString();
+    const tokenBAddr = tokens[tokenBIndex]?.assetAddress?.toString();
+
+    return tokenAAddr && tokenBAddr ? `${tokenAAddr}-${tokenBAddr}` : null;
+  }, [tokens, tokenAIndex, tokenBIndex]);
+
+  const shouldProcessSpecialPair = useMemo(() =>
+    currentFeeIndex === 5 &&
+    isPairToOveride &&
+    positionOpeningMethod === 'range' &&
+    !blocked &&
+    !isLoadingTicksOrTickmap,
+    [currentFeeIndex, isPairToOveride, positionOpeningMethod, blocked, isLoadingTicksOrTickmap]
+  );
+
+  useEffect(() => {
+    if (!tokenPairKey || !shouldProcessSpecialPair) return;
+
+    const [tokenAAddr, tokenBAddr] = tokenPairKey.split('-');
+    const specialPair = Object.values(SPECIAL_PAIRS).find(pair =>
+      pair.check(tokenAAddr, tokenBAddr)
+    );
+
+    if (specialPair) {
+      const MIN_TICK_FOR_PRICE = nearestTickIndex(specialPair.minPrice, tickSpacing, isXtoY, xDecimal, yDecimal);
+      const MAX_TICK_FOR_PRICE = nearestTickIndex(specialPair.maxPrice, tickSpacing, isXtoY, xDecimal, yDecimal);
+
+      changeRangeHandler(MIN_TICK_FOR_PRICE, MAX_TICK_FOR_PRICE, true);
+      autoZoomHandler(MIN_TICK_FOR_PRICE, MAX_TICK_FOR_PRICE, true);
+      hasSetSpecialPairRange.current = true;
+    }
+  }, [tokenPairKey, shouldProcessSpecialPair, tickSpacing, isXtoY, xDecimal, yDecimal]);
+
+  useEffect(() => {
     if (!isPairToOveride) {
-      hasSetSpecialPairRange.current = false
+      hasSetSpecialPairRange.current = false;
     }
-  }, [tokens, tokenAIndex, tokenBIndex, positionOpeningMethod, isLoadingTicksOrTickmap, blocked, tickSpacing, isXtoY, xDecimal, yDecimal, currentFeeIndex])
+  }, [isPairToOveride]);
+
+
 
   return (
     <Grid container className={classes.wrapper}>
