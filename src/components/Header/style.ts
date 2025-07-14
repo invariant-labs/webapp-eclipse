@@ -19,6 +19,15 @@ const useStyles = makeStyles()((theme: Theme) => {
         paddingInline: 8
       }
     },
+    networkContainer: {
+      display: 'flex',
+      flexDirection: 'row',
+      flexWrap: 'nowrap',
+      gap: 12,
+      [theme.breakpoints.down(360)]: {
+        gap: 0
+      }
+    },
     logo: {
       width: 150,
       height: 40,

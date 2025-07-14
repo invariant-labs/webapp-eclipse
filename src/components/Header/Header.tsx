@@ -181,7 +181,7 @@ export const Header: React.FC<IHeader> = ({
               }
             }}
           />
-          <Grid display='flex' gap='12px'>
+          <Grid className={classes.networkContainer}>
             <Bar
               rpcs={rpcs}
               activeNetwork={typeOfNetwork}
@@ -191,9 +191,7 @@ export const Header: React.FC<IHeader> = ({
               onFaucet={onFaucet}
             />
 
-            <Grid>
-              <YourPointsButton />
-            </Grid>
+            <YourPointsButton />
           </Grid>
           <ChangeWalletButton
             name={
