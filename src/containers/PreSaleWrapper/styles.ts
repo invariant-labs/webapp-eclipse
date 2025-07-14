@@ -104,7 +104,8 @@ export const useStyles = makeStyles()(() => ({
       justifyContent: 'center'
     },
     '& .slick-arrow': {
-      height: '40px'
+      height: '40px',
+      overflow: 'hidden'
     },
     '& .slick-arrow::before': {
       fontSize: '40px',
