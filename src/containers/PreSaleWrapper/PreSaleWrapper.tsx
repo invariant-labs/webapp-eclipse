@@ -4,15 +4,15 @@ import { BuyComponent } from '@components/PreSale/BuyComponent/BuyComponent'
 import { SaleStepper } from '@components/PreSale/SaleStepper/SaleStepper'
 import { RoundComponent } from '@components/PreSale/RoundComponent/RoundComponent'
 import { useDispatch, useSelector } from 'react-redux'
-import { actions } from '@store/reducers/sale'
+import { actions, NFTStatus } from '@store/reducers/sale'
 import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
 import { isLoadingProof, proofOfInclusion, saleSelectors } from '@store/selectors/sale'
 import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
-import { printBNandTrimZeros } from '@utils/utils'
+import { getNftStatus, printBNandTrimZeros } from '@utils/utils'
 import NftPlaceholder from '@static/png/NFT_Card.png'
 import {
-  EFFECTIVE_TARGET_MULTIPLIER,
+  EFFECTIVE_TARGET,
   getRound,
   getTierPrices,
   getCurrentTierLimit,
@@ -20,7 +20,8 @@ import {
   TIER1,
   TIER2,
   TIER3,
-  TIER4
+  TIER4,
+  MIN_DEPOSIT_FOR_NFT_MINT
 } from '@invariant-labs/sale-sdk'
 import { balanceLoading, status, poolTokens, balance, address } from '@store/selectors/solanaWallet'
 import {
@@ -205,6 +206,14 @@ export const PreSaleWrapper = () => {
   const initialReversePrices = localStorage.getItem('INVARIANT_SALE_REVERSE_PRICES') === 'true'
   const [reversedPrices, setReversedPrices] = useState(initialReversePrices)
   const walletAddress = useSelector(address)
+  const hasMintedNft = useMemo(() => {
+    const depositedAboveThreshold = userStats?.deposited.gte(MIN_DEPOSIT_FOR_NFT_MINT)
+    return depositedAboveThreshold && !userStats?.canMintNft
+  }, [userStats])
+
+  const nftStatus = useMemo<NFTStatus>(() => {
+    return getNftStatus(!!userStats?.canMintNft, hasMintedNft)
+  }, [userStats?.canMintNft, hasMintedNft])
 
   const slidesToShow = useMemo(() => {
     if (isSmallMobile) return 1
@@ -270,17 +279,14 @@ export const PreSaleWrapper = () => {
 
   const amountNeeded = useMemo(() => {
     if (targetAmount.isZero()) return new BN(0)
-    if (round === 4) return targetAmount.mul(EFFECTIVE_TARGET_MULTIPLIER)
+    if (round === 4) return EFFECTIVE_TARGET
     return getCurrentTierLimit(currentAmount, targetAmount)
   }, [currentAmount, targetAmount])
 
   const filledPercentage = useMemo(() => {
     if (targetAmount.isZero()) return new BN(0)
     if (round === 4)
-      return currentAmount
-        .muln(100)
-        .mul(PERCENTAGE_DENOMINATOR)
-        .div(targetAmount.mul(EFFECTIVE_TARGET_MULTIPLIER))
+      return currentAmount.muln(100).mul(PERCENTAGE_DENOMINATOR).div(EFFECTIVE_TARGET)
     return !amountNeeded.isZero()
       ? currentAmount.muln(100).mul(PERCENTAGE_DENOMINATOR).div(amountNeeded)
       : new BN(0)
@@ -288,7 +294,7 @@ export const PreSaleWrapper = () => {
 
   const amountLeft = useMemo(() => {
     if (targetAmount.isZero()) return new BN(0)
-    if (round === 4) return targetAmount.mul(EFFECTIVE_TARGET_MULTIPLIER).sub(currentAmount)
+    if (round === 4) return EFFECTIVE_TARGET.sub(currentAmount)
     return getAmountTillNextPriceIncrease(currentAmount, targetAmount)
   }, [currentAmount, targetAmount])
 
@@ -307,7 +313,7 @@ export const PreSaleWrapper = () => {
   const endtimestamp = useMemo(() => startTimestamp.add(duration), [startTimestamp, duration])
 
   const saleSoldOut = useMemo(
-    () => currentAmount.eq(targetAmount.mul(EFFECTIVE_TARGET_MULTIPLIER)),
+    () => currentAmount.eq(EFFECTIVE_TARGET),
     [targetAmount, currentAmount]
   )
 
@@ -343,7 +349,7 @@ export const PreSaleWrapper = () => {
   const getAlertBoxText = useCallback(() => {
     if (isLimitExceed) {
       return {
-        text: 'Your deposit exceed limit',
+        text: 'You have exceeded your allocation limit',
         variant: 'limit'
       }
     }
@@ -554,7 +560,7 @@ export const PreSaleWrapper = () => {
           isActive={isActive}
           progress={progress}
           isLoading={isLoadingSaleStats || isLoadingProofOfInclusion}
-          targetAmount={round === 4 ? targetAmount.mul(EFFECTIVE_TARGET_MULTIPLIER) : targetAmount}
+          targetAmount={round === 4 ? EFFECTIVE_TARGET : targetAmount}
           currentAmount={currentAmount}
           mintDecimals={mintDecimals}
           startTimestamp={startTimestamp}
@@ -596,9 +602,7 @@ export const PreSaleWrapper = () => {
               receive a special, non-transferable NFT.
             </Typography>
             <Typography component='h4'>Status</Typography>
-            <Typography component='h1'>
-              {userStats?.canMintNft ? 'Eligble' : 'Non-eligible'}
-            </Typography>
+            <Typography component='h1'>{nftStatus}</Typography>
 
             <Button
               scheme='green'
@@ -635,7 +639,7 @@ export const PreSaleWrapper = () => {
             <AnimatedPreSaleCard
               gradientPrimaryColor={colors.invariant.component}
               title='$5 MLN'
-              subtitle='valuation of Invariant during the public sale'
+              subtitle='valuation of Invariant during the sale'
               delay={400}
             />
           </Grid>
@@ -761,7 +765,7 @@ export const PreSaleWrapper = () => {
               heroImage={'https://eclipse.invariant.app/sBitz.png'}
             />
             <EventsCard
-              title={'Public Sale Begins'}
+              title={'Sale Begins'}
               borderColor={'pink'}
               description={
                 'Invariant launches on Solana mainnet. The first AMM with AutoSwap goes live.'
@@ -784,7 +788,7 @@ export const PreSaleWrapper = () => {
         <Faq
           faqData={[
             {
-              question: '1. How can I participate in the public sale?',
+              question: '1. How can I participate in the sale?',
               answer:
                 'To participate, simply scroll up to the presale section, connect your crypto wallet, enter the amount you’d like to invest, and click Buy Now. Tokens will be transferred after purchase.'
             },
@@ -802,7 +806,7 @@ export const PreSaleWrapper = () => {
             {
               question: '4. When is the TGE?',
               answer:
-                'The TGE will take place shortly after the public sale ends. We’ll announce the exact date on our official social media channels.'
+                'The TGE will take place shortly after the sale ends. We’ll announce the exact date on our official social media channels.'
             },
             {
               question: '5. How do I know if I’m whitelisted?',

@@ -9,7 +9,8 @@ const useStyles = makeStyles<{
   fullSpan?: boolean
   increasePadding?: boolean
   maxWidth?: string | number
-}>()((_theme, { top, left, right, bottom, fullSpan, increasePadding, maxWidth }) => ({
+  center
+}>()((_theme, { top, left, right, bottom, fullSpan, increasePadding, maxWidth, center }) => ({
   tooltipGradient: {
     minWidth: 'fit-content',
     position: 'relative',
@@ -59,7 +60,8 @@ const useStyles = makeStyles<{
     width: fullSpan ? '100%' : 'auto',
     display: 'inline-flex',
     margin: 0,
-    padding: 0
+    padding: 0,
+    justifyContent: center ? 'center' : 'flex-start'
   }
 }))
 

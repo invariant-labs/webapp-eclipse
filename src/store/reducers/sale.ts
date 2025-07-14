@@ -9,6 +9,12 @@ export interface IUserStats {
   canMintNft: boolean
 }
 
+export enum NFTStatus {
+  NonEligible = 'Non-eligible',
+  Eligible = 'Eligible',
+  Claimed = 'Claimed'
+}
+
 export interface ISaleStats {
   currentAmount: BN
   targetAmount: BN

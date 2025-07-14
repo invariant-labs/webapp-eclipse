@@ -1,18 +1,20 @@
 import { colors, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 import { FontData } from './Button'
+import { alpha } from '@mui/material'
 
 type StyleProps = {
-  scheme: 'normal' | 'green' | 'pink' | 'rainbow'
+  scheme: 'normal' | 'green' | 'pink' | 'rainbow' | 'grey'
   height?: string | number
   width?: string | number
   fontData?: FontData
   borderRadius?: string | number
   padding?: string | number
   margin?: string | number
+  gap?: string | number
 }
 
-const getStyles = (scheme: 'normal' | 'green' | 'pink' | 'rainbow') => {
+const getStyles = (scheme: 'normal' | 'green' | 'pink' | 'rainbow' | 'grey') => {
   switch (scheme) {
     case 'normal':
       return {
@@ -40,13 +42,21 @@ const getStyles = (scheme: 'normal' | 'green' | 'pink' | 'rainbow') => {
         color: colors.invariant.text,
         boxShadow: colors.invariant.light
       }
+    case 'grey':
+      return {
+        background: colors.invariant.greyLinearGradinet,
+        color: colors.invariant.dark,
+        backgroundHover: colors.invariant.greyLinearGradinet,
+        boxShadow: alpha('#A9B6BF', 0.25)
+      }
   }
 }
 
 const useStyles = makeStyles<StyleProps>()(
-  (_theme, { scheme, height, width, borderRadius, padding, margin, fontData }) => ({
+  (_theme, { scheme, height, width, borderRadius, padding, margin, fontData, gap }) => ({
     button: {
       zIndex: 1,
+      gap: gap ?? 0,
       height: height ?? 40,
       width: width ?? 'auto',
       minWidth: 0,

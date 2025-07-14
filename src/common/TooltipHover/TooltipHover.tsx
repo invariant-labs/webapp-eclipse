@@ -20,6 +20,7 @@ interface Props extends TooltipProps {
   allowEnterTooltip?: boolean
   textAlign?: 'left' | 'center' | 'right'
   maxWidth?: string | number
+  center?: boolean
 }
 
 export const TooltipHover = ({
@@ -38,9 +39,10 @@ export const TooltipHover = ({
   maxWidth,
   placement = 'top', // default placement,
   disabled,
+  center = false,
   ...props
 }: Props) => {
-  const { classes } = useStyles({ fullSpan, increasePadding, maxWidth })
+  const { classes } = useStyles({ fullSpan, increasePadding, maxWidth, center })
   const [open, setOpen] = useState(false)
   const [childrenHover, setChildrenHover] = useState(false)
   const [titleHover, setTitleHover] = useState(false)

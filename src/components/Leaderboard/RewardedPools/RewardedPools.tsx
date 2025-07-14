@@ -44,7 +44,6 @@ export const RewardedPools: React.FC<IProps> = ({
           addressFrom: poolData.tokenX.toString(),
           addressTo: poolData.tokenY.toString(),
           apy: poolData.apy,
-
           apyData: {
             fees: poolData.apy,
             accumulatedFarmsSingleTick: 0,
