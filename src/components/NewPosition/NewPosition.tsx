@@ -751,7 +751,11 @@ export const NewPosition: React.FC<INewPosition> = ({
   useEffect(() => {
     if (tokenAIndex === null || tokenBIndex === null) return
     if (alignment === DepositOptions.Auto) {
-      setTokenACheckbox(true)
+      if (lastSpecialPairRef.current !== '') {
+        setTokenACheckbox(false)
+      } else {
+        setTokenACheckbox(true)
+      }
       setTokenBCheckbox(true)
       return
     }
