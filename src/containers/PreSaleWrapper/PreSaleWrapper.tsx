@@ -601,7 +601,7 @@ export const PreSaleWrapper = () => {
         <Box display='flex' alignItems='center' gap={12} className={classes.nftBackground}>
           <Box className={classes.nftWrapper}>
             <Typography component='section'>
-              Every participant in the Invariant Public Sale who contributes at least $500 will
+              Every participant in the Invariant Public Sale who contributes at least $450 will
               receive a special, non-transferable NFT.
             </Typography>
             <Typography component='h4'>Status</Typography>
