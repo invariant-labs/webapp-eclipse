@@ -11,7 +11,7 @@ import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
 import { printBNandTrimZeros } from '@utils/utils'
 import {
-  EFFECTIVE_TARGET_MULTIPLIER,
+  EFFECTIVE_TARGET,
   getRound,
   getTierPrices,
   getCurrentTierLimit,
@@ -269,17 +269,14 @@ export const PreSaleWrapper = () => {
 
   const amountNeeded = useMemo(() => {
     if (targetAmount.isZero()) return new BN(0)
-    if (round === 4) return targetAmount.mul(EFFECTIVE_TARGET_MULTIPLIER)
+    if (round === 4) return EFFECTIVE_TARGET
     return getCurrentTierLimit(currentAmount, targetAmount)
   }, [currentAmount, targetAmount])
 
   const filledPercentage = useMemo(() => {
     if (targetAmount.isZero()) return new BN(0)
     if (round === 4)
-      return currentAmount
-        .muln(100)
-        .mul(PERCENTAGE_DENOMINATOR)
-        .div(targetAmount.mul(EFFECTIVE_TARGET_MULTIPLIER))
+      return currentAmount.muln(100).mul(PERCENTAGE_DENOMINATOR).div(EFFECTIVE_TARGET)
     return !amountNeeded.isZero()
       ? currentAmount.muln(100).mul(PERCENTAGE_DENOMINATOR).div(amountNeeded)
       : new BN(0)
@@ -287,7 +284,7 @@ export const PreSaleWrapper = () => {
 
   const amountLeft = useMemo(() => {
     if (targetAmount.isZero()) return new BN(0)
-    if (round === 4) return targetAmount.mul(EFFECTIVE_TARGET_MULTIPLIER).sub(currentAmount)
+    if (round === 4) return EFFECTIVE_TARGET.sub(currentAmount)
     return getAmountTillNextPriceIncrease(currentAmount, targetAmount)
   }, [currentAmount, targetAmount])
 
@@ -306,7 +303,7 @@ export const PreSaleWrapper = () => {
   const endtimestamp = useMemo(() => startTimestamp.add(duration), [startTimestamp, duration])
 
   const saleSoldOut = useMemo(
-    () => currentAmount.eq(targetAmount.mul(EFFECTIVE_TARGET_MULTIPLIER)),
+    () => currentAmount.eq(EFFECTIVE_TARGET),
     [targetAmount, currentAmount]
   )
 
@@ -553,7 +550,7 @@ export const PreSaleWrapper = () => {
           isActive={isActive}
           progress={progress}
           isLoading={isLoadingSaleStats || isLoadingProofOfInclusion}
-          targetAmount={round === 4 ? targetAmount.mul(EFFECTIVE_TARGET_MULTIPLIER) : targetAmount}
+          targetAmount={round === 4 ? EFFECTIVE_TARGET : targetAmount}
           currentAmount={currentAmount}
           mintDecimals={mintDecimals}
           startTimestamp={startTimestamp}
