@@ -18,7 +18,8 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
       minHeight: '100px',
       alignItems: 'center',
       justifyContent: 'center',
-      width: '100%'
+      width: '100%',
+      paddingLeft: 0
     }
   },
   stepContent: {

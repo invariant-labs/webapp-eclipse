@@ -45,7 +45,7 @@ export const useStyles = makeStyles()(() => ({
     alignItems: 'center',
     gap: 24,
     [theme.breakpoints.down('lg')]: {
-      minWidth: 'unset',
+      minWidth: 'fit-content',
       marginRight: 0,
       width: '100%',
       flexDirection: 'column',
