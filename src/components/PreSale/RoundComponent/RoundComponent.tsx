@@ -1,4 +1,4 @@
-import { Box, Grid, Typography, Skeleton } from '@mui/material'
+import { Box, Grid, Typography, Skeleton, IconButton } from '@mui/material'
 import React, { useMemo } from 'react'
 import useStyles from './style'
 import classNames from 'classnames'
@@ -15,6 +15,8 @@ import {
 } from '@invariant-labs/sale-sdk'
 import { Status } from '@store/reducers/solanaWallet'
 import { colors } from '@static/theme'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
+import { infoCircleIcon } from '@static/icons'
 
 interface RoundComponentProps {
   isActive: boolean
@@ -118,7 +120,7 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
 
       {!isActive && (
         <Box className={classNames(classes.infoRow)} marginTop={'24px'}>
-          <Typography className={classes.infoLabelBigger}>Current ratio: </Typography>
+          <Typography className={classes.infoLabelBigger}>Current price: </Typography>
           <Typography className={classes.currentPriceBigger}>
             {renderPriceWithSkeleton(currentPrice, mintDecimals, '160px', isLoadingSaleStats)}
           </Typography>
@@ -164,7 +166,17 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
                 {renderFormattedNumberWithSkeleton(targetAmount, mintDecimals, '$', '', '100px')}
               </Box>
               <Box className={classes.infoRow}>
-                <Typography className={classes.infoLabel}>Maximal raise:</Typography>
+                <Typography className={classes.infoLabel}>
+                  <Box mr={'2px'}>Upper limit</Box>
+                  <TooltipHover
+                    top={1}
+                    title={
+                      'The total allocation limit. Once this limit is reached, the sale will end.'
+                    }>
+                    <img src={infoCircleIcon} />
+                  </TooltipHover>
+                  <span>:</span>
+                </Typography>
                 {renderFormattedNumberWithSkeleton(
                   targetAmount.mul(EFFECTIVE_TARGET_MULTIPLIER),
                   mintDecimals,
@@ -195,14 +207,14 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
         {isActive && (
           <>
             <Box className={classes.infoRow}>
-              <Typography className={classes.infoLabel}>Current ratio: </Typography>
+              <Typography className={classes.infoLabel}>Current price: </Typography>
               <Typography className={classes.currentPrice}>
                 {renderPriceWithSkeleton(currentPrice, mintDecimals, '160px', isLoadingSaleStats)}
               </Typography>
             </Box>
             {!isLastRound && (
               <Box className={classes.infoRow}>
-                <Typography className={classes.infoLabel}>Next ratio: </Typography>
+                <Typography className={classes.infoLabel}>Next price: </Typography>
                 <Typography className={classes.nextPrice}>
                   {renderPriceWithSkeleton(
                     nextPrice,

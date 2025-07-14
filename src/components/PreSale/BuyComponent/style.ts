@@ -176,6 +176,11 @@ const useStyles = makeStyles<{ percentage: number; isActive?: boolean }>()(
       ...typography.caption1,
       color: colors.invariant.textGrey
     },
+    colorSliderLabel: {
+      display: 'flex',
+      ...typography.body1,
+      color: colors.invariant.green
+    },
     barWrapper: {
       display: 'flex',
       justifyContent: 'space-between',

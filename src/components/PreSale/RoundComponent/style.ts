@@ -121,6 +121,9 @@ const useStyles = makeStyles<{ percentage: number; isActive: boolean }>()(
     },
 
     infoLabel: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '1px',
       color: colors.invariant.text,
       ...typography.body2
     },
