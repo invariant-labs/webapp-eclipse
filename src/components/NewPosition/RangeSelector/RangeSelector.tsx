@@ -13,13 +13,15 @@ import {
   toMaxNumericPlaces
 } from '@utils/utils'
 import { PlotTickData } from '@store/reducers/positions'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import ConcentrationSlider from '../ConcentrationSlider/ConcentrationSlider'
 import useStyles from './style'
 import { PositionOpeningMethod } from '@store/consts/types'
 import { getMaxTick, getMinTick } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { boostPointsIcon } from '@static/icons'
 import PriceWarning from './PriceWarning/PriceWarning'
+import { ES_MAIN, USDC_MAIN, WETH_MAIN } from '@store/consts/static'
+import { SwapToken } from '@store/selectors/solanaWallet'
 
 export interface IRangeSelector {
   updatePath: (concIndex: number) => void
@@ -30,6 +32,7 @@ export interface IRangeSelector {
   tokenBSymbol: string
   onChangeRange: (leftIndex: number, rightIndex: number) => void
   blocked?: boolean
+  onRefresh: () => void
   blockerInfo?: string
   isLoadingTicksOrTickmap: boolean
   isXtoY: boolean
@@ -71,6 +74,10 @@ export interface IRangeSelector {
   oraclePriceWarning: boolean
   diffPercentage: number
   oracleDiffPercentage: number
+  tokens: SwapToken[]
+
+  tokenAIndex?: number | null
+  tokenBIndex?: number | null
 }
 
 export const RangeSelector: React.FC<IRangeSelector> = ({
@@ -112,7 +119,11 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
   showPriceWarning,
   oraclePriceWarning,
   diffPercentage,
-  oracleDiffPercentage
+  oracleDiffPercentage,
+  tokens,
+  tokenAIndex,
+  tokenBIndex,
+  onRefresh
 }) => {
   const { classes } = useStyles()
 
@@ -134,6 +145,40 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
   const [triggerReset, setTriggerReset] = useState(false)
 
   const isMountedRef = useRef(false)
+
+  const hasSetSpecialPairRange = useRef(false)
+
+
+  const SPECIAL_PAIRS = {
+    ES_USDC: {
+      minPrice: 0.4,
+      maxPrice: 0.6,
+      check: (tokenAAddr: string, tokenBAddr: string) =>
+        (tokenAAddr === ES_MAIN.address.toString() && tokenBAddr === USDC_MAIN.address.toString()) ||
+        (tokenBAddr === ES_MAIN.address.toString() && tokenAAddr === USDC_MAIN.address.toString())
+    },
+    ES_WETH: {
+      minPrice: 0.00013603,
+      maxPrice: 0.00020394,
+      check: (tokenAAddr: string, tokenBAddr: string) =>
+        (tokenAAddr === ES_MAIN.address.toString() && tokenBAddr === WETH_MAIN.address.toString()) ||
+        (tokenBAddr === ES_MAIN.address.toString() && tokenAAddr === WETH_MAIN.address.toString())
+    }
+  };
+
+
+  const isPairToOveride = useMemo(() => {
+    if (!tokens || tokenAIndex === null || tokenBIndex === null) return false
+
+    const tokenAAddress = tokens[tokenAIndex ?? 0].assetAddress.toString()
+    const tokenBAddress = tokens[tokenBIndex ?? 0].assetAddress.toString()
+
+    return (tokenAAddress === ES_MAIN.address.toString() && tokenBAddress === USDC_MAIN.address.toString()) ||
+      (tokenAAddress === USDC_MAIN.address.toString() && tokenBAddress === ES_MAIN.address.toString()) ||
+      (tokenAAddress === ES_MAIN.address.toString() && tokenBAddress === WETH_MAIN.address.toString()) ||
+      (tokenAAddress === WETH_MAIN.address.toString() && tokenBAddress === ES_MAIN.address.toString())
+  }, [tokens, tokenAIndex, tokenBIndex])
+
 
   const handleUpdateConcentrationFromURL = (concentrationValue: number) => {
     const mappedIndex = getConcentrationIndex(concentrationArray, concentrationValue)
@@ -265,7 +310,9 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     setRightInputRounded(val)
   }
 
-  const changeRangeHandler = (left: number, right: number) => {
+  const changeRangeHandler = (left: number, right: number, manualRefresh?: boolean) => {
+    const isRangeChanging = leftRange !== left || rightRange !== right;
+
     const { leftInRange, rightInRange } = getTicksInsideRange(left, right, isXtoY)
 
     setLeftRange(leftInRange)
@@ -273,18 +320,22 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     setLeftInputValues(calcPriceByTickIndex(leftInRange, isXtoY, xDecimal, yDecimal).toString())
     setRightInputValues(calcPriceByTickIndex(rightInRange, isXtoY, xDecimal, yDecimal).toString())
     onChangeRange(leftInRange, rightInRange)
+
+    if (isRangeChanging && manualRefresh) {
+      onRefresh()
+    }
   }
 
   const resetPlot = () => {
     if (positionOpeningMethod === 'range') {
       const initSideDist = Math.abs(
         midPrice.x -
-          calcPriceByTickIndex(
-            Math.max(getMinTick(tickSpacing), midPrice.index - tickSpacing * 15),
-            isXtoY,
-            xDecimal,
-            yDecimal
-          )
+        calcPriceByTickIndex(
+          Math.max(getMinTick(tickSpacing), midPrice.index - tickSpacing * 15),
+          isXtoY,
+          xDecimal,
+          yDecimal
+        )
       )
       const higherTick = Math.max(getMinTick(tickSpacing), midPrice.index - tickSpacing * 10)
       const lowerTick = Math.min(getMaxTick(tickSpacing), midPrice.index + tickSpacing * 10)
@@ -313,12 +364,12 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     } else {
       const initSideDist = Math.abs(
         midPrice.x -
-          calcPriceByTickIndex(
-            Math.max(getMinTick(tickSpacing), midPrice.index - tickSpacing * 15),
-            isXtoY,
-            xDecimal,
-            yDecimal
-          )
+        calcPriceByTickIndex(
+          Math.max(getMinTick(tickSpacing), midPrice.index - tickSpacing * 15),
+          isXtoY,
+          xDecimal,
+          yDecimal
+        )
       )
 
       setPlotMin(midPrice.x - initSideDist)
@@ -416,21 +467,21 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     if (leftX < plotMin || rightX > plotMax || canZoomCloser) {
       const leftDist = Math.abs(
         leftX -
-          calcPriceByTickIndex(
-            isXtoY ? higherLeftIndex : lowerLeftIndex,
-            isXtoY,
-            xDecimal,
-            yDecimal
-          )
+        calcPriceByTickIndex(
+          isXtoY ? higherLeftIndex : lowerLeftIndex,
+          isXtoY,
+          xDecimal,
+          yDecimal
+        )
       )
       const rightDist = Math.abs(
         rightX -
-          calcPriceByTickIndex(
-            isXtoY ? lowerRightIndex : higherRightIndex,
-            isXtoY,
-            xDecimal,
-            yDecimal
-          )
+        calcPriceByTickIndex(
+          isXtoY ? lowerRightIndex : higherRightIndex,
+          isXtoY,
+          xDecimal,
+          yDecimal
+        )
       )
 
       let dist
@@ -511,6 +562,85 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     changeRangeHandler(leftRange, rightRange)
     autoZoomHandler(leftRange, rightRange, true)
   }, [tokenASymbol, tokenBSymbol])
+
+  useEffect(() => {
+    if (!isPairToOveride) {
+      hasSetSpecialPairRange.current = false;
+    }
+  }, [isPairToOveride]);
+
+  useEffect(() => {
+    if (!tokens || tokenAIndex === null || tokenBIndex === null || !positionOpeningMethod) return;
+
+    const isSpecialPairCondition = currentFeeIndex === 5 &&
+      isPairToOveride &&
+      positionOpeningMethod === 'range' &&
+      !blocked &&
+      !isLoadingTicksOrTickmap;
+
+    if (isSpecialPairCondition) {
+      const tokenAAddr = tokens[tokenAIndex ?? 0].assetAddress.toString();
+      const tokenBAddr = tokens[tokenBIndex ?? 0].assetAddress.toString();
+
+      const specialPair = Object.values(SPECIAL_PAIRS).find(pair =>
+        pair.check(tokenAAddr, tokenBAddr)
+      );
+
+      if (specialPair) {
+        const MIN_TICK_FOR_PRICE = nearestTickIndex(specialPair.minPrice, tickSpacing, isXtoY, xDecimal, yDecimal);
+        const MAX_TICK_FOR_PRICE = nearestTickIndex(specialPair.maxPrice, tickSpacing, isXtoY, xDecimal, yDecimal);
+
+        changeRangeHandler(MIN_TICK_FOR_PRICE, MAX_TICK_FOR_PRICE, true);
+        autoZoomHandler(MIN_TICK_FOR_PRICE, MAX_TICK_FOR_PRICE, true);
+        hasSetSpecialPairRange.current = true;
+      }
+    }
+  }, [tokens, tokenAIndex, tokenBIndex, currentFeeIndex, isPairToOveride, positionOpeningMethod, blocked, isLoadingTicksOrTickmap]);
+
+
+  const tokenPairKey = useMemo(() => {
+    if (!tokens || tokenAIndex === undefined || tokenAIndex === null || tokenBIndex === undefined || tokenBIndex === null) return null;
+
+    const tokenAAddr = tokens[tokenAIndex]?.assetAddress?.toString();
+    const tokenBAddr = tokens[tokenBIndex]?.assetAddress?.toString();
+
+    return tokenAAddr && tokenBAddr ? `${tokenAAddr}-${tokenBAddr}` : null;
+  }, [tokens, tokenAIndex, tokenBIndex]);
+
+  const shouldProcessSpecialPair = useMemo(() =>
+    currentFeeIndex === 5 &&
+    isPairToOveride &&
+    positionOpeningMethod === 'range' &&
+    !blocked &&
+    !isLoadingTicksOrTickmap,
+    [currentFeeIndex, isPairToOveride, positionOpeningMethod, blocked, isLoadingTicksOrTickmap]
+  );
+
+  useEffect(() => {
+    if (!tokenPairKey || !shouldProcessSpecialPair) return;
+
+    const [tokenAAddr, tokenBAddr] = tokenPairKey.split('-');
+    const specialPair = Object.values(SPECIAL_PAIRS).find(pair =>
+      pair.check(tokenAAddr, tokenBAddr)
+    );
+
+    if (specialPair) {
+      const MIN_TICK_FOR_PRICE = nearestTickIndex(specialPair.minPrice, tickSpacing, isXtoY, xDecimal, yDecimal);
+      const MAX_TICK_FOR_PRICE = nearestTickIndex(specialPair.maxPrice, tickSpacing, isXtoY, xDecimal, yDecimal);
+
+      changeRangeHandler(MIN_TICK_FOR_PRICE, MAX_TICK_FOR_PRICE, true);
+      autoZoomHandler(MIN_TICK_FOR_PRICE, MAX_TICK_FOR_PRICE, true);
+      hasSetSpecialPairRange.current = true;
+    }
+  }, [tokenPairKey, shouldProcessSpecialPair, tickSpacing, isXtoY, xDecimal, yDecimal]);
+
+  useEffect(() => {
+    if (!isPairToOveride) {
+      hasSetSpecialPairRange.current = false;
+    }
+  }, [isPairToOveride]);
+
+
 
   return (
     <Grid container className={classes.wrapper}>
@@ -634,13 +764,13 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
             onBlur={() => {
               const newLeft = isXtoY
                 ? Math.min(
-                    rightRange - tickSpacing,
-                    nearestTickIndex(+leftInput, tickSpacing, isXtoY, xDecimal, yDecimal)
-                  )
+                  rightRange - tickSpacing,
+                  nearestTickIndex(+leftInput, tickSpacing, isXtoY, xDecimal, yDecimal)
+                )
                 : Math.max(
-                    rightRange + tickSpacing,
-                    nearestTickIndex(+leftInput, tickSpacing, isXtoY, xDecimal, yDecimal)
-                  )
+                  rightRange + tickSpacing,
+                  nearestTickIndex(+leftInput, tickSpacing, isXtoY, xDecimal, yDecimal)
+                )
 
               changeRangeHandler(newLeft, rightRange)
               autoZoomHandler(newLeft, rightRange)
@@ -673,13 +803,13 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
             onBlur={() => {
               const newRight = isXtoY
                 ? Math.max(
-                    leftRange + tickSpacing,
-                    nearestTickIndex(+rightInput, tickSpacing, isXtoY, xDecimal, yDecimal)
-                  )
+                  leftRange + tickSpacing,
+                  nearestTickIndex(+rightInput, tickSpacing, isXtoY, xDecimal, yDecimal)
+                )
                 : Math.min(
-                    leftRange - tickSpacing,
-                    nearestTickIndex(+rightInput, tickSpacing, isXtoY, xDecimal, yDecimal)
-                  )
+                  leftRange - tickSpacing,
+                  nearestTickIndex(+rightInput, tickSpacing, isXtoY, xDecimal, yDecimal)
+                )
 
               changeRangeHandler(leftRange, newRight)
               autoZoomHandler(leftRange, newRight)
@@ -748,5 +878,4 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     </Grid>
   )
 }
-
 export default RangeSelector
