@@ -347,7 +347,11 @@ export const NewPosition: React.FC<INewPosition> = ({
 
   useEffect(() => {
     if (isLoadingTicksOrTickmap || isWaitingForNewPool) return
+
+    const isSpecialPair = lastSpecialPairRef.current !== '';
+
     setIsAutoSwapAvailable(
+      !isSpecialPair &&
       tokenAIndex !== null &&
       tokenBIndex !== null &&
       autoSwapPools.some(
@@ -754,9 +758,8 @@ export const NewPosition: React.FC<INewPosition> = ({
     if (tokenAIndex === null || tokenBIndex === null) return
     if (alignment === DepositOptions.Auto) {
       if (lastSpecialPairRef.current !== '') {
-        setTimeout(() => {
-          setTokenACheckbox(false)
-        }, 1000);
+        setAlignment(DepositOptions.Basic);
+
       } else {
         setTokenACheckbox(true)
       }
@@ -1037,12 +1040,10 @@ export const NewPosition: React.FC<INewPosition> = ({
         true
       )
       lastSpecialPairRef.current = currentPair
-
-
     } else if (!isESUSDCPair && !isESWETHPair) {
       lastSpecialPairRef.current = ''
 
-      if (isAutoSwapAvailable && lastSpecialPairRef.current !== '') {
+      if (isAutoSwapAvailable && lastSpecialPairRef.current === '') {
         setAlignment(DepositOptions.Auto)
       }
     }
