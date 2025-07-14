@@ -270,12 +270,16 @@ export const Swap: React.FC<ISwap> = ({
   })
   const [bestAmount, setBestAmount] = useState(new BN(0))
   const [swapType, setSwapType] = useState(SwapType.Normal)
-  const [addBlur, setAddBlur] = useState(false)
   const [wasIsFetchingNewPoolRun, setWasIsFetchingNewPoolRun] = useState(false)
   const [wasSwapIsLoadingRun, setWasSwapIsLoadingRun] = useState(false)
   const [isReversingTokens, setIsReversingTokens] = useState(false)
   const shortenText = useMediaQuery(theme.breakpoints.down(500))
   const shortenTextXS = useMediaQuery(theme.breakpoints.down(360))
+  const addBlur = useMemo(() => {
+    return (
+      isSimulationRunning || swapIsLoading || throttle || pendingSimulation || isReversingTokens
+    )
+  }, [isSimulationRunning, swapIsLoading, throttle, pendingSimulation, isReversingTokens])
 
   const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT = useMemo(() => {
     if (network === NetworkType.Testnet) {
@@ -512,10 +516,6 @@ export const Swap: React.FC<ISwap> = ({
   }, [progress, swapIsLoading])
 
   const simulateWithTimeout = () => {
-    if (pendingSimulation || swapIsLoading) {
-      return
-    }
-
     setThrottle(true)
 
     clearTimeout(timeoutRef.current)
@@ -547,10 +547,6 @@ export const Swap: React.FC<ISwap> = ({
       } else if (!tokens[tokenFromIndex]) {
         setAmountFrom('')
       }
-    }
-
-    if (!pendingSimulation && !swapIsLoading) {
-      setAddBlur(false)
     }
   }, [bestAmount, simulateResult, simulateWithHopResult, pendingSimulation, swapIsLoading])
 
@@ -603,22 +599,6 @@ export const Swap: React.FC<ISwap> = ({
   const setSimulateAmount = async () => {
     if (swapIsLoading) {
       setPendingSimulation(true)
-      if (!addBlur) {
-        setAddBlur(true)
-      }
-      return
-    }
-
-    if (addBlur && !pendingSimulation) {
-      return
-    }
-
-    if (!addBlur) {
-      setAddBlur(true)
-    }
-
-    if (isSimulationRunning) {
-      return
     }
 
     if (tokenFromIndex !== null && tokenToIndex !== null && !swapIsLoading) {
@@ -685,10 +665,6 @@ export const Swap: React.FC<ISwap> = ({
       } catch (error) {
         console.error('Simulation failed:', error)
       }
-    }
-
-    if (!pendingSimulation && !swapIsLoading) {
-      setAddBlur(false)
     }
   }
 
@@ -845,7 +821,6 @@ export const Swap: React.FC<ISwap> = ({
       isReversingTokens ||
       rateLoading ||
       isFetchingNewPool ||
-      addBlur ||
       lockAnimation ||
       isError("TypeError: Cannot read properties of undefined (reading 'bitmap')")
     ) {
@@ -926,10 +901,6 @@ export const Swap: React.FC<ISwap> = ({
       return 'Not enough liquidity'
     }
 
-    if (addBlur) {
-      return 'Loading'
-    }
-
     return 'Exchange'
   }
   const hasShowRateMessage = () => {
@@ -998,14 +969,12 @@ export const Swap: React.FC<ISwap> = ({
 
   useEffect(() => {
     if (isFetchingNewPool) {
-      setAddBlur(true)
       setWasIsFetchingNewPoolRun(true)
     }
   }, [isFetchingNewPool])
 
   useEffect(() => {
     if (swapIsLoading) {
-      setAddBlur(true)
       setWasSwapIsLoadingRun(true)
     }
   }, [swapIsLoading])
@@ -1401,9 +1370,9 @@ export const Swap: React.FC<ISwap> = ({
                 setHideUnknownTokens(e)
               }}
               tokenPrice={tokenToPriceData?.price}
+              showMaxButton={false}
               priceLoading={priceToLoading}
               isBalanceLoading={isBalanceLoading}
-              showMaxButton={false}
               showBlur={
                 (inputRef === inputTarget.FROM && addBlur) ||
                 lockAnimation ||
