@@ -563,15 +563,12 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     autoZoomHandler(leftRange, rightRange, true)
   }, [tokenASymbol, tokenBSymbol])
 
-  // Strategia 1: Rozdziel na osobne hooki z różnymi zależnościami
-  // Hook dla resetowania stanu
   useEffect(() => {
     if (!isPairToOveride) {
       hasSetSpecialPairRange.current = false;
     }
   }, [isPairToOveride]);
 
-  // Hook dla głównej logiki - tylko najważniejsze zależności
   useEffect(() => {
     if (!tokens || tokenAIndex === null || tokenBIndex === null || !positionOpeningMethod) return;
 
@@ -600,7 +597,6 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     }
   }, [tokens, tokenAIndex, tokenBIndex, currentFeeIndex, isPairToOveride, positionOpeningMethod, blocked, isLoadingTicksOrTickmap]);
 
-  // ===================================================================
 
   const tokenPairKey = useMemo(() => {
     if (!tokens || tokenAIndex === undefined || tokenAIndex === null || tokenBIndex === undefined || tokenBIndex === null) return null;
