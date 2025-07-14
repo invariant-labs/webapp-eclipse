@@ -5,7 +5,7 @@ import classNames from 'classnames'
 import { BN } from '@coral-xyz/anchor'
 import { formatNumberWithCommas, printBNandTrimZeros } from '@utils/utils'
 import {
-  EFFECTIVE_TARGET_MULTIPLIER,
+  EFFECTIVE_TARGET,
   PERCENTAGE_SCALE,
   REWARD_SCALE,
   TIER1,
@@ -178,7 +178,7 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
                   <span>:</span>
                 </Typography>
                 {renderFormattedNumberWithSkeleton(
-                  targetAmount.mul(EFFECTIVE_TARGET_MULTIPLIER),
+                  EFFECTIVE_TARGET,
                   mintDecimals,
                   '$',
                   '',

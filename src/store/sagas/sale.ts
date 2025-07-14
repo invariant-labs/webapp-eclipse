@@ -118,12 +118,12 @@ export function* depositSale(action: PayloadAction<IDepositSale>) {
     const sale = yield* call(getSaleProgram, networkType, rpc, wallet as IWallet)
     const { amount, mint, proofOfInclusion } = action.payload
 
-    const ix = yield* call(
+    const ixs = yield* call(
       [sale, sale.depositIx],
       { amount, mint, proofOfInclusion: Uint8Array.from(proofOfInclusion!) },
       wallet.publicKey
     )
-    const tx = new Transaction().add(ix)
+    const tx = new Transaction().add(...ixs)
     const { blockhash, lastValidBlockHeight } = yield* call([
       connection,
       connection.getLatestBlockhash
