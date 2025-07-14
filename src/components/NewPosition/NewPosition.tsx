@@ -1006,14 +1006,17 @@ export const NewPosition: React.FC<INewPosition> = ({
     const currentPair = [tokenAAddress, tokenBAddress].sort().join('-')
 
     const isESUSDCPair =
-      (tokenAAddress === ES_MAIN.address.toString() && tokenBAddress === USDC_MAIN.address.toString())
+      (tokenAAddress === ES_MAIN.address.toString() && tokenBAddress === USDC_MAIN.address.toString()) ||
+      (tokenBAddress === ES_MAIN.address.toString() && tokenAAddress === USDC_MAIN.address.toString())
 
     const isESWETHPair =
-      (tokenAAddress === ES_MAIN.address.toString() && tokenBAddress === WETH_MAIN.address.toString())
+      (tokenAAddress === ES_MAIN.address.toString() && tokenBAddress === WETH_MAIN.address.toString()) ||
+      (tokenBAddress === ES_MAIN.address.toString() && tokenAAddress === WETH_MAIN.address.toString())
 
     if ((isESUSDCPair || isESWETHPair) && lastSpecialPairRef.current !== currentPair) {
       setPositionOpeningMethod('range')
       onPositionOpeningMethodChange('range')
+      setAlignment(DepositOptions.Basic)
 
       const DEST_FEE_TIER_INDEX = 5
 
@@ -1030,8 +1033,12 @@ export const NewPosition: React.FC<INewPosition> = ({
 
     } else if (!isESUSDCPair && !isESWETHPair) {
       lastSpecialPairRef.current = ''
+
+      if (isAutoSwapAvailable && lastSpecialPairRef.current !== '') {
+        setAlignment(DepositOptions.Auto)
+      }
     }
-  }, [tokenAIndex, tokenBIndex, tokens])
+  }, [tokenAIndex, tokenBIndex, tokens, isAutoSwapAvailable])
 
   return (
     <Grid container className={classes.wrapper}>
