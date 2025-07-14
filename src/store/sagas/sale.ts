@@ -285,7 +285,8 @@ export function* mintNft() {
             ikonType: 'claim',
             tokenXAmount: '1',
             tokenXIcon: logoShortIcon,
-            tokenXSymbol: 'INVT'
+            tokenXSymbol: 'INVT',
+            roundIcon: false
           },
           persist: false,
           txid
