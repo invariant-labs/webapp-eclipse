@@ -86,8 +86,8 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
         return ''
     }
   }, [ikonType])
-  const hasXAmount = tokenXAmount !== '0'
-  const hasYAmount = tokenYAmount !== '0'
+  const hasXAmount = !!tokenXAmount && tokenXAmount !== '0'
+  const hasYAmount = !!tokenYAmount && tokenYAmount !== '0'
   const hasBothAmounts = hasXAmount && hasYAmount
   return (
     <>
@@ -140,7 +140,7 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
               />
             </Grid>
             <StyledText>
-              {title} {!hasBothAmounts && 'succesfully'}
+              {title} {!hasBothAmounts && 'successfully'}
             </StyledText>
             {hasXAmount && (
               <>

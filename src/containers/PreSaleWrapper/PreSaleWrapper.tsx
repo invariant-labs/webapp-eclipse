@@ -4,12 +4,12 @@ import { BuyComponent } from '@components/PreSale/BuyComponent/BuyComponent'
 import { SaleStepper } from '@components/PreSale/SaleStepper/SaleStepper'
 import { RoundComponent } from '@components/PreSale/RoundComponent/RoundComponent'
 import { useDispatch, useSelector } from 'react-redux'
-import { actions } from '@store/reducers/sale'
+import { actions, NFTStatus } from '@store/reducers/sale'
 import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
 import { isLoadingProof, proofOfInclusion, saleSelectors } from '@store/selectors/sale'
 import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
-import { printBNandTrimZeros } from '@utils/utils'
+import { getNftStatus, printBN, printBNandTrimZeros } from '@utils/utils'
 import NftPlaceholder from '@static/png/NFT_Card.png'
 import {
   EFFECTIVE_TARGET_MULTIPLIER,
@@ -51,7 +51,7 @@ import ArrowLeft from '@static/png/presale/arrow_left.png'
 import ArrowRight from '@static/png/presale/arrow_right.png'
 import { useEffect, useState, useRef, useMemo, useCallback } from 'react'
 import { OverlayWrapper } from '@components/PreSale/Overlay/Overlay'
-import { DEFAULT_PUBLICKEY } from '@store/consts/static'
+import { DEFAULT_PUBLICKEY, USDC_MAIN } from '@store/consts/static'
 import { auditByLogoIcon, swapArrowClean } from '@static/icons'
 import { Tokenomics } from '@components/PreSale/Tokenomics/Tokenomics'
 import { DEXChart } from '@components/PreSale/DEXChart/DEXChart'
@@ -205,6 +205,15 @@ export const PreSaleWrapper = () => {
   const initialReversePrices = localStorage.getItem('INVARIANT_SALE_REVERSE_PRICES') === 'true'
   const [reversedPrices, setReversedPrices] = useState(initialReversePrices)
   const walletAddress = useSelector(address)
+
+  const hasMintedNft = useMemo(() => {
+    const depositedAboveThreshold = +printBN(userStats?.deposited, USDC_MAIN.decimals) >= 450 //TODO Change to sdk const
+    return depositedAboveThreshold && !userStats?.canMintNft
+  }, [userStats])
+
+  const nftStatus = useMemo<NFTStatus>(() => {
+    return getNftStatus(!!userStats?.canMintNft, hasMintedNft)
+  }, [userStats?.canMintNft, hasMintedNft])
 
   const slidesToShow = useMemo(() => {
     if (isSmallMobile) return 1
@@ -595,9 +604,7 @@ export const PreSaleWrapper = () => {
             receive a special, non-transferable NFT.
           </Typography>
           <Typography component='h4'>Status</Typography>
-          <Typography component='h1'>
-            {userStats?.canMintNft ? 'Eligble' : 'Non-eligible'}
-          </Typography>
+          <Typography component='h1'>{nftStatus}</Typography>
           <img className={classes.nftCard} src={NftPlaceholder} />
           <Button
             scheme='green'

@@ -53,13 +53,13 @@ export function* fetchUserStats() {
       return
     }
     const sale = yield* call(getSaleProgram, networkType, rpc, wallet as IWallet)
-    const hasMintedNft = yield* call([sale, sale.hasNftMinted], wallet.publicKey, NFT_MINT)
-
+    const canMintNft = yield* call([sale, sale.hasNftMinted], wallet.publicKey, NFT_MINT)
     const userBalance = yield* call([sale, sale.getUserBalance], wallet.publicKey)
+
     const userStats: IUserStats = {
       deposited: userBalance.deposited,
       received: userBalance.received,
-      canMintNft: !hasMintedNft
+      canMintNft: !canMintNft
     }
 
     yield* put(actions.setUserStats({ ...userStats }))
