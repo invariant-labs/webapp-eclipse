@@ -1053,7 +1053,9 @@ export const NewPosition: React.FC<INewPosition> = ({
       lastSpecialPairRef.current = currentPair
     } else if (!isESUSDCPair && !isESWETHPair) {
       lastSpecialPairRef.current = ''
-
+      if (positionOpeningMethod === 'range') {
+        setPositionOpeningMethod('concentration')
+      }
       if (isAutoSwapAvailable && lastSpecialPairRef.current === '') {
         setAlignment(DepositOptions.Auto)
       }
