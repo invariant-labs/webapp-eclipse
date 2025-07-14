@@ -266,7 +266,7 @@ export const BuyComponent: React.FC<IProps> = ({
                   </Box>
                   <Grid container className={classes.barWrapper}>
                     <Typography className={classes.sliderLabel}>0%</Typography>
-                    <Typography className={classes.sliderLabel}>
+                    <Typography className={classes.colorSliderLabel}>
                       {filledPercentage.toFixed(2)}%
                     </Typography>
                     <Typography className={classes.sliderLabel}>100%</Typography>
@@ -287,7 +287,7 @@ export const BuyComponent: React.FC<IProps> = ({
               currency={tokenIndex !== null ? tokens[tokenIndex].symbol : null}
               currencyIconSrc={tokenIndex !== null ? tokens[tokenIndex].logoURI : undefined}
               currencyIsUnknown={
-                tokenIndex !== null ? tokens[tokenIndex].isUnknown ?? false : false
+                tokenIndex !== null ? (tokens[tokenIndex].isUnknown ?? false) : false
               }
               disableBackgroundColor
               placeholder='0.0'

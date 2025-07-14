@@ -104,7 +104,8 @@ export const useStyles = makeStyles()(() => ({
       justifyContent: 'center'
     },
     '& .slick-arrow': {
-      height: '40px'
+      height: '40px',
+      overflow: 'hidden'
     },
     '& .slick-arrow::before': {
       fontSize: '40px',
@@ -352,7 +353,7 @@ export const useStyles = makeStyles()(() => ({
   },
   shareContainer: {
     display: 'flex',
-    gap: 4
+    gap: 8
   },
   nftWrapper: {
     position: 'relative',
