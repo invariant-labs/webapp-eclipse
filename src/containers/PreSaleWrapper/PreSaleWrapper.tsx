@@ -595,22 +595,25 @@ export const PreSaleWrapper = () => {
       </Box>
       <Box className={classes.sectionTitle}>
         <Typography className={classes.sectionTitleText}>Invariant Contributor NFT</Typography>
-        <Box className={classes.nftWrapper}>
-          <Typography component='section'>
-            Every participant in the Invariant Public Sale who contributes at least $500 will
-            receive a special, non-transferable NFT.
-          </Typography>
-          <Typography component='h4'>Status</Typography>
-          <Typography component='h1'>{nftStatus}</Typography>
-          <img className={classes.nftCard} src={NftPlaceholder} />
-          <Button
-            scheme='green'
-            onClick={() => dispatch(actions.mintNft())}
-            width={185}
-            height={44}
-            disabled={!userStats?.canMintNft}>
-            Mint
-          </Button>
+        <Box display='flex' alignItems='center' gap={12} className={classes.nftBackground}>
+          <Box className={classes.nftWrapper}>
+            <Typography component='section'>
+              Every participant in the Invariant Public Sale who contributes at least $500 will
+              receive a special, non-transferable NFT.
+            </Typography>
+            <Typography component='h4'>Status</Typography>
+            <Typography component='h1'>{nftStatus}</Typography>
+
+            <Button
+              scheme='green'
+              onClick={() => dispatch(actions.mintNft())}
+              width={185}
+              height={44}
+              disabled={!userStats?.canMintNft}>
+              Mint
+            </Button>
+          </Box>
+          <img className={classes.nftCard} src={NftPlaceholder} />{' '}
         </Box>
       </Box>
       <Box className={classes.sectionTitle}>
