@@ -342,7 +342,7 @@ export const PreSaleWrapper = () => {
   const getAlertBoxText = useCallback(() => {
     if (isLimitExceed) {
       return {
-        text: 'Your deposit exceed limit',
+        text: 'You have exceeded your allocation limit',
         variant: 'limit'
       }
     }
