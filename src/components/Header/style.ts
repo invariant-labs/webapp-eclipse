@@ -75,11 +75,6 @@ const useStyles = makeStyles()((theme: Theme) => {
         marginLeft: 0,
         width: '100%',
         justifyContent: 'center'
-      },
-
-      [theme.breakpoints.down('sm')]: {
-        justifyContent: 'space-between',
-        gap: 0
       }
     },
     leftButtons: {
