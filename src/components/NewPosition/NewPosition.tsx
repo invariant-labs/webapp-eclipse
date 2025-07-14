@@ -376,7 +376,9 @@ export const NewPosition: React.FC<INewPosition> = ({
 
   useEffect(() => {
     if (isAutoSwapAvailable) {
-      setAlignment(DepositOptions.Auto)
+      if (lastSpecialPairRef.current === '') {
+        setAlignment(DepositOptions.Auto)
+      }
     } else if (!isAutoSwapAvailable && alignment === DepositOptions.Auto) {
       setAlignment(DepositOptions.Basic)
     }
@@ -1101,9 +1103,6 @@ export const NewPosition: React.FC<INewPosition> = ({
                 <Box
                   mr={1}
                   display='flex'
-                  alignItems='center'
-                  justifyContent='center'
-                  width={26}
                   height={21}>
                   <Refresher
                     currentIndex={refresherTime}
