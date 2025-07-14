@@ -353,6 +353,6 @@ export const useStyles = makeStyles()(() => ({
   },
   shareContainer: {
     display: 'flex',
-    gap: 4
+    gap: 8
   }
 }))

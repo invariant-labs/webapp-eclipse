@@ -56,10 +56,10 @@ import { Tokenomics } from '@components/PreSale/Tokenomics/Tokenomics'
 import { DEXChart } from '@components/PreSale/DEXChart/DEXChart'
 import { getCurrentSolanaConnection } from '@utils/web3/connection'
 import { Button } from '@common/Button/Button'
-import share from '@static/svg/share.svg'
 import { ShareComponent } from '@components/PreSale/ShareComponent/ShareComponent'
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
+import { ShareIcon } from '@static/componentIcon/ShareIcon'
 
 function SampleNextArrow(props) {
   const { className, style, onClick } = props
@@ -527,7 +527,10 @@ export const PreSaleWrapper = () => {
                 onClick={() => setIsShareComponentShown(true)}
                 disabled={received.eqn(0)}>
                 <div className={classes.shareContainer}>
-                  Share <img src={share} alt='share icon' />
+                  Share{' '}
+                  <ShareIcon
+                    color={received.eqn(0) ? colors.invariant.textGrey : colors.invariant.black}
+                  />
                 </div>
               </Button>
             </Box>

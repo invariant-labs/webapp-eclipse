@@ -7,6 +7,7 @@ import { useRef } from 'react'
 import html2canvas from 'html2canvas'
 import grayLogo from '@static/png/gray-logo.png'
 import { formatNumberWithoutSuffix, printBN } from '@utils/utils'
+import { closeSmallIcon } from '@static/icons'
 
 interface IProps {
   open: boolean
@@ -71,6 +72,7 @@ export const ShareComponent: React.FC<IProps> = ({
           paper: cx(classes.container, classes.containerDisplay)
         }}
         transformOrigin={{ vertical: 'center', horizontal: 'center' }}>
+        <img onClick={onClose} className={classes.closeButton} src={closeSmallIcon} />
         <Box className={classes.titleContainer}>
           <Typography className={cx(classes.title, classes.titleDisplay)}>
             Congratulations
