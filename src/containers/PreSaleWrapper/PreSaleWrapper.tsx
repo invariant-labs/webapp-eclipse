@@ -656,7 +656,7 @@ export const PreSaleWrapper = () => {
           <Grid item className={cx(classes.animatedCardItem, classes.animatedCardItemWide)}>
             <AnimatedPreSaleCard
               gradientPrimaryColor={colors.invariant.component}
-              title='$5 MLN'
+              title='$4.5 MLN'
               subtitle='Fully Diluted Valuation (FDV)'
               delay={400}
             />

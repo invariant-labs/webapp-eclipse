@@ -208,7 +208,7 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
       <Box className={classes.infoCard} marginTop={'24px'}>
         <Box className={classes.infoRow}>
           <Typography className={classes.infoLabel}>Fully Diluted Valuation (FDV)</Typography>
-          <Typography className={classes.value}>$5 MLN</Typography>
+          <Typography className={classes.value}>$4.5 MLN</Typography>
         </Box>
       </Box>
       <Box className={classes.infoCard}>
