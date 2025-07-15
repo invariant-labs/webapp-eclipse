@@ -180,7 +180,7 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
                   <TooltipHover
                     top={1}
                     title={
-                      'The total allocation limit. Once this limit is reached, the sale will end.'
+                      'The sale can accept contributions beyond the target amount, up to this upper limit, to accommodate higher-than-expected demand'
                     }>
                     <img src={infoCircleIcon} />
                   </TooltipHover>
