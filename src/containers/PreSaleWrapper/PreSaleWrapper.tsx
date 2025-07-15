@@ -835,7 +835,7 @@ export const PreSaleWrapper = () => {
             {
               question: '5. How can I tell if I am whitelisted?',
               answer:
-                'You can use the <span style="color: #2EE09A; font-weight: bold;">Whitelist Checker</span> located at the top of the page.'
+                'You can use the <span style="color: #2EE09A; font-weight: bold;">Whitelist Checker</span> located at the top of the page. The <span style="color: #2EE09A; font-weight: bold;">Allocation Checker</span> is currently unavailable and will be revealed closer to the start of the sale'
             },
             {
               question: '6. I am not whitelisted, can I still take part in the Community Sale?',
