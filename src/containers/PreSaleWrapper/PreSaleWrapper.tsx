@@ -803,36 +803,67 @@ export const PreSaleWrapper = () => {
         <Faq
           faqData={[
             {
-              question: '1. How can I participate in the sale?',
-              answer:
-                'To participate, simply scroll up to the presale section, connect your crypto wallet, enter the amount you’d like to invest, and click Buy Now. Tokens will be transferred after purchase.'
-            },
-            {
-              question: '2. What is the initial token price?',
-              answer:
-                'The initial price is set at <span style="color: #2EE09A; font-weight: bold;">0.10$</span> during Round 1, with a gradual increase in each subsequent round.'
-            },
-            {
-              question: '3. When can I claim my tokens?',
+              question: '1. How does the Progressive Price Model work?',
               answer: `
-                  Purchased tokens will be available to claim during the <span style="color: #2EE09A; font-weight: bold;">Token Generation Event (TGE)</span>.
-                `
+      It’s designed to reward early contributors. The earlier you participate, the better price you get for the tokens.<br/><br/>
+      The sale is divided into 4 phases, each with its own target. Once a phase’s target is reached, the sale moves to the next phase and the price permanently increases.<br/><br/>
+      <b>Phases:</b><br/>
+      1. “Early Bird (0 - $150k) <span style="color: #2EE09A; font-weight: bold;">$0.010</span>”<br/>
+      2. “Phase 2 ($150k - $300k) <span style="color: #2EE09A; font-weight: bold;">$0.013</span>”<br/>
+      3. “Phase 3 ($300k - $450k) <span style="color: #2EE09A; font-weight: bold;">$0.015</span>”<br/>
+      4. “Final Phase (+$450k) <span style="color: #2EE09A; font-weight: bold;">$0.017</span>”
+    `
             },
             {
-              question: '4. When is the TGE?',
+              question: '2. Is the max allocation per wallet for one phase or the whole sale?',
               answer:
-                'The TGE will take place shortly after the sale ends. We’ll announce the exact date on our official social media channels.'
+                'For the whole sale. The max allocation per wallet is <span style="color: #2EE09A; font-weight: bold;">$4.5k</span>, regardless of which phase you buy in.'
             },
             {
-              question: '5. How do I know if I’m whitelisted?',
-              answer: `You can check your whitelist status and the round you're eligible for using the <span style="color: #2EE09A; font-weight: bold;">Whitelist Checker</span> at the top of the page. </br>
-                
-                If you're not whitelisted, don't worry — you’ll be able to participate in <span style="color: #2EE09A; font-weight: bold;">Round 4</span>, which is open to everyone.
-                `
+              question:
+                '3. Is USDC the only currency accepted for purchasing INVT during the presale?',
+              answer: 'Yes, that’s correct.'
             },
             {
-              question: `6. How can I contact the Invariant team?`,
-              answer: `Feel free to reach out to us on Discord or through any of our official channels: <b> </br> <ul><li><a href="https://discord.com/invite/w6hTeWTJvG" style="color: #2EE09A" target="_blank">Discord</a></li><li><a href="mailto:contact@invariant.app" style="color: #2EE09A">Email</a></li><li><a href="https://x.com/invariant_labs" style="color: #2EE09A" target="_blank">X</a></li></ul><p>The Terms and Conditions of the Invariant Points Program are available <a href="https://docs.invariant.app/docs/points_terms" style="color: #2EE09A" target="_blank">here.</a></p> </b>`
+              question: '4. Who is whitelisted?',
+              answer:
+                'Only wallets of active users who have supported the development of Eclipse and Invariant.'
+            },
+            {
+              question: '5. How can I check if I’m whitelisted?',
+              answer:
+                'You can check using the <span style="color: #2EE09A; font-weight: bold;">Whitelist Checker</span> located at the top of the page.'
+            },
+            {
+              question: '6. I’m not whitelisted, can I still take part in the Community Sale?',
+              answer:
+                'Yes, the <span style="color: #2EE09A; font-weight: bold;">Final Phase (Phase 4)</span> will be open to everyone.'
+            },
+            {
+              question: '7. When can I claim tokens? When is TGE?',
+              answer: `
+      You’ll be able to claim your tokens during the <span style="color: #2EE09A; font-weight: bold;">TGE (Token Generation Event)</span>, which will take place shortly after the Community Sale ends. 
+      We’ll announce the exact date on our social media channels.
+    `
+            },
+            {
+              question: '8. Why do I need to spend $450 to get the NFT?',
+              answer: `
+      The NFT is an extra benefit alongside INVT tokens. It’s our way of showing appreciation to those who make a significant contribution during the Invariant Community Sale.<br/>
+      Its quantity will be very limited, with a total supply of a few hundred pieces depending on the outcome of the Community Sale.
+    `
+            },
+            {
+              question: '9. What does holding the NFT give you?',
+              answer: `
+      Every participant in the Invariant Sale who contributes at least <span style="color: #2EE09A; font-weight: bold;">$450</span> will be able to mint a special, non-transferable NFT. This NFT is not intended for trading or circulation.<br/>
+      Instead, it serves as an on-chain marker that links the wallet to future benefits and privileges as part of our long-term roadmap.
+    `
+            },
+            {
+              question: '10. Can I sell/transfer my NFT?',
+              answer:
+                'No, the NFT is non-transferable. It is tied exclusively to the wallet that participated in the Community Sale.'
             }
           ]}
         />
