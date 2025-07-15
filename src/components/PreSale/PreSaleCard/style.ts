@@ -71,7 +71,7 @@ const useStyles = makeStyles<{ gradientDirection?: string; gradientPrimaryColor?
       fontWeight: 400,
       textAlign: 'center',
       color: colors.invariant.textGrey,
-      marginTop: '12px',
+      marginTop: '16px',
 
       [theme.breakpoints.down('lg')]: {
         fontSize: '18px',
