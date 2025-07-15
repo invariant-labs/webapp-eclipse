@@ -254,14 +254,14 @@ export const PreSaleWrapper = () => {
       saleStats
         ? saleStats
         : {
-            targetAmount: new BN(0),
-            currentAmount: new BN(0),
-            whitelistWalletLimit: new BN(0),
-            startTimestamp: new BN(0),
-            duration: new BN(0),
-            mint: new PublicKey(0),
-            minDeposit: new BN(0)
-          },
+          targetAmount: new BN(0),
+          currentAmount: new BN(0),
+          whitelistWalletLimit: new BN(0),
+          startTimestamp: new BN(0),
+          duration: new BN(0),
+          mint: new PublicKey(0),
+          minDeposit: new BN(0)
+        },
     [saleStats]
   )
 
@@ -275,9 +275,9 @@ export const PreSaleWrapper = () => {
       userStats
         ? userStats
         : {
-            deposited: new BN(0),
-            received: new BN(0)
-          },
+          deposited: new BN(0),
+          received: new BN(0)
+        },
     [userStats]
   )
 
@@ -440,7 +440,7 @@ export const PreSaleWrapper = () => {
     }
   }, [price, nextPrice, round, reversedPrices])
 
-  const stepNames = ['Early Bird', 'Phase 2', 'Phase 3', 'Final Phase']
+  const stepNames = ['Early Bird', 'Phase 2', 'Phase 3', 'Open Phase']
 
   const stepLabels = useMemo(() => {
     return tierPrices.map((price, idx) => {
@@ -813,7 +813,7 @@ export const PreSaleWrapper = () => {
       1. Early Bird (0 - $150k) <span style="color: #2EE09A; font-weight: bold;">$0.010</span><br/>
       2. Phase 2 ($150k - $300k) <span style="color: #2EE09A; font-weight: bold;">$0.013</span><br/>
       3. Phase 3 ($300k - $450k) <span style="color: #2EE09A; font-weight: bold;">$0.015</span><br/>
-      4. Final Phase (+$450k) <span style="color: #2EE09A; font-weight: bold;">$0.017</span>
+      4. Open Phase (+$450k) <span style="color: #2EE09A; font-weight: bold;">$0.017</span>
     `
             },
             {
@@ -840,7 +840,7 @@ export const PreSaleWrapper = () => {
             {
               question: '6. I am not whitelisted, can I still take part in the Community Sale?',
               answer:
-                'Yes, the <span style="color: #2EE09A; font-weight: bold;">Final Phase (Phase 4)</span> will be open to everyone.'
+                'Yes, the <span style="color: #2EE09A; font-weight: bold;">Open Phase (Phase 4)</span> will be open to everyone.'
             },
             {
               question: '7. When can I claim tokens? When is TGE?',
