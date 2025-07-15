@@ -44,7 +44,7 @@ export const useStyles = makeStyles()(() => ({
     alignItems: 'center',
     gap: 24,
     [theme.breakpoints.down('lg')]: {
-      minWidth: 'fit-content',
+      minWidth: 'auto',
       marginRight: 0,
       width: '100%',
       flexDirection: 'column',
@@ -58,9 +58,16 @@ export const useStyles = makeStyles()(() => ({
     flexDirection: 'column',
     alignItems: 'center',
     [theme.breakpoints.down('lg')]: {
+      background: colors.invariant.component,
       marginLeft: 0,
       marginTop: '24px',
-      width: '100%'
+      borderRadius: 24,
+      padding: '24px 16px',
+      width: 'calc(100% - 32px)'
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: 'calc(100% - 16px)',
+      padding: '24px 8px'
     }
   },
   animatedCardsContainer: {
@@ -213,6 +220,9 @@ export const useStyles = makeStyles()(() => ({
     boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
     WebkitTapHighlightColor: 'transparent',
     touchAction: 'manipulation',
+    [theme.breakpoints.down('lg')]: {
+      background: colors.invariant.bodyBackground
+    },
     [theme.breakpoints.down('sm')]: {
       height: 36,
       padding: '6px 10px',
@@ -305,7 +315,7 @@ export const useStyles = makeStyles()(() => ({
     zIndex: 90,
     marginTop: 72,
     width: '100%',
-    maxWidth: '1280px',
+    maxWidth: 1210,
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
@@ -317,7 +327,7 @@ export const useStyles = makeStyles()(() => ({
     zIndex: 90,
     marginTop: 72,
     width: '100%',
-    maxWidth: '1280px',
+    maxWidth: 1210,
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',

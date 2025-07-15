@@ -134,7 +134,9 @@ export const DEXChart = () => {
           </Box>
 
           <Box className={classes.rightSection}>
-            <Typography className={classes.sourceText}>As of July 11, source: DefiLlama</Typography>
+            <Typography className={classes.sourceText}>
+              As of July 11, source: DefiLlama, Eclipsescan
+            </Typography>
             <div className={classes.divider} />
             <img src={EclipseLogo} alt='Eclipse Logo' className={classes.eclipseLogo} />
           </Box>
