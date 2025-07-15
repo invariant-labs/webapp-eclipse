@@ -135,7 +135,7 @@ const useStyles = makeStyles<StyleProps>()((theme, { alignment }) => {
     },
     sourceText: {
       color: colors.invariant.textGrey,
-      ...typography.caption4
+      ...typography.body2
     },
     divider: {
       width: '1px',
