@@ -7,7 +7,8 @@ import {
   liquidityIcon,
   moreIcon,
   lqStakingIcon,
-  saleIcon,
+  saleSelectedIcon,
+  saleUnselectedIcon,
   statsIcon,
   swapArrowsIcon,
   tokenCreatorIcon,
@@ -121,7 +122,7 @@ export const FooterNavbar = () => {
     },
     {
       label: 'Presale',
-      icon: saleIcon,
+      icon: saleUnselectedIcon,
       url: 'presale',
 
       isLink: true,
@@ -227,7 +228,11 @@ export const FooterNavbar = () => {
                 }}>
                 {active && <Box className={classes.activeBox} />}
                 <img
-                  src={link.icon}
+                  src={
+                    activePath === 'presale' && link.label === 'Presale'
+                      ? saleSelectedIcon
+                      : link.icon
+                  }
                   width={link.width}
                   style={
                     active
