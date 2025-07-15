@@ -422,5 +422,30 @@ export const useStyles = makeStyles()(() => ({
     //   top: 'auto',
     //   right: 'auto'
     // }
+  },
+  targetsContainer: {
+    display: 'flex',
+    justifyContent: 'center'
+  },
+  targetsWrapper: {
+    width: '100%',
+    maxWidth: 1210,
+    display: 'grid',
+    gridTemplateColumns: '256px 256px 256px 256px',
+    gap: 32,
+
+    [theme.breakpoints.down('lg')]: {
+      gridTemplateColumns: '256px 256px',
+      gap: 16,
+      rowGap: 32
+    },
+
+    [theme.breakpoints.down('sm')]: {
+      gridTemplateColumns: '256px',
+      rowGap: 16
+    }
+  },
+  target: {
+    height: 256
   }
 }))

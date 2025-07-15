@@ -61,6 +61,10 @@ import { ShareComponent } from '@components/PreSale/ShareComponent/ShareComponen
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { ShareIcon } from '@static/componentIcon/ShareIcon'
+import Roadmap1 from '@static/svg/roadmap1.svg'
+import Roadmap2 from '@static/svg/roadmap2.svg'
+import Roadmap3 from '@static/svg/roadmap3.svg'
+import Roadmap4 from '@static/svg/roadmap4.svg'
 
 function SampleNextArrow(props) {
   const { className, style, onClick } = props
@@ -612,6 +616,21 @@ export const PreSaleWrapper = () => {
             )
           }}
         />
+      </Box>
+      <Box className={classes.sectionTitle}>
+        <Typography className={classes.sectionTitleText}>Targets</Typography>
+        <Box className={classes.targetsContainer}>
+          <Box className={classes.targetsWrapper}>
+            <img className={classes.target} src={Roadmap1} alt='incrase capital efficiency' />
+            <img className={classes.target} src={Roadmap2} alt='reduce the complexity of lp' />
+            <img className={classes.target} src={Roadmap3} alt='expand lp automation' />
+            <img
+              className={classes.target}
+              src={Roadmap4}
+              alt='become the primary liquidity layer on svm'
+            />
+          </Box>
+        </Box>
       </Box>
       <Box className={classes.sectionTitle}>
         <Typography className={classes.sectionTitleText}>Invariant Contributor NFT</Typography>
