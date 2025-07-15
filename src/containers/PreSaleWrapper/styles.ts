@@ -366,13 +366,13 @@ export const useStyles = makeStyles()(() => ({
     gap: 8
   },
   nftWrapper: {
+    width: '50%',
     position: 'relative',
     alignItems: 'center',
     padding: '24px 0',
     display: 'flex',
     flexDirection: 'column',
     gap: 24,
-    width: '100%',
     height: 264,
 
     '& section': {
@@ -405,7 +405,15 @@ export const useStyles = makeStyles()(() => ({
     [theme.breakpoints.down(1070)]: {
       flexDirection: 'column',
       gap: 0
-    }
+    },
+
+    width: '100%',
+    maxWidth: 1210
+  },
+  nftCardWrapper: {
+    width: '50%',
+    display: 'flex',
+    justifyContent: 'center'
   },
   nftCard: {
     minHeight: 406,

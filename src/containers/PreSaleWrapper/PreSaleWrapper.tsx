@@ -636,7 +636,9 @@ export const PreSaleWrapper = () => {
               Mint
             </Button>
           </Box>
-          <img className={classes.nftCard} src={NftPlaceholder} />{' '}
+          <Box className={classes.nftCardWrapper}>
+            <img className={classes.nftCard} src={NftPlaceholder} />
+          </Box>
         </Box>
       </Box>
       <Box className={classes.sectionTitle}>
