@@ -154,15 +154,13 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
       minPrice: 0.4,
       maxPrice: 0.6,
       check: (tokenAAddr: string, tokenBAddr: string) =>
-        (tokenAAddr === ES_MAIN.address.toString() && tokenBAddr === USDC_MAIN.address.toString()) ||
-        (tokenBAddr === ES_MAIN.address.toString() && tokenAAddr === USDC_MAIN.address.toString())
+        (tokenAAddr === ES_MAIN.address.toString() && tokenBAddr === USDC_MAIN.address.toString())
     },
     ES_WETH: {
       minPrice: 0.00013603,
       maxPrice: 0.00020394,
       check: (tokenAAddr: string, tokenBAddr: string) =>
-        (tokenAAddr === ES_MAIN.address.toString() && tokenBAddr === WETH_MAIN.address.toString()) ||
-        (tokenBAddr === ES_MAIN.address.toString() && tokenAAddr === WETH_MAIN.address.toString())
+        (tokenAAddr === ES_MAIN.address.toString() && tokenBAddr === WETH_MAIN.address.toString())
     }
   };
 
