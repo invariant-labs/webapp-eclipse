@@ -265,9 +265,11 @@ export const DEXChart = () => {
 
       <Box className={classes.footerContainer}>
         <Typography className={classes.footerText}>
-          {alignment === SwitcherAlignment.VOLUME_TVL
-            ? 'Volume/TVL shows how efficiently a DEX uses its liquidity. A higher ratio means the protocol generates more trading activity relative to the capital locked, indicating stronger capital efficiency and better utilization of user funds.'
-            : 'Fee/TVL represents the percentage of trading fees generated relative to the total value locked in the protocol. A higher ratio indicates the protocol is more profitable for liquidity providers compared to the capital they contribute.'}
+          Volume-to-TVL and Fee-to-TVL show how efficiently a DEX uses its liquidity. A higher ratio
+          means the protocol generates more trading activity relative to its TVL, indicating greater
+          capital efficiency and better utilization of user funds, ultimately making it more
+          profitable for users. Invariant achieves these numbers thanks to expertly leveraged Solana
+          technology and its own well-designed architecture
         </Typography>
       </Box>
     </GradientBorder>
