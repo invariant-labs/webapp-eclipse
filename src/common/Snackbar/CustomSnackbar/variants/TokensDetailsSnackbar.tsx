@@ -78,7 +78,7 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
       case 'withdraw':
         return 'Withdrawn'
       case 'claim':
-        return 'Claimed'
+        return 'Claimed NFT'
       case 'stake':
         return 'Staked:'
       case 'unstake':
@@ -140,12 +140,14 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
                 style={{ marginBottom: '2px' }}
               />
             </Grid>
-            <StyledText>
-              {title} {!hasBothAmounts && 'successfully'}
-            </StyledText>
-            {hasXAmount && (
+            <StyledText>{title}</StyledText>
+            {(hasXAmount || ikonType === 'claim') && (
               <>
-                <StyledText color={colors.invariant.green}>{tokenXAmount}</StyledText>
+                {hasXAmount ? (
+                  <StyledText color={colors.invariant.green}>{tokenXAmount}</StyledText>
+                ) : (
+                  <span> </span>
+                )}
                 {tokenXIcon === '/unknownToken.svg' ? (
                   <StyledText>{tokenXSymbol}</StyledText>
                 ) : (
@@ -153,20 +155,16 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
                 )}
               </>
             )}
-            {!!tokenYAmount && (
+            {hasYAmount && (
               <>
                 {ikonType === 'swap' ||
                 ikonType === 'unstake' ||
                 ikonType === 'stake' ||
                 ikonType === 'purchase' ? (
                   arrow
-                ) : ikonType === 'claim' ? (
-                  hasBothAmounts ? (
-                    <StyledText>+</StyledText>
-                  ) : null
-                ) : (
+                ) : hasBothAmounts ? (
                   <StyledText>+</StyledText>
-                )}
+                ) : null}
                 <StyledText color={colors.invariant.green}>
                   {tokenBetweenAmount ? tokenBetweenAmount : tokenYAmount}
                 </StyledText>
@@ -194,10 +192,10 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
                   position='relative'
                   display='flex'
                   alignItems='center'
-                  width={ikonType === 'swap' || ikonType === 'claim' ? 18 : 22}>
+                  width={ikonType === 'swap' ? 18 : 22}>
                   <img
                     src={icon}
-                    height={ikonType === 'swap' || ikonType === 'claim' ? 15 : 18}
+                    height={ikonType === 'swap' ? 15 : 18}
                     style={{ marginBottom: '2px' }}
                   />
                 </Grid>
