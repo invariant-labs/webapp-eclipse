@@ -1038,30 +1038,42 @@ export const NewPosition: React.FC<INewPosition> = ({
     )
   }
 
+  const originalPositionMethodRef = useRef<PositionOpeningMethod>(initialOpeningPositionMethod);
+
   useEffect(() => {
     if (tokenAIndex === null || tokenBIndex === null) return
 
     if ((isESUSDCPair || isESWETHPair) && lastSpecialPairRef.current !== currentPair) {
+      if (lastSpecialPairRef.current === '') {
+        originalPositionMethodRef.current = positionOpeningMethod;
+      }
+
       setPositionOpeningMethod('range')
-      onPositionOpeningMethodChange('range')
       setAlignment(DepositOptions.Basic)
 
       const DEST_FEE_TIER_INDEX = 5
-
       onChangePositionTokens(tokenAIndex, tokenBIndex, DEST_FEE_TIER_INDEX)
-
       lastSpecialPairRef.current = currentPair
     } else if (!isESUSDCPair && !isESWETHPair) {
-      lastSpecialPairRef.current = ''
-      if (positionOpeningMethod === 'range') {
-        setPositionOpeningMethod('concentration')
+      if (lastSpecialPairRef.current !== '') {
+        setPositionOpeningMethod(originalPositionMethodRef.current)
+
+        updatePath(
+          tokenAIndex,
+          tokenBIndex,
+          currentFeeIndex,
+          +concentrationArray[concentrationIndex].toFixed(0),
+          originalPositionMethodRef.current === 'range'
+        )
       }
-      if (isAutoSwapAvailable && lastSpecialPairRef.current === '') {
+
+      lastSpecialPairRef.current = ''
+
+      if (isAutoSwapAvailable) {
         setAlignment(DepositOptions.Auto)
       }
     }
   }, [tokenAIndex, tokenBIndex, tokens, isAutoSwapAvailable])
-
   return (
     <Grid container className={classes.wrapper}>
       <Grid onClick={() => handleBack()} className={classes.back} container item>
