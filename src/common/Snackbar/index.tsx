@@ -27,6 +27,7 @@ export interface TokensDetailsProps {
   tokenYIconAutoSwap?: string
   tokenXAmountAutoSwap?: string
   tokenYAmountAutoSwap?: string
+  roundIcon?: boolean
 }
 export interface CustomProps {
   txid?: string
@@ -60,7 +61,7 @@ const Transition = (props: GrowProps) => <Grow {...props} />
 const Snackbar: React.FC<ISnackbarProps> = ({ maxSnack = 3, children }) => {
   const isNavbarVisible = useMediaQuery(theme.breakpoints.down(1200))
   const isExSmall = useMediaQuery(theme.breakpoints.down('sm'))
-  const { classes } = useStyles()
+  const { classes } = useStyles({})
 
   return (
     <SnackbarProvider

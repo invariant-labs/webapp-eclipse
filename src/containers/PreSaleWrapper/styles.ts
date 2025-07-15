@@ -354,5 +354,62 @@ export const useStyles = makeStyles()(() => ({
   shareContainer: {
     display: 'flex',
     gap: 8
+  },
+  nftWrapper: {
+    position: 'relative',
+    alignItems: 'center',
+    padding: '24px 0',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 24,
+    width: '100%',
+    height: 264,
+
+    '& section': {
+      ...typography.body2,
+      color: colors.invariant.textGrey,
+      maxWidth: 408,
+      textAlign: 'center'
+    },
+    '& h4': {
+      ...typography.heading4,
+      color: colors.invariant.textGrey
+    },
+    '& h1': {
+      ...typography.heading1,
+      color: colors.invariant.text,
+      fontSize: 40
+    },
+    [theme.breakpoints.down(1070)]: {
+      height: 'auto'
+    }
+  },
+  nftBackground: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 48,
+    position: 'relative',
+    background:
+      'linear-gradient(90deg, rgba(17, 25, 49, 0.1) 0%, rgba(17, 25, 49, 1) 35%, rgba(17, 25, 49, 1) 70%, rgba(17, 25, 49, 0.1) 100%)',
+
+    [theme.breakpoints.down(1070)]: {
+      flexDirection: 'column',
+      gap: 0
+    }
+  },
+  nftCard: {
+    minHeight: 406,
+    minWidth: 326
+    // position: 'absolute',
+    // top: -50,
+    // right: 40,
+    // [theme.breakpoints.down(1200)]: {
+    //   right: -20
+    // },
+    // [theme.breakpoints.down(1070)]: {
+    //   position: 'relative',
+    //   top: 'auto',
+    //   right: 'auto'
+    // }
   }
 }))

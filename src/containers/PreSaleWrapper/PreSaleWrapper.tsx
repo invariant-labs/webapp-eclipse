@@ -4,12 +4,13 @@ import { BuyComponent } from '@components/PreSale/BuyComponent/BuyComponent'
 import { SaleStepper } from '@components/PreSale/SaleStepper/SaleStepper'
 import { RoundComponent } from '@components/PreSale/RoundComponent/RoundComponent'
 import { useDispatch, useSelector } from 'react-redux'
-import { actions } from '@store/reducers/sale'
+import { actions, NFTStatus } from '@store/reducers/sale'
 import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
 import { isLoadingProof, proofOfInclusion, saleSelectors } from '@store/selectors/sale'
 import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
 import { printBNandTrimZeros } from '@utils/utils'
+import NftPlaceholder from '@static/png/NFT_Card.png'
 import {
   EFFECTIVE_TARGET,
   getRound,
@@ -19,7 +20,8 @@ import {
   TIER1,
   TIER2,
   TIER3,
-  TIER4
+  TIER4,
+  MIN_DEPOSIT_FOR_NFT_MINT
 } from '@invariant-labs/sale-sdk'
 import { balanceLoading, status, poolTokens, balance, address } from '@store/selectors/solanaWallet'
 import {
@@ -204,6 +206,26 @@ export const PreSaleWrapper = () => {
   const initialReversePrices = localStorage.getItem('INVARIANT_SALE_REVERSE_PRICES') === 'true'
   const [reversedPrices, setReversedPrices] = useState(initialReversePrices)
   const walletAddress = useSelector(address)
+  const hasMintedNft = useMemo(() => {
+    const depositedAboveThreshold = userStats?.deposited.gte(MIN_DEPOSIT_FOR_NFT_MINT)
+    return depositedAboveThreshold && !userStats?.canMintNft
+  }, [userStats])
+
+  const nftStatus = useMemo<NFTStatus>(() => {
+    if (!userStats) {
+      return NFTStatus.NonEligible
+    }
+
+    if (userStats.canMintNft) {
+      return NFTStatus.Eligible
+    }
+
+    if (userStats.deposited.gte(MIN_DEPOSIT_FOR_NFT_MINT) && !userStats.canMintNft) {
+      return NFTStatus.Claimed
+    }
+
+    return NFTStatus.NonEligible
+  }, [userStats?.canMintNft, hasMintedNft])
 
   const slidesToShow = useMemo(() => {
     if (isSmallMobile) return 1
@@ -585,6 +607,30 @@ export const PreSaleWrapper = () => {
             )
           }}
         />
+      </Box>
+      <Box className={classes.sectionTitle}>
+        <Typography className={classes.sectionTitleText}>Invariant Contributor NFT</Typography>
+        <Box display='flex' alignItems='center' gap={12} className={classes.nftBackground}>
+          <Box className={classes.nftWrapper}>
+            <Typography component='section'>
+              Every participant in the Invariant Public Sale who contributes at least $
+              {printBNandTrimZeros(MIN_DEPOSIT_FOR_NFT_MINT, 6)} will receive a special,
+              non-transferable NFT.
+            </Typography>
+            <Typography component='h4'>Status</Typography>
+            <Typography component='h1'>{nftStatus}</Typography>
+
+            <Button
+              scheme='green'
+              onClick={() => dispatch(actions.mintNft())}
+              width={185}
+              height={44}
+              disabled={!userStats?.canMintNft}>
+              Mint
+            </Button>
+          </Box>
+          <img className={classes.nftCard} src={NftPlaceholder} />{' '}
+        </Box>
       </Box>
       <Box className={classes.sectionTitle}>
         <Typography className={classes.sectionTitleText}>Invariant by the Numbers</Typography>
