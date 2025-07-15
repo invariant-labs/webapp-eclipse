@@ -379,6 +379,9 @@ export const useStyles = makeStyles()(() => ({
     flexDirection: 'column',
     gap: 24,
     height: 264,
+    [theme.breakpoints.down('md')]: {
+      width: '100%'
+    },
 
     '& section': {
       ...typography.body2,
