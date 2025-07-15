@@ -58,6 +58,8 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
         return withdrawIcon
       case 'claim':
         return circleDolarIcon
+      case 'claim-nft':
+        return circleDolarIcon
       case 'stake':
         return stakeIcon
       case 'unstake':
@@ -78,6 +80,8 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
       case 'withdraw':
         return 'Withdrawn'
       case 'claim':
+        return 'Claimed'
+      case 'claim-nft':
         return 'Claimed NFT'
       case 'stake':
         return 'Staked:'
@@ -123,7 +127,8 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
                 ikonType === 'swap' ||
                 ikonType === 'unstake' ||
                 ikonType === 'stake' ||
-                ikonType === 'claim'
+                ikonType === 'claim' ||
+                ikonType === 'claim-nft'
                   ? 18
                   : 22
               }>
@@ -141,7 +146,7 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
               />
             </Grid>
             <StyledText>{title}</StyledText>
-            {(hasXAmount || ikonType === 'claim') && (
+            {(hasXAmount || ikonType === 'claim-nft') && (
               <>
                 {hasXAmount ? (
                   <StyledText color={colors.invariant.green}>{tokenXAmount}</StyledText>
