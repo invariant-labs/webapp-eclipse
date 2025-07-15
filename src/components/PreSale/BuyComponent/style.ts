@@ -3,6 +3,12 @@ import { makeStyles } from 'tss-react/mui'
 
 const useStyles = makeStyles<{ percentage: number; isActive?: boolean }>()(
   (theme, { percentage, isActive }) => ({
+    wrapper: {
+      width: 'fit-content',
+      [theme.breakpoints.down('lg')]: {
+        width: '100%'
+      }
+    },
     greenButton: {
       background: colors.invariant.greenLinearGradient,
       color: colors.invariant.newDark,
