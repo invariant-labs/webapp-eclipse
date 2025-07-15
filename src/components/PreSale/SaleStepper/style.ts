@@ -315,7 +315,8 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
     textAlign: 'center',
     ...typography.body1,
     [theme.breakpoints.down(550)]: {
-      ...typography.caption4
+      ...typography.caption4,
+      fontWeight: 700
     }
   }
 }))
