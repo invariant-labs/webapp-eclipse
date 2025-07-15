@@ -114,11 +114,11 @@ export const BuyComponent: React.FC<IProps> = ({
     }
 
     if (saleDidNotStart) {
-      return 'Sale did not start'
+      return 'Not started yet'
     }
 
     if (saleSoldOut) {
-      return 'Sale sold out'
+      return 'Sold out'
     }
 
     if (saleEnded) {
@@ -148,7 +148,7 @@ export const BuyComponent: React.FC<IProps> = ({
     }
 
     if (valueAsBN.add(userDepositedAmount).gt(whitelistWalletLimit) && !isPublic) {
-      return 'You have exceeded your allocation limit'
+      return 'Allocation limit reached'
     }
 
     if (valueAsBN.gt(tokens[tokenIndex].balance)) {
@@ -215,7 +215,7 @@ export const BuyComponent: React.FC<IProps> = ({
                   />
                 </Box>
               ) : saleDidNotStart ? (
-                <Typography className={classes.presaleTitle}>Presale starts in:</Typography>
+                <Typography className={classes.presaleTitle}>Community Sale opens in:</Typography>
               ) : null}
             </Box>
             <Box className={classes.sectionDivider} />
@@ -287,7 +287,7 @@ export const BuyComponent: React.FC<IProps> = ({
               currency={tokenIndex !== null ? tokens[tokenIndex].symbol : null}
               currencyIconSrc={tokenIndex !== null ? tokens[tokenIndex].logoURI : undefined}
               currencyIsUnknown={
-                tokenIndex !== null ? (tokens[tokenIndex].isUnknown ?? false) : false
+                tokenIndex !== null ? tokens[tokenIndex].isUnknown ?? false : false
               }
               disableBackgroundColor
               placeholder='0.0'
@@ -319,7 +319,7 @@ export const BuyComponent: React.FC<IProps> = ({
             />
           </Box>
           <Box className={classes.receiveBox}>
-            <Typography className={classes.receiveLabel}>You'll receive</Typography>
+            <Typography className={classes.receiveLabel}>Your allocation</Typography>
             {isLoading ? (
               <Skeleton variant='rounded' width={80} height={24} sx={{ ml: 1 }} />
             ) : (

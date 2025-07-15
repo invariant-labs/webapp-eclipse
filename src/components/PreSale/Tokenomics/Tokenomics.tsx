@@ -26,7 +26,7 @@ export const Tokenomics = () => {
       color: colors.invariant.textGrey
     },
     {
-      title: 'Presale',
+      title: 'Community Sale',
       percentage: 10,
       color: colors.invariant.yellow
     }

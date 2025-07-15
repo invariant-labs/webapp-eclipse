@@ -42,7 +42,6 @@ import TVLHero from '@static/png/presale/cards/TVL.png'
 import UsersHero from '@static/png/presale/cards/Users.png'
 import SonicHacktonHero from '@static/png/presale/cards/SonicHackaton.png'
 import AutoswapHero from '@static/png/presale/cards/Autoswap.png'
-import PubliSaleHero from '@static/png/presale/cards/SaleBegins.png'
 
 import { EventsCard } from '@components/PreSale/EventsCards/EventsCard'
 import Slider from 'react-slick'
@@ -367,12 +366,12 @@ export const PreSaleWrapper = () => {
   const getAlertBoxText = useCallback(() => {
     if (isLimitExceed) {
       return {
-        text: 'You have exceeded your allocation limit',
+        text: 'Allocation limit reached',
         variant: 'limit'
       }
     }
     if (!isPublic && proof?.length !== 0) {
-      return { text: 'You are eligible for this round of sale' }
+      return { text: 'You qualify for the sale' }
     }
     if (!isPublic && proof?.length === 0) {
       return {
@@ -641,7 +640,7 @@ export const PreSaleWrapper = () => {
         </Box>
       </Box>
       <Box className={classes.sectionTitle}>
-        <Typography className={classes.sectionTitleText}>Invariant by the Numbers</Typography>
+        <Typography className={classes.sectionTitleText}>Core Metrics</Typography>
         <Grid container className={classes.animatedCardsContainer}>
           <Grid item className={classes.animatedCardItem}>
             <AnimatedPreSaleCard
@@ -686,7 +685,7 @@ export const PreSaleWrapper = () => {
         </Grid>
       </Box>
       <Box className={classes.sectionTitle}>
-        <Typography className={classes.sectionTitleText}>The most capital-efficient DEX</Typography>
+        <Typography className={classes.sectionTitleText}>Designed for efficiency</Typography>
         <Box className={classes.dexChartContainer}>
           <DEXChart />
         </Box>
@@ -787,14 +786,6 @@ export const PreSaleWrapper = () => {
                 'Invariant introduces Liquid Staking on Eclipse. The sBITZ token is launched to solve BITZ liquidity issues and offer users significantly higher yields.'
               }
               heroImage={'https://eclipse.invariant.app/sBitz.png'}
-            />
-            <EventsCard
-              title={'Sale Begins'}
-              borderColor={'pink'}
-              description={
-                'Invariant launches on Solana mainnet. The first AMM with AutoSwap goes live.'
-              }
-              heroImage={PubliSaleHero}
             />
           </Slider>
         </Box>
