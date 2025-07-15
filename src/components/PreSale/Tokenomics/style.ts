@@ -19,17 +19,12 @@ const useStyles = makeStyles()(theme => ({
     }
   },
   gridContainer: {
-    width: '100%',
-    maxWidth: '600px',
     display: 'flex',
     flexWrap: 'wrap',
-    flexDirection: 'row',
-    [theme.breakpoints.down('md')]: {
-      flexDirection: 'column'
-    }
+    flexDirection: 'column',
+    width: '100%'
   },
   tokenomicsItemContainer: {
-    width: '50%',
     display: 'flex',
     justifyContent: 'flex-start',
     alignItems: 'center',
@@ -40,13 +35,21 @@ const useStyles = makeStyles()(theme => ({
     }
   },
   arcContainer: {
-    position: 'relative',
+    width: 311,
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
+    flexWrap: 'nowrap',
+    [theme.breakpoints.down('lg')]: {
+      maxWidth: 300,
+      width: '100%',
+      paddingRight: 10
+    },
+    gap: 24,
+    [theme.breakpoints.down(680)]: {
+      width: '100%'
+    }
   },
-  textContainer: {
-    marginLeft: '24px'
-  },
+
   chartImage: {
     position: 'absolute',
     height: '400px',
@@ -59,6 +62,14 @@ const useStyles = makeStyles()(theme => ({
       top: 0,
       position: 'relative',
       padding: 32
+    }
+  },
+  legendWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    [theme.breakpoints.down(680)]: {
+      flexDirection: 'column',
+      width: '100%'
     }
   }
 }))
