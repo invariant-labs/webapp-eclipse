@@ -808,10 +808,10 @@ export const PreSaleWrapper = () => {
       It’s designed to reward early contributors. The earlier you participate, the better price you get for the tokens.<br/><br/>
       The sale is divided into 4 phases, each with its own target. Once a phase’s target is reached, the sale moves to the next phase and the price permanently increases.<br/><br/>
       <b>Phases:</b><br/>
-      1. “Early Bird (0 - $150k) <span style="color: #2EE09A; font-weight: bold;">$0.010</span>”<br/>
-      2. “Phase 2 ($150k - $300k) <span style="color: #2EE09A; font-weight: bold;">$0.013</span>”<br/>
-      3. “Phase 3 ($300k - $450k) <span style="color: #2EE09A; font-weight: bold;">$0.015</span>”<br/>
-      4. “Final Phase (+$450k) <span style="color: #2EE09A; font-weight: bold;">$0.017</span>”
+      1. Early Bird (0 - $150k) <span style="color: #2EE09A; font-weight: bold;">$0.010</span><br/>
+      2. Phase 2 ($150k - $300k) <span style="color: #2EE09A; font-weight: bold;">$0.013</span><br/>
+      3. Phase 3 ($300k - $450k) <span style="color: #2EE09A; font-weight: bold;">$0.015</span><br/>
+      4. Final Phase (+$450k) <span style="color: #2EE09A; font-weight: bold;">$0.017</span>
     `
             },
             {
