@@ -25,7 +25,8 @@ export const OverlayWrapper = () => {
           backgroundImage: `url(${Overlay})`,
           backgroundSize: 'contain',
           backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat'
+          backgroundRepeat: 'no-repeat',
+          opacity: 0.5
         }}
       />
 
