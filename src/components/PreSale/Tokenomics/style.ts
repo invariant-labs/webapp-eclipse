@@ -1,3 +1,5 @@
+import { alpha } from '@mui/material'
+import { colors } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 const useStyles = makeStyles()(theme => ({
@@ -11,11 +13,13 @@ const useStyles = makeStyles()(theme => ({
     [theme.breakpoints.down('lg')]: {
       justifyContent: 'center',
       alignItems: 'center'
+    },
+    [theme.breakpoints.down('sm')]: {
+      paddingBottom: 8
     }
   },
   containerBackground: {
-    background:
-      'linear-gradient(90deg, rgba(17, 25, 49, 0.1) 0%, rgba(17, 25, 49, 1) 35%, rgba(17, 25, 49, 1) 70%, rgba(17, 25, 49, 0.1) 100%)'
+    background: `linear-gradient(90deg, ${alpha(colors.invariant.component, 0.1)} 0%, ${colors.invariant.component} 30%,  ${colors.invariant.component} 70%, ${alpha(colors.invariant.component, 0.1)} 100%)`
   },
   mobileChartContainer: {
     display: 'flex',
