@@ -32,7 +32,7 @@ export const useStyles = makeStyles()(() => ({
     width: '100%',
     minHeight: '112px',
     boxSizing: 'border-box',
-    borderRadius: '24px',
+    borderRadius: '34px',
     position: 'relative',
     background: 'linear-gradient(269.89deg, #EF84F5 0.89%, #2EE09A 99.11%)'
   },
