@@ -282,8 +282,8 @@ export function* mintNft() {
       yield put(
         snackbarsActions.add({
           tokensDetails: {
-            ikonType: 'claim',
-            tokenXAmount: '1',
+            ikonType: 'claim-nft',
+            tokenXAmount: '',
             tokenXIcon: logoShortIcon,
             tokenXSymbol: 'INVT',
             roundIcon: false

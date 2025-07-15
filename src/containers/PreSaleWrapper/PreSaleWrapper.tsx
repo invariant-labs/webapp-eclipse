@@ -307,6 +307,12 @@ export const PreSaleWrapper = () => {
   const amountLeft = useMemo(() => {
     if (targetAmount.isZero()) return new BN(0)
     if (round === 4) return EFFECTIVE_TARGET.sub(currentAmount)
+    if (round == 1) {
+      return new BN(150_000_000_000).sub(currentAmount) // 150k USDC
+    }
+    if (round == 2) {
+      return new BN(300_000_000_000).sub(currentAmount) // 300k USDC
+    }
     return getAmountTillNextPriceIncrease(currentAmount, targetAmount)
   }, [currentAmount, targetAmount])
 
