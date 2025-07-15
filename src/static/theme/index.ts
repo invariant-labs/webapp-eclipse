@@ -84,6 +84,8 @@ export const colors = {
     silver: '#C6C5C7',
     bronze: '#C48643',
     Error: '#FB555F',
+    offWhite: '#FBFBFB',
+    goldenYellow: '#FFD15C',
     normal: '#2A365C',
     lightBlue: '#00D9FF',
     errorTransparent: 'rgba(251, 85, 95, 0.2)',

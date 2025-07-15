@@ -31,8 +31,8 @@ import { Status } from '@store/reducers/solanaWallet'
 import { PublicKey } from '@solana/web3.js'
 import { EcosystemExposure } from './EcosystemExposure/EcosystemExposure'
 // import { ECBanner } from '@common/ECBanner/ECBanner'
-import { Faq } from '@common/Faq/Faq'
 import { faqData } from './faq'
+import { Faq } from '@common/Faq/Faq'
 
 interface LeaderboardProps {
   userContentPoints: CurrentContentPointsEntry[] | null
