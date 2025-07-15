@@ -7,6 +7,8 @@ const useStyles = makeStyles<{ percentage: number; isActive: boolean }>()(
       [theme.breakpoints.up('lg')]: {
         minWidth: '380px'
       },
+      display: 'flex',
+      flexDirection: 'column',
       width: '100%'
     },
 

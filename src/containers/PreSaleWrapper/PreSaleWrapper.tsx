@@ -555,7 +555,7 @@ export const PreSaleWrapper = () => {
             </Box>
             <Grid className={classes.reverseContainer}>
               <div className={classes.arrowIcon} onClick={togglePriceDirection}>
-                <span className={`${classes.reverseText} reverseText`}>Reverse token</span>
+                <span className={`${classes.reverseText} reverseText`}>Reverse token ratio</span>
                 <img src={swapArrowClean} alt='swap' />
               </div>
             </Grid>
@@ -613,9 +613,11 @@ export const PreSaleWrapper = () => {
         <Box display='flex' alignItems='center' gap={12} className={classes.nftBackground}>
           <Box className={classes.nftWrapper}>
             <Typography component='section'>
-              Every participant in the Invariant Public Sale who contributes at least $
-              {printBNandTrimZeros(MIN_DEPOSIT_FOR_NFT_MINT, 6)} will receive a special,
-              non-transferable NFT.
+              Every participant in the Invariant Sale who contributes at least $
+              {printBNandTrimZeros(MIN_DEPOSIT_FOR_NFT_MINT, 6)} will be able to mint a special,
+              non-transferable NFT. This NFT is not intended for trading or circulation. Instead, it
+              serves as an on-chain marker that links the wallet to future benefits and privileges
+              as part of our long-term roadmap
             </Typography>
             <Typography component='h4'>Status</Typography>
             <Typography component='h1'>{nftStatus}</Typography>
@@ -655,7 +657,7 @@ export const PreSaleWrapper = () => {
             <AnimatedPreSaleCard
               gradientPrimaryColor={colors.invariant.component}
               title='$4.5 MLN'
-              subtitle='valuation of Invariant during the sale'
+              subtitle='Fully Diluted Valuation (FDV)'
               delay={400}
             />
           </Grid>
@@ -671,7 +673,7 @@ export const PreSaleWrapper = () => {
               title='$1M in Fees'
               gradientPrimaryColor={`${colors.invariant.green}`}
               gradientDirection='to bottom'
-              subtitle='earned by liquidity providers'
+              subtitle='generated for liquidity providers'
               delay={700}
             />
           </Grid>
@@ -684,7 +686,7 @@ export const PreSaleWrapper = () => {
         </Box>
       </Box>
       <Box className={classes.sectionTitle}>
-        <Typography className={classes.sectionTitleText}>The Invariant Journey</Typography>
+        <Typography className={classes.sectionTitleText}>Invariant Journey</Typography>
         <Box className={classes.cardsContainer}>
           <Slider
             speed={500}

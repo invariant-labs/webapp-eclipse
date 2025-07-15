@@ -114,7 +114,7 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
   return (
     <Box className={classes.container}>
       <Box className={classes.roundTitleContainer}>
-        <Typography className={classes.roundText}>Phase:</Typography>
+        <Typography className={classes.roundText}>Current phase:</Typography>
         <Typography className={classes.roundTitle}>{roundName?.toUpperCase()}</Typography>
       </Box>
 
@@ -167,11 +167,11 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
           ) : (
             <>
               <Box className={classes.infoRow}>
-                <Typography className={classes.infoLabel}>Total raised:</Typography>
+                <Typography className={classes.infoLabel}>Total raised</Typography>
                 {renderFormattedNumberWithSkeleton(amountDeposited, mintDecimals, '$', '', '100px')}
               </Box>
               <Box className={classes.infoRow}>
-                <Typography className={classes.infoLabel}>Target raise:</Typography>
+                <Typography className={classes.infoLabel}>Target raise</Typography>
                 {renderFormattedNumberWithSkeleton(targetAmount, mintDecimals, '$', '', '100px')}
               </Box>
               <Box className={classes.infoRow}>
@@ -184,7 +184,6 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
                     }>
                     <img src={infoCircleIcon} />
                   </TooltipHover>
-                  <span>:</span>
                 </Typography>
                 {renderFormattedNumberWithSkeleton(
                   EFFECTIVE_TARGET,
@@ -208,7 +207,7 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
       </Box>
       <Box className={classes.infoCard} marginTop={'24px'}>
         <Box className={classes.infoRow}>
-          <Typography className={classes.infoLabel}>INVT Valuation:</Typography>
+          <Typography className={classes.infoLabel}>Fully Diluted Valuation (FDV)</Typography>
           <Typography className={classes.value}>$4.5 MLN</Typography>
         </Box>
       </Box>
@@ -240,7 +239,7 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
         )}
 
         <Box className={classes.infoRow}>
-          <Typography className={classes.secondaryLabel}>Your contribution: </Typography>
+          <Typography className={classes.secondaryLabel}>Your contribution</Typography>
           {!saleDidNotStart && walletStatus === Status.Initialized ? (
             <Typography className={classes.value}>
               {renderFormattedNumberWithSkeleton(
@@ -259,7 +258,7 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
 
         {!isLastRound && (
           <Box className={classes.infoRow}>
-            <Typography className={classes.secondaryLabel}>Remaining limit:</Typography>
+            <Typography className={classes.secondaryLabel}>Remaining limit</Typography>
             {!saleDidNotStart && walletStatus === Status.Initialized && !!proofOfInclusion ? (
               <Typography className={classes.value}>
                 {renderFormattedNumberWithSkeleton(
@@ -278,7 +277,7 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
         )}
 
         <Box className={classes.infoRow}>
-          <Typography className={classes.secondaryLabel}>Your allocation: </Typography>
+          <Typography className={classes.secondaryLabel}>Your allocation</Typography>
           {!saleDidNotStart && walletStatus === Status.Initialized ? (
             <Typography className={classes.value}>
               {renderFormattedNumberWithSkeleton(
