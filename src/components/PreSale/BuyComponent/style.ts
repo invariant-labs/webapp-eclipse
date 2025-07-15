@@ -126,7 +126,7 @@ const useStyles = makeStyles<{ percentage: number; isActive?: boolean }>()(
     },
     presaleTitle: {
       width: '100%',
-      height: '100%',
+      marginTop: '12px',
       textAlign: 'center',
       display: 'flex',
       justifyContent: 'center',

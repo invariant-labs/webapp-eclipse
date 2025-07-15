@@ -115,7 +115,11 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
     <Box className={classes.container}>
       <Box className={classes.roundTitleContainer}>
         <Typography className={classes.roundText}>Current phase:</Typography>
-        <Typography className={classes.roundTitle}>{roundName?.toUpperCase()}</Typography>
+        {isLoadingSaleStats ? (
+          <Skeleton variant='text' width={135} height={24} />
+        ) : (
+          <Typography className={classes.roundTitle}>{roundName?.toUpperCase()}</Typography>
+        )}
       </Box>
 
       {!isActive && (

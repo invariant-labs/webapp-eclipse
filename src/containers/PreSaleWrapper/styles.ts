@@ -24,7 +24,7 @@ export const useStyles = makeStyles()(() => ({
     zIndex: 5,
     textAlign: 'center',
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'flex-end',
     background:
       'linear-gradient(90deg, rgba(17, 25, 49, 0.1) 0%, #111931 29.21%, #111931 71%, rgba(17, 25, 49, 0.1) 100%);',
     boxSizing: 'border-box',
@@ -43,6 +43,7 @@ export const useStyles = makeStyles()(() => ({
     justifyContent: 'center',
     alignItems: 'center',
     gap: 24,
+    marginBottom: 51,
     [theme.breakpoints.down('lg')]: {
       minWidth: 'auto',
       marginRight: 0,
@@ -207,7 +208,7 @@ export const useStyles = makeStyles()(() => ({
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
-    marginTop: '24px',
+    marginTop: '12px',
     height: 40,
     padding: '8px 12px',
     borderRadius: '12px',
