@@ -1,5 +1,4 @@
 import { makeStyles } from 'tss-react/mui'
-import { colors } from '@static/theme'
 
 const useStyles = makeStyles()(theme => ({
   container: {
@@ -15,7 +14,8 @@ const useStyles = makeStyles()(theme => ({
     }
   },
   containerBackground: {
-    background: `linear-gradient(90deg, ${colors.invariant.component}ff 40%, ${colors.invariant.component}00 100%)`
+    background:
+      'linear-gradient(90deg, rgba(17, 25, 49, 0.1) 0%, rgba(17, 25, 49, 1) 35%, rgba(17, 25, 49, 1) 70%, rgba(17, 25, 49, 0.1) 100%)'
   },
   mobileChartContainer: {
     display: 'flex',

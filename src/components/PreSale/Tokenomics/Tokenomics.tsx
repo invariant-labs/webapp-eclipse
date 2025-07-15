@@ -44,17 +44,14 @@ export const Tokenomics = () => {
   ]
 
   return (
-    <Box className={`${classes.container} ${!isLgDown ? classes.containerBackground : ''}`}>
+    <Box className={`${classes.container} ${classes.containerBackground}`}>
       {isLgDown && (
         <Box className={classes.mobileChartContainer}>
           <img src={TokenomicsChart} alt='Tokenomics Chart' className={classes.mobileChart} />
         </Box>
       )}
 
-      <Grid
-        container
-        className={classes.gridContainer}
-        sx={{ background: isLgDown ? colors.invariant.component : 'transparent' }}>
+      <Grid container className={classes.gridContainer}>
         {tokenomicsItems.map((item, index) => (
           <Box key={index} className={classes.tokenomicsItemContainer}>
             <Box className={classes.arcContainer}>
