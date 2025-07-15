@@ -202,7 +202,16 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
             <Typography className={classes.priceIncreaseText}>
               {roundNumber === 4 ? 'REMAINING TO END OF SALE:' : 'REMAINING TO NEXT TIER:'}
             </Typography>
-            {renderFormattedNumberWithSkeleton(amountLeft, mintDecimals, '$', '', '100px')}
+            {isLoadingSaleStats ? (
+              <Skeleton variant='text' width={'100px'} height={24} />
+            ) : (
+              <Typography sx={{ color: colors.invariant.text }}>
+                $
+                {amountDeposited.eqn(0)
+                  ? '150,000'
+                  : formatNumberWithCommas(printBNandTrimZeros(amountLeft, mintDecimals, 3))}
+              </Typography>
+            )}
           </Box>
         )}
       </Box>
