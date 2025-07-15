@@ -216,6 +216,9 @@ export const Swap: React.FC<ISwap> = ({
   const [inputRef, setInputRef] = React.useState<string>(inputTarget.DEFAULT)
   const [isFirstPairGivingPoints, setIsFirstPairGivingPoints] = React.useState<boolean>(false)
   const [isSecondPairGivingPoints, setIsSecondPairGivingPoints] = React.useState<boolean>(false)
+  const isRefreshingRef = useRef(false)
+  const isTokenChangingRef = useRef(false)
+
   const [rateReversed, setRateReversed] = React.useState<boolean>(
     tokenFromIndex && tokenToIndex
       ? !initialXtoY(
@@ -295,7 +298,21 @@ export const Swap: React.FC<ISwap> = ({
   )
 
   const timeoutRef = useRef<number>(0)
+  const setTokenFromIndexSafe = (index: number | null) => {
+    isTokenChangingRef.current = true
+    setTokenFromIndex(index)
+    setTimeout(() => {
+      isTokenChangingRef.current = false
+    }, 800)
+  }
 
+  const setTokenToIndexSafe = (index: number | null) => {
+    isTokenChangingRef.current = true
+    setTokenToIndex(index)
+    setTimeout(() => {
+      isTokenChangingRef.current = false
+    }, 800)
+  }
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -447,8 +464,8 @@ export const Swap: React.FC<ISwap> = ({
 
   useEffect(() => {
     if (!!tokens.length && tokenFromIndex === null && tokenToIndex === null && canNavigate) {
-      setTokenFromIndex(initialTokenFromIndex)
-      setTokenToIndex(initialTokenToIndex)
+      setTokenFromIndexSafe(initialTokenFromIndex)
+      setTokenToIndexSafe(initialTokenToIndex)
     }
   }, [tokens.length, canNavigate, initialTokenFromIndex, initialTokenToIndex])
 
@@ -466,7 +483,9 @@ export const Swap: React.FC<ISwap> = ({
       !(amountFrom === '' && amountTo === '') &&
       !swapIsLoading &&
       swapAccounts &&
-      Object.keys(swapAccounts.pools || {}).length > 0
+      Object.keys(swapAccounts.pools || {}).length > 0 &&
+      !isRefreshingRef.current &&
+      !isTokenChangingRef.current
     ) {
       simulateWithTimeout()
     }
@@ -488,7 +507,9 @@ export const Swap: React.FC<ISwap> = ({
       !(amountFrom === '' && amountTo === '') &&
       !swapIsLoading &&
       swapAccounts &&
-      Object.keys(swapAccounts.pools || {}).length > 0
+      Object.keys(swapAccounts.pools || {}).length > 0 &&
+      !isRefreshingRef.current &&
+      !isTokenChangingRef.current
     ) {
       simulateWithTimeout()
     }
@@ -504,7 +525,12 @@ export const Swap: React.FC<ISwap> = ({
   ])
 
   useEffect(() => {
-    if (progress === 'none' && !(amountFrom === '' && amountTo === '')) {
+    if (
+      progress === 'none' &&
+      !(amountFrom === '' && amountTo === '') &&
+      !isRefreshingRef.current &&
+      !isTokenChangingRef.current
+    ) {
       if (swapIsLoading) {
         setPendingSimulation(true)
       } else {
@@ -528,7 +554,12 @@ export const Swap: React.FC<ISwap> = ({
   }
 
   useEffect(() => {
-    if (!swapIsLoading && pendingSimulation) {
+    if (
+      !swapIsLoading &&
+      pendingSimulation &&
+      !isRefreshingRef.current &&
+      !isTokenChangingRef.current
+    ) {
       setPendingSimulation(false)
       simulateWithTimeout()
     }
@@ -966,9 +997,16 @@ export const Swap: React.FC<ISwap> = ({
     amountTo !== ''
 
   const handleRefresh = async () => {
+    if (isRefreshingRef.current) return
+
+    isRefreshingRef.current = true
     setErrorVisible(false)
     onRefresh(tokenFromIndex, tokenToIndex)
     setRefresherTime(REFRESHER_INTERVAL)
+
+    setTimeout(() => {
+      isRefreshingRef.current = false
+    }, 600)
   }
 
   useEffect(() => {
@@ -1241,7 +1279,7 @@ export const Swap: React.FC<ISwap> = ({
               ]}
               tokens={tokens}
               current={tokenFromIndex !== null ? tokens[tokenFromIndex] : null}
-              onSelect={setTokenFromIndex}
+              onSelect={setTokenFromIndexSafe}
               disabled={tokenFromIndex === tokenToIndex || tokenFromIndex === null}
               hideBalances={walletStatus !== Status.Initialized}
               handleAddToken={handleAddToken}
@@ -1289,8 +1327,8 @@ export const Swap: React.FC<ISwap> = ({
                   const tmpAmount = amountTo
 
                   const tmp = tokenFromIndex
-                  setTokenFromIndex(tokenToIndex)
-                  setTokenToIndex(tmp)
+                  setTokenFromIndexSafe(tokenToIndex)
+                  setTokenToIndexSafe(tmp)
 
                   setInputRef(inputTarget.FROM)
                   setAmountFrom(tmpAmount)
@@ -1364,7 +1402,7 @@ export const Swap: React.FC<ISwap> = ({
               ]}
               tokens={tokens}
               current={tokenToIndex !== null ? tokens[tokenToIndex] : null}
-              onSelect={setTokenToIndex}
+              onSelect={setTokenToIndexSafe}
               disabled={tokenFromIndex === tokenToIndex || tokenToIndex === null}
               hideBalances={walletStatus !== Status.Initialized}
               handleAddToken={handleAddToken}
