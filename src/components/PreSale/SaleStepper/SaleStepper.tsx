@@ -24,6 +24,7 @@ export const SaleStepper: React.FC<SaleStepperProps> = ({
 }) => {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('lg'))
+  const isSm = useMediaQuery(theme.breakpoints.down(550))
 
   const connectorHeight = Math.round(720 / steps.length - 60)
   const { classes } = useStyles({ connectorHeight })
@@ -156,11 +157,12 @@ export const SaleStepper: React.FC<SaleStepperProps> = ({
                   sx={{
                     marginTop: '4px',
                     display: 'flex',
-                    flexDirection: 'column',
                     alignItems: 'flex-start',
-                    justifyContent: 'center'
+                    justifyContent: 'center',
+                    flexWrap: 'nowrap'
                   }}>
                   <Typography className={classes.labelText}>{tokenPart}</Typography>
+                  {!isSm && <Typography className={classes.labelText}> = </Typography>}
                   <Typography className={classes.labelText}>{pricePart}</Typography>
                 </Box>
               ) : (

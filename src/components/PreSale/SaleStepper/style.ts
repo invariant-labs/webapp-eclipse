@@ -58,6 +58,9 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
     [theme.breakpoints.down('lg')]: {
       marginBottom: 0,
       width: '30%'
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: '26%'
     }
   },
   stepCircle: {
@@ -109,7 +112,7 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
       marginLeft: 0,
       textAlign: 'center',
       display: 'flex',
-      flexDirection: 'column',
+      gap: '4px',
       alignItems: 'center',
       justifyContent: 'center',
       whiteSpace: 'nowrap',
@@ -117,6 +120,11 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
       top: '120%',
       transform: 'translate(-50%,-50%)',
       left: '50%'
+    },
+
+    [theme.breakpoints.down(550)]: {
+      flexDirection: 'column',
+      gap: 0
     }
   },
 
