@@ -13,6 +13,10 @@ export const useStyles = makeStyles()(() => ({
     paddingInline: 40,
     [theme.breakpoints.down('sm')]: {
       paddingInline: 8
+    },
+
+    '&>div:first-of-type': {
+      overflow: 'visible'
     }
   },
   contentWrapper: {

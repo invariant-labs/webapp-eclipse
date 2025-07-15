@@ -261,7 +261,7 @@ const useStyles = makeStyles<{ percentage: number; isActive?: boolean }>()(
         : colors.invariant.dark
     },
     receiveLabel: {
-      ...typography.caption2,
+      ...typography.body3,
       color: colors.invariant.textGrey
     },
     tokenAmount: {

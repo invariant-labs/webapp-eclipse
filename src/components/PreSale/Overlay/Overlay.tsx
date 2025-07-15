@@ -1,5 +1,6 @@
 import { Box } from '@mui/material'
-import Overlay from '@static/png/presale/Overlay.png'
+import Overlay1 from '@static/png/presale/overlay1.png'
+import Overlay2 from '@static/png/presale/overlay2.png'
 import PageOverlay from '@static/png/presale/page_overlay.png'
 
 export const OverlayWrapper = () => {
@@ -17,19 +18,34 @@ export const OverlayWrapper = () => {
       <Box
         sx={{
           position: 'absolute',
-          top: '0',
-          left: 'calc(50% - 800px)',
-          width: '900px',
-          height: '800px',
+          top: 550,
+          left: 'calc(50% - 600px)',
+          width: '230px',
+          height: '240px',
           zIndex: 10,
-          backgroundImage: `url(${Overlay})`,
+          backgroundImage: `url(${Overlay1})`,
           backgroundSize: 'contain',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
           opacity: 0.5
         }}
       />
-
+      <Box
+        sx={{
+          position: 'absolute',
+          top: '-100px',
+          left: 'calc(50% - 300px)',
+          width: '120px',
+          height: '200px',
+          overflow: 'visible',
+          zIndex: 10,
+          backgroundImage: `url(${Overlay2})`,
+          backgroundSize: 'contain',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          opacity: 0.5
+        }}
+      />
       <Box
         sx={{
           position: 'fixed',
