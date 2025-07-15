@@ -13,26 +13,17 @@ interface TokenomicsItem {
 export const Tokenomics = () => {
   const { classes } = useStyles()
 
-  const tokenomicsItems: TokenomicsItem[] = [
+  const tokenomicsItemsLeft: TokenomicsItem[] = [
     {
       title: 'Community',
       percentage: 40,
       color: colors.invariant.green
     },
-    {
-      title: 'Strategic Reserve',
-      percentage: 25,
-      color: colors.invariant.pink
-    },
+
     {
       title: 'Contributors & Grants',
       percentage: 15,
       color: colors.invariant.textGrey
-    },
-    {
-      title: 'Liquidity',
-      percentage: 10,
-      color: colors.invariant.light
     },
     {
       title: 'Presale',
@@ -40,23 +31,40 @@ export const Tokenomics = () => {
       color: colors.invariant.yellow
     }
   ]
+  const tokenomicsItemsRight: TokenomicsItem[] = [
+    {
+      title: 'Strategic Reserve',
+      percentage: 25,
+      color: colors.invariant.pink
+    },
+    {
+      title: 'Liquidity',
+      percentage: 10,
+      color: colors.invariant.light
+    }
+  ]
+  const tokenomicsItems = [tokenomicsItemsLeft, tokenomicsItemsRight]
 
   return (
     <Box className={classes.container}>
-      <Grid container className={classes.gridContainer}>
-        {tokenomicsItems.map((item, index) => (
-          <Box key={index} className={classes.tokenomicsItemContainer}>
-            <Box className={classes.arcContainer}>
-              <TokenomicsArc color={item.color} width={65} height={98} glowColor={item.color} />
-              <Box className={classes.textContainer} sx={{ color: colors.invariant.text }}>
-                <Typography sx={{ ...typography.heading3 }}>{item.title}</Typography>
-                <Typography sx={{ ...typography.heading4, color: item.color }}>
-                  ({item.percentage}%)
-                </Typography>
-              </Box>
-            </Box>
-          </Box>
-        ))}
+      <Grid className={classes.legendWrapper}>
+        {tokenomicsItems.map(tokenomicsSection => {
+          return (
+            <Grid className={classes.gridContainer}>
+              {tokenomicsSection.map((item, index) => (
+                <Box key={index} className={classes.arcContainer}>
+                  <TokenomicsArc color={item.color} width={65} height={98} glowColor={item.color} />
+                  <Box sx={{ color: colors.invariant.text }}>
+                    <Typography sx={{ ...typography.heading3 }}>{item.title}</Typography>
+                    <Typography sx={{ ...typography.heading4, color: item.color }}>
+                      ({item.percentage}%)
+                    </Typography>
+                  </Box>
+                </Box>
+              ))}
+            </Grid>
+          )
+        })}
       </Grid>
       <img src={TokenomicsChart} alt='Tokenomics Chart' className={classes.chartImage} />
     </Box>
