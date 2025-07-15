@@ -165,7 +165,8 @@ const useStyles = makeStyles<StyleProps>()((theme, { alignment }) => {
         marginTop: '32px'
       },
       fontWeight: '400',
-      marginTop: '16px'
+      marginTop: '16px',
+      fontSize: '18px'
     },
     barValueText: {
       ...typography.body1,
