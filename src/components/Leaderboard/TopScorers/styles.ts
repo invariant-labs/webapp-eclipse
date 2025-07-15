@@ -18,7 +18,8 @@ const useStyles = makeStyles()(() => {
       display: 'flex',
       gap: 24,
       [theme.breakpoints.down('sm')]: {
-        flexDirection: 'column'
+        flexDirection: 'column',
+        width: '100%'
       },
 
       [theme.breakpoints.up('lg')]: {
@@ -65,6 +66,9 @@ const useStyles = makeStyles()(() => {
       gap: 24,
       [theme.breakpoints.up('lg')]: {
         width: 316
+      },
+      [theme.breakpoints.down('sm')]: {
+        width: '100%'
       }
     },
     topScorersItemBox: {
