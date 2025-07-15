@@ -7,14 +7,12 @@ import {
   ALL_FEE_TIERS_DATA,
   autoSwapPools,
   DepositOptions,
-  ES_MAIN,
   NetworkType,
   PositionTokenBlock,
   promotedTiers,
   REFRESHER_INTERVAL,
   USDC_MAIN,
-  USDT_MAIN,
-  WETH_MAIN
+  USDT_MAIN
 } from '@store/consts/static'
 import {
   addressToTicker,
@@ -267,8 +265,6 @@ export const NewPosition: React.FC<INewPosition> = ({
     initialOpeningPositionMethod
   )
 
-  const lastSpecialPairRef = useRef<string>('')
-
   const [ConfirmDialog, confirm] = useConfirm(
     'Are you sure',
     `Please ensure you’re opening your position within the correct price range. Opening a position in an incorrect range on this pool can result in a loss of value - essentially, it’s like selling your tokens below the market price or buying them above it.`
@@ -297,35 +293,6 @@ export const NewPosition: React.FC<INewPosition> = ({
   const [refresherTime, setRefresherTime] = React.useState<number>(REFRESHER_INTERVAL)
 
   const [shouldReversePlot, setShouldReversePlot] = useState(false)
-
-  const { currentPair, isESUSDCPair, isESWETHPair } = useMemo(() => {
-    if (tokenAIndex === null || tokenBIndex === null) {
-      return {
-        tokenAAddress: '',
-        tokenBAddress: '',
-        currentPair: '',
-        isESUSDCPair: false,
-        isESWETHPair: false
-      }
-    }
-    const tokenAAddress = tokens[tokenAIndex].assetAddress.toString()
-    const tokenBAddress = tokens[tokenBIndex].assetAddress.toString()
-    const currentPair = [tokenAAddress, tokenBAddress].sort().join('-')
-
-    const isESUSDCPair =
-      (tokenAAddress === ES_MAIN.address.toString() && tokenBAddress === USDC_MAIN.address.toString()) ||
-      (tokenBAddress === ES_MAIN.address.toString() && tokenAAddress === USDC_MAIN.address.toString())
-
-    const isESWETHPair =
-      (tokenAAddress === ES_MAIN.address.toString() && tokenBAddress === WETH_MAIN.address.toString()) ||
-      (tokenBAddress === ES_MAIN.address.toString() && tokenAAddress === WETH_MAIN.address.toString())
-
-    return {
-      currentPair,
-      isESUSDCPair,
-      isESWETHPair
-    }
-  }, [tokens, tokenAIndex, tokenBIndex])
 
   const concentrationArray: number[] = useMemo(() => {
     const validatedMidPrice = validConcentrationMidPriceTick(midPrice.index, isXtoY, tickSpacing)
@@ -376,21 +343,17 @@ export const NewPosition: React.FC<INewPosition> = ({
 
   useEffect(() => {
     if (isLoadingTicksOrTickmap || isWaitingForNewPool) return
-
-    const isSpecialPair = lastSpecialPairRef.current !== '';
-
     setIsAutoSwapAvailable(
-      !isSpecialPair &&
       tokenAIndex !== null &&
-      tokenBIndex !== null &&
-      autoSwapPools.some(
-        item =>
-          (item.pair.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
-            item.pair.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
-          (item.pair.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
-            item.pair.tokenY.equals(tokens[tokenAIndex].assetAddress))
-      ) &&
-      isCurrentPoolExisting
+        tokenBIndex !== null &&
+        autoSwapPools.some(
+          item =>
+            (item.pair.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
+              item.pair.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
+            (item.pair.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
+              item.pair.tokenY.equals(tokens[tokenAIndex].assetAddress))
+        ) &&
+        isCurrentPoolExisting
     )
   }, [
     tokenAIndex,
@@ -409,9 +372,7 @@ export const NewPosition: React.FC<INewPosition> = ({
 
   useEffect(() => {
     if (isAutoSwapAvailable) {
-      if (lastSpecialPairRef.current === '') {
-        setAlignment(DepositOptions.Auto)
-      }
+      setAlignment(DepositOptions.Auto)
     } else if (!isAutoSwapAvailable && alignment === DepositOptions.Auto) {
       setAlignment(DepositOptions.Basic)
     }
@@ -467,7 +428,7 @@ export const NewPosition: React.FC<INewPosition> = ({
     return estimatedPointsForScale(
       positionOpeningMethod === 'concentration'
         ? concentrationArray[concentrationIndex] ??
-        concentrationArray[concentrationArray.length - 1]
+            concentrationArray[concentrationArray.length - 1]
         : calculateConcentration(leftRange, rightRange),
       positionOpeningMethod === 'concentration' ? concentrationArray : rangeConcentrationArray
     )
@@ -515,11 +476,11 @@ export const NewPosition: React.FC<INewPosition> = ({
       const amount = isAutoswapOn
         ? tokenBDeposit
         : getOtherTokenAmount(
-          convertBalanceToBN(deposit, tokens[tokenAIndex].decimals),
-          leftRange,
-          rightRange,
-          true
-        )
+            convertBalanceToBN(deposit, tokens[tokenAIndex].decimals),
+            leftRange,
+            rightRange,
+            true
+          )
 
       if (tokenBIndex !== null && +deposit !== 0) {
         setTokenADeposit(deposit)
@@ -531,11 +492,11 @@ export const NewPosition: React.FC<INewPosition> = ({
       const amount = isAutoswapOn
         ? tokenADeposit
         : getOtherTokenAmount(
-          convertBalanceToBN(deposit, tokens[tokenBIndex].decimals),
-          leftRange,
-          rightRange,
-          false
-        )
+            convertBalanceToBN(deposit, tokens[tokenBIndex].decimals),
+            leftRange,
+            rightRange,
+            false
+          )
 
       if (tokenAIndex !== null && +deposit !== 0) {
         setTokenBDeposit(deposit)
@@ -556,11 +517,11 @@ export const NewPosition: React.FC<INewPosition> = ({
       const amount = isAutoswapOn
         ? tokenBDeposit
         : getOtherTokenAmount(
-          convertBalanceToBN(deposit, tokens[tokenAIndex].decimals),
-          leftRange,
-          rightRange,
-          true
-        )
+            convertBalanceToBN(deposit, tokens[tokenAIndex].decimals),
+            leftRange,
+            rightRange,
+            true
+          )
       if (tokenBIndex !== null && +deposit !== 0) {
         setTokenADeposit(deposit)
         setTokenBDeposit(amount)
@@ -572,11 +533,11 @@ export const NewPosition: React.FC<INewPosition> = ({
       const amount = isAutoswapOn
         ? tokenADeposit
         : getOtherTokenAmount(
-          convertBalanceToBN(deposit, tokens[tokenBIndex].decimals),
-          leftRange,
-          rightRange,
-          false
-        )
+            convertBalanceToBN(deposit, tokens[tokenBIndex].decimals),
+            leftRange,
+            rightRange,
+            false
+          )
 
       if (tokenAIndex !== null && +deposit !== 0) {
         setTokenBDeposit(deposit)
@@ -589,12 +550,12 @@ export const NewPosition: React.FC<INewPosition> = ({
     tokenAIndex === null || tokenBIndex === null
       ? undefined
       : promotedTiers.find(
-        tier =>
-          (tier.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
-            tier.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
-          (tier.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
-            tier.tokenY.equals(tokens[tokenAIndex].assetAddress))
-      )?.index ?? undefined
+          tier =>
+            (tier.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
+              tier.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
+            (tier.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
+              tier.tokenY.equals(tokens[tokenAIndex].assetAddress))
+        )?.index ?? undefined
 
   const getMinSliderIndex = () => {
     let minimumSliderIndex = 0
@@ -753,11 +714,11 @@ export const NewPosition: React.FC<INewPosition> = ({
     () =>
       positionOpeningMethod === 'range'
         ? determinePositionTokenBlock(
-          currentPriceSqrt,
-          Math.min(leftRange, rightRange),
-          Math.max(leftRange, rightRange),
-          isXtoY
-        )
+            currentPriceSqrt,
+            Math.min(leftRange, rightRange),
+            Math.max(leftRange, rightRange),
+            isXtoY
+          )
         : false,
     [leftRange, rightRange, currentPriceSqrt]
   )
@@ -786,12 +747,7 @@ export const NewPosition: React.FC<INewPosition> = ({
   useEffect(() => {
     if (tokenAIndex === null || tokenBIndex === null) return
     if (alignment === DepositOptions.Auto) {
-      if (lastSpecialPairRef.current !== '') {
-        setAlignment(DepositOptions.Basic);
-
-      } else {
-        setTokenACheckbox(true)
-      }
+      setTokenACheckbox(true)
       setTokenBCheckbox(true)
       return
     }
@@ -1038,30 +994,6 @@ export const NewPosition: React.FC<INewPosition> = ({
     )
   }
 
-  useEffect(() => {
-    if (tokenAIndex === null || tokenBIndex === null) return
-
-    if ((isESUSDCPair || isESWETHPair) && lastSpecialPairRef.current !== currentPair) {
-      setPositionOpeningMethod('range')
-      onPositionOpeningMethodChange('range')
-      setAlignment(DepositOptions.Basic)
-
-      const DEST_FEE_TIER_INDEX = 5
-
-      onChangePositionTokens(tokenAIndex, tokenBIndex, DEST_FEE_TIER_INDEX)
-
-      lastSpecialPairRef.current = currentPair
-    } else if (!isESUSDCPair && !isESWETHPair) {
-      lastSpecialPairRef.current = ''
-      if (positionOpeningMethod === 'range') {
-        setPositionOpeningMethod('concentration')
-      }
-      if (isAutoSwapAvailable && lastSpecialPairRef.current === '') {
-        setAlignment(DepositOptions.Auto)
-      }
-    }
-  }, [tokenAIndex, tokenBIndex, tokens, isAutoSwapAvailable])
-
   return (
     <Grid container className={classes.wrapper}>
       <Grid onClick={() => handleBack()} className={classes.back} container item>
@@ -1119,6 +1051,9 @@ export const NewPosition: React.FC<INewPosition> = ({
                 <Box
                   mr={1}
                   display='flex'
+                  alignItems='center'
+                  justifyContent='center'
+                  width={26}
                   height={21}>
                   <Refresher
                     currentIndex={refresherTime}
@@ -1167,32 +1102,27 @@ export const NewPosition: React.FC<INewPosition> = ({
                 {tokenAIndex !== null && tokenBIndex !== null && (
                   <ConcentrationTypeSwitch
                     onSwitch={val => {
-                      console.log({ isESUSDCPair, isESWETHPair })
                       if (val) {
                         setPositionOpeningMethod('concentration')
-                        if (!isESUSDCPair && !isESWETHPair) {
-                          onPositionOpeningMethodChange('concentration')
-                          updatePath(
-                            tokenAIndex,
-                            tokenBIndex,
-                            currentFeeIndex,
-                            +concentrationArray[concentrationIndex].toFixed(0),
-                            false
-                          )
-                        }
+                        onPositionOpeningMethodChange('concentration')
+                        updatePath(
+                          tokenAIndex,
+                          tokenBIndex,
+                          currentFeeIndex,
+                          +concentrationArray[concentrationIndex].toFixed(0),
+                          false
+                        )
                       } else {
                         setPositionOpeningMethod('range')
-                        if (!isESUSDCPair && !isESWETHPair) {
-                          onPositionOpeningMethodChange('range')
-                          updatePath(
-                            tokenAIndex,
-                            tokenBIndex,
-                            currentFeeIndex,
-                            +concentrationArray[concentrationIndex].toFixed(0),
-                            true
-                          )
-                        }
+                        onPositionOpeningMethodChange('range')
 
+                        updatePath(
+                          tokenAIndex,
+                          tokenBIndex,
+                          currentFeeIndex,
+                          +concentrationArray[concentrationIndex].toFixed(0),
+                          true
+                        )
                       }
                     }}
                     className={classes.switch}
@@ -1273,10 +1203,10 @@ export const NewPosition: React.FC<INewPosition> = ({
           tokenAInputState={{
             value:
               tokenAIndex !== null &&
-                tokenBIndex !== null &&
-                !isWaitingForNewPool &&
-                blockedToken === PositionTokenBlock.A &&
-                alignment === DepositOptions.Basic
+              tokenBIndex !== null &&
+              !isWaitingForNewPool &&
+              blockedToken === PositionTokenBlock.A &&
+              alignment === DepositOptions.Basic
                 ? '0'
                 : tokenADeposit,
             setValue: value => {
@@ -1312,10 +1242,10 @@ export const NewPosition: React.FC<INewPosition> = ({
           tokenBInputState={{
             value:
               tokenAIndex !== null &&
-                tokenBIndex !== null &&
-                !isWaitingForNewPool &&
-                blockedToken === PositionTokenBlock.B &&
-                alignment === DepositOptions.Basic
+              tokenBIndex !== null &&
+              !isWaitingForNewPool &&
+              blockedToken === PositionTokenBlock.B &&
+              alignment === DepositOptions.Basic
                 ? '0'
                 : tokenBDeposit,
             setValue: value => {
@@ -1426,14 +1356,10 @@ export const NewPosition: React.FC<INewPosition> = ({
                 onSwitch={val => {
                   if (val) {
                     setPositionOpeningMethod('concentration')
-                    if (!isESUSDCPair && !isESWETHPair) {
-                      onPositionOpeningMethodChange('concentration')
-                    }
+                    onPositionOpeningMethodChange('concentration')
                   } else {
                     setPositionOpeningMethod('range')
-                    if (!isESUSDCPair && !isESWETHPair) {
-                      onPositionOpeningMethodChange('range')
-                    }
+                    onPositionOpeningMethodChange('range')
                   }
                 }}
                 className={classes.switch}
@@ -1443,14 +1369,11 @@ export const NewPosition: React.FC<INewPosition> = ({
           </Grid>
         </Hidden>
         {isCurrentPoolExisting ||
-          tokenAIndex === null ||
-          tokenBIndex === null ||
-          tokenAIndex === tokenBIndex ||
-          isWaitingForNewPool ? (
+        tokenAIndex === null ||
+        tokenBIndex === null ||
+        tokenAIndex === tokenBIndex ||
+        isWaitingForNewPool ? (
           <RangeSelector
-            tokens={tokens}
-            tokenAIndex={tokenAIndex}
-            tokenBIndex={tokenBIndex}
             oracleDiffPercentage={oracleDiffPercentage}
             diffPercentage={diffPercentage}
             showPriceWarning={showPriceWarning}
@@ -1467,21 +1390,20 @@ export const NewPosition: React.FC<INewPosition> = ({
             initialConcentration={initialConcentration}
             poolIndex={poolIndex}
             onChangeRange={onChangeRange}
-            onRefresh={onRefresh}
             blocked={blocked}
             blockerInfo={setRangeBlockerInfo()}
             {...(tokenAIndex === null ||
-              tokenBIndex === null ||
-              !isCurrentPoolExisting ||
-              data.length === 0 ||
-              isWaitingForNewPool
+            tokenBIndex === null ||
+            !isCurrentPoolExisting ||
+            data.length === 0 ||
+            isWaitingForNewPool
               ? noRangePlaceholderProps
               : {
-                data,
-                midPrice,
-                tokenASymbol: tokens[tokenAIndex].symbol,
-                tokenBSymbol: tokens[tokenBIndex].symbol
-              })}
+                  data,
+                  midPrice,
+                  tokenASymbol: tokens[tokenAIndex].symbol,
+                  tokenBSymbol: tokens[tokenBIndex].symbol
+                })}
             isLoadingTicksOrTickmap={isLoadingTicksOrTickmap}
             isXtoY={isXtoY}
             tickSpacing={tickSpacing}
