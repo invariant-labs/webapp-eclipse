@@ -173,7 +173,7 @@ export const BuyComponent: React.FC<IProps> = ({
   }, [alertBox])
 
   return (
-    <Box>
+    <Box className={classes.wrapper}>
       <Box className={classes.container}>
         <Box sx={{ minHeight: '206px' }}>
           <Box className={classes.headingContainer}>
@@ -287,7 +287,7 @@ export const BuyComponent: React.FC<IProps> = ({
               currency={tokenIndex !== null ? tokens[tokenIndex].symbol : null}
               currencyIconSrc={tokenIndex !== null ? tokens[tokenIndex].logoURI : undefined}
               currencyIsUnknown={
-                tokenIndex !== null ? (tokens[tokenIndex].isUnknown ?? false) : false
+                tokenIndex !== null ? tokens[tokenIndex].isUnknown ?? false : false
               }
               disableBackgroundColor
               placeholder='0.0'
