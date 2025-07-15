@@ -18,6 +18,14 @@ import { ILiquidityToken } from '@store/consts/types'
 import AddLiquidity from './AddLiquidity/AddLiquidity'
 import { BN } from '@coral-xyz/anchor'
 import RemoveLiquidity from './RemoveLiquidity/RemoveLiquidity'
+import { PublicKey } from '@solana/web3.js'
+import { Status } from '@store/reducers/solanaWallet'
+import { PoolWithAddress } from '@store/reducers/pools'
+import { NetworkType } from '@store/consts/static'
+import { Pair } from '@invariant-labs/sdk-eclipse'
+import { Tickmap } from '@invariant-labs/sdk-eclipse/lib/market'
+import { Tick } from '@invariant-labs/sdk-eclipse/src/market'
+import { PlotTickData } from '@store/reducers/positions'
 
 export interface IChangeLiquidityModal {
   open: boolean
@@ -32,11 +40,44 @@ export interface IChangeLiquidityModal {
   tvl: number
   currentPrice: number
   onClose: () => void
-  tokenXAddress: string
-  tokenYAddress: string
+  tokenXAddress: PublicKey
+  tokenYAddress: PublicKey
   fee: BN
   leftRange: number
   rightRange: number
+  tokens: {
+    assetAddress: PublicKey
+    balance: BN
+    tokenProgram?: PublicKey
+    symbol: string
+    address: PublicKey
+    decimals: number
+    name: string
+    logoURI: string
+    coingeckoId?: string
+    isUnknown?: boolean
+  }[]
+  walletStatus: Status
+  allPools: PoolWithAddress[]
+  isBalanceLoading: boolean
+  currentNetwork: NetworkType
+  ticksLoading: boolean
+  isTimeoutError: boolean
+  getCurrentPlotTicks: () => void
+  onConnectWallet: () => void
+  onDisconnectWallet: () => void
+  getPoolData: (pair: Pair) => void
+  setShouldNotUpdateRange: () => void
+  autoSwapPoolData: PoolWithAddress | null
+  autoSwapTicks: Tick[]
+  autoSwapTickMap: Tickmap | null
+  isLoadingAutoSwapPool: boolean
+  isLoadingAutoSwapPoolTicksOrTickMap: boolean
+  ticksData: PlotTickData[]
+  changeLiquidity: (liquidity: BN, slippage: BN, isAddLiquidity: boolean) => void
+  success: boolean
+  inProgress: boolean
+  setChangeLiquiditySuccess: (value: boolean) => void
 }
 
 export const ChangeLiquidityModal: React.FC<IChangeLiquidityModal> = ({
@@ -56,7 +97,28 @@ export const ChangeLiquidityModal: React.FC<IChangeLiquidityModal> = ({
   tokenYAddress,
   fee,
   leftRange,
-  rightRange
+  rightRange,
+  tokens,
+  walletStatus,
+  allPools,
+  currentNetwork,
+  ticksLoading,
+  isBalanceLoading,
+  getCurrentPlotTicks,
+  onConnectWallet,
+  onDisconnectWallet,
+  getPoolData,
+  setShouldNotUpdateRange,
+  autoSwapPoolData,
+  autoSwapTicks,
+  autoSwapTickMap,
+  isLoadingAutoSwapPool,
+  isLoadingAutoSwapPoolTicksOrTickMap,
+  ticksData,
+  changeLiquidity,
+  success,
+  inProgress,
+  setChangeLiquiditySuccess
 }) => {
   const { classes, cx } = useStyles()
 
@@ -164,21 +226,57 @@ export const ChangeLiquidityModal: React.FC<IChangeLiquidityModal> = ({
         <Box className={classes.wrapper}>
           {isAddLiquidity ? (
             <AddLiquidity
-              initialTokenFrom={tokenXAddress}
-              initialTokenTo={tokenYAddress}
-              initialFee={fee}
+              tokenFrom={tokenXAddress}
+              tokenTo={tokenYAddress}
+              fee={fee}
               leftRange={leftRange}
               rightRange={rightRange}
+              tokens={tokens}
+              walletStatus={walletStatus}
+              allPools={allPools}
+              isBalanceLoading={isBalanceLoading}
+              currentNetwork={currentNetwork}
+              ticksLoading={ticksLoading}
+              getCurrentPlotTicks={getCurrentPlotTicks}
+              onConnectWallet={onConnectWallet}
+              onDisconnectWallet={onDisconnectWallet}
+              getPoolData={getPoolData}
+              setShouldNotUpdateRange={setShouldNotUpdateRange}
+              autoSwapPoolData={autoSwapPoolData}
+              autoSwapTicks={autoSwapTicks}
+              autoSwapTickMap={autoSwapTickMap}
+              isLoadingAutoSwapPool={isLoadingAutoSwapPool}
+              isLoadingAutoSwapPoolTicksOrTickMap={isLoadingAutoSwapPoolTicksOrTickMap}
+              ticksData={ticksData}
+              changeLiquidity={changeLiquidity}
+              success={success}
+              inProgress={inProgress}
+              setChangeLiquiditySuccess={setChangeLiquiditySuccess}
             />
           ) : (
             <RemoveLiquidity
-              initialTokenFrom={tokenXAddress}
-              initialTokenTo={tokenYAddress}
-              initialFee={fee}
+              tokenFrom={tokenXAddress}
+              tokenTo={tokenYAddress}
+              fee={fee}
               leftRange={leftRange}
               rightRange={rightRange}
               tokenXLiquidity={tokenX.liqValue}
               tokenYLiquidity={tokenY.liqValue}
+              tokens={tokens}
+              walletStatus={walletStatus}
+              allPools={allPools}
+              isBalanceLoading={isBalanceLoading}
+              currentNetwork={currentNetwork}
+              ticksLoading={ticksLoading}
+              getCurrentPlotTicks={getCurrentPlotTicks}
+              onConnectWallet={onConnectWallet}
+              onDisconnectWallet={onDisconnectWallet}
+              getPoolData={getPoolData}
+              setShouldNotUpdateRange={setShouldNotUpdateRange}
+              changeLiquidity={changeLiquidity}
+              success={success}
+              inProgress={inProgress}
+              setChangeLiquiditySuccess={setChangeLiquiditySuccess}
             />
           )}
         </Box>

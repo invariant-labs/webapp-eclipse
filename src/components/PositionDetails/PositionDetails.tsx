@@ -42,6 +42,10 @@ import { PaginationList } from '@common/Pagination/Pagination/Pagination'
 import { useDispatch } from 'react-redux'
 import { actions } from '@store/reducers/navigation'
 import { ChangeLiquidityModal } from '@components/Modals/ChangeLiquidityModal/ChangeLiquidityModal'
+import { Status } from '@store/reducers/solanaConnection'
+import { PoolWithAddress } from '@store/reducers/pools'
+import { Pair } from '@invariant-labs/sdk-eclipse'
+import { Tick, Tickmap } from '@invariant-labs/sdk-eclipse/lib/market'
 
 interface IProps {
   tokenXAddress: PublicKey
@@ -60,6 +64,7 @@ interface IProps {
   onClickClaimFee: () => void
   lockPosition: () => void
   closePosition: (claimFarmRewards?: boolean) => void
+  changeLiquidity: (liquidity: BN, slippage: BN, isAddLiquidity: boolean) => void
   ticksLoading: boolean
   tickSpacing: number
   fee: BN
@@ -94,6 +99,35 @@ interface IProps {
   }
   interval: Intervals
   handleChangePagination: (page: number) => void
+  tokens: {
+    assetAddress: PublicKey
+    balance: BN
+    tokenProgram?: PublicKey
+    symbol: string
+    address: PublicKey
+    decimals: number
+    name: string
+    logoURI: string
+    coingeckoId?: string
+    isUnknown?: boolean
+  }[]
+  walletStatus: Status
+  allPools: PoolWithAddress[]
+  isBalanceLoading: boolean
+  isTimeoutError: boolean
+  onConnectWallet: () => void
+  onDisconnectWallet: () => void
+  getPoolData: (pair: Pair) => void
+  setShouldNotUpdateRange: () => void
+  autoSwapPoolData: PoolWithAddress | null
+  autoSwapTicks: Tick[]
+  autoSwapTickMap: Tickmap | null
+  isLoadingAutoSwapPool: boolean
+  isLoadingAutoSwapPoolTicksOrTickMap: boolean
+  ticksData: PlotTickData[]
+  changeLiquiditySuccess: boolean
+  changeLiquidityInProgress: boolean
+  setChangeLiquiditySuccess: (value: boolean) => void
 }
 
 const PositionDetails: React.FC<IProps> = ({
@@ -114,6 +148,7 @@ const PositionDetails: React.FC<IProps> = ({
   lockPosition,
   onClickClaimFee,
   closePosition,
+  changeLiquidity,
   ticksLoading,
   tickSpacing,
   fee,
@@ -143,7 +178,25 @@ const PositionDetails: React.FC<IProps> = ({
   positionId,
   paginationData,
   interval,
-  handleChangePagination
+  handleChangePagination,
+  tokens,
+  walletStatus,
+  allPools,
+  isTimeoutError,
+  isBalanceLoading,
+  onConnectWallet,
+  onDisconnectWallet,
+  getPoolData,
+  setShouldNotUpdateRange,
+  autoSwapPoolData,
+  autoSwapTicks,
+  autoSwapTickMap,
+  isLoadingAutoSwapPool,
+  isLoadingAutoSwapPoolTicksOrTickMap,
+  ticksData,
+  changeLiquiditySuccess,
+  changeLiquidityInProgress,
+  setChangeLiquiditySuccess
 }) => {
   const { classes } = useStyles()
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
@@ -374,11 +427,33 @@ const PositionDetails: React.FC<IProps> = ({
             }
             currentPrice={currentPrice ** (xToY ? 1 : -1)}
             onClose={() => setIsChangeLiquidityModalShown(false)}
-            tokenXAddress={tokenXAddress.toString()}
-            tokenYAddress={tokenYAddress.toString()}
+            tokenXAddress={tokenXAddress}
+            tokenYAddress={tokenYAddress}
             fee={fee}
             leftRange={leftRange.index}
             rightRange={rightRange.index}
+            tokens={tokens}
+            walletStatus={walletStatus}
+            allPools={allPools}
+            isBalanceLoading={isBalanceLoading}
+            currentNetwork={network}
+            ticksLoading={ticksLoading}
+            isTimeoutError={isTimeoutError}
+            getCurrentPlotTicks={reloadHandler}
+            onConnectWallet={onConnectWallet}
+            onDisconnectWallet={onDisconnectWallet}
+            getPoolData={getPoolData}
+            setShouldNotUpdateRange={setShouldNotUpdateRange}
+            autoSwapPoolData={autoSwapPoolData}
+            autoSwapTicks={autoSwapTicks}
+            autoSwapTickMap={autoSwapTickMap}
+            isLoadingAutoSwapPool={isLoadingAutoSwapPool}
+            isLoadingAutoSwapPoolTicksOrTickMap={isLoadingAutoSwapPoolTicksOrTickMap}
+            ticksData={ticksData}
+            changeLiquidity={changeLiquidity}
+            success={changeLiquiditySuccess}
+            inProgress={changeLiquidityInProgress}
+            setChangeLiquiditySuccess={setChangeLiquiditySuccess}
           />
           <PositionHeader
             isClosing={shouldDisable}

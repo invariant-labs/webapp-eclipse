@@ -2,17 +2,13 @@ import AnimatedButton, { ProgressState } from '@common/AnimatedButton/AnimatedBu
 import {
   ALL_FEE_TIERS_DATA,
   DEFAULT_NEW_POSITION_SLIPPAGE,
-  DepositOptions,
-  Intervals,
-  REFRESHER_INTERVAL,
-  autoSwapPools
+  NetworkType
 } from '@store/consts/static'
 import { TokenPriceData } from '@store/consts/types'
 import {
   calcPriceBySqrtPrice,
   calcPriceByTickIndex,
   convertBalanceToBN,
-  createPlaceholderLiquidityPlot,
   determinePositionTokenBlock,
   formatNumberWithoutSuffix,
   getMockedTokenPrice,
@@ -25,25 +21,12 @@ import {
   trimLeadingZeros
 } from '@utils/utils'
 import { BN } from '@coral-xyz/anchor'
-import { actions as poolsActions } from '@store/reducers/pools'
-import { actions, actions as positionsActions } from '@store/reducers/positions'
-import { actions as connectionActions } from '@store/reducers/solanaConnection'
-import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
-import { network, timeoutError } from '@store/selectors/solanaConnection'
-import poolsSelectors, {
-  isLoadingLatestPoolsForTransaction,
-  isLoadingPathTokens,
-  poolsArraySortedByFees
-} from '@store/selectors/pools'
-import { initPosition, plotTicks } from '@store/selectors/positions'
-import { balanceLoading, status, poolTokens } from '@store/selectors/solanaWallet'
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { useLocation } from 'react-router-dom'
-import { getCurrentSolanaConnection, networkTypetoProgramNetwork } from '@utils/web3/connection'
+import { PoolWithAddress } from '@store/reducers/pools'
+import { Status } from '@store/reducers/solanaWallet'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { networkTypetoProgramNetwork } from '@utils/web3/connection'
 import { PublicKey } from '@solana/web3.js'
 import {
-  DECIMAL,
   feeToTickSpacing,
   fromFee,
   getMaxTick,
@@ -57,11 +40,7 @@ import {
   getMaxLiquidityWithPercentage
 } from '@invariant-labs/sdk-eclipse/lib/math'
 import { calculatePriceSqrt } from '@invariant-labs/sdk-eclipse/src'
-import { actions as leaderboardActions } from '@store/reducers/leaderboard'
-import { actions as statsActions } from '@store/reducers/stats'
-import { poolsStatsWithTokensDetails } from '@store/selectors/stats'
 import { Box, Grid, Typography } from '@mui/material'
-import { blurContent } from '@utils/uiUtils'
 import { useStyles } from './style'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
@@ -70,44 +49,66 @@ import { InputState } from '@components/NewPosition/DepositSelector/DepositSelec
 import { PercentageSlider } from './PercentageSlider/PercentageSlider'
 
 export interface IProps {
-  initialTokenFrom: string
-  initialTokenTo: string
-  initialFee: BN
+  tokenFrom: PublicKey
+  tokenTo: PublicKey
+  fee: BN
   leftRange: number
   rightRange: number
   tokenXLiquidity: number
   tokenYLiquidity: number
+  tokens: {
+    assetAddress: PublicKey
+    balance: BN
+    tokenProgram?: PublicKey
+    symbol: string
+    address: PublicKey
+    decimals: number
+    name: string
+    logoURI: string
+    coingeckoId?: string
+    isUnknown?: boolean
+  }[]
+  walletStatus: Status
+  allPools: PoolWithAddress[]
+  isBalanceLoading: boolean
+  currentNetwork: NetworkType
+  ticksLoading: boolean
+  getCurrentPlotTicks: () => void
+  onConnectWallet: () => void
+  onDisconnectWallet: () => void
+  getPoolData: (pair: Pair) => void
+  setShouldNotUpdateRange: () => void
+  changeLiquidity: (liquidity: BN, slippage: BN, isAddLiquidity: boolean) => void
+  success: boolean
+  inProgress: boolean
+  setChangeLiquiditySuccess: (value: boolean) => void
 }
 
 export const RemoveLiquidity: React.FC<IProps> = ({
-  initialTokenFrom,
-  initialTokenTo,
-  initialFee,
+  tokenFrom,
+  tokenTo,
+  fee,
   leftRange,
   rightRange,
   tokenXLiquidity,
-  tokenYLiquidity
+  tokenYLiquidity,
+  tokens,
+  walletStatus,
+  allPools,
+  isBalanceLoading,
+  currentNetwork,
+  ticksLoading,
+  getCurrentPlotTicks,
+  onConnectWallet,
+  onDisconnectWallet,
+  getPoolData,
+  setShouldNotUpdateRange,
+  changeLiquidity,
+  success,
+  inProgress,
+  setChangeLiquiditySuccess
 }) => {
-  const dispatch = useDispatch()
-  const connection = getCurrentSolanaConnection()
-  const tokens = useSelector(poolTokens)
-  const walletStatus = useSelector(status)
-  const allPools = useSelector(poolsArraySortedByFees)
-  const isLoadingAutoSwapPool = useSelector(poolsSelectors.isLoadingAutoSwapPool)
-  const isLoadingAutoSwapPoolTicksOrTickMap = useSelector(
-    poolsSelectors.isLoadingAutoSwapPoolTicksOrTickMap
-  )
-  const isBalanceLoading = useSelector(balanceLoading)
-  const currentNetwork = useSelector(network)
-  const { success, inProgress } = useSelector(initPosition)
-  const { allData: ticksData, loading: ticksLoading } = useSelector(plotTicks)
-
-  const isFetchingNewPool = useSelector(isLoadingLatestPoolsForTransaction)
-
-  const isLoadingTicksOrTickmap = useMemo(
-    () => ticksLoading || isLoadingAutoSwapPoolTicksOrTickMap || isLoadingAutoSwapPool,
-    [ticksLoading, isLoadingAutoSwapPoolTicksOrTickMap, isLoadingAutoSwapPool]
-  )
+  const isLoadingTicksOrTickmap = useMemo(() => ticksLoading, [ticksLoading])
   const [liquidity, setLiquidity] = useState<BN>(new BN(0))
 
   const [poolIndex, setPoolIndex] = useState<number | null>(null)
@@ -116,72 +117,6 @@ export const RemoveLiquidity: React.FC<IProps> = ({
 
   const [tokenAIndex, setTokenAIndex] = useState<number | null>(null)
   const [tokenBIndex, setTokenBIndex] = useState<number | null>(null)
-
-  const [initialLoader, setInitialLoader] = useState(true)
-  const isMountedRef = useRef(false)
-  const isTimeoutError = useSelector(timeoutError)
-  const isPathTokensLoading = useSelector(isLoadingPathTokens)
-  const { state } = useLocation()
-  const [block, setBlock] = useState(state?.referer === 'stats')
-
-  useEffect(() => {
-    const pathTokens: string[] = []
-
-    if (
-      initialTokenFrom !== '' &&
-      tokens.findIndex(
-        token =>
-          token.address.toString() === (tickerToAddress(currentNetwork, initialTokenFrom) ?? '')
-      ) === -1
-    ) {
-      pathTokens.push(initialTokenFrom)
-    }
-
-    if (
-      initialTokenTo !== '' &&
-      tokens.findIndex(
-        token =>
-          token.address.toString() === (tickerToAddress(currentNetwork, initialTokenTo) ?? '')
-      ) === -1
-    ) {
-      pathTokens.push(initialTokenTo)
-    }
-
-    if (pathTokens.length) {
-      dispatch(poolsActions.getPathTokens(pathTokens))
-    }
-
-    setBlock(false)
-  }, [tokens])
-
-  const canNavigate = connection !== null && !isPathTokensLoading && !block
-
-  useEffect(() => {
-    if (canNavigate) {
-      const tokenAIndex = tokens.findIndex(token => token.address.toString() === initialTokenFrom)
-      if (tokenAIndex !== -1) {
-        setTokenAIndex(tokenAIndex)
-      }
-
-      const tokenBIndex = tokens.findIndex(token => token.address.toString() === initialTokenTo)
-      if (tokenBIndex !== -1) {
-        setTokenBIndex(tokenBIndex)
-      }
-    }
-  }, [canNavigate])
-
-  const urlUpdateTimeoutRef = useRef<NodeJS.Timeout>()
-
-  clearTimeout(urlUpdateTimeoutRef.current)
-
-  useEffect(() => {
-    isMountedRef.current = true
-
-    dispatch(leaderboardActions.getLeaderboardConfig())
-    return () => {
-      isMountedRef.current = false
-    }
-  }, [])
 
   useEffect(() => {
     setProgress('none')
@@ -195,11 +130,10 @@ export const RemoveLiquidity: React.FC<IProps> = ({
       setProgress(success ? 'approvedWithSuccess' : 'approvedWithFail')
 
       if (poolIndex !== null && tokenAIndex !== null && tokenBIndex !== null) {
-        dispatch(
-          actions.getCurrentPlotTicks({
-            poolIndex,
-            isXtoY: allPools[poolIndex].tokenX.equals(tokens[tokenAIndex].assetAddress),
-            disableLoading: true
+        getPoolData(
+          new Pair(tokens[tokenAIndex].assetAddress, tokens[tokenBIndex].assetAddress, {
+            fee,
+            tickSpacing
           })
         )
       }
@@ -210,7 +144,7 @@ export const RemoveLiquidity: React.FC<IProps> = ({
 
       timeoutId2 = setTimeout(() => {
         setProgress('none')
-        dispatch(actions.setInitPositionSuccess(false))
+        setChangeLiquiditySuccess(false)
       }, 1800)
     }
 
@@ -250,10 +184,9 @@ export const RemoveLiquidity: React.FC<IProps> = ({
   }, [tokenAIndex, tokenBIndex])
 
   const feeIndex = ALL_FEE_TIERS_DATA.findIndex(
-    feeTierData => feeTierData.tier.fee.toString() === initialFee.toString()
+    feeTierData => feeTierData.tier.fee.toString() === fee.toString()
   )
 
-  const fee = useMemo(() => ALL_FEE_TIERS_DATA[feeIndex].tier.fee, [feeIndex])
   const tickSpacing = useMemo(
     () =>
       ALL_FEE_TIERS_DATA[feeIndex].tier.tickSpacing ??
@@ -280,27 +213,8 @@ export const RemoveLiquidity: React.FC<IProps> = ({
     }
   }, [tokenAIndex, tokenBIndex, fee, tickSpacing, currentNetwork])
 
-  const isWaitingForNewPool = useMemo(() => {
-    if (poolIndex !== null) {
-      return false
-    }
-
-    return isFetchingNewPool
-  }, [isFetchingNewPool, poolIndex])
-
   useEffect(() => {
-    if (initialLoader && !isWaitingForNewPool) {
-      setInitialLoader(false)
-    }
-  }, [isWaitingForNewPool])
-
-  useEffect(() => {
-    if (
-      !isWaitingForNewPool &&
-      tokenAIndex !== null &&
-      tokenBIndex !== null &&
-      tokenAIndex !== tokenBIndex
-    ) {
+    if (tokenAIndex !== null && tokenBIndex !== null && tokenAIndex !== tokenBIndex) {
       const index = allPools.findIndex(
         pool =>
           pool.fee.eq(fee) &&
@@ -312,15 +226,10 @@ export const RemoveLiquidity: React.FC<IProps> = ({
       setPoolIndex(index !== -1 ? index : null)
 
       if (index !== -1) {
-        dispatch(
-          actions.getCurrentPlotTicks({
-            poolIndex: index,
-            isXtoY: allPools[index].tokenX.equals(tokens[tokenAIndex].assetAddress)
-          })
-        )
+        getCurrentPlotTicks()
       }
     }
-  }, [isWaitingForNewPool, allPools.length])
+  }, [allPools.length])
 
   useEffect(() => {
     if (poolIndex !== null && !!allPools[poolIndex]) {
@@ -342,14 +251,6 @@ export const RemoveLiquidity: React.FC<IProps> = ({
     }
   }, [poolIndex, isXtoY, xDecimal, yDecimal])
 
-  const data = useMemo(() => {
-    if (ticksLoading) {
-      return createPlaceholderLiquidityPlot(isXtoY, 10, tickSpacing, xDecimal, yDecimal)
-    }
-
-    return ticksData
-  }, [ticksData, ticksLoading, isXtoY, tickSpacing, xDecimal, yDecimal])
-
   useEffect(() => {
     if (
       tokenAIndex !== null &&
@@ -357,13 +258,11 @@ export const RemoveLiquidity: React.FC<IProps> = ({
       poolIndex === null &&
       progress === 'approvedWithSuccess'
     ) {
-      dispatch(
-        poolsActions.getPoolData(
-          new Pair(tokens[tokenAIndex].assetAddress, tokens[tokenBIndex].assetAddress, {
-            fee,
-            tickSpacing
-          })
-        )
+      getPoolData(
+        new Pair(tokens[tokenAIndex].assetAddress, tokens[tokenBIndex].assetAddress, {
+          fee,
+          tickSpacing
+        })
       )
     }
   }, [progress])
@@ -375,18 +274,14 @@ export const RemoveLiquidity: React.FC<IProps> = ({
       poolIndex !== null &&
       !allPools[poolIndex]
     ) {
-      dispatch(
-        poolsActions.getPoolData(
-          new Pair(tokens[tokenAIndex].assetAddress, tokens[tokenBIndex].assetAddress, {
-            fee,
-            tickSpacing
-          })
-        )
+      getPoolData(
+        new Pair(tokens[tokenAIndex].assetAddress, tokens[tokenBIndex].assetAddress, {
+          fee,
+          tickSpacing
+        })
       )
     }
   }, [poolIndex])
-
-  const [triggerFetchPrice, setTriggerFetchPrice] = useState(false)
 
   const [tokenAPriceData, setTokenAPriceData] = useState<TokenPriceData | undefined>(undefined)
 
@@ -404,7 +299,7 @@ export const RemoveLiquidity: React.FC<IProps> = ({
         setTokenAPriceData(getMockedTokenPrice(tokens[tokenAIndex].symbol, currentNetwork))
       )
       .finally(() => setPriceALoading(false))
-  }, [tokenAIndex, tokens, triggerFetchPrice])
+  }, [tokenAIndex, tokens])
 
   const [tokenBPriceData, setTokenBPriceData] = useState<TokenPriceData | undefined>(undefined)
   const [priceBLoading, setPriceBLoading] = useState(false)
@@ -421,7 +316,7 @@ export const RemoveLiquidity: React.FC<IProps> = ({
         setTokenBPriceData(getMockedTokenPrice(tokens[tokenBIndex].symbol, currentNetwork))
       )
       .finally(() => setPriceBLoading(false))
-  }, [tokenBIndex, tokens, triggerFetchPrice])
+  }, [tokenBIndex, tokens])
 
   const initialSlippage =
     localStorage.getItem('INVARIANT_NEW_POSITION_SLIPPAGE') ?? DEFAULT_NEW_POSITION_SLIPPAGE
@@ -462,206 +357,10 @@ export const RemoveLiquidity: React.FC<IProps> = ({
     }
   }
 
-  const onRefresh = () => {
-    if (!success) {
-      dispatch(positionsActions.setShouldNotUpdateRange(true))
-    }
-
-    setTriggerFetchPrice(!triggerFetchPrice)
-
-    if (tokenAIndex !== null && tokenBIndex !== null) {
-      dispatch(walletActions.getBalance())
-
-      dispatch(
-        poolsActions.getPoolData(
-          new Pair(tokens[tokenAIndex].assetAddress, tokens[tokenBIndex].assetAddress, {
-            fee,
-            tickSpacing
-          })
-        )
-      )
-
-      if (poolIndex !== null) {
-        dispatch(
-          actions.getCurrentPlotTicks({
-            poolIndex,
-            isXtoY: allPools[poolIndex].tokenX.equals(tokens[tokenAIndex].assetAddress)
-          })
-        )
-      }
-      if (autoSwapPool) {
-        poolsActions.getAutoSwapPoolData(
-          new Pair(tokens[tokenAIndex].assetAddress, tokens[tokenBIndex].assetAddress, {
-            fee: ALL_FEE_TIERS_DATA[autoSwapPool.swapPool.feeIndex].tier.fee,
-            tickSpacing:
-              ALL_FEE_TIERS_DATA[autoSwapPool.swapPool.feeIndex].tier.tickSpacing ??
-              feeToTickSpacing(ALL_FEE_TIERS_DATA[autoSwapPool.swapPool.feeIndex].tier.fee)
-          })
-        )
-      }
-    }
-  }
-
-  useEffect(() => {
-    if (isTimeoutError) {
-      void onRefresh()
-      dispatch(connectionActions.setTimeoutError(false))
-    }
-  }, [isTimeoutError])
-
-  const poolsList = useSelector(poolsStatsWithTokensDetails)
-
-  useEffect(() => {
-    dispatch(statsActions.getCurrentIntervalStats({ interval: Intervals.Daily }))
-  }, [])
-
-  const { feeTiersWithTvl } = useMemo(() => {
-    if (tokenAIndex === null || tokenBIndex === null) {
-      return { feeTiersWithTvl: {}, totalTvl: 0 }
-    }
-    const feeTiersWithTvl: Record<number, number> = {}
-    let totalTvl = 0
-
-    poolsList.forEach(pool => {
-      const xMatch =
-        pool.tokenX.equals(tokens[tokenAIndex ?? 0].assetAddress) &&
-        pool.tokenY.equals(tokens[tokenBIndex ?? 0].assetAddress)
-      const yMatch =
-        pool.tokenX.equals(tokens[tokenBIndex ?? 0].assetAddress) &&
-        pool.tokenY.equals(tokens[tokenAIndex ?? 0].assetAddress)
-
-      if (xMatch || yMatch) {
-        feeTiersWithTvl[pool.fee] = pool.tvl
-        totalTvl += pool.tvl
-      }
-    })
-
-    return { feeTiersWithTvl, totalTvl }
-  }, [poolsList, tokenAIndex, tokenBIndex])
-
-  const autoSwapPool = useMemo(
-    () =>
-      tokenAIndex !== null && tokenBIndex !== null
-        ? autoSwapPools.find(
-            item =>
-              (item.pair.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
-                item.pair.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
-              (item.pair.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
-                item.pair.tokenY.equals(tokens[tokenAIndex].assetAddress))
-          )
-        : undefined,
-    [tokenAIndex, tokenBIndex]
-  )
-
-  useEffect(() => {
-    if (tokenAIndex === null || tokenBIndex === null || !autoSwapPool) return
-    dispatch(
-      poolsActions.getAutoSwapPoolData(
-        new Pair(tokens[tokenAIndex].assetAddress, tokens[tokenBIndex].assetAddress, {
-          fee: ALL_FEE_TIERS_DATA[autoSwapPool.swapPool.feeIndex].tier.fee,
-          tickSpacing:
-            ALL_FEE_TIERS_DATA[autoSwapPool.swapPool.feeIndex].tier.tickSpacing ??
-            feeToTickSpacing(ALL_FEE_TIERS_DATA[autoSwapPool.swapPool.feeIndex].tier.fee)
-        })
-      )
-    )
-  }, [autoSwapPool])
-
-  const suggestedPrice = useMemo(() => {
-    if (tokenAIndex === null || tokenBIndex === null) {
-      return 0
-    }
-
-    const feeTiersTVLValues = Object.values(feeTiersWithTvl)
-    const bestFee = feeTiersTVLValues.length > 0 ? Math.max(...feeTiersTVLValues) : 0
-    const bestTierIndex = ALL_FEE_TIERS_DATA.findIndex(tier => {
-      return feeTiersWithTvl[+printBN(tier.tier.fee, DECIMAL - 2)] === bestFee && bestFee > 0
-    })
-
-    if (bestTierIndex === -1) {
-      return 0
-    }
-
-    const poolIndex = allPools.findIndex(
-      pool =>
-        pool.fee.eq(ALL_FEE_TIERS_DATA[bestTierIndex].tier.fee) &&
-        ((pool.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
-          pool.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
-          (pool.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
-            pool.tokenY.equals(tokens[tokenAIndex].assetAddress)))
-    )
-
-    if (poolIndex === -1) {
-      dispatch(
-        poolsActions.getPoolData(
-          new Pair(tokens[tokenAIndex].assetAddress, tokens[tokenBIndex].assetAddress, {
-            fee: ALL_FEE_TIERS_DATA[bestTierIndex].tier.fee,
-            tickSpacing: ALL_FEE_TIERS_DATA[bestTierIndex].tier.tickSpacing
-          })
-        )
-      )
-      return 0
-    }
-
-    return poolIndex !== -1
-      ? calcPriceBySqrtPrice(allPools[poolIndex].sqrtPrice, isXtoY, xDecimal, yDecimal)
-      : 0
-  }, [tokenAIndex, tokenBIndex, allPools.length])
-
-  const oraclePrice = useMemo(() => {
-    if (!tokenAPriceData || !tokenBPriceData) {
-      return null
-    }
-    return tokenAPriceData.price / tokenBPriceData.price
-  }, [tokenAPriceData, tokenBPriceData, isXtoY])
-
-  const [isAutoSwapAvailable, setIsAutoSwapAvailable] = useState(false)
-
   const [tokenADeposit, setTokenADeposit] = useState<string>('')
   const [tokenBDeposit, setTokenBDeposit] = useState<string>('')
 
-  const [tokenACheckbox, setTokenACheckbox] = useState<boolean>(true)
-  const [tokenBCheckbox, setTokenBCheckbox] = useState<boolean>(true)
-
-  const [alignment, setAlignment] = useState<DepositOptions>(DepositOptions.Basic)
-
   const [slippTolerance] = React.useState<string>(initialSlippage)
-
-  const [refresherTime, setRefresherTime] = React.useState<number>(REFRESHER_INTERVAL)
-
-  const isCurrentPoolExisting = currentPoolAddress
-    ? allPools.some(pool => pool.address.equals(currentPoolAddress))
-    : false
-
-  useEffect(() => {
-    if (isLoadingTicksOrTickmap || isWaitingForNewPool) return
-    setIsAutoSwapAvailable(
-      tokenAIndex !== null &&
-        tokenBIndex !== null &&
-        autoSwapPools.some(
-          item =>
-            (item.pair.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
-              item.pair.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
-            (item.pair.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
-              item.pair.tokenY.equals(tokens[tokenAIndex].assetAddress))
-        ) &&
-        isCurrentPoolExisting
-    )
-  }, [
-    tokenAIndex,
-    tokenBIndex,
-    isCurrentPoolExisting,
-    isWaitingForNewPool,
-    isLoadingTicksOrTickmap
-  ])
-
-  useEffect(() => {
-    if (isAutoSwapAvailable) {
-      setAlignment(DepositOptions.Auto)
-    } else if (!isAutoSwapAvailable && alignment === DepositOptions.Auto) {
-      setAlignment(DepositOptions.Basic)
-    }
-  }, [isAutoSwapAvailable])
 
   const updateLiquidity = (lq: BN) => setLiquidity(lq)
 
@@ -742,25 +441,11 @@ export const RemoveLiquidity: React.FC<IProps> = ({
     onChangeRange(leftRange, rightRange)
   }, [midPrice.index, leftRange, rightRange, currentPriceSqrt.toString()])
 
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (refresherTime > 0 && isCurrentPoolExisting) {
-        setRefresherTime(refresherTime - 1)
-      } else if (isCurrentPoolExisting) {
-        onRefresh()
-        setRefresherTime(REFRESHER_INTERVAL)
-      }
-    }, 1000)
-
-    return () => clearTimeout(timeout)
-  }, [refresherTime, poolIndex])
-
   const [lastPoolIndex, setLastPoolIndex] = useState<number | null>(poolIndex)
 
   useEffect(() => {
     if (poolIndex != lastPoolIndex) {
       setLastPoolIndex(lastPoolIndex)
-      setRefresherTime(REFRESHER_INTERVAL)
     }
   }, [poolIndex])
 
@@ -775,209 +460,23 @@ export const RemoveLiquidity: React.FC<IProps> = ({
     [leftRange, rightRange, currentPriceSqrt]
   )
 
-  useEffect(() => {
-    if (tokenAIndex === null || tokenBIndex === null) return
-    if (alignment === DepositOptions.Auto) {
-      setTokenACheckbox(true)
-      setTokenBCheckbox(true)
-      return
-    }
-    if (
-      (!tokenACheckbox || Number(tokenADeposit) === 0) &&
-      (!tokenBCheckbox || Number(tokenBDeposit) === 0)
-    ) {
-      setTokenADeposit('0')
-      setTokenBDeposit('0')
-      setTokenACheckbox(true)
-      setTokenBCheckbox(true)
-      return
-    }
-    if (
-      (!tokenACheckbox || Number(tokenADeposit) === 0) &&
-      tokenBCheckbox &&
-      Number(tokenBDeposit) > 0
-    ) {
-      setTokenADeposit(
-        getOtherTokenAmount(
-          convertBalanceToBN(tokenBDeposit, tokens[tokenBIndex].decimals),
-          leftRange,
-          rightRange,
-          false
-        )
-      )
-      setTokenACheckbox(true)
-      setTokenBCheckbox(true)
-      return
-    }
-    if (
-      (!tokenBCheckbox || Number(tokenBDeposit) === 0) &&
-      tokenACheckbox &&
-      Number(tokenADeposit) > 0
-    ) {
-      setTokenBDeposit(
-        getOtherTokenAmount(
-          convertBalanceToBN(tokenADeposit, tokens[tokenAIndex].decimals),
-          leftRange,
-          rightRange,
-          true
-        )
-      )
-      setTokenACheckbox(true)
-      setTokenBCheckbox(true)
-      return
-    }
-    setTokenACheckbox(true)
-    setTokenBCheckbox(true)
-
-    const { amount: secondValueBasedOnTokenA, liquidity: liquidityBasedOnTokenA } = calcAmount(
-      convertBalanceToBN(tokenADeposit, tokens[tokenAIndex].decimals),
-      leftRange,
-      rightRange,
-      tokens[tokenAIndex].assetAddress
-    )
-    const isBalanceEnoughForFirstCase =
-      secondValueBasedOnTokenA.lt(tokens[tokenBIndex].balance) &&
-      convertBalanceToBN(tokenADeposit, tokens[tokenAIndex].decimals).lt(
-        tokens[tokenAIndex].balance
-      )
-
-    const { amount: secondValueBasedOnTokenB, liquidity: liquidityBasedOnTokenB } = calcAmount(
-      convertBalanceToBN(tokenBDeposit, tokens[tokenBIndex].decimals),
-      leftRange,
-      rightRange,
-      tokens[tokenBIndex].assetAddress
-    )
-    const isBalanceEnoughForSecondCase =
-      secondValueBasedOnTokenB.lt(tokens[tokenAIndex].balance) &&
-      convertBalanceToBN(tokenBDeposit, tokens[tokenBIndex].decimals).lt(
-        tokens[tokenBIndex].balance
-      )
-
-    if (isBalanceEnoughForFirstCase && isBalanceEnoughForSecondCase) {
-      if (liquidityBasedOnTokenA.gt(liquidityBasedOnTokenB)) {
-        setTokenBDeposit(
-          trimLeadingZeros(printBN(secondValueBasedOnTokenA, tokens[tokenBIndex].decimals))
-        )
-        updateLiquidity(liquidityBasedOnTokenA)
-        return
-      }
-      setTokenADeposit(
-        trimLeadingZeros(printBN(secondValueBasedOnTokenB, tokens[tokenAIndex].decimals))
-      )
-      updateLiquidity(liquidityBasedOnTokenB)
-      return
-    }
-    if (!isBalanceEnoughForFirstCase && !isBalanceEnoughForSecondCase) {
-      if (liquidityBasedOnTokenA.gt(liquidityBasedOnTokenB)) {
-        setTokenADeposit(
-          trimLeadingZeros(printBN(secondValueBasedOnTokenB, tokens[tokenAIndex].decimals))
-        )
-        updateLiquidity(liquidityBasedOnTokenB)
-        return
-      }
-      setTokenBDeposit(
-        trimLeadingZeros(printBN(secondValueBasedOnTokenA, tokens[tokenBIndex].decimals))
-      )
-      updateLiquidity(liquidityBasedOnTokenA)
-      return
-    }
-    if (isBalanceEnoughForFirstCase) {
-      setTokenBDeposit(
-        trimLeadingZeros(printBN(secondValueBasedOnTokenA, tokens[tokenBIndex].decimals))
-      )
-      updateLiquidity(liquidityBasedOnTokenA)
-      return
-    }
-    setTokenADeposit(
-      trimLeadingZeros(printBN(secondValueBasedOnTokenB, tokens[tokenAIndex].decimals))
-    )
-    updateLiquidity(liquidityBasedOnTokenB)
-  }, [alignment])
-
-  const oracleDiffPercentage = useMemo(() => {
-    if (oraclePrice === null || midPrice.x === 0) {
-      return 0
-    }
-    return Math.abs((oraclePrice - midPrice.x) / midPrice.x) * 100
-  }, [oraclePrice, midPrice.x])
-
-  const oraclePriceWarning = useMemo(
-    () => oraclePrice !== 0 && oracleDiffPercentage > 10,
-    [oracleDiffPercentage]
-  )
-
-  const diffPercentage = useMemo(() => {
-    return Math.abs((suggestedPrice - midPrice.x) / midPrice.x) * 100
-  }, [suggestedPrice, midPrice.x])
-
-  const showPriceWarning = useMemo(
-    () => (diffPercentage > 10 && !oraclePrice) || (diffPercentage > 10 && oraclePriceWarning),
-    [diffPercentage, oraclePriceWarning, oraclePrice]
-  )
-  const blocked =
-    tokenAIndex === null ||
-    tokenBIndex === null ||
-    tokenAIndex === tokenBIndex ||
-    data.length === 0 ||
-    isWaitingForNewPool
-
-  const isPriceWarningVisible =
-    (showPriceWarning || oraclePriceWarning) && !blocked && !isLoadingTicksOrTickmap
-
-  const addLiquidityHandler = (leftTickIndex, rightTickIndex, xAmount, yAmount, slippage) => {
+  const removeLiquidityHandler = slippage => {
     if (tokenAIndex === null || tokenBIndex === null) {
       return
     }
     if (poolIndex !== null) {
-      dispatch(positionsActions.setShouldNotUpdateRange(true))
+      setShouldNotUpdateRange()
     }
     if (progress === 'none') {
       setProgress('progress')
     }
 
-    const lowerTickIndex = Math.min(leftTickIndex, rightTickIndex)
-    const upperTickIndex = Math.max(leftTickIndex, rightTickIndex)
-
-    dispatch(
-      positionsActions.initPosition({
-        tokenX: tokens[isXtoY ? tokenAIndex : tokenBIndex].assetAddress,
-        tokenY: tokens[isXtoY ? tokenBIndex : tokenAIndex].assetAddress,
-        fee,
-        lowerTick: lowerTickIndex,
-        upperTick: upperTickIndex,
-        liquidityDelta: liquidity,
-        initPool: poolIndex === null,
-        initTick: poolIndex === null ? midPrice.index : undefined,
-        xAmount: Math.floor(xAmount),
-        yAmount: Math.floor(yAmount),
-        slippage,
-        tickSpacing,
-        knownPrice: poolIndex === null ? midPrice.sqrtPrice : allPools[poolIndex].sqrtPrice,
-        poolIndex
-      })
-    )
+    changeLiquidity(liquidity, slippage, false)
   }
 
-  const onAddLiquidity = async () => {
-    if (isPriceWarningVisible) {
-      blurContent()
-      const ok = await confirm()
-      if (!ok) return
-    }
+  const onRemoveLiquidity = async () => {
     if (tokenAIndex !== null && tokenBIndex !== null) {
-      const tokenADecimals = tokens[tokenAIndex].decimals
-      const tokenBDecimals = tokens[tokenBIndex].decimals
-      addLiquidityHandler(
-        leftRange,
-        rightRange,
-        isXtoY
-          ? convertBalanceToBN(tokenADeposit, tokenADecimals)
-          : convertBalanceToBN(tokenBDeposit, tokenBDecimals),
-        isXtoY
-          ? convertBalanceToBN(tokenBDeposit, tokenBDecimals)
-          : convertBalanceToBN(tokenADeposit, tokenADecimals),
-        fromFee(new BN(Number(+slippTolerance * 1000)))
-      )
+      removeLiquidityHandler(fromFee(new BN(Number(+slippTolerance * 1000))))
     }
   }
 
@@ -1001,31 +500,13 @@ export const RemoveLiquidity: React.FC<IProps> = ({
               pool.tokenY.equals(tokens[tokenA].assetAddress)))
       )
 
-      if (
-        index !== poolIndex &&
-        !(
-          tokenAIndex === tokenB &&
-          tokenBIndex === tokenA &&
-          fee.eq(ALL_FEE_TIERS_DATA[feeTierIndex].tier.fee)
-        )
-      ) {
-        if (isMountedRef.current) {
-          setPoolIndex(index !== -1 ? index : null)
-        }
-      }
-
       let poolExists = false
       if (currentPoolAddress) {
         poolExists = allPools.some(pool => pool.address.equals(currentPoolAddress))
       }
 
       if (index !== -1 && index !== poolIndex) {
-        dispatch(
-          actions.getCurrentPlotTicks({
-            poolIndex: index,
-            isXtoY: allPools[index].tokenX.equals(tokens[tokenA].assetAddress)
-          })
-        )
+        getCurrentPlotTicks()
         setPoolIndex(index)
       }
 
@@ -1034,13 +515,11 @@ export const RemoveLiquidity: React.FC<IProps> = ({
           !fee.eq(ALL_FEE_TIERS_DATA[feeTierIndex].tier.fee)) &&
         (!poolExists || index === -1)
       ) {
-        dispatch(
-          poolsActions.getPoolData(
-            new Pair(tokens[tokenA].assetAddress, tokens[tokenB].assetAddress, {
-              fee: ALL_FEE_TIERS_DATA[feeTierIndex].tier.fee,
-              tickSpacing: ALL_FEE_TIERS_DATA[feeTierIndex].tier.tickSpacing
-            })
-          )
+        getPoolData(
+          new Pair(tokens[tokenA].assetAddress, tokens[tokenB].assetAddress, {
+            fee: ALL_FEE_TIERS_DATA[feeTierIndex].tier.fee,
+            tickSpacing: ALL_FEE_TIERS_DATA[feeTierIndex].tier.tickSpacing
+          })
         )
       }
     }
@@ -1049,23 +528,11 @@ export const RemoveLiquidity: React.FC<IProps> = ({
     setTokenBIndex(tokenB)
   }
 
-  const onConnectWallet = () => {
-    dispatch(walletActions.connect(false))
-  }
-
-  const onDisconnectWallet = () => {
-    dispatch(walletActions.disconnect())
-  }
-
   const { classes, cx } = useStyles()
 
   const tokenAInputState = {
     value:
-      tokenAIndex !== null &&
-      tokenBIndex !== null &&
-      !isWaitingForNewPool &&
-      blockedToken === PositionTokenBlock.A &&
-      alignment === DepositOptions.Basic
+      tokenAIndex !== null && tokenBIndex !== null && blockedToken === PositionTokenBlock.A
         ? '0'
         : tokenADeposit,
     setValue: value => {
@@ -1084,26 +551,14 @@ export const RemoveLiquidity: React.FC<IProps> = ({
       )
     },
     blocked:
-      (tokenAIndex !== null &&
-        tokenBIndex !== null &&
-        !isWaitingForNewPool &&
-        blockedToken === PositionTokenBlock.A &&
-        alignment === DepositOptions.Basic) ||
-      !tokenACheckbox ||
+      (tokenAIndex !== null && tokenBIndex !== null && blockedToken === PositionTokenBlock.A) ||
       tokenXLiquidity === 0,
-    blockerInfo:
-      alignment === DepositOptions.Basic
-        ? 'Range only for single-asset deposit'
-        : 'You chose not to spend this token',
+    blockerInfo: 'Range only for single-asset deposit',
     decimalsLimit: tokenAIndex !== null ? tokens[tokenAIndex].decimals : 0
   } as InputState
   const tokenBInputState = {
     value:
-      tokenAIndex !== null &&
-      tokenBIndex !== null &&
-      !isWaitingForNewPool &&
-      blockedToken === PositionTokenBlock.B &&
-      alignment === DepositOptions.Basic
+      tokenAIndex !== null && tokenBIndex !== null && blockedToken === PositionTokenBlock.B
         ? '0'
         : tokenBDeposit,
     setValue: value => {
@@ -1122,17 +577,9 @@ export const RemoveLiquidity: React.FC<IProps> = ({
       )
     },
     blocked:
-      (tokenAIndex !== null &&
-        tokenBIndex !== null &&
-        !isWaitingForNewPool &&
-        blockedToken === PositionTokenBlock.B &&
-        alignment === DepositOptions.Basic) ||
-      !tokenBCheckbox ||
+      (tokenAIndex !== null && tokenBIndex !== null && blockedToken === PositionTokenBlock.B) ||
       tokenYLiquidity === 0,
-    blockerInfo:
-      alignment === DepositOptions.Basic
-        ? 'Range only for single-asset deposit'
-        : 'You chose not to spend this token',
+    blockerInfo: 'Range only for single-asset deposit',
     decimalsLimit: tokenBIndex !== null ? tokens[tokenBIndex].decimals : 0
   } as InputState
 
@@ -1151,8 +598,8 @@ export const RemoveLiquidity: React.FC<IProps> = ({
     let feeTierIndexFromPath = 0
     let tokenAIndexFromPath: null | number = null
     let tokenBIndexFromPath: null | number = null
-    const tokenFromAddress = tickerToAddress(currentNetwork, initialTokenFrom)
-    const tokenToAddress = tickerToAddress(currentNetwork, initialTokenTo)
+    const tokenFromAddress = tickerToAddress(currentNetwork, tokenFrom.toString())
+    const tokenToAddress = tickerToAddress(currentNetwork, tokenTo.toString())
 
     const tokenFromIndex = tokens.findIndex(
       token => token.assetAddress.toString() === tokenFromAddress
@@ -1177,7 +624,7 @@ export const RemoveLiquidity: React.FC<IProps> = ({
     }
 
     ALL_FEE_TIERS_DATA.forEach((feeTierData, index) => {
-      if (feeTierData.tier.fee.toString() === initialFee.toString()) {
+      if (feeTierData.tier.fee.toString() === fee.toString()) {
         feeTierIndexFromPath = index
       }
     })
@@ -1188,30 +635,7 @@ export const RemoveLiquidity: React.FC<IProps> = ({
     if (tokenAIndexFromPath !== null && tokenBIndexFromPath !== null) {
       setIsLoaded(true)
     }
-  }, [tokens.length, initialTokenFrom, initialTokenTo])
-
-  const [wasRunTokenA, setWasRunTokenA] = useState(false)
-  const [wasRunTokenB, setWasRunTokenB] = useState(false)
-
-  useEffect(() => {
-    if (canNavigate) {
-      const tokenAIndex = tokens.findIndex(
-        token => token.assetAddress.toString() === tickerToAddress(currentNetwork, initialTokenFrom)
-      )
-      if (!wasRunTokenA && tokenAIndex !== -1) {
-        setTokenAIndex(tokenAIndex)
-        setWasRunTokenA(true)
-      }
-
-      const tokenBIndex = tokens.findIndex(
-        token => token.assetAddress.toString() === tickerToAddress(currentNetwork, initialTokenTo)
-      )
-      if (!wasRunTokenB && tokenBIndex !== -1) {
-        setTokenBIndex(tokenBIndex)
-        setWasRunTokenB(true)
-      }
-    }
-  }, [wasRunTokenA, wasRunTokenB, canNavigate, tokens.length])
+  }, [tokens.length, tokenFrom, tokenTo])
 
   const getButtonMessage = useCallback(() => {
     if (isLoadingTicksOrTickmap) {
@@ -1228,12 +652,10 @@ export const RemoveLiquidity: React.FC<IProps> = ({
 
     if (
       (!tokenAInputState.blocked &&
-        tokenACheckbox &&
         convertBalanceToBN(tokenAInputState.value, tokens[tokenAIndex].decimals).gt(
           convertBalanceToBN(tokenXLiquidity.toString(), tokens[tokenAIndex].decimals)
         )) ||
       (!tokenBInputState.blocked &&
-        tokenBCheckbox &&
         convertBalanceToBN(tokenBInputState.value, tokens[tokenBIndex].decimals).gt(
           convertBalanceToBN(tokenYLiquidity.toString(), tokens[tokenBIndex].decimals)
         ))
@@ -1257,9 +679,6 @@ export const RemoveLiquidity: React.FC<IProps> = ({
 
     return 'Remove Liquidity'
   }, [
-    isAutoSwapAvailable,
-    tokenACheckbox,
-    tokenBCheckbox,
     tokenAIndex,
     tokenBIndex,
     tokenAInputState,
@@ -1303,9 +722,8 @@ export const RemoveLiquidity: React.FC<IProps> = ({
 
       try {
         const values = getMaxLiquidityWithPercentage(
-          new BN(x * 10 ** xDecimal),
-
-          new BN(y * 10 ** yDecimal),
+          convertBalanceToBN(x.toString(), xDecimal),
+          convertBalanceToBN(y.toString(), yDecimal),
           lowerTick,
           upperTick,
           currentPriceSqrt,
@@ -1319,6 +737,7 @@ export const RemoveLiquidity: React.FC<IProps> = ({
           setTokenBDeposit(
             trimLeadingZeros(isXtoY ? printBN(values.y, decimalY) : printBN(values.x, decimalX))
           )
+          updateLiquidity(values.liquidity)
         } else {
           setTokenADeposit('0')
           setTokenBDeposit('0')
@@ -1377,6 +796,7 @@ export const RemoveLiquidity: React.FC<IProps> = ({
               {
                 label: 'Max',
                 onClick: () => {
+                  setIsSlider(true)
                   setDepositPercentage(100)
                 },
                 variant: 'max'
@@ -1385,6 +805,7 @@ export const RemoveLiquidity: React.FC<IProps> = ({
                 label: '50%',
                 variant: 'half',
                 onClick: () => {
+                  setIsSlider(true)
                   setDepositPercentage(50)
                 }
               }
@@ -1405,7 +826,7 @@ export const RemoveLiquidity: React.FC<IProps> = ({
               tokenAInputState.setValue(trimDecimalZeros(tokenAInputState.value))
             }}
             {...tokenAInputState}
-            value={tokenACheckbox ? tokenAInputState.value : '0'}
+            value={tokenAInputState.value}
             priceLoading={priceALoading}
             isBalanceLoading={isBalanceLoading}
             walletUninitialized={walletStatus !== Status.Initialized}
@@ -1453,7 +874,7 @@ export const RemoveLiquidity: React.FC<IProps> = ({
               tokenBInputState.setValue(trimDecimalZeros(tokenBInputState.value))
             }}
             {...tokenBInputState}
-            value={tokenBCheckbox ? tokenBInputState.value : '0'}
+            value={tokenBInputState.value}
             priceLoading={priceBLoading}
             isBalanceLoading={isBalanceLoading}
             walletUninitialized={walletStatus !== Status.Initialized}
@@ -1475,11 +896,12 @@ export const RemoveLiquidity: React.FC<IProps> = ({
           <ChangeWalletButton
             margin={'24px 0 0 0'}
             width={'100%'}
-            height={48}
+            height={40}
             name='Connect wallet'
             onConnect={onConnectWallet}
             connected={false}
             onDisconnect={onDisconnectWallet}
+            noUnblur
           />
         ) : getButtonMessage() === 'Insufficient ETH' ? (
           <TooltipHover
@@ -1494,7 +916,7 @@ export const RemoveLiquidity: React.FC<IProps> = ({
                 )}
                 onClick={() => {
                   if (progress === 'none') {
-                    onAddLiquidity()
+                    onRemoveLiquidity()
                   }
                 }}
                 disabled={getButtonMessage() !== 'Remove Liquidity'}
@@ -1508,7 +930,7 @@ export const RemoveLiquidity: React.FC<IProps> = ({
             className={cx(classes.addButton, progress === 'none' ? classes.hoverButton : undefined)}
             onClick={() => {
               if (progress === 'none' && tokenAIndex !== null && tokenBIndex !== null) {
-                onAddLiquidity()
+                onRemoveLiquidity()
               }
             }}
             disabled={getButtonMessage() !== 'Remove Liquidity'}

@@ -115,7 +115,8 @@ export const useStyles = makeStyles()(theme => ({
   },
   token: {
     height: 20,
-    width: 20
+    width: 20,
+    borderRadius: '50%'
   }
 }))
 

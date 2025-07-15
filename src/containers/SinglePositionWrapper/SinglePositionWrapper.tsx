@@ -19,6 +19,7 @@ import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
 import { network, timeoutError } from '@store/selectors/solanaConnection'
 import {
+  changeLiquidity,
   isLoadingPositionsList,
   lockedPositionsNavigationData,
   plotTicks,
@@ -29,7 +30,7 @@ import {
   singlePositionData,
   showFeesLoader as storeFeesLoader
 } from '@store/selectors/positions'
-import { balance, status } from '@store/selectors/solanaWallet'
+import { balance, balanceLoading, poolTokens, status } from '@store/selectors/solanaWallet'
 import { VariantType } from 'notistack'
 import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -47,9 +48,15 @@ import { getPromotedPools, isLoading as promotedLoading } from '@store/selectors
 import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import { BN } from '@coral-xyz/anchor'
 import { Intervals, LEADERBOARD_DECIMAL } from '@store/consts/static'
-import { poolsArraySortedByFees } from '@store/selectors/pools'
+import poolsSelectors, {
+  autoSwapTicksAndTickMap,
+  poolsArraySortedByFees
+} from '@store/selectors/pools'
 import { estimatePointsForUserPositions } from '@invariant-labs/points-sdk'
 import { address } from '@store/selectors/navigation'
+import { Pair } from '@invariant-labs/sdk-eclipse'
+import { actions as poolsActions } from '@store/reducers/pools'
+import { actions as positionsActions } from '@store/reducers/positions'
 
 export interface IProps {
   id: string
@@ -548,6 +555,38 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     )
   }
 
+  const tokens = useSelector(poolTokens)
+  const isBalanceLoading = useSelector(balanceLoading)
+
+  const onConnectWallet = () => {
+    dispatch(walletActions.connect(false))
+  }
+
+  const onDisconnectWallet = () => {
+    dispatch(walletActions.disconnect())
+  }
+
+  const getPoolData = (pair: Pair) => {
+    dispatch(poolsActions.getPoolData(pair))
+  }
+
+  const setShouldNotUpdateRange = () => {
+    dispatch(positionsActions.setShouldNotUpdateRange(true))
+  }
+
+  const autoSwapPoolData = useSelector(poolsSelectors.autoSwapPool)
+  const { ticks: autoSwapTicks, tickmap: autoSwapTickMap } = useSelector(autoSwapTicksAndTickMap)
+  const isLoadingAutoSwapPool = useSelector(poolsSelectors.isLoadingAutoSwapPool)
+  const isLoadingAutoSwapPoolTicksOrTickMap = useSelector(
+    poolsSelectors.isLoadingAutoSwapPoolTicksOrTickMap
+  )
+  const { success: changeLiquiditySuccess, inProgress: changeLiquidityInProgress } =
+    useSelector(changeLiquidity)
+
+  const setChangeLiquiditySuccess = (value: boolean) => {
+    dispatch(positionsActions.setChangeLiquiditySuccess(value))
+  }
+
   if (position) {
     return (
       <PositionDetails
@@ -592,6 +631,26 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
               claimFarmRewards
             })
           )
+        }}
+        changeLiquidity={(liquidity, slippage, isAddLiquidity) => {
+          if (isPreview) return
+          if (isAddLiquidity) {
+            dispatch(
+              actions.addLiquidity({
+                positionIndex: position.positionIndex,
+                liquidity,
+                slippage
+              })
+            )
+          } else {
+            dispatch(
+              actions.removeLiquidity({
+                positionIndex: position.positionIndex,
+                liquidity,
+                slippage
+              })
+            )
+          }
         }}
         ticksLoading={ticksLoading || !position}
         tickSpacing={position?.poolData.tickSpacing ?? 1}
@@ -654,6 +713,24 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         positionId={id}
         paginationData={paginationData}
         handleChangePagination={handleChangePagination}
+        tokens={tokens}
+        walletStatus={walletStatus}
+        allPools={poolsList}
+        isBalanceLoading={isBalanceLoading}
+        isTimeoutError={isTimeoutError}
+        onConnectWallet={onConnectWallet}
+        onDisconnectWallet={onDisconnectWallet}
+        getPoolData={getPoolData}
+        setShouldNotUpdateRange={setShouldNotUpdateRange}
+        autoSwapPoolData={autoSwapPoolData}
+        autoSwapTicks={autoSwapTicks}
+        autoSwapTickMap={autoSwapTickMap}
+        isLoadingAutoSwapPool={isLoadingAutoSwapPool}
+        isLoadingAutoSwapPoolTicksOrTickMap={isLoadingAutoSwapPoolTicksOrTickMap}
+        ticksData={ticksData}
+        changeLiquiditySuccess={changeLiquiditySuccess}
+        changeLiquidityInProgress={changeLiquidityInProgress}
+        setChangeLiquiditySuccess={setChangeLiquiditySuccess}
       />
     )
   }
