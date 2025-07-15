@@ -814,19 +814,23 @@ export const Swap: React.FC<ISwap> = ({
 
   const getStateMessage = () => {
     if (
-      (tokenFromIndex !== null && tokenToIndex !== null && throttle) ||
-      isWaitingForNewPool ||
-      swapIsLoading ||
-      isSimulationRunning ||
-      isReversingTokens ||
-      rateLoading ||
-      isFetchingNewPool ||
-      lockAnimation ||
-      isError("TypeError: Cannot read properties of undefined (reading 'bitmap')")
+      amountFrom !== '' &&
+      amountTo !== '' &&
+      ((tokenFromIndex !== null && tokenToIndex !== null && throttle) ||
+        isWaitingForNewPool ||
+        swapIsLoading ||
+        isSimulationRunning ||
+        isReversingTokens ||
+        rateLoading ||
+        isFetchingNewPool ||
+        lockAnimation ||
+        isError("TypeError: Cannot read properties of undefined (reading 'bitmap')"))
     ) {
       return 'Loading'
     }
-
+    if (tokenFromIndex !== null && tokenToIndex !== null && amountFrom === '' && amountTo === '') {
+      return 'Enter amount'
+    }
     if (walletStatus !== Status.Initialized) {
       return 'Connect a wallet'
     }
@@ -1253,12 +1257,14 @@ export const Swap: React.FC<ISwap> = ({
               isBalanceLoading={isBalanceLoading}
               showMaxButton={true}
               showBlur={
-                (inputRef === inputTarget.TO && addBlur) ||
-                lockAnimation ||
-                (pendingSimulation && inputRef !== inputTarget.FROM) ||
-                (swapIsLoading && inputRef !== inputTarget.FROM) ||
-                (getStateMessage() === 'Loading' &&
-                  (inputRef === inputTarget.TO || inputRef === inputTarget.DEFAULT))
+                amountTo === '' && amountFrom === ''
+                  ? false
+                  : (inputRef === inputTarget.TO && addBlur) ||
+                    lockAnimation ||
+                    (pendingSimulation && inputRef !== inputTarget.FROM) ||
+                    (swapIsLoading && inputRef !== inputTarget.FROM) ||
+                    (getStateMessage() === 'Loading' &&
+                      (inputRef === inputTarget.TO || inputRef === inputTarget.DEFAULT))
               }
               hiddenUnknownTokens={hideUnknownTokens}
               network={network}
@@ -1374,12 +1380,13 @@ export const Swap: React.FC<ISwap> = ({
               priceLoading={priceToLoading}
               isBalanceLoading={isBalanceLoading}
               showBlur={
-                (inputRef === inputTarget.FROM && addBlur) ||
-                lockAnimation ||
-                (pendingSimulation && inputRef !== inputTarget.TO) ||
-                (swapIsLoading && inputRef !== inputTarget.TO) ||
-                (getStateMessage() === 'Loading' &&
-                  (inputRef === inputTarget.FROM || inputRef === inputTarget.DEFAULT))
+                amountTo === '' && amountFrom === ''
+                  ? false
+                  : (inputRef === inputTarget.FROM && addBlur) ||
+                    (pendingSimulation && inputRef !== inputTarget.TO) ||
+                    (swapIsLoading && inputRef !== inputTarget.TO) ||
+                    (getStateMessage() === 'Loading' &&
+                      (inputRef === inputTarget.FROM || inputRef === inputTarget.DEFAULT))
               }
               hiddenUnknownTokens={hideUnknownTokens}
               network={network}
