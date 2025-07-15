@@ -1,4 +1,4 @@
-import { Box, Grid, Typography, useMediaQuery, useTheme } from '@mui/material'
+import { Box, Grid, Typography } from '@mui/material'
 import { colors, typography } from '@static/theme'
 import { TokenomicsArc } from '../TokenomicsArc/TokenomicsArc'
 import TokenomicsChart from '@static/png/presale/tokenomic_overlay_chart.png'
@@ -11,8 +11,6 @@ interface TokenomicsItem {
 }
 
 export const Tokenomics = () => {
-  const theme = useTheme()
-  const isLgDown = useMediaQuery(theme.breakpoints.down('lg'))
   const { classes } = useStyles()
 
   const tokenomicsItems: TokenomicsItem[] = [
@@ -44,13 +42,7 @@ export const Tokenomics = () => {
   ]
 
   return (
-    <Box className={`${classes.container} ${classes.containerBackground}`}>
-      {isLgDown && (
-        <Box className={classes.mobileChartContainer}>
-          <img src={TokenomicsChart} alt='Tokenomics Chart' className={classes.mobileChart} />
-        </Box>
-      )}
-
+    <Box className={classes.container}>
       <Grid container className={classes.gridContainer}>
         {tokenomicsItems.map((item, index) => (
           <Box key={index} className={classes.tokenomicsItemContainer}>
@@ -65,15 +57,8 @@ export const Tokenomics = () => {
             </Box>
           </Box>
         ))}
-
-        {!isLgDown && (
-          <img
-            src={TokenomicsChart}
-            alt='Tokenomics Background'
-            className={classes.desktopChartImage}
-          />
-        )}
       </Grid>
+      <img src={TokenomicsChart} alt='Tokenomics Chart' className={classes.chartImage} />
     </Box>
   )
 }

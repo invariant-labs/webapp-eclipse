@@ -5,36 +5,22 @@ import { makeStyles } from 'tss-react/mui'
 const useStyles = makeStyles()(theme => ({
   container: {
     width: '100%',
-    borderRadius: '24px',
     display: 'flex',
-    flexDirection: 'column-reverse',
     zIndex: 90,
     position: 'relative',
+    borderRadius: '24px',
+    background: `linear-gradient(90deg, ${alpha(colors.invariant.component, 0.1)} 0%, ${colors.invariant.component} 30%,  ${colors.invariant.component} 70%, ${alpha(colors.invariant.component, 0.1)} 100%)`,
     [theme.breakpoints.down('lg')]: {
+      flexDirection: 'column',
       justifyContent: 'center',
+      maxWidth: '600px',
+      background: colors.invariant.component,
       alignItems: 'center'
-    },
-    [theme.breakpoints.down('sm')]: {
-      paddingBottom: 8
     }
   },
-  containerBackground: {
-    background: `linear-gradient(90deg, ${alpha(colors.invariant.component, 0.1)} 0%, ${colors.invariant.component} 30%,  ${colors.invariant.component} 70%, ${alpha(colors.invariant.component, 0.1)} 100%)`
-  },
-  mobileChartContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-    marginTop: theme.spacing(4)
-  },
-  mobileChart: {
-    width: '250px',
-    height: '250px',
-    objectFit: 'contain'
-  },
   gridContainer: {
-    maxWidth: '600px',
     width: '100%',
-    borderRadius: '24px',
+    maxWidth: '600px',
     display: 'flex',
     flexWrap: 'wrap',
     flexDirection: 'row',
@@ -61,11 +47,19 @@ const useStyles = makeStyles()(theme => ({
   textContainer: {
     marginLeft: '24px'
   },
-  desktopChartImage: {
+  chartImage: {
     position: 'absolute',
     height: '400px',
     left: '50%',
-    top: -35
+    top: -35,
+    [theme.breakpoints.down('lg')]: {
+      width: '250px',
+      height: '250px',
+      left: 0,
+      top: 0,
+      position: 'relative',
+      padding: 32
+    }
   }
 }))
 
