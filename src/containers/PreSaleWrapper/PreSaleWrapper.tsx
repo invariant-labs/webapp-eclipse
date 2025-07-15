@@ -807,8 +807,8 @@ export const PreSaleWrapper = () => {
             {
               question: '1. How does the Progressive Price Model work?',
               answer: `
-      It’s designed to reward early contributors. The earlier you participate, the better price you get for the tokens.<br/><br/>
-      The sale is divided into 4 phases, each with its own target. Once a phase’s target is reached, the sale moves to the next phase and the price permanently increases.<br/><br/>
+      The model is designed to reward early contributors. The earlier you participate, the better price you get for the tokens.<br/><br/>
+      The sale is divided into 4 phases, each with its own target. Once a phase's target is reached, the sale moves to the next phase and the price permanently increases.<br/><br/>
       <b>Phases:</b><br/>
       1. Early Bird (0 - $150k) <span style="color: #2EE09A; font-weight: bold;">$0.010</span><br/>
       2. Phase 2 ($150k - $300k) <span style="color: #2EE09A; font-weight: bold;">$0.013</span><br/>
@@ -817,55 +817,55 @@ export const PreSaleWrapper = () => {
     `
             },
             {
-              question: '2. Is the max allocation per wallet for one phase or the whole sale?',
-              answer:
-                'For the whole sale. The max allocation per wallet is <span style="color: #2EE09A; font-weight: bold;">$4.5k</span>, regardless of which phase you buy in.'
+              question: '2. Is the purchasable amount per wallet for one phase or the whole sale?',
+              answer: `The max allocation (<span style="color: #2EE09A; font-weight: bold;">$4.5k</span>) is shared across the first three phases, and you can split it however you want between them.<br/>
+                 For the final phase, only the global target applies—participate early as tokens are available on a first-come, first-served basis until the target is reached.
+                 `
             },
             {
-              question:
-                '3. Is USDC the only currency accepted for purchasing INVT during the presale?',
-              answer: 'Yes, that’s correct.'
+              question: '3. Is USDC the only accepted currency during the presale?',
+              answer:
+                'Yes, <span style="color: #2EE09A; font-weight: bold;">USDC</span> is the only supported payment option.'
             },
             {
               question: '4. Who is whitelisted?',
               answer:
-                'Only wallets of active users who have supported the development of Eclipse and Invariant.'
+                'Only wallets of users who have actively supported the development of Eclipse and Invariant.'
             },
             {
-              question: '5. How can I check if I’m whitelisted?',
+              question: '5. How can I tell if I am whitelisted?',
               answer:
-                'You can check using the <span style="color: #2EE09A; font-weight: bold;">Whitelist Checker</span> located at the top of the page.'
+                'You can use the <span style="color: #2EE09A; font-weight: bold;">Whitelist Checker</span> located at the top of the page.'
             },
             {
-              question: '6. I’m not whitelisted, can I still take part in the Community Sale?',
+              question: '6. I am not whitelisted, can I still take part in the Community Sale?',
               answer:
                 'Yes, the <span style="color: #2EE09A; font-weight: bold;">Final Phase (Phase 4)</span> will be open to everyone.'
             },
             {
               question: '7. When can I claim tokens? When is TGE?',
               answer: `
-      You’ll be able to claim your tokens during the <span style="color: #2EE09A; font-weight: bold;">TGE (Token Generation Event)</span>, which will take place shortly after the Community Sale ends. 
-      We’ll announce the exact date on our social media channels.
+      You will be able to claim your tokens during the <span style="color: #2EE09A; font-weight: bold;">TGE (Token Generation Event)</span>, which will take place shortly after the Community Sale ends.</br>
+      We will announce the exact date on our social media.
     `
             },
             {
-              question: '8. Why do I need to spend $450 to get the NFT?',
+              question: '8. Why spend $450 to get the NFT?',
               answer: `
-      The NFT is an extra benefit alongside INVT tokens. It’s our way of showing appreciation to those who make a significant contribution during the Invariant Community Sale.<br/>
-      Its quantity will be very limited, with a total supply of a few hundred pieces depending on the outcome of the Community Sale.
+      The <span style="color: #2EE09A; font-weight: bold;">$450</span> spending milestone unlocks an exclusive NFT as a reward alongside your <span style="color: #2EE09A; font-weight: bold;">INVT</span> tokens. It's our way of recognizing significant contributors to the Invariant Community Sale.<br/><br/>
+      Supply is limited to a few hundred pieces depending on the sale outcome.
     `
             },
             {
               question: '9. What does holding the NFT give you?',
               answer: `
-      Every participant in the Invariant Sale who contributes at least <span style="color: #2EE09A; font-weight: bold;">$450</span> will be able to mint a special, non-transferable NFT. This NFT is not intended for trading or circulation.<br/>
-      Instead, it serves as an on-chain marker that links the wallet to future benefits and privileges as part of our long-term roadmap.
+      The NFT serves as an on-chain marker linking your wallet to future benefits and privileges in our long-term roadmap. It is non-transferable and not intended for trading.
     `
             },
             {
-              question: '10. Can I sell/transfer my NFT?',
+              question: '10. Can I sell or transfer my NFT?',
               answer:
-                'No, the NFT is non-transferable. It is tied exclusively to the wallet that participated in the Community Sale.'
+                'No, the NFT is non-transferable and tied exclusively to the wallet that participated in the Community Sale.'
             }
           ]}
         />
