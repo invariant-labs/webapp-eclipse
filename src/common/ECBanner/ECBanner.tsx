@@ -86,7 +86,7 @@ export const ECBanner: React.FC<IECBanner> = ({
         <Grid className={classes.buttonSection}>
           {changeDirection ? (
             <Grid>
-              <Typography className={classes.header}>Use ECLS tokens to earn trading</Typography>{' '}
+              <Typography className={classes.header}>Use ES token to earn trading</Typography>{' '}
               <TooltipHover center gradient title={earnTooltipTitle} top={1}>
                 <Typography className={classes.header}>
                   fees and points <img src={infoCircleIcon} />
@@ -95,7 +95,7 @@ export const ECBanner: React.FC<IECBanner> = ({
             </Grid>
           ) : (
             <Typography className={classes.header}>
-              Use ECLS tokens to earn trading fees and points{' '}
+              Use ES token to earn trading fees and points{' '}
               <TooltipHover gradient title={earnTooltipTitle} top={1}>
                 <img src={infoCircleIcon} />
               </TooltipHover>
@@ -107,7 +107,7 @@ export const ECBanner: React.FC<IECBanner> = ({
           </Typography>
           <Button
             onClick={() =>
-              navigate(ROUTES.getNewPositionRoute(ES_MAIN.symbol, USDC_MAIN.symbol, '0_1'))
+              navigate(ROUTES.getNewPositionRoute(ES_MAIN.symbol, USDC_MAIN.symbol, '0_30'))
             }
             scheme='pink'
             gap={8}

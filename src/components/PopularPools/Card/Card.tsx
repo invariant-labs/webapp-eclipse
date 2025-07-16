@@ -270,8 +270,7 @@ const Card: React.FC<ICard> = ({
                 {apy !== undefined && showAPY && (
                   <StatsLabel
                     title='APY'
-                    value={`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '👀' : Math.abs(convertedApy).toFixed(2) + '%'}`}
-                    disableShadow={convertedApy === 0}
+                    value={`${convertedApy > 1000 ? '>1000%' : Math.abs(convertedApy).toFixed(2) + '%'}`}
                   />
                 )}
                 <StatsLabel title='Fee' value={fee + '%'} />
@@ -281,11 +280,7 @@ const Card: React.FC<ICard> = ({
                 {
                   <StatsLabel
                     title='Volume'
-                    value={
-                      volume !== undefined && volume !== 0
-                        ? `$${formatNumberWithSuffix(volume)}`
-                        : 'SOON...'
-                    }
+                    value={volume !== undefined ? `$${formatNumberWithSuffix(volume)}` : '$0'}
                   />
                 }
               </Grid>
