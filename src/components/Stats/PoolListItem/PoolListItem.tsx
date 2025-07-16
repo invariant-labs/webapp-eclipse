@@ -22,6 +22,7 @@ import {
   Intervals,
   ITEMS_PER_PAGE,
   NetworkType,
+  POOLS_TO_HIDE_POINTS_PER_24H,
   SortTypePoolList
 } from '@store/consts/static'
 import {
@@ -383,7 +384,16 @@ const PoolListItem: React.FC<IProps> = ({
           <Box className={classes.row} justifyContent={'space-between'}>
             {fee && typeof fee === 'number' && <Typography>{fee}%</Typography>}
             {isPromoted && (
-              <PromotedPoolPopover apr={convertedApr} apy={convertedApy} points={points}>
+              <PromotedPoolPopover
+                apr={convertedApr}
+                apy={convertedApy}
+                points={
+                  poolAddress
+                    ? POOLS_TO_HIDE_POINTS_PER_24H.includes(poolAddress?.toString())
+                      ? new BN(0)
+                      : points
+                    : new BN(0)
+                }>
                 <Box
                   className={cx(classes.actionButton, classes.airdropIcon)}
                   ref={airdropIconRef}

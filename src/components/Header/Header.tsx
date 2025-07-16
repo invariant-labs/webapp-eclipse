@@ -58,6 +58,7 @@ export const Header: React.FC<IHeader> = ({
     'exchange',
     'liquidity',
     'portfolio',
+    'presale',
     ...(typeOfNetwork === NetworkType.Testnet ? ['creator'] : []),
     ...(typeOfNetwork === NetworkType.Mainnet ? ['points'] : []),
     'stake',
@@ -69,6 +70,7 @@ export const Header: React.FC<IHeader> = ({
     exchange: [/^exchange\/*/],
     portfolio: [/^portfolio\/*/, /^newPosition\/*/, /^position\/*/],
     stake: [/^stake\/*/],
+    presale: [/^presale\/*/],
     ...(typeOfNetwork === NetworkType.Mainnet ? { leaderboard: [/^points\/*/] } : {}),
     ...(typeOfNetwork === NetworkType.Testnet ? { creator: [/^creator\/*/] } : {})
   }
@@ -145,7 +147,7 @@ export const Header: React.FC<IHeader> = ({
           item
           className={classes.routers}
           sx={{
-            display: { lg: 'block' },
+            display: { lg: 'flex' },
             [theme.breakpoints.down(1200)]: {
               display: 'none'
             }

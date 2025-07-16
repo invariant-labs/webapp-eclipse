@@ -5,7 +5,17 @@ import GradientBorder from '@common/GradientBorder/GradientBorder'
 import { colors, theme } from '@static/theme'
 import cardBackgroundBottom from '@static/png/cardBackground1.png'
 import cardBackgroundTop from '@static/png/cardBackground2.png'
-import { airdropRainbowIcon, backIcon, unknownTokenIcon, warningIcon } from '@static/icons'
+import {
+  airdropRainbowIcon,
+  backIcon,
+  hornsETH,
+  hornsUSDC,
+  unknownTokenIcon,
+  warningIcon
+} from '@static/icons'
+import cardESTop from '@static/png/ESWavesTop.png'
+import cardESBottom from '@static/png/ESWavesBottom.png'
+import Horn from '@static/png/turboHorn.png'
 import { shortenAddress } from '@utils/uiUtils'
 import StatsLabel from './StatsLabel/StatsLabel'
 import {
@@ -17,7 +27,14 @@ import {
   ROUTES
 } from '@utils/utils'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { NetworkType } from '@store/consts/static'
+import {
+  ES_ETH_POOLS,
+  ES_MAIN,
+  NetworkType,
+  POOLS_TO_HIDE_POINTS_PER_24H,
+  USDC_MAIN,
+  WETH_MAIN
+} from '@store/consts/static'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { leaderboardSelectors } from '@store/selectors/leaderboard'
 import { useDispatch, useSelector } from 'react-redux'
@@ -27,6 +44,7 @@ import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/Promoted
 import { Button } from '@common/Button/Button'
 import { ReverseTokensIcon } from '@static/componentIcon/ReverseTokensIcon'
 import { actions } from '@store/reducers/navigation'
+import { PublicKey } from '@solana/web3.js'
 
 export interface ICard extends PopularPoolData {
   isLoading: boolean
@@ -53,13 +71,16 @@ const Card: React.FC<ICard> = ({
   network,
   showAPY
 }) => {
-  const { classes } = useStyles()
   const navigate = useNavigate()
   const location = useLocation()
   const dispatch = useDispatch()
+
   const airdropIconRef = useRef<HTMLDivElement>(null)
   const popoverContainerRef = useRef<HTMLDivElement>(null)
 
+  const flipHorns = poolAddress?.equals(new PublicKey(ES_ETH_POOLS['0_03'])) ?? false
+
+  const { classes } = useStyles({ flipHorns })
   const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
   const { promotedPools } = useSelector(leaderboardSelectors.config)
 
@@ -127,9 +148,32 @@ const Card: React.FC<ICard> = ({
       document.removeEventListener('click', handleDocumentClickCapture, true)
     }
   }, [isPromotedPoolPopoverOpen])
+  const ESToken = useMemo(() => {
+    if (addressFrom === ES_MAIN.address.toString() || addressTo === ES_MAIN.address.toString())
+      return true
+  }, [symbolFrom, symbolTo])
+
+  const isUSDC = useMemo(() => {
+    return (
+      addressFrom === USDC_MAIN.address.toString() || addressTo === USDC_MAIN.address.toString()
+    )
+  }, [addressFrom, addressTo])
+  const isETH = useMemo(() => {
+    return (
+      addressFrom === WETH_MAIN.address.toString() || addressTo === WETH_MAIN.address.toString()
+    )
+  }, [addressFrom, addressTo])
+
+  const horns = useMemo(() => {
+    if (isETH) return hornsETH
+    if (isUSDC) return hornsUSDC
+    return Horn
+  }, [isETH, isUSDC])
 
   return (
     <Grid className={classes.root}>
+      {ESToken && !isLoading && <img className={classes.horn} src={horns} />}
+
       {isLoading || !poolAddress?.toString() ? (
         <Skeleton variant='rounded' animation='wave' className={classes.skeleton} />
       ) : (
@@ -137,16 +181,21 @@ const Card: React.FC<ICard> = ({
           <GradientBorder
             borderRadius={24}
             borderWidth={2}
+            borderColor={
+              ESToken
+                ? colors.invariant.esToken
+                : `linear-gradient(to bottom, ${colors.invariant.green}, ${colors.invariant.pink})`
+            }
             backgroundColor={colors.invariant.newDark}
             innerClassName={classes.container}>
             <img
-              src={cardBackgroundTop}
+              src={ESToken ? cardESTop : cardBackgroundTop}
               alt=''
               className={classes.backgroundImage}
               style={{ top: 0, zIndex: -1 }}
             />
             <img
-              src={cardBackgroundBottom}
+              src={ESToken ? cardESBottom : cardBackgroundBottom}
               alt=''
               className={classes.backgroundImage}
               style={{ bottom: 0, zIndex: -1 }}
@@ -185,7 +234,11 @@ const Card: React.FC<ICard> = ({
                     <PromotedPoolPopover
                       apr={convertedApr ?? 0}
                       apy={convertedApy ?? 0}
-                      points={new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60)}>
+                      points={
+                        POOLS_TO_HIDE_POINTS_PER_24H.includes(poolAddress.toString())
+                          ? new BN(0)
+                          : new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60)
+                      }>
                       <div
                         className={classes.actionButton}
                         onPointerEnter={() => {
@@ -217,16 +270,19 @@ const Card: React.FC<ICard> = ({
                 {apy !== undefined && showAPY && (
                   <StatsLabel
                     title='APY'
-                    value={`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '-' : Math.abs(convertedApy).toFixed(2) + '%'}`}
+                    value={`${convertedApy > 1000 ? '>1000%' : Math.abs(convertedApy).toFixed(2) + '%'}`}
                   />
                 )}
                 <StatsLabel title='Fee' value={fee + '%'} />
                 {TVL !== undefined && (
                   <StatsLabel title='TVL' value={`$${formatNumberWithSuffix(TVL)}`} />
                 )}
-                {volume !== undefined && (
-                  <StatsLabel title='Volume' value={`$${formatNumberWithSuffix(volume)}`} />
-                )}
+                {
+                  <StatsLabel
+                    title='Volume'
+                    value={volume !== undefined ? `$${formatNumberWithSuffix(volume)}` : '$0'}
+                  />
+                }
               </Grid>
               <Grid container className={classes.footerWrapper}>
                 <Grid className={classes.back} container item onClick={handleOpenSwap}>

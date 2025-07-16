@@ -4,7 +4,7 @@ import { colors, theme, typography } from '@static/theme'
 import { SnackbarContent } from 'notistack'
 import { makeStyles } from 'tss-react/mui'
 
-export const useStyles = makeStyles()(() => ({
+export const useStyles = makeStyles<{ roundIcon?: boolean }>()((_theme, { roundIcon = true }) => ({
   customSnackbarContainer: {
     bottom: '90px !important',
     zIndex: '10000 !important'
@@ -36,7 +36,7 @@ export const useStyles = makeStyles()(() => ({
     width: 16,
     height: 16,
     marginBottom: 2,
-    borderRadius: '100%'
+    borderRadius: roundIcon ? '100%' : 'none'
   }
 }))
 

@@ -4,7 +4,7 @@ import { useStyles } from './style'
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { plusIcon, unknownTokenIcon } from '@static/icons'
-import { NetworkType } from '@store/consts/static'
+import { NetworkType, POOLS_TO_HIDE_POINTS_PER_24H } from '@store/consts/static'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import {
   addressToTicker,
@@ -23,6 +23,7 @@ import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
 import { BN } from '@coral-xyz/anchor'
 import { useDispatch } from 'react-redux'
 import { actions } from '@store/reducers/navigation'
+import { QuestionMark } from '@components/Leaderboard/QuestionMark/QuestionMark'
 
 export interface IProps {
   fee?: number
@@ -135,7 +136,7 @@ const PoolListItem: React.FC<IProps> = ({
         symbol: symbolFrom,
         icon: iconFrom
       }
-
+  console.log(poolAddress?.toString())
   return (
     <Grid maxWidth='100%' className={classes.wrapper}>
       {displayType === 'token' ? (
@@ -196,8 +197,16 @@ const PoolListItem: React.FC<IProps> = ({
           ) : null}
           <Typography>{fee}%</Typography>
           <Typography>
-            {formatNumberWithCommas(
-              printBN(new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60), 0)
+            {poolAddress ? (
+              POOLS_TO_HIDE_POINTS_PER_24H.includes(poolAddress) ? (
+                <QuestionMark height={'24px'} />
+              ) : (
+                formatNumberWithCommas(
+                  printBN(new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60), 0)
+                )
+              )
+            ) : (
+              <QuestionMark height={'24px'} />
             )}
           </Typography>
 

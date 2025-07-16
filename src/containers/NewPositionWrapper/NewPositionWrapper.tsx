@@ -9,6 +9,7 @@ import {
   DEFAULT_NEW_POSITION_SLIPPAGE,
   Intervals,
   LEADERBOARD_DECIMAL,
+  POOLS_TO_HIDE_POINTS_PER_24H,
   autoSwapPools,
   commonTokensForNetworks
 } from '@store/consts/static'
@@ -700,6 +701,10 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       return false
     }
 
+    if (POOLS_TO_HIDE_POINTS_PER_24H.includes(allPools[poolIndex].address.toString())) {
+      return false
+    }
+
     return promotedPools.some(pool => pool.address === allPools[poolIndex].address.toString())
   }, [promotedPools.length, poolIndex, allPools.length])
 
@@ -892,9 +897,8 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   }, [tokenAIndex, tokenBIndex, allPools.length, currentPairReversed])
 
   const oraclePrice = useMemo(() => {
-    if (!tokenAPriceData || !tokenBPriceData) {
-      return null
-    }
+    if (!tokenAPriceData || !tokenBPriceData) return null
+    if (tokenBPriceData.price === 0) return null
     return tokenAPriceData.price / tokenBPriceData.price
   }, [tokenAPriceData, tokenBPriceData, isXtoY])
 

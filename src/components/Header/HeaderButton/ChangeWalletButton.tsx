@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { actions } from '@store/reducers/leaderboard'
 import { leaderboardSelectors } from '@store/selectors/leaderboard'
 import { Button } from '@common/Button/Button'
-
+import { actions as saleActions } from '@store/reducers/sale'
 export interface IProps {
   name: string
   onConnect: () => void
@@ -22,6 +22,7 @@ export interface IProps {
   textClassName?: string
   isDisabled?: boolean
   margin?: string | number
+  defaultVariant?: 'green' | 'pink'
   width?: string | number
   height?: string | number
   isSwap?: boolean
@@ -35,6 +36,7 @@ export const ChangeWalletButton: React.FC<IProps> = ({
   startIcon,
   width,
   margin,
+  defaultVariant = 'pink',
   hideArrow,
   onDisconnect,
   isDisabled = false,
@@ -72,6 +74,7 @@ export const ChangeWalletButton: React.FC<IProps> = ({
     setIsChangeWallet(false)
 
     dispatch(actions.getLeaderboardData({ page: 1, itemsPerPage }))
+    dispatch(saleActions.getUserStats())
   }
 
   const handleClose = () => {
@@ -90,6 +93,7 @@ export const ChangeWalletButton: React.FC<IProps> = ({
     localStorage.setItem('WALLET_TYPE', '')
     dispatch(actions.resetCurrentUser())
     dispatch(actions.resetContentPoints())
+    dispatch(saleActions.resetUserStats())
   }
 
   const handleChangeWallet = () => {
@@ -118,7 +122,7 @@ export const ChangeWalletButton: React.FC<IProps> = ({
         margin={margin}
         height={height}
         width={width}
-        scheme={connected ? 'normal' : 'pink'}
+        scheme={connected ? 'normal' : defaultVariant === 'pink' ? 'pink' : 'green'}
         disabled={isDisabled}
         classes={{
           startIcon: classes.startIcon,
