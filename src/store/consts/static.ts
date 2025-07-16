@@ -93,6 +93,17 @@ export const WETH_DEV: Token = {
   coingeckoId: 'bridged-wrapped-ether-eclipse'
 }
 
+export const SALE_TEST: Token = {
+  tokenProgram: TOKEN_2022_PROGRAM_ID,
+  symbol: 'USDC',
+  address: new PublicKey('HqVpi4A8pXFV2kY7338mrczetd3LMQVJ5YSMfjVX5hak'),
+  decimals: 6,
+  name: 'USD Coin',
+  logoURI:
+    'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
+  coingeckoId: 'usd-coin'
+}
+
 export const USDC_TEST: Token = {
   tokenProgram: TOKEN_PROGRAM_ID,
   symbol: 'USDC',
@@ -970,6 +981,7 @@ export enum OverviewSwitcher {
 export const STATS_CACHE_TIME = 30 * 60 * 1000
 export const LEADERBOARD_API_URL = 'https://api.invariant.app/api'
 export const PRICE_API_URL = 'https://api.invariant.app/price'
+export const CHECKER_API_URL = 'https://api.invariant.app/check'
 
 export enum AutoswapCustomError {
   FetchError = 0
@@ -1125,6 +1137,7 @@ export const DEFAULT_STRATEGY = {
   tokenB: 'USDC',
   feeTier: '0_09'
 }
+export const BITZ_TOKENS_ADDR = '5FgZ9W81khmNXG8i96HSsG7oJiwwpKnVzmHgn9ZnqQja'
 
 export const PORTFOLIO_STAKE_STORAGE_KEY = 'STAKE_STATS_EXPANDED'
 export const PORTFOLIO_STAKE_EXPAND_DELAY = 50
@@ -1137,3 +1150,6 @@ export const POOLS_TO_HIDE_POINTS_PER_24H: string[] = [
   // ES_ETH_POOLS['0_03'],
   // '8gSs6K4NVZSh4Rd5ABcNTos5sJ6wVRTR4xr5LgNLMt58'
 ]
+
+export const PROOF_OF_INCLUSION_CACHE_KEY = 'PROOF_OF_INCLUSION'
+export const PROOF_OF_INCLUSION_CACHE_TTL = 1000 * 60 * 60 * 1 // 1 hour

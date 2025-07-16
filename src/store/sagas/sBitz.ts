@@ -10,6 +10,7 @@ import { actions as RPCAction, RpcStatus } from '@store/reducers/solanaConnectio
 import {
   APPROVAL_DENIED_MESSAGE,
   BITZ_MAIN,
+  BITZ_TOKENS_ADDR,
   COMMON_ERROR_MESSAGE,
   ErrorCodeExtractionKeys,
   sBITZ_MAIN,
@@ -17,6 +18,7 @@ import {
   TIMEOUT_ERROR_MESSAGE
 } from '@store/consts/static'
 import {
+  PublicKey,
   sendAndConfirmRawTransaction,
   SendTransactionError,
   Transaction,
@@ -30,19 +32,22 @@ import {
   ensureError,
   extractErrorCode,
   extractRuntimeErrorCode,
+  fetchMarketBitzStats,
   formatNumberWithoutSuffix,
+  getTokenPrice,
   mapErrorCodeToMessage,
   printBN
 } from '@utils/utils'
 import { closeSnackbar } from 'notistack'
 import {
+  AccountLayout,
   getAssociatedTokenAddressSync,
   TOKEN_2022_PROGRAM_ID,
   TOKEN_PROGRAM_ID
 } from '@solana/spl-token'
 import { accounts } from '@store/selectors/solanaWallet'
 import { BN } from '@coral-xyz/anchor'
-
+import { getBitzSupply } from '@invariant-labs/sbitz'
 export function* handleStake(action: PayloadAction<StakeLiquidityPayload>) {
   const loaderStaking = createLoaderKey()
   const loaderSigningTx = createLoaderKey()
@@ -532,6 +537,70 @@ export function* handleGetStakedAmountAndBalance() {
   }
 }
 
+export function* getMarketBitzStats(): Generator {
+  const networkType = yield* select(network)
+  const rpc = yield* select(rpcAddress)
+  const wallet = yield* call(getWallet)
+  const connection = yield* call(getConnection)
+  const price = yield* call(getTokenPrice, sBITZ_MAIN.address.toString(), networkType)
+  const stakingProgram = yield* call(getStakingProgram, networkType, rpc, wallet as IWallet)
+  try {
+    const { stakedAmount, stakedTokenSupply } = yield* call([
+      stakingProgram,
+      stakingProgram.getStakedAmountAndStakedTokenSupply
+    ])
+
+    const bitzSupply = yield* call(getBitzSupply, connection)
+
+    const tokenAccounts = yield* call(
+      [connection, connection.getTokenAccountsByOwner],
+      new PublicKey(BITZ_TOKENS_ADDR),
+      {
+        mint: BITZ_MAIN.address
+      }
+    )
+
+    let totalBalance = 0n
+    for (const { account } of tokenAccounts.value) {
+      const data = AccountLayout.decode(account.data)
+      totalBalance += BigInt(data.amount.toString())
+    }
+
+    const stakedTokenSupplyAmount = +printBN(stakedTokenSupply, BITZ_MAIN.decimals)
+    const sBitzAmount = +printBN(stakedAmount, BITZ_MAIN.decimals)
+    const totalBitzSupply = +printBN(totalBalance, BITZ_MAIN.decimals)
+    const bitzSupplyAmount = +printBN(bitzSupply, BITZ_MAIN.decimals)
+    const response = yield* call(fetchMarketBitzStats)
+    const holders = response.data[sBITZ_MAIN.address.toString()].holders
+
+    const bitzAmount = totalBitzSupply - sBitzAmount
+
+    const marketCapSBitz = (price ?? 0) * stakedTokenSupplyAmount
+
+    yield* put(
+      actions.setCurrentStats({
+        bitzAmount,
+        marketCap: marketCapSBitz,
+        sBitzSupply: stakedTokenSupplyAmount,
+        totalSupply: bitzSupplyAmount,
+        sBitzAmount,
+        holders
+      })
+    )
+  } catch (e: unknown) {
+    const error = ensureError(e)
+    console.log(error)
+
+    yield* put(actions.setLoadingStats(false))
+
+    yield* call(handleRpcError, error.message)
+  }
+}
+
+export function* marketBitzStatsHandler(): Generator {
+  yield* takeLatest(actions.getCurrentStats, getMarketBitzStats)
+}
+
 export function* stakeHandler(): Generator {
   yield* takeLatest(actions.stake, handleStake)
 }
@@ -545,5 +614,7 @@ export function* stakedAmountAndBalanceHandler(): Generator {
 }
 
 export function* stakeSaga(): Generator {
-  yield all([stakeHandler, unstakeHandler, stakedAmountAndBalanceHandler].map(spawn))
+  yield all(
+    [stakeHandler, unstakeHandler, stakedAmountAndBalanceHandler, marketBitzStatsHandler].map(spawn)
+  )
 }

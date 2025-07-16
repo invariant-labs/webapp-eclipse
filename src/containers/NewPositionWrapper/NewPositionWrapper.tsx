@@ -897,9 +897,8 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   }, [tokenAIndex, tokenBIndex, allPools.length, currentPairReversed])
 
   const oraclePrice = useMemo(() => {
-    if (!tokenAPriceData || !tokenBPriceData) {
-      return null
-    }
+    if (!tokenAPriceData || !tokenBPriceData) return null
+    if (tokenBPriceData.price === 0) return null
     return tokenAPriceData.price / tokenBPriceData.price
   }, [tokenAPriceData, tokenBPriceData, isXtoY])
 

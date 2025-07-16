@@ -30,8 +30,8 @@ import { VariantType } from 'notistack'
 import { Status } from '@store/reducers/solanaWallet'
 import { PublicKey } from '@solana/web3.js'
 import { EcosystemExposure } from './EcosystemExposure/EcosystemExposure'
-import { Faq } from '@common/Faq/Faq'
 import { faqData } from './faq'
+import { Faq } from '@common/Faq/Faq'
 import { ECBanner } from '@common/ECBanner/ECBanner'
 
 interface LeaderboardProps {

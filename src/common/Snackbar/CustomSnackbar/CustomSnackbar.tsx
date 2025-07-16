@@ -59,7 +59,7 @@ const CustomSnackbar = React.forwardRef<HTMLDivElement, CustomContentProps & Cus
 
     const { closeSnackbar } = useSnackbar()
     const dispatch = useDispatch()
-    const { classes } = useStyles()
+    const { classes } = useStyles({})
 
     const handleDismiss = useCallback(() => {
       if (!snackbarId) return

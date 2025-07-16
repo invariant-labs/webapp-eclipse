@@ -1,4 +1,4 @@
-import { colors, typography } from '@static/theme'
+import { colors, theme, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 const useStyles = makeStyles()(() => {
@@ -21,6 +21,10 @@ const useStyles = makeStyles()(() => {
         '@media (hover: none)': {
           color: colors.invariant.light
         }
+      },
+      // Note: this is added only due to new presale card for desktop navigation 1260-1200 px
+      [theme.breakpoints.down(1260)]: {
+        padding: '6px 10px'
       }
     },
     active: {
