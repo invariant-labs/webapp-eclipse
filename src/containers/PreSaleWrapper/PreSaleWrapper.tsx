@@ -254,14 +254,14 @@ export const PreSaleWrapper = () => {
       saleStats
         ? saleStats
         : {
-          targetAmount: new BN(0),
-          currentAmount: new BN(0),
-          whitelistWalletLimit: new BN(0),
-          startTimestamp: new BN(0),
-          duration: new BN(0),
-          mint: new PublicKey(0),
-          minDeposit: new BN(0)
-        },
+            targetAmount: new BN(0),
+            currentAmount: new BN(0),
+            whitelistWalletLimit: new BN(0),
+            startTimestamp: new BN(0),
+            duration: new BN(0),
+            mint: new PublicKey(0),
+            minDeposit: new BN(0)
+          },
     [saleStats]
   )
 
@@ -275,9 +275,9 @@ export const PreSaleWrapper = () => {
       userStats
         ? userStats
         : {
-          deposited: new BN(0),
-          received: new BN(0)
-        },
+            deposited: new BN(0),
+            received: new BN(0)
+          },
     [userStats]
   )
 
@@ -670,7 +670,7 @@ export const PreSaleWrapper = () => {
           </Grid>
           <Grid item className={classes.animatedCardItem}>
             <AnimatedPreSaleCard
-              title='4 Hackatons'
+              title='4 Hackathons'
               subtitle='won by Invariant team ($200k in prizes)'
               delay={500}
             />
@@ -693,7 +693,7 @@ export const PreSaleWrapper = () => {
         </Box>
       </Box>
       <Box className={classes.sectionTitle}>
-        <Typography className={classes.sectionTitleText}>Invariant Journey</Typography>
+        <Typography className={classes.sectionTitleText}>Invariant's Journey</Typography>
         <Box className={classes.cardsContainer}>
           <Slider
             speed={500}
@@ -711,7 +711,7 @@ export const PreSaleWrapper = () => {
             prevArrow={isSmallMobile ? null : <SamplePrevArrow />}
             rows={1}>
             <EventsCard
-              title={'Solana Riptide Hackaton'}
+              title={'Solana Riptide Hackathon'}
               description={
                 'First win comes at a major hackathon. Invariant celebrates its first big success.'
               }
@@ -735,7 +735,7 @@ export const PreSaleWrapper = () => {
               heroImage={AlphHackatonHero}
             />
             <EventsCard
-              title={'Eclipse Hackathon Win'}
+              title={'Eclipse Hackathon'}
               link='https://x.com/invariant_labs/status/1839676182884663721'
               description={`Third time's the charm. Invariant wins the opening hackathon on Eclipse, earns $15k, and steps into the spotlight.`}
               heroImage={EclipseHackatonHero}
@@ -765,7 +765,7 @@ export const PreSaleWrapper = () => {
               heroImage={UsersHero}
             />
             <EventsCard
-              title={'Sonic Mobius Hackaton'}
+              title={'Sonic Mobius Hackathon'}
               link='https://x.com/SonicSVM/status/1910590750024147382'
               borderColor={'green'}
               description={
