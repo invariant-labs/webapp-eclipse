@@ -424,10 +424,8 @@ export const useStyles = makeStyles()(() => ({
     justifyContent: 'center'
   },
   nftCard: {
-    [theme.breakpoints.down('xl')]: {
-      maxHeight: 406,
-      maxWidth: 326
-    },
+    maxHeight: 406,
+    maxWidth: 326,
 
     [theme.breakpoints.down('md')]: {
       minHeight: 406,
