@@ -109,6 +109,10 @@ import swapArrowIcon from './svg/swapArrow.svg'
 import lqStakingIcon from './svg/lqStakingIcon.svg'
 import warningStroke from './svg/warningStroke.svg'
 import plusDisabled from './svg/plusDisabled.svg'
+import plusIconLight from '@static/svg/plus-icon-light.svg'
+import plusIconDark from '@static/svg/plus-icon-dark.svg'
+import minusIconLight from '@static/svg/minus-icon-light.svg'
+import minusIconDark from '@static/svg/minus-icon-dark.svg'
 
 export {
   warningStroke,
@@ -221,7 +225,11 @@ export {
   connectWalletIcon,
   star,
   starFill,
-  swapArrowIcon
+  swapArrowIcon,
+  plusIconLight,
+  plusIconDark,
+  minusIconLight,
+  minusIconDark
 }
 
 export const chainIcons = {

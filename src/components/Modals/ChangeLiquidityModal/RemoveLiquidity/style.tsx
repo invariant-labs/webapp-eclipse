@@ -385,12 +385,7 @@ export const useStyles = makeStyles()(theme => {
       color: colors.invariant.textGrey
     },
     deposit: {
-      marginRight: 24,
-
-      [theme.breakpoints.down('md')]: {
-        marginBottom: 24,
-        marginRight: 0
-      }
+      marginRight: 24
     },
     slider: {
       height: 20,

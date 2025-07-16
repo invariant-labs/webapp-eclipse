@@ -3305,7 +3305,7 @@ export function* handleAddLiquidity(action: PayloadAction<RemoveLiquidityData>):
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Liquidity added successfully',
+          message: 'Liquidity added',
           variant: 'success',
           persist: false,
           txid: txId
@@ -3566,7 +3566,7 @@ function* handleAddLiquidityWithETH(action: PayloadAction<RemoveLiquidityData>):
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Liquidity added successfully',
+          message: 'Liquidity added',
           variant: 'success',
           persist: false,
           txid: txId
@@ -3813,7 +3813,7 @@ export function* handleRemoveLiquidity(action: PayloadAction<RemoveLiquidityData
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Liquidity removed successfully',
+          message: 'Liquidity removed',
           variant: 'success',
           persist: false,
           txid: txId
@@ -4074,7 +4074,7 @@ function* handleRemoveLiquidityWithETH(action: PayloadAction<RemoveLiquidityData
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Liquidity removed successfully',
+          message: 'Liquidity removed',
           variant: 'success',
           persist: false,
           txid: txId

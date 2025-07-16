@@ -26,6 +26,7 @@ import { Pair } from '@invariant-labs/sdk-eclipse'
 import { Tickmap } from '@invariant-labs/sdk-eclipse/lib/market'
 import { Tick } from '@invariant-labs/sdk-eclipse/src/market'
 import { PlotTickData } from '@store/reducers/positions'
+import { closeSmallIcon } from '@static/icons'
 
 export interface IChangeLiquidityModal {
   open: boolean
@@ -147,6 +148,12 @@ export const ChangeLiquidityModal: React.FC<IChangeLiquidityModal> = ({
         horizontal: 'center'
       }}>
       <Box className={classes.container}>
+        <Box className={classes.headerContainer}>
+          <Typography className={classes.headerTitle}>Change liquidity</Typography>
+          <Box className={classes.closeIconContainer} onClick={() => onClose()}>
+            <img className={classes.closeIcon} src={closeSmallIcon} alt='Close icon' />
+          </Box>
+        </Box>
         <Box className={classes.switch}>
           <Button
             className={cx(classes.switchButton, { [classes.switchButtonActive]: isAddLiquidity })}

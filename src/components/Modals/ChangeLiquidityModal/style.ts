@@ -3,12 +3,16 @@ import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(theme => ({
   paper: {
-    width: 'calc(100% - 80px)',
+    width: 'calc(100% - 48px)',
     background: colors.invariant.component,
     padding: 24,
     borderRadius: 24,
     boxShadow: 'none',
-    maxWidth: 416
+    maxWidth: 416,
+
+    [theme.breakpoints.down('sm')]: {
+      padding: 8
+    }
   },
   container: {
     display: 'flex',
@@ -37,7 +41,11 @@ export const useStyles = makeStyles()(theme => ({
     display: 'flex',
     gap: 8,
     borderRadius: 11,
-    textTransform: 'none'
+    textTransform: 'none',
+
+    [theme.breakpoints.down('sm')]: {
+      fontSize: 14
+    }
   },
   wrapper: {
     display: 'flex',
@@ -117,6 +125,26 @@ export const useStyles = makeStyles()(theme => ({
     height: 20,
     width: 20,
     borderRadius: '50%'
+  },
+  headerContainer: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  headerTitle: {
+    ...typography.heading4
+  },
+  closeIconContainer: {
+    height: 20,
+    width: 20,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    cursor: 'pointer'
+  },
+  closeIcon: {
+    height: 12,
+    width: 12
   }
 }))
 

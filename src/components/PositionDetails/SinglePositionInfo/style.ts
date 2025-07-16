@@ -1,3 +1,4 @@
+import { minusIconDark, minusIconLight, plusIconDark, plusIconLight } from '@static/icons'
 import { colors, theme, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
@@ -33,9 +34,9 @@ export const useStyles = makeStyles()(() => ({
   },
   liquidityButton: {
     borderRadius: 10,
-    height: 32,
+    height: 36,
     minWidth: 0,
-    width: 32,
+    width: 36,
     margin: 0,
     padding: 0,
     color: colors.invariant.green,
@@ -44,14 +45,25 @@ export const useStyles = makeStyles()(() => ({
     ...typography.body1,
 
     '&:hover': {
-      background: 'transparent'
+      background: `${colors.invariant.green}40`
     }
   },
-  liquidityButtonFill: {
+  liquidityButtonPlus: {
     background: colors.invariant.green,
+    backgroundImage: `url(${plusIconDark})`,
 
     '&:hover': {
-      background: colors.invariant.green
+      background: 'transparent',
+      backgroundImage: `url(${plusIconLight})`
+    }
+  },
+  liquidityButtonMinus: {
+    background: 'transparent',
+    backgroundImage: `url(${minusIconLight})`,
+
+    '&:hover': {
+      background: colors.invariant.green,
+      backgroundImage: `url(${minusIconDark})`
     }
   },
   liquidityButtonIcon: {
