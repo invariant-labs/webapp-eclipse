@@ -318,7 +318,7 @@ export const BuyComponent: React.FC<IProps> = ({
             />
           </Box>
           <Box className={classes.receiveBox}>
-            <Typography className={classes.receiveLabel}>Your allocation</Typography>
+            <Typography className={classes.receiveLabel}>You receive</Typography>
             {isLoading ? (
               <Skeleton variant='rounded' width={80} height={24} sx={{ ml: 1 }} />
             ) : (
