@@ -107,7 +107,7 @@ export const ECBanner: React.FC<IECBanner> = ({
           </Typography>
           <Button
             onClick={() =>
-              navigate(ROUTES.getNewPositionRoute(ES_MAIN.symbol, USDC_MAIN.symbol, '0_1'))
+              navigate(ROUTES.getNewPositionRoute(ES_MAIN.symbol, USDC_MAIN.symbol, '0_30'))
             }
             scheme='pink'
             gap={8}
