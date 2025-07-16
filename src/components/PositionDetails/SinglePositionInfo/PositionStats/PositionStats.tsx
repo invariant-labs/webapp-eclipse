@@ -99,7 +99,7 @@ export const PositionStats = ({
             <Skeleton height={17} width={36} variant='rounded' />
           ) : (
             <Typography className={cx(classes.statValue, classes.statValueHiglight)}>
-              {poolApy.toFixed(2)}%
+              {poolApy > 1000 ? '>1000' : poolApy.toFixed(2)}%
             </Typography>
           )}
         </Box>
