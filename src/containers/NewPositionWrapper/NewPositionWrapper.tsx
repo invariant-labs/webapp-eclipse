@@ -7,9 +7,12 @@ import {
   DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_SWAP,
   DEFAULT_AUTOSWAP_MIN_UTILIZATION,
   DEFAULT_NEW_POSITION_SLIPPAGE,
+  ES_MAIN,
   Intervals,
   LEADERBOARD_DECIMAL,
   POOLS_TO_HIDE_POINTS_PER_24H,
+  USDC_MAIN,
+  WETH_MAIN,
   autoSwapPools,
   commonTokensForNetworks
 } from '@store/consts/static'
@@ -209,21 +212,31 @@ export const NewPositionWrapper: React.FC<IProps> = ({
 
     const concentrationParam = initialConcentration ? `?conc=${initialConcentration}` : ''
 
-    const rangeParam =
-      initialIsRange !== null
+    const isSpecialESPair =
+      (fromAddress === ES_MAIN.address.toString() &&
+        (toAddress === USDC_MAIN.address.toString() || toAddress === WETH_MAIN.address.toString())) ||
+      (toAddress === ES_MAIN.address.toString() &&
+        (fromAddress === USDC_MAIN.address.toString() || fromAddress === WETH_MAIN.address.toString()));
+
+    const rangeParam = isSpecialESPair
+      ? '&range=true'
+      : initialIsRange !== null
         ? initialIsRange
           ? `&range=true`
           : '&range=false'
         : initialIsConcentrationOpening
           ? '&range=false'
           : '&range=true'
-
-    if (rangeParam === '&range=true') {
-      setPositionOpeningMethod('range')
-      setInitialOpeningPositionMethod('range')
+    if (!isSpecialESPair) {
+      if (rangeParam === '&range=true') {
+        setPositionOpeningMethod('range')
+        setInitialOpeningPositionMethod('range')
+      } else {
+        setPositionOpeningMethod('concentration')
+        setInitialOpeningPositionMethod('concentration')
+      }
     } else {
-      setPositionOpeningMethod('concentration')
-      setInitialOpeningPositionMethod('concentration')
+      setInitialOpeningPositionMethod('range')
     }
 
     if (fromAddress && fromIndex !== -1 && toAddress && toIndex !== -1) {
@@ -517,11 +530,22 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       })
     )
   }
-
   const setPositionOpeningMethod = (val: PositionOpeningMethod) => {
-    localStorage.setItem('OPENING_METHOD', val)
-  }
+    const tokenAAddress = tokenAIndex !== null ? tokens[tokenAIndex].assetAddress.toString() : '';
+    const tokenBAddress = tokenBIndex !== null ? tokens[tokenBIndex].assetAddress.toString() : '';
 
+    const isESUSDCPair =
+      (tokenAAddress === ES_MAIN.address.toString() && tokenBAddress === USDC_MAIN.address.toString()) ||
+      (tokenBAddress === ES_MAIN.address.toString() && tokenAAddress === USDC_MAIN.address.toString());
+
+    const isESWETHPair =
+      (tokenAAddress === ES_MAIN.address.toString() && tokenBAddress === WETH_MAIN.address.toString()) ||
+      (tokenBAddress === ES_MAIN.address.toString() && tokenAAddress === WETH_MAIN.address.toString());
+
+    if (!isESUSDCPair && !isESWETHPair) {
+      localStorage.setItem('OPENING_METHOD', val)
+    }
+  }
   const initialHideUnknownTokensValue =
     localStorage.getItem('HIDE_UNKNOWN_TOKENS') === 'true' ||
     localStorage.getItem('HIDE_UNKNOWN_TOKENS') === null
@@ -819,12 +843,12 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     () =>
       tokenAIndex !== null && tokenBIndex !== null
         ? autoSwapPools.find(
-            item =>
-              (item.pair.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
-                item.pair.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
-              (item.pair.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
-                item.pair.tokenY.equals(tokens[tokenAIndex].assetAddress))
-          )
+          item =>
+            (item.pair.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
+              item.pair.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
+            (item.pair.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
+              item.pair.tokenY.equals(tokens[tokenAIndex].assetAddress))
+        )
         : undefined,
     [tokenAIndex, tokenBIndex]
   )
@@ -1100,7 +1124,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       unblockUpdatePriceRange={unblockUpdatePriceRange}
       isGetLiquidityError={false}
       onlyUserPositions={false} //TODO implement logic
-      setOnlyUserPositions={() => {}} //TODO implement logic
+      setOnlyUserPositions={() => { }} //TODO implement logic
       network={currentNetwork}
       isLoadingTokens={isCurrentlyLoadingTokens}
       ethBalance={ethBalance}
