@@ -1018,6 +1018,10 @@ export const Swap: React.FC<ISwap> = ({
   const [errorVisible, setErrorVisible] = useState(false)
 
   useEffect(() => {
+    if (getStateMessage() !== 'Exchange') {
+      setErrorVisible(false)
+      return
+    }
     const hasUnknown =
       tokens[tokenFromIndex ?? '']?.isUnknown || tokens[tokenToIndex ?? '']?.isUnknown
 
@@ -1034,6 +1038,7 @@ export const Swap: React.FC<ISwap> = ({
     const id = setTimeout(() => setErrorVisible(riskWarning), 150)
     return () => clearTimeout(id)
   }, [
+    getStateMessage,
     priceImpact,
     oraclePriceDiffPercentage,
     priceFromLoading,
