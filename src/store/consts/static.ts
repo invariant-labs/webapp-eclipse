@@ -433,6 +433,15 @@ export const TUSD_MAIN: Token = {
   coingeckoId: ''
 }
 
+export const muES_MAIN: Token = {
+  symbol: 'muES',
+  address: new PublicKey('A9qpp2Ejxvy7xE4JxLLqSsqMcjsPUAJpyHTbA2WDJ4E3'),
+  decimals: 6,
+  name: 'Mushi ES',
+  logoURI: '',
+  coingeckoId: ''
+}
+
 const DEFAULT_PUBLICKEY = new PublicKey(0)
 const MAX_U64 = new BN('18446744073709551615')
 
@@ -793,7 +802,8 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
       WBTC: WBTC_MAIN.address.toString(),
       NPT: NPT_MAIN.address.toString(),
       USDN: USDN_MAIN.address.toString(),
-      WEETHS: WEETHS_MAIN.address.toString()
+      WEETHS: WEETHS_MAIN.address.toString(),
+      muES_MAIN: muES_MAIN.address.toString()
     }
   }
 }
