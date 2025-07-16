@@ -10,6 +10,8 @@ import closeIcon from './svg/closeIcon.svg'
 import docsIcon from './svg/docsCircle.svg'
 import closeSmallIcon from './svg/closeSmall.svg'
 import closeSmallGreenIcon from './svg/closeSmallGreen.svg'
+import closeSmallRedIcon from './svg/closeSmallRed.svg'
+import closeSmallYellowIcon from './svg/closeSmallYellow.svg'
 import successIcon from './svg/successIcon.svg'
 import xIcon from './svg/xCircle.svg'
 import unknownTokenIcon from './svg/unknownToken.svg'
@@ -42,6 +44,7 @@ import airdropIcon from './svg/airdrop.svg'
 import nightlyIcon from './svg/nightly.svg'
 import airdropRainbowIcon from './svg/airdropRainbow.svg'
 import auditIcon from './svg/audit.svg'
+import auditByLogoIcon from './svg/auditbylogo.svg'
 import warning2Icon from './svg/warning2.svg'
 import closeWarningIcon from './svg/closeWarning.svg'
 import dropdownIcon from './svg/dropdown.svg'
@@ -106,14 +109,26 @@ import connectWalletIcon from './svg/connectWalletIcon.svg'
 import star from './svg/star.svg'
 import starFill from './svg/star-fill.svg'
 import swapArrowIcon from './svg/swapArrow.svg'
+import moreIcon from './svg/moreIcon.svg'
 import lqStakingIcon from './svg/lqStakingIcon.svg'
 import warningStroke from './svg/warningStroke.svg'
 import plusDisabled from './svg/plusDisabled.svg'
+import pointsQMarkIcon from './svg/pointsQmark.svg'
+import hornsUSDC from './svg/hornsUSDC.svg'
+import hornsETH from './svg/hornsETH.svg'
+import virtualCardIcon from './svg/virtualCard.svg'
+import greenInfoIcon from './svg/greenInfo.svg'
+import swapArrowClean from './svg/swapArrowClean.svg'
+import saleSelectedIcon from './svg/sale-selected.svg'
+import saleUnselectedIcon from './svg/sale-unselected.svg'
 
 export {
+  hornsUSDC,
   warningStroke,
   plusDisabled,
   lqStakingIcon,
+  pointsQMarkIcon,
+  moreIcon,
   logoTitleIcon,
   logoShortIcon,
   arrowIcon,
@@ -125,7 +140,9 @@ export {
   closeIcon,
   docsIcon,
   closeSmallIcon,
+  closeSmallRedIcon,
   closeSmallGreenIcon,
+  closeSmallYellowIcon,
   successIcon,
   xIcon,
   unknownTokenIcon,
@@ -215,13 +232,20 @@ export {
   unstakeIcon,
   circleDolarIcon,
   depositIcon,
+  virtualCardIcon,
   withdrawIcon,
   centerToRangeIcon,
   warning3,
   connectWalletIcon,
   star,
   starFill,
-  swapArrowIcon
+  swapArrowIcon,
+  hornsETH,
+  auditByLogoIcon,
+  greenInfoIcon,
+  swapArrowClean,
+  saleSelectedIcon,
+  saleUnselectedIcon
 }
 
 export const chainIcons = {

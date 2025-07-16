@@ -8,7 +8,7 @@ import { airdropRainbowIcon, swapListIcon, warning2Icon, warningIcon } from '@st
 import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
 import { BN } from '@coral-xyz/anchor'
 import { usePromotedPool } from '@store/hooks/positionList/usePromotedPool'
-import { NetworkType } from '@store/consts/static'
+import { NetworkType, POOLS_TO_HIDE_POINTS_PER_24H } from '@store/consts/static'
 import { network as currentNetwork } from '@store/selectors/solanaConnection'
 import { useSelector } from 'react-redux'
 import { useTokenValues } from '@store/hooks/positionList/useTokenValues'
@@ -159,8 +159,16 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
               </>
             }
             pointsLabel={'Total points distributed across the pool per 24H:'}
-            estPoints={estimated24hPoints}
-            points={new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60)}>
+            estPoints={
+              POOLS_TO_HIDE_POINTS_PER_24H.includes(poolAddress.toString())
+                ? new BN(0)
+                : estimated24hPoints
+            }
+            points={
+              POOLS_TO_HIDE_POINTS_PER_24H.includes(poolAddress.toString())
+                ? new BN(0)
+                : new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60)
+            }>
             <div
               className={classes.actionButton}
               onClick={() => {

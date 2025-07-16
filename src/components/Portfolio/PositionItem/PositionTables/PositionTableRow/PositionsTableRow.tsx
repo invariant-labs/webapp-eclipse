@@ -23,6 +23,7 @@ import { useStyles } from './style'
 import { useSkeletonStyle } from '../skeletons/skeletons'
 import { ILiquidityToken } from '@store/consts/types'
 import { ReactFitty } from 'react-fitty'
+import { POOLS_TO_HIDE_POINTS_PER_24H } from '@store/consts/static'
 
 interface ILoadingStates {
   pairName?: boolean
@@ -340,8 +341,16 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
               </>
             }
             pointsLabel={'Total points distributed across the pool per 24H:'}
-            estPoints={estimated24hPoints}
-            points={new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60)}>
+            estPoints={
+              POOLS_TO_HIDE_POINTS_PER_24H.includes(poolAddress.toString())
+                ? new BN(0)
+                : estimated24hPoints
+            }
+            points={
+              POOLS_TO_HIDE_POINTS_PER_24H.includes(poolAddress.toString())
+                ? new BN(0)
+                : new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60)
+            }>
             <div ref={airdropIconRef} className={classes.actionButton}>
               <img
                 src={airdropRainbowIcon}

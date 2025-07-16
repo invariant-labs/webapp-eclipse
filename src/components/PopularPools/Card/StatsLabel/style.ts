@@ -1,7 +1,7 @@
 import { colors, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
-export const useStyles = makeStyles()(() => ({
+export const useStyles = makeStyles<{ disableShadow?: boolean }>()((_theme, { disableShadow }) => ({
   container: {
     background: 'linear-gradient(90deg, #010514 0%, #111931 100%)',
     justifyContent: 'space-between',
@@ -19,7 +19,7 @@ export const useStyles = makeStyles()(() => ({
   value: {
     ...typography.caption4,
     color: colors.invariant.green,
-    textShadow: '0px 0px 5px rgba(46, 224, 154, 1)',
+    textShadow: disableShadow ? '' : '0px 0px 5px rgba(46, 224, 154, 1)',
     fontWeight: 500,
     fontSize: 20
   }

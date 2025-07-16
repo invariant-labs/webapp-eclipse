@@ -4,10 +4,11 @@ import { useStyles } from './style'
 export interface IStatsLabel {
   title: string
   value: string
+  disableShadow?: boolean
 }
 
-const StatsLabel: React.FC<IStatsLabel> = ({ title, value }) => {
-  const { classes } = useStyles()
+const StatsLabel: React.FC<IStatsLabel> = ({ title, value, disableShadow }) => {
+  const { classes } = useStyles({ disableShadow })
 
   return (
     <Grid container className={classes.container}>
