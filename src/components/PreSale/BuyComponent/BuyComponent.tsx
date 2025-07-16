@@ -178,7 +178,7 @@ export const BuyComponent: React.FC<IProps> = ({
         <Box sx={{ minHeight: '206px' }}>
           <Box className={classes.headingContainer}>
             <Box sx={{ height: '60px', width: '100%' }}>
-              {alertBox && isActive && walletStatus !== Status.Uninitialized ? (
+              {alertBox && walletStatus !== Status.Uninitialized ? (
                 isLoadingUserStats ? (
                   <Skeleton className={classes.skeletonBanner} />
                 ) : (
@@ -201,7 +201,7 @@ export const BuyComponent: React.FC<IProps> = ({
                     </TooltipHover>
                   </Box>
                 )
-              ) : walletStatus !== Status.Initialized && isActive ? (
+              ) : walletStatus !== Status.Initialized ? (
                 <Box className={classes.egibilityCheckerWrapper}>
                   <Typography className={classes.egibilityCheckerText}>
                     To participate in sale, check your eligibility
@@ -214,8 +214,6 @@ export const BuyComponent: React.FC<IProps> = ({
                     onDisconnect={onDisconnectWallet}
                   />
                 </Box>
-              ) : saleDidNotStart ? (
-                <Typography className={classes.presaleTitle}>Community Sale opens in:</Typography>
               ) : null}
             </Box>
             <Box className={classes.sectionDivider} />
@@ -253,6 +251,7 @@ export const BuyComponent: React.FC<IProps> = ({
 
           {saleDidNotStart ? (
             <Box className={classes.timerContainer}>
+              <Typography className={classes.presaleTitle}>Community Sale opens in:</Typography>
               <Timer hours={hours} minutes={minutes} seconds={seconds} />
             </Box>
           ) : (
