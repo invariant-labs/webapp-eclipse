@@ -32,7 +32,7 @@ import {
 import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import { actions as snackbarActions } from '@store/reducers/snackbars'
 import { actions as navigationActions } from '@store/reducers/navigation'
-import { showFavourites as showFavouritesSelector } from '@store/selectors/navigation'
+import { address, showFavourites as showFavouritesSelector } from '@store/selectors/navigation'
 import { actions } from '@store/reducers/stats'
 import { Intervals as IntervalsKeys } from '@store/consts/static'
 import { VariantType } from 'notistack'
@@ -57,6 +57,8 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
 }) => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
+
+  const locationHistory = useSelector(address)
 
   const tokens = useSelector(poolTokens)
 
@@ -296,7 +298,11 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
 
   const feeTiers = ALL_FEE_TIERS_DATA.map(tier => +printBN(tier.tier.fee, DECIMAL - 2))
 
-  console.log(parsePathFeeToFeeString(initialFee))
+  const handleBack = () => {
+    const path = locationHistory === ROUTES.ROOT ? ROUTES.PORTFOLIO : locationHistory
+    navigate(path)
+  }
+
   return (
     <PoolDetails
       network={currentNetwork}
@@ -319,6 +325,7 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
       selectFeeTier={selectFeeTier}
       feeTiers={feeTiers}
       initialFee={initialFee}
+      handleBack={handleBack}
     />
   )
 }

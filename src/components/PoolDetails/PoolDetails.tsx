@@ -1,5 +1,5 @@
 import React from 'react'
-import { Grid } from '@mui/material'
+import { Grid, Typography } from '@mui/material'
 import useStyles from './style'
 import Chart from './Chart/Chart'
 import PoolInfo from './PoolInfo/PoolInfo'
@@ -10,6 +10,7 @@ import { PoolWithAddress } from '@store/reducers/pools'
 import { Intervals as IntervalsKeys } from '@store/consts/static'
 import { PoolChartSwitch, TokenReserve } from '@store/consts/types'
 import { VariantType } from 'notistack'
+import { backIcon } from '@static/icons'
 
 export interface IProps {
   network: NetworkType
@@ -32,6 +33,7 @@ export interface IProps {
   selectFeeTier: (value: number) => void
   feeTiers: number[]
   initialFee: string
+  handleBack: () => void
 }
 
 export const PoolDetails: React.FC<IProps> = ({
@@ -54,12 +56,17 @@ export const PoolDetails: React.FC<IProps> = ({
   prices,
   selectFeeTier,
   feeTiers,
-  initialFee
+  initialFee,
+  handleBack
 }) => {
   const { classes } = useStyles()
   console.log(initialFee)
   return (
     <Grid className={classes.wrapper}>
+      <Grid onClick={() => handleBack()} className={classes.back} container item>
+        <img className={classes.backIcon} src={backIcon} alt='back' />
+        <Typography className={classes.backText}>Back</Typography>
+      </Grid>
       <Grid className={classes.upperContainer}>
         <Chart
           poolAddress={poolData?.address.toString() ?? ''}
