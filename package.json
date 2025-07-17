@@ -21,7 +21,7 @@
     "@invariant-labs/locker-eclipse-sdk": "^0.0.23",
     "@invariant-labs/points-sdk": "^0.0.11",
     "@invariant-labs/sbitz": "^0.0.16",
-    "@invariant-labs/sale-sdk": "^0.0.50",
+    "@invariant-labs/sale-sdk": "^0.0.51",
     "@invariant-labs/sdk-eclipse": "^0.0.130",
     "@irys/web-upload": "*",
     "@irys/web-upload-solana": "^0.1.7",
