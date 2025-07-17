@@ -150,7 +150,7 @@ const TokenListItem: React.FC<IProps> = ({
               />
             </TooltipHover>
           </Grid>
-          <Typography>{`~$${formatNumberWithSuffix(price)}`}</Typography>
+          <Typography>{`$${formatNumberWithSuffix(price)}`}</Typography>
           {/* {!hideName && (
             <Typography style={{ color: isNegative ? colors.invariant.Error : colors.green.main }}>
               {isNegative ? `${priceChange.toFixed(2)}%` : `+${priceChange.toFixed(2)}%`}
