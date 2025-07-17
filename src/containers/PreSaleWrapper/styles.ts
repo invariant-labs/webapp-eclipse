@@ -419,9 +419,19 @@ export const useStyles = makeStyles()(() => ({
     maxWidth: 1210
   },
   nftCardWrapper: {
+    position: 'relative',
     width: '50%',
     display: 'flex',
     justifyContent: 'center'
+  },
+  nftText: {
+    position: 'absolute',
+    left: '50%',
+    bottom: '72px',
+    transform: 'translate(-50%, -50%)',
+    ...typography.heading3,
+    color: colors.invariant.text,
+    textWrap: 'nowrap'
   },
   nftCard: {
     maxHeight: 406,
