@@ -66,6 +66,13 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
     isActive
   })
 
+  const getValuation = (round: number) => {
+    if (round === 1) return '$3.65 MLN'
+    if (round === 2) return '$4.75 MLN'
+    if (round === 3) return '$5.48 MLN'
+    if (round === 4) return '$6.21 MLN'
+  }
+
   const renderPriceWithSkeleton = (
     amount: BN,
     decimals: number,
@@ -208,9 +215,19 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
       </Box>
       <Box className={classes.infoCard} marginTop={'24px'}>
         <Box className={classes.infoRow}>
-          <Typography className={classes.infoLabel}>Fully Diluted Valuation (FDV)</Typography>
+          <Typography className={classes.infoLabel}>Average Sale FDV</Typography>
           <Typography className={classes.value}>$4.5 MLN</Typography>
         </Box>
+        <Box className={classes.infoRow}>
+          <Typography className={classes.infoLabel}>Current Phase FDV</Typography>
+          <Typography className={classes.value}>{getValuation(roundNumber)}</Typography>
+        </Box>
+        {!isActive && (
+          <Box className={classes.infoRow}>
+            <Typography className={classes.infoLabel}>Total Supply</Typography>
+            <Typography className={classes.value}>365 MLN</Typography>
+          </Box>
+        )}
       </Box>
       <Box className={classes.infoCard}>
         {isActive && (
