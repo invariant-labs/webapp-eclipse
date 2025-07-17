@@ -10,7 +10,7 @@ import { isLoadingProof, proofOfInclusion, saleSelectors } from '@store/selector
 import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
 import { printBNandTrimZeros } from '@utils/utils'
-import NftPlaceholder from '@static/png/NFT_Card.png'
+import NftPlaceholder from '@static/png/presale/NFT_Card.png'
 import {
   EFFECTIVE_TARGET,
   getRound,
@@ -614,7 +614,7 @@ export const PreSaleWrapper = () => {
         />
       </Box>
       <Box className={classes.sectionTitle}>
-        <Typography className={classes.sectionTitleText}>Invariant Contributor NFT</Typography>
+        <Typography className={classes.sectionTitleText}>Proof of Contribution</Typography>
         <Box display='flex' alignItems='center' gap={12} className={classes.nftBackground}>
           <Box className={classes.nftWrapper}>
             <Typography component='section'>
@@ -638,6 +638,7 @@ export const PreSaleWrapper = () => {
           </Box>
           <Box className={classes.nftCardWrapper}>
             <img className={classes.nftCard} src={NftPlaceholder} />
+            <Typography className={classes.nftText}>Invariant Contributor NFT</Typography>
           </Box>
         </Box>
       </Box>
