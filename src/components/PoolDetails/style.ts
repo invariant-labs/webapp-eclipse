@@ -12,6 +12,7 @@ export const useStyles = makeStyles()(theme => ({
   upperContainer: {
     display: 'flex',
     justifyContent: 'space-between',
+    alignItems: 'stretch',
     gap: 24,
     [theme.breakpoints.down('md')]: {
       flexDirection: 'column'

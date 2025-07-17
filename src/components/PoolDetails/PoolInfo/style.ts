@@ -3,12 +3,15 @@ import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(theme => ({
   wrapper: {
+    display: 'flex',
+    flexDirection: 'column',
     width: 500,
     [theme.breakpoints.down('md')]: {
       width: '100%'
     }
   },
   container: {
+    flex: 1,
     background: colors.invariant.component,
     padding: 24,
     borderRadius: 24,

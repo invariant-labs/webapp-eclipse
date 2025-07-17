@@ -205,6 +205,8 @@ const PoolListItem: React.FC<IProps> = ({
     const tokenA = isXtoY ? address1 : address2
     const tokenB = isXtoY ? address2 : address1
 
+    dispatch(actions.setNavigation({ address: location.pathname }))
+
     navigate(ROUTES.getPoolDetailsRoute(tokenA, tokenB, parsedFee), { state: { referer: 'stats' } })
   }
 
