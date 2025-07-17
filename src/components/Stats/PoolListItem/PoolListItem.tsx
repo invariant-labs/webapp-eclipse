@@ -195,6 +195,18 @@ const PoolListItem: React.FC<IProps> = ({
     )
   }
 
+  const handleOpenPoolDetails = () => {
+    const address1 = addressToTicker(network, tokenAData.address ?? '')
+    const address2 = addressToTicker(network, tokenBData.address ?? '')
+    const parsedFee = parseFeeToPathFee(fee)
+    const isXtoY = initialXtoY(tokenAData.address ?? '', tokenBData.address ?? '')
+
+    const tokenA = isXtoY ? address1 : address2
+    const tokenB = isXtoY ? address2 : address1
+
+    navigate(ROUTES.getPoolDetailsRoute(tokenA, tokenB, parsedFee), { state: { referer: 'stats' } })
+  }
+
   const networkUrl = useMemo(() => {
     switch (network) {
       case NetworkType.Mainnet:
