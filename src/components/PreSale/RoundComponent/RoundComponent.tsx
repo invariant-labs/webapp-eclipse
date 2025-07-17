@@ -5,7 +5,6 @@ import classNames from 'classnames'
 import { BN } from '@coral-xyz/anchor'
 import { formatNumberWithCommas, printBN, printBNandTrimZeros } from '@utils/utils'
 import {
-  EFFECTIVE_TARGET,
   PERCENTAGE_SCALE,
   REWARD_SCALE,
   TIER1,
@@ -15,8 +14,6 @@ import {
 } from '@invariant-labs/sale-sdk'
 import { Status } from '@store/reducers/solanaWallet'
 import { colors } from '@static/theme'
-import { TooltipHover } from '@common/TooltipHover/TooltipHover'
-import { infoCircleIcon } from '@static/icons'
 
 interface RoundComponentProps {
   isActive: boolean
@@ -178,7 +175,7 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
                 <Typography className={classes.infoLabel}>Target raise</Typography>
                 {renderFormattedNumberWithSkeleton(targetAmount, mintDecimals, '$', '', '100px')}
               </Box>
-              <Box className={classes.infoRow}>
+              {/* <Box className={classes.infoRow}>
                 <Typography className={classes.infoLabel}>
                   <Box mr={'2px'}>Upper limit</Box>
                   <TooltipHover
@@ -196,7 +193,7 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
                   '',
                   '100px'
                 )}
-              </Box>
+              </Box> */}
             </>
           )}
         </Box>
