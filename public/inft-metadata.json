@@ -7,6 +7,6 @@
     { "trait_type": "Sale", "value": "Invariant Community Sale" },
     { "trait_type": "Role", "value": "Summer Contributor" },
     { "trait_type": "Transferable", "value": "No" },
-    { "trait_type": "Minimum Contribution", "commitment": "$450" }
+    { "trait_type": "Minimum Contribution", "value": "$450" }
   ]
 }
