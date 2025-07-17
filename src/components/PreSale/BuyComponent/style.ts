@@ -24,7 +24,6 @@ const useStyles = makeStyles<{ percentage: number; isActive?: boolean }>()(
       backgroundColor: colors.invariant.component,
       borderRadius: '20px',
       width: '520px',
-      height: '492px',
       [theme.breakpoints.down('lg')]: {
         width: 'calc(100% - 48px)'
       },
