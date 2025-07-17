@@ -334,7 +334,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
   useEffect(() => {
     const timer = setTimeout(() => {
       setShouldReversePlot(false)
-    }, 600)
+    }, 100)
 
     return () => {
       clearTimeout(timer)
