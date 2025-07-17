@@ -507,7 +507,9 @@ export const PreSaleWrapper = () => {
       <Hidden lgDown>
         <OverlayWrapper />
       </Hidden>
-
+      <Button scheme='green' onClick={() => dispatch(actions.withdraw({ mint }))}>
+        Withdraw
+      </Button>
       <ShareComponent
         open={isShareComponentShown}
         allocation={received}
