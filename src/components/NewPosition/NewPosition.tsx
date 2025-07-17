@@ -427,8 +427,8 @@ export const NewPosition: React.FC<INewPosition> = ({
   const estimatedScalePoints = useMemo(() => {
     return estimatedPointsForScale(
       positionOpeningMethod === 'concentration'
-        ? concentrationArray[concentrationIndex] ??
-            concentrationArray[concentrationArray.length - 1]
+        ? (concentrationArray[concentrationIndex] ??
+            concentrationArray[concentrationArray.length - 1])
         : calculateConcentration(leftRange, rightRange),
       positionOpeningMethod === 'concentration' ? concentrationArray : rangeConcentrationArray
     )
@@ -549,13 +549,13 @@ export const NewPosition: React.FC<INewPosition> = ({
   const promotedPoolTierIndex =
     tokenAIndex === null || tokenBIndex === null
       ? undefined
-      : promotedTiers.find(
+      : (promotedTiers.find(
           tier =>
             (tier.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
             (tier.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenAIndex].assetAddress))
-        )?.index ?? undefined
+        )?.index ?? undefined)
 
   const getMinSliderIndex = () => {
     let minimumSliderIndex = 0
@@ -916,19 +916,25 @@ export const NewPosition: React.FC<INewPosition> = ({
     return Math.abs((oraclePrice - midPrice.x) / midPrice.x) * 100
   }, [oraclePrice, midPrice.x])
 
-  const oraclePriceWarning = useMemo(
-    () => oraclePrice !== 0 && oracleDiffPercentage > 10,
-    [oracleDiffPercentage]
-  )
+  const oraclePriceWarning = useMemo(() => {
+    if (shouldReversePlot) {
+      return false
+    }
+
+    return oraclePrice !== 0 && oracleDiffPercentage > 10
+  }, [oracleDiffPercentage, shouldReversePlot, oraclePrice])
 
   const diffPercentage = useMemo(() => {
     return Math.abs((suggestedPrice - midPrice.x) / midPrice.x) * 100
   }, [suggestedPrice, midPrice.x])
 
-  const showPriceWarning = useMemo(
-    () => (diffPercentage > 10 && !oraclePrice) || (diffPercentage > 10 && oraclePriceWarning),
-    [diffPercentage, oraclePriceWarning, oraclePrice]
-  )
+  const showPriceWarning = useMemo(() => {
+    if (shouldReversePlot) {
+      return false
+    }
+    return (diffPercentage > 10 && !oraclePrice) || (diffPercentage > 10 && oraclePriceWarning)
+  }, [diffPercentage, oraclePriceWarning, oraclePrice, shouldReversePlot])
+
   const blocked =
     tokenAIndex === null ||
     tokenBIndex === null ||
