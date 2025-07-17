@@ -31,6 +31,11 @@ export const FeeSwitch: React.FC<IFeeSwitch> = ({
   containerKey,
   disabledFeeTiers
 }) => {
+  console.log(feeTiers)
+  console.log(feeTiersWithTvl)
+  console.log(promotedPoolTierIndex)
+  console.log(currentValue)
+
   const { classes, cx } = useStyles()
   const [blocked, setBlocked] = useState(false)
   const { classes: singleTabClasses } = useSingleTabStyles()

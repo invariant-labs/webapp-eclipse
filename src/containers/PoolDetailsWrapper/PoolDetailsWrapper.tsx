@@ -11,8 +11,10 @@ import { poolTokens, SwapToken } from '@store/selectors/solanaWallet'
 import {
   getTokenPrice,
   getTokenReserve,
+  initialXtoY,
   parseFeeToPathFee,
   parsePathFeeToFeeString,
+  printBN,
   ROUTES,
   tickerToAddress
 } from '@utils/utils'
@@ -40,6 +42,7 @@ import { getCurrentSolanaConnection } from '@utils/web3/connection'
 import { Connection, PublicKey } from '@solana/web3.js'
 import { TokenReserve } from '@store/consts/types'
 import { set } from 'remeda'
+import { token } from '@coral-xyz/anchor/dist/cjs/utils'
 
 export interface IProps {
   initialTokenFrom: string
@@ -281,6 +284,19 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
     )
   }
 
+  const selectFeeTier = (value: number) => {
+    if (!poolData) return
+
+    const address1 = tokenX?.symbol
+    const address2 = tokenY?.symbol
+    const parsedFee = parseFeeToPathFee(poolData.fee)
+
+    navigate(ROUTES.getPoolDetailsRoute(address1, address2, parsedFee))
+  }
+
+  const feeTiers = ALL_FEE_TIERS_DATA.map(tier => +printBN(tier.tier.fee, DECIMAL - 2))
+
+  console.log(parsePathFeeToFeeString(initialFee))
   return (
     <PoolDetails
       network={currentNetwork}
@@ -300,6 +316,9 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
       tokenXReserve={tokenXReserve}
       tokenYReserve={tokenYReserve}
       prices={prices}
+      selectFeeTier={selectFeeTier}
+      feeTiers={feeTiers}
+      initialFee={initialFee}
     />
   )
 }

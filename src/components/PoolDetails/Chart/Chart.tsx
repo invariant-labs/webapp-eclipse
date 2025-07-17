@@ -9,6 +9,7 @@ import ChartLowerSection from './ChartLowerSection/ChartLowerSection'
 import { Intervals as IntervalsKeys } from '@store/consts/static'
 import { PoolChartSwitch } from '@store/consts/types'
 import { VariantType } from 'notistack'
+import { select } from 'typed-redux-saga'
 
 export interface IProps {
   poolAddress: string
@@ -25,6 +26,9 @@ export interface IProps {
   lastStatsTimestamp: number
   setChartType: (type: PoolChartSwitch) => void
   updateInterval: (interval: IntervalsKeys) => void
+  selectFeeTier: (value: number) => void
+  feeTiers: number[]
+  currentFee: string
 }
 
 export const Chart: React.FC<IProps> = ({
@@ -41,7 +45,10 @@ export const Chart: React.FC<IProps> = ({
   isLoadingStats,
   lastStatsTimestamp,
   setChartType,
-  updateInterval
+  updateInterval,
+  selectFeeTier,
+  feeTiers,
+  currentFee
 }) => {
   const { classes } = useStyles()
 
@@ -58,6 +65,8 @@ export const Chart: React.FC<IProps> = ({
           poolAddress={poolAddress}
           tokenX={tokenX}
           tokenY={tokenY}
+          selectFeeTier={selectFeeTier}
+          feeTiers={feeTiers}
         />
         <Box className={classes.separator} />
         <ChartLowerSection

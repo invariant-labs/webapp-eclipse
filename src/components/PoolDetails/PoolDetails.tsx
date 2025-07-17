@@ -29,6 +29,9 @@ export interface IProps {
   tokenXReserve: TokenReserve | null
   tokenYReserve: TokenReserve | null
   prices: { tokenX: number; tokenY: number }
+  selectFeeTier: (value: number) => void
+  feeTiers: number[]
+  initialFee: string
 }
 
 export const PoolDetails: React.FC<IProps> = ({
@@ -48,10 +51,13 @@ export const PoolDetails: React.FC<IProps> = ({
   updateInterval,
   tokenXReserve,
   tokenYReserve,
-  prices
+  prices,
+  selectFeeTier,
+  feeTiers,
+  initialFee
 }) => {
   const { classes } = useStyles()
-
+  console.log(initialFee)
   return (
     <Grid className={classes.wrapper}>
       <Grid className={classes.upperContainer}>
@@ -70,6 +76,8 @@ export const PoolDetails: React.FC<IProps> = ({
           lastStatsTimestamp={lastStatsTimestamp}
           setChartType={setChartType}
           updateInterval={updateInterval}
+          selectFeeTier={selectFeeTier}
+          feeTiers={feeTiers}
         />
         <PoolInfo
           interval={interval}
