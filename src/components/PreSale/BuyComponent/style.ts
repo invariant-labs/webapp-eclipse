@@ -197,6 +197,7 @@ const useStyles = makeStyles<{ percentage: number; isActive?: boolean }>()(
       justifyContent: 'center',
       gap: 10,
       padding: 10,
+      paddingInline: 0,
       flexDirection: 'column',
       width: '100%'
     },
