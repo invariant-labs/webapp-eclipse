@@ -10,7 +10,7 @@ import { isLoadingProof, proofOfInclusion, saleSelectors } from '@store/selector
 import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
 import { printBNandTrimZeros } from '@utils/utils'
-import NftPlaceholder from '@static/png/NFT_Card.png'
+import NftPlaceholder from '@static/png/presale/NFT_Card.png'
 import {
   EFFECTIVE_TARGET,
   getRound,
@@ -614,7 +614,7 @@ export const PreSaleWrapper = () => {
         />
       </Box>
       <Box className={classes.sectionTitle}>
-        <Typography className={classes.sectionTitleText}>Invariant Contributor NFT</Typography>
+        <Typography className={classes.sectionTitleText}>Proof of Contribution</Typography>
         <Box display='flex' alignItems='center' gap={12} className={classes.nftBackground}>
           <Box className={classes.nftWrapper}>
             <Typography component='section'>
@@ -638,6 +638,7 @@ export const PreSaleWrapper = () => {
           </Box>
           <Box className={classes.nftCardWrapper}>
             <img className={classes.nftCard} src={NftPlaceholder} />
+            <Typography className={classes.nftText}>Invariant Contributor NFT</Typography>
           </Box>
         </Box>
       </Box>
@@ -835,7 +836,7 @@ export const PreSaleWrapper = () => {
             {
               question: '5. How can I tell if I am whitelisted?',
               answer:
-                'You can use the <span style="color: #2EE09A; font-weight: bold;">Whitelist Checker</span> located at the top of the page. The <span style="color: #2EE09A; font-weight: bold;">Allocation Checker</span> is currently unavailable and will be revealed closer to the start of the sale'
+                'You can use the <span style="color: #2EE09A; font-weight: bold;">Whitelist Checker</span> located at the top of the page.'
             },
             {
               question: '6. I am not whitelisted, can I still take part in the Community Sale?',
