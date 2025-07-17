@@ -215,10 +215,6 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
       </Box>
       <Box className={classes.infoCard} marginTop={'24px'}>
         <Box className={classes.infoRow}>
-          <Typography className={classes.infoLabel}>Average Sale FDV</Typography>
-          <Typography className={classes.value}>$4.5 MLN</Typography>
-        </Box>
-        <Box className={classes.infoRow}>
           <Typography className={classes.infoLabel}>Current Phase FDV</Typography>
           <Typography className={classes.value}>{getValuation(roundNumber)}</Typography>
         </Box>
