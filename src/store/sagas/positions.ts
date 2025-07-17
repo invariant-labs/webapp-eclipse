@@ -24,7 +24,8 @@ import {
   VersionedTransaction,
   PublicKey,
   ParsedInstruction,
-  SendTransactionError
+  SendTransactionError,
+  ComputeBudgetProgram
 } from '@solana/web3.js'
 import {
   APPROVAL_DENIED_MESSAGE,
@@ -2311,6 +2312,11 @@ export function* handleClaimFee(action: PayloadAction<{ index: number; isLocked:
       tickSpacing: poolForIndex.tickSpacing
     })
     if (action.payload.isLocked) {
+      tx.add(
+        ComputeBudgetProgram.setComputeUnitLimit({
+          units: 230000
+        })
+      )
       const ix = yield* call(
         [lockerProgram, lockerProgram.claimFeeIx],
         {
