@@ -15,6 +15,13 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
       borderTopRightRadius: 24,
       background: colors.invariant.component,
       borderBottom: `2px solid ${colors.invariant.light}`
+    },
+
+    [theme.breakpoints.up(1160)]: {
+      '&:hover': {
+        cursor: 'pointer',
+        filter: 'brightness(1.05)'
+      }
     }
   },
   symbolsWrapper: {

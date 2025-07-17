@@ -122,6 +122,7 @@ import swapArrowClean from './svg/swapArrowClean.svg'
 import saleSelectedIcon from './svg/sale-selected.svg'
 import saleUnselectedIcon from './svg/sale-unselected.svg'
 import poolStatsIcon from './svg/poolStats.svg'
+import poolStatsBtnIcon from './svg/poolStatsBtn.svg'
 
 export {
   hornsUSDC,
@@ -247,7 +248,8 @@ export {
   swapArrowClean,
   saleSelectedIcon,
   saleUnselectedIcon,
-  poolStatsIcon
+  poolStatsIcon,
+  poolStatsBtnIcon
 }
 
 export const chainIcons = {

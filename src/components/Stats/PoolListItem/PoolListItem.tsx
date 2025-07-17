@@ -15,7 +15,8 @@ import {
   plusIcon,
   unknownTokenIcon,
   plusDisabled,
-  warningIcon
+  warningIcon,
+  poolStatsBtnIcon
 } from '@static/icons'
 import {
   disabledPools,
@@ -198,7 +199,7 @@ const PoolListItem: React.FC<IProps> = ({
   const handleOpenPoolDetails = () => {
     const address1 = addressToTicker(network, tokenAData.address ?? '')
     const address2 = addressToTicker(network, tokenBData.address ?? '')
-    const parsedFee = parseFeeToPathFee(fee)
+    const parsedFee = parseFeeToPathFee(Math.round(fee * 10 ** (DECIMAL - 2)))
     const isXtoY = initialXtoY(tokenAData.address ?? '', tokenBData.address ?? '')
 
     const tokenA = isXtoY ? address1 : address2
@@ -309,11 +310,15 @@ const PoolListItem: React.FC<IProps> = ({
           </button>
         </CustomPopover>
       )}
+
+      <button className={classes.actionButton} onClick={handleOpenPoolDetails}>
+        <img width={28} src={poolStatsBtnIcon} alt={'Pool Details'} />
+      </button>
     </Box>
   )
 
   return (
-    <Grid className={classes.wrapper}>
+    <Grid className={classes.wrapper} onClick={!isMd ? handleOpenPoolDetails : undefined}>
       {displayType === 'token' ? (
         <Grid
           onClick={() => {
