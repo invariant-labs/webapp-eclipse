@@ -6,7 +6,8 @@ export const useStyles = makeStyles()(() => {
     barButtonIcon: {
       width: 24,
       height: 24,
-      padding: 8
+      padding: 8,
+      flexShrink: 0
     },
     title: {
       marginLeft: 8,
