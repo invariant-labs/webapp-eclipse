@@ -84,6 +84,7 @@ export function* handleStake(action: PayloadAction<StakeLiquidityPayload>) {
         amount: bitzAmount,
         mint: BITZ_MAIN.address,
         stakedMint: sBITZ_MAIN.address,
+        byAmountIn: true,
         createStakedATA: !walletAccounts[ata.toString()]
       },
       wallet.publicKey
@@ -310,6 +311,7 @@ export function* handleUnstake(action: PayloadAction<StakeLiquidityPayload>) {
         amount: sbitzAmount,
         mint: BITZ_MAIN.address,
         stakedMint: sBITZ_MAIN.address,
+        byAmountIn: true,
         createAta: !walletAccounts[ata.toString()]
       },
       wallet.publicKey

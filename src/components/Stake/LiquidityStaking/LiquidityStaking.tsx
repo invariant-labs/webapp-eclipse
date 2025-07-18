@@ -19,7 +19,7 @@ import { StakeSwitch } from '@store/consts/types'
 import { StakeLiquidityPayload } from '@store/reducers/sBitz'
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
 import { TOKEN_DECIMALS } from '@invariant-labs/sbitz/lib/consts'
-import { calculateTokensForWithdraw, calculateTokensToMint } from '@invariant-labs/sbitz'
+import { calculateTokensStake, calculateTokensUnstake } from '@invariant-labs/sbitz'
 export interface ILiquidityStaking {
   walletStatus: Status
   tokens: Record<string, SwapToken>
@@ -150,9 +150,9 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
       const isStakeAction = isStake ?? tokenFrom.assetAddress.equals(BITZ_MAIN.address)
       const amount = convertBalanceToBN(value, TOKEN_DECIMALS)
       if (isStakeAction) {
-        return calculateTokensToMint(stakedTokenSupply, stakedAmount, amount)
+        return calculateTokensStake(stakedTokenSupply, stakedAmount, amount)
       } else {
-        return calculateTokensForWithdraw(stakedTokenSupply, stakedAmount, amount)
+        return calculateTokensUnstake(stakedTokenSupply, stakedAmount, amount)
       }
     },
     [stakeDataLoading, stakedAmount, stakedTokenSupply, tokenFrom, tokenTo]
