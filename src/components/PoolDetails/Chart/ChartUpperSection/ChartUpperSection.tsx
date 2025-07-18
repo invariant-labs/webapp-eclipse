@@ -3,17 +3,13 @@ import { Box, Skeleton, Typography } from '@mui/material'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { horizontalSwapIcon, plusIcon } from '@static/icons'
 import { colors, typography } from '@static/theme'
-import { ALL_FEE_TIERS_DATA, NetworkType, promotedTiers } from '@store/consts/static'
+import { NetworkType, promotedTiers } from '@store/consts/static'
 import { NewTabIcon } from '@static/componentIcon/NewTabIcon'
 import { CopyIcon } from '@static/componentIcon/CopyIcon'
 import { ReverseTokensIcon } from '@static/componentIcon/ReverseTokensIcon'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import useStyles from './style'
 import { VariantType } from 'notistack'
-
-import { initialXtoY, parseFeeToPathFee, printBN } from '@utils/utils'
-import { token } from '@coral-xyz/anchor/dist/cjs/utils'
-import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { FeeSelector } from './FeeSelector/FeeSelector'
 
 export interface IProps {
@@ -76,15 +72,6 @@ export const ChartUpperSection: React.FC<IProps> = ({
       })
   }
 
-  const bestFeeIndex = useMemo(() => {
-    const feeTiersTVLValues = Object.values(feeTiersWithTvl)
-    const bestFee = feeTiersTVLValues.length > 0 ? Math.max(...feeTiersTVLValues) : 0
-    const bestTierIndex = ALL_FEE_TIERS_DATA.findIndex(tier => {
-      return feeTiersWithTvl[+printBN(tier.tier.fee, DECIMAL - 2)] === bestFee && bestFee > 0
-    })
-    return bestTierIndex
-  }, [ALL_FEE_TIERS_DATA, feeTiersWithTvl])
-
   const promotedPoolTierIndex = useMemo(() => {
     const tierIndex =
       tokenX === null || tokenY === null
@@ -101,7 +88,7 @@ export const ChartUpperSection: React.FC<IProps> = ({
 
   return (
     <Box display='flex' justifyContent='space-between' alignItems='center' minHeight='71px'>
-      <Box display='flex' alignItems='center' gap='8px'>
+      <Box display='flex' alignItems='center' gap='12px'>
         <Box>
           <Box display='flex' alignItems='center' gap={'6px'} minHeight={'27px'}>
             <Typography sx={{ ...typography.body2, color: colors.invariant.textGrey }}>
@@ -171,7 +158,7 @@ export const ChartUpperSection: React.FC<IProps> = ({
         <FeeSelector
           onSelect={selectFeeTier}
           feeTiers={feeTiers}
-          currentValue={feeTierIndex}
+          currentFeeIndex={feeTierIndex}
           promotedPoolTierIndex={promotedPoolTierIndex}
           feeTiersWithTvl={feeTiersWithTvl}
           totalTvl={totalTvl}

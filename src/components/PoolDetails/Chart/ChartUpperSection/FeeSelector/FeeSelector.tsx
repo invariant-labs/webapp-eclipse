@@ -1,44 +1,24 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react'
-import {
-  Box,
-  ClickAwayListener,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  Skeleton,
-  Typography
-} from '@mui/material'
-import { TooltipHover } from '@common/TooltipHover/TooltipHover'
-import { horizontalSwapIcon, plusIcon } from '@static/icons'
-import { colors, typography } from '@static/theme'
-import { NetworkType } from '@store/consts/static'
-import { NewTabIcon } from '@static/componentIcon/NewTabIcon'
-import { CopyIcon } from '@static/componentIcon/CopyIcon'
-import { ReverseTokensIcon } from '@static/componentIcon/ReverseTokensIcon'
-import { SwapToken } from '@store/selectors/solanaWallet'
-
-import { VariantType } from 'notistack'
+import React, { useCallback, useRef, useState } from 'react'
+import { Box, ClickAwayListener, Typography } from '@mui/material'
+import { dropdownIcon, dropdownReverseIcon } from '@static/icons'
 import useStyles from './style'
 
 export interface IProps {
   onSelect: (value: number) => void
   feeTiers: number[]
-  currentValue: number
+  currentFeeIndex: number
   promotedPoolTierIndex?: number
   feeTiersWithTvl: Record<number, number>
   totalTvl: number
-  isOpen?: boolean
 }
 
 export const FeeSelector: React.FC<IProps> = ({
   onSelect,
   feeTiers,
-  currentValue,
+  currentFeeIndex,
   feeTiersWithTvl,
   totalTvl,
-  promotedPoolTierIndex,
-  isOpen
+  promotedPoolTierIndex
 }) => {
   const { classes, cx } = useStyles()
   const [open, setOpen] = useState(false)
@@ -46,6 +26,14 @@ export const FeeSelector: React.FC<IProps> = ({
 
   const toggleDropdown = () => setOpen(prev => !prev)
   const closeDropdown = () => setOpen(false)
+
+  const feeTiersTVLValues = Object.values(feeTiersWithTvl)
+  const bestFee = feeTiersTVLValues.length > 0 ? Math.max(...feeTiersTVLValues) : 0
+  const isPromotedPool = promotedPoolTierIndex !== undefined && promotedPoolTierIndex !== null
+
+  const originalBestTierIndex = isPromotedPool
+    ? promotedPoolTierIndex!
+    : feeTiers.findIndex(tier => feeTiersWithTvl[tier] === bestFee && bestFee > 0)
 
   const doesPoolExist = useCallback(
     (tier: number) => Object.prototype.hasOwnProperty.call(feeTiersWithTvl, tier),
@@ -70,29 +58,39 @@ export const FeeSelector: React.FC<IProps> = ({
     onSelect(tier)
     closeDropdown()
   }
-
+  console.log(currentFeeIndex === promotedPoolTierIndex)
   return (
     <ClickAwayListener onClickAway={closeDropdown}>
-      <Box className={classes.wrapper} ref={dropdownRef}>
-        <Box className={classes.selected} onClick={toggleDropdown}>
-          <Typography className={classes.selectedText}>{currentValue}% Fee Tier</Typography>
-          <Box className={classes.arrow} />
+      <Box className={classes.wrapper} ref={dropdownRef} onClick={toggleDropdown}>
+        <Box
+          className={cx(classes.selected, {
+            [classes.bestSelect]: currentFeeIndex === originalBestTierIndex,
+            [classes.promotedSelect]: currentFeeIndex === promotedPoolTierIndex
+          })}>
+          <Typography className={classes.selectedText}>{feeTiers[currentFeeIndex]}%</Typography>
+          {!open ? <img src={dropdownIcon} alt='' /> : <img src={dropdownReverseIcon} alt='' />}
         </Box>
 
         {open && (
           <Box className={classes.dropdown}>
-            {feeTiers.map(tier => {
+            {feeTiers.map((tier, index) => {
               const disabled = !doesPoolExist(tier)
+
               return (
                 <Box
                   key={tier}
                   className={cx(classes.option, {
                     [classes.disabled]: disabled,
-                    [classes.active]: currentValue === tier
+
+                    [classes.best]: index === originalBestTierIndex,
+                    [classes.promoted]: index === promotedPoolTierIndex,
+                    [classes.active]: currentFeeIndex === index
                   })}
-                  onClick={() => !disabled && handleSelect(tier)}>
+                  onClick={() => !disabled && handleSelect(index)}>
                   <Typography className={classes.optionText}>{tier}%</Typography>
-                  <Typography className={classes.tvlText}>{getTvlValue(tier)} TVL</Typography>
+                  <Typography className={classes.tvlText}>
+                    {disabled ? 'Not created' : getTvlValue(tier) + 'TVL'}
+                  </Typography>
                 </Box>
               )
             })}

@@ -168,7 +168,7 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
 
     return address
   }
-
+  console.log(initialFee)
   useEffect(() => {
     dispatch(leaderboardActions.getLeaderboardConfig())
   }, [])
@@ -183,7 +183,7 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
         poolAddress: poolData?.address.toString()
       })
     )
-  }, [lastFetchedInterval, poolData?.address])
+  }, [lastFetchedInterval, poolData?.address, initialFee])
 
   useEffect(() => {
     if (lastUsedInterval || !poolData?.address) return
@@ -257,7 +257,7 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
         )
       )
     }
-  }, [fee, tokenX, tokenY])
+  }, [initialFee, tokenX, tokenY])
 
   useEffect(() => {
     if (!isPoolDataLoading && tokenX?.assetAddress && tokenY?.assetAddress && fee) {
@@ -269,7 +269,7 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
       )
       setPoolData(allPools[index])
     }
-  }, [isPoolDataLoading, allPools.length])
+  }, [isPoolDataLoading, allPools.length, initialFee])
 
   const handleOpenSwap = () => {
     navigate(ROUTES.getExchangeRoute(tokenX?.symbol, tokenY?.symbol), {
@@ -291,7 +291,7 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
 
   useEffect(() => {
     dispatch(actions.getCurrentIntervalStats({ interval: IntervalsKeys.Daily }))
-  }, [])
+  }, [initialFee])
 
   const { feeTiersWithTvl, totalTvl } = useMemo(() => {
     if (tokenX === null || tokenY === null) {
@@ -315,17 +315,18 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
     return { feeTiersWithTvl, totalTvl }
   }, [poolsList, tokenX, tokenY])
 
-  const selectFeeTier = (value: number) => {
+  const feeTiers = ALL_FEE_TIERS_DATA.map(tier => +printBN(tier.tier.fee, DECIMAL - 2))
+
+  const selectFeeTier = (index: number) => {
     if (!poolData) return
+    const fee = ALL_FEE_TIERS_DATA[index].tier.fee
 
     const address1 = tokenX?.symbol
     const address2 = tokenY?.symbol
-    const parsedFee = parseFeeToPathFee(poolData.fee)
+    const parsedFee = parseFeeToPathFee(fee)
 
     navigate(ROUTES.getPoolDetailsRoute(address1, address2, parsedFee))
   }
-
-  const feeTiers = ALL_FEE_TIERS_DATA.map(tier => +printBN(tier.tier.fee, DECIMAL - 2))
 
   const handleBack = () => {
     const path = locationHistory === ROUTES.ROOT ? ROUTES.PORTFOLIO : locationHistory

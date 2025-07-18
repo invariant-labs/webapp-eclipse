@@ -1,24 +1,26 @@
 import { colors, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
-export const useStyles = makeStyles()(theme => ({
+export const useStyles = makeStyles()(() => ({
   wrapper: {
     position: 'relative',
-    width: 180,
-    cursor: 'pointer'
+    width: 132,
+    cursor: 'pointer',
+    alignSelf: 'end'
   },
   selected: {
-    backgroundColor: '#1f1f1f',
-    color: '#fff',
-    padding: '10px 14px',
-    borderRadius: 8,
+    color: colors.invariant.text,
+    paddingBlock: 8,
+    width: '100%',
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    border: `1px solid #333`
+    justifyContent: 'center',
+    border: `2px solid ${colors.invariant.light}`,
+    borderRadius: 11
   },
   selectedText: {
-    fontSize: 14
+    ...typography.body1,
+    marginRight: 8
   },
   arrow: {
     width: 0,
@@ -29,42 +31,105 @@ export const useStyles = makeStyles()(theme => ({
     marginLeft: 8
   },
   dropdown: {
+    width: 132,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 6,
     position: 'absolute',
-    top: 'calc(100% + 4px)',
-    left: 0,
-    width: '100%',
-    backgroundColor: '#1f1f1f',
-    borderRadius: 8,
-    boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
-    zIndex: 999,
+    top: 'calc(100% + 8px)',
+    left: -8,
+    padding: 8,
+    backgroundColor: colors.invariant.component,
+    borderRadius: 16,
+    boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
+    zIndex: 10,
     overflow: 'hidden'
+  },
+  optionBorder: {
+    // width: '100%'
   },
   option: {
     padding: '10px 14px',
     display: 'flex',
+    flex: 1,
     justifyContent: 'space-between',
-    color: '#fff',
+    alignItems: 'center',
     transition: 'background 0.2s ease',
+    background: colors.invariant.newDark,
+    borderRadius: 11,
     '&:hover': {
-      backgroundColor: '#333'
+      background: colors.invariant.light
     }
   },
   optionText: {
-    fontSize: 14,
-    fontWeight: 500
+    color: colors.invariant.text,
+    ...typography.caption1
   },
   tvlText: {
-    fontSize: 12,
-    color: '#999'
+    color: colors.invariant.textGrey,
+    ...typography.tiny2
   },
   active: {
-    backgroundColor: '#2c2c2c'
+    backgroundImage: `linear-gradient( #3A466B, #3A466B), linear-gradient(0deg, #EF84F5  , #2EE09A)`
   },
   disabled: {
-    color: '#666',
-    cursor: 'not-allowed',
+    cursor: 'not-allowed'
+  },
+  bestSelect: {
+    border: `2px solid ${colors.invariant.green}`,
+
+    '& *': {
+      color: colors.invariant.green
+    }
+  },
+  promotedSelect: {
+    color: colors.invariant.pink,
+    borderRadius: 11,
+    border: '2px solid transparent',
+    backgroundImage: `linear-gradient(${colors.invariant.component},${colors.invariant.component}), linear-gradient(0deg, #EF84F5  , #2EE09A)`,
+    backgroundOrigin: 'border-box',
+    backgroundClip: 'padding-box, border-box',
     '&:hover': {
-      backgroundColor: 'transparent'
+      color: colors.invariant.pink,
+      backgroundImage:
+        'linear-gradient(#2A365C, #2A365C),  linear-gradient(0deg, #EF84F5  , #2EE09A)',
+      backgroundOrigin: 'border-box',
+      backgroundClip: 'padding-box, border-box'
+    },
+    '&.Mui-selected': {
+      backgroundImage:
+        'linear-gradient(#2A365C, #2A365C),  linear-gradient(0deg, #EF84F5  , #2EE09A)',
+      backgroundOrigin: 'border-box',
+      backgroundClip: 'padding-box, border-box'
+    }
+  },
+  promoted: {
+    color: colors.invariant.pink,
+    borderRadius: 10,
+    border: '2px solid transparent',
+    backgroundImage: `linear-gradient(${colors.invariant.newDark},${colors.invariant.newDark}),linear-gradient(0deg, #EF84F5  , #2EE09A)`,
+    backgroundOrigin: 'border-box',
+    backgroundClip: 'padding-box, border-box',
+    '&:hover': {
+      color: colors.invariant.pink,
+      backgroundImage:
+        'linear-gradient(#2A365C, #2A365C), linear-gradient(0deg, #EF84F5  , #2EE09A)',
+      backgroundOrigin: 'border-box',
+      backgroundClip: 'padding-box, border-box'
+    },
+    '&.Mui-selected': {
+      backgroundImage:
+        'linear-gradient(#2A365C, #2A365C), linear-gradient(0deg, #EF84F5  , #2EE09A)',
+      backgroundOrigin: 'border-box',
+      backgroundClip: 'padding-box, border-box'
+    }
+  },
+  best: {
+    color: colors.invariant.green,
+    border: `2px solid ${colors.invariant.green}`,
+    borderRadius: 10,
+    '&:hover': {
+      color: colors.invariant.green
     }
   }
 }))

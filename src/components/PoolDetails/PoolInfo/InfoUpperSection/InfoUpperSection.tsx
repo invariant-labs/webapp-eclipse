@@ -14,12 +14,14 @@ export interface IProps {
 
 export const InfoUpperSection: React.FC<IProps> = ({ statsPoolData, interval, isLoadingStats }) => {
   const intervalSuffix = mapIntervalToString(interval)
-
+  console.log(statsPoolData.apy)
   return (
     <Box display='flex' justifyContent='space-between' alignItems='center'>
       <InfoItem
         name='Pool APY'
-        value={`${formatNumberWithoutSuffix(statsPoolData.apy)}%`}
+        value={
+          statsPoolData.apy > 1000 ? '>1000%' : `${formatNumberWithoutSuffix(statsPoolData.apy)}%`
+        }
         isLoadingStats={isLoadingStats}
         isGreen
       />
