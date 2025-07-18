@@ -527,20 +527,26 @@ export const PreSaleWrapper = () => {
       <Box className={classes.contentWrapper}>
         <Grid className={classes.stepperContainer}>
           <Box display='flex' flexDirection='column' width={isTablet ? '100%' : 'auto'}>
-            <SaleStepper
-              isLoading={isLoadingSaleStats}
-              currentStep={round - 1}
-              steps={stepLabels}
-            />
-            <Box className={classes.timerContainer}>
-              <Typography className={classes.endSaleTitle}>Sale ends in:</Typography>
-              <Timer hours={hours} minutes={minutes} seconds={seconds} isSmall />
-            </Box>
+            {!saleEnded && (
+              <>
+                <SaleStepper
+                  isLoading={isLoadingSaleStats}
+                  currentStep={round - 1}
+                  steps={stepLabels}
+                />
+                <Box className={classes.timerContainer}>
+                  <Typography className={classes.endSaleTitle}>Sale ends in:</Typography>
+                  <Timer hours={hours} minutes={minutes} seconds={seconds} isSmall />
+                </Box>
+              </>
+            )}
           </Box>
           <Box className={classes.roundComponentContainer}>
             <RoundComponent
               isActive={isActive}
               saleDidNotStart={saleDidNotStart}
+              saleEnded={saleEnded}
+              saleSoldOut={saleSoldOut}
               targetAmount={targetAmount}
               amountDeposited={currentAmount}
               amountNeeded={amountNeeded}
