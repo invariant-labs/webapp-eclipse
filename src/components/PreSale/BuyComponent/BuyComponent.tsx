@@ -175,10 +175,10 @@ export const BuyComponent: React.FC<IProps> = ({
   return (
     <Box className={classes.wrapper}>
       <Box className={classes.container}>
-        <Box sx={{ minHeight: '206px' }}>
+        <Box sx={{ minHeight: !saleEnded ? '206px' : 0 }}>
           <Box className={classes.headingContainer}>
             <Box sx={{ height: '60px', width: '100%' }}>
-              {alertBox && walletStatus !== Status.Uninitialized ? (
+              {alertBox && walletStatus !== Status.Uninitialized && !saleEnded && !saleSoldOut ? (
                 isLoadingUserStats ? (
                   <Skeleton className={classes.skeletonBanner} />
                 ) : (
@@ -201,7 +201,7 @@ export const BuyComponent: React.FC<IProps> = ({
                     </TooltipHover>
                   </Box>
                 )
-              ) : walletStatus !== Status.Initialized ? (
+              ) : walletStatus !== Status.Initialized && !saleEnded && !saleSoldOut ? (
                 <Box className={classes.egibilityCheckerWrapper}>
                   <Typography className={classes.egibilityCheckerText}>
                     To participate in sale, check your eligibility
@@ -215,6 +215,11 @@ export const BuyComponent: React.FC<IProps> = ({
                   />
                 </Box>
               ) : null}
+              {(saleEnded || saleSoldOut) && (
+                <Typography className={classes.presaleEnded}>
+                  PRESALE HAS <span className={classes.greenText}>ENDED</span>
+                </Typography>
+              )}
             </Box>
             <Box className={classes.sectionDivider} />
             {!saleDidNotStart && (
@@ -228,23 +233,29 @@ export const BuyComponent: React.FC<IProps> = ({
                     INVT
                   </Typography>
                 </Typography>
-                <Typography className={classes.raisedInfo}>
-                  <Typography className={classes.greyText}>Raised:</Typography>
-                  {isLoading ? (
+                {isLoading ? (
+                  <Typography className={classes.raisedAfterEnd}>
                     <Skeleton variant='rounded' width={150} height={24} sx={{ ml: 1 }} />
-                  ) : (
+                  </Typography>
+                ) : saleEnded ? (
+                  <Typography className={classes.raisedAfterEnd}>
+                    Raised Amount:{' '}
+                    <span className={classes.greenText}>
+                      ${formatNumberWithCommas(printBNandTrimZeros(currentAmount, mintDecimals, 2))}
+                    </span>
+                  </Typography>
+                ) : (
+                  <Typography className={classes.raisedInfo}>
+                    <Typography className={classes.greyText}>Raised:</Typography>
+                    <Typography className={classes.greenBodyText}>
+                      ${formatNumberWithCommas(printBNandTrimZeros(currentAmount, mintDecimals, 2))}
+                    </Typography>
                     <>
-                      <Typography className={classes.greenBodyText}>
-                        $
-                        {formatNumberWithCommas(
-                          printBNandTrimZeros(currentAmount, mintDecimals, 2)
-                        )}
-                      </Typography>
                       {' / '}$
                       {formatNumberWithCommas(printBNandTrimZeros(targetAmount, mintDecimals, 2))}
                     </>
-                  )}
-                </Typography>
+                  </Typography>
+                )}
               </>
             )}
           </Box>
@@ -254,7 +265,7 @@ export const BuyComponent: React.FC<IProps> = ({
               <Typography className={classes.presaleTitle}>Community Sale opens in:</Typography>
               <Timer hours={hours} minutes={minutes} seconds={seconds} />
             </Box>
-          ) : (
+          ) : !saleEnded ? (
             <Box className={classes.barContainer}>
               {isLoading ? (
                 <Skeleton variant='rounded' width={'100%'} height={49} sx={{ marginTop: '8px' }} />
@@ -273,7 +284,7 @@ export const BuyComponent: React.FC<IProps> = ({
                 </>
               )}
             </Box>
-          )}
+          ) : null}
         </Box>
         <Box className={classes.sectionDivider} />
         <Box>
@@ -315,9 +326,12 @@ export const BuyComponent: React.FC<IProps> = ({
               value={value}
               isBalanceLoading={isBalanceLoading}
               walletUninitialized={walletStatus !== Status.Initialized}
+              blocked={!isLoading && (saleEnded || saleSoldOut)}
+              blockerInfo='Sale ended'
             />
           </Box>
           <Box className={classes.receiveBox}>
+            {!isLoading && (saleEnded || saleSoldOut) && <Box className={classes.blocker} />}{' '}
             <Typography className={classes.receiveLabel}>You receive</Typography>
             {isLoading ? (
               <Skeleton variant='rounded' width={80} height={24} sx={{ ml: 1 }} />
