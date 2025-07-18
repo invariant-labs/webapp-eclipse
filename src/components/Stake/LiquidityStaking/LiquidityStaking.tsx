@@ -157,7 +157,7 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
   }
 
   const calculateOtherTokenAmount = useCallback(
-    (value: string, isStake?: boolean) => {
+    (value: string, isStake?: boolean, byAmountIn?: boolean) => {
       if (!stakedAmount || !stakedTokenSupply) return new BN(0)
       const isStakeAction = isStake ?? tokenFrom.assetAddress.equals(BITZ_MAIN.address)
       const amount = convertBalanceToBN(value, TOKEN_DECIMALS)
@@ -166,14 +166,14 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
           stakedTokenSupply,
           stakedAmount,
           amount,
-          inputRef === inputTarget.FROM
+          byAmountIn ?? inputRef === inputTarget.FROM
         )
       } else {
         return calculateTokensUnstake(
           stakedTokenSupply,
           stakedAmount,
           amount,
-          inputRef === inputTarget.FROM
+          byAmountIn ?? inputRef === inputTarget.FROM
         )
       }
     },
@@ -277,24 +277,7 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
           }
         }}
         placeholder={`0`}
-        actionButtons={[
-          {
-            label: 'Max',
-            variant: 'max',
-            onClick: () => {
-              setInputRef(inputTarget.TO)
-              handleActionButtons('max', tokenTo.assetAddress, inputTarget.TO)
-            }
-          },
-          {
-            label: '50%',
-            variant: 'half',
-            onClick: () => {
-              setInputRef(inputTarget.FROM)
-              handleActionButtons('half', tokenTo.assetAddress, inputTarget.TO)
-            }
-          }
-        ]}
+        actionButtons={[]}
         tokens={[]}
         current={tokenTo}
         hideBalances={walletStatus !== Status.Initialized}
@@ -312,7 +295,7 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
       <TransactionDetails
         tokenFromTicker={tokenFrom.symbol}
         tokenToTicker={tokenTo.symbol}
-        tokenToAmount={printBN(calculateOtherTokenAmount('1'), TOKEN_DECIMALS)}
+        tokenToAmount={printBN(calculateOtherTokenAmount('1', undefined, true), TOKEN_DECIMALS)}
         stakedDataLoading={stakeDataLoading}
       />
       {walletStatus !== Status.Initialized ? (
