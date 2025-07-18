@@ -285,15 +285,15 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
             variant: 'max',
             onClick: () => {
               setInputRef(inputTarget.TO)
-              handleActionButtons('max', tokenTo.assetAddress, inputTarget.TO)
+              handleActionButtons('max', tokenFrom.assetAddress, inputTarget.TO)
             }
           },
           {
             label: '50%',
             variant: 'half',
             onClick: () => {
-              setInputRef(inputTarget.TO)
-              handleActionButtons('half', tokenTo.assetAddress, inputTarget.TO)
+              setInputRef(inputTarget.FROM)
+              handleActionButtons('half', tokenFrom.assetAddress, inputTarget.TO)
             }
           }
         ]}
@@ -302,12 +302,13 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
         hideBalances={walletStatus !== Status.Initialized}
         commonTokens={[]}
         tokenPrice={tokenTo.assetAddress.equals(BITZ_MAIN.address) ? bitzPrice : sBitzPrice}
-        priceLoading={priceLoading || stakeDataLoading}
+        priceLoading={priceLoading}
         isBalanceLoading={isBalanceLoading}
         showMaxButton={true}
-        showBlur={stakeDataLoading}
+        showBlur={false}
         hideSelect
         notRoundIcon
+        limit={1e14}
       />
       <Separator isHorizontal width={1} color={colors.invariant.light} margin='16px 0' />
       <TransactionDetails
@@ -337,16 +338,16 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
           disabled={getStateMessage() !== 'Stake' && getStateMessage() !== 'Unstake'}
           onClick={() => {
             setProgress('progress')
-
+            const amount = inputRef === inputTarget.FROM ? amountFrom : amountTo
             if (currentStakeTab === StakeSwitch.Stake) {
               handleStake({
                 byAmountIn: inputRef === inputTarget.FROM,
-                amount: convertBalanceToBN(amountFrom, tokenFrom.decimals)
+                amount: convertBalanceToBN(amount, tokenFrom.decimals)
               })
             } else {
               handleUnstake({
                 byAmountIn: inputRef === inputTarget.FROM,
-                amount: convertBalanceToBN(amountFrom, tokenFrom.decimals)
+                amount: convertBalanceToBN(amount, tokenFrom.decimals)
               })
             }
           }}
