@@ -248,7 +248,7 @@ export const PreSaleWrapper = () => {
     currentAmount,
     whitelistWalletLimit,
     startTimestamp,
-    duration,
+    // duration,
     mint,
     minDeposit
   } = useMemo(
@@ -329,8 +329,7 @@ export const PreSaleWrapper = () => {
     [currentAmount, targetAmount, mintDecimals]
   )
 
-  const endtimestamp = useMemo(() => startTimestamp.add(duration), [startTimestamp, duration])
-
+  const endtimestamp = useMemo(() => new BN(1752840000), [])
   const saleSoldOut = useMemo(
     () => currentAmount.eq(EFFECTIVE_TARGET),
     [targetAmount, currentAmount]
