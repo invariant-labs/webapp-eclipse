@@ -37,6 +37,7 @@ export interface IProps {
   feeTiersWithTvl: Record<number, number>
   totalTvl: number
   feeTierIndex: number
+  onRefresh: () => void
 }
 
 export const PoolDetails: React.FC<IProps> = ({
@@ -63,7 +64,8 @@ export const PoolDetails: React.FC<IProps> = ({
   handleBack,
   feeTiersWithTvl,
   totalTvl,
-  feeTierIndex
+  feeTierIndex,
+  onRefresh
 }) => {
   const { classes } = useStyles()
   console.log(initialFee)
@@ -106,6 +108,7 @@ export const PoolDetails: React.FC<IProps> = ({
           prices={prices}
           copyAddressHandler={copyAddressHandler}
           network={network}
+          onRefresh={onRefresh}
         />
       </Grid>
       {/* <Transactions /> */}

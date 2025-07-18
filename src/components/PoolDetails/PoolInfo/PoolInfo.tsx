@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Grid, Typography } from '@mui/material'
+import { Box, Button, Grid, Typography } from '@mui/material'
 import useStyles from './style'
 import InfoUpperSection from './InfoUpperSection/InfoUpperSection'
 import { PoolSnap } from '@store/reducers/stats'
@@ -9,6 +9,7 @@ import { SwapToken } from '@store/selectors/solanaWallet'
 import { TokenReserve } from '@store/consts/types'
 import TokenInfo from './TokenInfo/TokenInfo'
 import { VariantType } from 'notistack'
+import { refreshIcon } from '@static/icons'
 
 export interface IPros {
   interval: IntervalsKeys
@@ -21,6 +22,7 @@ export interface IPros {
   prices: { tokenX: number; tokenY: number }
   copyAddressHandler: (message: string, variant: VariantType) => void
   network: NetworkType
+  onRefresh: () => void
 }
 
 export const PoolInfo: React.FC<IPros> = ({
@@ -33,7 +35,8 @@ export const PoolInfo: React.FC<IPros> = ({
   tokenYReserve,
   prices,
   copyAddressHandler,
-  network
+  network,
+  onRefresh
 }) => {
   const { classes } = useStyles()
   const tokenXUsdAmount = tokenXReserve ? prices.tokenX * tokenXReserve.uiAmount : 0
@@ -52,7 +55,13 @@ export const PoolInfo: React.FC<IPros> = ({
 
   return (
     <Grid className={classes.wrapper}>
-      <Typography className={classes.header}>Pool Info</Typography>
+      <Box display='flex' justifyContent='space-between' alignItems='center'>
+        <Typography className={classes.header}>Pool Info</Typography>
+        <Button onClick={onRefresh} className={classes.refreshIconBtn}>
+          <img src={refreshIcon} className={classes.refreshIcon} alt='Refresh' />
+        </Button>
+      </Box>
+
       <Grid className={classes.container}>
         <InfoUpperSection
           interval={interval}

@@ -90,6 +90,8 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
     )
   )
 
+  const [triggerRefresh, setTriggerRefresh] = useState(false)
+
   const [tokenX, settokenX] = useState<SwapToken | null>(null)
   const [tokenY, settokenY] = useState<SwapToken | null>(null)
 
@@ -168,22 +170,21 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
 
     return address
   }
-  console.log(initialFee)
+
   useEffect(() => {
     dispatch(leaderboardActions.getLeaderboardConfig())
   }, [])
 
   useEffect(() => {
-    console.log('test')
     if (!lastUsedInterval || !poolData?.address) return
-    console.log(lastUsedInterval)
     dispatch(
       actions.getCurrentIntervalPoolStats({
         interval: lastUsedInterval,
         poolAddress: poolData?.address.toString()
       })
     )
-  }, [lastFetchedInterval, poolData?.address, initialFee])
+    setTriggerRefresh(false)
+  }, [lastFetchedInterval, poolData?.address, initialFee, triggerRefresh])
 
   useEffect(() => {
     if (lastUsedInterval || !poolData?.address) return
@@ -341,6 +342,22 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
     return feeIndex !== -1 ? feeIndex : 0 // Return 0 if no match is found
   }, [initialFee, ALL_FEE_TIERS_DATA])
 
+  const onRefresh = () => {
+    setTriggerRefresh(true)
+    console.log('test')
+    dispatch(actions.getCurrentIntervalStats({ interval: IntervalsKeys.Daily }))
+
+    if (fee && tickSpacing && tokenX && tokenY) {
+      dispatch(
+        poolsActions.getPoolData(
+          new Pair(tokenX.assetAddress, tokenY.assetAddress, {
+            fee,
+            tickSpacing
+          })
+        )
+      )
+    }
+  }
   return (
     <PoolDetails
       network={currentNetwork}
@@ -367,6 +384,7 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
       feeTiersWithTvl={feeTiersWithTvl}
       totalTvl={totalTvl}
       feeTierIndex={feeTierIndex}
+      onRefresh={onRefresh}
     />
   )
 }
