@@ -32,7 +32,6 @@ export interface IProps {
   prices: { tokenX: number; tokenY: number }
   selectFeeTier: (value: number) => void
   feeTiers: number[]
-  initialFee: string
   handleBack: () => void
   feeTiersWithTvl: Record<number, number>
   totalTvl: number
@@ -62,7 +61,6 @@ export const PoolDetails: React.FC<IProps> = ({
   prices,
   selectFeeTier,
   feeTiers,
-  initialFee,
   handleBack,
   feeTiersWithTvl,
   totalTvl,

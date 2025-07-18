@@ -18,7 +18,6 @@ export interface IProps {
   price: number
 }
 
-network: NetworkType
 export const TokenInfo: React.FC<IProps> = ({
   token,
   copyAddressHandler,

@@ -3,9 +3,9 @@ import { Grid, Typography } from '@mui/material'
 
 import useStyles from './style'
 
-export interface IFeeSwitch {}
+export interface IProps {}
 
-export const Transactions: React.FC<IFeeSwitch> = ({}) => {
+export const Transactions: React.FC<IProps> = () => {
   const { classes } = useStyles()
 
   return (

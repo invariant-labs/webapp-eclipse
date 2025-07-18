@@ -267,14 +267,6 @@ const ChartLowerSection: React.FC<StatsInterface> = ({
     }
   }, [chartType, statsPoolData])
 
-  useEffect(() => {
-    console.log(statsPoolData?.volume)
-  }, [statsPoolData?.volume])
-
-  useEffect(() => {
-    console.log(value)
-  }, [value])
-
   const isEmptyData = useMemo(() => data.every(item => item.value === 0), [data])
 
   return (

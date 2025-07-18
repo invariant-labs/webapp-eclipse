@@ -116,8 +116,6 @@ export function* getIntervalPoolStats(
       action.payload.interval,
       action.payload.poolAddress
     )
-    console.log(action.payload.interval)
-    console.log(action.payload.poolAddress)
 
     const parsedPoolSnap = {
       ...poolSnap,
@@ -125,8 +123,7 @@ export function* getIntervalPoolStats(
       liquidityPlot: poolSnap.liquidityPlot.reverse(),
       feesPlot: poolSnap.feesPlot.reverse()
     }
-    console.log(parsedPoolSnap.volume)
-    console.log(parsedPoolSnap.volume)
+
     const payload = {
       ...parsedPoolSnap,
       lastInterval: action.payload.interval

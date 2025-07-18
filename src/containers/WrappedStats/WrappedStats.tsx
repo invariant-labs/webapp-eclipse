@@ -169,19 +169,18 @@ export const WrappedStats: React.FC = () => {
 
   useEffect(() => {
     if (lastFetchedInterval === lastUsedInterval || !lastUsedInterval) return
-    console.log('test')
+
     dispatch(actions.getCurrentIntervalStats({ interval: lastUsedInterval }))
   }, [lastUsedInterval, lastFetchedInterval])
 
   useEffect(() => {
     if (lastUsedInterval) return
-    console.log('test')
+
     dispatch(actions.getCurrentIntervalStats({ interval: IntervalsKeys.Daily }))
     dispatch(actions.setCurrentInterval({ interval: IntervalsKeys.Daily }))
   }, [lastUsedInterval])
 
   const updateInterval = (interval: IntervalsKeys) => {
-    console.log('test')
     dispatch(actions.getCurrentIntervalStats({ interval }))
     dispatch(actions.setCurrentInterval({ interval }))
   }
@@ -261,7 +260,7 @@ export const WrappedStats: React.FC = () => {
       })
     )
   }
-  console.log(liquidityPlotData)
+
   return (
     <Grid container className={classes.wrapper}>
       {liquidityPlotData.length === 0 && !isLoadingStats ? (

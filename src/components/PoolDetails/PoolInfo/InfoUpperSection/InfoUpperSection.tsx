@@ -14,7 +14,7 @@ export interface IProps {
 
 export const InfoUpperSection: React.FC<IProps> = ({ statsPoolData, interval, isLoadingStats }) => {
   const intervalSuffix = mapIntervalToString(interval)
-  console.log(statsPoolData.apy)
+
   return (
     <Box display='flex' justifyContent='space-between' alignItems='center'>
       <InfoItem

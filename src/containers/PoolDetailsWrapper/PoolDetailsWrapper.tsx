@@ -1,17 +1,11 @@
 import PoolDetails from '@components/PoolDetails/PoolDetails'
 import { ALL_FEE_TIERS_DATA } from '@store/consts/static'
-import { getPromotedPools, leaderboardSelectors } from '@store/selectors/leaderboard'
-import {
-  isLoadingLatestPoolsForTransaction,
-  isLoadingTokens,
-  poolsArraySortedByFees
-} from '@store/selectors/pools'
+import { isLoadingLatestPoolsForTransaction, poolsArraySortedByFees } from '@store/selectors/pools'
 import { network } from '@store/selectors/solanaConnection'
 import { poolTokens, SwapToken } from '@store/selectors/solanaWallet'
 import {
   getTokenPrice,
   getTokenReserve,
-  initialXtoY,
   parseFeeToPathFee,
   parsePathFeeToFeeString,
   printBN,
@@ -33,7 +27,7 @@ import {
 import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import { actions as snackbarActions } from '@store/reducers/snackbars'
 import { actions as navigationActions } from '@store/reducers/navigation'
-import { address, showFavourites as showFavouritesSelector } from '@store/selectors/navigation'
+import { address } from '@store/selectors/navigation'
 import { actions } from '@store/reducers/stats'
 import { Intervals as IntervalsKeys } from '@store/consts/static'
 import { VariantType } from 'notistack'
@@ -42,8 +36,6 @@ import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { getCurrentSolanaConnection } from '@utils/web3/connection'
 import { Connection, PublicKey } from '@solana/web3.js'
 import { TokenReserve } from '@store/consts/types'
-import { set } from 'remeda'
-import { token } from '@coral-xyz/anchor/dist/cjs/utils'
 
 export interface IProps {
   initialTokenFrom: string
@@ -63,22 +55,17 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
 
   const tokens = useSelector(poolTokens)
 
-  const isCurrentlyLoadingTokens = useSelector(isLoadingTokens)
-
   const allPools = useSelector(poolsArraySortedByFees)
   const currentNetwork = useSelector(network)
 
   const statsPoolData = useSelector(currentPoolData)
   const lastStatsTimestamp = useSelector(lastSnapTimestamp)
   const isLoadingStats = useSelector(isLoading)
-  const promotedPools = useSelector(getPromotedPools)
 
   const lastUsedInterval = useSelector(currentInterval)
   const lastFetchedInterval = useSelector(lastInterval)
 
   const poolsList = useSelector(poolsStatsWithTokensDetails)
-
-  const showFavourites = useSelector(showFavouritesSelector)
 
   const isFetchingNewPool = useSelector(isLoadingLatestPoolsForTransaction)
 
@@ -262,7 +249,6 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
 
   const { fee, tickSpacing } = useMemo(() => {
     const parsedFee = parsePathFeeToFeeString(initialFee)
-    console.log(parsedFee)
     const feeTierData = ALL_FEE_TIERS_DATA.find(
       feeTierData => feeTierData.tier.fee.toString() === parsedFee
     )
@@ -369,7 +355,7 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
 
   const onRefresh = () => {
     setTriggerRefresh(true)
-    console.log('test')
+
     dispatch(actions.getCurrentIntervalStats({ interval: IntervalsKeys.Daily }))
 
     if (fee && tickSpacing && tokenX && tokenY) {
@@ -404,7 +390,6 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
       prices={prices}
       selectFeeTier={selectFeeTier}
       feeTiers={feeTiers}
-      initialFee={initialFee}
       handleBack={handleBack}
       feeTiersWithTvl={feeTiersWithTvl}
       totalTvl={totalTvl}

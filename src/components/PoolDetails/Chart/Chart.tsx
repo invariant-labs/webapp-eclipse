@@ -9,7 +9,6 @@ import ChartLowerSection from './ChartLowerSection/ChartLowerSection'
 import { Intervals as IntervalsKeys } from '@store/consts/static'
 import { PoolChartSwitch } from '@store/consts/types'
 import { VariantType } from 'notistack'
-import { select } from 'typed-redux-saga'
 
 export interface IProps {
   poolAddress: string

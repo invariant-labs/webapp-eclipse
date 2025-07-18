@@ -54,11 +54,10 @@ export const FeeSelector: React.FC<IProps> = ({
   )
 
   const handleSelect = (tier: number) => {
-    console.log(tier)
     onSelect(tier)
     closeDropdown()
   }
-  console.log(currentFeeIndex === promotedPoolTierIndex)
+
   return (
     <ClickAwayListener onClickAway={closeDropdown}>
       <Box className={classes.wrapper} ref={dropdownRef} onClick={toggleDropdown}>

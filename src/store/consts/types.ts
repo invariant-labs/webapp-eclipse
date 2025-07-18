@@ -333,3 +333,8 @@ export interface TokenReserve {
   uiAmount: number
   uiAmountString: string
 }
+
+export enum SwitcherAlignment {
+  VOLUME_TVL = 'volume/tvl',
+  FEE_TVL = 'fee/tvl'
+}
