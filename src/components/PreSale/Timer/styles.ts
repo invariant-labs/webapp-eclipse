@@ -1,14 +1,15 @@
-import { colors, theme } from '@static/theme'
+import { Theme } from '@mui/material'
+import { colors, theme, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
-export const useStyles = makeStyles()(() => ({
+export const useStyles = makeStyles<{ isSmall: boolean }>()((_theme: Theme, { isSmall }) => ({
   pageWrapper: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     gap: '24px',
     width: '100%',
-    maxWidth: '467px',
+    maxWidth: isSmall ? 200 : '467px',
     boxSizing: 'border-box',
     overflow: 'hidden'
   },
@@ -28,11 +29,11 @@ export const useStyles = makeStyles()(() => ({
   },
   timerContainer: {
     display: 'flex',
-    padding: '10px',
+    padding: isSmall ? 2 : 10,
     width: '100%',
-    minHeight: '112px',
+    minHeight: isSmall ? 35.5 : '112px',
     boxSizing: 'border-box',
-    borderRadius: '34px',
+    borderRadius: isSmall ? 12 : 34,
     position: 'relative',
     background: 'linear-gradient(269.89deg, #EF84F5 0.89%, #2EE09A 99.11%)'
   },
@@ -43,7 +44,7 @@ export const useStyles = makeStyles()(() => ({
     justifyContent: 'center',
     width: '100%',
     height: '100%',
-    borderRadius: '24px',
+    borderRadius: isSmall ? 10 : '24px',
     background: colors.invariant.newDark
   },
   timerWrapper: {
@@ -62,7 +63,7 @@ export const useStyles = makeStyles()(() => ({
     alignItems: 'center',
     justifyContent: 'center',
     flex: 1,
-    minHeight: '60px'
+    minHeight: isSmall ? '' : '60px'
   },
   timerNumber: {
     fontFamily: 'Mukta',
@@ -92,6 +93,10 @@ export const useStyles = makeStyles()(() => ({
     letterSpacing: '-0.03em',
     color: colors.invariant.text,
     padding: '0 2px'
+  },
+  smallText: {
+    ...typography.body2,
+    color: colors.invariant.text
   }
 }))
 export default useStyles

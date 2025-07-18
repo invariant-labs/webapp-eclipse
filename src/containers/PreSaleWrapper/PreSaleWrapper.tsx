@@ -61,6 +61,8 @@ import { ShareComponent } from '@components/PreSale/ShareComponent/ShareComponen
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { ShareIcon } from '@static/componentIcon/ShareIcon'
+import { Timer } from '@components/PreSale/Timer/Timer'
+import { useCountdown } from '@components/PreSale/Timer/useCountdown'
 
 function SampleNextArrow(props) {
   const { className, style, onClick } = props
@@ -502,6 +504,11 @@ export const PreSaleWrapper = () => {
     return stepNames[round - 1]
   }, [round])
 
+  const timerTargetDate = useMemo(() => new Date(endtimestamp.toNumber() * 1000), [endtimestamp])
+  const { hours, minutes, seconds } = useCountdown({
+    targetDate: timerTargetDate
+  })
+
   return (
     <Grid className={classes.pageWrapper} sx={{ position: 'relative' }}>
       <Hidden lgDown>
@@ -519,7 +526,17 @@ export const PreSaleWrapper = () => {
 
       <Box className={classes.contentWrapper}>
         <Grid className={classes.stepperContainer}>
-          <SaleStepper isLoading={isLoadingSaleStats} currentStep={round - 1} steps={stepLabels} />
+          <Box display='flex' flexDirection='column' width={isTablet ? '100%' : 'auto'}>
+            <SaleStepper
+              isLoading={isLoadingSaleStats}
+              currentStep={round - 1}
+              steps={stepLabels}
+            />
+            <Box className={classes.timerContainer}>
+              <Typography className={classes.endSaleTitle}>Sale ends in:</Typography>
+              <Timer hours={hours} minutes={minutes} seconds={seconds} isSmall />
+            </Box>
+          </Box>
           <Box className={classes.roundComponentContainer}>
             <RoundComponent
               isActive={isActive}
