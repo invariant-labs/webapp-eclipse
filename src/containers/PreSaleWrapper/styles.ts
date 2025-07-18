@@ -441,16 +441,26 @@ export const useStyles = makeStyles()(() => ({
       minHeight: 406,
       minWidth: 326
     }
-    // position: 'absolute',
-    // top: -50,
-    // right: 40,
-    // [theme.breakpoints.down(1200)]: {
-    //   right: -20
-    // },
-    // [theme.breakpoints.down(1070)]: {
-    //   position: 'relative',
-    //   top: 'auto',
-    //   right: 'auto'
-    // }
+  },
+  timerContainer: {
+    display: 'flex',
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 4,
+    padding: 10,
+    paddingInline: 0,
+    flexDirection: 'column',
+    width: '100%',
+    marginTop: 12
+  },
+  endSaleTitle: {
+    width: '100%',
+    textAlign: 'center',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    ...typography.heading4,
+    color: colors.invariant.text
   }
 }))
