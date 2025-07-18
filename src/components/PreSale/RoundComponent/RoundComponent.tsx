@@ -122,12 +122,14 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
   return (
     <Box className={classes.container}>
       <Box className={classes.roundTitleContainer}>
-        <Typography className={classes.roundText}>Current phase:</Typography>
         {isLoadingSaleStats ? (
-          <Skeleton variant='text' width={135} height={24} />
-        ) : (
-          <Typography className={classes.roundTitle}>{roundName?.toUpperCase()}</Typography>
-        )}
+          <Skeleton variant='text' width={235} height={24} />
+        ) : !saleEnded ? (
+          <>
+            <Typography className={classes.roundText}>Current phase:</Typography>
+            <Typography className={classes.roundTitle}>{roundName?.toUpperCase()}</Typography>
+          </>
+        ) : null}
       </Box>
 
       {!isActive && (
