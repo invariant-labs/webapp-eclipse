@@ -934,7 +934,13 @@ export const RemoveLiquidity: React.FC<IProps> = ({
               }
             }}
             disabled={getButtonMessage() !== 'Remove Liquidity'}
-            content={getButtonMessage()}
+            content={
+              getButtonMessage() === 'Remove Liquidity'
+                ? depositPercentage === 100
+                  ? 'Close Position'
+                  : 'Remove Liquidity'
+                : getButtonMessage()
+            }
             progress={progress}
           />
         )}

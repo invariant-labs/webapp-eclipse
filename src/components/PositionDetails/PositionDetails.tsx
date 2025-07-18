@@ -65,6 +65,20 @@ interface IProps {
   lockPosition: () => void
   closePosition: (claimFarmRewards?: boolean) => void
   changeLiquidity: (liquidity: BN, slippage: BN, isAddLiquidity: boolean) => void
+  swapAndAddLiquidity: (
+    xAmount: BN,
+    yAmount: BN,
+    swapAmount: BN,
+    xToY: boolean,
+    byAmountIn: boolean,
+    estimatedPriceAfterSwap: BN,
+    crossedTicks: number[],
+    swapSlippage: BN,
+    positionSlippage: BN,
+    minUtilizationPercentage: BN,
+    poolIndex: number,
+    liquidity: BN
+  ) => void
   ticksLoading: boolean
   tickSpacing: number
   fee: BN
@@ -149,6 +163,7 @@ const PositionDetails: React.FC<IProps> = ({
   onClickClaimFee,
   closePosition,
   changeLiquidity,
+  swapAndAddLiquidity,
   ticksLoading,
   tickSpacing,
   fee,
@@ -451,6 +466,7 @@ const PositionDetails: React.FC<IProps> = ({
             isLoadingAutoSwapPoolTicksOrTickMap={isLoadingAutoSwapPoolTicksOrTickMap}
             ticksData={ticksData}
             changeLiquidity={changeLiquidity}
+            swapAndAddLiquidity={swapAndAddLiquidity}
             success={changeLiquiditySuccess}
             inProgress={changeLiquidityInProgress}
             setChangeLiquiditySuccess={setChangeLiquiditySuccess}

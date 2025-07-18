@@ -467,7 +467,7 @@ export const NewPosition: React.FC<INewPosition> = ({
 
     setLeftRange(leftRange)
     setRightRange(rightRange)
-    console.log(left, right, leftRange, rightRange)
+
     if (
       tokenAIndex !== null &&
       tokenADeposit !== '0' &&

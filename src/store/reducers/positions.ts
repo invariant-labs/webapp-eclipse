@@ -114,6 +114,53 @@ export interface SwapAndCreatePosition
   isSamePool: boolean
 }
 
+export interface SwapAndAddLiquidityData
+  extends Omit<
+    CreatePosition,
+    'pair' | 'liquidityDelta' | 'knownPrice' | 'userTokenX' | 'userTokenY' | 'slippage'
+  > {
+  xAmount: BN
+  yAmount: BN
+  tokenX: PublicKey
+  tokenY: PublicKey
+  swapAmount: BN
+  byAmountIn: boolean
+  xToY: boolean
+  swapPool: PoolStructure
+  swapPoolTickmap: Tickmap
+  swapSlippage: BN
+  estimatedPriceAfterSwap: BN
+  crossedTicks: number[]
+  liquidityDelta: BN
+  positionIndex: number
+}
+
+export interface SwapAndAddLiquidityData
+  extends Omit<
+    CreatePosition,
+    'pair' | 'liquidityDelta' | 'knownPrice' | 'userTokenX' | 'userTokenY' | 'slippage'
+  > {
+  xAmount: BN
+  yAmount: BN
+  tokenX: PublicKey
+  tokenY: PublicKey
+  swapAmount: BN
+  byAmountIn: boolean
+  xToY: boolean
+  swapPool: PoolStructure
+  swapPoolTickmap: Tickmap
+  swapSlippage: BN
+  estimatedPriceAfterSwap: BN
+  crossedTicks: number[]
+  positionPair: { fee: BN; tickSpacing: number }
+  positionPoolIndex: number
+  positionPoolPrice: BN
+  positionSlippage: BN
+  liquidityDelta: BN
+  minUtilizationPercentage: BN
+  isSamePool: boolean
+}
+
 export interface GetCurrentTicksData {
   poolIndex: number
   isXtoY: boolean
@@ -128,7 +175,7 @@ export interface ClosePositionData {
   onSuccess: () => void
 }
 
-export interface RemoveLiquidityData {
+export interface ChangeLiquidityData {
   positionIndex: number
   liquidity: BN
   slippage: BN
@@ -321,11 +368,15 @@ const positionsSlice = createSlice({
     closePosition(state, _action: PayloadAction<ClosePositionData>) {
       return state
     },
-    addLiquidity(state, _action: PayloadAction<RemoveLiquidityData>) {
+    addLiquidity(state, _action: PayloadAction<ChangeLiquidityData>) {
       state.changeLiquidity.inProgress = true
       return state
     },
-    removeLiquidity(state, _action: PayloadAction<RemoveLiquidityData>) {
+    swapAndAddLiquidity(state, _action: PayloadAction<SwapAndAddLiquidityData>) {
+      state.changeLiquidity.inProgress = true
+      return state
+    },
+    removeLiquidity(state, _action: PayloadAction<ChangeLiquidityData>) {
       state.changeLiquidity.inProgress = true
       return state
     },

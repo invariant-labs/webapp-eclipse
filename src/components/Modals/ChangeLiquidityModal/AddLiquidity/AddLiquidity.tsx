@@ -3,7 +3,7 @@ import {
   ALL_FEE_TIERS_DATA,
   AutoswapCustomError,
   DEFAULT_AUTOSWAP_MAX_PRICE_IMPACT,
-  DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_CREATE_POSITION,
+  DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_ADD_LIQUIDITY,
   DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_SWAP,
   DEFAULT_AUTOSWAP_MIN_UTILIZATION,
   DEFAULT_NEW_POSITION_SLIPPAGE,
@@ -34,7 +34,7 @@ import {
 } from '@utils/utils'
 import { BN } from '@coral-xyz/anchor'
 import { actions as poolsActions, PoolWithAddress } from '@store/reducers/pools'
-import { PlotTickData, actions as positionsActions } from '@store/reducers/positions'
+import { PlotTickData } from '@store/reducers/positions'
 import { Status } from '@store/reducers/solanaWallet'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useDispatch } from 'react-redux'
@@ -112,6 +112,20 @@ export interface IProps {
   isLoadingAutoSwapPoolTicksOrTickMap: boolean
   ticksData: PlotTickData[]
   changeLiquidity: (liquidity: BN, slippage: BN, isAddLiquidity: boolean) => void
+  swapAndAddLiquidity: (
+    xAmount: BN,
+    yAmount: BN,
+    swapAmount: BN,
+    xToY: boolean,
+    byAmountIn: boolean,
+    estimatedPriceAfterSwap: BN,
+    crossedTicks: number[],
+    swapSlippage: BN,
+    positionSlippage: BN,
+    minUtilizationPercentage: BN,
+    poolIndex: number,
+    liquidity: BN
+  ) => void
   success: boolean
   inProgress: boolean
   setChangeLiquiditySuccess: (value: boolean) => void
@@ -141,6 +155,7 @@ export const AddLiquidity: React.FC<IProps> = ({
   isLoadingAutoSwapPoolTicksOrTickMap,
   ticksData,
   changeLiquidity,
+  swapAndAddLiquidity,
   success,
   inProgress,
   setChangeLiquiditySuccess
@@ -393,14 +408,14 @@ export const AddLiquidity: React.FC<IProps> = ({
     localStorage.setItem('INVARIANT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_SWAP', slippageToleranceSwap)
   }
 
-  const initialMaxSlippageToleranceCreatePosition =
-    localStorage.getItem('INVARIANT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_CREATE_POSITION') ??
-    DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_CREATE_POSITION
+  const initialMaxSlippageToleranceAddLiquidity =
+    localStorage.getItem('INVARIANT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_ADD_LIQUIDITY') ??
+    DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_ADD_LIQUIDITY
 
-  const onMaxSlippageToleranceCreatePositionChange = (slippageToleranceCreatePosition: string) => {
+  const onMaxSlippageToleranceAddLiquidityChange = (slippageToleranceAddLiquidity: string) => {
     localStorage.setItem(
-      'INVARIANT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_CREATE_POSITION',
-      slippageToleranceCreatePosition
+      'INVARIANT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_ADD_LIQUIDITY',
+      slippageToleranceAddLiquidity
     )
   }
 
@@ -799,9 +814,7 @@ export const AddLiquidity: React.FC<IProps> = ({
     crossedTicks,
     swapSlippage,
     positionSlippage,
-    minUtilizationPercentage,
-    leftTickIndex,
-    rightTickIndex
+    minUtilizationPercentage
   ) => {
     if (
       tokenAIndex === null ||
@@ -810,7 +823,10 @@ export const AddLiquidity: React.FC<IProps> = ({
       poolIndex === null ||
       !allPools[poolIndex] ||
       !autoSwapTickMap ||
-      !autoSwapPool
+      !autoSwapPool ||
+      !simulation ||
+      !simulation.swapInput ||
+      !simulation.swapSimulation
     ) {
       return
     }
@@ -821,36 +837,19 @@ export const AddLiquidity: React.FC<IProps> = ({
       setProgress('progress')
     }
 
-    const lowerTickIndex = Math.min(leftTickIndex, rightTickIndex)
-    const upperTickIndex = Math.max(leftTickIndex, rightTickIndex)
-
-    dispatch(
-      positionsActions.swapAndInitPosition({
-        xAmount,
-        yAmount,
-        tokenX: tokens[isXtoY ? tokenAIndex : tokenBIndex].assetAddress,
-        tokenY: tokens[isXtoY ? tokenBIndex : tokenAIndex].assetAddress,
-        swapAmount,
-        byAmountIn,
-        xToY,
-        swapPool: autoSwapPoolData,
-        swapPoolTickmap: autoSwapTickMap,
-        swapSlippage,
-        estimatedPriceAfterSwap,
-        crossedTicks,
-        positionPair: {
-          fee: allPools[poolIndex].fee,
-          tickSpacing: allPools[poolIndex].tickSpacing
-        },
-        positionPoolIndex: poolIndex,
-        positionPoolPrice: allPools[poolIndex].sqrtPrice,
-        positionSlippage,
-        lowerTick: lowerTickIndex,
-        upperTick: upperTickIndex,
-        liquidityDelta: liquidity,
-        minUtilizationPercentage,
-        isSamePool: allPools[poolIndex].address.equals(autoSwapPool.swapPool.address)
-      })
+    swapAndAddLiquidity(
+      xAmount,
+      yAmount,
+      swapAmount,
+      xToY,
+      byAmountIn,
+      estimatedPriceAfterSwap,
+      crossedTicks,
+      swapSlippage,
+      positionSlippage,
+      minUtilizationPercentage,
+      poolIndex,
+      liquidity
     )
   }
 
@@ -881,9 +880,7 @@ export const AddLiquidity: React.FC<IProps> = ({
       crossedTicks,
       swapSlippage,
       positionSlippage,
-      minUtilizationPercentage,
-      leftRange,
-      rightRange
+      minUtilizationPercentage
     )
   }
 
@@ -1021,8 +1018,8 @@ export const AddLiquidity: React.FC<IProps> = ({
   const [slippageToleranceSwap, setSlippageToleranceSwap] = useState<string>(
     initialMaxSlippageToleranceSwap
   )
-  const [slippageToleranceCreatePosition, setSlippageToleranceCreatePosition] = useState<string>(
-    initialMaxSlippageToleranceCreatePosition
+  const [slippageToleranceAddLiquidity, setSlippageToleranceAddLiquidity] = useState<string>(
+    initialMaxSlippageToleranceAddLiquidity
   )
 
   const [throttle, setThrottle] = useState<boolean>(false)
@@ -1241,9 +1238,9 @@ export const AddLiquidity: React.FC<IProps> = ({
     onMaxSlippageToleranceSwapChange(slippageToleranceSwap)
   }
 
-  const setMaxSlippageToleranceCreatePosition = (slippageToleranceCreatePosition: string): void => {
-    setSlippageToleranceCreatePosition(slippageToleranceCreatePosition)
-    onMaxSlippageToleranceCreatePositionChange(slippageToleranceCreatePosition)
+  const setMaxSlippageToleranceAddLiquidity = (slippageToleranceAddLiquidity: string): void => {
+    setSlippageToleranceAddLiquidity(slippageToleranceAddLiquidity)
+    onMaxSlippageToleranceAddLiquidityChange(slippageToleranceAddLiquidity)
   }
 
   useEffect(() => {
@@ -1537,7 +1534,7 @@ export const AddLiquidity: React.FC<IProps> = ({
         autoSwapTicks,
         autoSwapTickMap,
         toDecimal(+Number(slippageToleranceSwap).toFixed(4), 2),
-        toDecimal(+Number(slippageToleranceCreatePosition).toFixed(4), 2),
+        toDecimal(+Number(slippageToleranceAddLiquidity).toFixed(4), 2),
         simulationParams.lowerTickIndex,
         simulationParams.upperTickIndex,
         simulationParams.price,
@@ -1579,7 +1576,7 @@ export const AddLiquidity: React.FC<IProps> = ({
     autoSwapTicks,
     isLoadingTicksOrTickmap,
     priceImpact,
-    slippageToleranceCreatePosition,
+    slippageToleranceAddLiquidity,
     slippageToleranceSwap,
     utilization,
     valueA,
@@ -1595,8 +1592,8 @@ export const AddLiquidity: React.FC<IProps> = ({
         setMinUtilization={setMinUtilization}
         initialMaxSlippageToleranceSwap={initialMaxSlippageToleranceSwap}
         setMaxSlippageToleranceSwap={setMaxSlippageToleranceSwap}
-        initialMaxSlippageToleranceCreatePosition={initialMaxSlippageToleranceCreatePosition}
-        setMaxSlippageToleranceCreatePosition={setMaxSlippageToleranceCreatePosition}
+        initialMaxSlippageToleranceCreatePosition={initialMaxSlippageToleranceAddLiquidity}
+        setMaxSlippageToleranceCreatePosition={setMaxSlippageToleranceAddLiquidity}
         handleClose={handleCloseDepositOptions}
         open={settings}
       />
@@ -1842,7 +1839,7 @@ export const AddLiquidity: React.FC<IProps> = ({
                       simulation.swapSimulation.priceAfterSwap,
                       simulation.swapSimulation.crossedTicks,
                       toDecimal(+Number(slippageToleranceSwap).toFixed(4), 2),
-                      toDecimal(+Number(slippageToleranceCreatePosition).toFixed(4), 2),
+                      toDecimal(+Number(slippageToleranceAddLiquidity).toFixed(4), 2),
                       userMinUtilization
                     )
                   }

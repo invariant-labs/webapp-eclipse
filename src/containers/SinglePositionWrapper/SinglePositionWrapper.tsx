@@ -652,6 +652,54 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
             )
           }
         }}
+        swapAndAddLiquidity={(
+          xAmount,
+          yAmount,
+          swapAmount,
+          xToY,
+          byAmountIn,
+          estimatedPriceAfterSwap,
+          crossedTicks,
+          swapSlippage,
+          positionSlippage,
+          minUtilizationPercentage,
+          poolIndex,
+          liquidity
+        ) => {
+          if (!autoSwapPoolData || !autoSwapTickMap) {
+            return
+          }
+
+          dispatch(
+            actions.swapAndAddLiquidity({
+              xAmount,
+              yAmount,
+              tokenX: (xToY ? position.tokenX : position.tokenY).assetAddress,
+              tokenY: (xToY ? position.tokenY : position.tokenX).assetAddress,
+              swapAmount,
+              byAmountIn,
+              xToY,
+              swapPool: autoSwapPoolData,
+              swapPoolTickmap: autoSwapTickMap,
+              swapSlippage,
+              estimatedPriceAfterSwap,
+              crossedTicks,
+              positionPair: {
+                fee: position.poolData.fee,
+                tickSpacing: position.poolData.tickSpacing
+              },
+              positionPoolIndex: poolIndex,
+              positionPoolPrice: position.poolData.sqrtPrice,
+              positionSlippage,
+              lowerTick: position.lowerTickIndex,
+              upperTick: position.upperTickIndex,
+              liquidityDelta: liquidity,
+              minUtilizationPercentage,
+              isSamePool: position.poolData.address.equals(autoSwapPoolData.address),
+              positionIndex: position.positionIndex
+            })
+          )
+        }}
         ticksLoading={ticksLoading || !position}
         tickSpacing={position?.poolData.tickSpacing ?? 1}
         tokenX={{
