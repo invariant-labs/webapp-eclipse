@@ -49,9 +49,9 @@ import { StakeChart } from '@components/Stake/StakeChart/StakeChart'
 import { YourStakeProgress } from '@components/Stake/YourStakeStats/YourProgress'
 import { BN } from '@coral-xyz/anchor'
 import {
-  calculateTokensForWithdraw,
   computeBitzAprApy,
-  computeBitzSbitzRewards
+  computeBitzSbitzRewards,
+  calculateTokensUnstake
 } from '@invariant-labs/sbitz'
 import {
   sBITZ_MAIN,
@@ -135,7 +135,7 @@ export const WrappedStake: React.FC = () => {
     if (!stakedBitzData.stakedAmount || !stakedBitzData.stakedTokenSupply) {
       return new BN(0)
     }
-    return calculateTokensForWithdraw(
+    return calculateTokensUnstake(
       stakedBitzData.stakedTokenSupply,
       stakedBitzData.stakedAmount,
       sBitzBalance || new BN(0)
