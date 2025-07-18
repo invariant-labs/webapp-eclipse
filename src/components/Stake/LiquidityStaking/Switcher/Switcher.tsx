@@ -6,21 +6,29 @@ import { colors } from '@static/theme'
 import { LiquidityPlus } from '@static/componentIcon/LiquidityPlus'
 import { LiquidityMinus } from '@static/componentIcon/LiquidityMinus'
 import { StakeSwitch } from '@store/consts/types'
+import { inputTarget } from '@store/consts/static'
 
 interface ISwitcher {
   switchTab: string
   setSwitchTab: (newSwitch: StakeSwitch) => void
+  setInputRef: (val: inputTarget) => void
   isRotating: boolean
   setIsRotating: (isRotating: boolean) => void
 }
 
-const Switcher: React.FC<ISwitcher> = ({ switchTab, setSwitchTab, isRotating, setIsRotating }) => {
+const Switcher: React.FC<ISwitcher> = ({
+  switchTab,
+  setSwitchTab,
+  isRotating,
+  setInputRef,
+  setIsRotating
+}) => {
   const { classes } = useStyles({ switchTab })
 
   const handleIntervalChange = (_: any, newTab: string) => {
     if (!newTab) return
     setIsRotating(true)
-
+    setInputRef(inputTarget.FROM)
     if (newTab === 'Unstake') {
       setSwitchTab(StakeSwitch.Unstake)
     } else if (newTab === 'Stake') {

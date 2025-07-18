@@ -7,6 +7,7 @@ import { BN } from '@coral-xyz/anchor'
 import { Box, Button, Collapse, Grid, Typography, useMediaQuery } from '@mui/material'
 import {
   DEFAULT_TOKEN_DECIMAL,
+  inputTarget,
   NetworkType,
   REFRESHER_INTERVAL,
   SwapType,
@@ -195,11 +196,6 @@ export const Swap: React.FC<ISwap> = ({
   swapIsLoading
 }) => {
   const { classes, cx } = useStyles()
-  enum inputTarget {
-    DEFAULT = 'default',
-    FROM = 'from',
-    TO = 'to'
-  }
 
   const [tokenFromIndex, setTokenFromIndex] = React.useState<number | null>(null)
   const [tokenToIndex, setTokenToIndex] = React.useState<number | null>(null)
