@@ -1,7 +1,7 @@
 import React, { useCallback, useRef, useState } from 'react'
 import { Box, ClickAwayListener, Typography } from '@mui/material'
-import { dropdownIcon, dropdownReverseIcon } from '@static/icons'
 import useStyles from './style'
+import { DropdownIcon } from '@static/componentIcon/DropdownIcon'
 
 export interface IProps {
   onSelect: (value: number) => void
@@ -67,7 +67,7 @@ export const FeeSelector: React.FC<IProps> = ({
             [classes.promotedSelect]: currentFeeIndex === promotedPoolTierIndex
           })}>
           <Typography className={classes.selectedText}>{feeTiers[currentFeeIndex]}%</Typography>
-          {!open ? <img src={dropdownIcon} alt='' /> : <img src={dropdownReverseIcon} alt='' />}
+          {!open ? <DropdownIcon /> : <DropdownIcon style={{ transform: 'scaleY(-1)' }} />}
         </Box>
 
         {open && (
