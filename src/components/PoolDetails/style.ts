@@ -4,7 +4,7 @@ import { makeStyles } from 'tss-react/mui'
 export const useStyles = makeStyles()(theme => ({
   wrapper: {
     marginTop: 24,
-    maxWidth: '100%',
+    maxWidth: 1210,
     display: 'flex',
     flexDirection: 'column',
     flexGrow: 1

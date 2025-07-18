@@ -54,8 +54,8 @@ export const FeeSelector: React.FC<IProps> = ({
   )
 
   const handleSelect = (tier: number) => {
-    onSelect(tier)
     closeDropdown()
+    onSelect(tier)
   }
 
   return (
@@ -85,7 +85,15 @@ export const FeeSelector: React.FC<IProps> = ({
                     [classes.promoted]: index === promotedPoolTierIndex,
                     [classes.active]: currentFeeIndex === index
                   })}
-                  onClick={() => !disabled && handleSelect(index)}>
+                  onClick={e => {
+                    e.stopPropagation()
+                    e.preventDefault()
+                    if (!disabled) {
+                      setOpen(false)
+                      closeDropdown()
+                      handleSelect(index)
+                    }
+                  }}>
                   <Typography className={classes.optionText}>{tier}%</Typography>
                   <Typography className={classes.tvlText}>
                     {disabled ? 'Not created' : getTvlValue(tier) + 'TVL'}

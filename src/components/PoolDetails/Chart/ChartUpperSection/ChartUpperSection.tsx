@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react'
-import { Box, Skeleton, Typography } from '@mui/material'
+import { Box, Skeleton, Typography, useMediaQuery } from '@mui/material'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { horizontalSwapIcon, plusIcon } from '@static/icons'
-import { colors, typography } from '@static/theme'
+import { colors, theme, typography } from '@static/theme'
 import { NetworkType, promotedTiers } from '@store/consts/static'
 import { NewTabIcon } from '@static/componentIcon/NewTabIcon'
 import { CopyIcon } from '@static/componentIcon/CopyIcon'
@@ -44,6 +44,8 @@ export const ChartUpperSection: React.FC<IProps> = ({
   totalTvl
 }) => {
   const { classes } = useStyles()
+  const isTablet = useMediaQuery(theme.breakpoints.down(1200))
+  console.log(isTablet)
 
   const networkUrl = useMemo(() => {
     switch (network) {
@@ -87,7 +89,7 @@ export const ChartUpperSection: React.FC<IProps> = ({
   }, [tokenX, tokenY])
 
   return (
-    <Box display='flex' justifyContent='space-between' alignItems='center' minHeight='71px'>
+    <Box className={classes.upperContainer}>
       <Box display='flex' alignItems='center' gap='12px'>
         <Box>
           <Box display='flex' alignItems='center' gap={'6px'} minHeight={'27px'}>
@@ -155,27 +157,43 @@ export const ChartUpperSection: React.FC<IProps> = ({
             </Box>
           )}
         </Box>
-        <FeeSelector
-          onSelect={selectFeeTier}
-          feeTiers={feeTiers}
-          currentFeeIndex={feeTierIndex}
-          promotedPoolTierIndex={promotedPoolTierIndex}
-          feeTiersWithTvl={feeTiersWithTvl}
-          totalTvl={totalTvl}
-        />
+        {!isTablet && (
+          <FeeSelector
+            onSelect={selectFeeTier}
+            feeTiers={feeTiers}
+            currentFeeIndex={feeTierIndex}
+            promotedPoolTierIndex={promotedPoolTierIndex}
+            feeTiersWithTvl={feeTiersWithTvl}
+            totalTvl={totalTvl}
+          />
+        )}
       </Box>
-      <Box display='flex' flexDirection='column' justifyContent='flex-end'>
-        <Typography color={colors.invariant.textGrey} style={typography.body2} textAlign='right'>
-          Action
-        </Typography>
-        <Box display='flex' alignItems='center' gap='8px' mt={'12px'}>
-          <button className={classes.actionButton} onClick={handleOpenPosition}>
-            <img width={32} src={plusIcon} alt={'Open'} />
-          </button>
-          <button className={classes.actionButton} onClick={handleOpenSwap}>
-            <img width={32} src={horizontalSwapIcon} alt={'Exchange'} />
-          </button>
+      <Box className={classes.actionContainer}>
+        <Box className={classes.buttons}>
+          <Typography color={colors.invariant.textGrey} style={typography.body2} textAlign='right'>
+            Action
+          </Typography>
+          <Box display='flex' alignItems='center' gap='8px' mt={'12px'}>
+            <button className={classes.actionButton} onClick={handleOpenPosition}>
+              <img width={32} src={plusIcon} alt={'Open'} />
+            </button>
+            <button className={classes.actionButton} onClick={handleOpenSwap}>
+              <img width={32} src={horizontalSwapIcon} alt={'Exchange'} />
+            </button>
+          </Box>
         </Box>
+        {isTablet && (
+          <Box mt={2}>
+            <FeeSelector
+              onSelect={selectFeeTier}
+              feeTiers={feeTiers}
+              currentFeeIndex={feeTierIndex}
+              promotedPoolTierIndex={promotedPoolTierIndex}
+              feeTiersWithTvl={feeTiersWithTvl}
+              totalTvl={totalTvl}
+            />
+          </Box>
+        )}
       </Box>
     </Box>
   )

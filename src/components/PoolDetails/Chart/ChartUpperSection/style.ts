@@ -2,6 +2,33 @@ import { colors, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(theme => ({
+  upperContainer: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    minHeight: 71,
+    flexDirection: 'row',
+    [theme.breakpoints.down(1200)]: {
+      flexDirection: 'column',
+      alignItems: 'flex-start'
+    }
+  },
+  actionContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'flex-end',
+    [theme.breakpoints.down(1200)]: {
+      flexDirection: 'row-reverse',
+      alignItems: 'flex-end',
+      justifyContent: 'space-between',
+      width: '100%',
+      height: 'auto'
+    }
+  },
+  buttons: {
+    display: 'flex',
+    flexDirection: 'column'
+  },
   addressIcon: {
     '&:hover': {
       cursor: 'pointer'
@@ -51,10 +78,6 @@ export const useStyles = makeStyles()(theme => ({
       '@media (hover: none)': {
         filter: 'none'
       }
-    },
-    [theme.breakpoints.down('sm')]: {
-      height: 28,
-      width: 28
     }
   }
 }))
