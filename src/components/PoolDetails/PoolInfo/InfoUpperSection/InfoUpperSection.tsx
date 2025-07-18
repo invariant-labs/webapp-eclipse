@@ -1,0 +1,61 @@
+import React from 'react'
+import { Grid } from '@mui/material'
+import { PoolSnap } from '@store/reducers/stats'
+import { Intervals as IntervalsKeys } from '@store/consts/static'
+import InfoItem from './InfoItem/InfoItem'
+import { mapIntervalToString } from '@utils/uiUtils'
+import { formatNumberWithoutSuffix } from '@utils/utils'
+
+export interface IProps {
+  statsPoolData: PoolSnap
+  interval: IntervalsKeys
+  isLoadingStats: boolean
+}
+
+export const InfoUpperSection: React.FC<IProps> = ({ statsPoolData, interval, isLoadingStats }) => {
+  const intervalSuffix = mapIntervalToString(interval)
+
+  return (
+    <Grid container gap={1} justifyContent='center' alignItems='stretch' wrap='wrap'>
+      <Grid display='flex' item gap={1}>
+        <Grid display='flex' item>
+          <InfoItem
+            name='Pool APY'
+            value={
+              statsPoolData.apy > 1000
+                ? '>1000%'
+                : `${formatNumberWithoutSuffix(statsPoolData.apy)}%`
+            }
+            isLoadingStats={isLoadingStats}
+            isGreen
+          />
+        </Grid>
+        <Grid item>
+          <InfoItem
+            name={`TVL (${intervalSuffix})`}
+            value={`${formatNumberWithoutSuffix(statsPoolData.tvl)}USD`}
+            isLoadingStats={isLoadingStats}
+          />
+        </Grid>{' '}
+      </Grid>
+      <Grid display='flex' item gap={1}>
+        <Grid display='flex' item>
+          <InfoItem
+            name={`Volume (${intervalSuffix})`}
+            value={`${formatNumberWithoutSuffix(statsPoolData.volume)}USD`}
+            isLoadingStats={isLoadingStats}
+          />
+        </Grid>
+        <Grid item>
+          <InfoItem
+            name={`Fees (${intervalSuffix})`}
+            value={`${formatNumberWithoutSuffix(statsPoolData.fees)}USD`}
+            isLoadingStats={isLoadingStats}
+          />
+        </Grid>
+      </Grid>
+    </Grid>
+  )
+}
+
+export default InfoUpperSection

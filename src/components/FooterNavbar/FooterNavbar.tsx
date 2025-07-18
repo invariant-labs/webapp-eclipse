@@ -153,7 +153,7 @@ export const FooterNavbar = () => {
   }, [landing])
 
   const otherRoutesToHighlight: Record<string, RegExp[]> = {
-    liquidity: [/^liquidity\/*/],
+    liquidity: [/^liquidity\/*/, /^poolDetails\/*/],
     exchange: [/^exchange\/*/],
     sale: [/^presale\/*/],
     portfolio: [/^portfolio\/*/, /^newPosition\/*/, /^position\/*/],
