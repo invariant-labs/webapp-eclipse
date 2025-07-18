@@ -10,10 +10,11 @@ import { ReverseTokensIcon } from '@static/componentIcon/ReverseTokensIcon'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import useStyles from './style'
 import { VariantType } from 'notistack'
-import FeeSelector from './FeeSelector/FeeSelector'
+
 import { initialXtoY, parseFeeToPathFee, printBN } from '@utils/utils'
 import { token } from '@coral-xyz/anchor/dist/cjs/utils'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
+import { FeeSelector } from './FeeSelector/FeeSelector'
 
 export interface IProps {
   poolAddress: string
@@ -26,7 +27,9 @@ export interface IProps {
   isPoolDataLoading: boolean
   selectFeeTier: (value: number) => void
   feeTiers: number[]
-  currentFee: string
+  feeTierIndex: number
+  feeTiersWithTvl: Record<number, number>
+  totalTvl: number
 }
 
 export const ChartUpperSection: React.FC<IProps> = ({
@@ -40,7 +43,9 @@ export const ChartUpperSection: React.FC<IProps> = ({
   isPoolDataLoading,
   selectFeeTier,
   feeTiers,
-  currentFee
+  feeTierIndex,
+  feeTiersWithTvl,
+  totalTvl
 }) => {
   const { classes } = useStyles()
 
@@ -70,7 +75,17 @@ export const ChartUpperSection: React.FC<IProps> = ({
         copyAddressHandler('Failed to copy token address to Clipboard', 'error')
       })
   }
-  const promotedPoolTier = useMemo(() => {
+
+  const bestFeeIndex = useMemo(() => {
+    const feeTiersTVLValues = Object.values(feeTiersWithTvl)
+    const bestFee = feeTiersTVLValues.length > 0 ? Math.max(...feeTiersTVLValues) : 0
+    const bestTierIndex = ALL_FEE_TIERS_DATA.findIndex(tier => {
+      return feeTiersWithTvl[+printBN(tier.tier.fee, DECIMAL - 2)] === bestFee && bestFee > 0
+    })
+    return bestTierIndex
+  }, [ALL_FEE_TIERS_DATA, feeTiersWithTvl])
+
+  const promotedPoolTierIndex = useMemo(() => {
     const tierIndex =
       tokenX === null || tokenY === null
         ? undefined
@@ -81,11 +96,9 @@ export const ChartUpperSection: React.FC<IProps> = ({
               (tier.tokenX.equals(tokenY.assetAddress) && tier.tokenY.equals(tokenX.assetAddress))
           )?.index ?? undefined)
 
-    const promotedFee = ALL_FEE_TIERS_DATA[tierIndex ?? 0].tier.fee
-    return +printBN(promotedFee, DECIMAL - 2)
+    return tierIndex
   }, [tokenX, tokenY])
 
-  console.log(promotedPoolTier)
   return (
     <Box display='flex' justifyContent='space-between' alignItems='center' minHeight='71px'>
       <Box display='flex' alignItems='center' gap='8px'>
@@ -158,8 +171,10 @@ export const ChartUpperSection: React.FC<IProps> = ({
         <FeeSelector
           onSelect={selectFeeTier}
           feeTiers={feeTiers}
-          currentValue={currentFee}
-          promotedPoolTier={promotedPoolTier}
+          currentValue={feeTierIndex}
+          promotedPoolTierIndex={promotedPoolTierIndex}
+          feeTiersWithTvl={feeTiersWithTvl}
+          totalTvl={totalTvl}
         />
       </Box>
       <Box display='flex' flexDirection='column' justifyContent='flex-end'>

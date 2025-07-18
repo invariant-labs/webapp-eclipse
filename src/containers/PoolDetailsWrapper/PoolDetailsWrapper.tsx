@@ -27,7 +27,8 @@ import {
   currentPoolData,
   isLoading,
   lastInterval,
-  lastSnapTimestamp
+  lastSnapTimestamp,
+  poolsStatsWithTokensDetails
 } from '@store/selectors/stats'
 import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import { actions as snackbarActions } from '@store/reducers/snackbars'
@@ -74,6 +75,8 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
 
   const lastUsedInterval = useSelector(currentInterval)
   const lastFetchedInterval = useSelector(lastInterval)
+
+  const poolsList = useSelector(poolsStatsWithTokensDetails)
 
   const showFavourites = useSelector(showFavouritesSelector)
 
@@ -233,7 +236,7 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
 
   const { fee, tickSpacing } = useMemo(() => {
     const parsedFee = parsePathFeeToFeeString(initialFee)
-
+    console.log(parsedFee)
     const feeTierData = ALL_FEE_TIERS_DATA.find(
       feeTierData => feeTierData.tier.fee.toString() === parsedFee
     )
@@ -286,6 +289,32 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
     )
   }
 
+  useEffect(() => {
+    dispatch(actions.getCurrentIntervalStats({ interval: IntervalsKeys.Daily }))
+  }, [])
+
+  const { feeTiersWithTvl, totalTvl } = useMemo(() => {
+    if (tokenX === null || tokenY === null) {
+      return { feeTiersWithTvl: {}, totalTvl: 0 }
+    }
+    const feeTiersWithTvl: Record<number, number> = {}
+    let totalTvl = 0
+
+    poolsList.forEach(pool => {
+      const xMatch =
+        pool.tokenX.equals(tokenX.assetAddress) && pool.tokenY.equals(tokenY.assetAddress)
+      const yMatch =
+        pool.tokenX.equals(tokenY.assetAddress) && pool.tokenY.equals(tokenX.assetAddress)
+
+      if (xMatch || yMatch) {
+        feeTiersWithTvl[pool.fee] = pool.tvl
+        totalTvl += pool.tvl
+      }
+    })
+
+    return { feeTiersWithTvl, totalTvl }
+  }, [poolsList, tokenX, tokenY])
+
   const selectFeeTier = (value: number) => {
     if (!poolData) return
 
@@ -302,6 +331,14 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
     const path = locationHistory === ROUTES.ROOT ? ROUTES.PORTFOLIO : locationHistory
     navigate(path)
   }
+
+  const feeTierIndex = useMemo(() => {
+    const parsedFee = parsePathFeeToFeeString(initialFee)
+
+    const feeIndex = ALL_FEE_TIERS_DATA.findIndex(tier => tier.tier.fee.toNumber() === +parsedFee)
+
+    return feeIndex !== -1 ? feeIndex : 0 // Return 0 if no match is found
+  }, [initialFee, ALL_FEE_TIERS_DATA])
 
   return (
     <PoolDetails
@@ -326,6 +363,9 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
       feeTiers={feeTiers}
       initialFee={initialFee}
       handleBack={handleBack}
+      feeTiersWithTvl={feeTiersWithTvl}
+      totalTvl={totalTvl}
+      feeTierIndex={feeTierIndex}
     />
   )
 }

@@ -28,7 +28,9 @@ export interface IProps {
   updateInterval: (interval: IntervalsKeys) => void
   selectFeeTier: (value: number) => void
   feeTiers: number[]
-  currentFee: string
+  feeTiersWithTvl: Record<number, number>
+  totalTvl: number
+  feeTierIndex: number
 }
 
 export const Chart: React.FC<IProps> = ({
@@ -48,7 +50,9 @@ export const Chart: React.FC<IProps> = ({
   updateInterval,
   selectFeeTier,
   feeTiers,
-  currentFee
+  feeTiersWithTvl,
+  totalTvl,
+  feeTierIndex
 }) => {
   const { classes } = useStyles()
 
@@ -67,6 +71,9 @@ export const Chart: React.FC<IProps> = ({
           tokenY={tokenY}
           selectFeeTier={selectFeeTier}
           feeTiers={feeTiers}
+          feeTiersWithTvl={feeTiersWithTvl}
+          totalTvl={totalTvl}
+          feeTierIndex={feeTierIndex}
         />
         <Box className={classes.separator} />
         <ChartLowerSection

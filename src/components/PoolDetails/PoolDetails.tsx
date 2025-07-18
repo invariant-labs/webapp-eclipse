@@ -34,6 +34,9 @@ export interface IProps {
   feeTiers: number[]
   initialFee: string
   handleBack: () => void
+  feeTiersWithTvl: Record<number, number>
+  totalTvl: number
+  feeTierIndex: number
 }
 
 export const PoolDetails: React.FC<IProps> = ({
@@ -57,7 +60,10 @@ export const PoolDetails: React.FC<IProps> = ({
   selectFeeTier,
   feeTiers,
   initialFee,
-  handleBack
+  handleBack,
+  feeTiersWithTvl,
+  totalTvl,
+  feeTierIndex
 }) => {
   const { classes } = useStyles()
   console.log(initialFee)
@@ -85,6 +91,9 @@ export const PoolDetails: React.FC<IProps> = ({
           updateInterval={updateInterval}
           selectFeeTier={selectFeeTier}
           feeTiers={feeTiers}
+          feeTiersWithTvl={feeTiersWithTvl}
+          totalTvl={totalTvl}
+          feeTierIndex={feeTierIndex}
         />
         <PoolInfo
           interval={interval}
