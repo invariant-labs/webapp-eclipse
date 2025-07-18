@@ -9,7 +9,7 @@ export const useStyles = makeStyles<{ isSmall: boolean }>()((_theme: Theme, { is
     alignItems: 'center',
     gap: '24px',
     width: '100%',
-    maxWidth: '467px',
+    maxWidth: isSmall ? 200 : '467px',
     boxSizing: 'border-box',
     overflow: 'hidden'
   },

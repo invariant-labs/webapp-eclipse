@@ -526,7 +526,7 @@ export const PreSaleWrapper = () => {
 
       <Box className={classes.contentWrapper}>
         <Grid className={classes.stepperContainer}>
-          <Box display='flex' flexDirection='column'>
+          <Box display='flex' flexDirection='column' width={isTablet ? '100%' : 'auto'}>
             <SaleStepper
               isLoading={isLoadingSaleStats}
               currentStep={round - 1}
