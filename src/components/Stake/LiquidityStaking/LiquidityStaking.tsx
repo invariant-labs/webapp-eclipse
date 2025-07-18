@@ -1,7 +1,7 @@
 import { Box, Grid, Typography } from '@mui/material'
 import useStyles from './style'
 import Switcher from './Switcher/Switcher'
-import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import { useCallback, useLayoutEffect, useMemo, useState } from 'react'
 import { BITZ_MAIN, inputTarget, WETH_MIN_STAKE_UNSTAKE_LAMPORTS } from '@store/consts/static'
 import ExchangeAmountInput from '@components/Inputs/ExchangeAmountInput/ExchangeAmountInput'
 import { Status } from '@store/reducers/solanaWallet'
@@ -97,10 +97,6 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
   const [inputRef, setInputRef] = useState<string>(inputTarget.FROM)
 
   const [isRotating, setIsRotating] = useState(false)
-
-  useEffect(() => {
-    setInputRef(inputTarget.FROM)
-  }, [currentStakeTab])
 
   const handleSwitchTokens = () => {
     setIsRotating(true)
