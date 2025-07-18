@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box } from '@mui/material'
+import { Grid } from '@mui/material'
 import { PoolSnap } from '@store/reducers/stats'
 import { Intervals as IntervalsKeys } from '@store/consts/static'
 import InfoItem from './InfoItem/InfoItem'
@@ -16,31 +16,45 @@ export const InfoUpperSection: React.FC<IProps> = ({ statsPoolData, interval, is
   const intervalSuffix = mapIntervalToString(interval)
 
   return (
-    <Box display='flex' justifyContent='space-between' alignItems='center'>
-      <InfoItem
-        name='Pool APY'
-        value={
-          statsPoolData.apy > 1000 ? '>1000%' : `${formatNumberWithoutSuffix(statsPoolData.apy)}%`
-        }
-        isLoadingStats={isLoadingStats}
-        isGreen
-      />
-      <InfoItem
-        name={`TVL (${intervalSuffix})`}
-        value={`${formatNumberWithoutSuffix(statsPoolData.tvl)}USD`}
-        isLoadingStats={isLoadingStats}
-      />
-      <InfoItem
-        name={`Volume (${intervalSuffix})`}
-        value={`${formatNumberWithoutSuffix(statsPoolData.volume)}USD`}
-        isLoadingStats={isLoadingStats}
-      />
-      <InfoItem
-        name={`Fees (${intervalSuffix})`}
-        value={`${formatNumberWithoutSuffix(statsPoolData.fees)}USD`}
-        isLoadingStats={isLoadingStats}
-      />
-    </Box>
+    <Grid container gap={1} justifyContent='center' alignItems='stretch' wrap='wrap'>
+      <Grid display='flex' item gap={1}>
+        <Grid display='flex' item>
+          <InfoItem
+            name='Pool APY'
+            value={
+              statsPoolData.apy > 1000
+                ? '>1000%'
+                : `${formatNumberWithoutSuffix(statsPoolData.apy)}%`
+            }
+            isLoadingStats={isLoadingStats}
+            isGreen
+          />
+        </Grid>
+        <Grid item>
+          <InfoItem
+            name={`TVL (${intervalSuffix})`}
+            value={`${formatNumberWithoutSuffix(statsPoolData.tvl)}USD`}
+            isLoadingStats={isLoadingStats}
+          />
+        </Grid>{' '}
+      </Grid>
+      <Grid display='flex' item gap={1}>
+        <Grid display='flex' item>
+          <InfoItem
+            name={`Volume (${intervalSuffix})`}
+            value={`${formatNumberWithoutSuffix(statsPoolData.volume)}USD`}
+            isLoadingStats={isLoadingStats}
+          />
+        </Grid>
+        <Grid item>
+          <InfoItem
+            name={`Fees (${intervalSuffix})`}
+            value={`${formatNumberWithoutSuffix(statsPoolData.fees)}USD`}
+            isLoadingStats={isLoadingStats}
+          />
+        </Grid>
+      </Grid>
+    </Grid>
   )
 }
 

@@ -272,12 +272,7 @@ const ChartLowerSection: React.FC<StatsInterface> = ({
   return (
     <Grid className={cx(classes.container, className)}>
       <Box className={classes.volumeContainer}>
-        <Grid
-          container
-          display='flex'
-          justifyContent={'space-between'}
-          alignItems='center'
-          mb={'12px'}>
+        <Grid container className={classes.switchersContainer}>
           <Switcher
             value={chartType}
             onChange={setChartType}
@@ -285,7 +280,7 @@ const ChartLowerSection: React.FC<StatsInterface> = ({
             dark
             itemWidth={90}
           />
-          <Box display='flex' flexGrow={1} minWidth={'min-content'} width={'auto'}>
+          <Box display='flex'>
             <Intervals
               interval={interval ?? IntervalsKeys.Daily}
               setInterval={updateInterval}

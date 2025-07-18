@@ -56,5 +56,13 @@ export const useStyles = makeStyles()(() => ({
       pointerEvents: 'none',
       borderRadius: '24px'
     }
+  },
+  switchersContainer: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+    flexWrap: 'wrap',
+    gap: 12
   }
 }))
