@@ -49,7 +49,7 @@ export interface PlotTicks {
   hasError?: boolean
 }
 
-export interface InitPositionStore {
+export interface StatusStore {
   inProgress: boolean
   success: boolean
 }
@@ -60,7 +60,8 @@ export interface IPositionsStore {
   currentPoolIndex: number | null
   positionsList: PositionsListStore
   currentPositionId: string
-  initPosition: InitPositionStore
+  initPosition: StatusStore
+  changeLiquidity: StatusStore
   shouldNotUpdateRange: boolean
   prices: {
     data: Record<string, number>
@@ -127,6 +128,12 @@ export interface ClosePositionData {
   onSuccess: () => void
 }
 
+export interface RemoveLiquidityData {
+  positionIndex: number
+  liquidity: BN
+  slippage: BN
+}
+
 export interface SetPositionData {
   index: number
   isLocked: boolean
@@ -165,6 +172,10 @@ export const defaultState: IPositionsStore = {
   },
   currentPositionId: '',
   initPosition: {
+    inProgress: false,
+    success: false
+  },
+  changeLiquidity: {
     inProgress: false,
     success: false
   },
@@ -308,6 +319,19 @@ const positionsSlice = createSlice({
       return state
     },
     closePosition(state, _action: PayloadAction<ClosePositionData>) {
+      return state
+    },
+    addLiquidity(state, _action: PayloadAction<RemoveLiquidityData>) {
+      state.changeLiquidity.inProgress = true
+      return state
+    },
+    removeLiquidity(state, _action: PayloadAction<RemoveLiquidityData>) {
+      state.changeLiquidity.inProgress = true
+      return state
+    },
+    setChangeLiquiditySuccess(state, action: PayloadAction<boolean>) {
+      state.changeLiquidity.inProgress = false
+      state.changeLiquidity.success = action.payload
       return state
     },
     resetState() {

@@ -34,6 +34,7 @@ interface IProp {
   isClosing: boolean
   interval: Intervals
   isLocked?: boolean
+  showChangeLiquidityModal: (isAddLiquidity: boolean) => void
 }
 
 const SinglePositionInfo: React.FC<IProp> = ({
@@ -54,10 +55,11 @@ const SinglePositionInfo: React.FC<IProp> = ({
   isPromotedLoading,
   isClosing,
   interval,
-  isLocked
+  isLocked,
+  showChangeLiquidityModal
 }) => {
   const [isFeeTooltipOpen, setIsFeeTooltipOpen] = useState(false)
-  const { classes } = useStyles()
+  const { classes, cx } = useStyles()
 
   const Overlay = () => (
     <div
@@ -99,7 +101,18 @@ const SinglePositionInfo: React.FC<IProp> = ({
           isLocked={isLocked}
         />
         <Separator size='100%' isHorizontal color={colors.invariant.light} />
-        <Section title='Liquidity'>
+        <Section
+          title='Liquidity'
+          item={
+            <Box className={classes.liquidityButtons}>
+              <Button
+                className={cx(classes.liquidityButton, classes.liquidityButtonPlus)}
+                onClick={() => showChangeLiquidityModal(true)}></Button>
+              <Button
+                className={cx(classes.liquidityButton, classes.liquidityButtonMinus)}
+                onClick={() => showChangeLiquidityModal(false)}></Button>
+            </Box>
+          }>
           <Liquidity
             tokenA={
               xToY
