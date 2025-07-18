@@ -20,10 +20,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     color: colors.invariant.text,
     ...typography.heading4
   },
-  input: {
-    position: 'relative',
-    background: colors.invariant.newDark
-  },
+
   swapButton: {
     marginTop: 24,
     width: '100%',

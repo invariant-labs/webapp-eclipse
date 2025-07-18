@@ -183,7 +183,7 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
   useLayoutEffect(() => {
     if (inputRef === inputTarget.FROM) {
       if (!amountFrom || Number(amountFrom) === 0) {
-        setAmountTo('0')
+        setAmountTo('')
       } else {
         setAmountTo(printBN(calculateOtherTokenAmount(amountFrom), TOKEN_DECIMALS))
       }
@@ -191,7 +191,7 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
     }
     if (inputRef === inputTarget.TO) {
       if (!amountTo || Number(amountTo) === 0) {
-        setAmountFrom('0')
+        setAmountFrom('')
       } else {
         setAmountFrom(printBN(calculateOtherTokenAmount(amountTo), TOKEN_DECIMALS))
       }
@@ -217,7 +217,6 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
         value={amountFrom}
         balance={printBN(tokenFrom?.balance || new BN(0), tokenFrom?.decimals)}
         decimal={tokenFrom?.decimals}
-        className={classes.input}
         setValue={value => {
           if (value.match(/^\d*\.?\d*$/)) {
             setAmountFrom(value)
@@ -271,7 +270,6 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
         value={amountTo}
         balance={printBN(tokenTo?.balance || new BN(0), tokenTo?.decimals)}
         decimal={tokenTo?.decimals}
-        className={classes.input}
         setValue={value => {
           if (value.match(/^\d*\.?\d*$/)) {
             setAmountTo(value)
@@ -285,7 +283,7 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
             variant: 'max',
             onClick: () => {
               setInputRef(inputTarget.TO)
-              handleActionButtons('max', tokenFrom.assetAddress, inputTarget.TO)
+              handleActionButtons('max', tokenTo.assetAddress, inputTarget.TO)
             }
           },
           {
@@ -293,7 +291,7 @@ export const LiquidityStaking: React.FC<ILiquidityStaking> = ({
             variant: 'half',
             onClick: () => {
               setInputRef(inputTarget.FROM)
-              handleActionButtons('half', tokenFrom.assetAddress, inputTarget.TO)
+              handleActionButtons('half', tokenTo.assetAddress, inputTarget.TO)
             }
           }
         ]}
