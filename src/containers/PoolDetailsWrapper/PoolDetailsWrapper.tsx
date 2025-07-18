@@ -105,6 +105,31 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
 
   const [poolData, setPoolData] = useState<PoolWithAddress | null>(null)
 
+  useEffect(() => {
+    localStorage.setItem(
+      `INVARIANT_FAVOURITE_POOLS_Eclipse_${currentNetwork}`,
+      JSON.stringify([...favouritePools])
+    )
+  }, [favouritePools])
+
+  const switchFavouritePool = () => {
+    if (!poolData) return
+    if (favouritePools.has(poolData?.address.toString())) {
+      const updatedFavouritePools = new Set(favouritePools)
+      updatedFavouritePools.delete(poolData.address.toString())
+      setFavouritePools(updatedFavouritePools)
+    } else {
+      const updatedFavouritePools = new Set(favouritePools)
+      updatedFavouritePools.add(poolData.address.toString())
+      setFavouritePools(updatedFavouritePools)
+    }
+  }
+
+  const isFavourite = useMemo(() => {
+    if (!poolData) return false
+    return favouritePools.has(poolData.address.toString())
+  }, [poolData?.address.toString(), favouritePools])
+
   const fetchTokensReserves = async (
     tokenX: PublicKey,
     tokenY: PublicKey,
@@ -385,6 +410,8 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
       totalTvl={totalTvl}
       feeTierIndex={feeTierIndex}
       onRefresh={onRefresh}
+      isFavourite={isFavourite}
+      switchFavouritePool={switchFavouritePool}
     />
   )
 }

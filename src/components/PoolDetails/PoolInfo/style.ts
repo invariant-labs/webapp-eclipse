@@ -52,6 +52,9 @@ export const useStyles = makeStyles()(theme => ({
     '&:hover': {
       filter: 'brightness(1.5)'
     }
+  },
+  favouriteButton: {
+    cursor: 'pointer'
   }
 }))
 

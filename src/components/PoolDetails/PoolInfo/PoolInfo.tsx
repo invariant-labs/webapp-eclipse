@@ -9,7 +9,7 @@ import { SwapToken } from '@store/selectors/solanaWallet'
 import { TokenReserve } from '@store/consts/types'
 import TokenInfo from './TokenInfo/TokenInfo'
 import { VariantType } from 'notistack'
-import { refreshIcon } from '@static/icons'
+import { refreshIcon, star, starFill } from '@static/icons'
 
 export interface IPros {
   interval: IntervalsKeys
@@ -23,6 +23,8 @@ export interface IPros {
   copyAddressHandler: (message: string, variant: VariantType) => void
   network: NetworkType
   onRefresh: () => void
+  isFavourite: boolean
+  switchFavouritePool: () => void
 }
 
 export const PoolInfo: React.FC<IPros> = ({
@@ -36,7 +38,9 @@ export const PoolInfo: React.FC<IPros> = ({
   prices,
   copyAddressHandler,
   network,
-  onRefresh
+  onRefresh,
+  isFavourite,
+  switchFavouritePool
 }) => {
   const { classes } = useStyles()
   const tokenXUsdAmount = tokenXReserve ? prices.tokenX * tokenXReserve.uiAmount : 0
@@ -57,9 +61,19 @@ export const PoolInfo: React.FC<IPros> = ({
     <Grid className={classes.wrapper}>
       <Box display='flex' justifyContent='space-between' alignItems='center'>
         <Typography className={classes.header}>Pool Info</Typography>
-        <Button onClick={onRefresh} className={classes.refreshIconBtn}>
-          <img src={refreshIcon} className={classes.refreshIcon} alt='Refresh' />
-        </Button>
+        <Box display='flex' alignItems='center' gap={'8px'}>
+          <img
+            className={classes.favouriteButton}
+            src={isFavourite ? starFill : star}
+            onClick={e => {
+              switchFavouritePool()
+              e.stopPropagation()
+            }}
+          />
+          <Button onClick={onRefresh} className={classes.refreshIconBtn}>
+            <img src={refreshIcon} className={classes.refreshIcon} alt='Refresh' />
+          </Button>
+        </Box>
       </Box>
 
       <Grid className={classes.container}>

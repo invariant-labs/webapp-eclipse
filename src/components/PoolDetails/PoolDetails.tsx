@@ -38,6 +38,8 @@ export interface IProps {
   totalTvl: number
   feeTierIndex: number
   onRefresh: () => void
+  isFavourite: boolean
+  switchFavouritePool: () => void
 }
 
 export const PoolDetails: React.FC<IProps> = ({
@@ -65,10 +67,12 @@ export const PoolDetails: React.FC<IProps> = ({
   feeTiersWithTvl,
   totalTvl,
   feeTierIndex,
-  onRefresh
+  onRefresh,
+  isFavourite,
+  switchFavouritePool
 }) => {
   const { classes } = useStyles()
-  console.log(initialFee)
+
   return (
     <Grid className={classes.wrapper}>
       <Grid onClick={() => handleBack()} className={classes.back} container item>
@@ -109,6 +113,8 @@ export const PoolDetails: React.FC<IProps> = ({
           copyAddressHandler={copyAddressHandler}
           network={network}
           onRefresh={onRefresh}
+          isFavourite={isFavourite}
+          switchFavouritePool={switchFavouritePool}
         />
       </Grid>
       {/* <Transactions /> */}
