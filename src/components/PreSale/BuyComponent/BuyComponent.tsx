@@ -185,11 +185,11 @@ export const BuyComponent: React.FC<IProps> = ({
               ) : walletStatus !== Status.Initialized ? (
                 <Box className={classes.egibilityCheckerWrapper}>
                   <Typography className={classes.egibilityCheckerText}>
-                    To participate in sale, connect your wallet
+                    To participate in sale, checky your eligibility
                   </Typography>
                   <ChangeWalletButton
                     height={36}
-                    name={truncateText ? 'Connect' : 'Connect wallet'}
+                    name={truncateText ? 'Check' : 'Check eligibility'}
                     onConnect={onConnectWallet}
                     connected={false}
                     onDisconnect={onDisconnectWallet}
