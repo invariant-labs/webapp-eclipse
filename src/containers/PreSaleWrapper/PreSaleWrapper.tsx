@@ -585,7 +585,7 @@ export const PreSaleWrapper = () => {
           saleDidNotStart={saleDidNotStart}
           saleEnded={saleEnded}
           saleSoldOut={saleSoldOut}
-          isEligible={true} // Make everyone eligible
+          isEligible={true}
           whitelistWalletLimit={whitelistWalletLimit}
           userDepositedAmount={deposited}
           isActive={isActive}
