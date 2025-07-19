@@ -356,8 +356,7 @@ export const PreSaleWrapper = () => {
       walletAddress &&
       !walletAddress.equals(DEFAULT_PUBLICKEY)
     ) {
-      // Everyone is eligible, so we'll set a dummy proof
-      dispatch(actions.setProofOfInclusion([1])) // Set a non-empty proof to make everyone eligible
+      dispatch(actions.setProofOfInclusion([1]))
     }
   }, [walletStatus, isPublic, walletAddress])
 
