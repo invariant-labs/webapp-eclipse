@@ -15,15 +15,15 @@ import { getSolanaConnection } from '@utils/web3/connection'
 import {
   createLoaderKey,
   ensureError,
-  // fetchProofOfInclusion,
+  fetchProofOfInclusion,
   formatNumberWithoutSuffix,
   printBN
 } from '@utils/utils'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import {
   DEFAULT_PUBLICKEY,
-  // PROOF_OF_INCLUSION_CACHE_KEY,
-  // PROOF_OF_INCLUSION_CACHE_TTL,
+  PROOF_OF_INCLUSION_CACHE_KEY,
+  PROOF_OF_INCLUSION_CACHE_TTL,
   SIGNING_SNACKBAR_CONFIG,
   TIMEOUT_ERROR_MESSAGE,
   USDC_MAIN
@@ -331,7 +331,35 @@ export function* mintNft() {
 }
 
 export function* getProof(): Generator {
-  yield* put(actions.setProofOfInclusion([1]))
+  const wallet = yield* call(getWallet)
+  const address = wallet.publicKey.toBase58()
+
+  const lsKey = `${PROOF_OF_INCLUSION_CACHE_KEY}-${address}`
+  const currentTimestamp = +Date.now()
+
+  try {
+    const cachedProof = localStorage.getItem(lsKey)
+    const cachedTimestamp = localStorage.getItem(`${lsKey}-timestamp`)
+
+    if (cachedTimestamp && +cachedTimestamp > currentTimestamp - PROOF_OF_INCLUSION_CACHE_TTL) {
+      const proof = Array.from(new Uint8Array(JSON.parse(cachedProof!)))
+      yield* put(actions.setProofOfInclusion(proof))
+      return
+    }
+  } catch {
+    // Fallback to fetching proof if localStorage read fails
+  }
+
+  const proof = yield* call(fetchProofOfInclusion, wallet.publicKey.toBase58())
+
+  try {
+    localStorage.setItem(lsKey, JSON.stringify(Array.from(proof)))
+    localStorage.setItem(`${lsKey}-timestamp`, currentTimestamp.toString())
+  } catch {
+    // Fallback to not caching proof if localStorage write fails
+  }
+
+  yield* put(actions.setProofOfInclusion(Array.from(proof)))
 }
 
 export function* getProofHandler(): Generator {
