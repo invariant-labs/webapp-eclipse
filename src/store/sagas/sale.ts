@@ -331,7 +331,6 @@ export function* mintNft() {
 }
 
 export function* getProof(): Generator {
-  // Always set a dummy proof to make everyone eligible
   yield* put(actions.setProofOfInclusion([1]))
 }
 
