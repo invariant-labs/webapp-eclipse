@@ -6,7 +6,7 @@ import { RoundComponent } from '@components/PreSale/RoundComponent/RoundComponen
 import { useDispatch, useSelector } from 'react-redux'
 import { actions, NFTStatus } from '@store/reducers/sale'
 import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
-import { isLoadingProof, proofOfInclusion, saleSelectors } from '@store/selectors/sale'
+import { /*isLoadingProof,*/ proofOfInclusion, saleSelectors } from '@store/selectors/sale'
 import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
 import { printBNandTrimZeros } from '@utils/utils'
@@ -192,7 +192,7 @@ export const PreSaleWrapper = () => {
   const dispatch = useDispatch()
   const isLoadingSaleStats = useSelector(saleSelectors.isLoadingSaleStats)
   const isLoadingUserStats = useSelector(saleSelectors.isLoadingUserStats)
-  const isLoadingProofOfInclusion = useSelector(isLoadingProof)
+  // const isLoadingProofOfInclusion = useSelector(isLoadingProof)
   const saleStats = useSelector(saleSelectors.saleStats)
   const userStats = useSelector(saleSelectors.userStats)
   const { success, inProgress } = useSelector(saleSelectors.deposit)
@@ -356,7 +356,7 @@ export const PreSaleWrapper = () => {
       walletAddress &&
       !walletAddress.equals(DEFAULT_PUBLICKEY)
     ) {
-      dispatch(actions.getProof())
+      dispatch(actions.setProofOfInclusion([1]))
     }
   }, [walletStatus, isPublic, walletAddress])
 
@@ -372,14 +372,8 @@ export const PreSaleWrapper = () => {
         variant: 'limit'
       }
     }
-    if (!isPublic && proof?.length !== 0) {
+    if (!isPublic) {
       return { text: 'You qualify for the sale' }
-    }
-    if (!isPublic && proof?.length === 0) {
-      return {
-        text: 'You are not eligible for this round of sale',
-        variant: 'warning'
-      }
     }
     if (isPublic) {
       return { text: 'Sale is in public phase' }
@@ -387,7 +381,7 @@ export const PreSaleWrapper = () => {
     if (!isActive) {
       return { text: 'Sale not active' }
     }
-  }, [isPublic, proof, isLimitExceed])
+  }, [isPublic, isLimitExceed])
 
   useEffect(() => {
     dispatch(actions.getUserStats())
@@ -591,12 +585,12 @@ export const PreSaleWrapper = () => {
           saleDidNotStart={saleDidNotStart}
           saleEnded={saleEnded}
           saleSoldOut={saleSoldOut}
-          isEligible={proof?.length !== 0}
+          isEligible={true}
           whitelistWalletLimit={whitelistWalletLimit}
           userDepositedAmount={deposited}
           isActive={isActive}
           progress={progress}
-          isLoading={isLoadingSaleStats || isLoadingProofOfInclusion}
+          isLoading={isLoadingSaleStats}
           targetAmount={round === 4 ? EFFECTIVE_TARGET : targetAmount}
           currentAmount={currentAmount}
           mintDecimals={mintDecimals}
