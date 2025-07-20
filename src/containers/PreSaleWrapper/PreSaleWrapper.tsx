@@ -356,7 +356,7 @@ export const PreSaleWrapper = () => {
       walletAddress &&
       !walletAddress.equals(DEFAULT_PUBLICKEY)
     ) {
-      dispatch(actions.setProofOfInclusion([1]))
+      dispatch(actions.getProof())
     }
   }, [walletStatus, isPublic, walletAddress])
 
