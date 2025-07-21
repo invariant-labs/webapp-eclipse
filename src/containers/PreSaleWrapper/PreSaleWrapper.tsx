@@ -838,43 +838,43 @@ export const PreSaleWrapper = () => {
               answer:
                 'Yes, <span style="color: #2EE09A; font-weight: bold;">USDC</span> is the only supported payment option.'
             },
+            // {
+            //   question: '4. Who is whitelisted?',
+            //   answer:
+            //     'Only wallets of users who have actively supported the development of Eclipse and Invariant.'
+            // },
+            // {
+            //   question: '5. How can I tell if I am whitelisted?',
+            //   answer:
+            //     'You can use the <span style="color: #2EE09A; font-weight: bold;">Whitelist Checker</span> located at the top of the page.'
+            // },
+            // {
+            //   question: '6. I am not whitelisted, can I still take part in the Community Sale?',
+            //   answer:
+            //     'Yes, the <span style="color: #2EE09A; font-weight: bold;">Open Phase (Phase 4)</span> will be open to everyone.'
+            // },
             {
-              question: '4. Who is whitelisted?',
-              answer:
-                'Only wallets of users who have actively supported the development of Eclipse and Invariant.'
-            },
-            {
-              question: '5. How can I tell if I am whitelisted?',
-              answer:
-                'You can use the <span style="color: #2EE09A; font-weight: bold;">Whitelist Checker</span> located at the top of the page.'
-            },
-            {
-              question: '6. I am not whitelisted, can I still take part in the Community Sale?',
-              answer:
-                'Yes, the <span style="color: #2EE09A; font-weight: bold;">Open Phase (Phase 4)</span> will be open to everyone.'
-            },
-            {
-              question: '7. When can I claim tokens? When is TGE?',
+              question: '4. When can I claim tokens? When is TGE?',
               answer: `
       You will be able to claim your tokens during the <span style="color: #2EE09A; font-weight: bold;">TGE (Token Generation Event)</span>, which will take place shortly after the Community Sale ends.</br>
       We will announce the exact date on our social media.
     `
             },
             {
-              question: '8. Why spend $450 to get the NFT?',
+              question: '5. Why spend $450 to get the NFT?',
               answer: `
       The <span style="color: #2EE09A; font-weight: bold;">$450</span> spending milestone unlocks an exclusive NFT as a reward alongside your <span style="color: #2EE09A; font-weight: bold;">INVT</span> tokens. It's our way of recognizing significant contributors to the Invariant Community Sale.<br/><br/>
       Supply is limited to a few hundred pieces depending on the sale outcome.
     `
             },
             {
-              question: '9. What does holding the NFT give you?',
+              question: '6. What does holding the NFT give you?',
               answer: `
       The NFT serves as an on-chain marker linking your wallet to future benefits and privileges in our long-term roadmap. It is non-transferable and not intended for trading.
     `
             },
             {
-              question: '10. Can I sell or transfer my NFT?',
+              question: '7. Can I sell or transfer my NFT?',
               answer:
                 'No, the NFT is non-transferable and tied exclusively to the wallet that participated in the Community Sale.'
             }
