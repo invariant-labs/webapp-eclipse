@@ -54,7 +54,7 @@ export const defaultState: ISaleStore = {
 export interface IDepositSale {
   amount: BN
   mint: PublicKey
-  proofOfInclusion: Array<number> | undefined
+  // proofOfInclusion: Array<number> | undefined
 }
 
 export const saleSliceName = 'sale'
