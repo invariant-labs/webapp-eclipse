@@ -5,8 +5,8 @@ import { SaleStepper } from '@components/PreSale/SaleStepper/SaleStepper'
 import { RoundComponent } from '@components/PreSale/RoundComponent/RoundComponent'
 import { useDispatch, useSelector } from 'react-redux'
 import { actions, NFTStatus } from '@store/reducers/sale'
-import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
-import { isLoadingProof, proofOfInclusion, saleSelectors } from '@store/selectors/sale'
+import { actions as walletActions } from '@store/reducers/solanaWallet'
+import { /*isLoadingProof,*/ proofOfInclusion, saleSelectors } from '@store/selectors/sale'
 import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
 import { printBNandTrimZeros } from '@utils/utils'
@@ -23,7 +23,7 @@ import {
   TIER4,
   MIN_DEPOSIT_FOR_NFT_MINT
 } from '@invariant-labs/sale-sdk'
-import { balanceLoading, status, poolTokens, balance, address } from '@store/selectors/solanaWallet'
+import { balanceLoading, status, poolTokens, balance } from '@store/selectors/solanaWallet'
 import {
   getAmountTillNextPriceIncrease,
   getPrice,
@@ -51,7 +51,6 @@ import ArrowLeft from '@static/png/presale/arrow_left.png'
 import ArrowRight from '@static/png/presale/arrow_right.png'
 import { useEffect, useState, useRef, useMemo, useCallback } from 'react'
 import { OverlayWrapper } from '@components/PreSale/Overlay/Overlay'
-import { DEFAULT_PUBLICKEY } from '@store/consts/static'
 import { auditByLogoIcon, swapArrowClean } from '@static/icons'
 import { Tokenomics } from '@components/PreSale/Tokenomics/Tokenomics'
 import { DEXChart } from '@components/PreSale/DEXChart/DEXChart'
@@ -192,7 +191,7 @@ export const PreSaleWrapper = () => {
   const dispatch = useDispatch()
   const isLoadingSaleStats = useSelector(saleSelectors.isLoadingSaleStats)
   const isLoadingUserStats = useSelector(saleSelectors.isLoadingUserStats)
-  const isLoadingProofOfInclusion = useSelector(isLoadingProof)
+  //   const isLoadingProofOfInclusion = useSelector(isLoadingProof)
   const saleStats = useSelector(saleSelectors.saleStats)
   const userStats = useSelector(saleSelectors.userStats)
   const { success, inProgress } = useSelector(saleSelectors.deposit)
@@ -206,7 +205,7 @@ export const PreSaleWrapper = () => {
   const [currentTimestamp, setCurrentTimestamp] = useState<BN>(getTimestampSeconds())
   const initialReversePrices = localStorage.getItem('INVARIANT_SALE_REVERSE_PRICES') === 'true'
   const [reversedPrices, setReversedPrices] = useState(initialReversePrices)
-  const walletAddress = useSelector(address)
+  // const walletAddress = useSelector(address)
   const hasMintedNft = useMemo(() => {
     const depositedAboveThreshold = userStats?.deposited.gte(MIN_DEPOSIT_FOR_NFT_MINT)
     return depositedAboveThreshold && !userStats?.canMintNft
@@ -350,15 +349,15 @@ export const PreSaleWrapper = () => {
 
   const isPublic = useMemo(() => round === 4, [round])
 
-  useEffect(() => {
-    if (
-      walletStatus === Status.Initialized &&
-      walletAddress &&
-      !walletAddress.equals(DEFAULT_PUBLICKEY)
-    ) {
-      dispatch(actions.getProof())
-    }
-  }, [walletStatus, isPublic, walletAddress])
+  // useEffect(() => {
+  //   if (
+  //     walletStatus === Status.Initialized &&
+  //     walletAddress &&
+  //     !walletAddress.equals(DEFAULT_PUBLICKEY)
+  //   ) {
+  //     dispatch(actions.getProof())
+  //   }
+  // }, [walletStatus, isPublic, walletAddress])
 
   const isLimitExceed = useMemo(
     () => deposited.gte(whitelistWalletLimit) && !isPublic,
@@ -372,8 +371,8 @@ export const PreSaleWrapper = () => {
         variant: 'limit'
       }
     }
-    if (!isPublic && proof?.length !== 0) {
-      return { text: 'You qualify for the sale' }
+    if (!isPublic) {
+      return { text: 'Sale is in public phase' }
     }
     if (!isPublic && proof?.length === 0) {
       return {
@@ -596,7 +595,7 @@ export const PreSaleWrapper = () => {
           userDepositedAmount={deposited}
           isActive={isActive}
           progress={progress}
-          isLoading={isLoadingSaleStats || isLoadingProofOfInclusion}
+          isLoading={isLoadingSaleStats}
           targetAmount={round === 4 ? EFFECTIVE_TARGET : targetAmount}
           currentAmount={currentAmount}
           mintDecimals={mintDecimals}
@@ -623,8 +622,8 @@ export const PreSaleWrapper = () => {
             dispatch(
               actions.depositSale({
                 amount,
-                mint,
-                proofOfInclusion: proof
+                mint
+                // proofOfInclusion: proof
               })
             )
           }}
@@ -858,7 +857,7 @@ export const PreSaleWrapper = () => {
             {
               question: '6. I am not whitelisted, can I still take part in the Community Sale?',
               answer:
-                'Yes, the <span style="color: #2EE09A; font-weight: bold;">Open Phase (Phase 4)</span> will be open to everyone.'
+                'Yes, you can participate in the <span style="color: #2EE09A; font-weight: bold;">Open Phase (Phase 4)</span> or  <span style="color: #2EE09A; font-weight: bold;">8 hours before the end of the sale.</span>'
             },
             {
               question: '7. When can I claim tokens? When is TGE?',

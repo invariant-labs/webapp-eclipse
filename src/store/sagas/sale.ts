@@ -121,14 +121,13 @@ export function* depositSale(action: PayloadAction<IDepositSale>) {
     const wallet = yield* call(getWallet)
     const state = yield* select(userStats)
     const sale = yield* call(getSaleProgram, networkType, rpc, wallet as IWallet)
-    const { amount, mint, proofOfInclusion } = action.payload
+    const { amount, mint } = action.payload
 
     const ixs = yield* call(
       [sale, sale.depositIx],
       {
         amount,
-        mint,
-        proofOfInclusion: Uint8Array.from(proofOfInclusion!)
+        mint
       },
       wallet.publicKey
     )
