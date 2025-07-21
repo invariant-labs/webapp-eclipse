@@ -372,7 +372,7 @@ export const PreSaleWrapper = () => {
       }
     }
     if (!isPublic) {
-      return { text: 'You qualify for the sale' }
+      return { text: 'Sale is in public phase' }
     }
     if (isPublic) {
       return { text: 'Sale is in public phase' }
