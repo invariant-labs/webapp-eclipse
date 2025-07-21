@@ -23,7 +23,7 @@ import AnimatedButton, { ProgressState } from '@common/AnimatedButton/AnimatedBu
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
 import { WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_MAIN, WRAPPED_ETH_ADDRESS } from '@store/consts/static'
 import { createButtonActions } from '@utils/uiUtils'
-import { TooltipHover } from '@common/TooltipHover/TooltipHover'
+// import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { Link } from 'react-router-dom'
 import { theme } from '@static/theme'
 
@@ -58,7 +58,7 @@ interface IProps {
 
 export const BuyComponent: React.FC<IProps> = ({
   nativeBalance,
-  isEligible,
+  // isEligible,
   isPublic,
   saleDidNotStart,
   saleEnded,
@@ -129,10 +129,6 @@ export const BuyComponent: React.FC<IProps> = ({
       return 'Fetch error'
     }
 
-    if (!isEligible && !isPublic) {
-      return 'You are not eligible'
-    }
-
     if (nativeBalance.lt(WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_MAIN)) {
       return `Insufficient ETH`
     }
@@ -178,30 +174,15 @@ export const BuyComponent: React.FC<IProps> = ({
         <Box sx={{ minHeight: '206px' }}>
           <Box className={classes.headingContainer}>
             <Box sx={{ height: '60px', width: '100%' }}>
-              {alertBox && isActive && walletStatus !== Status.Uninitialized ? (
+              {alertBox && walletStatus !== Status.Uninitialized ? (
                 isLoadingUserStats ? (
                   <Skeleton className={classes.skeletonBanner} />
                 ) : (
                   <Box className={`${classes.alertBox} ${getAlerBoxColorVariant()}`}>
-                    <TooltipHover
-                      gradient
-                      title={
-                        alertBox.variant !== 'warning' ? (
-                          ''
-                        ) : (
-                          <Box className={classes.tooltipBox}>
-                            <Typography>Eligibility was granted for:</Typography>
-                            <Typography>- Participating in the Invariant Points Program</Typography>
-                            <Typography>- Staking $BITZ on Invariant</Typography>
-                          </Box>
-                        )
-                      }
-                      placement='bottom'>
-                      <Typography className={classes.alertBoxText}>{alertBox.text}</Typography>
-                    </TooltipHover>
+                    <Typography className={classes.alertBoxText}>{alertBox.text}</Typography>
                   </Box>
                 )
-              ) : walletStatus !== Status.Initialized && isActive ? (
+              ) : walletStatus !== Status.Initialized ? (
                 <Box className={classes.egibilityCheckerWrapper}>
                   <Typography className={classes.egibilityCheckerText}>
                     To participate in sale, check your eligibility
@@ -214,8 +195,6 @@ export const BuyComponent: React.FC<IProps> = ({
                     onDisconnect={onDisconnectWallet}
                   />
                 </Box>
-              ) : saleDidNotStart ? (
-                <Typography className={classes.presaleTitle}>Community Sale opens in:</Typography>
               ) : null}
             </Box>
             <Box className={classes.sectionDivider} />
@@ -253,6 +232,7 @@ export const BuyComponent: React.FC<IProps> = ({
 
           {saleDidNotStart ? (
             <Box className={classes.timerContainer}>
+              <Typography className={classes.presaleTitle}>Community Sale opens in:</Typography>
               <Timer hours={hours} minutes={minutes} seconds={seconds} />
             </Box>
           ) : (
@@ -319,7 +299,7 @@ export const BuyComponent: React.FC<IProps> = ({
             />
           </Box>
           <Box className={classes.receiveBox}>
-            <Typography className={classes.receiveLabel}>Your allocation</Typography>
+            <Typography className={classes.receiveLabel}>You receive</Typography>
             {isLoading ? (
               <Skeleton variant='rounded' width={80} height={24} sx={{ ml: 1 }} />
             ) : (

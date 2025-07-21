@@ -6,11 +6,11 @@ import { RoundComponent } from '@components/PreSale/RoundComponent/RoundComponen
 import { useDispatch, useSelector } from 'react-redux'
 import { actions, NFTStatus } from '@store/reducers/sale'
 import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
-import { isLoadingProof, proofOfInclusion, saleSelectors } from '@store/selectors/sale'
+import { /*isLoadingProof,*/ proofOfInclusion, saleSelectors } from '@store/selectors/sale'
 import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
 import { printBNandTrimZeros } from '@utils/utils'
-import NftPlaceholder from '@static/png/NFT_Card.png'
+import NftPlaceholder from '@static/png/presale/NFT_Card.png'
 import {
   EFFECTIVE_TARGET,
   getRound,
@@ -61,6 +61,8 @@ import { ShareComponent } from '@components/PreSale/ShareComponent/ShareComponen
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { ShareIcon } from '@static/componentIcon/ShareIcon'
+import { Timer } from '@components/PreSale/Timer/Timer'
+import { useCountdown } from '@components/PreSale/Timer/useCountdown'
 
 function SampleNextArrow(props) {
   const { className, style, onClick } = props
@@ -190,7 +192,7 @@ export const PreSaleWrapper = () => {
   const dispatch = useDispatch()
   const isLoadingSaleStats = useSelector(saleSelectors.isLoadingSaleStats)
   const isLoadingUserStats = useSelector(saleSelectors.isLoadingUserStats)
-  const isLoadingProofOfInclusion = useSelector(isLoadingProof)
+  // const isLoadingProofOfInclusion = useSelector(isLoadingProof)
   const saleStats = useSelector(saleSelectors.saleStats)
   const userStats = useSelector(saleSelectors.userStats)
   const { success, inProgress } = useSelector(saleSelectors.deposit)
@@ -254,14 +256,14 @@ export const PreSaleWrapper = () => {
       saleStats
         ? saleStats
         : {
-          targetAmount: new BN(0),
-          currentAmount: new BN(0),
-          whitelistWalletLimit: new BN(0),
-          startTimestamp: new BN(0),
-          duration: new BN(0),
-          mint: new PublicKey(0),
-          minDeposit: new BN(0)
-        },
+            targetAmount: new BN(0),
+            currentAmount: new BN(0),
+            whitelistWalletLimit: new BN(0),
+            startTimestamp: new BN(0),
+            duration: new BN(0),
+            mint: new PublicKey(0),
+            minDeposit: new BN(0)
+          },
     [saleStats]
   )
 
@@ -275,9 +277,9 @@ export const PreSaleWrapper = () => {
       userStats
         ? userStats
         : {
-          deposited: new BN(0),
-          received: new BN(0)
-        },
+            deposited: new BN(0),
+            received: new BN(0)
+          },
     [userStats]
   )
 
@@ -354,7 +356,7 @@ export const PreSaleWrapper = () => {
       walletAddress &&
       !walletAddress.equals(DEFAULT_PUBLICKEY)
     ) {
-      dispatch(actions.getProof())
+      dispatch(actions.setProofOfInclusion([1]))
     }
   }, [walletStatus, isPublic, walletAddress])
 
@@ -370,14 +372,8 @@ export const PreSaleWrapper = () => {
         variant: 'limit'
       }
     }
-    if (!isPublic && proof?.length !== 0) {
+    if (!isPublic) {
       return { text: 'You qualify for the sale' }
-    }
-    if (!isPublic && proof?.length === 0) {
-      return {
-        text: 'You are not eligible for this round of sale',
-        variant: 'warning'
-      }
     }
     if (isPublic) {
       return { text: 'Sale is in public phase' }
@@ -385,7 +381,7 @@ export const PreSaleWrapper = () => {
     if (!isActive) {
       return { text: 'Sale not active' }
     }
-  }, [isPublic, proof, isLimitExceed])
+  }, [isPublic, isLimitExceed])
 
   useEffect(() => {
     dispatch(actions.getUserStats())
@@ -502,6 +498,11 @@ export const PreSaleWrapper = () => {
     return stepNames[round - 1]
   }, [round])
 
+  const timerTargetDate = useMemo(() => new Date(endtimestamp.toNumber() * 1000), [endtimestamp])
+  const { hours, minutes, seconds } = useCountdown({
+    targetDate: timerTargetDate
+  })
+
   return (
     <Grid className={classes.pageWrapper} sx={{ position: 'relative' }}>
       <Hidden lgDown>
@@ -519,7 +520,17 @@ export const PreSaleWrapper = () => {
 
       <Box className={classes.contentWrapper}>
         <Grid className={classes.stepperContainer}>
-          <SaleStepper isLoading={isLoadingSaleStats} currentStep={round - 1} steps={stepLabels} />
+          <Box display='flex' flexDirection='column' width={isTablet ? '100%' : 'auto'}>
+            <SaleStepper
+              isLoading={isLoadingSaleStats}
+              currentStep={round - 1}
+              steps={stepLabels}
+            />
+            <Box className={classes.timerContainer}>
+              <Typography className={classes.endSaleTitle}>Sale ends in:</Typography>
+              <Timer hours={hours} minutes={minutes} seconds={seconds} isSmall />
+            </Box>
+          </Box>
           <Box className={classes.roundComponentContainer}>
             <RoundComponent
               isActive={isActive}
@@ -574,12 +585,12 @@ export const PreSaleWrapper = () => {
           saleDidNotStart={saleDidNotStart}
           saleEnded={saleEnded}
           saleSoldOut={saleSoldOut}
-          isEligible={proof?.length !== 0}
+          isEligible={true}
           whitelistWalletLimit={whitelistWalletLimit}
           userDepositedAmount={deposited}
           isActive={isActive}
           progress={progress}
-          isLoading={isLoadingSaleStats || isLoadingProofOfInclusion}
+          isLoading={isLoadingSaleStats}
           targetAmount={round === 4 ? EFFECTIVE_TARGET : targetAmount}
           currentAmount={currentAmount}
           mintDecimals={mintDecimals}
@@ -614,7 +625,7 @@ export const PreSaleWrapper = () => {
         />
       </Box>
       <Box className={classes.sectionTitle}>
-        <Typography className={classes.sectionTitleText}>Invariant Contributor NFT</Typography>
+        <Typography className={classes.sectionTitleText}>Proof of Contribution</Typography>
         <Box display='flex' alignItems='center' gap={12} className={classes.nftBackground}>
           <Box className={classes.nftWrapper}>
             <Typography component='section'>
@@ -638,6 +649,7 @@ export const PreSaleWrapper = () => {
           </Box>
           <Box className={classes.nftCardWrapper}>
             <img className={classes.nftCard} src={NftPlaceholder} />
+            <Typography className={classes.nftText}>Invariant Contributor NFT</Typography>
           </Box>
         </Box>
       </Box>
@@ -670,7 +682,7 @@ export const PreSaleWrapper = () => {
           </Grid>
           <Grid item className={classes.animatedCardItem}>
             <AnimatedPreSaleCard
-              title='4 Hackatons'
+              title='4 Hackathons'
               subtitle='won by Invariant team ($200k in prizes)'
               delay={500}
             />
@@ -693,7 +705,7 @@ export const PreSaleWrapper = () => {
         </Box>
       </Box>
       <Box className={classes.sectionTitle}>
-        <Typography className={classes.sectionTitleText}>Invariant Journey</Typography>
+        <Typography className={classes.sectionTitleText}>Invariant's Journey</Typography>
         <Box className={classes.cardsContainer}>
           <Slider
             speed={500}
@@ -711,7 +723,7 @@ export const PreSaleWrapper = () => {
             prevArrow={isSmallMobile ? null : <SamplePrevArrow />}
             rows={1}>
             <EventsCard
-              title={'Solana Riptide Hackaton'}
+              title={'Solana Riptide Hackathon'}
               description={
                 'First win comes at a major hackathon. Invariant celebrates its first big success.'
               }
@@ -735,7 +747,7 @@ export const PreSaleWrapper = () => {
               heroImage={AlphHackatonHero}
             />
             <EventsCard
-              title={'Eclipse Hackathon Win'}
+              title={'Eclipse Hackathon'}
               link='https://x.com/invariant_labs/status/1839676182884663721'
               description={`Third time's the charm. Invariant wins the opening hackathon on Eclipse, earns $15k, and steps into the spotlight.`}
               heroImage={EclipseHackatonHero}
@@ -765,7 +777,7 @@ export const PreSaleWrapper = () => {
               heroImage={UsersHero}
             />
             <EventsCard
-              title={'Sonic Mobius Hackaton'}
+              title={'Sonic Mobius Hackathon'}
               link='https://x.com/SonicSVM/status/1910590750024147382'
               borderColor={'green'}
               description={
@@ -835,7 +847,7 @@ export const PreSaleWrapper = () => {
             {
               question: '5. How can I tell if I am whitelisted?',
               answer:
-                'You can use the <span style="color: #2EE09A; font-weight: bold;">Whitelist Checker</span> located at the top of the page. The <span style="color: #2EE09A; font-weight: bold;">Allocation Checker</span> is currently unavailable and will be revealed closer to the start of the sale'
+                'You can use the <span style="color: #2EE09A; font-weight: bold;">Whitelist Checker</span> located at the top of the page.'
             },
             {
               question: '6. I am not whitelisted, can I still take part in the Community Sale?',

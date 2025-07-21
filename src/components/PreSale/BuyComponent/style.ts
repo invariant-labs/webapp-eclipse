@@ -24,7 +24,6 @@ const useStyles = makeStyles<{ percentage: number; isActive?: boolean }>()(
       backgroundColor: colors.invariant.component,
       borderRadius: '20px',
       width: '520px',
-      height: '492px',
       [theme.breakpoints.down('lg')]: {
         width: 'calc(100% - 48px)'
       },
@@ -132,7 +131,6 @@ const useStyles = makeStyles<{ percentage: number; isActive?: boolean }>()(
     },
     presaleTitle: {
       width: '100%',
-      marginTop: '12px',
       textAlign: 'center',
       display: 'flex',
       justifyContent: 'center',
@@ -196,7 +194,10 @@ const useStyles = makeStyles<{ percentage: number; isActive?: boolean }>()(
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      marginTop: '32px',
+      gap: 10,
+      padding: 10,
+      paddingInline: 0,
+      flexDirection: 'column',
       width: '100%'
     },
     barContainer: {

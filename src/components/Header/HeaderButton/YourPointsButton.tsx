@@ -37,8 +37,10 @@ export const YourPointsButton: React.FC<IProps> = ({ disabled = false }) => {
       <Button
         scheme='rainbow'
         disabled={disabled}
+        sx={{ whiteSpace: 'nowrap' }}
         padding={isXs ? `0 2px` : undefined}
         onClick={handleClick}>
+
         <>
           {isXs ? (
             <KeyboardArrowDownIcon id='downIcon' />
@@ -48,7 +50,7 @@ export const YourPointsButton: React.FC<IProps> = ({ disabled = false }) => {
             'Points'
           )}
         </>
-      </Button>
+      </Button >
       <YourPointsModal open={openNetworks} anchorEl={anchorEl} handleClose={handleClose} />
     </>
   )
