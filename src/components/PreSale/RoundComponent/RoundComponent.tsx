@@ -53,7 +53,6 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
   userDepositedAmount,
   userRemainingAllocation,
   mintDecimals,
-  proofOfInclusion,
   roundNumber,
   isLoadingSaleStats,
   isLoadingUserStats,
@@ -273,7 +272,7 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
         {!isLastRound && (
           <Box className={classes.infoRow}>
             <Typography className={classes.secondaryLabel}>Remaining limit</Typography>
-            {!saleDidNotStart && walletStatus === Status.Initialized && !!proofOfInclusion ? (
+            {!saleDidNotStart && walletStatus === Status.Initialized ? (
               <Typography className={classes.value}>
                 {renderFormattedNumberWithSkeleton(
                   userRemainingAllocation,
