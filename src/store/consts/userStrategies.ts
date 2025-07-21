@@ -1,6 +1,7 @@
 import { StrategyConfig } from '@store/types/userOverview'
 import {
   BITZ_MAIN,
+  ES_MAIN,
   sBITZ_MAIN,
   SOL_MAIN,
   TETH_MAIN,
@@ -40,5 +41,10 @@ export const STRATEGIES: StrategyConfig[] = [
     tokenAddressA: sBITZ_MAIN.address.toString(),
     tokenAddressB: WETH_MAIN.address.toString(),
     feeTier: '1_00'
+  },
+  {
+    tokenAddressA: ES_MAIN.address.toString(),
+    tokenAddressB: WETH_MAIN.address.toString(),
+    feeTier: '0_30'
   }
 ]
