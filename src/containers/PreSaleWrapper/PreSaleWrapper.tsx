@@ -5,7 +5,7 @@ import { SaleStepper } from '@components/PreSale/SaleStepper/SaleStepper'
 import { RoundComponent } from '@components/PreSale/RoundComponent/RoundComponent'
 import { useDispatch, useSelector } from 'react-redux'
 import { actions, NFTStatus } from '@store/reducers/sale'
-import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
+import { actions as walletActions } from '@store/reducers/solanaWallet'
 import { /*isLoadingProof,*/ proofOfInclusion, saleSelectors } from '@store/selectors/sale'
 import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
@@ -23,7 +23,7 @@ import {
   TIER4,
   MIN_DEPOSIT_FOR_NFT_MINT
 } from '@invariant-labs/sale-sdk'
-import { balanceLoading, status, poolTokens, balance, address } from '@store/selectors/solanaWallet'
+import { balanceLoading, status, poolTokens, balance } from '@store/selectors/solanaWallet'
 import {
   getAmountTillNextPriceIncrease,
   getPrice,
@@ -51,7 +51,6 @@ import ArrowLeft from '@static/png/presale/arrow_left.png'
 import ArrowRight from '@static/png/presale/arrow_right.png'
 import { useEffect, useState, useRef, useMemo, useCallback } from 'react'
 import { OverlayWrapper } from '@components/PreSale/Overlay/Overlay'
-import { DEFAULT_PUBLICKEY } from '@store/consts/static'
 import { auditByLogoIcon, swapArrowClean } from '@static/icons'
 import { Tokenomics } from '@components/PreSale/Tokenomics/Tokenomics'
 import { DEXChart } from '@components/PreSale/DEXChart/DEXChart'
@@ -206,7 +205,7 @@ export const PreSaleWrapper = () => {
   const [currentTimestamp, setCurrentTimestamp] = useState<BN>(getTimestampSeconds())
   const initialReversePrices = localStorage.getItem('INVARIANT_SALE_REVERSE_PRICES') === 'true'
   const [reversedPrices, setReversedPrices] = useState(initialReversePrices)
-  const walletAddress = useSelector(address)
+  // const walletAddress = useSelector(address)
   const hasMintedNft = useMemo(() => {
     const depositedAboveThreshold = userStats?.deposited.gte(MIN_DEPOSIT_FOR_NFT_MINT)
     return depositedAboveThreshold && !userStats?.canMintNft
@@ -350,15 +349,15 @@ export const PreSaleWrapper = () => {
 
   const isPublic = useMemo(() => round === 4, [round])
 
-  useEffect(() => {
-    if (
-      walletStatus === Status.Initialized &&
-      walletAddress &&
-      !walletAddress.equals(DEFAULT_PUBLICKEY)
-    ) {
-      dispatch(actions.getProof())
-    }
-  }, [walletStatus, isPublic, walletAddress])
+  // useEffect(() => {
+  //   if (
+  //     walletStatus === Status.Initialized &&
+  //     walletAddress &&
+  //     !walletAddress.equals(DEFAULT_PUBLICKEY)
+  //   ) {
+  //     dispatch(actions.getProof())
+  //   }
+  // }, [walletStatus, isPublic, walletAddress])
 
   const isLimitExceed = useMemo(
     () => deposited.gte(whitelistWalletLimit) && !isPublic,
@@ -617,8 +616,8 @@ export const PreSaleWrapper = () => {
             dispatch(
               actions.depositSale({
                 amount,
-                mint,
-                proofOfInclusion: proof
+                mint
+                // proofOfInclusion: proof
               })
             )
           }}
