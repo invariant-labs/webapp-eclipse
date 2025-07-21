@@ -851,7 +851,7 @@ export const PreSaleWrapper = () => {
             {
               question: '6. I am not whitelisted, can I still take part in the Community Sale?',
               answer:
-                'Yes, you can participate in the <span style="color: #2EE09A; font-weight: bold;">Open Phase (Phase 4)</span> or 8 hours before the end of the sale.'
+                'Yes, you can participate in the <span style="color: #2EE09A; font-weight: bold;">Open Phase (Phase 4)</span> or  <span style="color: #2EE09A; font-weight: bold;">8 hours before the end of the sale.</span>'
             },
             {
               question: '7. When can I claim tokens? When is TGE?',
