@@ -247,7 +247,7 @@ export const PreSaleWrapper = () => {
     currentAmount,
     whitelistWalletLimit,
     startTimestamp,
-    duration,
+    // duration,
     mint,
     minDeposit
   } = useMemo(
@@ -328,8 +328,7 @@ export const PreSaleWrapper = () => {
     [currentAmount, targetAmount, mintDecimals]
   )
 
-  const endtimestamp = useMemo(() => startTimestamp.add(duration), [startTimestamp, duration])
-
+  const endtimestamp = useMemo(() => new BN(1752840000), [])
   const saleSoldOut = useMemo(
     () => currentAmount.eq(EFFECTIVE_TARGET),
     [targetAmount, currentAmount]
@@ -526,20 +525,26 @@ export const PreSaleWrapper = () => {
       <Box className={classes.contentWrapper}>
         <Grid className={classes.stepperContainer}>
           <Box display='flex' flexDirection='column' width={isTablet ? '100%' : 'auto'}>
-            <SaleStepper
-              isLoading={isLoadingSaleStats}
-              currentStep={round - 1}
-              steps={stepLabels}
-            />
-            <Box className={classes.timerContainer}>
-              <Typography className={classes.endSaleTitle}>Sale ends in:</Typography>
-              <Timer hours={hours} minutes={minutes} seconds={seconds} isSmall />
-            </Box>
+            {!saleEnded && (
+              <>
+                <SaleStepper
+                  isLoading={isLoadingSaleStats}
+                  currentStep={round - 1}
+                  steps={stepLabels}
+                />
+                <Box className={classes.timerContainer}>
+                  <Typography className={classes.endSaleTitle}>Sale ends in:</Typography>
+                  <Timer hours={hours} minutes={minutes} seconds={seconds} isSmall />
+                </Box>
+              </>
+            )}
           </Box>
           <Box className={classes.roundComponentContainer}>
             <RoundComponent
               isActive={isActive}
               saleDidNotStart={saleDidNotStart}
+              saleEnded={saleEnded}
+              saleSoldOut={saleSoldOut}
               targetAmount={targetAmount}
               amountDeposited={currentAmount}
               amountNeeded={amountNeeded}
