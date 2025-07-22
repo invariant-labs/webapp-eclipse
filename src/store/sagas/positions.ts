@@ -68,7 +68,11 @@ import {
   printBN,
   getAmountFromClaimFeeInstruction,
   getAmountFromClosePositionInstruction,
-  getTokenProgramId
+  getTokenProgramId,
+  getAmountFromSwapAndAddLiquidity,
+  getSwapAmountFromSwapAndAddLiquidity,
+  getAddAmountFromSwapAndAddLiquidity,
+  SwapTokenType
 } from '@utils/utils'
 import { actions as connectionActions } from '@store/reducers/solanaConnection'
 import {
@@ -3864,7 +3868,7 @@ export function* handleRemoveLiquidity(action: PayloadAction<ChangeLiquidityData
             yield put(
               snackbarsActions.add({
                 tokensDetails: {
-                  ikonType: 'deposit',
+                  ikonType: 'withdraw',
                   tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals)),
                   tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals)),
                   tokenXIcon: tokenX.logoURI,
@@ -4126,7 +4130,7 @@ function* handleRemoveLiquidityWithETH(action: PayloadAction<ChangeLiquidityData
             yield put(
               snackbarsActions.add({
                 tokensDetails: {
-                  ikonType: 'deposit',
+                  ikonType: 'withdraw',
                   tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals)),
                   tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals)),
                   tokenXIcon: tokenX.logoURI,
@@ -4250,20 +4254,20 @@ export function* handleSwapAndAddLiquidity(
 
     const tokensAccounts = yield* select(accounts)
 
-    let userTokenX = tokensAccounts[action.payload.tokenX.toString()]
-      ? tokensAccounts[action.payload.tokenX.toString()].address
+    let userTokenX = tokensAccounts[swapPair.tokenX.toString()]
+      ? tokensAccounts[swapPair.tokenX.toString()].address
       : null
 
     if (userTokenX === null) {
-      userTokenX = yield* call(createAccount, action.payload.tokenX)
+      userTokenX = yield* call(createAccount, swapPair.tokenX)
     }
 
-    let userTokenY = tokensAccounts[action.payload.tokenY.toString()]
-      ? tokensAccounts[action.payload.tokenY.toString()].address
+    let userTokenY = tokensAccounts[swapPair.tokenY.toString()]
+      ? tokensAccounts[swapPair.tokenY.toString()].address
       : null
 
     if (userTokenY === null) {
-      userTokenY = yield* call(createAccount, action.payload.tokenY)
+      userTokenY = yield* call(createAccount, swapPair.tokenY)
     }
 
     const swapAndAddOnDifferentPools = action.payload.isSamePool
@@ -4315,7 +4319,6 @@ export function* handleSwapAndAddLiquidity(
       }
     )
 
-    const xToY = action.payload.xToY
     yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
 
     const signedTx = (yield* call([wallet, wallet.signTransaction], tx)) as VersionedTransaction
@@ -4381,44 +4384,33 @@ export function* handleSwapAndAddLiquidity(
         }
 
         const meta = txDetails.meta
-        const tokenX = xToY
-          ? allTokens[swapPair.tokenX.toString()]
-          : allTokens[swapPair.tokenY.toString()]
-        const tokenY = xToY
-          ? allTokens[swapPair.tokenY.toString()]
-          : allTokens[swapPair.tokenX.toString()]
-
         if (meta?.innerInstructions && meta.innerInstructions) {
           try {
-            const targetInner = meta.innerInstructions[2] ?? meta.innerInstructions[0]
-            targetInner.instructions.slice(1, 3)
-            const tokenXDeposit = targetInner.instructions
-              .slice(5)
-              .find(
-                (ix): ix is ParsedInstruction =>
-                  (ix as ParsedInstruction).parsed?.info?.mint === tokenX.address.toString()
-              )?.parsed?.info?.tokenAmount
+            const tokenIn = action.payload.xToY
+              ? allTokens[swapPair.tokenX.toString()]
+              : allTokens[swapPair.tokenY.toString()]
+            const tokenOut = action.payload.xToY
+              ? allTokens[swapPair.tokenY.toString()]
+              : allTokens[swapPair.tokenX.toString()]
 
-            const tokenYDeposit = targetInner.instructions
-              .slice(5)
-              .find(
-                (ix): ix is ParsedInstruction =>
-                  (ix as ParsedInstruction).parsed?.info?.mint === tokenY.address.toString()
-              )?.parsed?.info?.tokenAmount
+            const amountX = getAddAmountFromSwapAndAddLiquidity(meta, TokenType.TokenX)
+            const amountY = getAddAmountFromSwapAndAddLiquidity(meta, TokenType.TokenY)
 
-            const tokenXExchange = targetInner.instructions
-              .slice(1, 3)
-              .find(
-                (ix): ix is ParsedInstruction =>
-                  (ix as ParsedInstruction).parsed.info?.mint === tokenX.address.toString()
-              )?.parsed.info.tokenAmount.amount
+            const swapAmountIn = getSwapAmountFromSwapAndAddLiquidity(
+              meta,
+              marketProgram.programAuthority.address.toString(),
+              tokenIn.address.toString(),
+              SwapTokenType.TokenIn
+            )
+            const swapAmountOut = getSwapAmountFromSwapAndAddLiquidity(
+              meta,
+              marketProgram.programAuthority.address.toString(),
+              tokenOut.address.toString(),
+              SwapTokenType.TokenOut
+            )
 
-            const tokenYExchange = targetInner.instructions
-              .slice(1, 3)
-              .find(
-                (ix): ix is ParsedInstruction =>
-                  (ix as ParsedInstruction).parsed.info?.mint === tokenY.address.toString()
-              )?.parsed.info.tokenAmount.amount
+            const tokenX = allTokens[swapPair.tokenX.toString()]
+            const tokenY = allTokens[swapPair.tokenY.toString()]
 
             const match = autoSwapPools.find(
               ({ pair }) =>
@@ -4428,10 +4420,6 @@ export function* handleSwapAndAddLiquidity(
 
             const feeTier = match?.swapPool.feeIndex ?? null
 
-            const amountX = tokenXDeposit?.amount
-            const amountY = tokenYDeposit?.amount
-            const tokenXDecimal = tokenXDeposit?.decimals
-            const tokenYDecimal = tokenYDeposit?.decimals
             let points = new BN(0)
 
             if (
@@ -4446,7 +4434,7 @@ export function* handleSwapAndAddLiquidity(
               const feed = feeds[tokenX.address.toString()]
 
               points = calculatePoints(
-                new BN(tokenXExchange),
+                new BN(swapAmountIn),
                 tokenX.decimals,
                 FEE_TIERS[feeTier ?? ''].fee,
                 feed.price,
@@ -4459,20 +4447,20 @@ export function* handleSwapAndAddLiquidity(
               snackbarsActions.add({
                 tokensDetails: {
                   ikonType: 'deposit',
-                  tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenXDecimal)),
-                  tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenYDecimal)),
+                  tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals)),
+                  tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals)),
                   tokenXIcon: tokenX.logoURI,
                   tokenYIcon: tokenY.logoURI,
                   tokenXSymbol: tokenX.symbol ?? tokenX.address.toString(),
                   tokenYSymbol: tokenY.symbol ?? tokenY.address.toString(),
                   tokenXAmountAutoSwap: formatNumberWithoutSuffix(
-                    printBN(tokenXExchange, tokenX.decimals)
+                    printBN(swapAmountIn, tokenIn.decimals)
                   ),
                   tokenYAmountAutoSwap: formatNumberWithoutSuffix(
-                    printBN(tokenYExchange, tokenY.decimals)
+                    printBN(swapAmountOut, tokenOut.decimals)
                   ),
-                  tokenXIconAutoSwap: tokenX.logoURI,
-                  tokenYIconAutoSwap: tokenY.logoURI,
+                  tokenXIconAutoSwap: tokenIn.logoURI,
+                  tokenYIconAutoSwap: tokenOut.logoURI,
                   earnedPoints: points.eqn(0)
                     ? undefined
                     : formatNumberWithoutSuffix(printBN(points, LEADERBOARD_DECIMAL))
@@ -4596,31 +4584,31 @@ export function* handleSwapAndAddLiquidityWithETH(
       wrappedEthAccount.publicKey,
       wallet.publicKey,
       net,
-      allTokens[action.payload.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS
+      allTokens[swapPair.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS
         ? action.payload.xAmount
         : action.payload.yAmount
     )
 
     let userTokenX =
-      allTokens[action.payload.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS
+      allTokens[swapPair.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS
         ? wrappedEthAccount.publicKey
-        : tokensAccounts[action.payload.tokenX.toString()]
-          ? tokensAccounts[action.payload.tokenX.toString()].address
+        : tokensAccounts[swapPair.tokenX.toString()]
+          ? tokensAccounts[swapPair.tokenX.toString()].address
           : null
 
     if (userTokenX === null) {
-      userTokenX = yield* call(createAccount, action.payload.tokenX)
+      userTokenX = yield* call(createAccount, swapPair.tokenX)
     }
 
     let userTokenY =
-      allTokens[action.payload.tokenY.toString()].address.toString() === WRAPPED_ETH_ADDRESS
+      allTokens[swapPair.tokenY.toString()].address.toString() === WRAPPED_ETH_ADDRESS
         ? wrappedEthAccount.publicKey
-        : tokensAccounts[action.payload.tokenY.toString()]
-          ? tokensAccounts[action.payload.tokenY.toString()].address
+        : tokensAccounts[swapPair.tokenY.toString()]
+          ? tokensAccounts[swapPair.tokenY.toString()].address
           : null
 
     if (userTokenY === null) {
-      userTokenY = yield* call(createAccount, action.payload.tokenY)
+      userTokenY = yield* call(createAccount, swapPair.tokenY)
     }
 
     const swapAndAddOnDifferentPools = action.payload.isSamePool
@@ -4635,9 +4623,9 @@ export function* handleSwapAndAddLiquidityWithETH(
         }
 
     const isInitialEthZero =
-      (allTokens[action.payload.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS &&
+      (allTokens[swapPair.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS &&
         action.payload.xAmount.eq(new BN(0))) ||
-      (allTokens[action.payload.tokenY.toString()].address.toString() === WRAPPED_ETH_ADDRESS &&
+      (allTokens[swapPair.tokenY.toString()].address.toString() === WRAPPED_ETH_ADDRESS &&
         action.payload.yAmount.eq(new BN(0)))
 
     const prependedIxs = [createIx, ...(isInitialEthZero ? [] : [transferIx]), initIx]
@@ -4681,14 +4669,6 @@ export function* handleSwapAndAddLiquidityWithETH(
       prependedIxs,
       [unwrapIx]
     )
-    const xToY = action.payload.xToY
-
-    const tokenX = xToY
-      ? allTokens[swapPair.tokenX.toString()]
-      : allTokens[swapPair.tokenY.toString()]
-    const tokenY = xToY
-      ? allTokens[swapPair.tokenY.toString()]
-      : allTokens[swapPair.tokenX.toString()]
 
     yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
 
@@ -4762,29 +4742,31 @@ export function* handleSwapAndAddLiquidityWithETH(
         const meta = txDetails.meta
         if (meta?.innerInstructions && meta.innerInstructions) {
           try {
-            const index = meta.innerInstructions.length
-            const targetInner = meta.innerInstructions[index - 1]
-            const depositInstructions = targetInner.instructions.slice(5)
+            const tokenIn = action.payload.xToY
+              ? allTokens[swapPair.tokenX.toString()]
+              : allTokens[swapPair.tokenY.toString()]
+            const tokenOut = action.payload.xToY
+              ? allTokens[swapPair.tokenY.toString()]
+              : allTokens[swapPair.tokenX.toString()]
 
-            const exchangeInstructions = targetInner.instructions.slice(1, 3)
+            const amountX = getAddAmountFromSwapAndAddLiquidity(meta, TokenType.TokenX)
+            const amountY = getAddAmountFromSwapAndAddLiquidity(meta, TokenType.TokenY)
 
-            const fromExchangeAmount =
-              (exchangeInstructions[1] as ParsedInstruction).parsed?.info?.amount ??
-              (exchangeInstructions[1] as ParsedInstruction).parsed?.info?.tokenAmount?.amount
+            const swapAmountIn = getSwapAmountFromSwapAndAddLiquidity(
+              meta,
+              marketProgram.programAuthority.address.toString(),
+              tokenIn.address.toString(),
+              SwapTokenType.TokenIn
+            )
+            const swapAmountOut = getSwapAmountFromSwapAndAddLiquidity(
+              meta,
+              marketProgram.programAuthority.address.toString(),
+              tokenOut.address.toString(),
+              SwapTokenType.TokenOut
+            )
 
-            const toExchangeAmount =
-              (exchangeInstructions[0] as ParsedInstruction).parsed?.info?.amount ??
-              (exchangeInstructions[0] as ParsedInstruction).parsed?.info?.tokenAmount?.amount
-
-            const tokenXDeposit =
-              (depositInstructions[xToY ? 0 : 1] as ParsedInstruction).parsed?.info?.amount ??
-              (depositInstructions[xToY ? 0 : 1] as ParsedInstruction).parsed?.info?.tokenAmount
-                ?.amount
-
-            const tokenYDeposit =
-              (depositInstructions[xToY ? 1 : 0] as ParsedInstruction).parsed?.info?.amount ??
-              (depositInstructions[xToY ? 1 : 0] as ParsedInstruction).parsed?.info?.tokenAmount
-                ?.amount
+            const tokenX = allTokens[swapPair.tokenX.toString()]
+            const tokenY = allTokens[swapPair.tokenY.toString()]
 
             const match = autoSwapPools.find(
               ({ pair }) =>
@@ -4808,7 +4790,7 @@ export function* handleSwapAndAddLiquidityWithETH(
               const feed = feeds[tokenX.address.toString()]
 
               points = calculatePoints(
-                new BN(fromExchangeAmount),
+                new BN(swapAmountIn),
                 tokenX.decimals,
                 FEE_TIERS[feeTier ?? ''].fee,
                 feed.price,
@@ -4821,20 +4803,20 @@ export function* handleSwapAndAddLiquidityWithETH(
               snackbarsActions.add({
                 tokensDetails: {
                   ikonType: 'deposit',
-                  tokenXAmount: formatNumberWithoutSuffix(printBN(tokenXDeposit, tokenX.decimals)),
-                  tokenYAmount: formatNumberWithoutSuffix(printBN(tokenYDeposit, tokenY.decimals)),
+                  tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals)),
+                  tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals)),
                   tokenXIcon: tokenX.logoURI,
                   tokenYIcon: tokenY.logoURI,
                   tokenXSymbol: tokenX.symbol ?? tokenX.address.toString(),
                   tokenYSymbol: tokenY.symbol ?? tokenY.address.toString(),
                   tokenXAmountAutoSwap: formatNumberWithoutSuffix(
-                    printBN(fromExchangeAmount, tokenX.decimals)
+                    printBN(swapAmountIn, tokenIn.decimals)
                   ),
                   tokenYAmountAutoSwap: formatNumberWithoutSuffix(
-                    printBN(toExchangeAmount, tokenY.decimals)
+                    printBN(swapAmountOut, tokenOut.decimals)
                   ),
-                  tokenXIconAutoSwap: tokenX.logoURI,
-                  tokenYIconAutoSwap: tokenY.logoURI,
+                  tokenXIconAutoSwap: tokenIn.logoURI,
+                  tokenYIconAutoSwap: tokenOut.logoURI,
                   earnedPoints: points.eqn(0)
                     ? undefined
                     : formatNumberWithoutSuffix(printBN(points, LEADERBOARD_DECIMAL))
@@ -4843,7 +4825,8 @@ export function* handleSwapAndAddLiquidityWithETH(
                 persist: false
               })
             )
-          } catch {
+          } catch (e) {
+            console.log(e)
             // Should never be triggered
           }
         }
@@ -5037,7 +5020,7 @@ export function* addLiquidityHandler(): Generator {
   yield* takeEvery(actions.addLiquidity, handleAddLiquidity)
 }
 
-export function* swapAndAddLiquidity(): Generator {
+export function* swapAndAddLiquidityHandler(): Generator {
   yield* takeEvery(actions.swapAndAddLiquidity, handleSwapAndAddLiquidity)
 }
 
@@ -5065,7 +5048,7 @@ export function* positionsSaga(): Generator {
       getSinglePositionHandler,
       getPositionHandler,
       addLiquidityHandler,
-      swapAndAddLiquidity,
+      swapAndAddLiquidityHandler,
       removeLiquidityHandler
     ].map(spawn)
   )
