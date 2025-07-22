@@ -62,7 +62,7 @@ export const FeeSelector: React.FC<IProps> = ({
 
   useEffect(() => {
     const doesExist = doesPoolExist(feeTiers[currentFeeIndex])
-    console.log(doesExist)
+
     if (!doesExist) {
       onSelect(originalBestTierIndex)
     }
