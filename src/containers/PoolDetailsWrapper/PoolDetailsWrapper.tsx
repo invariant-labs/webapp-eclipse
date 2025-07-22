@@ -325,7 +325,8 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
   const feeTiers = ALL_FEE_TIERS_DATA.map(tier => +printBN(tier.tier.fee, DECIMAL - 2))
 
   const selectFeeTier = (index: number) => {
-    if (!poolData) return
+    if (index === -1) return
+
     const fee = ALL_FEE_TIERS_DATA[index].tier.fee
 
     const address1 = tokenX?.symbol

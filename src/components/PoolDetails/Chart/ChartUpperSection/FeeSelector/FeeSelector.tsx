@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Box, ClickAwayListener, Typography } from '@mui/material'
 import useStyles from './style'
 import { DropdownIcon } from '@static/componentIcon/DropdownIcon'
@@ -59,6 +59,14 @@ export const FeeSelector: React.FC<IProps> = ({
     closeDropdown()
     onSelect(tier)
   }
+
+  useEffect(() => {
+    const doesExist = doesPoolExist(feeTiers[currentFeeIndex])
+    console.log(doesExist)
+    if (!doesExist) {
+      onSelect(originalBestTierIndex)
+    }
+  }, [currentFeeIndex, originalBestTierIndex])
 
   return (
     <ClickAwayListener onClickAway={closeDropdown}>
