@@ -23,13 +23,7 @@ export const InfoItem: React.FC<IProps> = ({ isLoadingStats, name, value, isGree
         </Typography>
       </Box>
       {isLoadingStats ? (
-        <Skeleton
-          variant='rounded'
-          height={17}
-          width={80}
-          animation='wave'
-          sx={{ borderRadius: '8px' }}
-        />
+        <Skeleton variant='rounded' height={17} width={80} animation='wave' />
       ) : (
         <Typography style={typography.caption2}>{value}</Typography>
       )}
