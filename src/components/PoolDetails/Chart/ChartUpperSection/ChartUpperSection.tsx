@@ -145,9 +145,9 @@ export const ChartUpperSection: React.FC<IProps> = ({
             <Box display='flex' alignItems='center' gap='8px' mt={1}>
               <Box className={classes.iconContainer}>
                 <img className={classes.icon} src={tokenX.logoURI} alt={tokenX.symbol} />
-                <TooltipHover title='Reverse tokens'>
-                  <ReverseTokensIcon className={classes.reverseTokensIcon} />
-                </TooltipHover>
+
+                <ReverseTokensIcon className={classes.reverseTokensIcon} />
+
                 <img className={classes.icon} src={tokenY.logoURI} alt={tokenY.symbol} />
               </Box>
 

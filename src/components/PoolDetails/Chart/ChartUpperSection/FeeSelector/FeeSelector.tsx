@@ -96,7 +96,7 @@ export const FeeSelector: React.FC<IProps> = ({
                   }}>
                   <Typography className={classes.optionText}>{tier}%</Typography>
                   <Typography className={classes.tvlText}>
-                    {disabled ? 'Not created' : getTvlValue(tier) + 'TVL'}
+                    {disabled ? 'Not created' : getTvlValue(tier) + ' TVL'}
                   </Typography>
                 </Box>
               )

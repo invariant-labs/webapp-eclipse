@@ -320,10 +320,12 @@ const PoolListItem: React.FC<IProps> = ({
   )
 
   return (
-    <Grid className={classes.wrapper} onClick={!isMd ? handleOpenPoolDetails : undefined}>
+    <Grid className={classes.wrapper}>
       {displayType === 'token' ? (
         <Grid
           onClick={() => {
+            if (!isMd) handleOpenPoolDetails()
+
             if (isSmd) setShowInfo(prev => !prev)
           }}
           container
