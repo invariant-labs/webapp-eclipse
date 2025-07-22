@@ -119,6 +119,7 @@ export const PoolDetails: React.FC<IProps> = ({
           onRefresh={onRefresh}
           isFavourite={isFavourite}
           switchFavouritePool={switchFavouritePool}
+          isPoolDataLoading={isPoolDataLoading}
         />
       </Grid>
       {/* <Transactions /> */}

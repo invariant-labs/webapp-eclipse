@@ -169,12 +169,8 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
   }, [tokenX, tokenY])
 
   const isPoolDataLoading = useMemo(() => {
-    if (poolData !== null) {
-      return false
-    }
-
     return isFetchingNewPool
-  }, [isFetchingNewPool, poolData, tokenX, tokenY])
+  }, [isFetchingNewPool])
 
   const getTokenIndex = (ticker: string) => {
     const address = tickerToAddress(currentNetwork, ticker)

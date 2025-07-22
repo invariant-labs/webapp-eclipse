@@ -16,6 +16,7 @@ export interface IProps {
   network: NetworkType
   amount?: number
   price: number
+  isPoolDataLoading: boolean
 }
 
 export const TokenInfo: React.FC<IProps> = ({
@@ -23,7 +24,8 @@ export const TokenInfo: React.FC<IProps> = ({
   copyAddressHandler,
   network,
   amount,
-  price
+  price,
+  isPoolDataLoading
 }) => {
   const { classes } = useStyles()
   const address = token?.assetAddress.toString() || ''
@@ -69,10 +71,14 @@ export const TokenInfo: React.FC<IProps> = ({
             Value
           </Typography>
         </Box>
-        {amount && (
-          <Typography color={colors.invariant.text} style={typography.heading2}>
-            ${formatNumberWithSuffix(amount * price)}
-          </Typography>
+        {isPoolDataLoading ? (
+          <Skeleton variant='rounded' height={32} width={110} />
+        ) : (
+          amount && (
+            <Typography color={colors.invariant.text} style={typography.heading2}>
+              ${formatNumberWithSuffix(amount * price)}
+            </Typography>
+          )
         )}
       </Box>
       <Box className={classes.separator} />
@@ -81,52 +87,64 @@ export const TokenInfo: React.FC<IProps> = ({
           <Typography color={colors.invariant.textGrey} style={typography.caption1}>
             Coin address
           </Typography>
-          <Box display='flex' alignItems='center' gap={'3px'}>
-            <TooltipHover title='Copy'>
-              <Box
-                display='flex'
-                alignItems='center'
-                gap='3px'
-                className={classes.addressIcon}
-                onClick={copyToClipboard}>
-                <Typography
-                  style={{ textDecoration: 'underline', ...typography.body2 }}
-                  color={colors.invariant.text}
-                  height={'20px'}>
-                  {address.slice(0, 4)}...{address.slice(address.length - 4, address.length)}
-                </Typography>
-                <CopyIcon color={colors.invariant.text} height={10} />
-              </Box>
-            </TooltipHover>
-            <TooltipHover title='Open pool in explorer'>
-              <a
-                href={`https://eclipsescan.xyz/account/${address}${networkUrl}`}
-                target='_blank'
-                rel='noopener noreferrer'
-                onClick={event => {
-                  event.stopPropagation()
-                }}
-                className={classes.addressIcon}>
-                <NewTabIcon color={colors.invariant.text} height={10} />
-              </a>
-            </TooltipHover>
-          </Box>
+          {isPoolDataLoading ? (
+            <Skeleton variant='rounded' height={20} width={100} />
+          ) : (
+            <Box display='flex' alignItems='center' gap={'3px'}>
+              <TooltipHover title='Copy'>
+                <Box
+                  display='flex'
+                  alignItems='center'
+                  gap='3px'
+                  className={classes.addressIcon}
+                  onClick={copyToClipboard}>
+                  <Typography
+                    style={{ textDecoration: 'underline', ...typography.body2 }}
+                    color={colors.invariant.text}
+                    height={'20px'}>
+                    {address.slice(0, 4)}...{address.slice(address.length - 4, address.length)}
+                  </Typography>
+                  <CopyIcon color={colors.invariant.text} height={10} />
+                </Box>
+              </TooltipHover>
+              <TooltipHover title='Open pool in explorer'>
+                <a
+                  href={`https://eclipsescan.xyz/account/${address}${networkUrl}`}
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  onClick={event => {
+                    event.stopPropagation()
+                  }}
+                  className={classes.addressIcon}>
+                  <NewTabIcon color={colors.invariant.text} height={10} />
+                </a>
+              </TooltipHover>
+            </Box>
+          )}
         </Box>
         <Box display='flex' alignItems='center' justifyContent='space-between'>
           <Typography color={colors.invariant.textGrey} style={typography.caption1}>
             Amount
           </Typography>
-          <Typography color={colors.invariant.textGrey} style={typography.body2}>
-            {formatNumberWithSuffix(amount ?? 0)}
-          </Typography>
+          {isPoolDataLoading ? (
+            <Skeleton variant='rounded' height={20} width={60} />
+          ) : (
+            <Typography color={colors.invariant.textGrey} style={typography.body2}>
+              {formatNumberWithSuffix(amount ?? 0)}
+            </Typography>
+          )}
         </Box>
         <Box display='flex' alignItems='center' justifyContent='space-between'>
           <Typography color={colors.invariant.textGrey} style={typography.caption1}>
             Price
           </Typography>
-          <Typography color={colors.invariant.textGrey} style={typography.body2}>
-            ${formatNumberWithSuffix(price ?? 0)} USD
-          </Typography>
+          {isPoolDataLoading ? (
+            <Skeleton variant='rounded' height={20} width={60} />
+          ) : (
+            <Typography color={colors.invariant.textGrey} style={typography.body2}>
+              ${formatNumberWithSuffix(price ?? 0)} USD
+            </Typography>
+          )}
         </Box>
       </Box>
     </Box>

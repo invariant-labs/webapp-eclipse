@@ -25,6 +25,7 @@ export interface IPros {
   onRefresh: () => void
   isFavourite: boolean
   switchFavouritePool: () => void
+  isPoolDataLoading: boolean
 }
 
 export const PoolInfo: React.FC<IPros> = ({
@@ -40,14 +41,15 @@ export const PoolInfo: React.FC<IPros> = ({
   network,
   onRefresh,
   isFavourite,
-  switchFavouritePool
+  switchFavouritePool,
+  isPoolDataLoading
 }) => {
   const { classes } = useStyles()
   const tokenXUsdAmount = tokenXReserve ? prices.tokenX * tokenXReserve.uiAmount : 0
   const tokenYUsdAmount = tokenYReserve ? prices.tokenY * tokenYReserve.uiAmount : 0
 
   const [tokenXPercentage, tokenYPercentage] = React.useMemo(() => {
-    if (!tokenX || !tokenY || !tokenXReserve || !tokenYReserve) return [0, 0]
+    if (!tokenX || !tokenY || !tokenXReserve || !tokenYReserve) return [null, null]
 
     const tokenXPercentage = (tokenXUsdAmount / (tokenXUsdAmount + tokenYUsdAmount)) * 100
     const tokenYPercentage = (tokenYUsdAmount / (tokenXUsdAmount + tokenYUsdAmount)) * 100
@@ -89,6 +91,7 @@ export const PoolInfo: React.FC<IPros> = ({
           tokenY={tokenY}
           tokenXPercentage={tokenXPercentage}
           tokenYPercentage={tokenYPercentage}
+          isPoolDataLoading={isPoolDataLoading}
         />
         <Box display='flex' gap='20px' flexDirection='column' mt={'20px'}>
           <TokenInfo
@@ -97,6 +100,7 @@ export const PoolInfo: React.FC<IPros> = ({
             network={network}
             amount={tokenXReserve?.uiAmount}
             price={prices.tokenX}
+            isPoolDataLoading={isPoolDataLoading}
           />
           <TokenInfo
             token={tokenY}
@@ -104,6 +108,7 @@ export const PoolInfo: React.FC<IPros> = ({
             network={network}
             amount={tokenYReserve?.uiAmount}
             price={prices.tokenY}
+            isPoolDataLoading={isPoolDataLoading}
           />
         </Box>
       </Grid>

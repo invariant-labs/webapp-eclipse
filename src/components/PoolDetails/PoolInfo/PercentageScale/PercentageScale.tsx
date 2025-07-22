@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Box, Typography } from '@mui/material'
+import { Box, Skeleton, Typography } from '@mui/material'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import useStyles from './style'
 import { colors, typography } from '@static/theme'
@@ -8,15 +8,17 @@ import { useAverageLogoColor } from '@store/hooks/userOverview/useAverageLogoCol
 export interface IProps {
   tokenX: SwapToken
   tokenY: SwapToken
-  tokenXPercentage: number
-  tokenYPercentage: number
+  tokenXPercentage: number | null
+  tokenYPercentage: number | null
+  isPoolDataLoading: boolean
 }
 
 export const PercentageScale: React.FC<IProps> = ({
   tokenX,
   tokenY,
   tokenXPercentage,
-  tokenYPercentage
+  tokenYPercentage,
+  isPoolDataLoading
 }) => {
   const { getAverageColor, getTokenColor, tokenColorOverrides } = useAverageLogoColor()
 
@@ -41,7 +43,7 @@ export const PercentageScale: React.FC<IProps> = ({
   }, [tokenX.logoURI, tokenX.symbol, tokenY.logoURI, tokenY.symbol, getAverageColor])
 
   const { classes, cx } = useStyles({
-    leftPercentage: +tokenXPercentage.toFixed(2),
+    leftPercentage: tokenXPercentage !== null ? +tokenXPercentage.toFixed(2) : 0,
     colorLeft: colorX,
     colorRight: colorY
   })
@@ -58,13 +60,18 @@ export const PercentageScale: React.FC<IProps> = ({
         <Typography color={colors.invariant.text} style={typography.body2} mt={'6px'}>
           {tokenX.symbol}
         </Typography>
-        <Typography
-          color={colors.invariant.textGrey}
-          style={typography.caption2}
-          textAlign={'center'}
-          noWrap>
-          {tokenXPercentage ? tokenXPercentage.toFixed(2) : 0} %
-        </Typography>
+        {isPoolDataLoading || tokenXPercentage === null ? (
+          <Skeleton variant='rounded' height={17} width={44} />
+        ) : (
+          <Typography
+            width={44}
+            color={colors.invariant.textGrey}
+            style={typography.caption2}
+            textAlign={'center'}
+            noWrap>
+            {tokenXPercentage ? tokenXPercentage.toFixed(2) : 0} %
+          </Typography>
+        )}
       </Box>
       <Box className={classes.scaleContainer}>
         <div className={cx(classes.dot, classes.leftDot)} />
@@ -76,13 +83,18 @@ export const PercentageScale: React.FC<IProps> = ({
         <Typography color={colors.invariant.text} style={typography.body2} mt={'6px'}>
           {tokenY.symbol}
         </Typography>
-        <Typography
-          color={colors.invariant.textGrey}
-          style={typography.caption2}
-          textAlign={'center'}
-          noWrap>
-          {tokenYPercentage ? tokenYPercentage.toFixed(2) : 0} %
-        </Typography>
+        {isPoolDataLoading || tokenYPercentage === null ? (
+          <Skeleton variant='rounded' height={17} width={44} />
+        ) : (
+          <Typography
+            width={44}
+            color={colors.invariant.textGrey}
+            style={typography.caption2}
+            textAlign={'center'}
+            noWrap>
+            {tokenYPercentage ? tokenYPercentage.toFixed(2) : 0} %
+          </Typography>
+        )}
       </Box>
     </Box>
   )
