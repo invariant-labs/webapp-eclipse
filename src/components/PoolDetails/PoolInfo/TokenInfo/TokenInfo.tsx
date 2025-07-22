@@ -91,7 +91,8 @@ export const TokenInfo: React.FC<IProps> = ({
                 onClick={copyToClipboard}>
                 <Typography
                   style={{ textDecoration: 'underline', ...typography.body2 }}
-                  color={colors.invariant.text}>
+                  color={colors.invariant.text}
+                  height={'20px'}>
                   {address.slice(0, 4)}...{address.slice(address.length - 4, address.length)}
                 </Typography>
                 <CopyIcon color={colors.invariant.text} height={10} />
