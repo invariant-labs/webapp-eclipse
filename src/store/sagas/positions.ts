@@ -69,7 +69,6 @@ import {
   getAmountFromClaimFeeInstruction,
   getAmountFromClosePositionInstruction,
   getTokenProgramId,
-  getAmountFromSwapAndAddLiquidity,
   getSwapAmountFromSwapAndAddLiquidity,
   getAddAmountFromSwapAndAddLiquidity,
   SwapTokenType
