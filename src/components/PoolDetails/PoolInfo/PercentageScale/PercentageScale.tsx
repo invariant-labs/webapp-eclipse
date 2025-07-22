@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { Box, Typography } from '@mui/material'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import useStyles from './style'
-import { formatNumberWithSuffix } from '@utils/utils'
 import { colors, typography } from '@static/theme'
 import { useAverageLogoColor } from '@store/hooks/userOverview/useAverageLogoColor'
 
@@ -64,7 +63,7 @@ export const PercentageScale: React.FC<IProps> = ({
           style={typography.caption2}
           textAlign={'center'}
           noWrap>
-          {formatNumberWithSuffix(tokenXPercentage, { decimalsAfterDot: 2 })} %
+          {tokenXPercentage.toFixed(2)} %
         </Typography>
       </Box>
       <Box className={classes.scaleContainer}>
@@ -82,7 +81,7 @@ export const PercentageScale: React.FC<IProps> = ({
           style={typography.caption2}
           textAlign={'center'}
           noWrap>
-          {formatNumberWithSuffix(tokenYPercentage, { decimalsAfterDot: 2 })} %
+          {tokenYPercentage.toFixed(2)} %
         </Typography>
       </Box>
     </Box>

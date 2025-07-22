@@ -1,9 +1,7 @@
 import React from 'react'
 import { Box, Skeleton, Typography } from '@mui/material'
-import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { colors, typography } from '@static/theme'
 import useStyles from './style'
-import { WarningIcon } from '@static/componentIcon/WarningIcon'
 
 export interface IProps {
   isLoadingStats: boolean
@@ -23,11 +21,6 @@ export const InfoItem: React.FC<IProps> = ({ isLoadingStats, name, value, isGree
           color={isGreen ? colors.invariant.green : colors.invariant.textGrey}>
           {name}{' '}
         </Typography>
-        {isGreen && (
-          <TooltipHover title='tooltip'>
-            <WarningIcon color={colors.invariant.green} height={12} />
-          </TooltipHover>
-        )}
       </Box>
       {isLoadingStats ? (
         <Skeleton
