@@ -63,7 +63,7 @@ export const PercentageScale: React.FC<IProps> = ({
           style={typography.caption2}
           textAlign={'center'}
           noWrap>
-          {tokenXPercentage.toFixed(2)} %
+          {tokenXPercentage ? tokenXPercentage.toFixed(2) : 0} %
         </Typography>
       </Box>
       <Box className={classes.scaleContainer}>
@@ -81,7 +81,7 @@ export const PercentageScale: React.FC<IProps> = ({
           style={typography.caption2}
           textAlign={'center'}
           noWrap>
-          {tokenYPercentage.toFixed(2)} %
+          {tokenYPercentage ? tokenYPercentage.toFixed(2) : 0} %
         </Typography>
       </Box>
     </Box>
