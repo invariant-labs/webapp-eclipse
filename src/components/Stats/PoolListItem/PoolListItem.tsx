@@ -501,7 +501,10 @@ const PoolListItem: React.FC<IProps> = ({
                   disabled={isDisabled}
                   style={isDisabled ? { cursor: 'not-allowed' } : {}}
                   className={classes.actionButton}
-                  onClick={handleOpenPosition}>
+                  onClick={e => {
+                    e.stopPropagation()
+                    handleOpenPosition()
+                  }}>
                   <img
                     width={32}
                     height={32}
@@ -515,13 +518,14 @@ const PoolListItem: React.FC<IProps> = ({
               <TooltipHover title='Open in explorer'>
                 <button
                   className={classes.actionButton}
-                  onClick={() =>
+                  onClick={e => {
+                    e.stopPropagation()
                     window.open(
                       `https://eclipsescan.xyz/account/${poolAddress}${networkUrl}`,
                       '_blank',
                       'noopener,noreferrer'
                     )
-                  }>
+                  }}>
                   <img width={32} height={32} src={newTabBtnIcon} alt={'Exchange'} />
                 </button>
               </TooltipHover>

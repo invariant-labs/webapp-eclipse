@@ -284,6 +284,7 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
   }, [isPoolDataLoading, allPools.length, initialFee])
 
   const handleOpenSwap = () => {
+    dispatch(navigationActions.setNavigation({ address: location.pathname }))
     navigate(ROUTES.getExchangeRoute(tokenX?.symbol, tokenY?.symbol), {
       state: { referer: 'stats' }
     })
@@ -337,7 +338,8 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
   }
 
   const handleBack = () => {
-    const path = locationHistory === ROUTES.ROOT ? ROUTES.PORTFOLIO : locationHistory
+    const parsedLocation = locationHistory.slice(0, 12)
+    const path = parsedLocation === ROUTES.POOL_DETAILS ? ROUTES.PORTFOLIO : locationHistory
     navigate(path)
   }
 
