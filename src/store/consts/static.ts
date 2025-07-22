@@ -997,6 +997,12 @@ export enum ErrorCodeExtractionKeys {
   Dot = '.'
 }
 
+export enum inputTarget {
+  DEFAULT = 'default',
+  FROM = 'from',
+  TO = 'to'
+}
+
 const SLIPPAGE_ERROR_MESSAGE = 'Price changed – increase slippage or retry'
 
 export const ERROR_CODE_TO_MESSAGE: Record<number, string> = {
@@ -1152,5 +1158,5 @@ export const POOLS_TO_HIDE_POINTS_PER_24H: string[] = [
   // '8gSs6K4NVZSh4Rd5ABcNTos5sJ6wVRTR4xr5LgNLMt58'
 ]
 
-export const PROOF_OF_INCLUSION_CACHE_KEY = 'PROOF_OF_INCLUSION'
+export const PROOF_OF_INCLUSION_CACHE_KEY = 'PROOF_OF_INCLUSION_V2'
 export const PROOF_OF_INCLUSION_CACHE_TTL = 1000 * 60 * 60 * 1 // 1 hour

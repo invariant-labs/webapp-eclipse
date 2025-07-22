@@ -81,10 +81,10 @@ export interface UpdateAutoSwapTicksAndTickmap {
   ticks: Tick[]
 }
 const network =
-  // process.env.NODE_ENV === 'development'
-  NetworkType[localStorage.getItem('INVARIANT_NETWORK_ECLIPSE') as keyof typeof NetworkType] ??
-  NetworkType.Mainnet
-// : NetworkType.Mainnet
+  process.env.NODE_ENV === 'development'
+    ? (NetworkType[localStorage.getItem('INVARIANT_NETWORK_ECLIPSE') as keyof typeof NetworkType] ??
+      NetworkType.Mainnet)
+    : NetworkType.Mainnet
 
 export const defaultState: IPoolsStore = {
   tokens: { ...getNetworkTokensList(network) },

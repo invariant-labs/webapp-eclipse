@@ -15,16 +15,34 @@ const useStyles = makeStyles<{ percentage: number; isActive?: boolean }>()(
       backgroundHover: colors.invariant.greenLinearGradient,
       boxShadow: 'rgba(46, 224, 154, 0.5)'
     },
+    presaleEnded: {
+      marginTop: 10,
+      width: '100%',
+      height: '100%',
+      ...typography.heading3,
+      color: colors.invariant.text,
+      textAlign: 'center'
+    },
     skeletonBanner: {
       height: 74,
       marginTop: -16,
       borderRadius: '12px'
     },
+    blocker: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      zIndex: 11,
+      width: '100%',
+      height: '100%',
+      backgroundColor: 'rgba(11, 12, 13, 0.88)',
+      filter: 'blur(4px) brightness(0.4)',
+      borderRadius: 20
+    },
     container: {
       backgroundColor: colors.invariant.component,
       borderRadius: '20px',
       width: '520px',
-      height: '492px',
       [theme.breakpoints.down('lg')]: {
         width: 'calc(100% - 48px)'
       },
@@ -153,6 +171,12 @@ const useStyles = makeStyles<{ percentage: number; isActive?: boolean }>()(
       ...typography.body2,
       color: colors.invariant.text
     },
+    raisedAfterEnd: {
+      height: '24px',
+      marginTop: '16px',
+      color: colors.invariant.textGrey,
+      ...typography.heading4
+    },
     greyText: {
       color: colors.invariant.textGrey,
       ...typography.body2
@@ -197,6 +221,7 @@ const useStyles = makeStyles<{ percentage: number; isActive?: boolean }>()(
       justifyContent: 'center',
       gap: 10,
       padding: 10,
+      paddingInline: 0,
       flexDirection: 'column',
       width: '100%'
     },
@@ -251,6 +276,7 @@ const useStyles = makeStyles<{ percentage: number; isActive?: boolean }>()(
     },
     receiveBox: {
       display: 'flex',
+      position: 'relative',
       marginTop: '12px',
       height: '32px',
       justifyContent: 'space-between',
