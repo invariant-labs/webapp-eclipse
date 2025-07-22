@@ -10,6 +10,7 @@ export interface IProps {
   promotedPoolTierIndex?: number
   feeTiersWithTvl: Record<number, number>
   totalTvl: number
+  disabledFeeTiers: string[]
 }
 
 export const FeeSelector: React.FC<IProps> = ({
@@ -18,7 +19,8 @@ export const FeeSelector: React.FC<IProps> = ({
   currentFeeIndex,
   feeTiersWithTvl,
   totalTvl,
-  promotedPoolTierIndex
+  promotedPoolTierIndex,
+  disabledFeeTiers
 }) => {
   const { classes, cx } = useStyles()
   const [open, setOpen] = useState(false)
@@ -73,14 +75,14 @@ export const FeeSelector: React.FC<IProps> = ({
         {open && (
           <Box className={classes.dropdown}>
             {feeTiers.map((tier, index) => {
-              const disabled = !doesPoolExist(tier)
+              const notCreated = !doesPoolExist(tier)
+              const disabled = disabledFeeTiers.includes(tier.toString())
 
               return (
                 <Box
                   key={tier}
                   className={cx(classes.option, {
-                    [classes.disabled]: disabled,
-
+                    [classes.disabled]: notCreated,
                     [classes.best]: index === originalBestTierIndex,
                     [classes.promoted]: index === promotedPoolTierIndex,
                     [classes.active]: currentFeeIndex === index
@@ -88,7 +90,7 @@ export const FeeSelector: React.FC<IProps> = ({
                   onClick={e => {
                     e.stopPropagation()
                     e.preventDefault()
-                    if (!disabled) {
+                    if (!notCreated) {
                       setOpen(false)
                       closeDropdown()
                       handleSelect(index)
@@ -96,7 +98,11 @@ export const FeeSelector: React.FC<IProps> = ({
                   }}>
                   <Typography className={classes.optionText}>{tier}%</Typography>
                   <Typography className={classes.tvlText}>
-                    {disabled ? 'Not created' : getTvlValue(tier) + ' TVL'}
+                    {disabled
+                      ? 'Pool disabled'
+                      : notCreated
+                        ? 'Not created'
+                        : getTvlValue(tier) + ' TVL'}
                   </Typography>
                 </Box>
               )

@@ -1,5 +1,5 @@
 import PoolDetails from '@components/PoolDetails/PoolDetails'
-import { ALL_FEE_TIERS_DATA } from '@store/consts/static'
+import { ALL_FEE_TIERS_DATA, disabledPools } from '@store/consts/static'
 import { isLoadingLatestPoolsForTransaction, poolsArraySortedByFees } from '@store/selectors/pools'
 import { network } from '@store/selectors/solanaConnection'
 import { poolTokens, SwapToken } from '@store/selectors/solanaWallet'
@@ -291,14 +291,9 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
 
   const handleOpenPosition = () => {
     dispatch(navigationActions.setNavigation({ address: location.pathname }))
-    navigate(
-      ROUTES.getNewPositionRoute(
-        tokenX?.symbol,
-        tokenY?.symbol,
-        parseFeeToPathFee(Math.round(fee * 10 ** (DECIMAL - 2)))
-      ),
-      { state: { referer: 'stats' } }
-    )
+    navigate(ROUTES.getNewPositionRoute(tokenX?.symbol, tokenY?.symbol, parseFeeToPathFee(fee)), {
+      state: { referer: 'stats' }
+    })
   }
 
   useEffect(() => {
@@ -350,7 +345,7 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
 
     const feeIndex = ALL_FEE_TIERS_DATA.findIndex(tier => tier.tier.fee.toNumber() === +parsedFee)
 
-    return feeIndex !== -1 ? feeIndex : 0 // Return 0 if no match is found
+    return feeIndex !== -1 ? feeIndex : 0
   }, [initialFee, ALL_FEE_TIERS_DATA])
 
   const onRefresh = () => {
@@ -369,6 +364,25 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
       )
     }
   }
+
+  const { isDisabled, disabledFeeTiers } = useMemo(() => {
+    if (!tokenX?.assetAddress || !tokenY?.assetAddress) {
+      return { isDisabled: false, disabledFeeTiers: [] }
+    }
+
+    const matchingPools = disabledPools.filter(
+      pool =>
+        (pool.tokenX.equals(tokenX.assetAddress) && pool.tokenY.equals(tokenY.assetAddress)) ||
+        (pool.tokenX.equals(tokenY.assetAddress) && pool.tokenY.equals(tokenX.assetAddress))
+    )
+
+    const disabledFeeTiers = matchingPools.flatMap(p => p.feeTiers)
+    const formattedFee = (+printBN(fee, DECIMAL - 2)).toString()
+    const isDisabled = disabledFeeTiers.includes(formattedFee)
+
+    return { isDisabled, disabledFeeTiers }
+  }, [tokenX, tokenY, fee, disabledPools])
+
   return (
     <PoolDetails
       network={currentNetwork}
@@ -397,6 +411,8 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
       onRefresh={onRefresh}
       isFavourite={isFavourite}
       switchFavouritePool={switchFavouritePool}
+      isDisabled={isDisabled}
+      disabledFeeTiers={disabledFeeTiers}
     />
   )
 }

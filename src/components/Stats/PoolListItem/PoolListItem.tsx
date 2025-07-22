@@ -490,7 +490,7 @@ const PoolListItem: React.FC<IProps> = ({
                 </TooltipHover>
               )}
 
-              <TooltipHover title='Exchange'>
+              <TooltipHover title='Pool details'>
                 <button className={classes.actionButton} onClick={handleOpenPoolDetails}>
                   <img width={32} height={32} src={poolStatsBtnIcon} alt={'Pool details'} />
                 </button>

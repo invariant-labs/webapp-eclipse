@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 import { Box, Skeleton, Typography, useMediaQuery } from '@mui/material'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
-import { horizontalSwapIcon, plusIcon } from '@static/icons'
+import { horizontalSwapIcon, plusDisabled, plusIcon } from '@static/icons'
 import { colors, theme, typography } from '@static/theme'
 import { NetworkType, promotedTiers } from '@store/consts/static'
 import { NewTabIcon } from '@static/componentIcon/NewTabIcon'
@@ -26,6 +26,8 @@ export interface IProps {
   feeTierIndex: number
   feeTiersWithTvl: Record<number, number>
   totalTvl: number
+  isDisabled: boolean
+  disabledFeeTiers: string[]
 }
 
 export const ChartUpperSection: React.FC<IProps> = ({
@@ -41,11 +43,12 @@ export const ChartUpperSection: React.FC<IProps> = ({
   feeTiers,
   feeTierIndex,
   feeTiersWithTvl,
-  totalTvl
+  totalTvl,
+  isDisabled,
+  disabledFeeTiers
 }) => {
   const { classes } = useStyles()
   const isTablet = useMediaQuery(theme.breakpoints.down(1200))
-  console.log(isTablet)
 
   const networkUrl = useMemo(() => {
     switch (network) {
@@ -165,6 +168,7 @@ export const ChartUpperSection: React.FC<IProps> = ({
             promotedPoolTierIndex={promotedPoolTierIndex}
             feeTiersWithTvl={feeTiersWithTvl}
             totalTvl={totalTvl}
+            disabledFeeTiers={disabledFeeTiers}
           />
         )}
       </Box>
@@ -174,12 +178,25 @@ export const ChartUpperSection: React.FC<IProps> = ({
             Action
           </Typography>
           <Box display='flex' alignItems='center' gap='8px' mt={'12px'}>
-            <button className={classes.actionButton} onClick={handleOpenPosition}>
-              <img width={32} src={plusIcon} alt={'Open'} />
-            </button>
-            <button className={classes.actionButton} onClick={handleOpenSwap}>
-              <img width={32} src={horizontalSwapIcon} alt={'Exchange'} />
-            </button>
+            <TooltipHover title={isDisabled ? 'Pool disabled' : 'Add position'}>
+              <button
+                className={classes.actionButton}
+                onClick={handleOpenPosition}
+                disabled={isDisabled}
+                style={isDisabled ? { cursor: 'not-allowed' } : {}}>
+                <img
+                  width={32}
+                  src={isDisabled ? plusDisabled : plusIcon}
+                  style={isDisabled ? { opacity: 0.6 } : {}}
+                  alt={'Open'}
+                />
+              </button>
+            </TooltipHover>
+            <TooltipHover title={'Exchange'}>
+              <button className={classes.actionButton} onClick={handleOpenSwap}>
+                <img width={32} src={horizontalSwapIcon} alt={'Exchange'} />
+              </button>
+            </TooltipHover>
           </Box>
         </Box>
         {isTablet && (
@@ -191,6 +208,7 @@ export const ChartUpperSection: React.FC<IProps> = ({
               promotedPoolTierIndex={promotedPoolTierIndex}
               feeTiersWithTvl={feeTiersWithTvl}
               totalTvl={totalTvl}
+              disabledFeeTiers={disabledFeeTiers}
             />
           </Box>
         )}

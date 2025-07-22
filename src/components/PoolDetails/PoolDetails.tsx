@@ -39,6 +39,8 @@ export interface IProps {
   onRefresh: () => void
   isFavourite: boolean
   switchFavouritePool: () => void
+  isDisabled: boolean
+  disabledFeeTiers: string[]
 }
 
 export const PoolDetails: React.FC<IProps> = ({
@@ -67,7 +69,9 @@ export const PoolDetails: React.FC<IProps> = ({
   feeTierIndex,
   onRefresh,
   isFavourite,
-  switchFavouritePool
+  switchFavouritePool,
+  isDisabled,
+  disabledFeeTiers
 }) => {
   const { classes } = useStyles()
 
@@ -98,6 +102,8 @@ export const PoolDetails: React.FC<IProps> = ({
           feeTiersWithTvl={feeTiersWithTvl}
           totalTvl={totalTvl}
           feeTierIndex={feeTierIndex}
+          isDisabled={isDisabled}
+          disabledFeeTiers={disabledFeeTiers}
         />
         <PoolInfo
           interval={interval}

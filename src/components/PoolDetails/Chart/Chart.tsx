@@ -30,6 +30,8 @@ export interface IProps {
   feeTiersWithTvl: Record<number, number>
   totalTvl: number
   feeTierIndex: number
+  isDisabled: boolean
+  disabledFeeTiers: string[]
 }
 
 export const Chart: React.FC<IProps> = ({
@@ -51,7 +53,9 @@ export const Chart: React.FC<IProps> = ({
   feeTiers,
   feeTiersWithTvl,
   totalTvl,
-  feeTierIndex
+  feeTierIndex,
+  isDisabled,
+  disabledFeeTiers
 }) => {
   const { classes } = useStyles()
 
@@ -73,6 +77,8 @@ export const Chart: React.FC<IProps> = ({
           feeTiersWithTvl={feeTiersWithTvl}
           totalTvl={totalTvl}
           feeTierIndex={feeTierIndex}
+          isDisabled={isDisabled}
+          disabledFeeTiers={disabledFeeTiers}
         />
         <Box className={classes.separator} />
         <ChartLowerSection
