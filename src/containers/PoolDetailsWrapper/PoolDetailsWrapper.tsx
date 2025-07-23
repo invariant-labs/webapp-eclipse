@@ -94,6 +94,8 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
 
   const [poolData, setPoolData] = useState<PoolWithAddress | null>(null)
 
+  const [sameTokensError, setSameTokensError] = useState(false)
+
   useEffect(() => {
     localStorage.setItem(
       `INVARIANT_FAVOURITE_POOLS_Eclipse_${currentNetwork}`,
@@ -258,14 +260,20 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
 
   useEffect(() => {
     if (fee && tickSpacing && tokenX && tokenY) {
-      dispatch(
-        poolsActions.getPoolData(
-          new Pair(tokenX.assetAddress, tokenY.assetAddress, {
-            fee,
-            tickSpacing
-          })
+      if (tokenX.assetAddress.toString() === tokenY.assetAddress.toString()) {
+        setSameTokensError(true)
+        return
+      } else {
+        setSameTokensError(false)
+        dispatch(
+          poolsActions.getPoolData(
+            new Pair(tokenX.assetAddress, tokenY.assetAddress, {
+              fee,
+              tickSpacing
+            })
+          )
         )
-      )
+      }
     }
   }, [initialFee, tokenX, tokenY])
 
@@ -483,6 +491,7 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
       setTokens={setTokens}
       handleAddToken={addTokenHandler}
       onCreateNewPool={onCreateNewPool}
+      sameTokensError={sameTokensError}
     />
   )
 }

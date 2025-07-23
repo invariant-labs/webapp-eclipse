@@ -45,6 +45,7 @@ export interface IProps {
   setTokens: (tokenX: SwapToken, tokenY: SwapToken) => void
   handleAddToken: (address: string) => void
   onCreateNewPool: () => void
+  sameTokensError: boolean
 }
 
 export const PoolDetails: React.FC<IProps> = ({
@@ -79,7 +80,8 @@ export const PoolDetails: React.FC<IProps> = ({
   tokens,
   setTokens,
   handleAddToken,
-  onCreateNewPool
+  onCreateNewPool,
+  sameTokensError
 }) => {
   const { classes } = useStyles()
 
@@ -127,6 +129,7 @@ export const PoolDetails: React.FC<IProps> = ({
           setHideUnknownTokensValue={setHideUnknownTokensValue}
           noData={!poolData?.address.toString() && !isPoolDataLoading && !isLoadingStats}
           onCreateNewPool={onCreateNewPool}
+          sameTokensError={sameTokensError}
         />
         <PoolInfo
           interval={interval}

@@ -40,6 +40,7 @@ export interface IProps {
   setHideUnknownTokensValue: (value: boolean) => void
   noData: boolean
   onCreateNewPool: () => void
+  sameTokensError: boolean
 }
 
 export const Chart: React.FC<IProps> = ({
@@ -70,7 +71,8 @@ export const Chart: React.FC<IProps> = ({
   initialHideUnknownTokensValue,
   setHideUnknownTokensValue,
   noData,
-  onCreateNewPool
+  onCreateNewPool,
+  sameTokensError
 }) => {
   const { classes } = useStyles()
 
@@ -106,12 +108,16 @@ export const Chart: React.FC<IProps> = ({
           <EmptyPlaceholder
             height={426}
             newVersion
-            mainTitle={`The ${tokenX?.symbol}/${tokenY?.symbol ?? ''} pool was not found...`}
-            desc={'You can create it by yourself!'}
-            desc2={'Or try to change tokens to find one!'}
+            mainTitle={
+              sameTokensError
+                ? 'Please select different tokens'
+                : `The ${tokenX?.symbol}/${tokenY?.symbol ?? ''} pool was not found...`
+            }
+            desc={sameTokensError ? '' : 'You can create it by yourself!'}
+            desc2={sameTokensError ? '' : 'Or try to change tokens to find one!'}
             buttonName='Create Pool'
             onAction={onCreateNewPool}
-            withButton={true}
+            withButton={!sameTokensError}
             withImg={true}
             roundedCorners
           />
