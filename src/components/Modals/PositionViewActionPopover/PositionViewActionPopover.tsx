@@ -72,25 +72,25 @@ export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = (
             }}>
             <Typography className={classes.name}>Close position</Typography>
           </Button>
+          <Button
+            className={cx(classes.listItem)}
+            disabled={isLocked || shouldDisable}
+            onClick={() => {
+              onManagePosition()
+              handleClose()
+            }}>
+            <Typography className={classes.name}>Manage position</Typography>
+          </Button>
+          <Button
+            className={cx(classes.listItem)}
+            disabled={isLocked || shouldDisable}
+            onClick={() => {
+              onLockPosition()
+              handleClose()
+            }}>
+            <Typography className={classes.name}>Lock position</Typography>
+          </Button>
         </Grid>
-        <Button
-          className={cx(classes.listItem)}
-          disabled={isLocked || shouldDisable}
-          onClick={() => {
-            onManagePosition()
-            handleClose()
-          }}>
-          <Typography className={classes.name}>Manage position</Typography>
-        </Button>
-        <Button
-          className={cx(classes.listItem)}
-          disabled={isLocked || shouldDisable}
-          onClick={() => {
-            onLockPosition()
-            handleClose()
-          }}>
-          <Typography className={classes.name}>Lock position</Typography>
-        </Button>
       </Grid>
     </Popover>
   )

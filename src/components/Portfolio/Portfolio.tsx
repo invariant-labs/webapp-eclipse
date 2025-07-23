@@ -119,7 +119,13 @@ interface IProps {
   setChangeLiquiditySuccess: (value: boolean) => void
   reloadHandler: () => void
   isTimeoutError: boolean
-  changeLiquidity: (liquidity: BN, slippage: BN, isAddLiquidity: boolean) => void
+  changeLiquidity: (
+    liquidity: BN,
+    slippage: BN,
+    isAddLiquidity: boolean,
+    xAmount: BN,
+    yAmount: BN
+  ) => void
   swapAndAddLiquidity: (
     xAmount: BN,
     yAmount: BN,

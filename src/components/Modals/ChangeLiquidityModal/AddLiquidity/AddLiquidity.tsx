@@ -111,7 +111,13 @@ export interface IProps {
   isLoadingAutoSwapPool: boolean
   isLoadingAutoSwapPoolTicksOrTickMap: boolean
   ticksData: PlotTickData[]
-  changeLiquidity: (liquidity: BN, slippage: BN, isAddLiquidity: boolean) => void
+  changeLiquidity: (
+    liquidity: BN,
+    slippage: BN,
+    isAddLiquidity: boolean,
+    xAmount: BN,
+    yAmount: BN
+  ) => void
   swapAndAddLiquidity: (
     xAmount: BN,
     yAmount: BN,
@@ -784,7 +790,7 @@ export const AddLiquidity: React.FC<IProps> = ({
 
   const isPriceWarningVisible = !blocked && !isLoadingTicksOrTickmap
 
-  const addLiquidityHandler = slippage => {
+  const addLiquidityHandler = (xAmount, yAmount, slippage) => {
     if (tokenAIndex === null || tokenBIndex === null) {
       return
     }
@@ -795,12 +801,12 @@ export const AddLiquidity: React.FC<IProps> = ({
       setProgress('progress')
     }
 
-    changeLiquidity(liquidity, slippage, true)
+    changeLiquidity(liquidity, slippage, true, xAmount, yAmount)
   }
 
-  const onAddLiquidity = async () => {
+  const onAddLiquidity = async (xAmount, yAmount) => {
     if (tokenAIndex !== null && tokenBIndex !== null) {
-      addLiquidityHandler(fromFee(new BN(Number(+slippTolerance * 1000))))
+      addLiquidityHandler(fromFee(new BN(Number(+slippTolerance * 1000))), xAmount, yAmount)
     }
   }
 
@@ -1830,8 +1836,15 @@ export const AddLiquidity: React.FC<IProps> = ({
                   progress === 'none' ? classes.hoverButton : undefined
                 )}
                 onClick={() => {
-                  if (progress === 'none') {
-                    onAddLiquidity()
+                  if (progress === 'none' && tokenAIndex !== null && tokenBIndex !== null) {
+                    onAddLiquidity(
+                      isXtoY
+                        ? convertBalanceToBN(valueB, tokens[tokenBIndex].decimals)
+                        : convertBalanceToBN(valueA, tokens[tokenAIndex].decimals),
+                      isXtoY
+                        ? convertBalanceToBN(valueA, tokens[tokenAIndex].decimals)
+                        : convertBalanceToBN(valueB, tokens[tokenBIndex].decimals)
+                    )
                   }
                 }}
                 disabled={getButtonMessage() !== 'Add Liquidity'}
@@ -1846,12 +1859,26 @@ export const AddLiquidity: React.FC<IProps> = ({
             onClick={() => {
               if (progress === 'none' && tokenAIndex !== null && tokenBIndex !== null) {
                 if (!isAutoswapOn) {
-                  onAddLiquidity()
+                  onAddLiquidity(
+                    isXtoY
+                      ? convertBalanceToBN(valueB, tokens[tokenBIndex].decimals)
+                      : convertBalanceToBN(valueA, tokens[tokenAIndex].decimals),
+                    isXtoY
+                      ? convertBalanceToBN(valueA, tokens[tokenAIndex].decimals)
+                      : convertBalanceToBN(valueB, tokens[tokenBIndex].decimals)
+                  )
                 } else if (
                   isAutoswapOn &&
                   isSimulationStatus(SwapAndCreateSimulationStatus.PerfectRatio)
                 ) {
-                  onAddLiquidity()
+                  onAddLiquidity(
+                    isXtoY
+                      ? convertBalanceToBN(valueB, tokens[tokenBIndex].decimals)
+                      : convertBalanceToBN(valueA, tokens[tokenAIndex].decimals),
+                    isXtoY
+                      ? convertBalanceToBN(valueA, tokens[tokenAIndex].decimals)
+                      : convertBalanceToBN(valueB, tokens[tokenBIndex].decimals)
+                  )
                 } else {
                   if (
                     (tokenACheckbox || tokenBCheckbox) &&

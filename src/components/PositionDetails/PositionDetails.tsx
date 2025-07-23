@@ -64,7 +64,13 @@ interface IProps {
   onClickClaimFee: () => void
   lockPosition: () => void
   closePosition: (claimFarmRewards?: boolean) => void
-  changeLiquidity: (liquidity: BN, slippage: BN, isAddLiquidity: boolean) => void
+  changeLiquidity: (
+    liquidity: BN,
+    slippage: BN,
+    isAddLiquidity: boolean,
+    xAmount?: BN,
+    yAmount?: BN
+  ) => void
   swapAndAddLiquidity: (
     xAmount: BN,
     yAmount: BN,

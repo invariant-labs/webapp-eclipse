@@ -781,7 +781,7 @@ const PortfolioWrapper = () => {
         )
       }}
       isTimeoutError={isTimeoutError}
-      changeLiquidity={(liquidity, slippage, isAddLiquidity) => {
+      changeLiquidity={(liquidity, slippage, isAddLiquidity, xAmount, yAmount) => {
         if (!position) {
           return
         }
@@ -791,7 +791,9 @@ const PortfolioWrapper = () => {
             actions.addLiquidity({
               positionIndex: position.positionIndex,
               liquidity,
-              slippage
+              slippage,
+              xAmount,
+              yAmount
             })
           )
         } else {
@@ -800,6 +802,8 @@ const PortfolioWrapper = () => {
               positionIndex: position.positionIndex,
               liquidity,
               slippage,
+              xAmount,
+              yAmount,
               onSuccess: () => {
                 navigate(ROUTES.PORTFOLIO)
 

@@ -75,7 +75,13 @@ export interface IChangeLiquidityModal {
   isLoadingAutoSwapPool: boolean
   isLoadingAutoSwapPoolTicksOrTickMap: boolean
   ticksData: PlotTickData[]
-  changeLiquidity: (liquidity: BN, slippage: BN, isAddLiquidity: boolean) => void
+  changeLiquidity: (
+    liquidity: BN,
+    slippage: BN,
+    isAddLiquidity: boolean,
+    xAmount?: BN,
+    yAmount?: BN
+  ) => void
   swapAndAddLiquidity: (
     xAmount: BN,
     yAmount: BN,

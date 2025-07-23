@@ -644,14 +644,16 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
             })
           )
         }}
-        changeLiquidity={(liquidity, slippage, isAddLiquidity) => {
+        changeLiquidity={(liquidity, slippage, isAddLiquidity, xAmount, yAmount) => {
           if (isPreview) return
           if (isAddLiquidity) {
             dispatch(
               actions.addLiquidity({
                 positionIndex: position.positionIndex,
                 liquidity,
-                slippage
+                slippage,
+                xAmount,
+                yAmount
               })
             )
           } else {
@@ -660,6 +662,8 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
                 positionIndex: position.positionIndex,
                 liquidity,
                 slippage,
+                xAmount,
+                yAmount,
                 onSuccess: () => {
                   if (lastPosition && nextPosition) {
                     navigate(ROUTES.getPositionRoute(lastPosition.id), { replace: true })

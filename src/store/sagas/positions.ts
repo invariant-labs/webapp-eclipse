@@ -3489,10 +3489,13 @@ function* handleAddLiquidityWithETH(action: PayloadAction<ChangeLiquidityData>):
 
     const net = networkTypetoProgramNetwork(networkType)
 
-    const { createIx, initIx, unwrapIx } = createNativeAtaInstructions(
+    const { createIx, initIx, transferIx, unwrapIx } = createNativeAtaWithTransferInstructions(
       wrappedEthAccount.publicKey,
       wallet.publicKey,
-      net
+      net,
+      allTokens[position.poolData.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS
+        ? data.xAmount
+        : data.yAmount
     )
 
     let userTokenX =
@@ -3521,7 +3524,7 @@ function* handleAddLiquidityWithETH(action: PayloadAction<ChangeLiquidityData>):
 
     const combinedTransaction = new Transaction()
 
-    combinedTransaction.add(createIx).add(initIx)
+    combinedTransaction.add(createIx).add(transferIx).add(initIx)
 
     const changeLiquidityIx = yield* call([marketProgram, marketProgram.changeLiquidityIx], {
       pair,
