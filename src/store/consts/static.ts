@@ -438,7 +438,7 @@ export const muES_MAIN: Token = {
   address: new PublicKey('A9qpp2Ejxvy7xE4JxLLqSsqMcjsPUAJpyHTbA2WDJ4E3'),
   decimals: 6,
   name: 'Mushi ES',
-  logoURI: '',
+  logoURI: 'https://app.mushi.fi/images/mushi-short-logo.svg',
   coingeckoId: ''
 }
 
