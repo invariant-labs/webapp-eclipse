@@ -11,9 +11,9 @@ export const useStyles = makeStyles()(() => ({
     border: `1px solid ${colors.invariant.light}`,
     padding: '10px 8px',
     borderRadius: 12,
-    width: 88,
-    color: colors.invariant.text,
-    maxWidth: '100%'
+    minWidth: 88,
+    flex: 1,
+    color: colors.invariant.text
   },
   green: {
     color: colors.invariant.green,

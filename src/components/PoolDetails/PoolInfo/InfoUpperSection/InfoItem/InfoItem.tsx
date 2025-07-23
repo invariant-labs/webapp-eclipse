@@ -31,7 +31,7 @@ export const InfoItem: React.FC<IProps> = ({
         </Typography>
       </Box>
       {isLoadingStats ? (
-        <Skeleton variant='rounded' height={17} width={80} animation='wave' />
+        <Skeleton variant='rounded' height={20} width={80} animation='wave' />
       ) : (
         <Typography style={typography.body2} noWrap>
           {poolUnavailable ? '-' : value}

@@ -55,6 +55,10 @@ export const useStyles = makeStyles()(() => ({
     position: 'relative',
     width: '100%',
     height: 335,
+
+    [theme.breakpoints.down(1200)]: {
+      height: 280
+    },
     '&::after': {
       content: '""',
       position: 'absolute',
