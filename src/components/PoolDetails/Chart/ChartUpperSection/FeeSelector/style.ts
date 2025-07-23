@@ -6,7 +6,8 @@ export const useStyles = makeStyles()(() => ({
     position: 'relative',
     width: 132,
     cursor: 'pointer',
-    alignSelf: 'end'
+    alignSelf: 'end',
+    zIndex: 100
   },
   selected: {
     color: colors.invariant.text,
@@ -16,7 +17,8 @@ export const useStyles = makeStyles()(() => ({
     alignItems: 'center',
     justifyContent: 'center',
     border: `2px solid ${colors.invariant.light}`,
-    borderRadius: 11
+    borderRadius: 11,
+    height: 24
   },
   selectedText: {
     ...typography.body1,

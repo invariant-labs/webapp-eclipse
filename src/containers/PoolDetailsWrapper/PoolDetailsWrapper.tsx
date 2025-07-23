@@ -4,6 +4,8 @@ import { isLoadingLatestPoolsForTransaction, poolsArraySortedByFees } from '@sto
 import { network } from '@store/selectors/solanaConnection'
 import { poolTokens, SwapToken } from '@store/selectors/solanaWallet'
 import {
+  addNewTokenToLocalStorage,
+  getNewTokenOrThrow,
   getTokenPrice,
   getTokenReserve,
   parseFeeToPathFee,
@@ -52,7 +54,7 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
   const navigate = useNavigate()
 
   const locationHistory = useSelector(address)
-
+  const connection = getCurrentSolanaConnection()
   const tokens = useSelector(poolTokens)
 
   const allPools = useSelector(poolsArraySortedByFees)
@@ -382,6 +384,71 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
     return { isDisabled, disabledFeeTiers }
   }, [tokenX, tokenY, fee, disabledPools])
 
+  const addTokenHandler = (address: string) => {
+    if (
+      connection !== null &&
+      tokens.findIndex(token => token.address.toString() === address) === -1
+    ) {
+      getNewTokenOrThrow(address, connection)
+        .then(data => {
+          dispatch(poolsActions.addTokens(data))
+
+          addNewTokenToLocalStorage(address, currentNetwork)
+          dispatch(
+            snackbarActions.add({
+              message: 'Token added',
+              variant: 'success',
+              persist: false
+            })
+          )
+        })
+        .catch(() => {
+          dispatch(
+            snackbarActions.add({
+              message: 'Token add failed',
+              variant: 'error',
+              persist: false
+            })
+          )
+        })
+    } else {
+      dispatch(
+        snackbarActions.add({
+          message: 'Token already in list',
+          variant: 'info',
+          persist: false
+        })
+      )
+    }
+  }
+
+  const setTokens = (tokenX: SwapToken, tokenY: SwapToken) => {
+    settokenX(tokenX)
+    settokenY(tokenY)
+
+    const address1 = tokenX?.symbol
+    const address2 = tokenY?.symbol
+    const parsedFee = parseFeeToPathFee(fee)
+
+    navigate(ROUTES.getPoolDetailsRoute(address1, address2, parsedFee))
+  }
+
+  const onCreateNewPool = () => {
+    dispatch(navigationActions.setNavigation({ address: location.pathname }))
+
+    const parsedFee = parseFeeToPathFee(fee)
+
+    navigate(
+      ROUTES.getNewPositionRoute(
+        tokenX?.assetAddress.toString(),
+        tokenY?.assetAddress.toString(),
+        parsedFee
+      ),
+      {
+        state: { referer: 'stats' }
+      }
+    )
+  }
   return (
     <PoolDetails
       network={currentNetwork}
@@ -412,6 +479,10 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
       switchFavouritePool={switchFavouritePool}
       isDisabled={isDisabled}
       disabledFeeTiers={disabledFeeTiers}
+      tokens={tokens}
+      setTokens={setTokens}
+      handleAddToken={addTokenHandler}
+      onCreateNewPool={onCreateNewPool}
     />
   )
 }

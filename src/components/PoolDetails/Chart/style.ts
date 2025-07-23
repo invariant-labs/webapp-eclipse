@@ -4,6 +4,9 @@ import { makeStyles } from 'tss-react/mui'
 export const useStyles = makeStyles()(theme => ({
   wrapper: {
     flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'stretch',
 
     [theme.breakpoints.down('md')]: {
       width: '100%'
@@ -11,6 +14,9 @@ export const useStyles = makeStyles()(theme => ({
   },
 
   container: {
+    display: 'flex',
+    flexDirection: 'column',
+    flex: 1,
     background: colors.invariant.component,
     padding: 24,
     borderRadius: 24,

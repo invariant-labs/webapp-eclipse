@@ -6,6 +6,7 @@ export const useStyles = makeStyles()(theme => ({
     display: 'flex',
     flexDirection: 'column',
     width: 500,
+    minHeight: 642,
     [theme.breakpoints.down('md')]: {
       width: '100%'
     }

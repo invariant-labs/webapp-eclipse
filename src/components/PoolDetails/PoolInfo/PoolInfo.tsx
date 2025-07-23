@@ -10,6 +10,7 @@ import { TokenReserve } from '@store/consts/types'
 import TokenInfo from './TokenInfo/TokenInfo'
 import { VariantType } from 'notistack'
 import { refreshIcon, star, starFill } from '@static/icons'
+import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
 
 export interface IPros {
   interval: IntervalsKeys
@@ -26,6 +27,8 @@ export interface IPros {
   isFavourite: boolean
   switchFavouritePool: () => void
   isPoolDataLoading: boolean
+  poolAddress: string
+  noData: boolean
 }
 
 export const PoolInfo: React.FC<IPros> = ({
@@ -42,7 +45,9 @@ export const PoolInfo: React.FC<IPros> = ({
   onRefresh,
   isFavourite,
   switchFavouritePool,
-  isPoolDataLoading
+  isPoolDataLoading,
+  poolAddress,
+  noData
 }) => {
   const { classes } = useStyles()
   const tokenXUsdAmount = tokenXReserve ? prices.tokenX * tokenXReserve.uiAmount : 0
@@ -64,14 +69,16 @@ export const PoolInfo: React.FC<IPros> = ({
       <Box display='flex' justifyContent='space-between' alignItems='center'>
         <Typography className={classes.header}>Pool Info</Typography>
         <Box display='flex' alignItems='center' gap={'8px'}>
-          <img
-            className={classes.favouriteButton}
-            src={isFavourite ? starFill : star}
-            onClick={e => {
-              switchFavouritePool()
-              e.stopPropagation()
-            }}
-          />
+          {!noData && (
+            <img
+              className={classes.favouriteButton}
+              src={isFavourite ? starFill : star}
+              onClick={e => {
+                switchFavouritePool()
+                e.stopPropagation()
+              }}
+            />
+          )}
           <Button onClick={onRefresh} className={classes.refreshIconBtn}>
             <img src={refreshIcon} className={classes.refreshIcon} alt='Refresh' />
           </Button>
@@ -79,38 +86,54 @@ export const PoolInfo: React.FC<IPros> = ({
       </Box>
 
       <Grid className={classes.container}>
-        <InfoUpperSection
-          interval={interval}
-          statsPoolData={statsPoolData}
-          isLoadingStats={isLoadingStats}
-        />
-        <Box className={classes.separator} />
+        {!noData ? (
+          <>
+            <InfoUpperSection
+              interval={interval}
+              statsPoolData={statsPoolData}
+              isLoadingStats={isLoadingStats}
+              poolAddress={poolAddress}
+            />
+            <Box className={classes.separator} />
 
-        <PercentageScale
-          tokenX={tokenX}
-          tokenY={tokenY}
-          tokenXPercentage={tokenXPercentage}
-          tokenYPercentage={tokenYPercentage}
-          isPoolDataLoading={isPoolDataLoading}
-        />
-        <Box display='flex' gap='20px' flexDirection='column' mt={'20px'}>
-          <TokenInfo
-            token={tokenX}
-            copyAddressHandler={copyAddressHandler}
-            network={network}
-            amount={tokenXReserve?.uiAmount}
-            price={prices.tokenX}
-            isPoolDataLoading={isPoolDataLoading}
+            <PercentageScale
+              tokenX={tokenX}
+              tokenY={tokenY}
+              tokenXPercentage={tokenXPercentage}
+              tokenYPercentage={tokenYPercentage}
+              isPoolDataLoading={isPoolDataLoading}
+            />
+            <Box display='flex' gap='20px' flexDirection='column' mt={'20px'}>
+              <TokenInfo
+                token={tokenX}
+                copyAddressHandler={copyAddressHandler}
+                network={network}
+                amount={tokenXReserve?.uiAmount}
+                price={prices.tokenX}
+                isPoolDataLoading={isPoolDataLoading}
+              />
+              <TokenInfo
+                token={tokenY}
+                copyAddressHandler={copyAddressHandler}
+                network={network}
+                amount={tokenYReserve?.uiAmount}
+                price={prices.tokenY}
+                isPoolDataLoading={isPoolDataLoading}
+              />
+            </Box>
+          </>
+        ) : (
+          <EmptyPlaceholder
+            mainTitle='Pool info not found'
+            desc=''
+            newVersion
+            roundedCorners
+            withButton={false}
+            desc2=''
+            height={'100%'}
+            withImg={false}
           />
-          <TokenInfo
-            token={tokenY}
-            copyAddressHandler={copyAddressHandler}
-            network={network}
-            amount={tokenYReserve?.uiAmount}
-            price={prices.tokenY}
-            isPoolDataLoading={isPoolDataLoading}
-          />
-        </Box>
+        )}
       </Grid>
     </Grid>
   )

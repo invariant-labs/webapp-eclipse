@@ -8,9 +8,16 @@ export interface IProps {
   name: string
   value: string | number
   isGreen?: boolean
+  poolUnavailable: boolean
 }
 
-export const InfoItem: React.FC<IProps> = ({ isLoadingStats, name, value, isGreen }) => {
+export const InfoItem: React.FC<IProps> = ({
+  isLoadingStats,
+  name,
+  value,
+  isGreen,
+  poolUnavailable
+}) => {
   const { classes, cx } = useStyles()
 
   return (
@@ -25,7 +32,7 @@ export const InfoItem: React.FC<IProps> = ({ isLoadingStats, name, value, isGree
       {isLoadingStats ? (
         <Skeleton variant='rounded' height={17} width={80} animation='wave' />
       ) : (
-        <Typography style={typography.caption2}>{value}</Typography>
+        <Typography style={typography.caption2}>{poolUnavailable ? '-' : value}</Typography>
       )}
     </Box>
   )

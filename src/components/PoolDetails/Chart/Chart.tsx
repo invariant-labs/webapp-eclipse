@@ -9,6 +9,7 @@ import ChartLowerSection from './ChartLowerSection/ChartLowerSection'
 import { Intervals as IntervalsKeys } from '@store/consts/static'
 import { PoolChartSwitch } from '@store/consts/types'
 import { VariantType } from 'notistack'
+import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
 
 export interface IProps {
   poolAddress: string
@@ -32,6 +33,13 @@ export interface IProps {
   feeTierIndex: number
   isDisabled: boolean
   disabledFeeTiers: string[]
+  tokens: SwapToken[]
+  setTokens: (tokenX: SwapToken, tokenY: SwapToken) => void
+  handleAddToken: (address: string) => void
+  initialHideUnknownTokensValue: boolean
+  setHideUnknownTokensValue: (value: boolean) => void
+  noData: boolean
+  onCreateNewPool: () => void
 }
 
 export const Chart: React.FC<IProps> = ({
@@ -55,13 +63,20 @@ export const Chart: React.FC<IProps> = ({
   totalTvl,
   feeTierIndex,
   isDisabled,
-  disabledFeeTiers
+  disabledFeeTiers,
+  tokens,
+  setTokens,
+  handleAddToken,
+  initialHideUnknownTokensValue,
+  setHideUnknownTokensValue,
+  noData,
+  onCreateNewPool
 }) => {
   const { classes } = useStyles()
 
   return (
     <Grid className={classes.wrapper}>
-      <Typography className={classes.header}>Chart</Typography>
+      <Typography className={classes.header}>Pool Details</Typography>
       <Box className={classes.container}>
         <ChartUpperSection
           copyAddressHandler={copyAddressHandler}
@@ -79,16 +94,37 @@ export const Chart: React.FC<IProps> = ({
           feeTierIndex={feeTierIndex}
           isDisabled={isDisabled}
           disabledFeeTiers={disabledFeeTiers}
+          tokens={tokens}
+          setTokens={setTokens}
+          handleAddToken={handleAddToken}
+          initialHideUnknownTokensValue={initialHideUnknownTokensValue}
+          setHideUnknownTokensValue={setHideUnknownTokensValue}
+          noData={noData}
         />
         <Box className={classes.separator} />
-        <ChartLowerSection
-          statsPoolData={statsPoolData}
-          interval={interval}
-          isLoading={isLoadingStats}
-          lastStatsTimestamp={lastStatsTimestamp}
-          setChartType={setChartType}
-          updateInterval={updateInterval}
-        />
+        {noData ? (
+          <EmptyPlaceholder
+            height={426}
+            newVersion
+            mainTitle={`The ${tokenX?.symbol}/${tokenY?.symbol ?? ''} pool was not found...`}
+            desc={'You can create it by yourself!'}
+            desc2={'Or try to change tokens to find one!'}
+            buttonName='Create Pool'
+            onAction={onCreateNewPool}
+            withButton={true}
+            withImg={true}
+            roundedCorners
+          />
+        ) : (
+          <ChartLowerSection
+            statsPoolData={statsPoolData}
+            interval={interval}
+            isLoading={isLoadingStats}
+            lastStatsTimestamp={lastStatsTimestamp}
+            setChartType={setChartType}
+            updateInterval={updateInterval}
+          />
+        )}
       </Box>
     </Grid>
   )

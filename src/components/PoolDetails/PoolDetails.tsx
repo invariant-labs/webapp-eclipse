@@ -41,6 +41,10 @@ export interface IProps {
   switchFavouritePool: () => void
   isDisabled: boolean
   disabledFeeTiers: string[]
+  tokens: SwapToken[]
+  setTokens: (tokenX: SwapToken, tokenY: SwapToken) => void
+  handleAddToken: (address: string) => void
+  onCreateNewPool: () => void
 }
 
 export const PoolDetails: React.FC<IProps> = ({
@@ -71,9 +75,21 @@ export const PoolDetails: React.FC<IProps> = ({
   isFavourite,
   switchFavouritePool,
   isDisabled,
-  disabledFeeTiers
+  disabledFeeTiers,
+  tokens,
+  setTokens,
+  handleAddToken,
+  onCreateNewPool
 }) => {
   const { classes } = useStyles()
+
+  const initialHideUnknownTokensValue =
+    localStorage.getItem('HIDE_UNKNOWN_TOKENS') === 'true' ||
+    localStorage.getItem('HIDE_UNKNOWN_TOKENS') === null
+
+  const setHideUnknownTokensValue = (val: boolean) => {
+    localStorage.setItem('HIDE_UNKNOWN_TOKENS', val ? 'true' : 'false')
+  }
 
   return (
     <Grid className={classes.wrapper}>
@@ -104,6 +120,13 @@ export const PoolDetails: React.FC<IProps> = ({
           feeTierIndex={feeTierIndex}
           isDisabled={isDisabled}
           disabledFeeTiers={disabledFeeTiers}
+          tokens={tokens}
+          setTokens={setTokens}
+          handleAddToken={handleAddToken}
+          initialHideUnknownTokensValue={initialHideUnknownTokensValue}
+          setHideUnknownTokensValue={setHideUnknownTokensValue}
+          noData={!poolData?.address.toString() && !isPoolDataLoading && !isLoadingStats}
+          onCreateNewPool={onCreateNewPool}
         />
         <PoolInfo
           interval={interval}
@@ -120,6 +143,8 @@ export const PoolDetails: React.FC<IProps> = ({
           isFavourite={isFavourite}
           switchFavouritePool={switchFavouritePool}
           isPoolDataLoading={isPoolDataLoading}
+          poolAddress={poolData?.address.toString() ?? ''}
+          noData={!poolData?.address.toString() && !isPoolDataLoading && !isLoadingStats}
         />
       </Grid>
       {/* <Transactions /> */}

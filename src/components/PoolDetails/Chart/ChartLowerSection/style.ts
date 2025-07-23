@@ -4,7 +4,11 @@ import { makeStyles } from 'tss-react/mui'
 export const useStyles = makeStyles()(() => ({
   container: {
     borderRadius: 24,
-    boxSizing: 'border-box'
+    boxSizing: 'border-box',
+    display: 'flex',
+    flexDirection: 'column',
+    flex: 1,
+    justifyContent: 'space-between'
   },
   volumeContainer: {
     display: 'flex',

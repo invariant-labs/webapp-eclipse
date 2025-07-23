@@ -1,13 +1,15 @@
 import { colors, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
-export const useStyles = makeStyles()(theme => ({
+export const useStyles = makeStyles<{ noData: boolean }>()((theme, { noData }) => ({
   upperContainer: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
     minHeight: 71,
     flexDirection: 'row',
+    rowGap: 8,
+
     [theme.breakpoints.down(1200)]: {
       flexDirection: 'column',
       alignItems: 'flex-start'
@@ -20,7 +22,7 @@ export const useStyles = makeStyles()(theme => ({
     [theme.breakpoints.down(1200)]: {
       flexDirection: 'row-reverse',
       alignItems: 'flex-end',
-      justifyContent: 'space-between',
+      justifyContent: noData ? 'flex-end' : 'space-between',
       width: '100%',
       height: 'auto'
     }
@@ -70,6 +72,30 @@ export const useStyles = makeStyles()(theme => ({
       cursor: 'pointer',
       '@media (hover: none)': {
         filter: 'none'
+      }
+    }
+  },
+  selectContainer: {
+    [theme.breakpoints.down('sm')]: {
+      width: '100%'
+    }
+  },
+  customSelect: {
+    justifyContent: 'flex-start',
+    border: 'none',
+    backgroundColor: colors.invariant.componentBcg,
+    borderRadius: 13,
+    paddingInline: 13,
+    height: 44,
+    flex: 1,
+    '& .selectArrow': {
+      marginLeft: 'auto'
+    },
+
+    '&:hover': {
+      backgroundColor: colors.invariant.light,
+      '@media (hover: none)': {
+        backgroundColor: colors.invariant.componentBcg
       }
     }
   }

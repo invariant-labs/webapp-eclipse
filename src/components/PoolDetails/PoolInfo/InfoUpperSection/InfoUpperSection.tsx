@@ -10,9 +10,15 @@ export interface IProps {
   statsPoolData: PoolSnap
   interval: IntervalsKeys
   isLoadingStats: boolean
+  poolAddress: string
 }
 
-export const InfoUpperSection: React.FC<IProps> = ({ statsPoolData, interval, isLoadingStats }) => {
+export const InfoUpperSection: React.FC<IProps> = ({
+  statsPoolData,
+  interval,
+  isLoadingStats,
+  poolAddress
+}) => {
   const intervalSuffix = mapIntervalToString(interval)
 
   return (
@@ -28,6 +34,7 @@ export const InfoUpperSection: React.FC<IProps> = ({ statsPoolData, interval, is
             }
             isLoadingStats={isLoadingStats}
             isGreen
+            poolUnavailable={!poolAddress}
           />
         </Grid>
         <Grid item>
@@ -35,6 +42,7 @@ export const InfoUpperSection: React.FC<IProps> = ({ statsPoolData, interval, is
             name={`TVL (${intervalSuffix})`}
             value={`${formatNumberWithoutSuffix(statsPoolData.tvl)}USD`}
             isLoadingStats={isLoadingStats}
+            poolUnavailable={!poolAddress}
           />
         </Grid>{' '}
       </Grid>
@@ -44,6 +52,7 @@ export const InfoUpperSection: React.FC<IProps> = ({ statsPoolData, interval, is
             name={`Volume (${intervalSuffix})`}
             value={`${formatNumberWithoutSuffix(statsPoolData.volume)}USD`}
             isLoadingStats={isLoadingStats}
+            poolUnavailable={!poolAddress}
           />
         </Grid>
         <Grid item>
@@ -51,6 +60,7 @@ export const InfoUpperSection: React.FC<IProps> = ({ statsPoolData, interval, is
             name={`Fees (${intervalSuffix})`}
             value={`${formatNumberWithoutSuffix(statsPoolData.fees)}USD`}
             isLoadingStats={isLoadingStats}
+            poolUnavailable={!poolAddress}
           />
         </Grid>
       </Grid>
