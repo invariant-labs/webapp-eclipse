@@ -3,7 +3,12 @@ import { Box, Grid, Skeleton, Typography, useMediaQuery } from '@mui/material'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { horizontalSwapIcon, plusDisabled, plusIcon } from '@static/icons'
 import { colors, theme, typography } from '@static/theme'
-import { commonTokensForNetworks, NetworkType, promotedTiers } from '@store/consts/static'
+import {
+  commonTokensForNetworks,
+  DOGWIFHAT_MAIN,
+  NetworkType,
+  promotedTiers
+} from '@store/consts/static'
 import { NewTabIcon } from '@static/componentIcon/NewTabIcon'
 import { CopyIcon } from '@static/componentIcon/CopyIcon'
 import { SwapToken } from '@store/selectors/solanaWallet'

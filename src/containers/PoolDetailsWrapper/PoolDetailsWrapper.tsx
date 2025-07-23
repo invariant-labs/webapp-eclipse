@@ -5,6 +5,7 @@ import { network } from '@store/selectors/solanaConnection'
 import { poolTokens, SwapToken } from '@store/selectors/solanaWallet'
 import {
   addNewTokenToLocalStorage,
+  addressToTicker,
   getNewTokenOrThrow,
   getTokenPrice,
   getTokenReserve,
@@ -336,11 +337,12 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
 
     const fee = ALL_FEE_TIERS_DATA[index].tier.fee
 
-    const address1 = tokenX?.symbol
-    const address2 = tokenY?.symbol
+    const tokenA = addressToTicker(currentNetwork, tokenX?.assetAddress.toString() ?? '')
+    const tokenB = addressToTicker(currentNetwork, tokenY?.assetAddress.toString() ?? '')
+
     const parsedFee = parseFeeToPathFee(fee)
 
-    navigate(ROUTES.getPoolDetailsRoute(address1, address2, parsedFee))
+    navigate(ROUTES.getPoolDetailsRoute(tokenA, tokenB, parsedFee))
   }
 
   const handleBack = () => {
@@ -434,11 +436,11 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
     settokenX(tokenX)
     settokenY(tokenY)
 
-    const address1 = tokenX?.symbol
-    const address2 = tokenY?.symbol
+    const tokenA = addressToTicker(currentNetwork, tokenX?.assetAddress.toString() ?? '')
+    const tokenB = addressToTicker(currentNetwork, tokenY?.assetAddress.toString() ?? '')
     const parsedFee = parseFeeToPathFee(fee)
 
-    navigate(ROUTES.getPoolDetailsRoute(address1, address2, parsedFee))
+    navigate(ROUTES.getPoolDetailsRoute(tokenA, tokenB, parsedFee))
   }
 
   const onCreateNewPool = () => {
