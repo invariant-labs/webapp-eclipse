@@ -86,6 +86,7 @@ export const useStyles = makeStyles<{ noData: boolean }>()((theme, { noData }) =
     paddingInline: 13,
     height: 44,
     flex: 1,
+    minWidth: 130,
     '& .selectArrow': {
       marginLeft: 'auto'
     },
