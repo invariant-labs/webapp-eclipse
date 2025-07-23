@@ -278,6 +278,8 @@ export const ChangeLiquidityModal: React.FC<IChangeLiquidityModal> = ({
               success={success}
               inProgress={inProgress}
               setChangeLiquiditySuccess={setChangeLiquiditySuccess}
+              tokenXLiquidity={tokenX.liqValue}
+              tokenYLiquidity={tokenY.liqValue}
             />
           ) : (
             <RemoveLiquidity

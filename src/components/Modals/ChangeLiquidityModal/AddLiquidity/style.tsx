@@ -389,6 +389,23 @@ export const useStyles = makeStyles()(theme => {
     },
     deposit: {
       marginRight: 24
+    },
+    positionAfter: {
+      color: colors.invariant.textGrey,
+      display: 'flex',
+      gap: 4
+    },
+    positionAfterValue: {
+      color: colors.white.main,
+      fontWeight: 'bold',
+      display: 'flex',
+      alignItems: 'center',
+      gap: 4
+    },
+    smallIcon: {
+      marginTop: -2,
+      width: 16,
+      height: 16
     }
   }
 })

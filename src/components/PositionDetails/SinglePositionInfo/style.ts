@@ -66,18 +66,18 @@ export const useStyles = makeStyles()(() => ({
     }
   },
   liquidityButtonPlusDisabled: {
-    background: colors.invariant.textGrey,
-    borderColor: colors.invariant.textGrey,
+    background: colors.invariant.light,
+    borderColor: colors.invariant.light,
 
     '&.Mui-disabled': {
-      color: colors.invariant.dark
+      color: colors.invariant.component
     }
   },
   liquidityButtonMinusDisabled: {
-    borderColor: colors.invariant.textGrey,
+    borderColor: colors.invariant.light,
 
     '&.Mui-disabled': {
-      color: colors.invariant.text
+      color: colors.invariant.light
     }
   },
   liquidityButtonIcon: {

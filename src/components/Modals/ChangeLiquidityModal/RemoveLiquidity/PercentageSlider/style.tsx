@@ -33,7 +33,7 @@ export const useSliderStyles = makeStyles<{
   },
   rail: {
     background: `linear-gradient(90deg, ${colors.invariant.green} 0%, ${
-      colors.invariant.green
+      colors.invariant.textGrey
     } ${value}%, #256963 ${value + 1}%, #256963 100%)`,
     height: 4,
     opacity: 1

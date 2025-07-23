@@ -69,7 +69,7 @@ import { blurContent, createButtonActions } from '@utils/uiUtils'
 import { useStyles } from './style'
 import { theme } from '@static/theme'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
-import { infoIcon, settingIcon } from '@static/icons'
+import { infoIcon, settingIcon, unknownTokenIcon } from '@static/icons'
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
 import DepoSitOptionsModal from '@components/Modals/DepositOptionsModal/DepositOptionsModal'
 import DepositAmountInput from '@components/Inputs/DepositAmountInput/DepositAmountInput'
@@ -129,6 +129,8 @@ export interface IProps {
   success: boolean
   inProgress: boolean
   setChangeLiquiditySuccess: (value: boolean) => void
+  tokenXLiquidity: number
+  tokenYLiquidity: number
 }
 
 export const AddLiquidity: React.FC<IProps> = ({
@@ -158,7 +160,9 @@ export const AddLiquidity: React.FC<IProps> = ({
   swapAndAddLiquidity,
   success,
   inProgress,
-  setChangeLiquiditySuccess
+  setChangeLiquiditySuccess,
+  tokenXLiquidity,
+  tokenYLiquidity
 }) => {
   const dispatch = useDispatch()
 
@@ -1748,6 +1752,48 @@ export const AddLiquidity: React.FC<IProps> = ({
             isBalanceLoading={isBalanceLoading}
             walletUninitialized={walletStatus !== Status.Initialized}
           />
+        </Box>
+        <Box className={classes.positionAfter}>
+          Your position after deposit:{' '}
+          <span className={classes.positionAfterValue}>
+            {tokenAIndex !== null
+              ? formatNumberWithoutSuffix(
+                  tokenXLiquidity +
+                    (isAutoswapOn
+                      ? +printBN(simulation?.position.x, xDecimal)
+                      : +tokenAInputState.value)
+                )
+              : 0}{' '}
+            {tokenAIndex !== null ? (
+              <img
+                className={classes.smallIcon}
+                src={tokens[tokenAIndex].logoURI}
+                alt={`${tokens[tokenAIndex].name} icon`}
+              />
+            ) : (
+              <img className={classes.smallIcon} src={unknownTokenIcon} alt='unknown icon' />
+            )}
+          </span>
+          {', '}
+          <span className={classes.positionAfterValue}>
+            {tokenBIndex !== null
+              ? formatNumberWithoutSuffix(
+                  tokenYLiquidity +
+                    (isAutoswapOn
+                      ? +printBN(simulation?.position.y, yDecimal)
+                      : +tokenBInputState.value)
+                )
+              : 0}{' '}
+            {tokenBIndex !== null ? (
+              <img
+                className={classes.smallIcon}
+                src={tokens[tokenBIndex].logoURI}
+                alt={`${tokens[tokenBIndex].name} icon`}
+              />
+            ) : (
+              <img className={classes.smallIcon} src={unknownTokenIcon} alt='unknown icon' />
+            )}
+          </span>
         </Box>
       </Grid>
       <Box className={classes.totalDepositCard}>

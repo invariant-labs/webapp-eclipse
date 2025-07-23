@@ -16,7 +16,12 @@ export const useStyles = makeStyles()(theme => ({
     maxWidth: 416,
 
     [theme.breakpoints.down('sm')]: {
-      padding: 8
+      width: 'calc(100% - 16px)',
+      padding: 8,
+      borderRadius: 0,
+      maxWidth: '100%',
+      minHeight: '100%',
+      inset: 0
     }
   },
   container: {

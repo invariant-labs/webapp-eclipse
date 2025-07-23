@@ -43,6 +43,7 @@ import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButt
 import DepositAmountInput from '@components/Inputs/DepositAmountInput/DepositAmountInput'
 import { InputState } from '@components/NewPosition/DepositSelector/DepositSelector'
 import { PercentageSlider } from './PercentageSlider/PercentageSlider'
+import { unknownTokenIcon } from '@static/icons'
 
 export interface IProps {
   tokenFrom: PublicKey
@@ -649,14 +650,8 @@ export const RemoveLiquidity: React.FC<IProps> = ({
     }
 
     if (
-      (!tokenAInputState.blocked &&
-        convertBalanceToBN(tokenAInputState.value, tokens[tokenAIndex].decimals).gt(
-          convertBalanceToBN(tokenXLiquidity.toString(), tokens[tokenAIndex].decimals)
-        )) ||
-      (!tokenBInputState.blocked &&
-        convertBalanceToBN(tokenBInputState.value, tokens[tokenBIndex].decimals).gt(
-          convertBalanceToBN(tokenYLiquidity.toString(), tokens[tokenBIndex].decimals)
-        ))
+      (!tokenAInputState.blocked && +tokenAInputState.value > tokenXLiquidity) ||
+      (!tokenBInputState.blocked && +tokenBInputState.value > tokenYLiquidity)
     ) {
       return `Not enough ${tokens[tokenAIndex].symbol} and ${tokens[tokenBIndex].symbol}`
     }
@@ -877,6 +872,38 @@ export const RemoveLiquidity: React.FC<IProps> = ({
             walletUninitialized={walletStatus !== Status.Initialized}
           />
         </Box>
+        <Box className={classes.positionAfter}>
+          Your position after withdraw:{' '}
+          <span className={classes.positionAfterValue}>
+            {tokenAIndex !== null
+              ? formatNumberWithoutSuffix(tokenXLiquidity - +tokenAInputState.value)
+              : 0}{' '}
+            {tokenAIndex !== null ? (
+              <img
+                className={classes.smallIcon}
+                src={tokens[tokenAIndex].logoURI}
+                alt={`${tokens[tokenAIndex].name} icon`}
+              />
+            ) : (
+              <img className={classes.smallIcon} src={unknownTokenIcon} alt='unknown icon' />
+            )}
+          </span>
+          {', '}
+          <span className={classes.positionAfterValue}>
+            {tokenBIndex !== null
+              ? formatNumberWithoutSuffix(tokenYLiquidity - +tokenBInputState.value)
+              : 0}{' '}
+            {tokenBIndex !== null ? (
+              <img
+                className={classes.smallIcon}
+                src={tokens[tokenBIndex].logoURI}
+                alt={`${tokens[tokenBIndex].name} icon`}
+              />
+            ) : (
+              <img className={classes.smallIcon} src={unknownTokenIcon} alt='unknown icon' />
+            )}
+          </span>
+        </Box>
       </Grid>
       <Box className={classes.totalDepositCard}>
         <Typography className={classes.totalDepositTitle}>Total withdraw</Typography>
@@ -933,7 +960,7 @@ export const RemoveLiquidity: React.FC<IProps> = ({
             disabled={getButtonMessage() !== 'Remove Liquidity'}
             content={
               getButtonMessage() === 'Remove Liquidity'
-                ? depositPercentage === 100
+                ? +tokenAInputState.value === tokenXLiquidity
                   ? 'Close Position'
                   : 'Remove Liquidity'
                 : getButtonMessage()

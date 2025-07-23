@@ -404,6 +404,23 @@ export const useStyles = makeStyles()(theme => {
     sliderValue: {
       ...typography.caption4,
       color: colors.invariant.textGrey
+    },
+    positionAfter: {
+      color: colors.invariant.textGrey,
+      display: 'flex',
+      gap: 4
+    },
+    positionAfterValue: {
+      color: colors.white.main,
+      fontWeight: 'bold',
+      display: 'flex',
+      alignItems: 'center',
+      gap: 4
+    },
+    smallIcon: {
+      marginTop: -2,
+      width: 16,
+      height: 16
     }
   }
 })
