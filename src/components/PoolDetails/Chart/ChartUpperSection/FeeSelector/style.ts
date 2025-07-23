@@ -51,9 +51,6 @@ export const useStyles = makeStyles()(() => ({
     zIndex: 1,
     overflow: 'hidden'
   },
-  optionBorder: {
-    // width: '100%'
-  },
   option: {
     padding: '10px 14px',
     display: 'flex',
