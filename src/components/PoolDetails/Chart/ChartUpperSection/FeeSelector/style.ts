@@ -6,7 +6,7 @@ export const useStyles = makeStyles()(() => ({
     position: 'relative',
     cursor: 'pointer',
     alignSelf: 'end',
-    zIndex: 100
+    zIndex: 10
   },
   selected: {
     color: colors.invariant.text,
