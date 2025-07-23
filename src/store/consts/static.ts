@@ -996,6 +996,12 @@ export enum ErrorCodeExtractionKeys {
   Dot = '.'
 }
 
+export enum inputTarget {
+  DEFAULT = 'default',
+  FROM = 'from',
+  TO = 'to'
+}
+
 const SLIPPAGE_ERROR_MESSAGE = 'Price changed – increase slippage or retry'
 
 export const ERROR_CODE_TO_MESSAGE: Record<number, string> = {

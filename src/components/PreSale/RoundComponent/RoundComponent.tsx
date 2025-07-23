@@ -37,10 +37,14 @@ interface RoundComponentProps {
   walletStatus: Status
   priceFormat: 'token-to-usdc' | 'usdc-to-token'
   roundName?: string
+  saleEnded: boolean
+  saleSoldOut: boolean
 }
 
 export const RoundComponent: React.FC<RoundComponentProps> = ({
   isActive,
+  saleEnded,
+  saleSoldOut,
   saleDidNotStart,
   targetAmount,
   amountDeposited,
@@ -53,7 +57,6 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
   userDepositedAmount,
   userRemainingAllocation,
   mintDecimals,
-  proofOfInclusion,
   roundNumber,
   isLoadingSaleStats,
   isLoadingUserStats,
@@ -118,12 +121,14 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
   return (
     <Box className={classes.container}>
       <Box className={classes.roundTitleContainer}>
-        <Typography className={classes.roundText}>Current phase:</Typography>
         {isLoadingSaleStats ? (
-          <Skeleton variant='text' width={135} height={24} />
-        ) : (
-          <Typography className={classes.roundTitle}>{roundName?.toUpperCase()}</Typography>
-        )}
+          <Skeleton variant='text' width={235} height={24} />
+        ) : !saleEnded ? (
+          <>
+            <Typography className={classes.roundText}>Current phase:</Typography>
+            <Typography className={classes.roundTitle}>{roundName?.toUpperCase()}</Typography>
+          </>
+        ) : null}
       </Box>
 
       {!isActive && (
@@ -178,10 +183,12 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
                 <Typography className={classes.infoLabel}>Total raised</Typography>
                 {renderFormattedNumberWithSkeleton(amountDeposited, mintDecimals, '$', '', '100px')}
               </Box>
-              <Box className={classes.infoRow}>
-                <Typography className={classes.infoLabel}>Target raise</Typography>
-                {renderFormattedNumberWithSkeleton(targetAmount, mintDecimals, '$', '', '100px')}
-              </Box>
+              {!saleEnded && !saleSoldOut && (
+                <Box className={classes.infoRow}>
+                  <Typography className={classes.infoLabel}>Target raise</Typography>
+                  {renderFormattedNumberWithSkeleton(targetAmount, mintDecimals, '$', '', '100px')}
+                </Box>
+              )}
               {/* <Box className={classes.infoRow}>
                 <Typography className={classes.infoLabel}>
                   <Box mr={'2px'}>Upper limit</Box>
@@ -270,10 +277,10 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
           )}
         </Box>
 
-        {!isLastRound && (
+        {!isLastRound && !saleEnded && (
           <Box className={classes.infoRow}>
             <Typography className={classes.secondaryLabel}>Remaining limit</Typography>
-            {!saleDidNotStart && walletStatus === Status.Initialized && !!proofOfInclusion ? (
+            {!saleDidNotStart && walletStatus === Status.Initialized ? (
               <Typography className={classes.value}>
                 {renderFormattedNumberWithSkeleton(
                   userRemainingAllocation,
