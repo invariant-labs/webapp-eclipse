@@ -6,7 +6,7 @@ export const useStyles = makeStyles()(() => ({
     position: 'relative',
     cursor: 'pointer',
     alignSelf: 'end',
-    zIndex: 10
+    zIndex: 15
   },
   selected: {
     color: colors.invariant.text,
@@ -48,7 +48,7 @@ export const useStyles = makeStyles()(() => ({
     backgroundColor: colors.invariant.component,
     borderRadius: 16,
     boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
-    zIndex: 10,
+    zIndex: 1,
     overflow: 'hidden'
   },
   optionBorder: {
