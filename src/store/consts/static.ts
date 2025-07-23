@@ -93,6 +93,17 @@ export const WETH_DEV: Token = {
   coingeckoId: 'bridged-wrapped-ether-eclipse'
 }
 
+export const SALE_TEST: Token = {
+  tokenProgram: TOKEN_2022_PROGRAM_ID,
+  symbol: 'USDC',
+  address: new PublicKey('HqVpi4A8pXFV2kY7338mrczetd3LMQVJ5YSMfjVX5hak'),
+  decimals: 6,
+  name: 'USD Coin',
+  logoURI:
+    'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
+  coingeckoId: 'usd-coin'
+}
+
 export const USDC_TEST: Token = {
   tokenProgram: TOKEN_PROGRAM_ID,
   symbol: 'USDC',
@@ -796,8 +807,8 @@ export const getReversedAddressTickerMap = (network: NetworkType) => {
 export const MINIMAL_POOL_INIT_PRICE = 0.00000001
 
 export const DEFAULT_SWAP_SLIPPAGE = '0.50'
-export const DEFAULT_NEW_POSITION_SLIPPAGE = '0.50'
-export const DEFAULT_AUTOSWAP_MAX_PRICE_IMPACT = '0.50'
+export const DEFAULT_NEW_POSITION_SLIPPAGE = '2.00'
+export const DEFAULT_AUTOSWAP_MAX_PRICE_IMPACT = '2.00'
 export const DEFAULT_AUTOSWAP_MIN_UTILIZATION = '95.00'
 export const DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_CREATE_POSITION = '2.50'
 export const DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_SWAP = '0.50'
@@ -970,6 +981,7 @@ export enum OverviewSwitcher {
 export const STATS_CACHE_TIME = 30 * 60 * 1000
 export const LEADERBOARD_API_URL = 'https://api.invariant.app/api'
 export const PRICE_API_URL = 'https://api.invariant.app/price'
+export const CHECKER_API_URL = 'https://api.invariant.app/check'
 
 export enum AutoswapCustomError {
   FetchError = 0
@@ -982,6 +994,12 @@ export enum ErrorCodeExtractionKeys {
   UndefinedOnSplit = "Cannot read properties of undefined (reading 'split')",
   RightBracket = '}',
   Dot = '.'
+}
+
+export enum inputTarget {
+  DEFAULT = 'default',
+  FROM = 'from',
+  TO = 'to'
 }
 
 const SLIPPAGE_ERROR_MESSAGE = 'Price changed – increase slippage or retry'
@@ -1135,6 +1153,9 @@ export const ES_ETH_POOLS = {
   '0_03': '6ciuuX2AZ3RFU6fJh2XrzJurZdRWuDeMonNsb7xzztp1'
 }
 export const POOLS_TO_HIDE_POINTS_PER_24H: string[] = [
-  ES_ETH_POOLS['0_03'],
-  '8gSs6K4NVZSh4Rd5ABcNTos5sJ6wVRTR4xr5LgNLMt58'
+  // ES_ETH_POOLS['0_03'],
+  // '8gSs6K4NVZSh4Rd5ABcNTos5sJ6wVRTR4xr5LgNLMt58'
 ]
+
+export const PROOF_OF_INCLUSION_CACHE_KEY = 'PROOF_OF_INCLUSION_V2'
+export const PROOF_OF_INCLUSION_CACHE_TTL = 1000 * 60 * 60 * 1 // 1 hour

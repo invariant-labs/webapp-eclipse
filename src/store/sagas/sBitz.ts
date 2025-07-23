@@ -52,7 +52,7 @@ export function* handleStake(action: PayloadAction<StakeLiquidityPayload>) {
   const loaderStaking = createLoaderKey()
   const loaderSigningTx = createLoaderKey()
 
-  const { amount: bitzAmount } = action.payload
+  const { amount: bitzAmount, byAmountIn } = action.payload
 
   const networkType = yield* select(network)
   const rpc = yield* select(rpcAddress)
@@ -81,6 +81,7 @@ export function* handleStake(action: PayloadAction<StakeLiquidityPayload>) {
     const stakeIx = yield* call(
       [stakingProgram, stakingProgram.stakeIx],
       {
+        byAmountIn,
         amount: bitzAmount,
         mint: BITZ_MAIN.address,
         stakedMint: sBITZ_MAIN.address,
@@ -279,7 +280,7 @@ export function* handleUnstake(action: PayloadAction<StakeLiquidityPayload>) {
   const loaderUnstaking = createLoaderKey()
   const loaderSigningTx = createLoaderKey()
 
-  const { amount: sbitzAmount } = action.payload
+  const { amount: sbitzAmount, byAmountIn } = action.payload
 
   const networkType = yield* select(network)
   const rpc = yield* select(rpcAddress)
@@ -307,6 +308,7 @@ export function* handleUnstake(action: PayloadAction<StakeLiquidityPayload>) {
     const unstakeIx = yield* call(
       [stakingProgram, stakingProgram.unstakeIx],
       {
+        byAmountIn,
         amount: sbitzAmount,
         mint: BITZ_MAIN.address,
         stakedMint: sBITZ_MAIN.address,

@@ -334,7 +334,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
   useEffect(() => {
     const timer = setTimeout(() => {
       setShouldReversePlot(false)
-    }, 600)
+    }, 100)
 
     return () => {
       clearTimeout(timer)
@@ -570,7 +570,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
           plotMaxData={plotMax}
           zoomMinus={zoomMinus}
           zoomPlus={zoomPlus}
-          loading={isLoadingTicksOrTickmap && !blocked}
+          loading={isLoadingTicksOrTickmap && !shouldNotUpdatePriceRange && !blocked}
           isXtoY={isXtoY}
           spacing={tickSpacing}
           xDecimal={xDecimal}
