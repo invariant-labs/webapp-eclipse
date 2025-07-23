@@ -8,7 +8,7 @@ export const useStyles = makeStyles<{ noData: boolean }>()((theme, { noData }) =
     alignItems: 'flex-end',
     minHeight: 71,
     flexDirection: 'row',
-    rowGap: 8,
+    rowGap: 12,
 
     [theme.breakpoints.down(1200)]: {
       flexDirection: 'column',
@@ -57,8 +57,6 @@ export const useStyles = makeStyles<{ noData: boolean }>()((theme, { noData }) =
     }
   },
   actionButton: {
-    height: 32,
-    width: 32,
     background: 'none',
     padding: 0,
     margin: 0,

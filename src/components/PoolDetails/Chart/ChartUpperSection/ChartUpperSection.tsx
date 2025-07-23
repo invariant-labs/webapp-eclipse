@@ -3,12 +3,7 @@ import { Box, Grid, Skeleton, Typography, useMediaQuery } from '@mui/material'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { horizontalSwapIcon, plusDisabled, plusIcon } from '@static/icons'
 import { colors, theme, typography } from '@static/theme'
-import {
-  commonTokensForNetworks,
-  DOGWIFHAT_MAIN,
-  NetworkType,
-  promotedTiers
-} from '@store/consts/static'
+import { commonTokensForNetworks, NetworkType, promotedTiers } from '@store/consts/static'
 import { NewTabIcon } from '@static/componentIcon/NewTabIcon'
 import { CopyIcon } from '@static/componentIcon/CopyIcon'
 import { SwapToken } from '@store/selectors/solanaWallet'
@@ -196,7 +191,6 @@ export const ChartUpperSection: React.FC<IProps> = ({
                 hiddenUnknownTokens={hideUnknownTokens}
                 network={network}
               />
-              {/* <ReverseTokensIcon className={classes.reverseTokensIcon} /> */}
               <Typography color={colors.invariant.text}>-</Typography>
               <Select
                 tokens={tokens}
@@ -217,17 +211,6 @@ export const ChartUpperSection: React.FC<IProps> = ({
                 hiddenUnknownTokens={hideUnknownTokens}
                 network={network}
               />
-              {/* <Box className={classes.iconContainer}>
-                <img className={classes.icon} src={tokenX.logoURI} alt={tokenX.symbol} />
-
-                <ReverseTokensIcon className={classes.reverseTokensIcon} />
-
-                <img className={classes.icon} src={tokenY.logoURI} alt={tokenY.symbol} />
-              </Box>
-
-              <Typography className={classes.tickerContainer}>
-                {tokenX.symbol} - {tokenY.symbol}
-              </Typography> */}
             </Box>
           )}
         </Grid>
@@ -247,13 +230,15 @@ export const ChartUpperSection: React.FC<IProps> = ({
       <Box className={classes.actionContainer}>
         {!noData && (
           <Box className={classes.buttons}>
-            <Typography
-              color={colors.invariant.textGrey}
-              style={typography.body2}
-              textAlign='right'>
-              Action
-            </Typography>
-            <Box display='flex' alignItems='center' gap='8px' mt={'12px'}>
+            {!isTablet && (
+              <Typography
+                color={colors.invariant.textGrey}
+                style={typography.body2}
+                textAlign='right'>
+                Action
+              </Typography>
+            )}
+            <Box display='flex' alignItems='center' gap='8px'>
               <TooltipHover title={isDisabled ? 'Pool disabled' : 'Add position'}>
                 <button
                   className={classes.actionButton}
@@ -261,7 +246,7 @@ export const ChartUpperSection: React.FC<IProps> = ({
                   disabled={isDisabled}
                   style={isDisabled ? { cursor: 'not-allowed' } : {}}>
                   <img
-                    width={32}
+                    width={isTablet ? 40 : 32}
                     src={isDisabled ? plusDisabled : plusIcon}
                     style={isDisabled ? { opacity: 0.6 } : {}}
                     alt={'Open'}
@@ -270,24 +255,22 @@ export const ChartUpperSection: React.FC<IProps> = ({
               </TooltipHover>
               <TooltipHover title={'Exchange'}>
                 <button className={classes.actionButton} onClick={handleOpenSwap}>
-                  <img width={32} src={horizontalSwapIcon} alt={'Exchange'} />
+                  <img width={isTablet ? 40 : 32} src={horizontalSwapIcon} alt={'Exchange'} />
                 </button>
               </TooltipHover>
             </Box>
           </Box>
         )}
         {isTablet && (
-          <Box mt={2}>
-            <FeeSelector
-              onSelect={selectFeeTier}
-              feeTiers={feeTiers}
-              currentFeeIndex={feeTierIndex}
-              promotedPoolTierIndex={promotedPoolTierIndex}
-              feeTiersWithTvl={feeTiersWithTvl}
-              totalTvl={totalTvl}
-              disabledFeeTiers={disabledFeeTiers}
-            />
-          </Box>
+          <FeeSelector
+            onSelect={selectFeeTier}
+            feeTiers={feeTiers}
+            currentFeeIndex={feeTierIndex}
+            promotedPoolTierIndex={promotedPoolTierIndex}
+            feeTiersWithTvl={feeTiersWithTvl}
+            totalTvl={totalTvl}
+            disabledFeeTiers={disabledFeeTiers}
+          />
         )}
       </Box>
     </Box>
