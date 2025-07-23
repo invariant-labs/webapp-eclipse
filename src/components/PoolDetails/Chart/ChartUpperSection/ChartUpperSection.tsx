@@ -234,7 +234,8 @@ export const ChartUpperSection: React.FC<IProps> = ({
               <Typography
                 color={colors.invariant.textGrey}
                 style={typography.body2}
-                textAlign='right'>
+                textAlign='right'
+                mb={1}>
                 Action
               </Typography>
             )}
