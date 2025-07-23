@@ -527,11 +527,7 @@ export const AddLiquidity: React.FC<IProps> = ({
     )
   }, [tokenAIndex, tokenBIndex, isCurrentPoolExisting, isLoadingTicksOrTickmap])
 
-  const isAutoswapOn = useMemo(
-    () =>
-      isAutoSwapAvailable && (tokenACheckbox || tokenBCheckbox) && alignment == DepositOptions.Auto,
-    [isAutoSwapAvailable, tokenACheckbox, tokenBCheckbox, alignment]
-  )
+  const isAutoswapOn = useMemo(() => alignment == DepositOptions.Auto, [alignment])
 
   useEffect(() => {
     if (isAutoSwapAvailable) {
@@ -1385,15 +1381,17 @@ export const AddLiquidity: React.FC<IProps> = ({
     if (isSimulationStatus(SwapAndCreateSimulationStatus.PerfectRatio)) {
       return (
         <Box className={classes.unknownWarning}>
-          <TooltipHover title={'You already have enough tokens to open position'}>
-            <img
-              src={infoIcon}
-              alt=''
-              width='12px'
-              style={{ marginRight: '4px', marginBottom: '-1.5px' }}
-              className={classes.grayscaleIcon}
-            />
-          </TooltipHover>
+          <div style={{ marginBottom: '-1.5px' }}>
+            <TooltipHover title={'You already have enough tokens to open position'}>
+              <img
+                src={infoIcon}
+                alt=''
+                width='12px'
+                style={{ marginRight: '4px' }}
+                className={classes.grayscaleIcon}
+              />
+            </TooltipHover>
+          </div>
           No swap required
         </Box>
       )
@@ -1402,15 +1400,17 @@ export const AddLiquidity: React.FC<IProps> = ({
     if (isSimulationStatus(SwapAndCreateSimulationStatus.LiquidityTooLow)) {
       return (
         <Box className={classes.errorWarning}>
-          <TooltipHover title={'There is not enough liquidity to perform the swap'}>
-            <img
-              src={infoIcon}
-              alt=''
-              width='12px'
-              style={{ marginRight: '4px', marginBottom: '-1.5px' }}
-              className={classes.errorIcon}
-            />
-          </TooltipHover>
+          <div style={{ marginBottom: '-1.5px' }}>
+            <TooltipHover title={'There is not enough liquidity to perform the swap'}>
+              <img
+                src={infoIcon}
+                alt=''
+                width='12px'
+                style={{ marginRight: '4px' }}
+                className={classes.errorIcon}
+              />
+            </TooltipHover>
+          </div>
           Insufficient liquidity
         </Box>
       )

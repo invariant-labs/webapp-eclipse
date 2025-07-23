@@ -113,10 +113,6 @@ import moreIcon from './svg/moreIcon.svg'
 import lqStakingIcon from './svg/lqStakingIcon.svg'
 import warningStroke from './svg/warningStroke.svg'
 import plusDisabled from './svg/plusDisabled.svg'
-import plusIconLight from '@static/svg/plus-icon-light.svg'
-import plusIconDark from '@static/svg/plus-icon-dark.svg'
-import minusIconLight from '@static/svg/minus-icon-light.svg'
-import minusIconDark from '@static/svg/minus-icon-dark.svg'
 import pointsQMarkIcon from './svg/pointsQmark.svg'
 import hornsUSDC from './svg/hornsUSDC.svg'
 import hornsETH from './svg/hornsETH.svg'
@@ -244,10 +240,6 @@ export {
   star,
   starFill,
   swapArrowIcon,
-  plusIconLight,
-  plusIconDark,
-  minusIconLight,
-  minusIconDark,
   hornsETH,
   auditByLogoIcon,
   greenInfoIcon,

@@ -142,6 +142,12 @@ interface IProps {
   changeLiquiditySuccess: boolean
   changeLiquidityInProgress: boolean
   setChangeLiquiditySuccess: (value: boolean) => void
+  positionLiquidity: BN
+  isChangeLiquidityModalShown: boolean
+  setIsChangeLiquidityModalShown: (value: boolean) => void
+  isAddLiquidity: boolean
+  setIsAddLiquidity: (value: boolean) => void
+  openPosition?: (index: string) => void
 }
 
 const PositionDetails: React.FC<IProps> = ({
@@ -211,7 +217,12 @@ const PositionDetails: React.FC<IProps> = ({
   ticksData,
   changeLiquiditySuccess,
   changeLiquidityInProgress,
-  setChangeLiquiditySuccess
+  setChangeLiquiditySuccess,
+  positionLiquidity,
+  isChangeLiquidityModalShown,
+  setIsChangeLiquidityModalShown,
+  isAddLiquidity,
+  setIsAddLiquidity
 }) => {
   const { classes } = useStyles()
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
@@ -353,17 +364,6 @@ const PositionDetails: React.FC<IProps> = ({
     }
   }, [midPrice.x, pricesLoading])
 
-  const [isChangeLiquidityModalShown, setIsChangeLiquidityModalShown] = useState(false)
-  const [isAddLiquidity, setIsAddLiquidity] = useState(true)
-
-  useEffect(() => {
-    if (isChangeLiquidityModalShown) {
-      blurContent()
-    } else {
-      unblurContent()
-    }
-  }, [isChangeLiquidityModalShown])
-
   return (
     <Box display='flex' flexDirection={'column'} flex={1}>
       <Information mb={3} transitionTimeout={300} shouldOpen={showPreviewInfo}>
@@ -470,6 +470,7 @@ const PositionDetails: React.FC<IProps> = ({
             success={changeLiquiditySuccess}
             inProgress={changeLiquidityInProgress}
             setChangeLiquiditySuccess={setChangeLiquiditySuccess}
+            positionLiquidity={positionLiquidity}
           />
           <PositionHeader
             isClosing={shouldDisable}

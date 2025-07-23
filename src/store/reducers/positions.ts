@@ -173,12 +173,14 @@ export interface ClosePositionData {
   positionIndex: number
   claimFarmRewards?: boolean
   onSuccess: () => void
+  isRemoveLiquidity?: boolean
 }
 
 export interface ChangeLiquidityData {
   positionIndex: number
   liquidity: BN
   slippage: BN
+  onSuccess?: () => void
 }
 
 export interface SetPositionData {

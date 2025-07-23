@@ -34,7 +34,7 @@ import { ECBanner } from '@common/ECBanner/ECBanner'
 import { refreshIcon } from '@static/icons'
 import { PositionListSwitcher } from './PositionListSwitcher/PositionListSwitcher'
 import { LiquidityPools, PlotTickData } from '@store/reducers/positions'
-import { blurContent, unblurContent } from '@utils/uiUtils'
+import { unblurContent } from '@utils/uiUtils'
 import { useDispatch } from 'react-redux'
 import { actions } from '@store/reducers/navigation'
 import { ChangeLiquidityModal } from '@components/Modals/ChangeLiquidityModal/ChangeLiquidityModal'
@@ -134,7 +134,12 @@ interface IProps {
     poolIndex: number,
     liquidity: BN
   ) => void
-  setPositionId: (id: string) => void
+  positionLiquidity: BN
+  isChangeLiquidityModalShown: boolean
+  setIsChangeLiquidityModalShown: (value: boolean) => void
+  isAddLiquidity: boolean
+  setIsAddLiquidity: (value: boolean) => void
+  openPosition: (index: string) => void
 }
 
 const Portfolio: React.FC<IProps> = ({
@@ -197,7 +202,12 @@ const Portfolio: React.FC<IProps> = ({
   isTimeoutError,
   changeLiquidity,
   swapAndAddLiquidity,
-  setPositionId
+  positionLiquidity,
+  isChangeLiquidityModalShown,
+  setIsChangeLiquidityModalShown,
+  isAddLiquidity,
+  setIsAddLiquidity,
+  openPosition
 }) => {
   const { classes, cx } = useStyles()
 
@@ -424,22 +434,6 @@ const Portfolio: React.FC<IProps> = ({
     ))
   }
 
-  const [isChangeLiquidityModalShown, setIsChangeLiquidityModalShown] = useState(false)
-  const [isAddLiquidity, setIsAddLiquidity] = useState(true)
-
-  useEffect(() => {
-    if (isChangeLiquidityModalShown) {
-      blurContent()
-    } else {
-      unblurContent()
-    }
-  }, [isChangeLiquidityModalShown])
-
-  const openPosition = (id: string) => {
-    setPositionId(id)
-    setIsChangeLiquidityModalShown(true)
-  }
-
   return (
     <>
       <ChangeLiquidityModal
@@ -486,6 +480,7 @@ const Portfolio: React.FC<IProps> = ({
         success={changeLiquiditySuccess}
         inProgress={changeLiquidityInProgress}
         setChangeLiquiditySuccess={setChangeLiquiditySuccess}
+        positionLiquidity={positionLiquidity}
       />
 
       {showBanner && (

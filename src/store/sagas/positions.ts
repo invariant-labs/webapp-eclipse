@@ -2876,6 +2876,10 @@ export function* handleClosePositionWithETH(data: ClosePositionData) {
           txid
         })
       )
+
+      if (data.isRemoveLiquidity) {
+        yield put(actions.setChangeLiquiditySuccess(false))
+      }
     } else {
       yield put(
         snackbarsActions.add({
@@ -2926,7 +2930,15 @@ export function* handleClosePositionWithETH(data: ClosePositionData) {
 
     closeSnackbar(loaderClosePosition)
     yield put(snackbarsActions.remove(loaderClosePosition))
+
+    if (data.isRemoveLiquidity) {
+      yield put(actions.setChangeLiquiditySuccess(true))
+    }
   } catch (e: unknown) {
+    if (data.isRemoveLiquidity) {
+      yield put(actions.setChangeLiquiditySuccess(false))
+    }
+
     const error = ensureError(e)
     console.log(error)
     let msg: string = ''
@@ -3381,6 +3393,8 @@ export function* handleAddLiquidity(action: PayloadAction<ChangeLiquidityData>):
     closeSnackbar(loaderAddLiquidity)
     yield put(snackbarsActions.remove(loaderAddLiquidity))
   } catch (e: unknown) {
+    yield put(actions.setChangeLiquiditySuccess(false))
+
     const error = ensureError(e)
     console.log(error)
 
@@ -3643,6 +3657,8 @@ function* handleAddLiquidityWithETH(action: PayloadAction<ChangeLiquidityData>):
     closeSnackbar(loaderAddLiquidity)
     yield put(snackbarsActions.remove(loaderAddLiquidity))
   } catch (e: unknown) {
+    yield put(actions.setChangeLiquiditySuccess(false))
+
     const error = ensureError(e)
     console.log(error)
 
@@ -3701,6 +3717,17 @@ export function* handleRemoveLiquidity(action: PayloadAction<ChangeLiquidityData
 
   const positionsData = yield* select(positionsWithPoolsData)
   const position = positionsData[data.positionIndex]
+
+  if (data.liquidity.eq(position.liquidity)) {
+    return yield* call(handleClosePosition, {
+      payload: {
+        positionIndex: data.positionIndex,
+        onSuccess: data.onSuccess || (() => {}),
+        isRemoveLiquidity: true
+      },
+      type: 'positions/closePosition'
+    })
+  }
 
   if (
     position.poolData.tokenX.toString() === WRAPPED_ETH_ADDRESS ||
@@ -3891,6 +3918,8 @@ export function* handleRemoveLiquidity(action: PayloadAction<ChangeLiquidityData
     closeSnackbar(loaderRemoveLiquidity)
     yield put(snackbarsActions.remove(loaderRemoveLiquidity))
   } catch (e: unknown) {
+    yield put(actions.setChangeLiquiditySuccess(false))
+
     const error = ensureError(e)
     console.log(error)
 
@@ -4153,6 +4182,8 @@ function* handleRemoveLiquidityWithETH(action: PayloadAction<ChangeLiquidityData
     closeSnackbar(loaderRemoveLiquidity)
     yield put(snackbarsActions.remove(loaderRemoveLiquidity))
   } catch (e: unknown) {
+    yield put(actions.setChangeLiquiditySuccess(false))
+
     const error = ensureError(e)
     console.log(error)
 
@@ -4481,6 +4512,8 @@ export function* handleSwapAndAddLiquidity(
     closeSnackbar(loaderAddPosition)
     yield put(snackbarsActions.remove(loaderAddPosition))
   } catch (e: unknown) {
+    yield put(actions.setChangeLiquiditySuccess(false))
+
     const error = ensureError(e)
     console.log(error)
 
@@ -4838,6 +4871,8 @@ export function* handleSwapAndAddLiquidityWithETH(
     closeSnackbar(loaderAddLiquidity)
     yield put(snackbarsActions.remove(loaderAddLiquidity))
   } catch (e: unknown) {
+    yield put(actions.setChangeLiquiditySuccess(false))
+
     const error = ensureError(e)
     console.log(error)
 

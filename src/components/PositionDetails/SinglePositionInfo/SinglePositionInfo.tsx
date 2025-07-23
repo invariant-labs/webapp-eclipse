@@ -14,6 +14,8 @@ import { calculateAPYAndAPR } from '@utils/utils'
 import { PublicKey } from '@solana/web3.js'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { Intervals } from '@store/consts/static'
+import { Minus } from '@static/componentIcon/Minus'
+import { Plus } from '@static/componentIcon/Plus'
 
 interface IProp {
   onClickClaimFee: () => void
@@ -106,11 +108,21 @@ const SinglePositionInfo: React.FC<IProp> = ({
           item={
             <Box className={classes.liquidityButtons}>
               <Button
-                className={cx(classes.liquidityButton, classes.liquidityButtonPlus)}
-                onClick={() => showChangeLiquidityModal(true)}></Button>
+                className={cx(classes.liquidityButton, classes.liquidityButtonPlus, {
+                  [classes.liquidityButtonPlusDisabled]: isLocked
+                })}
+                disabled={isLocked}
+                onClick={() => showChangeLiquidityModal(true)}>
+                <Plus />
+              </Button>
               <Button
-                className={cx(classes.liquidityButton, classes.liquidityButtonMinus)}
-                onClick={() => showChangeLiquidityModal(false)}></Button>
+                className={cx(classes.liquidityButton, classes.liquidityButtonMinus, {
+                  [classes.liquidityButtonMinusDisabled]: isLocked
+                })}
+                disabled={isLocked}
+                onClick={() => showChangeLiquidityModal(false)}>
+                <Minus />
+              </Button>
             </Box>
           }>
           <Liquidity

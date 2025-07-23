@@ -78,6 +78,7 @@ import poolsSelectors, {
 } from '@store/selectors/pools'
 import { actions as poolsActions } from '@store/reducers/pools'
 import { actions as positionsActions } from '@store/reducers/positions'
+import { blurContent, unblurContent } from '@utils/uiUtils'
 
 const PortfolioWrapper = () => {
   const BANNER_STORAGE_KEY = 'invariant-es-banner-state'
@@ -200,6 +201,9 @@ const PortfolioWrapper = () => {
   const handleLockPosition = (index: number) => {
     dispatch(lockerActions.lockPosition({ index, network: currentNetwork }))
   }
+
+  const [isChangeLiquidityModalShown, setIsChangeLiquidityModalShown] = useState(false)
+  const [isAddLiquidity, setIsAddLiquidity] = useState(true)
 
   const canClosePosition = useMemo(() => {
     if (currentNetwork === NetworkType.Testnet) {
@@ -658,6 +662,19 @@ const PortfolioWrapper = () => {
     dispatch(positionsActions.setChangeLiquiditySuccess(value))
   }
 
+  useEffect(() => {
+    if (isChangeLiquidityModalShown) {
+      blurContent()
+    } else {
+      unblurContent()
+    }
+  }, [isChangeLiquidityModalShown])
+
+  const openPosition = (id: string) => {
+    setPositionId(id)
+    setIsChangeLiquidityModalShown(true)
+  }
+
   return isConnected ? (
     <Portfolio
       handleCloseBanner={handleBannerClose}
@@ -782,7 +799,12 @@ const PortfolioWrapper = () => {
             actions.removeLiquidity({
               positionIndex: position.positionIndex,
               liquidity,
-              slippage
+              slippage,
+              onSuccess: () => {
+                navigate(ROUTES.PORTFOLIO)
+
+                setIsChangeLiquidityModalShown(false)
+              }
             })
           )
         }
@@ -839,7 +861,12 @@ const PortfolioWrapper = () => {
           })
         )
       }}
-      setPositionId={setPositionId}
+      positionLiquidity={position?.liquidity}
+      isChangeLiquidityModalShown={isChangeLiquidityModalShown}
+      setIsChangeLiquidityModalShown={setIsChangeLiquidityModalShown}
+      isAddLiquidity={isAddLiquidity}
+      setIsAddLiquidity={setIsAddLiquidity}
+      openPosition={openPosition}
     />
   ) : (
     <Grid className={classes.emptyContainer}>

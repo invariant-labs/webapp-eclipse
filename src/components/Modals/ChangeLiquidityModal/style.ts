@@ -2,6 +2,11 @@ import { colors, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(theme => ({
+  root: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
   paper: {
     width: 'calc(100% - 48px)',
     background: colors.invariant.component,

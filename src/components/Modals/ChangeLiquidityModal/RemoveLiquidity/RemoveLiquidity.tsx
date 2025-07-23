@@ -33,12 +33,8 @@ import {
   getMinTick
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { InitMidPrice } from '@common/PriceRangePlot/PriceRangePlot'
-import { DENOMINATOR, getMarketAddress, Pair } from '@invariant-labs/sdk-eclipse'
-import {
-  getLiquidityByX,
-  getLiquidityByY,
-  getMaxLiquidityWithPercentage
-} from '@invariant-labs/sdk-eclipse/lib/math'
+import { getMarketAddress, Pair } from '@invariant-labs/sdk-eclipse'
+import { getLiquidityByX, getLiquidityByY } from '@invariant-labs/sdk-eclipse/lib/math'
 import { calculatePriceSqrt } from '@invariant-labs/sdk-eclipse/src'
 import { Box, Grid, Typography } from '@mui/material'
 import { useStyles } from './style'
@@ -82,6 +78,7 @@ export interface IProps {
   success: boolean
   inProgress: boolean
   setChangeLiquiditySuccess: (value: boolean) => void
+  positionLiquidity: BN
 }
 
 export const RemoveLiquidity: React.FC<IProps> = ({
@@ -106,7 +103,8 @@ export const RemoveLiquidity: React.FC<IProps> = ({
   changeLiquidity,
   success,
   inProgress,
-  setChangeLiquiditySuccess
+  setChangeLiquiditySuccess,
+  positionLiquidity
 }) => {
   const isLoadingTicksOrTickmap = useMemo(() => ticksLoading, [ticksLoading])
   const [liquidity, setLiquidity] = useState<BN>(new BN(0))
@@ -553,7 +551,7 @@ export const RemoveLiquidity: React.FC<IProps> = ({
     blocked:
       (tokenAIndex !== null && tokenBIndex !== null && blockedToken === PositionTokenBlock.A) ||
       tokenXLiquidity === 0,
-    blockerInfo: 'Range only for single-asset deposit',
+    blockerInfo: 'Range only for single-asset withdraw',
     decimalsLimit: tokenAIndex !== null ? tokens[tokenAIndex].decimals : 0
   } as InputState
   const tokenBInputState = {
@@ -579,7 +577,7 @@ export const RemoveLiquidity: React.FC<IProps> = ({
     blocked:
       (tokenAIndex !== null && tokenBIndex !== null && blockedToken === PositionTokenBlock.B) ||
       tokenYLiquidity === 0,
-    blockerInfo: 'Range only for single-asset deposit',
+    blockerInfo: 'Range only for single-asset withdraw',
     decimalsLimit: tokenBIndex !== null ? tokens[tokenBIndex].decimals : 0
   } as InputState
 
@@ -664,10 +662,8 @@ export const RemoveLiquidity: React.FC<IProps> = ({
     }
 
     if (
-      !tokenAInputState.blocked &&
-      +tokenAInputState.value === 0 &&
-      !tokenBInputState.blocked &&
-      +tokenBInputState.value === 0
+      (!tokenAInputState.blocked && +tokenAInputState.value === 0) ||
+      (!tokenBInputState.blocked && +tokenBInputState.value === 0)
     ) {
       return !tokenAInputState.blocked &&
         !tokenBInputState.blocked &&
@@ -716,28 +712,28 @@ export const RemoveLiquidity: React.FC<IProps> = ({
       const decimalA = tokens[tokenAIndex].decimals
       const decimalB = tokens[tokenBIndex].decimals
 
-      const [lowerTick, upperTick] = isXtoY ? [leftRange, rightRange] : [rightRange, leftRange]
       const [x, y] = isXtoY ? [balanceA, balanceB] : [balanceB, balanceA]
       const [decimalX, decimalY] = isXtoY ? [decimalA, decimalB] : [decimalB, decimalA]
 
       try {
-        const values = getMaxLiquidityWithPercentage(
-          convertBalanceToBN(x.toString(), xDecimal),
-          convertBalanceToBN(y.toString(), yDecimal),
-          lowerTick,
-          upperTick,
-          currentPriceSqrt,
-          new BN(DENOMINATOR).mul(new BN(depositPercentage)).div(new BN(100))
-        )
+        const valueX = convertBalanceToBN(x.toString(), xDecimal)
+          .mul(new BN(depositPercentage))
+          .div(new BN(100))
+
+        const valueY = convertBalanceToBN(y.toString(), yDecimal)
+          .mul(new BN(depositPercentage))
+          .div(new BN(100))
+
+        const liquidity = new BN(positionLiquidity).mul(new BN(depositPercentage)).div(new BN(100))
 
         if (!(x < 0 || y < 0)) {
           setTokenADeposit(
-            trimLeadingZeros(isXtoY ? printBN(values.x, decimalX) : printBN(values.y, decimalY))
+            trimLeadingZeros(isXtoY ? printBN(valueX, decimalX) : printBN(valueY, decimalY))
           )
           setTokenBDeposit(
-            trimLeadingZeros(isXtoY ? printBN(values.y, decimalY) : printBN(values.x, decimalX))
+            trimLeadingZeros(isXtoY ? printBN(valueY, decimalY) : printBN(valueX, decimalX))
           )
-          updateLiquidity(values.liquidity)
+          updateLiquidity(liquidity)
         } else {
           setTokenADeposit('0')
           setTokenBDeposit('0')
@@ -754,7 +750,8 @@ export const RemoveLiquidity: React.FC<IProps> = ({
     currentPriceSqrt,
     isBalanceLoading,
     walletStatus,
-    depositPercentage
+    depositPercentage,
+    positionLiquidity
   ])
 
   useEffect(() => {

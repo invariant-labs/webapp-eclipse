@@ -93,6 +93,7 @@ export interface IChangeLiquidityModal {
   success: boolean
   inProgress: boolean
   setChangeLiquiditySuccess: (value: boolean) => void
+  positionLiquidity: BN
 }
 
 export const ChangeLiquidityModal: React.FC<IChangeLiquidityModal> = ({
@@ -134,7 +135,8 @@ export const ChangeLiquidityModal: React.FC<IChangeLiquidityModal> = ({
   swapAndAddLiquidity,
   success,
   inProgress,
-  setChangeLiquiditySuccess
+  setChangeLiquiditySuccess,
+  positionLiquidity
 }) => {
   const { classes, cx } = useStyles()
 
@@ -153,7 +155,7 @@ export const ChangeLiquidityModal: React.FC<IChangeLiquidityModal> = ({
     <Popover
       open={open}
       onClose={onClose}
-      classes={{ paper: classes.paper }}
+      classes={{ root: classes.root, paper: classes.paper }}
       anchorOrigin={{
         vertical: 'center',
         horizontal: 'center'
@@ -161,7 +163,8 @@ export const ChangeLiquidityModal: React.FC<IChangeLiquidityModal> = ({
       transformOrigin={{
         vertical: 'center',
         horizontal: 'center'
-      }}>
+      }}
+      anchorReference='none'>
       <Box className={classes.container}>
         <Box className={classes.headerContainer}>
           <Typography className={classes.headerTitle}>Change liquidity</Typography>
@@ -300,6 +303,7 @@ export const ChangeLiquidityModal: React.FC<IChangeLiquidityModal> = ({
               success={success}
               inProgress={inProgress}
               setChangeLiquiditySuccess={setChangeLiquiditySuccess}
+              positionLiquidity={positionLiquidity}
             />
           )}
         </Box>

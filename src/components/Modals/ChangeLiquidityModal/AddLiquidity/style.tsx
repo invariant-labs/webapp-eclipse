@@ -262,6 +262,8 @@ export const useStyles = makeStyles()(theme => {
       padding: '5px 8px',
       borderRadius: 9,
       textWrap: 'nowrap',
+      display: 'flex',
+      alignItems: 'center',
       [theme.breakpoints.down(370)]: {
         maxWidth: 79,
         padding: '5px 6px'
@@ -279,6 +281,8 @@ export const useStyles = makeStyles()(theme => {
       paddingInline: 8,
       borderRadius: 9,
       textWrap: 'nowrap',
+      display: 'flex',
+      alignItems: 'center',
       [theme.breakpoints.down(370)]: {
         maxWidth: 79,
         padding: '5px 6px'

@@ -57,6 +57,7 @@ import { address } from '@store/selectors/navigation'
 import { Pair } from '@invariant-labs/sdk-eclipse'
 import { actions as poolsActions } from '@store/reducers/pools'
 import { actions as positionsActions } from '@store/reducers/positions'
+import { blurContent, unblurContent } from '@utils/uiUtils'
 
 export interface IProps {
   id: string
@@ -587,6 +588,17 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     dispatch(positionsActions.setChangeLiquiditySuccess(value))
   }
 
+  const [isChangeLiquidityModalShown, setIsChangeLiquidityModalShown] = useState(false)
+  const [isAddLiquidity, setIsAddLiquidity] = useState(true)
+
+  useEffect(() => {
+    if (isChangeLiquidityModalShown) {
+      blurContent()
+    } else {
+      unblurContent()
+    }
+  }, [isChangeLiquidityModalShown])
+
   if (position) {
     return (
       <PositionDetails
@@ -647,7 +659,18 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
               actions.removeLiquidity({
                 positionIndex: position.positionIndex,
                 liquidity,
-                slippage
+                slippage,
+                onSuccess: () => {
+                  if (lastPosition && nextPosition) {
+                    navigate(ROUTES.getPositionRoute(lastPosition.id), { replace: true })
+                  } else if (previousPosition) {
+                    navigate(ROUTES.getPositionRoute(previousPosition.id), { replace: true })
+                  } else {
+                    navigate(ROUTES.PORTFOLIO)
+                  }
+
+                  setIsChangeLiquidityModalShown(false)
+                }
               })
             )
           }
@@ -779,6 +802,11 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         changeLiquiditySuccess={changeLiquiditySuccess}
         changeLiquidityInProgress={changeLiquidityInProgress}
         setChangeLiquiditySuccess={setChangeLiquiditySuccess}
+        positionLiquidity={position.liquidity}
+        isChangeLiquidityModalShown={isChangeLiquidityModalShown}
+        setIsChangeLiquidityModalShown={setIsChangeLiquidityModalShown}
+        isAddLiquidity={isAddLiquidity}
+        setIsAddLiquidity={setIsAddLiquidity}
       />
     )
   }
