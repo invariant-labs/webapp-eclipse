@@ -22,47 +22,59 @@ export const InfoUpperSection: React.FC<IProps> = ({
   const intervalSuffix = mapIntervalToString(interval)
 
   return (
-    <Grid container gap={1} justifyContent='center' alignItems='stretch' wrap='wrap'>
-      <Grid display='flex' item gap={1}>
-        <Grid display='flex' item>
-          <InfoItem
-            name='Pool APY'
-            value={
-              statsPoolData.apy > 1000
-                ? '>1000%'
-                : `${formatNumberWithoutSuffix(statsPoolData.apy)}%`
-            }
-            isLoadingStats={isLoadingStats}
-            isGreen
-            poolUnavailable={!poolAddress}
-          />
-        </Grid>
-        <Grid item>
-          <InfoItem
-            name={`TVL (${intervalSuffix})`}
-            value={`${formatNumberWithoutSuffix(statsPoolData.tvl)}USD`}
-            isLoadingStats={isLoadingStats}
-            poolUnavailable={!poolAddress}
-          />
-        </Grid>{' '}
+    <Grid
+      container
+      gap={1}
+      justifyContent='center'
+      alignItems='stretch'
+      wrap='wrap'
+      width='100%' // full-width container
+    >
+      <Grid
+        item
+        display='flex'
+        flex={1}
+        gap={1}
+        justifyContent='space-around'
+        alignItems='center'
+        flexWrap='wrap'>
+        <InfoItem
+          name='Pool APY'
+          value={
+            statsPoolData.apy > 1000 ? '>1000%' : `${formatNumberWithoutSuffix(statsPoolData.apy)}%`
+          }
+          isLoadingStats={isLoadingStats}
+          isGreen
+          poolUnavailable={!poolAddress}
+        />
+        <InfoItem
+          name={`TVL (${intervalSuffix})`}
+          value={`$${formatNumberWithoutSuffix(statsPoolData.tvl)}`}
+          isLoadingStats={isLoadingStats}
+          poolUnavailable={!poolAddress}
+        />
       </Grid>
-      <Grid display='flex' item gap={1}>
-        <Grid display='flex' item>
-          <InfoItem
-            name={`Volume (${intervalSuffix})`}
-            value={`${formatNumberWithoutSuffix(statsPoolData.volume)}USD`}
-            isLoadingStats={isLoadingStats}
-            poolUnavailable={!poolAddress}
-          />
-        </Grid>
-        <Grid item>
-          <InfoItem
-            name={`Fees (${intervalSuffix})`}
-            value={`${formatNumberWithoutSuffix(statsPoolData.fees)}USD`}
-            isLoadingStats={isLoadingStats}
-            poolUnavailable={!poolAddress}
-          />
-        </Grid>
+      <Grid
+        item
+        display='flex'
+        gap={1}
+        justifyContent='space-around'
+        alignItems='center'
+        flexWrap='wrap'
+        flex={1}>
+        <InfoItem
+          name={`Volume (${intervalSuffix})`}
+          value={`$${formatNumberWithoutSuffix(statsPoolData.volume)}`}
+          isLoadingStats={isLoadingStats}
+          poolUnavailable={!poolAddress}
+        />
+
+        <InfoItem
+          name={`Fees (${intervalSuffix})`}
+          value={`$${formatNumberWithoutSuffix(statsPoolData.fees)}`}
+          isLoadingStats={isLoadingStats}
+          poolUnavailable={!poolAddress}
+        />
       </Grid>
     </Grid>
   )

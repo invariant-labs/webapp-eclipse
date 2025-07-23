@@ -4,7 +4,6 @@ import { makeStyles } from 'tss-react/mui'
 export const useStyles = makeStyles()(() => ({
   wrapper: {
     position: 'relative',
-    width: 132,
     cursor: 'pointer',
     alignSelf: 'end',
     zIndex: 100
@@ -12,8 +11,9 @@ export const useStyles = makeStyles()(() => ({
   selected: {
     color: colors.invariant.text,
     paddingBlock: 8,
-    width: '100%',
     display: 'flex',
+    width: 128,
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     border: `2px solid ${colors.invariant.light}`,
@@ -69,13 +69,26 @@ export const useStyles = makeStyles()(() => ({
   },
   tvlText: {
     color: colors.invariant.textGrey,
-    ...typography.tiny2
+    ...typography.caption4
   },
   active: {
-    backgroundImage: `linear-gradient( #3A466B, #3A466B), linear-gradient(0deg, #EF84F5  , #2EE09A)`
+    backgroundImage: `linear-gradient( #3A466B, #3A466B), linear-gradient(0deg, #EF84F5  , #2EE09A)`,
+
+    '&:hover': {
+      backgroundImage: `linear-gradient( #2A365C, #2A365C), linear-gradient(0deg, #EF84F5  , #2EE09A)`
+    }
   },
   disabled: {
-    cursor: 'not-allowed'
+    cursor: 'not-allowed',
+    filter: 'brightness(1.2)',
+    '& p': {
+      color: colors.invariant.textGrey
+    },
+
+    '&:hover': {
+      background: colors.invariant.componentBcg,
+      filter: 'brightness(1.2)'
+    }
   },
   bestSelect: {
     border: `2px solid ${colors.invariant.green}`,

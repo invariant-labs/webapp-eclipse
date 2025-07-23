@@ -103,7 +103,14 @@ export const PoolInfo: React.FC<IPros> = ({
               tokenYPercentage={tokenYPercentage}
               isPoolDataLoading={isPoolDataLoading}
             />
-            <Box display='flex' gap='20px' flexDirection='column' mt={'20px'}>
+            <Grid
+              container
+              display='flex'
+              flex={1}
+              gap='20px'
+              flexDirection='column'
+              mt={'20px'}
+              justifyContent={'space-evenly'}>
               <TokenInfo
                 token={tokenX}
                 copyAddressHandler={copyAddressHandler}
@@ -120,7 +127,7 @@ export const PoolInfo: React.FC<IPros> = ({
                 price={prices.tokenY}
                 isPoolDataLoading={isPoolDataLoading}
               />
-            </Box>
+            </Grid>
           </>
         ) : (
           <EmptyPlaceholder

@@ -128,7 +128,7 @@ export const ChartUpperSection: React.FC<IProps> = ({
                   - pool not exists
                 </Typography>
               ) : (
-                <>
+                <Box display='flex' alignItems='center' gap='8px'>
                   <TooltipHover title='Copy'>
                     <Box
                       display='flex'
@@ -144,7 +144,7 @@ export const ChartUpperSection: React.FC<IProps> = ({
                       </Typography>
 
                       <Box>
-                        <CopyIcon color={colors.invariant.text} height={10} />
+                        <CopyIcon color={colors.invariant.text} height={12} />
                       </Box>
                     </Box>
                   </TooltipHover>
@@ -157,10 +157,10 @@ export const ChartUpperSection: React.FC<IProps> = ({
                         event.stopPropagation()
                       }}
                       className={classes.addressIcon}>
-                      <NewTabIcon color={colors.invariant.text} height={10} />
+                      <NewTabIcon color={colors.invariant.text} height={12} width={12} />
                     </a>
                   </TooltipHover>
-                </>
+                </Box>
               )}
             </Box>
           }

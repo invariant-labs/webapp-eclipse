@@ -18,6 +18,10 @@ export const useStyles = makeStyles()(theme => ({
     borderRadius: 24,
     marginTop: 16,
 
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'stretch',
+
     [theme.breakpoints.down('sm')]: {
       padding: '24px 8px'
     }

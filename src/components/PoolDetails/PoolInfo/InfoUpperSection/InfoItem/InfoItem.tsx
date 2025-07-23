@@ -24,15 +24,18 @@ export const InfoItem: React.FC<IProps> = ({
     <Box className={cx(classes.container, { [classes.green]: isGreen })}>
       <Box display='flex' alignItems='center' gap={'2px'}>
         <Typography
-          style={typography.caption1}
-          color={isGreen ? colors.invariant.green : colors.invariant.textGrey}>
+          style={typography.body1}
+          color={isGreen ? colors.invariant.green : colors.invariant.textGrey}
+          noWrap>
           {name}{' '}
         </Typography>
       </Box>
       {isLoadingStats ? (
         <Skeleton variant='rounded' height={17} width={80} animation='wave' />
       ) : (
-        <Typography style={typography.caption2}>{poolUnavailable ? '-' : value}</Typography>
+        <Typography style={typography.body2} noWrap>
+          {poolUnavailable ? '-' : value}
+        </Typography>
       )}
     </Box>
   )

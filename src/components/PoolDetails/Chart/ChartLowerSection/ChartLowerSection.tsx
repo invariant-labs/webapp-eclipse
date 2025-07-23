@@ -279,13 +279,14 @@ const ChartLowerSection: React.FC<StatsInterface> = ({
             options={[PoolChartSwitch.volume, PoolChartSwitch.tvl, PoolChartSwitch.fees]}
             dark
             itemWidth={90}
+            fullWidth={isMobile}
           />
-          <Box display='flex'>
+          <Box display={'flex'} width={isMobile ? '100%' : 'auto'}>
             <Intervals
               interval={interval ?? IntervalsKeys.Daily}
               setInterval={updateInterval}
               dark
-              fullWidth={false}
+              fullWidth={isMobile}
             />
           </Box>
         </Grid>

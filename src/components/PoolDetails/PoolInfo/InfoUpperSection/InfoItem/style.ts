@@ -9,11 +9,11 @@ export const useStyles = makeStyles()(() => ({
     alignItems: 'center',
     justifyContent: 'center',
     border: `1px solid ${colors.invariant.light}`,
-    padding: '10px 12px',
+    padding: '10px 8px',
     borderRadius: 12,
-    gap: 8,
-    width: 80,
-    color: colors.invariant.text
+    width: 88,
+    color: colors.invariant.text,
+    maxWidth: '100%'
   },
   green: {
     color: colors.invariant.green,

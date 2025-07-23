@@ -66,7 +66,7 @@ export const PercentageScale: React.FC<IProps> = ({
           <Typography
             width={44}
             color={colors.invariant.textGrey}
-            style={typography.caption2}
+            style={typography.caption1}
             textAlign={'center'}
             noWrap>
             {tokenXPercentage ? tokenXPercentage.toFixed(2) : 0} %
@@ -89,7 +89,7 @@ export const PercentageScale: React.FC<IProps> = ({
           <Typography
             width={44}
             color={colors.invariant.textGrey}
-            style={typography.caption2}
+            style={typography.caption1}
             textAlign={'center'}
             noWrap>
             {tokenYPercentage ? tokenYPercentage.toFixed(2) : 0} %

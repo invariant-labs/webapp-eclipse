@@ -5,7 +5,7 @@ export const useStyles = makeStyles<{ noData: boolean }>()((theme, { noData }) =
   upperContainer: {
     display: 'flex',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-end',
     minHeight: 71,
     flexDirection: 'row',
     rowGap: 8,

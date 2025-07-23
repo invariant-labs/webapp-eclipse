@@ -1,4 +1,4 @@
-import { typography, colors } from '@static/theme'
+import { typography, colors, theme } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => ({
@@ -28,7 +28,11 @@ export const useStyles = makeStyles()(() => ({
   },
   barContainer: {
     height: 335,
-    display: 'flex'
+    display: 'flex',
+
+    [theme.breakpoints.down(1200)]: {
+      height: 280
+    }
   },
   tooltip: {
     background: colors.invariant.component,
