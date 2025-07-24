@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { Box, ClickAwayListener, Skeleton, Typography } from '@mui/material'
+import { Box, ClickAwayListener, Skeleton, Typography, useMediaQuery } from '@mui/material'
 import useStyles from './style'
 import { DropdownIcon } from '@static/componentIcon/DropdownIcon'
+import { theme } from '@static/theme'
 
 export interface IProps {
   onSelect: (value: number) => void
@@ -29,6 +30,7 @@ export const FeeSelector: React.FC<IProps> = ({
   const { classes, cx } = useStyles()
   const [open, setOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const isTablet = useMediaQuery(theme.breakpoints.down(1200))
 
   const toggleDropdown = () => setOpen(prev => !prev)
   const closeDropdown = () => setOpen(false)
@@ -136,7 +138,12 @@ export const FeeSelector: React.FC<IProps> = ({
             )}
           </>
         ) : (
-          <Skeleton variant='rounded' width={132} height={44} sx={{ borderRadius: '8px' }} />
+          <Skeleton
+            variant='rounded'
+            width={132}
+            height={isTablet ? 40 : 44}
+            sx={{ borderRadius: '8px' }}
+          />
         )}
       </Box>
     </ClickAwayListener>
