@@ -88,7 +88,7 @@ export const useSliderStyles = makeStyles<{
     margin: 0,
     top: -4,
     borderRadius: 7,
-    background: colors.invariant.dark,
+    background: colors.invariant.light,
     maxWidth: '100%',
 
     '& span': {

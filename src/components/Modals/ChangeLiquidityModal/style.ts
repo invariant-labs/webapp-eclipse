@@ -1,7 +1,11 @@
 import { colors, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
-export const useStyles = makeStyles()(theme => ({
+type Props = {
+  isAddLiquidity: boolean
+}
+
+export const useStyles = makeStyles<Props>()((theme, { isAddLiquidity }) => ({
   root: {
     display: 'flex',
     justifyContent: 'center',
@@ -17,11 +21,9 @@ export const useStyles = makeStyles()(theme => ({
 
     [theme.breakpoints.down('sm')]: {
       width: 'calc(100% - 16px)',
-      padding: 8,
-      borderRadius: 0,
+      padding: '16px 8px',
       maxWidth: '100%',
-      minHeight: '100%',
-      inset: 0
+      top: 0
     }
   },
   container: {
@@ -33,15 +35,11 @@ export const useStyles = makeStyles()(theme => ({
     background: colors.invariant.dark,
     padding: 2,
     display: 'flex',
-    borderRadius: 13
+    borderRadius: 13,
+    position: 'relative'
   },
   switchButtonActive: {
-    color: colors.invariant.text,
-    background: colors.invariant.light,
-
-    '&:hover': {
-      background: colors.invariant.light
-    }
+    color: colors.invariant.text
   },
   switchButton: {
     ...typography.body1,
@@ -155,6 +153,15 @@ export const useStyles = makeStyles()(theme => ({
   closeIcon: {
     height: 12,
     width: 12
+  },
+  marker: {
+    position: 'absolute',
+    width: 'calc((100% - 4px) / 2)',
+    height: 'calc(100% - 4px)',
+    borderRadius: 10,
+    background: colors.invariant.light,
+    transform: `translateX(${isAddLiquidity ? '0' : '100%'})`,
+    transitionDuration: '300ms'
   }
 }))
 

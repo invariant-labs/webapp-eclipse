@@ -69,13 +69,15 @@ import { blurContent, createButtonActions } from '@utils/uiUtils'
 import { useStyles } from './style'
 import { theme } from '@static/theme'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
-import { infoIcon, settingIcon, unknownTokenIcon } from '@static/icons'
+import { unknownTokenIcon } from '@static/icons'
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
 import DepoSitOptionsModal from '@components/Modals/DepositOptionsModal/DepositOptionsModal'
 import DepositAmountInput from '@components/Inputs/DepositAmountInput/DepositAmountInput'
 import loadingAnimation from '@static/gif/loading.gif'
 import { InputState } from '@components/NewPosition/DepositSelector/DepositSelector'
 import { Tick, Tickmap } from '@invariant-labs/sdk-eclipse/lib/market'
+import { Info } from '@static/componentIcon/Info'
+import { Settings } from '@static/componentIcon/Settings'
 
 export interface IProps {
   tokenFrom: PublicKey
@@ -1362,11 +1364,9 @@ export const AddLiquidity: React.FC<IProps> = ({
               className={classes.optionsIconBtn}
               disableRipple
               style={!isAutoswapOn ? { pointerEvents: 'none' } : {}}>
-              <img
-                src={settingIcon}
-                className={!isAutoswapOn ? classes.grayscaleIcon : classes.whiteIcon}
-                alt='options'
-              />
+              <Box className={!isAutoswapOn ? classes.grayscaleIcon : classes.whiteIcon}>
+                <Settings />
+              </Box>
             </Button>
           </Box>
         </TooltipHover>
@@ -1391,15 +1391,9 @@ export const AddLiquidity: React.FC<IProps> = ({
     if (isSimulationStatus(SwapAndCreateSimulationStatus.PerfectRatio)) {
       return (
         <Box className={classes.unknownWarning}>
-          <div style={{ marginBottom: '-1.5px' }}>
+          <div style={{ marginBottom: '-1.5px', marginRight: '4px' }}>
             <TooltipHover title={'You already have enough tokens to open position'}>
-              <img
-                src={infoIcon}
-                alt=''
-                width='12px'
-                style={{ marginRight: '4px' }}
-                className={classes.grayscaleIcon}
-              />
+              <Info style={{ height: 20, width: 20 }} />
             </TooltipHover>
           </div>
           No swap required
@@ -1410,15 +1404,9 @@ export const AddLiquidity: React.FC<IProps> = ({
     if (isSimulationStatus(SwapAndCreateSimulationStatus.LiquidityTooLow)) {
       return (
         <Box className={classes.errorWarning}>
-          <div style={{ marginBottom: '-1.5px' }}>
+          <div style={{ marginBottom: '-1.5px', marginRight: '4px' }}>
             <TooltipHover title={'There is not enough liquidity to perform the swap'}>
-              <img
-                src={infoIcon}
-                alt=''
-                width='12px'
-                style={{ marginRight: '4px' }}
-                className={classes.errorIcon}
-              />
+              <Info style={{ height: 20, width: 20 }} />
             </TooltipHover>
           </div>
           Insufficient liquidity
@@ -1437,13 +1425,9 @@ export const AddLiquidity: React.FC<IProps> = ({
         <Box className={classes.errorWarning}>
           <TooltipHover title={'Unable to perform autoswap and open a position'}>
             <Box display='flex' alignItems='center'>
-              <img
-                src={infoIcon}
-                alt=''
-                width='12px'
-                style={{ marginRight: '4px', marginBottom: '-1.5px' }}
-                className={classes.errorIcon}
-              />
+              <div style={{ marginBottom: '-1.5px', marginRight: '4px' }}>
+                <Info style={{ height: 20, width: 20 }} />
+              </div>
               Invalid parameters
             </Box>
           </TooltipHover>
@@ -1759,9 +1743,11 @@ export const AddLiquidity: React.FC<IProps> = ({
             walletUninitialized={walletStatus !== Status.Initialized}
           />
         </Box>
-        <Box className={classes.positionAfter}>
-          Your position after deposit:{' '}
-          <span className={classes.positionAfterValue}>
+      </Grid>
+      <Box className={classes.statCard}>
+        <Box className={classes.statRow}>
+          <Typography className={classes.statTitle}>Your position after deposit:</Typography>
+          <Typography className={classes.statContent}>
             {tokenAIndex !== null
               ? formatNumberWithoutSuffix(
                   tokenXLiquidity +
@@ -1779,9 +1765,7 @@ export const AddLiquidity: React.FC<IProps> = ({
             ) : (
               <img className={classes.smallIcon} src={unknownTokenIcon} alt='unknown icon' />
             )}
-          </span>
-          {', '}
-          <span className={classes.positionAfterValue}>
+            {' + '}
             {tokenBIndex !== null
               ? formatNumberWithoutSuffix(
                   tokenYLiquidity +
@@ -1799,18 +1783,18 @@ export const AddLiquidity: React.FC<IProps> = ({
             ) : (
               <img className={classes.smallIcon} src={unknownTokenIcon} alt='unknown icon' />
             )}
-          </span>
+          </Typography>
         </Box>
-      </Grid>
-      <Box className={classes.totalDepositCard}>
-        <Typography className={classes.totalDepositTitle}>Total deposit</Typography>
-        <Typography className={classes.totalDepositContent}>
-          $
-          {formatNumberWithoutSuffix(
-            (tokenAPriceData?.price ?? 0) * +tokenAInputState.value +
-              (tokenBPriceData?.price ?? 0) * +tokenBInputState.value
-          )}
-        </Typography>
+        <Box className={classes.statRow}>
+          <Typography className={classes.statTitle}>Total deposit:</Typography>
+          <Typography className={classes.statContent}>
+            $
+            {formatNumberWithoutSuffix(
+              (tokenAPriceData?.price ?? 0) * +tokenAInputState.value +
+                (tokenBPriceData?.price ?? 0) * +tokenBInputState.value
+            )}
+          </Typography>
+        </Box>
       </Box>
       <Box width='100%'>
         {walletStatus !== Status.Initialized ? (

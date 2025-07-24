@@ -2,7 +2,8 @@ import AnimatedButton, { ProgressState } from '@common/AnimatedButton/AnimatedBu
 import {
   ALL_FEE_TIERS_DATA,
   DEFAULT_NEW_POSITION_SLIPPAGE,
-  NetworkType
+  NetworkType,
+  thresholdsWithTokenDecimal
 } from '@store/consts/static'
 import { TokenPriceData } from '@store/consts/types'
 import {
@@ -11,8 +12,10 @@ import {
   convertBalanceToBN,
   determinePositionTokenBlock,
   formatNumberWithoutSuffix,
+  formatNumberWithSuffix,
   getMockedTokenPrice,
   getScaleFromString,
+  getThresholdsDecimals,
   getTokenPrice,
   PositionTokenBlock,
   printBN,
@@ -334,11 +337,11 @@ export const RemoveLiquidity: React.FC<IProps> = ({
     try {
       if (byX) {
         const result = getLiquidityByX(
-          amount,
+          amount.add(new BN(1)),
           lowerTick,
           upperTick,
           poolIndex !== null ? allPools[poolIndex].sqrtPrice : midPrice.sqrtPrice,
-          true
+          false
         )
         return { amount: result.y, liquidity: result.liquidity }
       } else {
@@ -347,7 +350,7 @@ export const RemoveLiquidity: React.FC<IProps> = ({
           lowerTick,
           upperTick,
           poolIndex !== null ? allPools[poolIndex].sqrtPrice : midPrice.sqrtPrice,
-          true
+          false
         )
         return { amount: result.x, liquidity: result.liquidity }
       }
@@ -711,11 +714,25 @@ export const RemoveLiquidity: React.FC<IProps> = ({
       const [decimalX, decimalY] = isXtoY ? [decimalA, decimalB] : [decimalB, decimalA]
 
       try {
-        const valueX = convertBalanceToBN(x.toString(), xDecimal)
+        const valueX = convertBalanceToBN(
+          formatNumberWithSuffix(x, {
+            decimalsAfterDot: getThresholdsDecimals(x, thresholdsWithTokenDecimal(xDecimal)),
+            noSubNumbers: true,
+            alternativeConfig: true
+          }),
+          xDecimal
+        )
           .mul(new BN(depositPercentage))
           .div(new BN(100))
 
-        const valueY = convertBalanceToBN(y.toString(), yDecimal)
+        const valueY = convertBalanceToBN(
+          formatNumberWithSuffix(y, {
+            decimalsAfterDot: getThresholdsDecimals(y, thresholdsWithTokenDecimal(yDecimal)),
+            noSubNumbers: true,
+            alternativeConfig: true
+          }),
+          yDecimal
+        )
           .mul(new BN(depositPercentage))
           .div(new BN(100))
 
@@ -872,9 +889,11 @@ export const RemoveLiquidity: React.FC<IProps> = ({
             walletUninitialized={walletStatus !== Status.Initialized}
           />
         </Box>
-        <Box className={classes.positionAfter}>
-          Your position after withdraw:{' '}
-          <span className={classes.positionAfterValue}>
+      </Grid>
+      <Box className={classes.statCard}>
+        <Box className={classes.statRow}>
+          <Typography className={classes.statTitle}>Your position after withdraw:</Typography>
+          <Typography className={classes.statContent}>
             {tokenAIndex !== null
               ? formatNumberWithoutSuffix(tokenXLiquidity - +tokenAInputState.value)
               : 0}{' '}
@@ -887,9 +906,7 @@ export const RemoveLiquidity: React.FC<IProps> = ({
             ) : (
               <img className={classes.smallIcon} src={unknownTokenIcon} alt='unknown icon' />
             )}
-          </span>
-          {', '}
-          <span className={classes.positionAfterValue}>
+            {' + '}
             {tokenBIndex !== null
               ? formatNumberWithoutSuffix(tokenYLiquidity - +tokenBInputState.value)
               : 0}{' '}
@@ -902,18 +919,18 @@ export const RemoveLiquidity: React.FC<IProps> = ({
             ) : (
               <img className={classes.smallIcon} src={unknownTokenIcon} alt='unknown icon' />
             )}
-          </span>
+          </Typography>
         </Box>
-      </Grid>
-      <Box className={classes.totalDepositCard}>
-        <Typography className={classes.totalDepositTitle}>Total withdraw</Typography>
-        <Typography className={classes.totalDepositContent}>
-          $
-          {formatNumberWithoutSuffix(
-            (tokenAPriceData?.price ?? 0) * +tokenAInputState.value +
-              (tokenBPriceData?.price ?? 0) * +tokenBInputState.value
-          )}
-        </Typography>
+        <Box className={classes.statRow}>
+          <Typography className={classes.statTitle}>Total withdraw:</Typography>
+          <Typography className={classes.statContent}>
+            $
+            {formatNumberWithoutSuffix(
+              (tokenAPriceData?.price ?? 0) * +tokenAInputState.value +
+                (tokenBPriceData?.price ?? 0) * +tokenBInputState.value
+            )}
+          </Typography>
+        </Box>
       </Box>
       <Box width='100%'>
         {walletStatus !== Status.Initialized ? (

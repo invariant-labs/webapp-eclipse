@@ -289,23 +289,10 @@ export const useStyles = makeStyles()(theme => {
       }
     },
     whiteIcon: {
-      filter: 'brightness(0) invert(100%)',
-      transition: 'filter 0.7s ease-in-out',
-      minWidth: '12px',
-      minHeight: '12px'
+      color: colors.white.main
     },
     grayscaleIcon: {
-      filter: 'grayscale(100%)',
-      transition: 'filter 0.7s ease-in-out',
-      minWidth: '12px',
-      minHeight: '12px'
-    },
-    errorIcon: {
-      filter:
-        'brightness(0) saturate(100%) invert(45%) sepia(83%) saturate(1283%) hue-rotate(327deg) brightness(98%) contrast(98%)',
-      transition: 'filter 0.7s ease-in-out',
-      minWidth: '12px',
-      minHeight: '12px'
+      color: colors.invariant.textGrey
     },
     inputWrapper: {
       display: 'flex',
@@ -372,38 +359,29 @@ export const useStyles = makeStyles()(theme => {
         gap: 4
       }
     },
-    totalDepositCard: {
+    statCard: {
       marginTop: 24,
       padding: 12,
-      display: 'flex',
-      justifyContent: 'space-between',
       background: colors.invariant.light,
       borderRadius: 13
     },
-    totalDepositTitle: {
-      ...typography.body1
+    statRow: {
+      display: 'flex',
+      justifyContent: 'space-between'
     },
-    totalDepositContent: {
+    statTitle: {
       ...typography.body2,
       color: colors.invariant.textGrey
+    },
+    statContent: {
+      ...typography.body1,
+      display: 'flex',
+      gap: 4
     },
     deposit: {
       marginRight: 24
     },
-    positionAfter: {
-      color: colors.invariant.textGrey,
-      display: 'flex',
-      gap: 4
-    },
-    positionAfterValue: {
-      color: colors.white.main,
-      fontWeight: 'bold',
-      display: 'flex',
-      alignItems: 'center',
-      gap: 4
-    },
     smallIcon: {
-      marginTop: -2,
       width: 16,
       height: 16
     }

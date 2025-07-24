@@ -1,9 +1,5 @@
 import { Box, Button, Popover, Typography } from '@mui/material'
 import useStyles from './style'
-import addWhiteIcon from '@static/svg/add-white.svg'
-import removeGrayIcon from '@static/svg/remove-gray.svg'
-import addGrayIcon from '@static/svg/add-gray.svg'
-import removeWhiteIcon from '@static/svg/remove-white.svg'
 import inRangeIcon from '@static/svg/in-range.svg'
 import outOfRangeIcon from '@static/svg/out-of-range.svg'
 import { useMemo } from 'react'
@@ -27,6 +23,7 @@ import { Tickmap } from '@invariant-labs/sdk-eclipse/lib/market'
 import { Tick } from '@invariant-labs/sdk-eclipse/src/market'
 import { PlotTickData } from '@store/reducers/positions'
 import { closeSmallIcon } from '@static/icons'
+import { Add, Remove } from '@mui/icons-material'
 
 export interface IChangeLiquidityModal {
   open: boolean
@@ -144,7 +141,7 @@ export const ChangeLiquidityModal: React.FC<IChangeLiquidityModal> = ({
   setChangeLiquiditySuccess,
   positionLiquidity
 }) => {
-  const { classes, cx } = useStyles()
+  const { classes, cx } = useStyles({ isAddLiquidity })
 
   const { tokenXPercentage, tokenYPercentage } = useMemo(
     () =>
@@ -179,16 +176,17 @@ export const ChangeLiquidityModal: React.FC<IChangeLiquidityModal> = ({
           </Box>
         </Box>
         <Box className={classes.switch}>
+          <Box className={classes.marker}></Box>
           <Button
             className={cx(classes.switchButton, { [classes.switchButtonActive]: isAddLiquidity })}
             onClick={() => setIsAddLiquidity(true)}>
-            <img src={isAddLiquidity ? addWhiteIcon : addGrayIcon} alt='plus icon' />
+            <Add />
             Add liquidity
           </Button>
           <Button
             className={cx(classes.switchButton, { [classes.switchButtonActive]: !isAddLiquidity })}
             onClick={() => setIsAddLiquidity(false)}>
-            <img src={!isAddLiquidity ? removeWhiteIcon : removeGrayIcon} alt='remove icon' />
+            <Remove />
             Remove liquidity
           </Button>
         </Box>

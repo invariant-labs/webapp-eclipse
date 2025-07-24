@@ -369,20 +369,24 @@ export const useStyles = makeStyles()(theme => {
         gap: 4
       }
     },
-    totalDepositCard: {
+    statCard: {
       marginTop: 24,
       padding: 12,
-      display: 'flex',
-      justifyContent: 'space-between',
       background: colors.invariant.light,
       borderRadius: 13
     },
-    totalDepositTitle: {
-      ...typography.body1
+    statRow: {
+      display: 'flex',
+      justifyContent: 'space-between'
     },
-    totalDepositContent: {
+    statTitle: {
       ...typography.body2,
       color: colors.invariant.textGrey
+    },
+    statContent: {
+      ...typography.body1,
+      display: 'flex',
+      gap: 4
     },
     deposit: {
       marginRight: 24
@@ -405,22 +409,10 @@ export const useStyles = makeStyles()(theme => {
       ...typography.caption4,
       color: colors.invariant.textGrey
     },
-    positionAfter: {
-      color: colors.invariant.textGrey,
-      display: 'flex',
-      gap: 4
-    },
-    positionAfterValue: {
-      color: colors.white.main,
-      fontWeight: 'bold',
-      display: 'flex',
-      alignItems: 'center',
-      gap: 4
-    },
     smallIcon: {
-      marginTop: -2,
       width: 16,
-      height: 16
+      height: 16,
+      borderRadius: '100%'
     }
   }
 })
