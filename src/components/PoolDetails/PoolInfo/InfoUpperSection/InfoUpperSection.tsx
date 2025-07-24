@@ -22,14 +22,7 @@ export const InfoUpperSection: React.FC<IProps> = ({
   const intervalSuffix = mapIntervalToString(interval)
 
   return (
-    <Grid
-      container
-      gap={1}
-      justifyContent='center'
-      alignItems='stretch'
-      wrap='wrap'
-      width='100%' // full-width container
-    >
+    <Grid container gap={1} justifyContent='center' alignItems='stretch' wrap='wrap' width='100%'>
       <Grid
         item
         display='flex'
@@ -44,7 +37,6 @@ export const InfoUpperSection: React.FC<IProps> = ({
             statsPoolData.apy > 1000 ? '>1000%' : `${formatNumberWithoutSuffix(statsPoolData.apy)}%`
           }
           isLoadingStats={isLoadingStats}
-          isGreen
           poolUnavailable={!poolAddress}
         />
         <InfoItem

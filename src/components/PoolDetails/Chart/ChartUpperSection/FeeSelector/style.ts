@@ -148,6 +148,9 @@ export const useStyles = makeStyles()(() => ({
     '&:hover': {
       color: colors.invariant.green
     }
+  },
+  selectorDisabled: {
+    cursor: 'not-allowed'
   }
 }))
 

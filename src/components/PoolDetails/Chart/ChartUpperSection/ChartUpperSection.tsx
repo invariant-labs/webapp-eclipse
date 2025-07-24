@@ -20,7 +20,7 @@ export interface IProps {
   tokenY: SwapToken | null
   handleOpenSwap: () => void
   handleOpenPosition: () => void
-  isPoolDataLoading: boolean
+  isLoading: boolean
   selectFeeTier: (value: number) => void
   feeTiers: number[]
   feeTierIndex: number
@@ -44,7 +44,7 @@ export const ChartUpperSection: React.FC<IProps> = ({
   tokenY,
   handleOpenSwap,
   handleOpenPosition,
-  isPoolDataLoading,
+  isLoading,
   selectFeeTier,
   feeTiers,
   feeTierIndex,
@@ -115,7 +115,7 @@ export const ChartUpperSection: React.FC<IProps> = ({
               <Typography sx={{ ...typography.body2, color: colors.invariant.textGrey }}>
                 Pool address
               </Typography>
-              {isPoolDataLoading ? (
+              {isLoading ? (
                 <Skeleton
                   variant='rounded'
                   height={27}
@@ -165,7 +165,7 @@ export const ChartUpperSection: React.FC<IProps> = ({
             </Box>
           }
 
-          {tokenX && tokenY && (
+          {
             <Box
               display='flex'
               alignItems='center'
@@ -176,7 +176,9 @@ export const ChartUpperSection: React.FC<IProps> = ({
                 tokens={tokens}
                 current={tokenX}
                 onSelect={index => {
-                  setTokens(tokens[index], tokenY)
+                  if (tokenX && tokenY) {
+                    setTokens(tokens[index], tokenY)
+                  }
                 }}
                 centered
                 className={classes.customSelect}
@@ -196,7 +198,9 @@ export const ChartUpperSection: React.FC<IProps> = ({
                 tokens={tokens}
                 current={tokenY}
                 onSelect={index => {
-                  setTokens(tokenX, tokens[index])
+                  if (tokenX && tokenY) {
+                    setTokens(tokenX, tokens[index])
+                  }
                 }}
                 centered
                 className={classes.customSelect}
@@ -212,7 +216,7 @@ export const ChartUpperSection: React.FC<IProps> = ({
                 network={network}
               />
             </Box>
-          )}
+          }
         </Grid>
         {!isTablet && (
           <FeeSelector
@@ -223,6 +227,8 @@ export const ChartUpperSection: React.FC<IProps> = ({
             feeTiersWithTvl={feeTiersWithTvl}
             totalTvl={totalTvl}
             disabledFeeTiers={disabledFeeTiers}
+            noData={noData}
+            isLoading={isLoading}
           />
         )}
       </Grid>
@@ -271,6 +277,8 @@ export const ChartUpperSection: React.FC<IProps> = ({
             feeTiersWithTvl={feeTiersWithTvl}
             totalTvl={totalTvl}
             disabledFeeTiers={disabledFeeTiers}
+            noData={noData}
+            isLoading={isLoading}
           />
         )}
       </Box>

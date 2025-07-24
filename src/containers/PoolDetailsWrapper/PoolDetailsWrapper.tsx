@@ -1,5 +1,5 @@
 import PoolDetails from '@components/PoolDetails/PoolDetails'
-import { ALL_FEE_TIERS_DATA, disabledPools } from '@store/consts/static'
+import { ALL_FEE_TIERS_DATA, disabledPools, USDC_MAIN, WETH_MAIN } from '@store/consts/static'
 import { isLoadingLatestPoolsForTransaction, poolsArraySortedByFees } from '@store/selectors/pools'
 import { network } from '@store/selectors/solanaConnection'
 import { poolTokens, SwapToken } from '@store/selectors/solanaWallet'
@@ -196,8 +196,7 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
         poolAddress: poolData?.address.toString()
       })
     )
-    setTriggerRefresh(false)
-  }, [lastFetchedInterval, poolData?.address, initialFee, triggerRefresh])
+  }, [lastFetchedInterval, triggerRefresh, poolData?.address.toString()])
 
   useEffect(() => {
     if (lastUsedInterval || !poolData?.address) return
@@ -237,8 +236,24 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
     const tokenXAddress = getTokenIndex(initialTokenFrom)
     const tokenYAddress = getTokenIndex(initialTokenTo)
 
-    const tokenX = tokens.find(token => token.address.toString() === tokenXAddress?.toString())
-    const tokenY = tokens.find(token => token.address.toString() === tokenYAddress?.toString())
+    let tokenX = tokens.find(token => token.address.toString() === tokenXAddress?.toString())
+    let tokenY = tokens.find(token => token.address.toString() === tokenYAddress?.toString())
+
+    if (!tokenX) {
+      if (tokenY && tokenY.assetAddress.toString() !== WETH_MAIN?.address.toString()) {
+        tokenX = tokens.find(token => token.address.toString() === WETH_MAIN?.address.toString())
+      } else {
+        tokenX = tokens.find(token => token.address.toString() === USDC_MAIN?.address.toString())
+      }
+    }
+
+    if (!tokenY) {
+      if (tokenX && tokenX.assetAddress.toString() !== USDC_MAIN?.address.toString()) {
+        tokenY = tokens.find(token => token.address.toString() === USDC_MAIN?.address.toString())
+      } else {
+        tokenY = tokens.find(token => token.address.toString() === WETH_MAIN?.address.toString())
+      }
+    }
 
     if (!tokenX || !tokenY) return
 
@@ -263,6 +278,7 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
     if (fee && tickSpacing && tokenX && tokenY) {
       if (tokenX.assetAddress.toString() === tokenY.assetAddress.toString()) {
         setSameTokensError(true)
+        setPoolData(null)
         return
       } else {
         setSameTokensError(false)
@@ -276,7 +292,7 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
         )
       }
     }
-  }, [initialFee, tokenX, tokenY])
+  }, [initialFee, tokenX?.assetAddress.toString(), tokenY?.assetAddress.toString()])
 
   useEffect(() => {
     if (!isPoolDataLoading && tokenX?.assetAddress && tokenY?.assetAddress && fee) {
@@ -360,19 +376,27 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
   }, [initialFee, ALL_FEE_TIERS_DATA])
 
   const onRefresh = () => {
-    setTriggerRefresh(true)
+    setTriggerRefresh(prev => !prev)
 
     dispatch(actions.getCurrentIntervalStats({ interval: IntervalsKeys.Daily }))
 
     if (fee && tickSpacing && tokenX && tokenY) {
-      dispatch(
-        poolsActions.getPoolData(
-          new Pair(tokenX.assetAddress, tokenY.assetAddress, {
-            fee,
-            tickSpacing
-          })
+      if (tokenX.assetAddress.toString() === tokenY.assetAddress.toString()) {
+        setPoolData(null)
+        setSameTokensError(true)
+        return
+      } else {
+        setSameTokensError(false)
+
+        dispatch(
+          poolsActions.getPoolData(
+            new Pair(tokenX.assetAddress, tokenY.assetAddress, {
+              fee,
+              tickSpacing
+            })
+          )
         )
-      )
+      }
     }
   }
 

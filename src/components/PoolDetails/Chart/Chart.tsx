@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Box, Grid, Typography } from '@mui/material'
 import useStyles from './style'
 import { NetworkType } from '@store/consts/static'
@@ -76,6 +76,20 @@ export const Chart: React.FC<IProps> = ({
 }) => {
   const { classes } = useStyles()
 
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    setIsLoading(true)
+
+    const timeout = setTimeout(() => {
+      if (!isPoolDataLoading && !isLoadingStats) {
+        setIsLoading(false)
+      }
+    }, 100)
+
+    return () => clearTimeout(timeout)
+  }, [isPoolDataLoading, isLoadingStats])
+
   return (
     <Grid className={classes.wrapper}>
       <Typography className={classes.header}>Pool Details</Typography>
@@ -84,7 +98,7 @@ export const Chart: React.FC<IProps> = ({
           copyAddressHandler={copyAddressHandler}
           handleOpenPosition={handleOpenPosition}
           handleOpenSwap={handleOpenSwap}
-          isPoolDataLoading={isPoolDataLoading}
+          isLoading={isLoading}
           network={network}
           poolAddress={poolAddress}
           tokenX={tokenX}
