@@ -29,7 +29,11 @@ export const useStyles = makeStyles<{ noData: boolean }>()((theme, { noData }) =
   },
   buttons: {
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'column',
+
+    [theme.breakpoints.down(1200)]: {
+      height: 40
+    }
   },
   addressIcon: {
     '&:hover': {
@@ -64,6 +68,7 @@ export const useStyles = makeStyles<{ noData: boolean }>()((theme, { noData }) =
     color: colors.invariant.black,
     textTransform: 'none',
     transition: 'filter 0.3s linear',
+    height: 'min-content',
 
     '&:hover': {
       filter: 'brightness(1.2)',

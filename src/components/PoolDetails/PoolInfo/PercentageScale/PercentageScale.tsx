@@ -54,7 +54,7 @@ export const PercentageScale: React.FC<IProps> = ({
       alignItems='center'
       width='100%'
       justifyContent='space-between'
-      gap={'24px'}>
+      gap={'16px'}>
       <Box display='flex' alignItems='center' flexDirection='column' justifyContent='center'>
         <img className={classes.icon} src={tokenX.logoURI} alt={tokenX.symbol} />
         <Typography color={colors.invariant.text} style={typography.body2} mt={'6px'}>
@@ -64,12 +64,19 @@ export const PercentageScale: React.FC<IProps> = ({
           <Skeleton variant='rounded' height={17} width={44} />
         ) : (
           <Typography
-            width={44}
+            minWidth={44}
             color={colors.invariant.textGrey}
             style={typography.caption1}
             textAlign={'center'}
             noWrap>
-            {tokenXPercentage ? tokenXPercentage.toFixed(2) : 0} %
+            {tokenXPercentage
+              ? tokenXPercentage > 99
+                ? '99'
+                : tokenXPercentage < 0.01
+                  ? '<0.01'
+                  : tokenXPercentage.toFixed(2)
+              : 0}
+            %
           </Typography>
         )}
       </Box>
@@ -87,12 +94,19 @@ export const PercentageScale: React.FC<IProps> = ({
           <Skeleton variant='rounded' height={17} width={44} />
         ) : (
           <Typography
-            width={44}
+            minWidth={44}
             color={colors.invariant.textGrey}
             style={typography.caption1}
             textAlign={'center'}
             noWrap>
-            {tokenYPercentage ? tokenYPercentage.toFixed(2) : 0} %
+            {tokenYPercentage
+              ? tokenYPercentage > 99
+                ? '99'
+                : tokenYPercentage < 0.01
+                  ? '<0.01'
+                  : tokenYPercentage.toFixed(2)
+              : 0}
+            %
           </Typography>
         )}
       </Box>
