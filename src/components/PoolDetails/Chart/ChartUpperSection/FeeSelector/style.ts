@@ -69,7 +69,7 @@ export const useStyles = makeStyles()(() => ({
     ...typography.caption1
   },
   tvlText: {
-    color: colors.invariant.textGrey,
+    color: colors.invariant.text,
     ...typography.caption4
   },
   active: {
@@ -81,14 +81,15 @@ export const useStyles = makeStyles()(() => ({
   },
   disabled: {
     cursor: 'not-allowed',
-    filter: 'brightness(1.2)',
+    background: colors.invariant.component,
+    filter: 'brightness(0.85)',
     '& p': {
       color: colors.invariant.textGrey
     },
 
     '&:hover': {
-      background: colors.invariant.componentBcg,
-      filter: 'brightness(1.2)'
+      background: colors.invariant.component,
+      filter: 'brightness(0.85)'
     }
   },
   bestSelect: {
