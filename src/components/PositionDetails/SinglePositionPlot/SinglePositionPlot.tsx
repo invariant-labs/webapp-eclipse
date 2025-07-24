@@ -8,10 +8,11 @@ import {
   formatNumberWithSuffix,
   numberToString,
   spacingMultiplicityGte,
+  trimLeadingZeros,
   truncateString
 } from '@utils/utils'
 import { PlotTickData } from '@store/reducers/positions'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import useStyles from './style'
 import { getMaxTick, getMinTick } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { Stat } from './Stat/Stat'
@@ -233,6 +234,23 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
   const maxPercentage = ((+max - currentPrice) / currentPrice) * 100
   const concentration = calculateConcentration(leftRange.index, rightRange.index)
 
+  const { formattedMin, formattedMax } = useMemo(() => {
+    const formattedMin = formatNumberWithoutSuffix(min)
+    const formattedMax = formatNumberWithoutSuffix(max)
+
+    if (formattedMin === formattedMax) {
+      return {
+        formattedMin: trimLeadingZeros(min.toFixed(xToY ? tokenY.decimal : tokenX.decimal)),
+        formattedMax: trimLeadingZeros(max.toFixed(xToY ? tokenY.decimal : tokenX.decimal))
+      }
+    } else {
+      return {
+        formattedMin,
+        formattedMax
+      }
+    }
+  }, [min, max, xToY])
+
   return (
     <Box className={classes.container}>
       <Box className={classes.headerContainer}>
@@ -334,7 +352,7 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
                 value={
                   <Box>
                     <Typography component='span' className={classes.value}>
-                      {isFullRange ? 0 : formatNumberWithoutSuffix(min)}
+                      {isFullRange ? 0 : formattedMin}
                     </Typography>{' '}
                     {!isFullRange &&
                       (xToY
@@ -351,11 +369,7 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
                 value={
                   <Box>
                     <Typography component='span' className={classes.value}>
-                      {isFullRange ? (
-                        <span style={{ fontSize: '24px' }}>∞</span>
-                      ) : (
-                        formatNumberWithoutSuffix(max)
-                      )}
+                      {isFullRange ? <span style={{ fontSize: '24px' }}>∞</span> : formattedMax}
                     </Typography>{' '}
                     {!isFullRange &&
                       (xToY
