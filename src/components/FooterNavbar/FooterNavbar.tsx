@@ -7,8 +7,6 @@ import {
   liquidityIcon,
   moreIcon,
   lqStakingIcon,
-  saleSelectedIcon,
-  saleUnselectedIcon,
   statsIcon,
   swapArrowsIcon,
   tokenCreatorIcon,
@@ -120,14 +118,14 @@ export const FooterNavbar = () => {
       width: 26,
       isLink: true
     },
-    {
-      label: 'Presale',
-      icon: saleUnselectedIcon,
-      url: 'presale',
+    // {
+    //   label: 'Presale',
+    //   icon: saleUnselectedIcon,
+    //   url: 'presale',
 
-      isLink: true,
-      width: 34
-    },
+    //   isLink: true,
+    //   width: 34
+    // },
 
     {
       label: 'More',
@@ -229,9 +227,10 @@ export const FooterNavbar = () => {
                 {active && <Box className={classes.activeBox} />}
                 <img
                   src={
-                    activePath === 'presale' && link.label === 'Presale'
-                      ? saleSelectedIcon
-                      : link.icon
+                    // activePath === 'presale' && link.label === 'Presale'
+                    //   ? saleSelectedIcon
+                    //   :
+                    link.icon
                   }
                   width={link.width}
                   style={
