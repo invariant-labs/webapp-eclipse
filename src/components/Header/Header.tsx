@@ -58,7 +58,7 @@ export const Header: React.FC<IHeader> = ({
     'exchange',
     'liquidity',
     'portfolio',
-    'presale',
+    // 'presale',
     ...(typeOfNetwork === NetworkType.Testnet ? ['creator'] : []),
     ...(typeOfNetwork === NetworkType.Mainnet ? ['points'] : []),
     'stake',
@@ -70,7 +70,7 @@ export const Header: React.FC<IHeader> = ({
     exchange: [/^exchange\/*/],
     portfolio: [/^portfolio\/*/, /^newPosition\/*/, /^position\/*/],
     stake: [/^stake\/*/],
-    presale: [/^presale\/*/],
+    // presale: [/^presale\/*/],
     ...(typeOfNetwork === NetworkType.Mainnet ? { leaderboard: [/^points\/*/] } : {}),
     ...(typeOfNetwork === NetworkType.Testnet ? { creator: [/^creator\/*/] } : {})
   }
@@ -198,12 +198,13 @@ export const Header: React.FC<IHeader> = ({
           <ChangeWalletButton
             name={
               walletConnected
-                ? `${address.toString().slice(0, 4)}...${!isSmDown
-                  ? address
-                    .toString()
-                    .slice(address.toString().length - 4, address.toString().length)
-                  : ''
-                }`
+                ? `${address.toString().slice(0, 4)}...${
+                    !isSmDown
+                      ? address
+                          .toString()
+                          .slice(address.toString().length - 4, address.toString().length)
+                      : ''
+                  }`
                 : isSmDown
                   ? 'Connect'
                   : 'Connect wallet'

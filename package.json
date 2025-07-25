@@ -66,7 +66,8 @@
     "tweetnacl": "^1.0.3",
     "typed-redux-saga": "^1.5.0",
     "vite-plugin-top-level-await": "^1.4.1",
-    "vite-plugin-wasm": "^3.3.0"
+    "vite-plugin-wasm": "^3.3.0",
+    "@invariant-labs/sale-sdk": "^0.0.51"
   },
   "devDependencies": {
     "@rollup/plugin-inject": "^5.0.5",
