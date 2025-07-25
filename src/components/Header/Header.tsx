@@ -194,28 +194,30 @@ export const Header: React.FC<IHeader> = ({
           />
 
           <YourPointsButton />
-          <ChangeWalletButton
-            name={
-              walletConnected
-                ? `${address.toString().slice(0, 4)}...${
-                    !isSmDown
-                      ? address
-                          .toString()
-                          .slice(address.toString().length - 4, address.toString().length)
-                      : ''
-                  }`
-                : isSmDown
-                  ? 'Connect'
-                  : 'Connect wallet'
-            }
-            onConnect={onConnectWallet}
-            connected={walletConnected}
-            onDisconnect={onDisconnectWallet}
-            startIcon={
-              walletConnected ? <DotIcon className={classes.connectedWalletIcon} /> : undefined
-            }
-            onCopyAddress={onCopyAddress}
-          />
+          <Grid className={classes.changeWalletButtonWrapper}>
+            <ChangeWalletButton
+              name={
+                walletConnected
+                  ? `${address.toString().slice(0, 4)}...${
+                      !isSmDown
+                        ? address
+                            .toString()
+                            .slice(address.toString().length - 4, address.toString().length)
+                        : ''
+                    }`
+                  : isSmDown
+                    ? 'Connect'
+                    : 'Connect wallet'
+              }
+              onConnect={onConnectWallet}
+              connected={walletConnected}
+              onDisconnect={onDisconnectWallet}
+              startIcon={
+                walletConnected ? <DotIcon className={classes.connectedWalletIcon} /> : undefined
+              }
+              onCopyAddress={onCopyAddress}
+            />
+          </Grid>
         </Grid>
       </Grid>
     </Grid>
