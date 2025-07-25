@@ -270,7 +270,7 @@ const Card: React.FC<ICard> = ({
                 {apy !== undefined && showAPY && (
                   <StatsLabel
                     title='APY'
-                    value={`${convertedApy > 1000 ? '>1000%' : Math.abs(convertedApy).toFixed(2) + '%'}`}
+                    value={`${convertedApy > 9999 ? '>9,999%' : Math.abs(convertedApy).toFixed(2) + '%'}`}
                   />
                 )}
                 <StatsLabel title='Fee' value={fee + '%'} />

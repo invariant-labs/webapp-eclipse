@@ -117,13 +117,14 @@ const PoolListItem: React.FC<IProps> = ({
   isFavourite,
   switchFavouritePool
 }) => {
-  const [showInfo, setShowInfo] = useState(false)
+  const [_showInfo, setShowInfo] = useState(false)
+  const showInfo = true
   const { classes, cx } = useStyles({ showInfo })
   const navigate = useNavigate()
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
   const isSmd = useMediaQuery(theme.breakpoints.down('md'))
   const hideInterval = useMediaQuery(theme.breakpoints.between(600, 650))
-
+  const showCopyIcon = useMediaQuery(theme.breakpoints.up(380))
   const isMd = useMediaQuery(theme.breakpoints.down(1160))
   const airdropIconRef = useRef<HTMLDivElement>(null)
   const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
@@ -371,18 +372,24 @@ const PoolListItem: React.FC<IProps> = ({
                 {shortenAddress(tokenAData.symbol ?? '')}/{shortenAddress(tokenBData.symbol ?? '')}
               </Typography>
             )}
-            <TooltipHover title='Copy pool address'>
-              <FileCopyOutlinedIcon
-                onClick={(e: React.MouseEvent) => {
-                  e.stopPropagation()
-                  copyToClipboard()
-                }}
-                classes={{ root: classes.clipboardIcon }}
-              />
-            </TooltipHover>
+            {showCopyIcon && (
+              <TooltipHover title='Copy pool address'>
+                <FileCopyOutlinedIcon
+                  onClick={(e: React.MouseEvent) => {
+                    e.stopPropagation()
+                    copyToClipboard()
+                  }}
+                  classes={{ root: classes.clipboardIcon }}
+                />
+              </TooltipHover>
+            )}
           </Grid>
-          <Box className={classes.row} justifyContent={'space-between'}>
-            {fee && typeof fee === 'number' && <Typography>{fee}%</Typography>}
+          <Box
+            className={classes.row}
+            sx={{ justifyContent: isSm ? 'flex-start' : 'space-between' }}>
+            {fee && typeof fee === 'number' && (
+              <Typography sx={{ marginLeft: isSm ? 2 : 0 }}>{fee}%</Typography>
+            )}
             {isPromoted && (
               <PromotedPoolPopover
                 apr={convertedApr}
@@ -428,10 +435,10 @@ const PoolListItem: React.FC<IProps> = ({
             <Grid className={classes.row} sx={{ justifyContent: 'space-between' }}>
               <Grid sx={{ display: 'flex', gap: '4px' }}>
                 <Typography>
-                  {`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '' : Math.abs(convertedApy).toFixed(2) + '%'}`}
+                  {`${convertedApy > 9999 ? '>9,999%' : convertedApy === 0 ? '' : Math.abs(convertedApy).toFixed(2) + '%'}`}
                 </Typography>{' '}
                 <Typography className={classes.apyLabel}>
-                  {`${convertedApr > 1000 ? '>1000%' : convertedApr === 0 ? '-' : Math.abs(convertedApr).toFixed(2) + '%'}`}
+                  {`${convertedApr > 9999 ? '>9,999%' : convertedApr === 0 ? '-' : Math.abs(convertedApr).toFixed(2) + '%'}`}
                 </Typography>
               </Grid>
             </Grid>
@@ -523,7 +530,7 @@ const PoolListItem: React.FC<IProps> = ({
                     className={classes.extendedRowTitle}>
                     APY{' '}
                     <span className={classes.extendedRowContent}>
-                      {`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '-' : Math.abs(convertedApy).toFixed(2) + '%'}`}
+                      {`${convertedApy > 9999 ? '>9,999%' : convertedApy === 0 ? '-' : Math.abs(convertedApy).toFixed(2) + '%'}`}
                     </span>
                   </Typography>
                   <Typography
@@ -532,7 +539,7 @@ const PoolListItem: React.FC<IProps> = ({
                     className={cx(classes.extendedRowTitle, classes.selfEnd)}>
                     APR{' '}
                     <span className={classes.extendedRowContent}>
-                      {`${convertedApr > 1000 ? '>1000%' : convertedApr === 0 ? '-' : Math.abs(convertedApr).toFixed(2) + '%'}`}
+                      {`${convertedApr > 9999 ? '>9,999%' : convertedApr === 0 ? '-' : Math.abs(convertedApr).toFixed(2) + '%'}`}
                     </span>
                   </Typography>
 
@@ -547,7 +554,7 @@ const PoolListItem: React.FC<IProps> = ({
                   <Typography component='h5' className={classes.extendedRowTitle}>
                     APY{' '}
                     <span className={classes.extendedRowContent}>
-                      {`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '-' : Math.abs(convertedApy).toFixed(2) + '%'}`}
+                      {`${convertedApy > 9999 ? '>9,999%' : convertedApy === 0 ? '-' : Math.abs(convertedApy).toFixed(2) + '%'}`}
                     </span>
                   </Typography>
                   <Typography
@@ -556,7 +563,7 @@ const PoolListItem: React.FC<IProps> = ({
                     className={cx(classes.extendedRowTitle, classes.selfEnd)}>
                     APR{' '}
                     <span className={classes.extendedRowContent}>
-                      {`${convertedApr > 1000 ? '>1000%' : convertedApr === 0 ? '-' : Math.abs(convertedApr).toFixed(2) + '%'}`}
+                      {`${convertedApr > 9999 ? '>9,999%' : convertedApr === 0 ? '-' : Math.abs(convertedApr).toFixed(2) + '%'}`}
                     </span>
                   </Typography>
                   <Typography>{''}</Typography>

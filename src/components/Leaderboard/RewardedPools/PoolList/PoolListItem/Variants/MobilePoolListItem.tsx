@@ -186,15 +186,15 @@ export const MobilePoolListItem: React.FC<IProps> = ({
               </Box>
               <Box style={{ display: 'flex' }}>
                 <span className={classes.APYValue}>
-                  {convertedApy > 1000
-                    ? '>1000%'
+                  {convertedApy > 9999
+                    ? '>9,999%'
                     : convertedApy === 0
                       ? ''
                       : Math.abs(convertedApy).toFixed(2) + '%'}
                 </span>
                 <span className={classes.APRValue}>
-                  {convertedApr > 1000
-                    ? '>1000%'
+                  {convertedApr > 9999
+                    ? '>9,999%'
                     : convertedApr === 0
                       ? ''
                       : Math.abs(convertedApr).toFixed(2) + '%'}

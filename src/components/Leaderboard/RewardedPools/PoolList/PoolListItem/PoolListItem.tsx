@@ -189,9 +189,9 @@ const PoolListItem: React.FC<IProps> = ({
           </Grid>
           {!isSm && showAPY ? (
             <Typography className={classes.row}>
-              {`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '' : Math.abs(convertedApy).toFixed(2) + '%'}`}
+              {`${convertedApy > 9999 ? '>9,999%' : convertedApy === 0 ? '' : Math.abs(convertedApy).toFixed(2) + '%'}`}
               <span className={classes.apy}>
-                {`${convertedApr > 1000 ? '>1000%' : convertedApr === 0 ? '-' : Math.abs(convertedApr).toFixed(2) + '%'}`}
+                {`${convertedApr > 9999 ? '>9,999%' : convertedApr === 0 ? '-' : Math.abs(convertedApr).toFixed(2) + '%'}`}
               </span>
             </Typography>
           ) : null}
