@@ -103,7 +103,7 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     },
 
     [theme.breakpoints.down('sm')]: {
-      gridTemplateColumns: '30px auto 23% 22% 17% 24px'
+      gridTemplateColumns: '30px auto 23% 29% 17% 24px'
     },
 
     cursor: 'pointer'
