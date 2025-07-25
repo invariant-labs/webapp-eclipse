@@ -4,13 +4,13 @@ import { arrowRightIcon, closeSmallIcon, infoCircleIcon, newTabIcon } from '@sta
 import { Button } from '@common/Button/Button'
 import { Separator } from '@common/Separator/Separator'
 import { colors, theme } from '@static/theme'
-import cardLarge from '@static/png/Eclipse-USDC.png'
-import cardSmall from '@static/png/Eclipse-USDC-small.png'
+import cardLarge from '@static/png/ES_ETH.png'
+import cardSmall from '@static/png/ES_ETH-small.png'
 import React from 'react'
 import { ROUTES } from '@utils/utils'
 import { useNavigate } from 'react-router-dom'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
-import { ES_MAIN, USDC_MAIN } from '@store/consts/static'
+import { ES_MAIN, WETH_MAIN } from '@store/consts/static'
 
 interface IECBanner {
   isCloseButton?: boolean
@@ -44,7 +44,7 @@ export const ECBanner: React.FC<IECBanner> = ({
       Believe in Eclipse and the long-term value of $ES? <br />
       Don’t let your tokens sit idle in your wallet.
       <br />
-      Provide liquidity to the ES-USDC pool and start
+      Provide liquidity to the ES-ETH pool and start
       <br />
       earning trading fees, Invariant Points, and exclusive
       <br />
@@ -103,11 +103,11 @@ export const ECBanner: React.FC<IECBanner> = ({
           )}
           <Typography component='span'>
             Want to change your assets to actions? <br /> Click the button below to create your ES -
-            USDC {changeDirection && <br />} position and enjoy your never ending fees!
+            ETH {changeDirection && <br />} position and enjoy your never ending fees!
           </Typography>
           <Button
             onClick={() =>
-              navigate(ROUTES.getNewPositionRoute(ES_MAIN.symbol, USDC_MAIN.symbol, '0_30'))
+              navigate(ROUTES.getNewPositionRoute(ES_MAIN.symbol, WETH_MAIN.symbol, '0_30'))
             }
             scheme='pink'
             gap={8}
@@ -117,7 +117,11 @@ export const ECBanner: React.FC<IECBanner> = ({
             <img className={classes.arrowRight} src={arrowRightIcon} />
           </Button>
         </Grid>
-        <img className={classes.card} src={changeDirection ? cardSmall : cardLarge} />
+        <img
+          className={classes.card}
+          style={{ width: changeDirection ? 340 : 'auto' }}
+          src={changeDirection ? cardSmall : cardLarge}
+        />
       </Grid>
     </Grid>
   )
