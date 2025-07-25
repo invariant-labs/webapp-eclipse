@@ -829,7 +829,7 @@ export const CHAINS = [
   // { name: Chain.Vara, address: 'https://vara.invariant.app/exchange' },
 ]
 
-export const enum SortTypePoolList {
+export enum SortTypePoolList {
   NAME_ASC,
   NAME_DESC,
   FEE_ASC,

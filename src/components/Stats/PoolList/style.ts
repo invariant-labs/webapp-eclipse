@@ -1,13 +1,34 @@
 import { alpha } from '@mui/material'
-import { colors } from '@static/theme'
+import { colors, theme, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(_theme => ({
+  header: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+    marginTop: 72,
+
+    [theme.breakpoints.down('md')]: {
+      marginTop: 24
+    }
+  },
+  headerContainer: {
+    display: 'flex',
+    width: 'auto',
+    gap: 14
+  },
+  subheader: {
+    ...typography.heading4,
+    color: colors.white.main,
+    display: 'flex'
+  },
   container: {
     flexDirection: 'column',
     maxWidth: 1210,
     flexWrap: 'nowrap',
-    position: 'relative',
+    // position: 'relative',
     overflow: 'hidden',
     backgroundColor: colors.invariant.component,
     borderRadius: '24px'
@@ -40,5 +61,54 @@ export const useStyles = makeStyles()(_theme => ({
     height: 69,
     background: colors.invariant.component,
     boxSizing: 'border-box'
+  },
+  rowContainer: {
+    display: 'flex',
+    alignItems: 'end',
+    justifyContent: 'space-between',
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column',
+      alignItems: 'flex-start'
+    }
+  },
+
+  showFavouritesButton: {
+    height: 40,
+    background: colors.invariant.component,
+    padding: '6px 8px',
+    borderRadius: 9,
+    display: 'flex',
+    alignItems: 'center',
+    gap: 8,
+    textTransform: 'none',
+    width: 155,
+    textAlign: 'right',
+
+    '&:hover': {
+      background: colors.invariant.componentDark,
+      boxShadow: 'none'
+    },
+
+    '& .MuiTouchRipple-root .MuiTouchRipple-child': {
+      backgroundColor: colors.invariant.lightGrey
+    },
+
+    [theme.breakpoints.down('sm')]: {
+      minWidth: 40,
+      width: 40
+    }
+  },
+  showFavouritesText: {
+    ...typography.body2,
+    color: colors.invariant.textGrey,
+    marginTop: 2,
+    width: 108
+  },
+  sortWrapper: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    flex: 1,
+    margin: '16px 8px'
   }
 }))

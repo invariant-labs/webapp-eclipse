@@ -2,38 +2,45 @@ import { colors, theme, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInfo = false }) => ({
-  wrapper: {
-    maxWidth: '100%',
-    '&:nth-of-type(odd)': {
-      background: `${colors.invariant.component}`
-    },
-    '&:nth-of-type(even)': {
-      background: colors.invariant.componentDark
-    },
-    '&:first-of-type': {
-      borderTopLeftRadius: 24,
-      borderTopRightRadius: 24,
-      background: colors.invariant.component,
-      borderBottom: `2px solid ${colors.invariant.light}`
+  container: {
+    transition: 'all 0.3s',
+    rowGap: 12,
+    color: colors.white.main,
+    display: 'flex',
+    alignItems: 'center',
+    padding: '12px 24px',
+    whiteSpace: 'nowrap',
+    borderBottom: `1px solid ${colors.invariant.light}`,
+    overflow: 'hidden',
+    flexDirection: 'row',
+    height: showInfo ? 153 : 88,
+    background: showInfo ? colors.invariant.darkGradient : colors.invariant.component,
+
+    [theme.breakpoints.down('md')]: {
+      padding: '12px 16px',
+      // height: showInfo ? 230 : 88
+      height: showInfo ? 286 : 88
     },
 
-    [theme.breakpoints.up(1160)]: {
-      '&:hover': {
-        cursor: 'pointer',
-        filter: 'brightness(1.05)'
-      }
+    [theme.breakpoints.down('sm')]: {
+      padding: '12px 8px'
     }
+  },
+
+  info: {
+    visibility: showInfo ? 'visible' : 'hidden',
+    width: '100%'
   },
   symbolsWrapper: {
     display: 'flex',
     flexWrap: 'nowrap',
-    minWidth: '64px',
-    [theme.breakpoints.down('md')]: {
-      minWidth: 60
-    },
-    [theme.breakpoints.down('sm')]: {
-      minWidth: 55
-    }
+    width: 40
+    // [theme.breakpoints.down('md')]: {
+    //   minWidth: 40
+    // },
+    // [theme.breakpoints.down('sm')]: {
+    //   minWidth: 50
+    // }
   },
   imageWrapper: {
     position: 'relative',
@@ -43,93 +50,23 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     position: 'relative',
     display: 'flex'
   },
-  container: {
-    transition: 'all 0.3s',
-    height: !showInfo ? 69 : 135,
-    color: colors.white.main,
-    display: 'grid',
-    alignItems: 'center',
-    gridTemplateColumns: '70px auto 110px 160px 140px 120px 120px 150px',
-    padding: '20px 26px 14px 24px',
-    whiteSpace: 'nowrap',
 
-    boxSizing: 'border-box',
-
-    '& p': {
-      ...typography.heading4,
-      justifyContent: 'flex-start',
-      alignItems: 'center'
-    },
-    [theme.breakpoints.up(1160)]: {
-      '& p:last-child': {
-        justifyContent: 'flex-end'
-      }
-    },
-
-    [theme.breakpoints.down(1160)]: {
-      gridTemplateColumns: '40px auto 120px 140px 140px 120px 100px'
-    },
-
-    [theme.breakpoints.down('md')]: {
-      height: !showInfo ? 69 : 155,
-
-      gridTemplateColumns: '30px auto 120px 120px 90px 15px',
-      rowGap: 16,
-      cursor: 'pointer'
-    },
-
-    [theme.breakpoints.down('sm')]: {
-      height: !showInfo ? 69 : 143,
-
-      rowGap: 20,
-      gridTemplateColumns: '30px auto 23% 22% 17% 24px',
-      padding: '20px 4px 16px 8px',
-
-      '& p': {
-        justifyContent: 'flex-start',
-        ...typography.caption1
-      },
-      '& > p:nth-of-type(5)': {
-        justifyContent: 'flex-end'
-      },
-      '& > div:nth-of-type(6)': {
-        justifyContent: 'flex-end'
-      }
-    }
-  },
-
-  containerNoAPY: {
-    gridTemplateColumns: '70px auto 120px 140px 120px 120px 150px',
-
-    [theme.breakpoints.down(1160)]: {
-      gridTemplateColumns: '40px auto 120px 140px 120px 100px'
-    },
-
-    [theme.breakpoints.down('md')]: {
-      gridTemplateColumns: '40px auto 130px 130px 80px 24px'
-    },
-
-    [theme.breakpoints.down('sm')]: {
-      gridTemplateColumns: '30px auto 23% 22% 17% 24px'
-    },
-
-    cursor: 'pointer'
-  },
+  containerNoAPY: {},
 
   imageContainer: {
     display: 'flex',
-    alignItems: 'center',
-    width: '100%',
-    paddingRight: 12,
+    alignItems: 'center'
+    // width: '100%',
+    // paddingRight: 12,
 
-    '& p': {
-      maxWidth: 'calc(100% - 80px);',
+    // '& p': {
+    //   maxWidth: 'calc(100% - 80px);',
 
-      paddingRight: 4,
-      overflow: 'hidden',
-      whiteSpace: 'nowrap',
-      textOverflow: 'ellipsis'
-    }
+    //   paddingRight: 4,
+    //   overflow: 'hidden',
+    //   whiteSpace: 'nowrap',
+    //   textOverflow: 'ellipsis'
+    // }
   },
 
   iconsWrapper: {
@@ -264,18 +201,7 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
       width: 28
     }
   },
-  airdropIcon: {
-    marginRight: 15,
-    marginBottom: 6,
-    [theme.breakpoints.down(1160)]: {
-      marginRight: 25
-    },
 
-    [theme.breakpoints.down('sm')]: {
-      marginRight: 6,
-      marginBottom: 12
-    }
-  },
   iconContainer: {
     minWidth: 24,
     maxWidth: 24,
@@ -334,6 +260,9 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     color: colors.invariant.textGrey
   },
   apyLabel: {
+    position: 'absolute',
+    bottom: -10,
+    right: -56,
     color: colors.invariant.textGrey,
     marginTop: 4,
     marginRight: 4,
@@ -392,6 +321,7 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
   },
 
   favouriteButton: {
-    cursor: 'pointer'
+    cursor: 'pointer',
+    flexShrink: 0
   }
 }))

@@ -110,6 +110,7 @@ export const colors = {
       'linear-gradient(180deg, rgba(239, 132, 245, 0.00) 0%, rgba(239, 132, 245, 0.10) 100%), #111931',
     darkGreenGradient:
       'linear-gradient(180deg, rgba(46, 224, 154, 0.00) 0%, rgba(46, 224, 154, 0.10) 100%), #111931',
+    darkGradient: 'linear-gradient(180deg,rgba(17, 25, 49, 0) 0%, rgba(17, 25, 49, 1) 100%)',
     esToken: '#A0FEA0'
   }
 }
