@@ -302,3 +302,7 @@ export const getLabelDate = (
 
   return `${day < 10 ? '0' : ''}${day} ${monthName}`
 }
+
+export const convertAPYValue = apy => {
+  return apy > 9999 ? '>9999%' : apy === 0 ? '-' : Math.abs(apy).toFixed(2) + '%'
+}
