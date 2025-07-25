@@ -39,6 +39,7 @@ import {
   showFavouritesTokens as showFavouritesTokensSelector
 } from '@store/selectors/navigation'
 import { theme } from '@static/theme'
+import SortTypeSelector from '@components/Stats/PoolList/SortTypeSelector/SortTypeSelector'
 
 export const WrappedStats: React.FC = () => {
   const { classes } = useStyles()
@@ -261,6 +262,17 @@ export const WrappedStats: React.FC = () => {
     )
   }
 
+  const handleFavouritesClick = () => {
+    setShowFavourites(!showFavourites)
+    dispatch(
+      navigationActions.setSearch({
+        section: 'statsPool',
+        type: 'pageNumber',
+        pageNumber: 1
+      })
+    )
+  }
+
   return (
     <Grid container className={classes.wrapper}>
       {liquidityPlotData.length === 0 && !isLoadingStats ? (
@@ -284,84 +296,53 @@ export const WrappedStats: React.FC = () => {
             cumulativeFees={cumulativeFeesData}
             setChartType={e => dispatch(actions.setChartType(e))}
           />
-          <Grid className={classes.rowContainer}>
-            <Typography className={classes.subheader} mb={2}>
-              Top pools
-            </Typography>
-            <Box className={classes.headerContainer}>
-              <Button
-                className={classes.showFavouritesButton}
-                onClick={() => {
-                  setShowFavourites(!showFavourites)
-                  dispatch(
-                    navigationActions.setSearch({
-                      section: 'statsPool',
-                      type: 'pageNumber',
-                      pageNumber: 1
-                    })
-                  )
-                }}>
-                <img src={showFavourites ? starFill : star} />
-                {!isMd && (
-                  <Typography className={classes.showFavouritesText}>
-                    {' '}
-                    {!showFavourites ? 'Show' : 'Hide'} favourites
-                  </Typography>
-                )}
-              </Button>
-              <FilterSearch
-                networkType={currentNetwork}
-                setSelectedFilters={setSearchPoolsValue}
-                selectedFilters={searchPoolsValue}
-                filtersAmount={2}
-              />
-            </Box>
-          </Grid>
-          <Grid container className={classes.row}>
-            <PoolList
-              initialLength={poolsList.length}
-              interval={lastUsedInterval ?? IntervalsKeys.Daily}
-              data={filteredPoolsList.map(poolData => ({
-                symbolFrom: poolData.tokenXDetails?.symbol ?? poolData.tokenX.toString(),
-                symbolTo: poolData.tokenYDetails?.symbol ?? poolData.tokenY.toString(),
-                iconFrom: poolData.tokenXDetails?.logoURI ?? unknownTokenIcon,
-                iconTo: poolData.tokenYDetails?.logoURI ?? unknownTokenIcon,
-                volume: poolData.volume24,
-                TVL: poolData.tvl,
-                fee: poolData.fee,
-                addressFrom: poolData.tokenX.toString(),
-                addressTo: poolData.tokenY.toString(),
-                apy: poolData.apy,
-                lockedX: poolData.lockedX,
-                lockedY: poolData.lockedY,
-                liquidityX: poolData.liquidityX,
-                liquidityY: poolData.liquidityY,
-                apyData: {
-                  fees: poolData.apy,
-                  accumulatedFarmsSingleTick: 0,
-                  accumulatedFarmsAvg: 0
-                },
 
-                isUnknownFrom: poolData.tokenXDetails?.isUnknown ?? false,
-                isUnknownTo: poolData.tokenYDetails?.isUnknown ?? false,
-                poolAddress: poolData.poolAddress.toString(),
-                pointsPerSecond:
-                  promotedPools.find(pool => pool.address === poolData.poolAddress.toString())
-                    ?.pointsPerSecond || '0',
-                isPromoted: promotedPools.some(
-                  pool => pool.address === poolData.poolAddress.toString()
-                ),
-                isFavourite: poolData.isFavourite
-              }))}
-              network={currentNetwork}
-              copyAddressHandler={copyAddressHandler}
-              isLoading={isLoadingStats}
-              showAPY={showAPY}
-              filteredTokens={searchPoolsValue}
-              switchFavouritePool={switchFavouritePool}
-              showFavourites={showFavourites}
-            />
-          </Grid>
+          <PoolList
+            initialLength={poolsList.length}
+            interval={lastUsedInterval ?? IntervalsKeys.Daily}
+            data={filteredPoolsList.map(poolData => ({
+              symbolFrom: poolData.tokenXDetails?.symbol ?? poolData.tokenX.toString(),
+              symbolTo: poolData.tokenYDetails?.symbol ?? poolData.tokenY.toString(),
+              iconFrom: poolData.tokenXDetails?.logoURI ?? unknownTokenIcon,
+              iconTo: poolData.tokenYDetails?.logoURI ?? unknownTokenIcon,
+              volume: poolData.volume24,
+              TVL: poolData.tvl,
+              fee: poolData.fee,
+              addressFrom: poolData.tokenX.toString(),
+              addressTo: poolData.tokenY.toString(),
+              apy: poolData.apy,
+              lockedX: poolData.lockedX,
+              lockedY: poolData.lockedY,
+              liquidityX: poolData.liquidityX,
+              liquidityY: poolData.liquidityY,
+              apyData: {
+                fees: poolData.apy,
+                accumulatedFarmsSingleTick: 0,
+                accumulatedFarmsAvg: 0
+              },
+
+              isUnknownFrom: poolData.tokenXDetails?.isUnknown ?? false,
+              isUnknownTo: poolData.tokenYDetails?.isUnknown ?? false,
+              poolAddress: poolData.poolAddress.toString(),
+              pointsPerSecond:
+                promotedPools.find(pool => pool.address === poolData.poolAddress.toString())
+                  ?.pointsPerSecond || '0',
+              isPromoted: promotedPools.some(
+                pool => pool.address === poolData.poolAddress.toString()
+              ),
+              isFavourite: poolData.isFavourite
+            }))}
+            network={currentNetwork}
+            copyAddressHandler={copyAddressHandler}
+            isLoading={isLoadingStats}
+            showAPY={showAPY}
+            filteredTokens={searchPoolsValue}
+            switchFavouritePool={switchFavouritePool}
+            showFavourites={showFavourites}
+            handleFavouritesClick={handleFavouritesClick}
+            setSearchPoolsValue={setSearchPoolsValue}
+            searchPoolsValue={searchPoolsValue}
+          />
 
           <Grid className={classes.rowContainer}>
             <Typography className={classes.subheader} mb={2}>
@@ -388,6 +369,7 @@ export const WrappedStats: React.FC = () => {
                   </Typography>
                 )}
               </Button>
+
               <FilterSearch
                 networkType={currentNetwork}
                 setSelectedFilters={setSearchTokensValue}

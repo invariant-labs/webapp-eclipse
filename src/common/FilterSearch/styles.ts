@@ -6,7 +6,6 @@ export const useStyles = makeStyles<{ isSmall: boolean }>()((_theme: Theme, { is
   searchBar: {
     mHeight: 32,
     borderRadius: 10,
-    marginBottom: 8,
     background: colors.invariant.black,
     border: '1px solid #202946',
     color: colors.invariant.light,

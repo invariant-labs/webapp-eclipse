@@ -63,5 +63,10 @@ export const useStyles = makeStyles()(() => ({
   },
   addZIndex: {
     zIndex: 2
+  },
+  volumeBar: {
+    display: 'flex',
+    flexDirection: 'column',
+    width: '100%'
   }
 }))
