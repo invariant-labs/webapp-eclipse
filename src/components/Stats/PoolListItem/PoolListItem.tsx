@@ -117,8 +117,7 @@ const PoolListItem: React.FC<IProps> = ({
   isFavourite,
   switchFavouritePool
 }) => {
-  const [_showInfo, setShowInfo] = useState(false)
-  const showInfo = true
+  const [showInfo, setShowInfo] = useState(false)
   const { classes, cx } = useStyles({ showInfo })
   const navigate = useNavigate()
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
