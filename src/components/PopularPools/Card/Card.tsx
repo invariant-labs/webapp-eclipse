@@ -16,7 +16,7 @@ import {
 import cardESTop from '@static/png/ESWavesTop.png'
 import cardESBottom from '@static/png/ESWavesBottom.png'
 import Horn from '@static/png/turboHorn.png'
-import { shortenAddress } from '@utils/uiUtils'
+import { convertAPYValue, shortenAddress } from '@utils/uiUtils'
 import StatsLabel from './StatsLabel/StatsLabel'
 import {
   addressToTicker,
@@ -268,10 +268,7 @@ const Card: React.FC<ICard> = ({
               </Box>
               <Grid container gap='8px'>
                 {apy !== undefined && showAPY && (
-                  <StatsLabel
-                    title='APY'
-                    value={`${convertedApy > 9999 ? '>9,999%' : Math.abs(convertedApy).toFixed(2) + '%'}`}
-                  />
+                  <StatsLabel title='APY' value={convertAPYValue(convertedApy)} />
                 )}
                 <StatsLabel title='Fee' value={fee + '%'} />
                 {TVL !== undefined && (

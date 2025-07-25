@@ -37,7 +37,7 @@ import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { VariantType } from 'notistack'
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
-import { mapIntervalToString, shortenAddress } from '@utils/uiUtils'
+import { convertAPYValue, mapIntervalToString, shortenAddress } from '@utils/uiUtils'
 import LockStatsPopover from '@components/Modals/LockStatsPopover/LockStatsPopover'
 import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
 import { BN } from '@coral-xyz/anchor'
@@ -433,11 +433,9 @@ const PoolListItem: React.FC<IProps> = ({
           {!isSmd && showAPY ? (
             <Grid className={classes.row} sx={{ justifyContent: 'space-between' }}>
               <Grid sx={{ display: 'flex', gap: '4px' }}>
-                <Typography>
-                  {`${convertedApy > 9999 ? '>9,999%' : convertedApy === 0 ? '' : Math.abs(convertedApy).toFixed(2) + '%'}`}
-                </Typography>{' '}
+                <Typography>{convertAPYValue(convertedApy)}</Typography>{' '}
                 <Typography className={classes.apyLabel}>
-                  {`${convertedApr > 9999 ? '>9,999%' : convertedApr === 0 ? '-' : Math.abs(convertedApr).toFixed(2) + '%'}`}
+                  {convertAPYValue(convertedApr)}
                 </Typography>
               </Grid>
             </Grid>
@@ -529,7 +527,7 @@ const PoolListItem: React.FC<IProps> = ({
                     className={classes.extendedRowTitle}>
                     APY{' '}
                     <span className={classes.extendedRowContent}>
-                      {`${convertedApy > 9999 ? '>9,999%' : convertedApy === 0 ? '-' : Math.abs(convertedApy).toFixed(2) + '%'}`}
+                      {convertAPYValue(convertedApy)}{' '}
                     </span>
                   </Typography>
                   <Typography
@@ -538,7 +536,7 @@ const PoolListItem: React.FC<IProps> = ({
                     className={cx(classes.extendedRowTitle, classes.selfEnd)}>
                     APR{' '}
                     <span className={classes.extendedRowContent}>
-                      {`${convertedApr > 9999 ? '>9,999%' : convertedApr === 0 ? '-' : Math.abs(convertedApr).toFixed(2) + '%'}`}
+                      {convertAPYValue(convertedApr)}
                     </span>
                   </Typography>
 
@@ -553,7 +551,7 @@ const PoolListItem: React.FC<IProps> = ({
                   <Typography component='h5' className={classes.extendedRowTitle}>
                     APY{' '}
                     <span className={classes.extendedRowContent}>
-                      {`${convertedApy > 9999 ? '>9,999%' : convertedApy === 0 ? '-' : Math.abs(convertedApy).toFixed(2) + '%'}`}
+                      {convertAPYValue(convertedApy)}
                     </span>
                   </Typography>
                   <Typography
@@ -562,7 +560,7 @@ const PoolListItem: React.FC<IProps> = ({
                     className={cx(classes.extendedRowTitle, classes.selfEnd)}>
                     APR{' '}
                     <span className={classes.extendedRowContent}>
-                      {`${convertedApr > 9999 ? '>9,999%' : convertedApr === 0 ? '-' : Math.abs(convertedApr).toFixed(2) + '%'}`}
+                      {convertAPYValue(convertedApr)}
                     </span>
                   </Typography>
                   <Typography>{''}</Typography>

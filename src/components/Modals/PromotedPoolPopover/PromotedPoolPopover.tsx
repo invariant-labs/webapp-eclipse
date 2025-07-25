@@ -5,6 +5,7 @@ import { formatNumberWithCommas, printBN, removeAdditionalDecimals } from '@util
 import { LEADERBOARD_DECIMAL } from '@store/consts/static'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { QuestionMark } from '@components/Leaderboard/QuestionMark/QuestionMark'
+import { convertAPYValue } from '@utils/uiUtils'
 export interface IPromotedPoolPopover {
   isActive?: boolean
   apr?: BN
@@ -100,10 +101,8 @@ export const PromotedPoolPopover = ({
                   <span className={classes.apy}>APR</span>
                 </Typography>{' '}
                 <Typography className={classes.whiteText}>
-                  {`${apy > 9999 ? '>9,999%' : apy === 0 ? '' : Math.abs(apy).toFixed(2) + '%'}`}
-                  <span className={classes.apy}>
-                    {`${apr > 9999 ? '>9,999%' : apr === 0 ? '-' : Math.abs(apr).toFixed(2) + '%'}`}
-                  </span>
+                  {convertAPYValue(apy)}
+                  <span className={classes.apy}>{convertAPYValue(apr)}</span>
                 </Typography>
               </div>
             </>
