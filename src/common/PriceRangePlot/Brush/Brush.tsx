@@ -41,7 +41,9 @@ export const Handle: React.FC<HandleProps> = ({
   const mousePositionRef = useRef<number | null>(null)
 
   useEffect(() => {
-    setCurrentPosition(position)
+    if (!drag) {
+      setCurrentPosition(position)
+    }
   }, [position, drag])
 
   useEffect(() => {

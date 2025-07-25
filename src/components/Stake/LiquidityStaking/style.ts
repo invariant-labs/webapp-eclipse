@@ -20,20 +20,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     color: colors.invariant.text,
     ...typography.heading4
   },
-  amountOutInput: {
-    position: 'relative',
-    background: colors.invariant.newDark,
-    '& .MuiInputBase-input': {
-      userSelect: 'text',
-      caretColor: 'transparent',
-      opacity: 1,
-      cursor: 'default'
-    }
-  },
-  amountInput: {
-    position: 'relative',
-    background: colors.invariant.newDark
-  },
+
   swapButton: {
     marginTop: 24,
     width: '100%',
