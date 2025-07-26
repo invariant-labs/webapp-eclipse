@@ -98,6 +98,23 @@ export const YourPointsModal: React.FC<ISelectNetworkModal> = ({ anchorEl, open,
                       Go to Points Tab
                     </Button>
                   </Box>
+                  <Divider className={classes.divider} />
+                  <Box className={classes.counterItem} style={{ marginTop: '4px' }}>
+                    <Typography className={classes.counterYourPoints}>INVT</Typography>
+                    <Typography className={classes.counterLabel}>Check your allocation</Typography>
+                  </Box>
+                  <Box className={classes.linkContainer}>
+                    <Button
+                      scheme='pink'
+                      width='100%'
+                      height={32}
+                      onClick={() => {
+                        handleClose()
+                        window.open('https://claim.invaraint.app')
+                      }}>
+                      Claim
+                    </Button>
+                  </Box>
                 </>
               ) : (
                 <Box className={classes.counterItem}>
