@@ -27,6 +27,63 @@ export const useStyles = makeStyles()(() => ({
     zIndex: 1300,
     backgroundColor: 'transparent'
   },
+  liquidityButtons: {
+    display: 'flex',
+    gap: 8
+  },
+  liquidityButton: {
+    borderRadius: 10,
+    height: 36,
+    minWidth: 0,
+    width: 36,
+    margin: 0,
+    padding: 0,
+    color: colors.invariant.green,
+    border: `2px solid ${colors.invariant.green}`,
+    textTransform: 'none',
+    ...typography.body1,
+
+    '&:hover': {
+      background: `${colors.invariant.green}40`
+    }
+  },
+  liquidityButtonPlus: {
+    background: colors.invariant.green,
+    color: colors.invariant.dark,
+
+    '&:hover': {
+      background: 'transparent',
+      color: colors.invariant.green
+    }
+  },
+  liquidityButtonMinus: {
+    background: 'transparent',
+    color: colors.invariant.green,
+
+    '&:hover': {
+      background: colors.invariant.green,
+      color: colors.invariant.dark
+    }
+  },
+  liquidityButtonPlusDisabled: {
+    background: colors.invariant.light,
+    borderColor: colors.invariant.light,
+
+    '&.Mui-disabled': {
+      color: colors.invariant.component
+    }
+  },
+  liquidityButtonMinusDisabled: {
+    borderColor: colors.invariant.light,
+
+    '&.Mui-disabled': {
+      color: colors.invariant.light
+    }
+  },
+  liquidityButtonIcon: {
+    height: 32,
+    minWidth: 32
+  },
   claimButton: {
     background: colors.invariant.pinkLinearGradientOpacity,
     borderRadius: 12,

@@ -695,15 +695,17 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     if (isSimulationStatus(SwapAndCreateSimulationStatus.PerfectRatio)) {
       return (
         <Box className={classes.unknownWarning}>
-          <TooltipHover title={'You already have enough tokens to open position'}>
-            <img
-              src={infoIcon}
-              alt=''
-              width='12px'
-              style={{ marginRight: '4px', marginBottom: '-1.5px' }}
-              className={classes.grayscaleIcon}
-            />
-          </TooltipHover>
+          <div style={{ marginBottom: '-1.5px' }}>
+            <TooltipHover title={'You already have enough tokens to open position'}>
+              <img
+                src={infoIcon}
+                alt=''
+                width='12px'
+                style={{ marginRight: '4px' }}
+                className={classes.grayscaleIcon}
+              />
+            </TooltipHover>
+          </div>
           No swap required
         </Box>
       )
@@ -712,15 +714,17 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     if (isSimulationStatus(SwapAndCreateSimulationStatus.LiquidityTooLow)) {
       return (
         <Box className={classes.errorWarning}>
-          <TooltipHover title={'There is not enough liquidity to perform the swap'}>
-            <img
-              src={infoIcon}
-              alt=''
-              width='12px'
-              style={{ marginRight: '4px', marginBottom: '-1.5px' }}
-              className={classes.errorIcon}
-            />
-          </TooltipHover>
+          <div style={{ marginBottom: '-1.5px' }}>
+            <TooltipHover title={'There is not enough liquidity to perform the swap'}>
+              <img
+                src={infoIcon}
+                alt=''
+                width='12px'
+                style={{ marginRight: '4px' }}
+                className={classes.errorIcon}
+              />
+            </TooltipHover>
+          </div>
           Insufficient liquidity
         </Box>
       )
