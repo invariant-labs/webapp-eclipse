@@ -129,6 +129,9 @@ const saleSlice = createSlice({
     mintNft(state) {
       state.deposit.inProgress = true
       return state
+    },
+    withdraw(state, _action: PayloadAction<{ mint: PublicKey }>) {
+      return state
     }
   }
 })

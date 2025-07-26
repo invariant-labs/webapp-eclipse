@@ -2,6 +2,7 @@ import { call, put, all, spawn, takeLatest, select } from 'typed-redux-saga'
 import { IWallet } from '@invariant-labs/sdk-eclipse'
 import { PayloadAction } from '@reduxjs/toolkit'
 import {
+  PublicKey,
   sendAndConfirmRawTransaction,
   Transaction,
   TransactionExpiredTimeoutError
@@ -219,6 +220,45 @@ export function* depositSale(action: PayloadAction<IDepositSale>) {
   }
 }
 
+export function* withdraw(action: PayloadAction<{ mint: PublicKey }>) {
+  const networkType = yield* select(network)
+  const rpc = yield* select(rpcAddress)
+  const connection = getSolanaConnection(rpc)
+  const wallet = yield* call(getWallet)
+  const sale = yield* call(getSaleProgram, networkType, rpc, wallet as IWallet)
+  const { mint } = action.payload
+  try {
+    const ix = yield* call(
+      [sale, sale.withdrawFundsIx],
+      {
+        mint
+      },
+      wallet.publicKey
+    )
+
+    const tx = new Transaction().add(ix)
+
+    const { blockhash, lastValidBlockHeight } = yield* call([
+      connection,
+      connection.getLatestBlockhash
+    ])
+    tx.recentBlockhash = blockhash
+    tx.lastValidBlockHeight = lastValidBlockHeight
+    tx.feePayer = wallet.publicKey
+
+    const signedTx = (yield* call([wallet, wallet.signTransaction], tx)) as Transaction
+
+    const txid = yield* call(sendAndConfirmRawTransaction, connection, signedTx.serialize(), {
+      skipPreflight: false
+    })
+    console.log(txid)
+  } catch (e) {
+    const error = ensureError(e)
+
+    yield* call(handleRpcError, (error as Error).message)
+  }
+}
+
 export function* mintNft() {
   const loaderDepositSale = createLoaderKey()
   const loaderSigningTx = createLoaderKey()
@@ -379,6 +419,11 @@ export function* depositSaleHandler(): Generator {
 export function* handleMintNft(): Generator {
   yield* takeLatest(actions.mintNft, mintNft)
 }
+
+export function* handleWithdraw(): Generator {
+  yield* takeLatest(actions.withdraw, withdraw)
+}
+
 export function* saleSaga(): Generator {
   yield all(
     [
@@ -386,7 +431,8 @@ export function* saleSaga(): Generator {
       getSaleStatsHandler,
       depositSaleHandler,
       getProofHandler,
-      handleMintNft
+      handleMintNft,
+      handleWithdraw
     ].map(spawn)
   )
 }
