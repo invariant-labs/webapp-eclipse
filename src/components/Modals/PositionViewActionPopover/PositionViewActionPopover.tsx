@@ -11,6 +11,7 @@ export interface IPositionViewActionPopover {
   handleClose: () => void
   onLockPosition: () => void
   createPosition: () => void
+  openPoolDetails: () => void
   isLocked: boolean
   shouldDisable: boolean
 }
@@ -24,6 +25,7 @@ export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = (
   closePosition,
   onLockPosition,
   createPosition,
+  openPoolDetails,
   unclaimedFeesInUSD,
   shouldDisable
 }) => {
@@ -79,6 +81,9 @@ export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = (
             handleClose()
           }}>
           <Typography className={classes.name}>Lock position</Typography>
+        </Button>
+        <Button className={cx(classes.listItem)} onClick={openPoolDetails}>
+          <Typography className={classes.name}>Pool details</Typography>
         </Button>
       </Grid>
     </Popover>

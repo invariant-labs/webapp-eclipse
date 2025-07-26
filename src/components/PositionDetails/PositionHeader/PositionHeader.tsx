@@ -1,7 +1,7 @@
 import { Box, Typography, useMediaQuery } from '@mui/material'
 import { useStyles } from './style'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
-import { airdropRainbowIcon, backIcon, newTabIcon } from '@static/icons'
+import { airdropRainbowIcon, backIcon, newTabIcon, poolStatsIcon } from '@static/icons'
 import { theme } from '@static/theme'
 import MarketIdLabel from '@components/NewPosition/MarketIdLabel/MarketIdLabel'
 import { VariantType } from 'notistack'
@@ -48,6 +48,7 @@ type Props = {
   isClosing: boolean
   previousPosition: INavigatePosition | null
   nextPosition: INavigatePosition | null
+  openPoolDetails: () => void
 }
 
 export const PositionHeader = ({
@@ -71,7 +72,8 @@ export const PositionHeader = ({
   isPreview,
   isClosing,
   previousPosition,
-  nextPosition
+  nextPosition,
+  openPoolDetails
 }: Props) => {
   const { classes, cx } = useStyles()
   const isSmDown = useMediaQuery(theme.breakpoints.down(688))
@@ -174,6 +176,17 @@ export const PositionHeader = ({
     </TooltipHover>
   )
 
+  const poolDetails = (
+    <TooltipHover title='Pool details'>
+      <img
+        src={poolStatsIcon}
+        alt='Explorer link'
+        className={classes.poolStats}
+        onClick={openPoolDetails}
+      />
+    </TooltipHover>
+  )
+
   const tooltipText = useMemo(() => {
     if (isLocked) {
       return (
@@ -200,7 +213,10 @@ export const PositionHeader = ({
         </Box>
         {isMdDown && (
           <Box className={classes.navigationSide}>
-            {marketIdLabel} {refresher}
+            {marketIdLabel}
+            <Box display='flex' alignItems='center' gap={1}>
+              {refresher} {poolDetails}
+            </Box>
           </Box>
         )}
         {!isMdDown && isLgDown && (previousPosition || nextPosition) && (
@@ -321,7 +337,7 @@ export const PositionHeader = ({
               <>
                 {marketIdLabel}
                 <Box className={classes.wrapper}>
-                  {refresher} {addButton}
+                  {refresher} {poolDetails} {addButton}
                   <LockButton
                     isLocked={isLocked}
                     isClosing={isClosing}
