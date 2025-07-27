@@ -112,7 +112,7 @@ const SingleToken: React.FC<IProps> = ({ token, network, tokenPrice, copyTokenAd
               {token
                 ? token.assetAddress.toString().slice(0, 4) +
                   '...' +
-                  token.assetAddress.toString().slice(-5, -1)
+                  token.assetAddress.toString().slice(-5)
                 : '--'}
             </Typography>
             <img

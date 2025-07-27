@@ -5,6 +5,7 @@ import { BN } from '@coral-xyz/anchor'
 // Remove duplicate interface
 export interface StakeLiquidityPayload {
   amount: BN
+  byAmountIn: boolean
 }
 
 export interface GetBackedByBITZPayload {
