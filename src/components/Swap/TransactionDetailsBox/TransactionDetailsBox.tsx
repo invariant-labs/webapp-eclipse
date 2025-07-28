@@ -8,6 +8,7 @@ import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import RouteBox from './RouteBox/RouteBox'
 import { SimulationPath } from '../Swap'
 import { DENOMINATOR } from '@invariant-labs/sdk-eclipse/src'
+import { SwapType } from '@store/consts/static'
 
 interface IProps {
   open: boolean
@@ -16,6 +17,7 @@ interface IProps {
   priceImpact: BN
   isLoadingRate?: boolean
   simulationPath: SimulationPath
+  swapType: SwapType
 }
 
 const TransactionDetailsBox: React.FC<IProps> = ({
@@ -24,7 +26,8 @@ const TransactionDetailsBox: React.FC<IProps> = ({
   slippage,
   priceImpact,
   isLoadingRate = false,
-  simulationPath
+  simulationPath,
+  swapType
 }) => {
   const { classes } = useStyles({ open })
 
@@ -41,7 +44,7 @@ const TransactionDetailsBox: React.FC<IProps> = ({
 
   return (
     <Grid container className={classes.wrapper}>
-      <RouteBox simulationPath={simulationPath} isLoadingRate={isLoadingRate} />
+      <RouteBox simulationPath={simulationPath} isLoadingRate={isLoadingRate} swapType={swapType} />
       <Grid container direction='column' wrap='nowrap' className={classes.innerWrapper}>
         <Grid container justifyContent='space-between' className={classes.row}>
           <Typography className={classes.label}>Exchange rate:</Typography>
@@ -71,7 +74,9 @@ const TransactionDetailsBox: React.FC<IProps> = ({
             <Skeleton width={80} height={20} variant='rounded' animation='wave' />
           ) : (
             <Typography className={classes.value}>
-              {priceImpact < 0.01 ? '<0.01%' : `${priceImpact.toFixed(2)}%`}
+              {priceImpact < 0.01 && swapType !== SwapType.BitzRoute
+                ? '<0.01%'
+                : `${priceImpact.toFixed(2)}%`}
             </Typography>
           )}
         </Grid>

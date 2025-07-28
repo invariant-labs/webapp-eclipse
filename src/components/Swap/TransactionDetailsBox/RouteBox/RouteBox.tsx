@@ -10,10 +10,12 @@ import { formatNumberWithoutSuffix, printBN } from '@utils/utils'
 import { SimulationPath } from '@components/Swap/Swap'
 import { selectTokenIcon } from '@static/icons'
 import loadingAnimation from '@static/gif/loading.gif'
+import { BITZ_MAIN, SwapType } from '@store/consts/static'
 
 interface IProps {
   simulationPath: SimulationPath
   isLoadingRate: boolean
+  swapType: SwapType
 }
 
 const MAX_DIGITS = 5
@@ -28,7 +30,8 @@ const RouteBox: React.FC<IProps> = ({
     firstAmount,
     secondAmount
   },
-  isLoadingRate
+  isLoadingRate,
+  swapType
 }) => {
   const isSmallDevice = useMediaQuery(theme.breakpoints.down('sm'))
 
@@ -36,7 +39,12 @@ const RouteBox: React.FC<IProps> = ({
   const { classes, cx } = useStyles({ onePoolType })
   const firstFeePercent = Number(printBN(firstPair?.feeTier.fee ?? new BN(0), DECIMAL - 2))
   const secondFeePercent = Number(printBN(secondPair?.feeTier.fee ?? new BN(0), DECIMAL - 2))
-
+  const bitzRouteMessage =
+    swapType !== SwapType.BitzRoute
+      ? ''
+      : tokenFrom?.assetAddress.equals(BITZ_MAIN.address)
+        ? 'Stake'
+        : 'Unstake'
   return (
     <Grid
       container
@@ -83,7 +91,9 @@ const RouteBox: React.FC<IProps> = ({
               </Typography>
             </Box>
             <Box className={classes.arrowContainer}>
-              <Typography className={classes.routeLabel}>{firstFeePercent}% fee</Typography>
+              <Typography className={classes.routeLabel}>
+                {swapType === SwapType.BitzRoute ? bitzRouteMessage : `${firstFeePercent}% fee`}
+              </Typography>
               <img
                 className={classes.routeIcon}
                 src={onePoolType ? routeArrow1 : routeArrow2}

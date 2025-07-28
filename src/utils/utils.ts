@@ -124,6 +124,7 @@ import { Umi } from '@metaplex-foundation/umi'
 import { StakingStatsResponse } from '@store/reducers/sbitz-stats'
 import { DEFAULT_FEE_TIER, STRATEGIES } from '@store/consts/userStrategies'
 import { HoldersResponse } from '@store/reducers/sBitz'
+import { calculateTokensStake, calculateTokensUnstake } from '@invariant-labs/sbitz'
 
 export const transformBN = (amount: BN): string => {
   return (amount.div(new BN(1e2)).toNumber() / 1e4).toString()
@@ -1067,6 +1068,27 @@ export const calcCurrentPriceOfPool = (
 }
 
 export const hasLuts = (pool: PublicKey) => POOLS_WITH_LUTS.some(p => p.equals(pool))
+
+export const handleBitzRoute = (
+  sbitzSupply: BN,
+  totalBitzStaked: BN,
+  amount: BN,
+  byAmountIn: boolean,
+  tokenFrom: PublicKey,
+  tokenTo: PublicKey
+) => {
+  if (
+    !(
+      (tokenFrom.equals(BITZ_MAIN.address) && tokenTo.equals(sBITZ_MAIN.address)) ||
+      (tokenFrom.equals(sBITZ_MAIN.address) && tokenTo.equals(BITZ_MAIN.address))
+    )
+  ) {
+    return new BN()
+  }
+  const bitzToSBITZ = tokenFrom.equals(BITZ_MAIN.address) && tokenTo.equals(sBITZ_MAIN.address)
+  const calculate = bitzToSBITZ ? calculateTokensStake : calculateTokensUnstake
+  return calculate(sbitzSupply, totalBitzStaked, amount, byAmountIn)
+}
 
 export const handleSimulate = async (
   pools: PoolWithAddress[],

@@ -1,8 +1,10 @@
 import { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 import { Swap } from '@components/Swap/Swap'
 import {
+  BITZ_MAIN,
   commonTokensForNetworks,
   DEFAULT_SWAP_SLIPPAGE,
+  sBITZ_MAIN,
   WETH_MAIN,
   WRAPPED_ETH_ADDRESS
 } from '@store/consts/static'
@@ -50,6 +52,8 @@ import { getMarketProgramSync } from '@utils/web3/programs/amm'
 import { getEclipseWallet } from '@utils/web3/wallet'
 import { IWallet } from '@invariant-labs/sdk-eclipse'
 import { actions as swapActions } from '@store/reducers/swap'
+import { actions as sbitzActions, StakeLiquidityPayload } from '@store/reducers/sBitz'
+import { stakedData } from '@store/selectors/sBitz'
 
 type Props = {
   initialTokenFrom: string
@@ -86,6 +90,7 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const [block, setBlock] = useState(state?.referer === 'stats')
   const rpc = useSelector(rpcAddress)
   const wallet = getEclipseWallet()
+  const stakedBitzData = useSelector(stakedData)
   const market = getMarketProgramSync(networkType, rpc, wallet as IWallet)
   useEffect(() => {
     dispatch(leaderboardActions.getLeaderboardConfig())
@@ -357,6 +362,14 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const swapAccounts = useSelector(accounts)
   const swapIsLoading = useSelector(isLoading)
 
+  const onBitzRoute = async (payload: StakeLiquidityPayload, isStake: boolean) => {
+    if (isStake) {
+      dispatch(sbitzActions.stake(payload))
+    } else {
+      dispatch(sbitzActions.unstake(payload))
+    }
+  }
+
   return (
     <Swap
       isFetchingNewPool={isFetchingNewPool}
@@ -407,6 +420,13 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
               second: tokenTo
             })
           )
+
+          if (
+            (tokenFrom.equals(BITZ_MAIN.address) || tokenTo.equals(BITZ_MAIN.address)) &&
+            (tokenFrom.equals(sBITZ_MAIN.address) || tokenTo.equals(sBITZ_MAIN.address))
+          ) {
+            dispatch(sbitzActions.getStakedAmountAndBalance())
+          }
         }
       }}
       onConnectWallet={() => {
@@ -455,6 +475,9 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
       tokensDict={tokensDict}
       swapAccounts={swapAccounts}
       swapIsLoading={swapIsLoading}
+      sbitzSupply={stakedBitzData.stakedTokenSupply}
+      totalBitzStaked={stakedBitzData.stakedAmount}
+      onBitzRoute={onBitzRoute}
     />
   )
 }
