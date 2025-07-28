@@ -143,6 +143,8 @@ export interface ISwap {
   sbitzSupply: BN
   totalBitzStaked: BN
   onBitzRoute: (payload: StakeLiquidityPayload, isStake: boolean) => void
+  swapType: SwapType
+  setSwapType: (swapType: SwapType) => void
 }
 
 export type SimulationPath = {
@@ -203,7 +205,9 @@ export const Swap: React.FC<ISwap> = ({
   swapIsLoading,
   sbitzSupply,
   totalBitzStaked,
-  onBitzRoute
+  onBitzRoute,
+  swapType,
+  setSwapType
 }) => {
   const { classes, cx } = useStyles()
 
@@ -273,7 +277,7 @@ export const Swap: React.FC<ISwap> = ({
     secondPriceImpact: null
   })
   const [bestAmount, setBestAmount] = useState(new BN(0))
-  const [swapType, setSwapType] = useState(SwapType.Normal)
+
   const [addBlur, setAddBlur] = useState(false)
   const [wasIsFetchingNewPoolRun, setWasIsFetchingNewPoolRun] = useState(false)
   const [wasSwapIsLoadingRun, setWasSwapIsLoadingRun] = useState(false)
