@@ -194,7 +194,7 @@ export const Header: React.FC<IHeader> = ({
           />
 
           <YourPointsButton />
-          <Grid className={classes.changeWalletButtonWrapper}>
+          <Grid className={walletConnected ? classes.changeWalletButtonWrapper : ''}>
             <ChangeWalletButton
               name={
                 walletConnected
