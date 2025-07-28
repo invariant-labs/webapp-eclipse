@@ -267,9 +267,7 @@ const PoolListItem: React.FC<IProps> = ({
       }}
       container
       classes={{
-        container: cx(classes.container, {
-          [classes.containerNoAPY]: !showAPY
-        })
+        container: cx(classes.container)
       }}>
       <Grid container className={classes.mainContent}>
         <ItemValue

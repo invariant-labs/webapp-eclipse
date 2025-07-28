@@ -1,4 +1,4 @@
-import { typography, colors, theme } from '@static/theme'
+import { colors, theme } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInfo = false }) => ({
@@ -46,20 +46,6 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     visibility: showInfo ? 'visible' : 'hidden',
     width: '100%'
   },
-
-  tokenList: {
-    alignItems: 'center',
-    color: colors.white.main,
-    '& p': {
-      ...typography.heading4
-    },
-
-    [theme.breakpoints.down('sm')]: {
-      '& p': {
-        ...typography.caption1
-      }
-    }
-  },
   extendedRowIcon: {
     justifySelf: 'end',
     alignSelf: 'center',
@@ -73,35 +59,6 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     transition: 'all 0.3s ease',
     transform: showInfo ? 'rotate(180deg)' : 'rotate(0deg)'
   },
-
-  header: {
-    '& p.MuiTypography-root': {
-      ...typography.heading4,
-      fontWeight: 600,
-      display: 'flex',
-      justifyContent: 'start',
-      alignItems: 'center',
-
-      [theme.breakpoints.down('sm')]: {
-        ...typography.caption2,
-        fontWeight: 600
-      }
-    }
-  },
-
-  tokenName: {
-    display: 'flex',
-    alignItems: 'center',
-    width: '100%',
-    '& p': {
-      paddingRight: 12,
-      maxWidth: 'calc(100% - 80px);',
-      overflow: 'hidden',
-      whiteSpace: 'nowrap',
-      textOverflow: 'ellipsis'
-    }
-  },
-
   tokenSymbol: {
     color: colors.invariant.textGrey,
     fontWeight: 400
@@ -168,15 +125,6 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
       }
     }
   },
-  tokenIndexContainer: {
-    display: 'flex',
-    alignItems: 'center'
-  },
-
-  tokenIndex: {
-    width: 32
-  },
-
   favouriteButton: {
     cursor: 'pointer'
   }

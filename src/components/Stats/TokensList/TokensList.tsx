@@ -21,7 +21,7 @@ import { actions } from '@store/reducers/navigation'
 import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
 import { useStyles } from './style'
 import { FilterSearch, ISearchToken } from '@common/FilterSearch/FilterSearch'
-import SortTypeSelector from '../PoolList/SortTypeSelector/SortTypeSelector'
+import SortTypeSelector from '../SortTypeSelector/SortTypeSelector'
 import { star, starFill } from '@static/icons'
 
 export interface ITokensListData {

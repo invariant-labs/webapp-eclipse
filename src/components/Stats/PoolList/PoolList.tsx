@@ -25,7 +25,7 @@ import { shortenAddress } from '@utils/uiUtils'
 import { actions } from '@store/reducers/navigation'
 import { useDispatch, useSelector } from 'react-redux'
 import { poolSearch } from '@store/selectors/navigation'
-import SortTypeSelector from './SortTypeSelector/SortTypeSelector'
+import SortTypeSelector from '../SortTypeSelector/SortTypeSelector'
 import { star, starFill } from '@static/icons'
 
 export interface PoolListInterface {

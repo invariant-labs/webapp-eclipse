@@ -198,12 +198,13 @@ export const Header: React.FC<IHeader> = ({
           <ChangeWalletButton
             name={
               walletConnected
-                ? `${address.toString().slice(0, 4)}...${!isSmDown
-                  ? address
-                    .toString()
-                    .slice(address.toString().length - 4, address.toString().length)
-                  : ''
-                }`
+                ? `${address.toString().slice(0, 4)}...${
+                    !isSmDown
+                      ? address
+                          .toString()
+                          .slice(address.toString().length - 4, address.toString().length)
+                      : ''
+                  }`
                 : isSmDown
                   ? 'Connect'
                   : 'Connect wallet'

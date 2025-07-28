@@ -66,15 +66,6 @@ export const useStyles = makeStyles()(() => ({
     background: colors.invariant.component,
     boxSizing: 'border-box'
   },
-  rowContainer: {
-    display: 'flex',
-    alignItems: 'end',
-    justifyContent: 'space-between',
-    [theme.breakpoints.down('sm')]: {
-      flexDirection: 'column',
-      alignItems: 'flex-start'
-    }
-  },
 
   showFavouritesButton: {
     height: 40,

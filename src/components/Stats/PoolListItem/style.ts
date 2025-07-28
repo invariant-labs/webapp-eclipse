@@ -1,4 +1,4 @@
-import { colors, theme, typography } from '@static/theme'
+import { colors, theme } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInfo = false }) => ({
@@ -19,7 +19,6 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
 
     [theme.breakpoints.down('md')]: {
       padding: '12px 16px',
-      // height: showInfo ? 230 : 88
       height: showInfo ? 264 : 79
     },
 
@@ -61,113 +60,6 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
   imageToWrapper: {
     position: 'relative',
     display: 'flex'
-  },
-
-  containerNoAPY: {},
-
-  imageContainer: {
-    display: 'flex',
-    alignItems: 'center'
-    // width: '100%',
-    // paddingRight: 12,
-
-    // '& p': {
-    //   maxWidth: 'calc(100% - 80px);',
-
-    //   paddingRight: 4,
-    //   overflow: 'hidden',
-    //   whiteSpace: 'nowrap',
-    //   textOverflow: 'ellipsis'
-    // }
-  },
-
-  iconsWrapper: {
-    display: 'flex',
-    marginRight: 8
-  },
-  selfEnd: {
-    [theme.breakpoints.down('sm')]: {
-      justifyContent: 'flex-end',
-      textAlign: 'end'
-    }
-  },
-  header: {
-    height: '69px',
-    '& p.MuiTypography-root': {
-      display: 'flex',
-
-      color: colors.invariant.textGrey,
-      ...typography.heading4,
-      fontWeight: 600,
-
-      [theme.breakpoints.down('sm')]: {
-        ...typography.caption2,
-        fontWeight: 600
-      }
-    }
-  },
-
-  symbolsContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    marginLeft: 10,
-    paddingRight: 5,
-
-    '& p': {
-      overflow: 'hidden',
-      whiteSpace: 'nowrap',
-      textOverflow: 'ellipsis',
-      display: 'block'
-    },
-
-    [theme.breakpoints.down('sm')]: {
-      marginLeft: 0,
-      justifyContent: 'flex-start'
-    }
-  },
-  icon: {
-    [theme.breakpoints.down('sm')]: {
-      marginLeft: -4
-    }
-  },
-  activeLiquidityIcon: {
-    marginLeft: 5,
-    height: 14,
-    width: 14,
-    border: '1px solid #FFFFFF',
-    color: colors.invariant.text,
-    borderRadius: '50%',
-    fontSize: 10,
-    lineHeight: '10px',
-    fontWeight: 400,
-    textAlign: 'center',
-    boxSizing: 'border-box',
-    paddingTop: 1,
-    cursor: 'pointer'
-  },
-  liquidityTooltip: {
-    background: colors.invariant.component,
-    boxShadow: '0px 4px 18px rgba(0, 0, 0, 0.35)',
-    borderRadius: 20,
-    padding: 16,
-    maxWidth: 350,
-    boxSizing: 'border-box'
-  },
-  liquidityTitle: {
-    color: colors.invariant.text,
-    ...typography.heading4,
-    marginBottom: 8
-  },
-  liquidityDesc: {
-    color: colors.invariant.text,
-    ...typography.caption1
-  },
-  extendedGrid: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gridColumn: 'span 4',
-    gap: 8
   },
   action: {
     display: 'flex',
@@ -213,14 +105,6 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
       width: 28
     }
   },
-
-  iconContainer: {
-    minWidth: 24,
-    maxWidth: 24,
-    height: 24,
-    marginRight: 3,
-    position: 'relative'
-  },
   tokenIcon: {
     minWidth: 24,
     maxWidth: 24,
@@ -259,25 +143,13 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
       }
     }
   },
-  row: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 4,
-    fontSize: 30,
-    height: 32
-  },
-  apy: {
-    fontSize: 12,
-    alignSelf: 'flex-end',
-    color: colors.invariant.textGrey
-  },
   apyLabel: {
     position: 'absolute',
     top: '100%',
     left: '100%',
     color: colors.invariant.textGrey,
     fontSize: '15px !important',
-    transform: 'translate(0px, -8px)' // można tu dodać ewentualne przesunięcie
+    transform: 'translate(0px, -8px)'
   },
   extendedRowIcon: {
     justifySelf: 'end',
@@ -292,45 +164,6 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     transition: 'all 0.3s ease',
     transform: showInfo ? 'rotate(180deg)' : 'rotate(0deg)'
   },
-
-  extendedRowTitle: {
-    visibility: showInfo ? 'visible' : 'hidden',
-
-    ...typography.body3,
-    display: 'flex',
-
-    gap: 6,
-
-    color: colors.invariant.textGrey,
-
-    [theme.breakpoints.down('sm')]: {
-      ...typography.caption1
-    },
-    [theme.breakpoints.up('sm')]: {
-      ':last-of-type': {
-        // justifySelf: 'end'
-      }
-    }
-  },
-
-  extendedRowContent: {
-    ...typography.body3,
-    fontWeight: 700,
-    color: colors.invariant.text,
-    [theme.breakpoints.down('sm')]: {
-      ...typography.caption1
-    }
-  },
-
-  tokenIndexContainer: {
-    display: 'flex',
-    alignItems: 'center'
-  },
-
-  tokenIndex: {
-    width: 32
-  },
-
   favouriteButton: {
     cursor: 'pointer',
     flexShrink: 0
