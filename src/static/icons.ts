@@ -123,6 +123,8 @@ import saleSelectedIcon from './svg/sale-selected.svg'
 import saleUnselectedIcon from './svg/sale-unselected.svg'
 import poolStatsIcon from './svg/poolStats.svg'
 import poolStatsBtnIcon from './svg/poolStatsBtn.svg'
+import arrowUpIcon from './svg/arrowUp.svg'
+import arrowDownIcon from './svg/arrowDown.svg'
 
 export {
   hornsUSDC,
@@ -249,7 +251,9 @@ export {
   saleSelectedIcon,
   saleUnselectedIcon,
   poolStatsIcon,
-  poolStatsBtnIcon
+  poolStatsBtnIcon,
+  arrowUpIcon,
+  arrowDownIcon
 }
 
 export const chainIcons = {

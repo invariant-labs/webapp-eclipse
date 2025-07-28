@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Box, Button, Grid, Popover, Typography } from '@mui/material'
 import { SortTypePoolList } from '@store/consts/static'
-import { dropdownIcon, dropdownReverseIcon } from '@static/icons'
+import { arrowDownIcon, arrowUpIcon, dropdownIcon, dropdownReverseIcon } from '@static/icons'
 import { colors, typography } from '@static/theme'
 import { useStyles } from './style'
 
@@ -50,12 +50,17 @@ const SortTypeSelector: React.FC<Props> = ({ currentSort, onSelect, fullWidth })
           <Typography sx={{ ...typography.caption1 }} color={colors.invariant.text}>
             Sort by:
           </Typography>{' '}
-          <Typography sx={{ ...typography.caption2 }} color={colors.invariant.textGrey}>
+          <Typography
+            sx={{ ...typography.caption2 }}
+            color={colors.invariant.textGrey}
+            display='flex'
+            alignItems='center'>
             {sortGroups
               .flatMap(group => [group.asc, group.desc])
               .find(value => value === currentSort) !== undefined &&
               sortGroups.find(group => group.asc === currentSort || group.desc === currentSort)
-                ?.label + (currentSort % 2 === 0 ? ' ↑' : ' ↓')}
+                ?.label}{' '}
+            <img src={currentSort % 2 === 0 ? arrowUpIcon : arrowDownIcon} />
           </Typography>
         </Box>
         {!open ? <img src={dropdownIcon} alt='' /> : <img src={dropdownReverseIcon} alt='' />}
@@ -70,27 +75,29 @@ const SortTypeSelector: React.FC<Props> = ({ currentSort, onSelect, fullWidth })
         classes={{ paper: classes.paper }}>
         <Grid className={classes.root}>
           {sortGroups.map(group => (
-            <Grid item key={group.label}>
-              <Grid container spacing={1}>
-                <Grid item xs={6}>
-                  <Button
-                    fullWidth
-                    variant={currentSort === group.asc ? 'contained' : 'text'}
-                    onClick={() => handleSelect(group.asc)}
-                    className={classes.optionButton}>
-                    {group.label} ↑
-                  </Button>
-                </Grid>
-                <Grid item xs={6}>
-                  <Button
-                    fullWidth
-                    variant={currentSort === group.desc ? 'contained' : 'text'}
-                    onClick={() => handleSelect(group.desc)}
-                    className={classes.optionButton}>
-                    {group.label} ↓
-                  </Button>
-                </Grid>
-              </Grid>
+            <Grid
+              display={'flex'}
+              width={'100%'}
+              justifyContent='center'
+              alignItems='center'
+              gap={1}>
+              <Typography display={'flex'} flex={1}>
+                {group.label}
+              </Typography>
+
+              <button
+                className={classes.optionButton}
+                // variant={currentSort === group.asc ? 'contained' : 'text'}
+                onClick={() => handleSelect(group.asc)}>
+                <img src={arrowUpIcon} alt='sort decreasing' />
+              </button>
+
+              <button
+                // variant={currentSort === group.desc ? 'contained' : 'text'}
+                onClick={() => handleSelect(group.desc)}
+                className={classes.optionButton}>
+                <img src={arrowDownIcon} alt='sort increasing' />
+              </button>
             </Grid>
           ))}
         </Grid>

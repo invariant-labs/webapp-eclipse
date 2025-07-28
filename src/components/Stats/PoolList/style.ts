@@ -89,13 +89,13 @@ export const useStyles = makeStyles()(() => ({
     textAlign: 'right',
 
     '&:hover': {
-      background: colors.invariant.componentDark,
-      backgroundColor: colors.invariant.lightGrey,
-      boxShadow: 'none'
+      background: colors.invariant.component,
+      boxShadow: 'none',
+      filter: 'brightness(1.2)'
     },
 
     '& .MuiTouchRipple-root .MuiTouchRipple-child': {
-      backgroundColor: colors.invariant.lightGrey
+      // backgroundColor: colors.invariant.lightGrey
     },
 
     [theme.breakpoints.down('md')]: {

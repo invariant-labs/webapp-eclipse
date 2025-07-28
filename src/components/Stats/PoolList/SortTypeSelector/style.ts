@@ -71,7 +71,7 @@ export const useStyles = makeStyles()((theme: Theme) => {
     },
     root: {
       background: colors.invariant.component,
-      width: 140,
+      width: 200,
       borderBottomLeftRadius: 16,
       borderBottomRightRadius: 16,
       padding: 16,
@@ -83,22 +83,29 @@ export const useStyles = makeStyles()((theme: Theme) => {
     },
     paper: {
       background: 'transparent',
-      boxShadow: 'none',
       borderRadius: '16px',
       boxSizing: 'border-box',
-      marginTop: '8px'
+      marginTop: '8px',
+      boxShadow: `0px 2px 8px ${colors.invariant.black}`
     },
     optionButton: {
-      width: '100%',
-      height: 32,
+      width: 40,
+      height: 40,
+      outline: 'none',
+      border: `1px solid ${colors.invariant.light}`,
+      borderRadius: 8,
+      padding: 8,
+      minWidth: 'none',
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'flex-start',
+      justifyContent: 'center',
+
       backgroundColor: colors.invariant.component,
       textDecoration: 'none',
       textTransform: 'none',
       '&:hover': {
-        backgroundColor: colors.invariant.newDark
+        backgroundColor: colors.invariant.newDark,
+        cursor: 'pointer'
       },
       ...typography.body2,
       color: colors.invariant.textGrey
@@ -114,7 +121,7 @@ export const useStyles = makeStyles()((theme: Theme) => {
       alignItems: 'center',
       justifyContent: 'space-between',
       gap: 10,
-      background: colors.invariant.light,
+      background: colors.invariant.component,
       textDecoration: 'none',
       textTransform: 'none',
       transition: 'filter 0.3s',
@@ -123,6 +130,7 @@ export const useStyles = makeStyles()((theme: Theme) => {
       borderRadius: 9,
       '&:hover': {
         background: colors.invariant.component,
+        boxShadow: 'none',
         filter: 'brightness(1.2)'
       },
       ...typography.body2,
