@@ -136,9 +136,9 @@ export const ChangeLiquidityModal: React.FC<IChangeLiquidityModal> = ({
   setChangeLiquiditySuccess,
   positionLiquidity
 }) => {
-  const { classes, cx } = useStyles({ isAddLiquidity })
-
   const [width, setWidth] = useState(0)
+
+  const { classes, cx } = useStyles({ isAddLiquidity, width })
   const ref = useRef<HTMLDivElement>(null)
 
   const { tokenXPercentage, tokenYPercentage } = useMemo(
@@ -156,6 +156,16 @@ export const ChangeLiquidityModal: React.FC<IChangeLiquidityModal> = ({
     if (ref.current) {
       setWidth(ref.current?.offsetWidth)
     }
+
+    const listener = () => {
+      if (ref.current) {
+        setWidth(ref.current?.offsetWidth)
+      }
+    }
+
+    window.addEventListener('resize', listener)
+
+    return () => window.removeEventListener('resize', listener)
   }, [ref.current, tokenXPercentage, tokenYPercentage])
 
   return (
@@ -204,7 +214,7 @@ export const ChangeLiquidityModal: React.FC<IChangeLiquidityModal> = ({
                 </Typography>
                 <Box className={classes.statDescription}>
                   {formatNumberWithSuffix(min)} - {formatNumberWithSuffix(max)}
-                  <Box className={classes.rangeWrapper} style={{ width }}>
+                  <Box className={classes.rangeWrapper}>
                     <Box
                       className={cx(classes.rangeContainer, {
                         [classes.inRangeContainer]: inRange

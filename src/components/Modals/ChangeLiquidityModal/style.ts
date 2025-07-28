@@ -3,9 +3,10 @@ import { makeStyles } from 'tss-react/mui'
 
 type Props = {
   isAddLiquidity: boolean
+  width: number
 }
 
-export const useStyles = makeStyles<Props>()((theme, { isAddLiquidity }) => ({
+export const useStyles = makeStyles<Props>()((theme, { isAddLiquidity, width }) => ({
   root: {
     display: 'flex',
     justifyContent: 'center',
@@ -114,9 +115,11 @@ export const useStyles = makeStyles<Props>()((theme, { isAddLiquidity }) => ({
     }
   },
   rangeWrapper: {
+    width,
     display: 'flex',
 
     [theme.breakpoints.down('sm')]: {
+      width: 'fit-content',
       justifyContent: 'flex-end'
     }
   },
