@@ -268,7 +268,7 @@ const Card: React.FC<ICard> = ({
               </Box>
               <Grid container gap='8px'>
                 {apy !== undefined && showAPY && (
-                  <StatsLabel title='APY' value={convertAPYValue(convertedApy)} />
+                  <StatsLabel title='APY' value={convertAPYValue(convertedApy, 'APY')} />
                 )}
                 <StatsLabel title='Fee' value={fee + '%'} />
                 {TVL !== undefined && (

@@ -185,8 +185,8 @@ export const MobilePoolListItem: React.FC<IProps> = ({
                 <span className={classes.APRLabel}>APR</span>
               </Box>
               <Box style={{ display: 'flex' }}>
-                <span className={classes.APYValue}>{convertAPYValue(convertedApy)}</span>
-                <span className={classes.APRValue}>{convertAPYValue(convertedApr)}</span>
+                <span className={classes.APYValue}>{convertAPYValue(convertedApy, 'APY')}</span>
+                <span className={classes.APRValue}>{convertAPYValue(convertedApr, 'APR')}</span>
               </Box>
             </Box>
             <Box>

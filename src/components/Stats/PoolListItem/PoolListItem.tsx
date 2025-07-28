@@ -433,9 +433,9 @@ const PoolListItem: React.FC<IProps> = ({
           {!isSmd && showAPY ? (
             <Grid className={classes.row} sx={{ justifyContent: 'space-between' }}>
               <Grid sx={{ display: 'flex', gap: '4px' }}>
-                <Typography>{convertAPYValue(convertedApy)}</Typography>{' '}
+                <Typography>{convertAPYValue(convertedApy, 'APY')}</Typography>{' '}
                 <Typography className={classes.apyLabel}>
-                  {convertAPYValue(convertedApr)}
+                  {convertAPYValue(convertedApr, 'APR')}
                 </Typography>
               </Grid>
             </Grid>
@@ -527,7 +527,7 @@ const PoolListItem: React.FC<IProps> = ({
                     className={classes.extendedRowTitle}>
                     APY{' '}
                     <span className={classes.extendedRowContent}>
-                      {convertAPYValue(convertedApy)}{' '}
+                      {convertAPYValue(convertedApy, 'APY')}{' '}
                     </span>
                   </Typography>
                   <Typography
@@ -536,7 +536,7 @@ const PoolListItem: React.FC<IProps> = ({
                     className={cx(classes.extendedRowTitle, classes.selfEnd)}>
                     APR{' '}
                     <span className={classes.extendedRowContent}>
-                      {convertAPYValue(convertedApr)}
+                      {convertAPYValue(convertedApr, 'APR')}
                     </span>
                   </Typography>
 
@@ -551,7 +551,7 @@ const PoolListItem: React.FC<IProps> = ({
                   <Typography component='h5' className={classes.extendedRowTitle}>
                     APY{' '}
                     <span className={classes.extendedRowContent}>
-                      {convertAPYValue(convertedApy)}
+                      {convertAPYValue(convertedApy, 'APY')}
                     </span>
                   </Typography>
                   <Typography
@@ -560,7 +560,7 @@ const PoolListItem: React.FC<IProps> = ({
                     className={cx(classes.extendedRowTitle, classes.selfEnd)}>
                     APR{' '}
                     <span className={classes.extendedRowContent}>
-                      {convertAPYValue(convertedApr)}
+                      {convertAPYValue(convertedApr, 'APR')}
                     </span>
                   </Typography>
                   <Typography>{''}</Typography>

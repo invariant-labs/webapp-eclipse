@@ -101,8 +101,8 @@ export const PromotedPoolPopover = ({
                   <span className={classes.apy}>APR</span>
                 </Typography>{' '}
                 <Typography className={classes.whiteText}>
-                  {convertAPYValue(apy)}
-                  <span className={classes.apy}>{convertAPYValue(apr)}</span>
+                  {convertAPYValue(apy, 'APY')}
+                  <span className={classes.apy}>{convertAPYValue(apr, 'APR')}</span>
                 </Typography>
               </div>
             </>

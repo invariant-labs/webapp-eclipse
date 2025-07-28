@@ -189,8 +189,8 @@ const PoolListItem: React.FC<IProps> = ({
           </Grid>
           {!isSm && showAPY ? (
             <Typography className={classes.row}>
-              {convertAPYValue(convertedApy)}
-              <span className={classes.apy}>{convertAPYValue(convertedApr)}</span>
+              {convertAPYValue(convertedApy, 'APY')}
+              <span className={classes.apy}>{convertAPYValue(convertedApr, 'APR')}</span>
             </Typography>
           ) : null}
           <Typography>{fee}%</Typography>
