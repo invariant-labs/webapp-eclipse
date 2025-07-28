@@ -8,7 +8,6 @@ import {
   formatNumberWithSuffix,
   numberToString,
   spacingMultiplicityGte,
-  trimLeadingZeros,
   truncateString
 } from '@utils/utils'
 import { PlotTickData } from '@store/reducers/positions'
@@ -235,19 +234,29 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
   const concentration = calculateConcentration(leftRange.index, rightRange.index)
 
   const { formattedMin, formattedMax } = useMemo(() => {
-    const formattedMin = formatNumberWithoutSuffix(min)
-    const formattedMax = formatNumberWithoutSuffix(max)
+    let formattedMin = formatNumberWithSuffix(min)
+    let formattedMax = formatNumberWithSuffix(max)
 
-    if (formattedMin === formattedMax) {
-      return {
-        formattedMin: trimLeadingZeros(min.toFixed(xToY ? tokenY.decimal : tokenX.decimal)),
-        formattedMax: trimLeadingZeros(max.toFixed(xToY ? tokenY.decimal : tokenX.decimal))
-      }
-    } else {
-      return {
-        formattedMin,
-        formattedMax
-      }
+    const maxIterations = 4
+    let currentIterations = 0
+    while (formattedMin === formattedMax && currentIterations < maxIterations) {
+      formattedMin = formatNumberWithSuffix(min, {
+        decimalsAfterDot: currentIterations + 4,
+        noSubNumbers: true,
+        alternativeConfig: true
+      })
+      formattedMax = formatNumberWithSuffix(max, {
+        decimalsAfterDot: currentIterations + 4,
+        noSubNumbers: true,
+        alternativeConfig: true
+      })
+
+      currentIterations += 1
+    }
+
+    return {
+      formattedMin,
+      formattedMax
     }
   }, [min, max, xToY])
 
