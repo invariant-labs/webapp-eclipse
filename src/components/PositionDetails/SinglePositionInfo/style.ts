@@ -44,40 +44,16 @@ export const useStyles = makeStyles()(() => ({
     ...typography.body1,
 
     '&:hover': {
-      background: `${colors.invariant.green}40`
-    }
-  },
-  liquidityButtonPlus: {
-    background: colors.invariant.green,
-    color: colors.invariant.dark,
-
-    '&:hover': {
-      background: 'transparent',
-      color: colors.invariant.green
-    }
-  },
-  liquidityButtonMinus: {
-    background: 'transparent',
-    color: colors.invariant.green,
-
-    '&:hover': {
       background: colors.invariant.green,
-      color: colors.invariant.dark
+      color: colors.invariant.component
     }
   },
-  liquidityButtonPlusDisabled: {
+  liquidityButtonDisabled: {
     background: colors.invariant.light,
     borderColor: colors.invariant.light,
 
     '&.Mui-disabled': {
       color: colors.invariant.component
-    }
-  },
-  liquidityButtonMinusDisabled: {
-    borderColor: colors.invariant.light,
-
-    '&.Mui-disabled': {
-      color: colors.invariant.light
     }
   },
   liquidityButtonIcon: {

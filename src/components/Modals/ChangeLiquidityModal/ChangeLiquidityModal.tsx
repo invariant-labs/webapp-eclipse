@@ -2,14 +2,9 @@ import { Box, Button, Popover, Typography } from '@mui/material'
 import useStyles from './style'
 import inRangeIcon from '@static/svg/in-range.svg'
 import outOfRangeIcon from '@static/svg/out-of-range.svg'
-import { useMemo } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { unknownTokenIcon } from '@static/icons'
-import {
-  calculatePercentageRatio,
-  formatNumberWithoutSuffix,
-  formatNumberWithSuffix,
-  numberToString
-} from '@utils/utils'
+import { calculatePercentageRatio, formatNumberWithSuffix, numberToString } from '@utils/utils'
 import { ILiquidityToken } from '@store/consts/types'
 import AddLiquidity from './AddLiquidity/AddLiquidity'
 import { BN } from '@coral-xyz/anchor'
@@ -143,6 +138,9 @@ export const ChangeLiquidityModal: React.FC<IChangeLiquidityModal> = ({
 }) => {
   const { classes, cx } = useStyles({ isAddLiquidity })
 
+  const [width, setWidth] = useState(0)
+  const ref = useRef<HTMLDivElement>(null)
+
   const { tokenXPercentage, tokenYPercentage } = useMemo(
     () =>
       calculatePercentageRatio(
@@ -153,6 +151,12 @@ export const ChangeLiquidityModal: React.FC<IChangeLiquidityModal> = ({
       ),
     [tokenX, tokenY, currentPrice, xToY]
   )
+
+  useEffect(() => {
+    if (ref.current) {
+      setWidth(ref.current?.offsetWidth)
+    }
+  }, [ref.current, tokenXPercentage, tokenYPercentage])
 
   return (
     <Popover
@@ -194,19 +198,23 @@ export const ChangeLiquidityModal: React.FC<IChangeLiquidityModal> = ({
           <Typography className={classes.title}>Current position</Typography>
           <Box className={classes.card}>
             <Box className={classes.row}>
-              <Box className={classes.stat}>
+              <Box className={cx(classes.stat, classes.statFull)}>
                 <Typography className={classes.statTitle}>
                   {xToY ? tokenY.name : tokenX.name} per {xToY ? tokenX.name : tokenY.name}
                 </Typography>
                 <Box className={classes.statDescription}>
-                  {formatNumberWithoutSuffix(min)} - {formatNumberWithoutSuffix(max)}
-                  <Box
-                    className={cx(classes.rangeContainer, { [classes.inRangeContainer]: inRange })}>
-                    <img
-                      src={inRange ? inRangeIcon : outOfRangeIcon}
-                      alt={inRange ? 'in range icon' : 'out of range icon'}
-                    />
-                    {inRange ? 'In range' : 'Out of range'}
+                  {formatNumberWithSuffix(min)} - {formatNumberWithSuffix(max)}
+                  <Box className={classes.rangeWrapper} style={{ width }}>
+                    <Box
+                      className={cx(classes.rangeContainer, {
+                        [classes.inRangeContainer]: inRange
+                      })}>
+                      <img
+                        src={inRange ? inRangeIcon : outOfRangeIcon}
+                        alt={inRange ? 'in range icon' : 'out of range icon'}
+                      />
+                      {inRange ? 'In range' : 'Out of range'}
+                    </Box>
                   </Box>
                 </Box>
               </Box>
@@ -232,7 +240,9 @@ export const ChangeLiquidityModal: React.FC<IChangeLiquidityModal> = ({
               </Box>
               <Box className={cx(classes.stat, classes.statMobile)}>
                 <Typography className={classes.statTitle}>Deposit ratio</Typography>
-                <Box className={cx(classes.statDescription, classes.statDescriptionMobile)}>
+                <Box
+                  className={cx(classes.statDescription, classes.statDescriptionMobile)}
+                  ref={ref}>
                   <Box className={classes.depositRatioContainer}>
                     <img
                       className={classes.token}

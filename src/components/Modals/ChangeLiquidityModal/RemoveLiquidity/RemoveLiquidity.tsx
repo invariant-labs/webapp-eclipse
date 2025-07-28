@@ -892,7 +892,7 @@ export const RemoveLiquidity: React.FC<IProps> = ({
       </Grid>
       <Box className={classes.statCard}>
         <Box className={classes.statRow}>
-          <Typography className={classes.statTitle}>Your position after withdraw:</Typography>
+          <Typography className={classes.statTitle}>Position after withdraw:</Typography>
           <Typography className={classes.statContent}>
             {tokenAIndex !== null
               ? formatNumberWithoutSuffix(tokenXLiquidity - +tokenAInputState.value)

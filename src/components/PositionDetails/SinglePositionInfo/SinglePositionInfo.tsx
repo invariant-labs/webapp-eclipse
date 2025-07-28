@@ -108,18 +108,18 @@ const SinglePositionInfo: React.FC<IProp> = ({
           item={
             <Box className={classes.liquidityButtons}>
               <Button
-                className={cx(classes.liquidityButton, classes.liquidityButtonPlus, {
-                  [classes.liquidityButtonPlusDisabled]: isLocked
+                className={cx(classes.liquidityButton, {
+                  [classes.liquidityButtonDisabled]: isLocked || isPreview
                 })}
-                disabled={isLocked}
+                disabled={isLocked || isPreview}
                 onClick={() => showChangeLiquidityModal(true)}>
                 <Plus />
               </Button>
               <Button
-                className={cx(classes.liquidityButton, classes.liquidityButtonMinus, {
-                  [classes.liquidityButtonMinusDisabled]: isLocked
+                className={cx(classes.liquidityButton, {
+                  [classes.liquidityButtonDisabled]: isLocked || isPreview
                 })}
-                disabled={isLocked}
+                disabled={isLocked || isPreview}
                 onClick={() => showChangeLiquidityModal(false)}>
                 <Minus />
               </Button>

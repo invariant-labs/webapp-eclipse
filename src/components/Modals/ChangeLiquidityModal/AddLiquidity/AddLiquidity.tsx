@@ -1746,7 +1746,7 @@ export const AddLiquidity: React.FC<IProps> = ({
       </Grid>
       <Box className={classes.statCard}>
         <Box className={classes.statRow}>
-          <Typography className={classes.statTitle}>Your position after deposit:</Typography>
+          <Typography className={classes.statTitle}>Position after deposit:</Typography>
           <Typography className={classes.statContent}>
             {tokenAIndex !== null
               ? formatNumberWithoutSuffix(

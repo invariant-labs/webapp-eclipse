@@ -81,6 +81,9 @@ export const useStyles = makeStyles<Props>()((theme, { isAddLiquidity }) => ({
       gap: 8
     }
   },
+  statFull: {
+    flex: 1
+  },
   stat: {
     display: 'flex',
     flexDirection: 'column',
@@ -102,6 +105,7 @@ export const useStyles = makeStyles<Props>()((theme, { isAddLiquidity }) => ({
     color: colors.invariant.text,
     display: 'flex',
     alignItems: 'center',
+    justifyContent: 'space-between',
     gap: 8
   },
   statDescriptionMobile: {
@@ -109,11 +113,19 @@ export const useStyles = makeStyles<Props>()((theme, { isAddLiquidity }) => ({
       ...typography.caption1
     }
   },
+  rangeWrapper: {
+    display: 'flex',
+
+    [theme.breakpoints.down('sm')]: {
+      justifyContent: 'flex-end'
+    }
+  },
   rangeContainer: {
-    ...typography.caption4,
+    width: 'fit-content',
+    ...typography.caption2,
     background: '#FB555F40',
     paddingInline: 6,
-    height: 20,
+    height: 24,
     borderRadius: 5,
     display: 'flex',
     flexShrink: 0,

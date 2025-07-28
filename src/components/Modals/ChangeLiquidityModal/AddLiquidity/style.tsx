@@ -289,9 +289,13 @@ export const useStyles = makeStyles()(theme => {
       }
     },
     whiteIcon: {
+      width: 20,
+      height: 20,
       color: colors.white.main
     },
     grayscaleIcon: {
+      width: 20,
+      height: 20,
       color: colors.invariant.textGrey
     },
     inputWrapper: {
@@ -383,7 +387,8 @@ export const useStyles = makeStyles()(theme => {
     },
     smallIcon: {
       width: 16,
-      height: 16
+      height: 16,
+      borderRadius: '100%'
     }
   }
 })
