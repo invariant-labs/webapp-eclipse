@@ -1,48 +1,50 @@
-import { Theme } from '@mui/material'
-import { typography, colors } from '@static/theme'
+import { typography, colors, theme } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
-export const useStyles = makeStyles()((theme: Theme) => ({
-  wrapper: {
-    maxWidth: '100%',
-    '&:nth-of-type(odd)': {
-      background: `${colors.invariant.component}`
+export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInfo = false }) => ({
+  container: {
+    transition: 'all 0.3s',
+    rowGap: 12,
+    color: colors.white.main,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '12px 24px',
+    whiteSpace: 'nowrap',
+    borderBottom: `1px solid ${colors.invariant.light}`,
+    overflow: 'hidden',
+    flexDirection: 'row',
+    height: showInfo ? 145 : 79,
+    background: showInfo ? colors.invariant.darkGradient : colors.invariant.component,
+
+    [theme.breakpoints.down('md')]: {
+      padding: '12px 16px'
     },
-    '&:nth-of-type(even)': {
-      background: colors.invariant.componentDark
-    },
-    '&:first-of-type': {
-      borderBottom: `2px solid ${colors.invariant.light}`,
-      borderTopLeftRadius: 24,
-      borderTopRightRadius: 24,
-      background: colors.invariant.component
+
+    [theme.breakpoints.down('sm')]: {
+      padding: '12px 8px'
     }
   },
-  container: {
-    display: 'grid',
-    gridTemplateColumns: '70px 34% 17.5% auto 12.5% 60px',
-    padding: '18px 24px',
-    whiteSpace: 'nowrap',
-    height: 69,
-    boxSizing: 'border-box',
-    [theme.breakpoints.down('md')]: {
-      gridTemplateColumns: '40px 30% 17.5% auto 12% 60px',
-      padding: ' 14px 20px ',
-      height: 69,
+  mainContent: {
+    display: 'flex',
+    alignItems: 'center',
+    flexWrap: 'nowrap',
+    paddingBottom: 12,
 
-      '& p': {
-        ...typography.caption1
-      }
-    },
-    [theme.breakpoints.down('sm')]: {
-      gridTemplateColumns: '30px auto 22.5% max(25%, 90px) max(15%, 60px)',
-      padding: '18px 8px',
-      height: 69,
-
-      '& p': {
-        ...typography.caption1
-      }
-    }
+    borderBottom: '4px solid transparent',
+    borderImage: `repeating-linear-gradient(
+      to right,
+      ${colors.invariant.light} 0,
+      ${colors.invariant.light} 8px,
+      transparent 8px,
+      transparent 24px
+    )`,
+    borderImageSlice: 1,
+    borderImageWidth: '0 0 1px 0'
+  },
+  info: {
+    visibility: showInfo ? 'visible' : 'hidden',
+    width: '100%'
   },
 
   tokenList: {
@@ -57,6 +59,19 @@ export const useStyles = makeStyles()((theme: Theme) => ({
         ...typography.caption1
       }
     }
+  },
+  extendedRowIcon: {
+    justifySelf: 'end',
+    alignSelf: 'center',
+    display: 'flex',
+    height: 24,
+    padding: 0,
+    width: 20,
+    fontSize: 10,
+    cursor: 'pointer',
+    fill: colors.invariant.green,
+    transition: 'all 0.3s ease',
+    transform: showInfo ? 'rotate(180deg)' : 'rotate(0deg)'
   },
 
   header: {

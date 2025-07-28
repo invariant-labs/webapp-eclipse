@@ -857,6 +857,22 @@ export const enum SortTypeTokenList {
   TVL_DESC
 }
 
+export const poolSortGroups = [
+  { label: 'Name', asc: SortTypePoolList.NAME_ASC, desc: SortTypePoolList.NAME_DESC },
+  { label: 'Fee', asc: SortTypePoolList.FEE_ASC, desc: SortTypePoolList.FEE_DESC },
+  { label: '24h Fee', asc: SortTypePoolList.FEE_24_ASC, desc: SortTypePoolList.FEE_24_DESC },
+  { label: 'Volume', asc: SortTypePoolList.VOLUME_ASC, desc: SortTypePoolList.VOLUME_DESC },
+  { label: 'TVL', asc: SortTypePoolList.TVL_ASC, desc: SortTypePoolList.TVL_DESC },
+  { label: 'APY', asc: SortTypePoolList.APY_ASC, desc: SortTypePoolList.APY_DESC }
+]
+
+export const tokenSortGroups = [
+  { label: 'Name', asc: SortTypeTokenList.NAME_ASC, desc: SortTypeTokenList.NAME_DESC },
+  { label: 'Price', asc: SortTypeTokenList.PRICE_ASC, desc: SortTypeTokenList.PRICE_DESC },
+  { label: 'Volume', asc: SortTypeTokenList.VOLUME_ASC, desc: SortTypeTokenList.VOLUME_DESC },
+  { label: 'TVL', asc: SortTypeTokenList.TVL_ASC, desc: SortTypeTokenList.TVL_DESC }
+]
+
 export const RECOMMENDED_RPC_ADDRESS = {
   [NetworkType.Testnet]: RPC.TEST,
   [NetworkType.Mainnet]: RPC.MAIN_TRITON,

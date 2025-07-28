@@ -7,6 +7,7 @@ import {
   Intervals,
   ITEMS_PER_PAGE,
   NetworkType,
+  poolSortGroups,
   SortTypePoolList,
   USDC_TEST,
   WETH_TEST
@@ -219,7 +220,13 @@ const PoolList: React.FC<PoolListInterface> = ({
               }
             </Button>
           )}
-          {!isMd && <SortTypeSelector currentSort={sortType} onSelect={setSortType} />}
+          {!isMd && (
+            <SortTypeSelector
+              currentSort={sortType}
+              sortGroups={poolSortGroups}
+              onSelect={setSortType}
+            />
+          )}
 
           <FilterSearch
             networkType={network}
@@ -251,6 +258,7 @@ const PoolList: React.FC<PoolListInterface> = ({
                   <SortTypeSelector
                     currentSort={sortType}
                     onSelect={setSortType}
+                    sortGroups={poolSortGroups}
                     fullWidth={isSm}
                   />
                 </Box>

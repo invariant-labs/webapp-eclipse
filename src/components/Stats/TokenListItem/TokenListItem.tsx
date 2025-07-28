@@ -1,16 +1,23 @@
-import React, { useMemo } from 'react'
-import { colors, theme } from '@static/theme'
+import React, { useEffect, useMemo, useState } from 'react'
+import { theme } from '@static/theme'
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
-import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp'
 import { useStyles } from './style'
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import { formatNumberWithSuffix } from '@utils/utils'
-import { Intervals, ITEMS_PER_PAGE, NetworkType, SortTypeTokenList } from '@store/consts/static'
-import { newTabBtnIcon, star, starFill, unknownTokenIcon, warningIcon } from '@static/icons'
+import { Intervals, NetworkType, SortTypeTokenList } from '@store/consts/static'
+import {
+  copyAddressIcon,
+  newTabBtnIcon,
+  star,
+  starFill,
+  unknownTokenIcon,
+  warningIcon
+} from '@static/icons'
 import { mapIntervalToString, shortenAddress } from '@utils/uiUtils'
 import { VariantType } from 'notistack'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
-import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
+import ItemValue from '../ListItem/ItemValue/ItemValue'
+import BoxValue from '../ListItem/BoxValue/BoxValue'
 
 interface IProps {
   displayType: string
@@ -54,7 +61,8 @@ const TokenListItem: React.FC<IProps> = ({
   copyAddressHandler,
   switchFavouriteTokens
 }) => {
-  const { classes } = useStyles()
+  const [showInfo, setShowInfo] = useState(false)
+  const { classes, cx } = useStyles({ showInfo })
   // const isNegative = priceChange < 0
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
   const isXs = useMediaQuery(theme.breakpoints.down('xs'))
@@ -88,192 +96,153 @@ const TokenListItem: React.FC<IProps> = ({
   }
   const shouldShowText = !isSm
   const intervalSuffix = mapIntervalToString(interval)
-  return (
-    <Grid className={classes.wrapper}>
-      {displayType === 'tokens' ? (
-        <Grid
-          container
-          classes={{ container: classes.container, root: classes.tokenList }}
-          sx={{
-            borderBottom:
-              itemNumber !== 0 && itemNumber % ITEMS_PER_PAGE
-                ? `1px solid ${colors.invariant.light}`
-                : `2px solid ${colors.invariant.light}`
-          }}>
-          <Box className={classes.tokenIndexContainer}>
-            {!isMd && (
-              <Box className={classes.tokenIndex}>
-                <Typography>{itemNumber}</Typography>
-              </Box>
-            )}
-            <img
-              className={classes.favouriteButton}
-              src={isFavourite ? starFill : star}
-              onClick={e => {
-                if (address && switchFavouriteTokens) {
-                  switchFavouriteTokens(address)
-                }
 
-                e.stopPropagation()
-              }}
-            />
-          </Box>{' '}
-          <Grid className={classes.tokenName}>
-            {icon === '/src/static/svg/unknownToken.svg' && isSm ? (
+  useEffect(() => {
+    if (!isMd) {
+      setShowInfo(false)
+    }
+  }, [isMd])
+
+  useEffect(() => {
+    setShowInfo(false)
+  }, [itemNumber])
+
+  return (
+    <Grid
+      container
+      classes={{ container: classes.container }}
+      onClick={e => {
+        e.stopPropagation()
+
+        if (isMd) setShowInfo(prev => !prev)
+      }}>
+      <Grid container className={classes.mainContent}>
+        <ItemValue
+          minWidth={125}
+          style={{ flexBasis: 300 }}
+          title={'Name'}
+          value={
+            icon === '/src/static/svg/unknownToken.svg' && isSm ? (
               <Typography>{symbol}</Typography>
             ) : (
-              <Grid className={classes.imageContainer}>
-                <img
-                  className={classes.tokenIcon}
-                  src={icon}
-                  alt='Token icon'
-                  onError={e => {
-                    e.currentTarget.src = unknownTokenIcon
-                  }}
-                />
-                {isUnknown && <img className={classes.warningIcon} src={warningIcon} />}
-              </Grid>
-            )}
+              <Grid display='flex' alignItems='center' gap={1}>
+                {!isMd && (
+                  <img
+                    className={classes.favouriteButton}
+                    src={isFavourite ? starFill : star}
+                    onClick={e => {
+                      if (address && switchFavouriteTokens) {
+                        switchFavouriteTokens(address)
+                      }
 
-            {shouldShowText && (
-              <Typography>
-                {isXs ? shortenAddress(symbol) : name.length < 25 ? name : name.slice(0, 40)}
-                {!isXs && name.length < 25 && (
-                  <span className={classes.tokenSymbol}>{` (${shortenAddress(symbol)})`}</span>
+                      e.stopPropagation()
+                    }}
+                  />
                 )}
-              </Typography>
-            )}
-            <TooltipHover title='Copy token address'>
-              <FileCopyOutlinedIcon
-                onClick={copyToClipboard}
-                classes={{ root: classes.clipboardIcon }}
-              />
-            </TooltipHover>
-          </Grid>
-          <Typography>{`~$${formatNumberWithSuffix(price)}`}</Typography>
-          {/* {!hideName && (
-            <Typography style={{ color: isNegative ? colors.invariant.Error : colors.green.main }}>
-              {isNegative ? `${priceChange.toFixed(2)}%` : `+${priceChange.toFixed(2)}%`}
-            </Typography>
-          )} */}
-          <Typography>{`$${formatNumberWithSuffix(volume)}`}</Typography>
-          <Typography>{`$${formatNumberWithSuffix(TVL)}`}</Typography>
-          {!isSm && (
-            <Box className={classes.action}>
-              <TooltipHover title='Open in explorer'>
-                <button
-                  className={classes.actionButton}
-                  onClick={() =>
-                    window.open(
-                      `https://eclipsescan.xyz/token/${address}${networkUrl}`,
-                      '_blank',
-                      'noopener,noreferrer'
-                    )
-                  }>
-                  <img width={32} height={32} src={newTabBtnIcon} alt={'Exchange'} />
-                </button>
-              </TooltipHover>
-            </Box>
-          )}
-        </Grid>
-      ) : (
-        <Grid
-          container
-          style={{ color: colors.invariant.textGrey, fontWeight: 400 }}
-          sx={{
-            borderBottom:
-              itemNumber !== 0 && itemNumber % 10
-                ? `1px solid ${colors.invariant.light}`
-                : `px solid ${colors.invariant.light}`
-          }}
-          classes={{ container: classes.container, root: classes.header }}>
-          <Typography style={{ lineHeight: '12px' }}>
-            N<sup>o</sup>
-          </Typography>
+                <Grid className={classes.imageContainer}>
+                  <img
+                    className={classes.tokenIcon}
+                    src={icon}
+                    alt='Token icon'
+                    onError={e => {
+                      e.currentTarget.src = unknownTokenIcon
+                    }}
+                  />
+                  {isUnknown && (
+                    <img className={classes.warningIcon} src={warningIcon} alt='Warning' />
+                  )}
+                </Grid>
+                {shouldShowText && (
+                  <Typography>
+                    {isXs ? shortenAddress(symbol) : name.length < 25 ? name : name.slice(0, 40)}
+                    {!isXs && name.length < 25 && (
+                      <span className={classes.tokenSymbol}>{` (${shortenAddress(symbol)})`}</span>
+                    )}
+                  </Typography>
+                )}
+              </Grid>
+            )
+          }
+        />
 
-          <Typography
-            style={{ cursor: 'pointer' }}
-            onClick={() => {
-              if (sortType === SortTypeTokenList.NAME_ASC) {
-                onSort?.(SortTypeTokenList.NAME_DESC)
-              } else {
-                onSort?.(SortTypeTokenList.NAME_ASC)
-              }
-            }}>
-            Token
-            {sortType === SortTypeTokenList.NAME_ASC ? (
-              <ArrowDropUpIcon className={classes.icon} />
-            ) : sortType === SortTypeTokenList.NAME_DESC ? (
-              <ArrowDropDownIcon className={classes.icon} />
-            ) : null}
-          </Typography>
-          <Typography
-            style={{ cursor: 'pointer' }}
-            onClick={() => {
-              if (sortType === SortTypeTokenList.PRICE_ASC) {
-                onSort?.(SortTypeTokenList.PRICE_DESC)
-              } else {
-                onSort?.(SortTypeTokenList.PRICE_ASC)
-              }
-            }}>
-            Price
-            {sortType === SortTypeTokenList.PRICE_ASC ? (
-              <ArrowDropUpIcon className={classes.icon} />
-            ) : sortType === SortTypeTokenList.PRICE_DESC ? (
-              <ArrowDropDownIcon className={classes.icon} />
-            ) : null}
-          </Typography>
-          {/* {!hideName && (
-            <Typography
-              style={{ cursor: 'pointer' }}
-              onClick={() => {
-                if (sortType === SortTypeTokenList.CHANGE_ASC) {
-                  onSort?.(SortTypeTokenList.CHANGE_DESC)
-                } else {
-                  onSort?.(SortTypeTokenList.CHANGE_ASC)
+        <ItemValue minWidth={110} title={'Price'} value={`~$${formatNumberWithSuffix(price)}`} />
+
+        <ItemValue
+          minWidth={110}
+          title={`Volume ${intervalSuffix}`}
+          value={`$${formatNumberWithSuffix(volume)}`}
+        />
+
+        <ItemValue
+          minWidth={110}
+          title={`TVL ${intervalSuffix}`}
+          value={`$${formatNumberWithSuffix(TVL)}`}
+        />
+
+        {!isMd && (
+          <ItemValue
+            minWidth={60}
+            style={{ flexGrow: 0 }}
+            title='Action'
+            value={
+              <Box className={classes.action}>
+                <TooltipHover title='Open in explorer'>
+                  <button
+                    className={classes.actionButton}
+                    onClick={() =>
+                      window.open(
+                        `https://eclipsescan.xyz/token/${address}${networkUrl}`,
+                        '_blank',
+                        'noopener,noreferrer'
+                      )
+                    }>
+                    <img width={32} height={32} src={newTabBtnIcon} alt={'Exchange'} />
+                  </button>
+                </TooltipHover>
+              </Box>
+            }
+          />
+        )}
+
+        {isMd && (
+          <ArrowDropDownIcon preserveAspectRatio='none' className={classes.extendedRowIcon} />
+        )}
+      </Grid>
+      {isMd && (
+        <Grid gap={'12px'} display='flex' container flexDirection='column'>
+          <Box className={classes.info}>
+            <Grid container gap={'8px'} overflow={'hidden'}>
+              <BoxValue
+                title={isFavourite ? 'Remove Favourite' : 'Add Favourite'}
+                icon={isFavourite ? starFill : star}
+                onClick={() => {
+                  if (address && switchFavouriteTokens) {
+                    switchFavouriteTokens(address)
+                  }
+                }}
+              />
+              <BoxValue
+                title='View'
+                icon={newTabBtnIcon}
+                style={{ flex: 1 }}
+                onClick={() =>
+                  window.open(
+                    `https://eclipsescan.xyz/token/${address}${networkUrl}`,
+                    '_blank',
+                    'noopener,noreferrer'
+                  )
                 }
-              }}>
-              Price change
-              {sortType === SortTypeTokenList.CHANGE_ASC ? (
-                <ArrowDropUpIcon className={classes.icon} />
-              ) : sortType === SortTypeTokenList.CHANGE_DESC ? (
-                <ArrowDropDownIcon className={classes.icon} />
-              ) : null}
-            </Typography>
-          )} */}
-          <Typography
-            style={{ cursor: 'pointer' }}
-            onClick={() => {
-              if (sortType === SortTypeTokenList.VOLUME_DESC) {
-                onSort?.(SortTypeTokenList.VOLUME_ASC)
-              } else {
-                onSort?.(SortTypeTokenList.VOLUME_DESC)
-              }
-            }}>
-            Volume {intervalSuffix}
-            {sortType === SortTypeTokenList.VOLUME_ASC ? (
-              <ArrowDropUpIcon className={classes.icon} />
-            ) : sortType === SortTypeTokenList.VOLUME_DESC ? (
-              <ArrowDropDownIcon className={classes.icon} />
-            ) : null}
-          </Typography>
-          <Typography
-            style={{ cursor: 'pointer' }}
-            onClick={() => {
-              if (sortType === SortTypeTokenList.TVL_DESC) {
-                onSort?.(SortTypeTokenList.TVL_ASC)
-              } else {
-                onSort?.(SortTypeTokenList.TVL_DESC)
-              }
-            }}>
-            TVL
-            {sortType === SortTypeTokenList.TVL_ASC ? (
-              <ArrowDropUpIcon className={classes.icon} />
-            ) : sortType === SortTypeTokenList.TVL_DESC ? (
-              <ArrowDropDownIcon className={classes.icon} />
-            ) : null}
-          </Typography>
-          {!isSm && <Typography align='right'>Action</Typography>}
+              />
+
+              <BoxValue
+                title={isSm ? 'Copy' : 'Copy address'}
+                onClick={copyToClipboard}
+                icon={copyAddressIcon}
+                style={{ flex: 1 }}
+                smallerIcon
+              />
+            </Grid>
+          </Box>
         </Grid>
       )}
     </Grid>

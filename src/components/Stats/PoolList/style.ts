@@ -94,10 +94,6 @@ export const useStyles = makeStyles()(() => ({
       filter: 'brightness(1.2)'
     },
 
-    '& .MuiTouchRipple-root .MuiTouchRipple-child': {
-      // backgroundColor: colors.invariant.lightGrey
-    },
-
     [theme.breakpoints.down('md')]: {
       border: `1px solid ${colors.invariant.light}`,
       padding: '8px 12px'
@@ -120,7 +116,6 @@ export const useStyles = makeStyles()(() => ({
     justifyContent: 'flex-end',
     alignItems: 'center',
     flex: 1,
-    margin: '16px 8px',
 
     [theme.breakpoints.down('sm')]: {
       margin: 0,

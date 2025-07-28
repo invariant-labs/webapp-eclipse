@@ -1,33 +1,30 @@
 import React, { useState } from 'react'
 import { Box, Button, Grid, Popover, Typography } from '@mui/material'
-import { SortTypePoolList } from '@store/consts/static'
 import { arrowDownIcon, arrowUpIcon, dropdownIcon, dropdownReverseIcon } from '@static/icons'
 import { colors, typography } from '@static/theme'
 import { useStyles } from './style'
 
-interface Props {
-  currentSort: SortTypePoolList
-  onSelect: (value: SortTypePoolList) => void
+export interface SortGroup<T> {
+  label: string
+  asc: T
+  desc: T
+}
+
+interface Props<T> {
+  currentSort: T
+  onSelect: (value: T) => void
+  sortGroups: SortGroup<T>[]
   fullWidth?: boolean
 }
 
-const sortGroups: {
-  label: string
-  asc: SortTypePoolList
-  desc: SortTypePoolList
-}[] = [
-  { label: 'Name', asc: SortTypePoolList.NAME_ASC, desc: SortTypePoolList.NAME_DESC },
-  { label: 'Fee', asc: SortTypePoolList.FEE_ASC, desc: SortTypePoolList.FEE_DESC },
-  { label: '24h Fee', asc: SortTypePoolList.FEE_24_ASC, desc: SortTypePoolList.FEE_24_DESC },
-  { label: 'Volume', asc: SortTypePoolList.VOLUME_ASC, desc: SortTypePoolList.VOLUME_DESC },
-  { label: 'TVL', asc: SortTypePoolList.TVL_ASC, desc: SortTypePoolList.TVL_DESC },
-  { label: 'APY', asc: SortTypePoolList.APY_ASC, desc: SortTypePoolList.APY_DESC }
-]
-
-const SortTypeSelector: React.FC<Props> = ({ currentSort, onSelect, fullWidth }) => {
+const SortTypeSelector = <T extends number>({
+  currentSort,
+  onSelect,
+  sortGroups,
+  fullWidth
+}: Props<T>) => {
   const { classes, cx } = useStyles()
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
-
   const open = Boolean(anchorEl)
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -38,33 +35,31 @@ const SortTypeSelector: React.FC<Props> = ({ currentSort, onSelect, fullWidth })
     setAnchorEl(null)
   }
 
-  const handleSelect = (option: SortTypePoolList) => {
+  const handleSelect = (option: T) => {
     onSelect(option)
     handleClose()
   }
-  console.log(currentSort)
+
+  const currentLabel = sortGroups.find(
+    group => group.asc === currentSort || group.desc === currentSort
+  )?.label
 
   return (
     <Box display='flex' flexGrow={fullWidth ? 1 : 'initial'}>
       <Button onClick={handleClick} className={classes.selectButton}>
-        <Box display={'flex'} gap={1}>
-          <Typography sx={{ ...typography.caption1 }} color={colors.invariant.text}>
+        <Box display='flex' gap={1}>
+          <Typography sx={typography.caption1} color={colors.invariant.text}>
             Sort by:
-          </Typography>{' '}
+          </Typography>
           <Typography
-            sx={{ ...typography.caption2 }}
+            sx={typography.caption2}
             color={colors.invariant.textGrey}
             display='flex'
             alignItems='center'>
-            {sortGroups
-              .flatMap(group => [group.asc, group.desc])
-              .find(value => value === currentSort) !== undefined &&
-              sortGroups.find(group => group.asc === currentSort || group.desc === currentSort)
-                ?.label}{' '}
-            <img src={currentSort % 2 === 0 ? arrowUpIcon : arrowDownIcon} />
+            {currentLabel} <img src={currentSort % 2 === 0 ? arrowUpIcon : arrowDownIcon} />
           </Typography>
         </Box>
-        {!open ? <img src={dropdownIcon} alt='' /> : <img src={dropdownReverseIcon} alt='' />}
+        <img src={open ? dropdownReverseIcon : dropdownIcon} alt='' />
       </Button>
 
       <Popover
@@ -75,36 +70,33 @@ const SortTypeSelector: React.FC<Props> = ({ currentSort, onSelect, fullWidth })
         transformOrigin={{ vertical: 'top', horizontal: 'center' }}
         classes={{ paper: classes.paper }}>
         <Grid className={classes.root}>
-          {sortGroups.map(group => {
-            return (
-              <Grid
-                display={'flex'}
-                width={'100%'}
-                justifyContent='center'
-                alignItems='center'
-                gap={1}>
-                <Typography display={'flex'} flex={1}>
-                  {group.label}
-                </Typography>
+          {sortGroups.map(group => (
+            <Grid
+              key={group.label}
+              display='flex'
+              width='100%'
+              justifyContent='center'
+              alignItems='center'
+              gap={1}>
+              <Typography flex={1}>{group.label}</Typography>
 
-                <button
-                  className={cx(classes.optionButton, {
-                    [classes.active]: currentSort === group.asc
-                  })}
-                  onClick={() => handleSelect(group.asc)}>
-                  <img src={arrowUpIcon} alt='sort ascending' />
-                </button>
+              <button
+                className={cx(classes.optionButton, {
+                  [classes.active]: currentSort === group.asc
+                })}
+                onClick={() => handleSelect(group.asc)}>
+                <img src={arrowUpIcon} alt='sort ascending' />
+              </button>
 
-                <button
-                  onClick={() => handleSelect(group.desc)}
-                  className={cx(classes.optionButton, {
-                    [classes.active]: currentSort === group.desc
-                  })}>
-                  <img src={arrowDownIcon} alt='sort increasing' />
-                </button>
-              </Grid>
-            )
-          })}
+              <button
+                className={cx(classes.optionButton, {
+                  [classes.active]: currentSort === group.desc
+                })}
+                onClick={() => handleSelect(group.desc)}>
+                <img src={arrowDownIcon} alt='sort descending' />
+              </button>
+            </Grid>
+          ))}
         </Grid>
       </Popover>
     </Box>

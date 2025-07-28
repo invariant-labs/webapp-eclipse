@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import useStyles from './styles'
-import { Box, Button, Grid, Typography, useMediaQuery } from '@mui/material'
+import { Grid, useMediaQuery } from '@mui/material'
 import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
 import {
   isLoading,
@@ -23,13 +23,13 @@ import { network } from '@store/selectors/solanaConnection'
 import { actions } from '@store/reducers/stats'
 import TokensList from '@components/Stats/TokensList/TokensList'
 import PoolList from '@components/Stats/PoolList/PoolList'
-import { star, starFill, unknownTokenIcon } from '@static/icons'
+import { unknownTokenIcon } from '@static/icons'
 import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import { actions as snackbarActions } from '@store/reducers/snackbars'
 import { actions as navigationActions } from '@store/reducers/navigation'
 import { VariantType } from 'notistack'
 import { getPromotedPools } from '@store/selectors/leaderboard'
-import { FilterSearch, ISearchToken } from '@common/FilterSearch/FilterSearch'
+import { ISearchToken } from '@common/FilterSearch/FilterSearch'
 import { Intervals as IntervalsKeys } from '@store/consts/static'
 import Overview from '@components/Stats/Overview/Overview'
 import {
@@ -39,7 +39,6 @@ import {
   showFavouritesTokens as showFavouritesTokensSelector
 } from '@store/selectors/navigation'
 import { theme } from '@static/theme'
-import SortTypeSelector from '@components/Stats/PoolList/SortTypeSelector/SortTypeSelector'
 
 export const WrappedStats: React.FC = () => {
   const { classes } = useStyles()
@@ -273,6 +272,17 @@ export const WrappedStats: React.FC = () => {
     )
   }
 
+  const handleFavouritesTokensClick = () => {
+    setShowFavouritesTokens(!showFavouritesTokens)
+    dispatch(
+      navigationActions.setSearch({
+        section: 'statsTokens',
+        type: 'pageNumber',
+        pageNumber: 1
+      })
+    )
+  }
+
   return (
     <Grid container className={classes.wrapper}>
       {liquidityPlotData.length === 0 && !isLoadingStats ? (
@@ -343,42 +353,6 @@ export const WrappedStats: React.FC = () => {
             setSearchPoolsValue={setSearchPoolsValue}
             searchPoolsValue={searchPoolsValue}
           />
-
-          <Grid className={classes.rowContainer}>
-            <Typography className={classes.subheader} mb={2}>
-              Top tokens
-            </Typography>
-            <Box className={classes.headerContainer}>
-              <Button
-                className={classes.showFavouritesButton}
-                onClick={() => {
-                  setShowFavouritesTokens(!showFavouritesTokens)
-                  dispatch(
-                    navigationActions.setSearch({
-                      section: 'statsTokens',
-                      type: 'pageNumber',
-                      pageNumber: 1
-                    })
-                  )
-                }}>
-                <img src={showFavouritesTokens ? starFill : star} />
-                {!isMd && (
-                  <Typography className={classes.showFavouritesText}>
-                    {' '}
-                    {!showFavouritesTokens ? 'Show' : 'Hide'} favourites
-                  </Typography>
-                )}
-              </Button>
-
-              <FilterSearch
-                networkType={currentNetwork}
-                setSelectedFilters={setSearchTokensValue}
-                selectedFilters={searchTokensValue}
-                filtersAmount={2}
-                closeOnSelect={true}
-              />
-            </Box>
-          </Grid>
           <TokensList
             initialLength={tokensList.length}
             data={filteredTokenList.map(tokenData => ({
@@ -386,7 +360,6 @@ export const WrappedStats: React.FC = () => {
               name: tokenData.tokenDetails?.name ?? tokenData.address.toString(),
               symbol: tokenData.tokenDetails?.symbol ?? tokenData.address.toString(),
               price: tokenData.price,
-              // priceChange: tokenData.priceChange,
               volume: tokenData.volume24,
               TVL: tokenData.tvl,
               address: tokenData.address.toString(),
@@ -398,6 +371,10 @@ export const WrappedStats: React.FC = () => {
             isLoading={isLoadingStats}
             interval={lastUsedInterval ?? IntervalsKeys.Daily}
             switchFavouriteTokens={switchFavouriteToken}
+            handleFavouritesClick={handleFavouritesTokensClick}
+            searchTokensValue={searchTokensValue}
+            setSearchTokensValue={setSearchTokensValue}
+            showFavourites={showFavouritesTokens}
           />
         </>
       )}
