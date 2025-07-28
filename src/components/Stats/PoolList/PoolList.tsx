@@ -207,7 +207,7 @@ const PoolList: React.FC<PoolListInterface> = ({
 
   return (
     <>
-      <Grid className={classes.headerWrapper}>
+      <Grid className={classes.headerWrapper} container>
         <Typography className={classes.subheader}>Top pools</Typography>
         <Box className={classes.headerContainer}>
           {!isMd && (

@@ -9,6 +9,7 @@ export const useStyles = makeStyles()(() => ({
     justifyContent: 'space-between',
     marginBottom: 16,
     marginTop: 72,
+    gap: 12,
 
     [theme.breakpoints.down('md')]: {
       marginTop: 24
