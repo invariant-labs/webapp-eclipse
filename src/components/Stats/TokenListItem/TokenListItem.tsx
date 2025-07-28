@@ -4,7 +4,7 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 import { useStyles } from './style'
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import { formatNumberWithSuffix } from '@utils/utils'
-import { Intervals, NetworkType, SortTypeTokenList } from '@store/consts/static'
+import { Intervals, NetworkType } from '@store/consts/static'
 import {
   copyAddressIcon,
   newTabBtnIcon,
@@ -20,7 +20,6 @@ import ItemValue from '../ListItem/ItemValue/ItemValue'
 import BoxValue from '../ListItem/BoxValue/BoxValue'
 
 interface IProps {
-  displayType: string
   itemNumber?: number
   icon?: string
   name?: string
@@ -29,8 +28,6 @@ interface IProps {
   // priceChange?: number
   volume?: number
   TVL?: number
-  sortType?: SortTypeTokenList
-  onSort?: (type: SortTypeTokenList) => void
   hideBottomLine?: boolean
   address?: string
   isUnknown?: boolean
@@ -42,17 +39,13 @@ interface IProps {
 }
 
 const TokenListItem: React.FC<IProps> = ({
-  displayType,
   itemNumber = 0,
   icon = 'BTCIcon',
   name = 'Bitcoin',
   symbol = 'BTCIcon',
   price = 0,
-  // priceChange = 0,
   volume = 0,
   TVL = 0,
-  sortType,
-  onSort,
   address,
   network,
   interval = Intervals.Daily,
@@ -62,8 +55,8 @@ const TokenListItem: React.FC<IProps> = ({
   switchFavouriteTokens
 }) => {
   const [showInfo, setShowInfo] = useState(false)
-  const { classes, cx } = useStyles({ showInfo })
-  // const isNegative = priceChange < 0
+  const { classes } = useStyles({ showInfo })
+
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
   const isXs = useMediaQuery(theme.breakpoints.down('xs'))
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
@@ -94,7 +87,7 @@ const TokenListItem: React.FC<IProps> = ({
         copyAddressHandler('Failed to copy token address to Clipboard', 'error')
       })
   }
-  const shouldShowText = !isSm
+
   const intervalSuffix = mapIntervalToString(interval)
 
   useEffect(() => {
@@ -118,8 +111,7 @@ const TokenListItem: React.FC<IProps> = ({
       }}>
       <Grid container className={classes.mainContent}>
         <ItemValue
-          minWidth={125}
-          style={{ flexBasis: 300 }}
+          style={{ flexShrink: 1, flexBasis: '300px', minWidth: 40, marginRight: '4px' }}
           title={'Name'}
           value={
             icon === '/src/static/svg/unknownToken.svg' && isSm ? (
@@ -152,29 +144,43 @@ const TokenListItem: React.FC<IProps> = ({
                     <img className={classes.warningIcon} src={warningIcon} alt='Warning' />
                   )}
                 </Grid>
-                {shouldShowText && (
-                  <Typography>
-                    {isXs ? shortenAddress(symbol) : name.length < 25 ? name : name.slice(0, 40)}
-                    {!isXs && name.length < 25 && (
+                {
+                  <Typography
+                    sx={{
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                      paddingRight: '12px'
+                    }}>
+                    {!isXs &&
+                      (isSm ? shortenAddress(symbol) : name.length < 25 ? name : name.slice(0, 40))}
+                    {!isSm && name.length < 25 && (
                       <span className={classes.tokenSymbol}>{` (${shortenAddress(symbol)})`}</span>
                     )}
                   </Typography>
-                )}
+                }
               </Grid>
             )
           }
         />
 
-        <ItemValue minWidth={110} title={'Price'} value={`~$${formatNumberWithSuffix(price)}`} />
+        <ItemValue
+          style={{ flexBasis: 110 }}
+          minWidth={80}
+          title={'Price'}
+          value={`~$${formatNumberWithSuffix(price)}`}
+        />
 
         <ItemValue
-          minWidth={110}
+          style={{ flexBasis: 110 }}
+          minWidth={80}
           title={`Volume ${intervalSuffix}`}
           value={`$${formatNumberWithSuffix(volume)}`}
         />
 
         <ItemValue
-          minWidth={110}
+          style={{ flexBasis: 100, flexGrow: isMd ? 0 : undefined }}
+          minWidth={80}
           title={`TVL ${intervalSuffix}`}
           value={`$${formatNumberWithSuffix(TVL)}`}
         />
@@ -213,7 +219,7 @@ const TokenListItem: React.FC<IProps> = ({
           <Box className={classes.info}>
             <Grid container gap={'8px'} overflow={'hidden'}>
               <BoxValue
-                title={isFavourite ? 'Remove Favourite' : 'Add Favourite'}
+                title={'Favourite'}
                 icon={isFavourite ? starFill : star}
                 onClick={() => {
                   if (address && switchFavouriteTokens) {

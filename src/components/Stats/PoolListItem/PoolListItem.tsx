@@ -115,7 +115,6 @@ const PoolListItem: React.FC<IProps> = ({
 
   const isTablet = useMediaQuery(theme.breakpoints.down(1200))
 
-  const isExSm = useMediaQuery(theme.breakpoints.down(380))
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
   const isMdUp = useMediaQuery(theme.breakpoints.up('md'))
   const isSmd = useMediaQuery(theme.breakpoints.down('md'))
@@ -612,15 +611,17 @@ const PoolListItem: React.FC<IProps> = ({
           {isMd && (
             <Box className={classes.info}>
               <Grid container gap={'8px'} overflow={'hidden'}>
-                {/* <BoxValue
-                    title={isFavourite ? 'Remove Favourite' : 'Add Favourite'}
+                {isSm && (
+                  <BoxValue
+                    title={'Favourite'}
                     icon={isFavourite ? starFill : star}
                     onClick={() => {
                       if (poolAddress && switchFavouritePool) {
                         switchFavouritePool(poolAddress)
                       }
                     }}
-                  /> */}
+                  />
+                )}
 
                 {isLocked && (
                   <Box display='flex' flex={1}>

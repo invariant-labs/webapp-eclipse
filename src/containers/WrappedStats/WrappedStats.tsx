@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import useStyles from './styles'
-import { Grid, useMediaQuery } from '@mui/material'
+import { Grid } from '@mui/material'
 import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
 import {
   isLoading,
@@ -38,12 +38,9 @@ import {
   showFavourites as showFavouritesSelector,
   showFavouritesTokens as showFavouritesTokensSelector
 } from '@store/selectors/navigation'
-import { theme } from '@static/theme'
 
 export const WrappedStats: React.FC = () => {
   const { classes } = useStyles()
-
-  const isMd = useMediaQuery(theme.breakpoints.down('md'))
 
   const dispatch = useDispatch()
   const poolsList = useSelector(poolsStatsWithTokensDetails)
