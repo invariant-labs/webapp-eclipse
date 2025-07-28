@@ -271,7 +271,7 @@ const PoolListItem: React.FC<IProps> = ({
       }}>
       <Grid container className={classes.mainContent}>
         <ItemValue
-          title='Name:'
+          title='Pool'
           style={{ flexShrink: 1, flexBasis: '300px', minWidth: 80 }}
           value={
             <Grid display='flex' alignItems='center' gap={1}>

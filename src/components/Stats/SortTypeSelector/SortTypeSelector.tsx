@@ -48,12 +48,12 @@ const SortTypeSelector = <T extends number>({
     <Box display='flex' flexGrow={fullWidth ? 1 : 'initial'}>
       <Button onClick={handleClick} className={classes.selectButton}>
         <Box display='flex' gap={1}>
-          <Typography sx={typography.caption1} color={colors.invariant.text}>
+          <Typography sx={typography.body2} color={colors.invariant.textGrey}>
             Sort by:
           </Typography>
           <Typography
-            sx={typography.caption2}
-            color={colors.invariant.textGrey}
+            sx={typography.body1}
+            color={colors.invariant.text}
             display='flex'
             alignItems='center'>
             {currentLabel} <img src={currentSort % 2 === 0 ? arrowUpIcon : arrowDownIcon} />

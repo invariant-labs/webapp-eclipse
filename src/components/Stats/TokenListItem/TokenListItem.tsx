@@ -113,7 +113,7 @@ const TokenListItem: React.FC<IProps> = ({
       <Grid container className={classes.mainContent}>
         <ItemValue
           style={{ flexShrink: 1, flexBasis: '300px', minWidth: 40, marginRight: '4px' }}
-          title={'Name'}
+          title={'Token'}
           value={
             icon === '/src/static/svg/unknownToken.svg' && isSm ? (
               <Typography>{symbol}</Typography>
