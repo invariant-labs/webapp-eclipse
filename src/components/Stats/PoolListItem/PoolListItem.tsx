@@ -396,16 +396,22 @@ const PoolListItem: React.FC<IProps> = ({
             title={'APY'}
             value={
               showAPY ? (
-                <Grid className={classes.row} width={80} sx={{ justifyContent: 'space-between' }}>
-                  <Box position='relative' maxHeight={24}>
-                    <Typography>
-                      {`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '' : Math.abs(convertedApy).toFixed(2) + '%'}`}
+                <Box>
+                  <Typography style={{ position: 'relative', display: 'inline-block' }}>
+                    {convertedApy > 1000
+                      ? '>1000%'
+                      : convertedApy === 0
+                        ? ''
+                        : Math.abs(convertedApy).toFixed(2) + '%'}
+                    <Typography className={classes.apyLabel} component='span'>
+                      {convertedApr > 1000
+                        ? '>1000%'
+                        : convertedApr === 0
+                          ? '-'
+                          : Math.abs(convertedApr).toFixed(2) + '%'}
                     </Typography>
-                    <Typography className={classes.apyLabel}>
-                      {`${convertedApr > 1000 ? '>1000%' : convertedApr === 0 ? '-' : Math.abs(convertedApr).toFixed(2) + '%'}`}
-                    </Typography>
-                  </Box>
-                </Grid>
+                  </Typography>
+                </Box>
               ) : (
                 '-'
               )
@@ -553,7 +559,7 @@ const PoolListItem: React.FC<IProps> = ({
                         liquidityY={tokenBData.liquidity}
                       />
                     }>
-                    <BoxValue title='Locked' icon={lockIcon} style={{ width: '100%' }} />
+                    <BoxValue title='Locked' icon={lockIcon} />
                   </TooltipHover>
                 </Box>
               )}
@@ -561,17 +567,11 @@ const PoolListItem: React.FC<IProps> = ({
                 <BoxValue
                   title='Pool details'
                   icon={poolStatsBtnIcon}
-                  style={{ flex: 1 }}
                   onClick={handleOpenPoolDetails}
                 />
               )}
 
-              <BoxValue
-                title='Exchange'
-                icon={horizontalSwapIcon}
-                style={{ flex: 1 }}
-                onClick={handleOpenSwap}
-              />
+              <BoxValue title='Exchange' icon={horizontalSwapIcon} onClick={handleOpenSwap} />
               <BoxValue
                 title={
                   isDisabled ? (isSm ? 'Disabled' : 'Pool disabled') : isSm ? 'Add' : 'Add position'
@@ -579,14 +579,12 @@ const PoolListItem: React.FC<IProps> = ({
                 onClick={!isDisabled ? handleOpenPosition : undefined}
                 isDisabled={isDisabled}
                 icon={isDisabled ? plusDisabled : plusIcon}
-                style={{ flex: 1 }}
               />
 
               {isMdUp && (
                 <BoxValue
                   title='View'
                   icon={newTabBtnIcon}
-                  style={{ flex: 1 }}
                   onClick={() => {
                     window.open(
                       `https://eclipsescan.xyz/account/${poolAddress}${networkUrl}`,
@@ -602,7 +600,6 @@ const PoolListItem: React.FC<IProps> = ({
                   onClick={copyToClipboard}
                   isDisabled={isDisabled}
                   icon={copyAddressIcon}
-                  style={{ flex: 1 }}
                   smallerIcon
                 />
               )}
@@ -613,7 +610,7 @@ const PoolListItem: React.FC<IProps> = ({
               <Grid container gap={'8px'} overflow={'hidden'}>
                 {isSm && (
                   <BoxValue
-                    title={'Favourite'}
+                    title={isSm ? undefined : 'Favourite'}
                     icon={isFavourite ? starFill : star}
                     onClick={() => {
                       if (poolAddress && switchFavouritePool) {
@@ -638,20 +635,18 @@ const PoolListItem: React.FC<IProps> = ({
                           liquidityY={tokenBData.liquidity}
                         />
                       }>
-                      <BoxValue title='Locked' icon={lockIcon} style={{ width: '100%' }} />
+                      <BoxValue title='Locked' icon={lockIcon} />
                     </TooltipHover>
                   </Box>
                 )}
                 <BoxValue
                   title={isSm ? 'Details' : 'Pool details'}
                   icon={poolStatsBtnIcon}
-                  style={{ flex: 1 }}
                   onClick={handleOpenPoolDetails}
                 />
                 <BoxValue
                   title='View'
                   icon={newTabBtnIcon}
-                  style={{ flex: 1 }}
                   onClick={() => {
                     window.open(
                       `https://eclipsescan.xyz/account/${poolAddress}${networkUrl}`,

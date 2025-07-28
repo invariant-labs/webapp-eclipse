@@ -18,6 +18,7 @@ import { VariantType } from 'notistack'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import ItemValue from '../ListItem/ItemValue/ItemValue'
 import BoxValue from '../ListItem/BoxValue/BoxValue'
+import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
 
 interface IProps {
   itemNumber?: number
@@ -149,8 +150,7 @@ const TokenListItem: React.FC<IProps> = ({
                     sx={{
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                      paddingRight: '12px'
+                      whiteSpace: 'nowrap'
                     }}>
                     {!isXs &&
                       (isSm ? shortenAddress(symbol) : name.length < 25 ? name : name.slice(0, 40))}
@@ -159,6 +159,18 @@ const TokenListItem: React.FC<IProps> = ({
                     )}
                   </Typography>
                 }
+
+                {!isMd && (
+                  <TooltipHover title='Copy pool address'>
+                    <FileCopyOutlinedIcon
+                      onClick={(e: React.MouseEvent) => {
+                        e.stopPropagation()
+                        copyToClipboard()
+                      }}
+                      classes={{ root: classes.clipboardIcon }}
+                    />
+                  </TooltipHover>
+                )}
               </Grid>
             )
           }
@@ -219,7 +231,7 @@ const TokenListItem: React.FC<IProps> = ({
           <Box className={classes.info}>
             <Grid container gap={'8px'} overflow={'hidden'}>
               <BoxValue
-                title={'Favourite'}
+                title={isXs ? undefined : 'Favourite'}
                 icon={isFavourite ? starFill : star}
                 onClick={() => {
                   if (address && switchFavouriteTokens) {
@@ -230,7 +242,6 @@ const TokenListItem: React.FC<IProps> = ({
               <BoxValue
                 title='View'
                 icon={newTabBtnIcon}
-                style={{ flex: 1 }}
                 onClick={() =>
                   window.open(
                     `https://eclipsescan.xyz/token/${address}${networkUrl}`,
@@ -244,7 +255,6 @@ const TokenListItem: React.FC<IProps> = ({
                 title={isSm ? 'Copy' : 'Copy address'}
                 onClick={copyToClipboard}
                 icon={copyAddressIcon}
-                style={{ flex: 1 }}
                 smallerIcon
               />
             </Grid>

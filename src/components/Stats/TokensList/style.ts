@@ -112,5 +112,11 @@ export const useStyles = makeStyles()(_theme => ({
       margin: 0,
       flex: 'none'
     }
+  },
+  tableHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 12
   }
 }))

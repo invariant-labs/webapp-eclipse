@@ -86,6 +86,7 @@ const TokensList: React.FC<ITokensList> = ({
   const page = searchParams.pageNumber
   const [sortType, setSortType] = React.useState(searchParams.sortType)
 
+  const isSm = useMediaQuery(theme.breakpoints.down('sm'))
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
 
   useEffect(() => {
@@ -212,19 +213,33 @@ const TokensList: React.FC<ITokensList> = ({
         classes={{ root: classes.container }}
         className={cx({ [classes.loadingOverlay]: isLoading })}>
         <>
-          <TokenListItem
-            displayType='header'
-            onSort={setSortType}
-            sortType={sortType}
-            interval={interval}
-          />
           {data.length > 0 || isLoading ? (
             <>
+              {isMd && (
+                <Grid container className={classes.tableHeader}>
+                  <Button className={classes.showFavouritesButton} onClick={handleFavouritesClick}>
+                    <img src={showFavourites ? starFill : star} />
+                    {!isSm && (
+                      <Typography className={classes.showFavouritesText}>
+                        {!showFavourites ? 'Show' : 'Hide'} {!isSm && 'favourites'}
+                      </Typography>
+                    )}
+                  </Button>
+
+                  <Box className={classes.sortWrapper}>
+                    <SortTypeSelector
+                      currentSort={sortType}
+                      onSelect={setSortType}
+                      sortGroups={tokenSortGroups}
+                      fullWidth={isSm}
+                    />
+                  </Box>
+                </Grid>
+              )}
               {paginator(page).data.map((token, index) => {
                 return (
                   <TokenListItem
                     key={index}
-                    displayType='tokens'
                     itemNumber={index + 1 + (page - 1) * ITEMS_PER_PAGE}
                     icon={token.icon}
                     name={token.name}

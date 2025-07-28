@@ -1,27 +1,17 @@
 import React from 'react'
-import { Box, Grid, Typography } from '@mui/material'
-import { colors, typography } from '@static/theme'
+import { Grid, Typography } from '@mui/material'
+import { colors } from '@static/theme'
 import { useStyles } from './style'
 
 interface IProps {
   icon: string
-  title: string
+  title?: string
   isDisabled?: boolean
   onClick?: () => void
-  minWidth?: number
-  style?: React.CSSProperties
   smallerIcon?: boolean
 }
 
-const BoxValue: React.FC<IProps> = ({
-  title,
-  icon,
-  onClick,
-  minWidth,
-  style,
-  isDisabled,
-  smallerIcon
-}) => {
+const BoxValue: React.FC<IProps> = ({ title, icon, onClick, isDisabled, smallerIcon }) => {
   const { classes, cx } = useStyles()
   return (
     <Grid
@@ -33,10 +23,10 @@ const BoxValue: React.FC<IProps> = ({
       }}>
       <img
         src={icon}
-        alt={title}
+        alt={title ?? ''}
         style={{ width: smallerIcon ? 12 : 20, height: smallerIcon ? 12 : 20 }}
       />
-      <Typography color={colors.invariant.text}>{title}</Typography>
+      {title && <Typography color={colors.invariant.text}>{title}</Typography>}
     </Grid>
   )
 }

@@ -273,12 +273,11 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
   },
   apyLabel: {
     position: 'absolute',
-    bottom: -10,
-    right: -56,
+    top: '100%',
+    left: '100%',
     color: colors.invariant.textGrey,
-    marginTop: 4,
-    marginRight: 4,
-    fontSize: '15px !important'
+    fontSize: '15px !important',
+    transform: 'translate(0px, -8px)' // można tu dodać ewentualne przesunięcie
   },
   extendedRowIcon: {
     justifySelf: 'end',
