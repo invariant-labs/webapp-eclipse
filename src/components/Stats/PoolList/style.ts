@@ -2,8 +2,8 @@ import { alpha } from '@mui/material'
 import { colors, theme, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
-export const useStyles = makeStyles()(_theme => ({
-  header: {
+export const useStyles = makeStyles()(() => ({
+  headerWrapper: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -17,7 +17,12 @@ export const useStyles = makeStyles()(_theme => ({
   headerContainer: {
     display: 'flex',
     width: 'auto',
-    gap: 14
+    gap: 14,
+    [theme.breakpoints.down('sm')]: {
+      flex: 1,
+      justifyContent: 'flex-end',
+      maxWidth: 315
+    }
   },
   subheader: {
     ...typography.heading4,
@@ -28,7 +33,6 @@ export const useStyles = makeStyles()(_theme => ({
     flexDirection: 'column',
     maxWidth: 1210,
     flexWrap: 'nowrap',
-    // position: 'relative',
     overflow: 'hidden',
     backgroundColor: colors.invariant.component,
     borderRadius: '24px'
@@ -81,11 +85,12 @@ export const useStyles = makeStyles()(_theme => ({
     alignItems: 'center',
     gap: 8,
     textTransform: 'none',
-    width: 155,
+    width: 170,
     textAlign: 'right',
 
     '&:hover': {
       background: colors.invariant.componentDark,
+      backgroundColor: colors.invariant.lightGrey,
       boxShadow: 'none'
     },
 
@@ -93,9 +98,15 @@ export const useStyles = makeStyles()(_theme => ({
       backgroundColor: colors.invariant.lightGrey
     },
 
+    [theme.breakpoints.down('md')]: {
+      border: `1px solid ${colors.invariant.light}`,
+      padding: '8px 12px'
+    },
+
     [theme.breakpoints.down('sm')]: {
       minWidth: 40,
-      width: 40
+      width: 40,
+      background: colors.invariant.light
     }
   },
   showFavouritesText: {
@@ -109,6 +120,17 @@ export const useStyles = makeStyles()(_theme => ({
     justifyContent: 'flex-end',
     alignItems: 'center',
     flex: 1,
-    margin: '16px 8px'
+    margin: '16px 8px',
+
+    [theme.breakpoints.down('sm')]: {
+      margin: 0,
+      flex: 'none'
+    }
+  },
+  tableHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 12
   }
 }))

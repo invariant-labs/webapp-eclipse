@@ -10,9 +10,18 @@ interface IProps {
   onClick?: () => void
   minWidth?: number
   style?: React.CSSProperties
+  smallerIcon?: boolean
 }
 
-const BoxValue: React.FC<IProps> = ({ title, icon, onClick, minWidth, style, isDisabled }) => {
+const BoxValue: React.FC<IProps> = ({
+  title,
+  icon,
+  onClick,
+  minWidth,
+  style,
+  isDisabled,
+  smallerIcon
+}) => {
   const { classes, cx } = useStyles()
   return (
     <Grid
@@ -22,7 +31,11 @@ const BoxValue: React.FC<IProps> = ({ title, icon, onClick, minWidth, style, isD
         e.stopPropagation()
         onClick?.()
       }}>
-      <img src={icon} alt={title} style={{ width: 20, height: 20 }} />
+      <img
+        src={icon}
+        alt={title}
+        style={{ width: smallerIcon ? 12 : 20, height: smallerIcon ? 12 : 20 }}
+      />
       <Typography color={colors.invariant.text}>{title}</Typography>
     </Grid>
   )

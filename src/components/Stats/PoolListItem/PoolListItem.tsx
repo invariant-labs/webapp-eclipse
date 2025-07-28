@@ -16,7 +16,8 @@ import {
   plusDisabled,
   warningIcon,
   poolStatsBtnIcon,
-  horizontalSwapIcon
+  horizontalSwapIcon,
+  copyAddressIcon
 } from '@static/icons'
 import {
   disabledPools,
@@ -50,14 +51,10 @@ interface IProps {
   TVL?: number
   volume?: number
   fee?: number
-  displayType: string
   symbolFrom?: string
   symbolTo?: string
   iconFrom?: string
   iconTo?: string
-  tokenIndex?: number
-  sortType?: SortTypePoolList
-  onSort?: (type: SortTypePoolList) => void
   addressFrom?: string
   addressTo?: string
   network: NetworkType
@@ -93,14 +90,10 @@ const PoolListItem: React.FC<IProps> = ({
   lockedY = 0,
   liquidityX = 0,
   liquidityY = 0,
-  displayType,
   symbolFrom,
   symbolTo,
   iconFrom,
   iconTo,
-  tokenIndex,
-  sortType,
-  onSort,
   addressFrom,
   addressTo,
   network,
@@ -243,10 +236,10 @@ const PoolListItem: React.FC<IProps> = ({
   }
 
   useEffect(() => {
-    if (!isSmd) {
+    if (!isTablet) {
       setShowInfo(false)
     }
-  }, [isSmd])
+  }, [isTablet])
 
   useEffect(() => {
     setShowInfo(false)
@@ -282,7 +275,7 @@ const PoolListItem: React.FC<IProps> = ({
             [classes.containerNoAPY]: !showAPY
           })
         }}>
-        <Grid container display='flex' alignItems='center' flexWrap={'nowrap'} mb={'12px'}>
+        <Grid container className={classes.mainContent}>
           <ItemValue
             title='Name:'
             style={{ flexShrink: 1, flexBasis: '300px', minWidth: 80 }}
@@ -524,26 +517,18 @@ const PoolListItem: React.FC<IProps> = ({
           )}
         </Grid>
         {isSmd && (
-          <Grid container display='flex' alignItems='center'>
+          <Grid container display='flex' alignItems='center' justifyContent='space-around'>
             <ItemValue
-              minWidth={125}
+              minWidth={80}
+              style={{ flexGrow: isSmd ? 0 : 1 }}
               title={'APY'}
-              value={
-                showAPY ? (
-                  <Grid className={classes.row} width={80} sx={{ justifyContent: 'space-between' }}>
-                    <Box position='relative' maxHeight={24}>
-                      <Typography>
-                        {`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '' : Math.abs(convertedApy).toFixed(2) + '%'}`}
-                      </Typography>
-                      <Typography className={classes.apyLabel}>
-                        {`${convertedApr > 1000 ? '>1000%' : convertedApr === 0 ? '-' : Math.abs(convertedApr).toFixed(2) + '%'}`}
-                      </Typography>
-                    </Box>
-                  </Grid>
-                ) : (
-                  '-'
-                )
-              }
+              value={`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '' : Math.abs(convertedApy).toFixed(2) + '%'}`}
+            />
+            <ItemValue
+              minWidth={80}
+              style={{ flexGrow: isSmd ? 0 : 1 }}
+              title={'APR'}
+              value={`${convertedApr > 1000 ? '>1000%' : convertedApr === 0 ? '-' : Math.abs(convertedApr).toFixed(2) + '%'}`}
             />
             <ItemValue
               minWidth={80}
@@ -576,25 +561,37 @@ const PoolListItem: React.FC<IProps> = ({
                     </TooltipHover>
                   </Box>
                 )}
-                <BoxValue
-                  title={isDisabled ? 'Pool disabled' : 'Add position'}
-                  onClick={!isDisabled ? handleOpenPosition : undefined}
-                  isDisabled={isDisabled}
-                  icon={isDisabled ? plusDisabled : plusIcon}
-                  style={{ flex: 1 }}
-                />
-                <BoxValue
-                  title='Pool details'
-                  icon={poolStatsBtnIcon}
-                  style={{ flex: 1 }}
-                  onClick={handleOpenPoolDetails}
-                />
+                {isMdUp && (
+                  <BoxValue
+                    title='Pool details'
+                    icon={poolStatsBtnIcon}
+                    style={{ flex: 1 }}
+                    onClick={handleOpenPoolDetails}
+                  />
+                )}
+
                 <BoxValue
                   title='Exchange'
                   icon={horizontalSwapIcon}
                   style={{ flex: 1 }}
                   onClick={handleOpenSwap}
                 />
+                <BoxValue
+                  title={
+                    isDisabled
+                      ? isSm
+                        ? 'Disabled'
+                        : 'Pool disabled'
+                      : isSm
+                        ? 'Add'
+                        : 'Add position'
+                  }
+                  onClick={!isDisabled ? handleOpenPosition : undefined}
+                  isDisabled={isDisabled}
+                  icon={isDisabled ? plusDisabled : plusIcon}
+                  style={{ flex: 1 }}
+                />
+
                 {isMdUp && (
                   <BoxValue
                     title='View'
@@ -609,12 +606,22 @@ const PoolListItem: React.FC<IProps> = ({
                     }}
                   />
                 )}
+                {isSm && (
+                  <BoxValue
+                    title={isSm ? 'Copy' : 'Copy address'}
+                    onClick={copyToClipboard}
+                    isDisabled={isDisabled}
+                    icon={copyAddressIcon}
+                    style={{ flex: 1 }}
+                    smallerIcon
+                  />
+                )}
               </Grid>
             </Box>
             {isMd && (
               <Box className={classes.info}>
                 <Grid container gap={'8px'} overflow={'hidden'}>
-                  <BoxValue
+                  {/* <BoxValue
                     title={isFavourite ? 'Remove Favourite' : 'Add Favourite'}
                     icon={isFavourite ? starFill : star}
                     onClick={() => {
@@ -622,17 +629,7 @@ const PoolListItem: React.FC<IProps> = ({
                         switchFavouritePool(poolAddress)
                       }
                     }}
-                  />
-
-                  {isSm && (
-                    <BoxValue
-                      title={'Copy address'}
-                      onClick={copyToClipboard}
-                      isDisabled={isDisabled}
-                      icon={isDisabled ? plusDisabled : plusIcon}
-                      style={{ flex: 1 }}
-                    />
-                  )}
+                  /> */}
 
                   {isLocked && (
                     <Box display='flex' flex={1}>
@@ -653,7 +650,12 @@ const PoolListItem: React.FC<IProps> = ({
                       </TooltipHover>
                     </Box>
                   )}
-
+                  <BoxValue
+                    title={isSm ? 'Details' : 'Pool details'}
+                    icon={poolStatsBtnIcon}
+                    style={{ flex: 1 }}
+                    onClick={handleOpenPoolDetails}
+                  />
                   <BoxValue
                     title='View'
                     icon={newTabBtnIcon}

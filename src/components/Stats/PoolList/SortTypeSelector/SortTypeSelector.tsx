@@ -1,10 +1,9 @@
 import React, { useState } from 'react'
 import { Box, Button, Grid, Popover, Typography } from '@mui/material'
-
 import { SortTypePoolList } from '@store/consts/static'
-import { useStyles } from './style'
 import { dropdownIcon, dropdownReverseIcon } from '@static/icons'
 import { colors, typography } from '@static/theme'
+import { useStyles } from './style'
 
 interface Props {
   currentSort: SortTypePoolList

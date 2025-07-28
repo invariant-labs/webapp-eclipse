@@ -123,7 +123,6 @@ const PoolList: React.FC<PoolListInterface> = ({
   const page = searchParam.pageNumber
   const [sortType, setSortType] = useState<SortTypePoolList>(searchParam.sortType)
 
-  const is900 = useMediaQuery(theme.breakpoints.down(920))
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
   useEffect(() => {
@@ -204,23 +203,23 @@ const PoolList: React.FC<PoolListInterface> = ({
     () => (initialDataLength > ITEMS_PER_PAGE ? (isCenterAligment ? 176 : 90) : 69),
     [initialDataLength, isCenterAligment]
   )
-  console.log(isSm)
+
   return (
     <>
-      <Grid className={classes.header}>
+      <Grid className={classes.headerWrapper}>
         <Typography className={classes.subheader}>Top pools</Typography>
         <Box className={classes.headerContainer}>
-          {!is900 && (
+          {!isMd && (
             <Button className={classes.showFavouritesButton} onClick={handleFavouritesClick}>
               <img src={showFavourites ? starFill : star} />
               {
                 <Typography className={classes.showFavouritesText}>
-                  {!showFavourites ? 'Show' : 'Hide'}
+                  {!showFavourites ? 'Show ' : 'Hide '}favourites
                 </Typography>
               }
             </Button>
           )}
-          {!is900 && <SortTypeSelector currentSort={sortType} onSelect={setSortType} />}
+          {!isMd && <SortTypeSelector currentSort={sortType} onSelect={setSortType} />}
 
           <FilterSearch
             networkType={network}
@@ -237,13 +236,13 @@ const PoolList: React.FC<PoolListInterface> = ({
         className={cx({ [classes.loadingOverlay]: isLoading })}>
         {data.length > 0 || isLoading ? (
           <>
-            {is900 && (
-              <Grid display='flex' alignItems='center' container gap={4}>
+            {isMd && (
+              <Grid container className={classes.tableHeader}>
                 <Button className={classes.showFavouritesButton} onClick={handleFavouritesClick}>
                   <img src={showFavourites ? starFill : star} />
                   {!isSm && (
                     <Typography className={classes.showFavouritesText}>
-                      {!showFavourites ? 'Show' : 'Hide'} favourites
+                      {!showFavourites ? 'Show' : 'Hide'} {!isSm && 'favourites'}
                     </Typography>
                   )}
                 </Button>
@@ -261,8 +260,6 @@ const PoolList: React.FC<PoolListInterface> = ({
             {paginator(page).map((element, index) => (
               <PoolListItem
                 itemNumber={index + 1 + (page - 1) * ITEMS_PER_PAGE}
-                displayType='token'
-                tokenIndex={index + 1 + (page - 1) * ITEMS_PER_PAGE}
                 symbolFrom={element.symbolFrom}
                 symbolTo={element.symbolTo}
                 iconFrom={element.iconFrom}

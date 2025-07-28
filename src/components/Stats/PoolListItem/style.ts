@@ -8,18 +8,19 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     color: colors.white.main,
     display: 'flex',
     alignItems: 'center',
+    justifyContent: 'center',
     padding: '12px 24px',
     whiteSpace: 'nowrap',
     borderBottom: `1px solid ${colors.invariant.light}`,
     overflow: 'hidden',
     flexDirection: 'row',
-    height: showInfo ? 153 : 88,
+    height: showInfo ? 145 : 79,
     background: showInfo ? colors.invariant.darkGradient : colors.invariant.component,
 
     [theme.breakpoints.down('md')]: {
       padding: '12px 16px',
       // height: showInfo ? 230 : 88
-      height: showInfo ? 286 : 88
+      height: showInfo ? 264 : 79
     },
 
     [theme.breakpoints.down('sm')]: {
@@ -35,12 +36,23 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     display: 'flex',
     flexWrap: 'nowrap',
     width: 40
-    // [theme.breakpoints.down('md')]: {
-    //   minWidth: 40
-    // },
-    // [theme.breakpoints.down('sm')]: {
-    //   minWidth: 50
-    // }
+  },
+  mainContent: {
+    display: 'flex',
+    alignItems: 'center',
+    flexWrap: 'nowrap',
+    paddingBottom: 12,
+
+    borderBottom: '4px solid transparent',
+    borderImage: `repeating-linear-gradient(
+      to right,
+      ${colors.invariant.light} 0,
+      ${colors.invariant.light} 8px,
+      transparent 8px,
+      transparent 24px
+    )`,
+    borderImageSlice: 1,
+    borderImageWidth: '0 0 1px 0'
   },
   imageWrapper: {
     position: 'relative',

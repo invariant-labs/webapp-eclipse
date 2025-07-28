@@ -8,7 +8,7 @@ export const useStyles = makeStyles()(_theme => ({
     alignItems: 'flex-start',
     justifyContent: 'space-between',
     flexGrow: 1,
-    height: 64
+    height: 54
   },
 
   title: {
