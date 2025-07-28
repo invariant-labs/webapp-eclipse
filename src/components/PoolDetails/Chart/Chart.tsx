@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Box, Grid, Typography } from '@mui/material'
 import useStyles from './style'
 import { NetworkType } from '@store/consts/static'
@@ -76,6 +76,20 @@ export const Chart: React.FC<IProps> = ({
 }) => {
   const { classes } = useStyles()
 
+  const [isLoadingChart, setIsLoadingChart] = useState(true)
+
+  useEffect(() => {
+    setIsLoadingChart(true)
+
+    const timeout = setTimeout(() => {
+      if (!isPoolDataLoading && !isLoadingStats) {
+        setIsLoadingChart(false)
+      }
+    }, 100)
+
+    return () => clearTimeout(timeout)
+  }, [isPoolDataLoading, isLoadingStats])
+
   return (
     <Grid className={classes.wrapper}>
       <Typography className={classes.header}>Pool Details</Typography>
@@ -104,7 +118,7 @@ export const Chart: React.FC<IProps> = ({
           noData={noData}
         />
         <Box className={classes.separator} />
-        {noData ? (
+        {noData && !statsPoolData?.feesPlot && !isLoadingChart ? (
           <EmptyPlaceholder
             height={426}
             newVersion
@@ -125,7 +139,7 @@ export const Chart: React.FC<IProps> = ({
           <ChartLowerSection
             statsPoolData={statsPoolData}
             interval={interval}
-            isLoading={isLoadingStats}
+            isLoading={isLoadingChart}
             lastStatsTimestamp={lastStatsTimestamp}
             setChartType={setChartType}
             updateInterval={updateInterval}
