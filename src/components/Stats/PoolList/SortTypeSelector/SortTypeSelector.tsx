@@ -25,7 +25,7 @@ const sortGroups: {
 ]
 
 const SortTypeSelector: React.FC<Props> = ({ currentSort, onSelect, fullWidth }) => {
-  const { classes } = useStyles()
+  const { classes, cx } = useStyles()
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
 
   const open = Boolean(anchorEl)
@@ -42,6 +42,7 @@ const SortTypeSelector: React.FC<Props> = ({ currentSort, onSelect, fullWidth })
     onSelect(option)
     handleClose()
   }
+  console.log(currentSort)
 
   return (
     <Box display='flex' flexGrow={fullWidth ? 1 : 'initial'}>
@@ -74,32 +75,36 @@ const SortTypeSelector: React.FC<Props> = ({ currentSort, onSelect, fullWidth })
         transformOrigin={{ vertical: 'top', horizontal: 'center' }}
         classes={{ paper: classes.paper }}>
         <Grid className={classes.root}>
-          {sortGroups.map(group => (
-            <Grid
-              display={'flex'}
-              width={'100%'}
-              justifyContent='center'
-              alignItems='center'
-              gap={1}>
-              <Typography display={'flex'} flex={1}>
-                {group.label}
-              </Typography>
+          {sortGroups.map(group => {
+            return (
+              <Grid
+                display={'flex'}
+                width={'100%'}
+                justifyContent='center'
+                alignItems='center'
+                gap={1}>
+                <Typography display={'flex'} flex={1}>
+                  {group.label}
+                </Typography>
 
-              <button
-                className={classes.optionButton}
-                // variant={currentSort === group.asc ? 'contained' : 'text'}
-                onClick={() => handleSelect(group.asc)}>
-                <img src={arrowUpIcon} alt='sort decreasing' />
-              </button>
+                <button
+                  className={cx(classes.optionButton, {
+                    [classes.active]: currentSort === group.asc
+                  })}
+                  onClick={() => handleSelect(group.asc)}>
+                  <img src={arrowUpIcon} alt='sort ascending' />
+                </button>
 
-              <button
-                // variant={currentSort === group.desc ? 'contained' : 'text'}
-                onClick={() => handleSelect(group.desc)}
-                className={classes.optionButton}>
-                <img src={arrowDownIcon} alt='sort increasing' />
-              </button>
-            </Grid>
-          ))}
+                <button
+                  onClick={() => handleSelect(group.desc)}
+                  className={cx(classes.optionButton, {
+                    [classes.active]: currentSort === group.desc
+                  })}>
+                  <img src={arrowDownIcon} alt='sort increasing' />
+                </button>
+              </Grid>
+            )
+          })}
         </Grid>
       </Popover>
     </Box>

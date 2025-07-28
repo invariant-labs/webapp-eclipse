@@ -7,7 +7,7 @@ export const useStyles = makeStyles()((theme: Theme) => {
     leaderboardTypeBox: {
       position: 'absolute',
       left: 0,
-      [theme.breakpoints.down(960)]: {
+      [theme.breakpoints.down('md')]: {
         marginTop: 20,
         width: '100%',
         position: 'relative'
@@ -134,7 +134,14 @@ export const useStyles = makeStyles()((theme: Theme) => {
         filter: 'brightness(1.2)'
       },
       ...typography.body2,
-      color: colors.invariant.textGrey
+      color: colors.invariant.textGrey,
+
+      [theme.breakpoints.down('md')]: {
+        border: `1px solid ${colors.invariant.light}`
+      }
+    },
+    active: {
+      background: colors.invariant.componentBcg
     }
   }
 })
