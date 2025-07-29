@@ -37,7 +37,7 @@ import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { VariantType } from 'notistack'
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
-import { mapIntervalToString, shortenAddress } from '@utils/uiUtils'
+import { convertAPYValue, mapIntervalToString, shortenAddress } from '@utils/uiUtils'
 import LockStatsPopover from '@components/Modals/LockStatsPopover/LockStatsPopover'
 import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
 import { BN } from '@coral-xyz/anchor'
@@ -124,7 +124,6 @@ const PoolListItem: React.FC<IProps> = ({
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
   const isSmd = useMediaQuery(theme.breakpoints.down('md'))
   const hideInterval = useMediaQuery(theme.breakpoints.between(600, 650))
-
   const isMd = useMediaQuery(theme.breakpoints.down(1160))
   const airdropIconRef = useRef<HTMLDivElement>(null)
   const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
@@ -404,8 +403,12 @@ const PoolListItem: React.FC<IProps> = ({
               </TooltipHover>
             )}
           </Grid>
-          <Box className={classes.row} justifyContent={'space-between'}>
-            {fee && typeof fee === 'number' && <Typography>{fee}%</Typography>}
+          <Box
+            className={classes.row}
+            sx={{ justifyContent: isSm ? 'flex-start' : 'space-between' }}>
+            {fee && typeof fee === 'number' && (
+              <Typography sx={{ marginLeft: isSm ? 2 : 0 }}>{fee}%</Typography>
+            )}
             {isPromoted && (
               <PromotedPoolPopover
                 apr={convertedApr}
@@ -450,11 +453,9 @@ const PoolListItem: React.FC<IProps> = ({
           {!isSmd && showAPY ? (
             <Grid className={classes.row} sx={{ justifyContent: 'space-between' }}>
               <Grid sx={{ display: 'flex', gap: '4px' }}>
-                <Typography>
-                  {`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '' : Math.abs(convertedApy).toFixed(2) + '%'}`}
-                </Typography>{' '}
+                <Typography>{convertAPYValue(convertedApy, 'APY')}</Typography>{' '}
                 <Typography className={classes.apyLabel}>
-                  {`${convertedApr > 1000 ? '>1000%' : convertedApr === 0 ? '-' : Math.abs(convertedApr).toFixed(2) + '%'}`}
+                  {convertAPYValue(convertedApr, 'APR')}
                 </Typography>
               </Grid>
             </Grid>
@@ -550,7 +551,7 @@ const PoolListItem: React.FC<IProps> = ({
                     className={classes.extendedRowTitle}>
                     APY{' '}
                     <span className={classes.extendedRowContent}>
-                      {`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '-' : Math.abs(convertedApy).toFixed(2) + '%'}`}
+                      {convertAPYValue(convertedApy, 'APY')}{' '}
                     </span>
                   </Typography>
                   <Typography
@@ -559,7 +560,7 @@ const PoolListItem: React.FC<IProps> = ({
                     className={cx(classes.extendedRowTitle, classes.selfEnd)}>
                     APR{' '}
                     <span className={classes.extendedRowContent}>
-                      {`${convertedApr > 1000 ? '>1000%' : convertedApr === 0 ? '-' : Math.abs(convertedApr).toFixed(2) + '%'}`}
+                      {convertAPYValue(convertedApr, 'APR')}
                     </span>
                   </Typography>
 
@@ -574,7 +575,7 @@ const PoolListItem: React.FC<IProps> = ({
                   <Typography component='h5' className={classes.extendedRowTitle}>
                     APY{' '}
                     <span className={classes.extendedRowContent}>
-                      {`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '-' : Math.abs(convertedApy).toFixed(2) + '%'}`}
+                      {convertAPYValue(convertedApy, 'APY')}
                     </span>
                   </Typography>
                   <Typography
@@ -583,7 +584,7 @@ const PoolListItem: React.FC<IProps> = ({
                     className={cx(classes.extendedRowTitle, classes.selfEnd)}>
                     APR{' '}
                     <span className={classes.extendedRowContent}>
-                      {`${convertedApr > 1000 ? '>1000%' : convertedApr === 0 ? '-' : Math.abs(convertedApr).toFixed(2) + '%'}`}
+                      {convertAPYValue(convertedApr, 'APR')}
                     </span>
                   </Typography>
                   <Typography>{''}</Typography>

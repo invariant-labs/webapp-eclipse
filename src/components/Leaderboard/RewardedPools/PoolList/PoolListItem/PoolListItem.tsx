@@ -16,7 +16,7 @@ import {
   ROUTES
 } from '@utils/utils'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
-import { shortenAddress } from '@utils/uiUtils'
+import { convertAPYValue, shortenAddress } from '@utils/uiUtils'
 import { VariantType } from 'notistack'
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
 
@@ -189,10 +189,8 @@ const PoolListItem: React.FC<IProps> = ({
           </Grid>
           {!isSm && showAPY ? (
             <Typography className={classes.row}>
-              {`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '' : Math.abs(convertedApy).toFixed(2) + '%'}`}
-              <span className={classes.apy}>
-                {`${convertedApr > 1000 ? '>1000%' : convertedApr === 0 ? '-' : Math.abs(convertedApr).toFixed(2) + '%'}`}
-              </span>
+              {convertAPYValue(convertedApy, 'APY')}
+              <span className={classes.apy}>{convertAPYValue(convertedApr, 'APR')}</span>
             </Typography>
           ) : null}
           <Typography>{fee}%</Typography>

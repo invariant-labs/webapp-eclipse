@@ -73,7 +73,7 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     [theme.breakpoints.down('md')]: {
       height: !showInfo ? 69 : 155,
 
-      gridTemplateColumns: '30px auto 120px 120px 90px 15px',
+      gridTemplateColumns: '30px auto 130px 120px 90px 15px',
       rowGap: 16,
       cursor: 'pointer'
     },
@@ -82,7 +82,7 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
       height: !showInfo ? 69 : 143,
 
       rowGap: 20,
-      gridTemplateColumns: '30px auto 23% 22% 17% 24px',
+      gridTemplateColumns: '30px auto 23% 29% 17% 24px',
       padding: '20px 4px 16px 8px',
 
       '& p': {
@@ -106,11 +106,11 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     },
 
     [theme.breakpoints.down('md')]: {
-      gridTemplateColumns: '40px auto 130px 130px 80px 24px'
+      gridTemplateColumns: '30px auto 135px 130px 90px 15px'
     },
 
     [theme.breakpoints.down('sm')]: {
-      gridTemplateColumns: '30px auto 23% 22% 17% 24px'
+      gridTemplateColumns: '30px auto 23% 29% 17% 24px'
     },
 
     cursor: 'pointer'
