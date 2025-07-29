@@ -7,22 +7,45 @@ export const useStyles = makeStyles()(() => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 8,
-    marginTop: 72,
     gap: 12,
+    flexWrap: 'nowrap'
 
-    [theme.breakpoints.down('md')]: {
-      marginTop: 24
+    // [theme.breakpoints.down('md')]: {
+    //   marginTop: 24
+    // }
+  },
+  tableHeader: {
+    display: 'flex',
+    flexShrink: 1,
+    background: colors.invariant.component,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    padding: '12px 16px',
+    marginTop: 12,
+    borderBottom: `2px solid ${colors.invariant.light}`,
+    [theme.breakpoints.down('sm')]: {
+      padding: '12px 8px'
     }
+  },
+  headerRow: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: 12
   },
   headerContainer: {
     display: 'flex',
-    width: 'auto',
     gap: 14,
     [theme.breakpoints.down('sm')]: {
       flex: 1,
       justifyContent: 'flex-end',
-      maxWidth: 315
+      marginBottom: 8
+    },
+
+    [theme.breakpoints.down('sm')]: {
+      flex: 1,
+      justifyContent: 'flex-end'
+      // maxWidth: 315
     }
   },
   subheader: {
@@ -36,7 +59,9 @@ export const useStyles = makeStyles()(() => ({
     flexWrap: 'nowrap',
     overflow: 'hidden',
     backgroundColor: colors.invariant.component,
-    borderRadius: '24px'
+    // borderRadius: '24px'
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24
   },
   pagination: {
     maxWidth: '100%',
@@ -71,7 +96,6 @@ export const useStyles = makeStyles()(() => ({
   showFavouritesButton: {
     height: 40,
     background: colors.invariant.component,
-    padding: '6px 8px',
     borderRadius: 9,
     display: 'flex',
     alignItems: 'center',
@@ -79,14 +103,15 @@ export const useStyles = makeStyles()(() => ({
     textTransform: 'none',
     width: 170,
     textAlign: 'right',
-
+    padding: 0,
+    border: `1px solid ${colors.invariant.light}`,
     '&:hover': {
       background: colors.invariant.component,
       boxShadow: 'none',
       filter: 'brightness(1.2)'
     },
 
-    [theme.breakpoints.down('sm')]: {
+    [theme.breakpoints.down('md')]: {
       minWidth: 40,
       width: 40
     }
@@ -101,17 +126,11 @@ export const useStyles = makeStyles()(() => ({
     display: 'flex',
     justifyContent: 'flex-end',
     alignItems: 'center',
-    flex: 1,
+    flexShrink: 1,
 
     [theme.breakpoints.down('sm')]: {
       margin: 0,
       flex: 'none'
     }
-  },
-  tableHeader: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 12
   }
 }))

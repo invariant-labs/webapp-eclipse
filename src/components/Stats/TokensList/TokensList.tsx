@@ -231,6 +231,7 @@ const TokensList: React.FC<ITokensList> = ({
           </Grid>
         )}
       </Grid>
+      <Box className={classes.header} />
       <Grid
         container
         classes={{ root: classes.container }}

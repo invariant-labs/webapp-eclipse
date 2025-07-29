@@ -37,7 +37,16 @@ export const useStyles = makeStyles()(_theme => ({
     position: 'relative',
     overflow: 'hidden',
     backgroundColor: colors.invariant.component,
-    borderRadius: '24px'
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24
+  },
+  header: {
+    width: '100%',
+    height: 24,
+    borderBottom: `1px solid ${colors.invariant.light}`,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    background: colors.invariant.component
   },
   pagination: {
     maxWidth: '100%',
