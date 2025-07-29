@@ -62,7 +62,11 @@ export const Claim: React.FC<ClaimProps> = ({
                 </Typography>
                 <Box mt={3}>
                   {isConnected ? (
-                    <Button scheme='green' disabled width={200} height={44}>
+                    <Button
+                      scheme='pink'
+                      onClick={() => window.open('https://claims.invariant.app')}
+                      width={200}
+                      height={44}>
                       Claim
                     </Button>
                   ) : (
