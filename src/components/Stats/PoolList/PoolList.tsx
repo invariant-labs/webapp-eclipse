@@ -208,26 +208,30 @@ const PoolList: React.FC<PoolListInterface> = ({
 
   return (
     <>
-      <Grid container>
+      <Typography className={classes.subheader} mt={isSm ? '24px' : '72px'}>
+        Top pools
+      </Typography>
+      <Grid container className={classes.tableHeader}>
         <Grid container className={classes.headerWrapper}>
-          <Typography className={classes.subheader}>Top pools</Typography>
-          <Box className={classes.headerContainer}>
-            {!isMd && (
-              <Button className={classes.showFavouritesButton} onClick={handleFavouritesClick}>
-                <img src={showFavourites ? starFill : star} />
-                {
-                  <Typography className={classes.showFavouritesText}>
-                    {!showFavourites ? 'Show ' : 'Hide '}favourites
-                  </Typography>
-                }
-              </Button>
-            )}
-            {!isMd && (
-              <SortTypeSelector
-                currentSort={sortType}
-                sortGroups={poolSortGroups}
-                onSelect={setSortType}
-              />
+          {!isSm && (
+            <Button className={classes.showFavouritesButton} onClick={handleFavouritesClick}>
+              <img src={showFavourites ? starFill : star} />
+              {!isMd && (
+                <Typography className={classes.showFavouritesText}>
+                  {!showFavourites ? 'Show ' : 'Hide '}favourites
+                </Typography>
+              )}
+            </Button>
+          )}
+          <Grid className={classes.headerContainer}>
+            {!isSm && (
+              <Box className={classes.sortWrapper}>
+                <SortTypeSelector
+                  currentSort={sortType}
+                  sortGroups={poolSortGroups}
+                  onSelect={setSortType}
+                />
+              </Box>
             )}
 
             <FilterSearch
@@ -237,10 +241,10 @@ const PoolList: React.FC<PoolListInterface> = ({
               filtersAmount={2}
               closeOnSelect={true}
             />
-          </Box>
+          </Grid>
         </Grid>
-        {isMd && (
-          <Grid container className={classes.tableHeader}>
+        {isSm && (
+          <Grid container className={classes.headerRow}>
             <Button className={classes.showFavouritesButton} onClick={handleFavouritesClick}>
               <img src={showFavourites ? starFill : star} />
               {!isSm && (

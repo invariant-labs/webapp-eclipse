@@ -58,6 +58,7 @@ export const useStyles = makeStyles()(() => {
       padding: 12,
       minWidth: 170,
       borderRadius: 9,
+      border: `1px solid ${colors.invariant.light}`,
       '&:hover': {
         background: colors.invariant.component,
         boxShadow: 'none',

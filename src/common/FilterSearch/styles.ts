@@ -4,12 +4,13 @@ import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles<{ isSmall: boolean }>()((_theme: Theme, { isSmall }) => ({
   searchBar: {
-    mHeight: 32,
+    flexShrink: 1,
+    minHeight: 38,
     borderRadius: 10,
     background: colors.invariant.black,
     border: '1px solid #202946',
     color: colors.invariant.light,
-    width: isSmall ? '100%' : 350,
+    width: isSmall ? '100%' : 250,
     display: 'flex',
     alignItems: 'center'
   },
