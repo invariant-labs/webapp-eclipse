@@ -384,13 +384,22 @@ const PoolListItem: React.FC<IProps> = ({
         {!isSmd && (
           <ItemValue
             minWidth={125}
-            title={'APY'}
+            title={
+              <Box>
+                <Typography className={classes.apyLabel}>
+                  APY
+                  <Typography className={classes.aprLabel} component='span'>
+                    APR
+                  </Typography>
+                </Typography>
+              </Box>
+            }
             value={
               showAPY ? (
                 <Box>
-                  <Typography className={classes.apyLabel}>
+                  <Typography className={classes.apyValue}>
                     {convertAPYValue(convertedApy, 'APY')}
-                    <Typography className={classes.aprLabel} component='span'>
+                    <Typography className={classes.aprValue} component='span'>
                       {convertAPYValue(convertedApr, 'APR')}
                     </Typography>
                   </Typography>

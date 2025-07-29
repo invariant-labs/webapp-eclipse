@@ -3,7 +3,7 @@ import { Box, Grid, Typography } from '@mui/material'
 import { useStyles } from './style'
 
 interface IProps {
-  title: string
+  title: string | JSX.Element
   value: string | number | JSX.Element
   minWidth?: number
   style?: React.CSSProperties

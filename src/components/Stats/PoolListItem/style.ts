@@ -146,18 +146,34 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
   apyLabel: {
     position: 'relative',
     display: 'inline-block',
+    ...typography.body2,
+    [theme.breakpoints.down('sm')]: {
+      ...typography.caption2
+    }
+  },
+  aprLabel: {
+    ...typography.caption4,
+    position: 'absolute',
+    top: '100%',
+    left: '100%',
+    color: colors.invariant.textGrey,
+    transform: 'translate(4px, -14px)'
+  },
+  apyValue: {
+    position: 'relative',
+    display: 'inline-block',
     ...typography.heading4,
     [theme.breakpoints.down('sm')]: {
       ...typography.body1
     }
   },
-  aprLabel: {
+  aprValue: {
     position: 'absolute',
     top: '100%',
     left: '100%',
     color: colors.invariant.textGrey,
-    fontSize: '15px !important',
-    transform: 'translate(0px, -8px)'
+    transform: 'translate(4px, -14px)',
+    ...typography.caption1
   },
   extendedRowIcon: {
     justifySelf: 'end',
