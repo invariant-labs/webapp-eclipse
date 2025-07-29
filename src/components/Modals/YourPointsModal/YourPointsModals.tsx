@@ -110,7 +110,7 @@ export const YourPointsModal: React.FC<ISelectNetworkModal> = ({ anchorEl, open,
                       height={32}
                       onClick={() => {
                         handleClose()
-                        window.open('https://claim.invaraint.app')
+                        window.open('https://claims.invariant.app')
                       }}>
                       Claim
                     </Button>
