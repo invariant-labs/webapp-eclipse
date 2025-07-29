@@ -15,7 +15,7 @@ export const useStyles = makeStyles()(_theme => ({
     ...typography.body2,
     color: colors.invariant.textGrey,
 
-    [theme.breakpoints.down(900)]: {
+    [theme.breakpoints.down('sm')]: {
       ...typography.caption2
     }
   },
@@ -29,7 +29,7 @@ export const useStyles = makeStyles()(_theme => ({
     ...typography.heading4,
     color: colors.invariant.text,
 
-    [theme.breakpoints.down(900)]: {
+    [theme.breakpoints.down('sm')]: {
       ...typography.body1
     }
   }

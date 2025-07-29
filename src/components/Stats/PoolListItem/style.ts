@@ -1,4 +1,4 @@
-import { colors, theme } from '@static/theme'
+import { colors, theme, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInfo = false }) => ({
@@ -144,6 +144,14 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     }
   },
   apyLabel: {
+    position: 'relative',
+    display: 'inline-block',
+    ...typography.heading4,
+    [theme.breakpoints.down('sm')]: {
+      ...typography.body1
+    }
+  },
+  aprLabel: {
     position: 'absolute',
     top: '100%',
     left: '100%',
@@ -167,5 +175,16 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
   favouriteButton: {
     cursor: 'pointer',
     flexShrink: 0
+  },
+  poolAddress: {
+    maxWidth: 100,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+    ...typography.heading4,
+
+    [theme.breakpoints.down('sm')]: {
+      ...typography.body1
+    }
   }
 }))

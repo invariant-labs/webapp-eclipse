@@ -1,4 +1,4 @@
-import { colors, typography } from '@static/theme'
+import { colors, theme, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => ({
@@ -9,14 +9,18 @@ export const useStyles = makeStyles()(() => ({
     gap: 4,
     background: colors.invariant.light,
     height: 40,
-    borderRadius: 6,
-
-    '& p': {
-      ...typography.caption2
-    }
+    borderRadius: 6
   },
   disabled: {
     filter: 'brightness(0.8)',
     cursor: 'not-allowed'
+  },
+  title: {
+    color: colors.invariant.text,
+    ...typography.body2,
+
+    [theme.breakpoints.down('sm')]: {
+      ...typography.caption2
+    }
   }
 }))

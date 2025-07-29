@@ -318,13 +318,7 @@ const PoolListItem: React.FC<IProps> = ({
                 </Grid>
               </Grid>
               {!hideInterval && !isSm && (
-                <Typography
-                  sx={{
-                    maxWidth: 100,
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap'
-                  }}>
+                <Typography className={classes.poolAddress}>
                   {shortenAddress(tokenAData.symbol ?? '')}/
                   {shortenAddress(tokenBData.symbol ?? '')}
                 </Typography>
@@ -385,7 +379,7 @@ const PoolListItem: React.FC<IProps> = ({
           }
         />
 
-        <ItemValue minWidth={60} title='Fee' value={<Typography>{fee}%</Typography>} />
+        <ItemValue minWidth={60} title='Fee' value={fee + '%'} />
 
         {!isSmd && (
           <ItemValue
@@ -394,9 +388,9 @@ const PoolListItem: React.FC<IProps> = ({
             value={
               showAPY ? (
                 <Box>
-                  <Typography style={{ position: 'relative', display: 'inline-block' }}>
+                  <Typography className={classes.apyLabel}>
                     {convertAPYValue(convertedApy, 'APY')}
-                    <Typography className={classes.apyLabel} component='span'>
+                    <Typography className={classes.aprLabel} component='span'>
                       {convertAPYValue(convertedApr, 'APR')}
                     </Typography>
                   </Typography>
