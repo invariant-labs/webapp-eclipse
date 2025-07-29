@@ -63,7 +63,7 @@ export const useStyles = makeStyles()(_theme => ({
     }
   },
   emptyRow: {
-    height: 69,
+    height: 79,
     background: colors.invariant.component,
     boxSizing: 'border-box'
   },

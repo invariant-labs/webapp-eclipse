@@ -172,10 +172,10 @@ const TokensList: React.FC<ITokensList> = ({
   const pages = useMemo(() => Math.ceil(data.length / ITEMS_PER_PAGE), [data])
   const isCenterAligment = useMediaQuery(theme.breakpoints.down(1280))
   const height = useMemo(
-    () => (initialDataLength > ITEMS_PER_PAGE ? (isCenterAligment ? 176 : 90) : 69),
+    () => (initialDataLength > ITEMS_PER_PAGE ? (isCenterAligment ? 176 : 90) : 79),
     [initialDataLength, isCenterAligment]
   )
-
+  console.log(initialDataLength * 79)
   return (
     <>
       <Grid className={classes.headerWrapper}>
@@ -275,7 +275,7 @@ const TokensList: React.FC<ITokensList> = ({
           ) : (
             <Grid container className={classes.emptyContainer}>
               <EmptyPlaceholder
-                height={initialDataLength < ITEMS_PER_PAGE ? initialDataLength * 69 : 688}
+                height={initialDataLength < ITEMS_PER_PAGE ? initialDataLength * 79 : 688}
                 newVersion
                 mainTitle={`You don't have any favourite tokens yet...`}
                 desc={'You can add them by clicking the star icon next to the token!'}

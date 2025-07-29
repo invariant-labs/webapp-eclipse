@@ -201,7 +201,7 @@ const PoolList: React.FC<PoolListInterface> = ({
   const pages = useMemo(() => Math.ceil(data.length / ITEMS_PER_PAGE), [data])
   const isCenterAligment = useMediaQuery(theme.breakpoints.down(1280))
   const height = useMemo(
-    () => (initialDataLength > ITEMS_PER_PAGE ? (isCenterAligment ? 176 : 90) : 69),
+    () => (initialDataLength > ITEMS_PER_PAGE ? (isCenterAligment ? 176 : 90) : 79),
     [initialDataLength, isCenterAligment]
   )
 
@@ -316,7 +316,9 @@ const PoolList: React.FC<PoolListInterface> = ({
           <Grid container className={classes.emptyContainer}>
             {showFavourites ? (
               <EmptyPlaceholder
-                height={initialDataLength < ITEMS_PER_PAGE ? initialDataLength * 69 : 688}
+                height={
+                  initialDataLength < ITEMS_PER_PAGE ? initialDataLength * 79 : isMd ? 852 : 788
+                }
                 newVersion
                 mainTitle={`You don't have any favourite pools yet...`}
                 desc={'You can add them by clicking the star icon next to the pool!'}
@@ -325,7 +327,9 @@ const PoolList: React.FC<PoolListInterface> = ({
             ) : (
               <EmptyPlaceholder
                 newVersion
-                height={initialDataLength < ITEMS_PER_PAGE ? initialDataLength * 69 : 688}
+                height={
+                  initialDataLength < ITEMS_PER_PAGE ? initialDataLength * 79 : isMd ? 852 : 788
+                }
                 mainTitle={`The ${shortenAddress(filteredTokenX.symbol ?? '')}/${shortenAddress(filteredTokenY.symbol ?? '')} pool was not found...`}
                 desc={initialDataLength < 3 ? '' : 'You can create it yourself!'}
                 desc2={initialDataLength < 5 ? '' : 'Or try adjusting your search criteria!'}
