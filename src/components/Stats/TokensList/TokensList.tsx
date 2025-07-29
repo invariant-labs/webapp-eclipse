@@ -175,7 +175,7 @@ const TokensList: React.FC<ITokensList> = ({
     () => (initialDataLength > ITEMS_PER_PAGE ? (isCenterAligment ? 176 : 90) : 79),
     [initialDataLength, isCenterAligment]
   )
-  console.log(initialDataLength * 79)
+
   return (
     <>
       <Grid className={classes.headerWrapper}>

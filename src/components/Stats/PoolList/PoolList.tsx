@@ -189,7 +189,6 @@ const PoolList: React.FC<PoolListInterface> = ({
   }
 
   const paginator = (currentPage: number) => {
-    console.log(currentPage)
     const page = currentPage || 1
     const offest = (page - 1) * ITEMS_PER_PAGE
 
@@ -206,7 +205,7 @@ const PoolList: React.FC<PoolListInterface> = ({
     () => (initialDataLength > ITEMS_PER_PAGE ? (isCenterAligment ? 176 : 90) : 79),
     [initialDataLength, isCenterAligment]
   )
-  console.log(page)
+
   return (
     <>
       <Grid className={classes.headerWrapper} container>

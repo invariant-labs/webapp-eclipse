@@ -25,7 +25,7 @@ export const WrappedPoolList: React.FC = () => {
   const currentNetwork = useSelector(network)
   const searchParams = useSelector(liquiditySearch)
   const isLoadingStats = useSelector(isLoading)
-  console.log(searchParams.pageNumber)
+
   const selectedFilters = searchParams.filteredTokens
   const setSelectedFilters = (tokens: ISearchToken[]) => {
     dispatch(
@@ -137,7 +137,6 @@ export const WrappedPoolList: React.FC = () => {
   }
 
   const handleChangePagination = (newPage: number) => {
-    console.log('test')
     dispatch(
       navigationActions.setSearch({
         section: 'liquidityPool',
