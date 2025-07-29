@@ -13,7 +13,12 @@ export const useStyles = makeStyles()(() => ({
     transition: 'filter 0.3s ease-in-out',
     '&:hover': {
       filter: 'brightness(1.2)',
-      cursor: 'pointer'
+      cursor: 'pointer',
+
+      '@media (hover: none)': {
+        filter: 'brightness(1)',
+        cursor: 'default'
+      }
     }
   },
   disabled: {
