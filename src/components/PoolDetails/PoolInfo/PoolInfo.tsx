@@ -87,7 +87,7 @@ export const PoolInfo: React.FC<IPros> = ({
       </Box>
 
       <Grid className={classes.container}>
-        {noData && !isPoolDataLoading ? (
+        {noData && statsPoolData.fees && !isPoolDataLoading ? (
           <EmptyPlaceholder
             mainTitle='Pool info not found'
             desc=''
