@@ -180,7 +180,7 @@ const TokenListItem: React.FC<IProps> = ({
           style={{ flexBasis: 110 }}
           minWidth={80}
           title={'Price'}
-          value={`~$${formatNumberWithSuffix(price)}`}
+          value={`$${formatNumberWithSuffix(price)}`}
         />
 
         <ItemValue

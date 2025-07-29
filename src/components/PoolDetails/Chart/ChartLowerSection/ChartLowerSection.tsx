@@ -13,6 +13,7 @@ import { useSelector } from 'react-redux'
 import { poolDetailsChartType } from '@store/selectors/stats'
 import { useStyles } from './style'
 import Intervals from '@components/Stats/Intervals/Intervals'
+import loader from '@static/gif/loader.gif'
 
 interface StatsInterface {
   statsPoolData: PoolSnap
@@ -307,71 +308,76 @@ const ChartLowerSection: React.FC<StatsInterface> = ({
           </div>
         )}
       </Box>
-
-      <div
-        ref={chartContainerRef}
-        className={cx(classes.barContainer, {
-          [classes.loadingOverlay]: isLoading
-        })}
-        style={{ position: 'relative' }}
-        onMouseLeave={() => hideTooltip(true)}>
-        <ResponsiveBar
-          layout='vertical'
-          key={`${interval}-${isLoading}`}
-          animate={false}
-          margin={{ top: 30, bottom: 30, left: 30, right: 4 }}
-          data={data as Array<{ timestamp: number; value: number }>}
-          keys={['value']}
-          indexBy='timestamp'
-          axisBottom={{
-            tickSize: 0,
-            tickPadding: 10,
-            tickRotation: 0,
-            format: time =>
-              isLoading
-                ? ''
-                : formatPlotDataLabels(time, data.length, interval, isMobile || isTablet)
-          }}
-          axisLeft={{
-            tickSize: 0,
-            tickPadding: 2,
-            tickRotation: 0,
-            tickValues: 5,
-            renderTick: isLoading
-              ? () => <text></text>
-              : ({ x, y, value }) => (
-                  <g transform={`translate(${x - (isMobile ? 22 : 30)},${y + 4})`}>
-                    <text
-                      style={{ fill: colors.invariant.textGrey, ...typography.tiny2 }}
-                      textAnchor='start'
-                      dominantBaseline='center'>
-                      {trimZeros(formatLargeNumber(value))}
-                    </text>
-                  </g>
-                )
-          }}
-          gridYValues={5}
-          theme={Theme}
-          groupMode='grouped'
-          enableLabel={false}
-          enableGridY={true}
-          innerPadding={isXsDown ? 1 : 2}
-          isInteractive={false}
-          padding={0.03}
-          indexScale={{ type: 'band', round: true }}
-          defs={[
-            linearGradientDef('gradient', [
-              { offset: 0, color: '#EF84F5' },
-              { offset: 100, color: '#9C3EBD', opacity: 0.8 }
-            ])
-          ]}
-          fill={[{ match: '*', id: 'gradient' }]}
-          colors={colors.invariant.pink}
-          layers={['grid', 'axes', 'bars', 'markers', 'legends', 'annotations', CustomHoverLayer]}
-          maxValue={isEmptyData ? 1 : 'auto'}
-        />
-        <CustomTooltip />
-      </div>
+      {!isLoading ? (
+        <div
+          ref={chartContainerRef}
+          className={cx(classes.barContainer, {
+            [classes.loadingOverlay]: isLoading
+          })}
+          style={{ position: 'relative' }}
+          onMouseLeave={() => hideTooltip(true)}>
+          <ResponsiveBar
+            layout='vertical'
+            key={`${interval}-${isLoading}`}
+            animate={false}
+            margin={{ top: 30, bottom: 30, left: 30, right: 4 }}
+            data={data as Array<{ timestamp: number; value: number }>}
+            keys={['value']}
+            indexBy='timestamp'
+            axisBottom={{
+              tickSize: 0,
+              tickPadding: 10,
+              tickRotation: 0,
+              format: time =>
+                isLoading
+                  ? ''
+                  : formatPlotDataLabels(time, data.length, interval, isMobile || isTablet)
+            }}
+            axisLeft={{
+              tickSize: 0,
+              tickPadding: 2,
+              tickRotation: 0,
+              tickValues: 5,
+              renderTick: isLoading
+                ? () => <text></text>
+                : ({ x, y, value }) => (
+                    <g transform={`translate(${x - (isMobile ? 22 : 30)},${y + 4})`}>
+                      <text
+                        style={{ fill: colors.invariant.textGrey, ...typography.tiny2 }}
+                        textAnchor='start'
+                        dominantBaseline='center'>
+                        {trimZeros(formatLargeNumber(value))}
+                      </text>
+                    </g>
+                  )
+            }}
+            gridYValues={5}
+            theme={Theme}
+            groupMode='grouped'
+            enableLabel={false}
+            enableGridY={true}
+            innerPadding={isXsDown ? 1 : 2}
+            isInteractive={false}
+            padding={0.03}
+            indexScale={{ type: 'band', round: true }}
+            defs={[
+              linearGradientDef('gradient', [
+                { offset: 0, color: '#EF84F5' },
+                { offset: 100, color: '#9C3EBD', opacity: 0.8 }
+              ])
+            ]}
+            fill={[{ match: '*', id: 'gradient' }]}
+            colors={colors.invariant.pink}
+            layers={['grid', 'axes', 'bars', 'markers', 'legends', 'annotations', CustomHoverLayer]}
+            maxValue={isEmptyData ? 1 : 'auto'}
+          />
+          <CustomTooltip />
+        </div>
+      ) : (
+        <Grid container style={{ height: 280 }}>
+          <img src={loader} className={classes.loader} alt='Loader' />
+        </Grid>
+      )}
     </Grid>
   )
 }

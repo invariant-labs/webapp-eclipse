@@ -36,7 +36,7 @@ import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { VariantType } from 'notistack'
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
-import { mapIntervalToString, shortenAddress } from '@utils/uiUtils'
+import { convertAPYValue, mapIntervalToString, shortenAddress } from '@utils/uiUtils'
 import LockStatsPopover from '@components/Modals/LockStatsPopover/LockStatsPopover'
 import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
 import { BN } from '@coral-xyz/anchor'
@@ -119,7 +119,6 @@ const PoolListItem: React.FC<IProps> = ({
   const isMdUp = useMediaQuery(theme.breakpoints.up('md'))
   const isSmd = useMediaQuery(theme.breakpoints.down('md'))
   const hideInterval = useMediaQuery(theme.breakpoints.between(600, 650))
-
   const isMd = useMediaQuery(theme.breakpoints.down(1160))
   const airdropIconRef = useRef<HTMLDivElement>(null)
   const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
@@ -396,17 +395,9 @@ const PoolListItem: React.FC<IProps> = ({
               showAPY ? (
                 <Box>
                   <Typography style={{ position: 'relative', display: 'inline-block' }}>
-                    {convertedApy > 1000
-                      ? '>1000%'
-                      : convertedApy === 0
-                        ? ''
-                        : Math.abs(convertedApy).toFixed(2) + '%'}
+                    {convertAPYValue(convertedApy, 'APY')}
                     <Typography className={classes.apyLabel} component='span'>
-                      {convertedApr > 1000
-                        ? '>1000%'
-                        : convertedApr === 0
-                          ? '-'
-                          : Math.abs(convertedApr).toFixed(2) + '%'}
+                      {convertAPYValue(convertedApr, 'APR')}
                     </Typography>
                   </Typography>
                 </Box>
@@ -522,13 +513,13 @@ const PoolListItem: React.FC<IProps> = ({
             minWidth={80}
             style={{ flexGrow: isSmd ? 0 : 1 }}
             title={'APY'}
-            value={`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '' : Math.abs(convertedApy).toFixed(2) + '%'}`}
+            value={convertAPYValue(convertedApy, 'APY')}
           />
           <ItemValue
             minWidth={80}
             style={{ flexGrow: isSmd ? 0 : 1 }}
             title={'APR'}
-            value={`${convertedApr > 1000 ? '>1000%' : convertedApr === 0 ? '-' : Math.abs(convertedApr).toFixed(2) + '%'}`}
+            value={convertAPYValue(convertedApr, 'APR')}
           />
           <ItemValue
             minWidth={80}

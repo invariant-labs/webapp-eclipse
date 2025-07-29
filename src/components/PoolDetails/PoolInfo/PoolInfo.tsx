@@ -74,6 +74,7 @@ export const PoolInfo: React.FC<IPros> = ({
               className={classes.favouriteButton}
               src={isFavourite ? starFill : star}
               onClick={e => {
+                if (isLoadingStats) return
                 switchFavouritePool()
                 e.stopPropagation()
               }}
@@ -86,7 +87,18 @@ export const PoolInfo: React.FC<IPros> = ({
       </Box>
 
       <Grid className={classes.container}>
-        {!noData ? (
+        {noData && !isPoolDataLoading ? (
+          <EmptyPlaceholder
+            mainTitle='Pool info not found'
+            desc=''
+            newVersion
+            roundedCorners
+            withButton={false}
+            desc2=''
+            height={'100%'}
+            withImg={false}
+          />
+        ) : (
           <>
             <InfoUpperSection
               interval={interval}
@@ -129,17 +141,6 @@ export const PoolInfo: React.FC<IPros> = ({
               />
             </Grid>
           </>
-        ) : (
-          <EmptyPlaceholder
-            mainTitle='Pool info not found'
-            desc=''
-            newVersion
-            roundedCorners
-            withButton={false}
-            desc2=''
-            height={'100%'}
-            withImg={false}
-          />
         )}
       </Grid>
     </Grid>

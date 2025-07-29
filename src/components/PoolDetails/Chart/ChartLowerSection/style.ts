@@ -29,7 +29,7 @@ export const useStyles = makeStyles()(() => ({
   barContainer: {
     height: 335,
     display: 'flex',
-
+    maxWidth: '100%',
     [theme.breakpoints.down(1200)]: {
       height: 280
     }
@@ -76,5 +76,10 @@ export const useStyles = makeStyles()(() => ({
     marginBottom: 12,
     flexWrap: 'wrap',
     gap: 12
+  },
+  loader: {
+    height: 150,
+    width: 150,
+    margin: 'auto'
   }
 }))

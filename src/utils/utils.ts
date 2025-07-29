@@ -2619,27 +2619,28 @@ export const getAmountFromClaimFeeInstruction = (
   meta: ParsedTransactionMeta,
   type: TokenType
 ): number => {
-  if (!meta.innerInstructions) {
-    return 0
+  const transfers =
+    meta.innerInstructions
+      ?.flatMap(inner => inner.instructions)
+      .filter((ix): ix is ParsedInstruction =>
+        ['transfer', 'transferChecked'].includes((ix as ParsedInstruction)?.parsed?.type)
+      ) ?? []
+
+  if (transfers.length < 2) return 0
+
+  for (let i = transfers.length - 2; i >= 0; i--) {
+    const [a, b] = [transfers[i], transfers[i + 1]]
+    if (
+      (a as any).stackHeight === (b as any).stackHeight &&
+      a.parsed.info.authority === b.parsed.info.authority
+    ) {
+      const chosen = type === TokenType.TokenX ? a : b
+      return chosen.parsed.info.amount ?? chosen.parsed.info.tokenAmount?.amount ?? 0
+    }
   }
 
-  const innerInstruction =
-    meta.innerInstructions.find(
-      innerInstruction =>
-        !!innerInstruction.instructions.find(
-          instruction =>
-            (instruction as ParsedInstruction)?.parsed.type === 'transfer' ||
-            (instruction as ParsedInstruction)?.parsed.type === 'transferChecked'
-        )
-    ) ?? meta.innerInstructions[0]
-
-  const instruction = innerInstruction.instructions.filter(
-    instruction =>
-      (instruction as ParsedInstruction)?.parsed.type === 'transfer' ||
-      (instruction as ParsedInstruction)?.parsed.type === 'transferChecked'
-  )[type === TokenType.TokenX ? 0 : 1] as ParsedInstruction | undefined
-
-  return instruction?.parsed.info.amount || instruction?.parsed.info.tokenAmount.amount
+  const chosen = transfers[type === TokenType.TokenX ? 0 : 1]
+  return chosen?.parsed.info.amount ?? chosen?.parsed.info.tokenAmount?.amount ?? 0
 }
 
 export const getAmountFromClosePositionInstruction = (

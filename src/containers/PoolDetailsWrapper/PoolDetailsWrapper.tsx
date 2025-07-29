@@ -483,6 +483,24 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
       }
     )
   }
+
+  useEffect(() => {
+    return () => {
+      dispatch(
+        actions.setPoolStats({
+          feesPlot: [],
+          liquidityPlot: [],
+          volumePlot: [],
+          timestamp: 0,
+          volume: 0,
+          tvl: 0,
+          fees: 0,
+          apy: 0
+        })
+      )
+    }
+  }, [])
+
   return (
     <PoolDetails
       network={currentNetwork}
