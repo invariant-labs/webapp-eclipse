@@ -7,7 +7,7 @@ export const useStyles = makeStyles()(() => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 16,
+    marginBottom: 8,
     marginTop: 72,
     gap: 12,
 
@@ -86,15 +86,9 @@ export const useStyles = makeStyles()(() => ({
       filter: 'brightness(1.2)'
     },
 
-    [theme.breakpoints.down('md')]: {
-      border: `1px solid ${colors.invariant.light}`,
-      padding: '8px 12px'
-    },
-
     [theme.breakpoints.down('sm')]: {
       minWidth: 40,
-      width: 40,
-      background: colors.invariant.light
+      width: 40
     }
   },
   showFavouritesText: {
@@ -118,6 +112,6 @@ export const useStyles = makeStyles()(() => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: 12
+    marginBottom: 12
   }
 }))

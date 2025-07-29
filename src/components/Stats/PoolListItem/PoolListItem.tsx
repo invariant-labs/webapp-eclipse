@@ -512,6 +512,18 @@ const PoolListItem: React.FC<IProps> = ({
       </Grid>
       {isSmd && (
         <Grid container display='flex' alignItems='center' justifyContent='space-around'>
+          {/* {isSm && ( 
+            <ItemValue
+              minWidth={80}
+              style={{ flexGrow: isSmd ? 0 : 1 }}
+              title={'Tokens'}
+              value={
+                shortenAddress(tokenAData.symbol ?? '') +
+                '/' +
+                shortenAddress(tokenBData.symbol ?? '')
+              }
+            />
+          )} */}
           <ItemValue
             minWidth={80}
             style={{ flexGrow: isSmd ? 0 : 1 }}

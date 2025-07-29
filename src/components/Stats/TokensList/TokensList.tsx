@@ -178,35 +178,58 @@ const TokensList: React.FC<ITokensList> = ({
 
   return (
     <>
-      <Grid className={classes.headerWrapper}>
-        <Typography className={classes.subheader}>Top pools</Typography>
-        <Box className={classes.headerContainer}>
-          {!isMd && (
+      <Grid container>
+        <Grid container className={classes.headerWrapper}>
+          <Typography className={classes.subheader}>Top tokens</Typography>
+          <Box className={classes.headerContainer}>
+            {!isMd && (
+              <Button className={classes.showFavouritesButton} onClick={handleFavouritesClick}>
+                <img src={showFavourites ? starFill : star} />
+                {
+                  <Typography className={classes.showFavouritesText}>
+                    {!showFavourites ? 'Show ' : 'Hide '}favourites
+                  </Typography>
+                }
+              </Button>
+            )}
+            {!isMd && (
+              <SortTypeSelector
+                currentSort={sortType}
+                onSelect={setSortType}
+                sortGroups={tokenSortGroups}
+              />
+            )}
+
+            <FilterSearch
+              networkType={network}
+              setSelectedFilters={setSearchTokensValue}
+              selectedFilters={searchTokensValue}
+              filtersAmount={2}
+              closeOnSelect={true}
+            />
+          </Box>
+        </Grid>
+        {isMd && (
+          <Grid container className={classes.tableHeader}>
             <Button className={classes.showFavouritesButton} onClick={handleFavouritesClick}>
               <img src={showFavourites ? starFill : star} />
-              {
+              {!isSm && (
                 <Typography className={classes.showFavouritesText}>
-                  {!showFavourites ? 'Show ' : 'Hide '}favourites
+                  {!showFavourites ? 'Show' : 'Hide'} {!isSm && 'favourites'}
                 </Typography>
-              }
+              )}
             </Button>
-          )}
-          {!isMd && (
-            <SortTypeSelector
-              currentSort={sortType}
-              onSelect={setSortType}
-              sortGroups={tokenSortGroups}
-            />
-          )}
 
-          <FilterSearch
-            networkType={network}
-            setSelectedFilters={setSearchTokensValue}
-            selectedFilters={searchTokensValue}
-            filtersAmount={2}
-            closeOnSelect={true}
-          />
-        </Box>
+            <Box className={classes.sortWrapper}>
+              <SortTypeSelector
+                currentSort={sortType}
+                onSelect={setSortType}
+                sortGroups={tokenSortGroups}
+                fullWidth={isSm}
+              />
+            </Box>
+          </Grid>
+        )}
       </Grid>
       <Grid
         container
@@ -215,27 +238,6 @@ const TokensList: React.FC<ITokensList> = ({
         <>
           {data.length > 0 || isLoading ? (
             <>
-              {isMd && (
-                <Grid container className={classes.tableHeader}>
-                  <Button className={classes.showFavouritesButton} onClick={handleFavouritesClick}>
-                    <img src={showFavourites ? starFill : star} />
-                    {!isSm && (
-                      <Typography className={classes.showFavouritesText}>
-                        {!showFavourites ? 'Show' : 'Hide'} {!isSm && 'favourites'}
-                      </Typography>
-                    )}
-                  </Button>
-
-                  <Box className={classes.sortWrapper}>
-                    <SortTypeSelector
-                      currentSort={sortType}
-                      onSelect={setSortType}
-                      sortGroups={tokenSortGroups}
-                      fullWidth={isSm}
-                    />
-                  </Box>
-                </Grid>
-              )}
               {paginator(page).data.map((token, index) => {
                 return (
                   <TokenListItem

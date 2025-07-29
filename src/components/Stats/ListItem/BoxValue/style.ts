@@ -9,7 +9,12 @@ export const useStyles = makeStyles()(() => ({
     gap: 4,
     background: colors.invariant.light,
     height: 40,
-    borderRadius: 6
+    borderRadius: 6,
+    transition: 'filter 0.3s ease-in-out',
+    '&:hover': {
+      filter: 'brightness(1.2)',
+      cursor: 'pointer'
+    }
   },
   disabled: {
     filter: 'brightness(0.8)',

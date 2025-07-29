@@ -860,7 +860,7 @@ export const enum SortTypeTokenList {
 export const poolSortGroups = [
   { label: 'Name', asc: SortTypePoolList.NAME_ASC, desc: SortTypePoolList.NAME_DESC },
   { label: 'Fee', asc: SortTypePoolList.FEE_ASC, desc: SortTypePoolList.FEE_DESC },
-  { label: '24h Fee', asc: SortTypePoolList.FEE_24_ASC, desc: SortTypePoolList.FEE_24_DESC },
+  { label: 'Fees', asc: SortTypePoolList.FEE_24_ASC, desc: SortTypePoolList.FEE_24_DESC },
   { label: 'Volume', asc: SortTypePoolList.VOLUME_ASC, desc: SortTypePoolList.VOLUME_DESC },
   { label: 'TVL', asc: SortTypePoolList.TVL_ASC, desc: SortTypePoolList.TVL_DESC },
   { label: 'APY', asc: SortTypePoolList.APY_ASC, desc: SortTypePoolList.APY_DESC }

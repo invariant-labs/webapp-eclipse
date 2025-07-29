@@ -208,35 +208,58 @@ const PoolList: React.FC<PoolListInterface> = ({
 
   return (
     <>
-      <Grid className={classes.headerWrapper} container>
-        <Typography className={classes.subheader}>Top pools</Typography>
-        <Box className={classes.headerContainer}>
-          {!isMd && (
+      <Grid container>
+        <Grid container className={classes.headerWrapper}>
+          <Typography className={classes.subheader}>Top pools</Typography>
+          <Box className={classes.headerContainer}>
+            {!isMd && (
+              <Button className={classes.showFavouritesButton} onClick={handleFavouritesClick}>
+                <img src={showFavourites ? starFill : star} />
+                {
+                  <Typography className={classes.showFavouritesText}>
+                    {!showFavourites ? 'Show ' : 'Hide '}favourites
+                  </Typography>
+                }
+              </Button>
+            )}
+            {!isMd && (
+              <SortTypeSelector
+                currentSort={sortType}
+                sortGroups={poolSortGroups}
+                onSelect={setSortType}
+              />
+            )}
+
+            <FilterSearch
+              networkType={network}
+              setSelectedFilters={setSearchPoolsValue}
+              selectedFilters={searchPoolsValue}
+              filtersAmount={2}
+              closeOnSelect={true}
+            />
+          </Box>
+        </Grid>
+        {isMd && (
+          <Grid container className={classes.tableHeader}>
             <Button className={classes.showFavouritesButton} onClick={handleFavouritesClick}>
               <img src={showFavourites ? starFill : star} />
-              {
+              {!isSm && (
                 <Typography className={classes.showFavouritesText}>
-                  {!showFavourites ? 'Show ' : 'Hide '}favourites
+                  {!showFavourites ? 'Show' : 'Hide'} {!isSm && 'favourites'}
                 </Typography>
-              }
+              )}
             </Button>
-          )}
-          {!isMd && (
-            <SortTypeSelector
-              currentSort={sortType}
-              sortGroups={poolSortGroups}
-              onSelect={setSortType}
-            />
-          )}
 
-          <FilterSearch
-            networkType={network}
-            setSelectedFilters={setSearchPoolsValue}
-            selectedFilters={searchPoolsValue}
-            filtersAmount={2}
-            closeOnSelect={true}
-          />
-        </Box>
+            <Box className={classes.sortWrapper}>
+              <SortTypeSelector
+                currentSort={sortType}
+                onSelect={setSortType}
+                sortGroups={poolSortGroups}
+                fullWidth={isSm}
+              />
+            </Box>
+          </Grid>
+        )}
       </Grid>
       <Grid
         container
@@ -244,28 +267,6 @@ const PoolList: React.FC<PoolListInterface> = ({
         className={cx({ [classes.loadingOverlay]: isLoading })}>
         {data.length > 0 || isLoading ? (
           <>
-            {isMd && (
-              <Grid container className={classes.tableHeader}>
-                <Button className={classes.showFavouritesButton} onClick={handleFavouritesClick}>
-                  <img src={showFavourites ? starFill : star} />
-                  {!isSm && (
-                    <Typography className={classes.showFavouritesText}>
-                      {!showFavourites ? 'Show' : 'Hide'} {!isSm && 'favourites'}
-                    </Typography>
-                  )}
-                </Button>
-
-                <Box className={classes.sortWrapper}>
-                  <SortTypeSelector
-                    currentSort={sortType}
-                    onSelect={setSortType}
-                    sortGroups={poolSortGroups}
-                    fullWidth={isSm}
-                  />
-                </Box>
-              </Grid>
-            )}
-
             {paginator(page).map((element, index) => (
               <PoolListItem
                 itemNumber={index + 1 + (page - 1) * ITEMS_PER_PAGE}

@@ -1,8 +1,7 @@
-import { Theme } from '@mui/material'
 import { colors, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
-export const useStyles = makeStyles()((theme: Theme) => {
+export const useStyles = makeStyles()(() => {
   return {
     root: {
       background: colors.invariant.component,
@@ -65,11 +64,7 @@ export const useStyles = makeStyles()((theme: Theme) => {
         filter: 'brightness(1.2)'
       },
       ...typography.body2,
-      color: colors.invariant.textGrey,
-
-      [theme.breakpoints.down('md')]: {
-        border: `1px solid ${colors.invariant.light}`
-      }
+      color: colors.invariant.textGrey
     },
     active: {
       background: colors.invariant.componentBcg
