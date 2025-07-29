@@ -3,7 +3,7 @@ import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { useMediaQuery, Grid, Typography, Box } from '@mui/material'
 import { airdropRainbowIcon, plusIcon, unknownTokenIcon } from '@static/icons'
 import { colors, theme, typography } from '@static/theme'
-import { shortenAddress } from '@utils/uiUtils'
+import { convertAPYValue, shortenAddress } from '@utils/uiUtils'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useStyles } from './style'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
@@ -185,20 +185,8 @@ export const MobilePoolListItem: React.FC<IProps> = ({
                 <span className={classes.APRLabel}>APR</span>
               </Box>
               <Box style={{ display: 'flex' }}>
-                <span className={classes.APYValue}>
-                  {convertedApy > 1000
-                    ? '>1000%'
-                    : convertedApy === 0
-                      ? ''
-                      : Math.abs(convertedApy).toFixed(2) + '%'}
-                </span>
-                <span className={classes.APRValue}>
-                  {convertedApr > 1000
-                    ? '>1000%'
-                    : convertedApr === 0
-                      ? ''
-                      : Math.abs(convertedApr).toFixed(2) + '%'}
-                </span>
+                <span className={classes.APYValue}>{convertAPYValue(convertedApy, 'APY')}</span>
+                <span className={classes.APRValue}>{convertAPYValue(convertedApr, 'APR')}</span>
               </Box>
             </Box>
             <Box>
