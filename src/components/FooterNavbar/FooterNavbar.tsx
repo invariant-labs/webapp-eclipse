@@ -1,11 +1,10 @@
-import { Box, Grid, Popover, Typography } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import useStyles from './style'
 import { Link, useLocation } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import {
   airdropIcon,
   liquidityIcon,
-  moreIcon,
   lqStakingIcon,
   statsIcon,
   swapArrowsIcon,
@@ -16,8 +15,6 @@ import { NetworkType } from '@store/consts/static'
 import { useSelector } from 'react-redux'
 import { network } from '@store/selectors/solanaConnection'
 import { colors } from '@static/theme'
-import { blurContent, unblurContent } from '@utils/uiUtils'
-import { Separator } from '@common/Separator/Separator'
 
 interface INavLinks {
   label: string
@@ -31,70 +28,70 @@ interface INavLinks {
 export const FooterNavbar = () => {
   const typeOfNetwork = useSelector(network)
 
-  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
-  const [isMorePopupOpen, setIsMorePopupOpen] = useState(false)
+  // const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
+  // const [isMorePopupOpen, setIsMorePopupOpen] = useState(false)
 
-  const moreOptions: INavLinks[] = [
-    ...(typeOfNetwork === NetworkType.Mainnet
-      ? [
-          {
-            label: 'Stake',
-            icon: lqStakingIcon,
-            url: 'stake',
-            onClick: () => {
-              setIsMorePopupOpen(false)
-              setAnchorEl(null)
-              unblurContent()
-            },
-            isLink: true,
-            width: 25
-          }
-        ]
-      : []),
+  // const moreOptions: INavLinks[] = [
+  //   ...(typeOfNetwork === NetworkType.Mainnet
+  //     ? [
+  //         {
+  //           label: 'Stake',
+  //           icon: lqStakingIcon,
+  //           url: 'stake',
+  //           onClick: () => {
+  //             setIsMorePopupOpen(false)
+  //             setAnchorEl(null)
+  //             unblurContent()
+  //           },
+  //           isLink: true,
+  //           width: 25
+  //         }
+  //       ]
+  //     : []),
 
-    ...(typeOfNetwork === NetworkType.Testnet
-      ? [
-          {
-            label: 'Creator',
-            icon: tokenCreatorIcon,
-            url: 'creator',
-            width: 25,
-            isLink: true,
-            onClick: () => {
-              setIsMorePopupOpen(false)
-              setAnchorEl(null)
-              unblurContent()
-            }
-          }
-        ]
-      : [
-          {
-            label: 'Points',
-            icon: airdropIcon,
-            url: 'points',
-            width: 22,
-            onClick: () => {
-              setIsMorePopupOpen(false)
-              setAnchorEl(null)
-              unblurContent()
-            },
-            isLink: true
-          }
-        ]),
+  //   ...(typeOfNetwork === NetworkType.Testnet
+  //     ? [
+  //         {
+  //           label: 'Creator',
+  //           icon: tokenCreatorIcon,
+  //           url: 'creator',
+  //           width: 25,
+  //           isLink: true,
+  //           onClick: () => {
+  //             setIsMorePopupOpen(false)
+  //             setAnchorEl(null)
+  //             unblurContent()
+  //           }
+  //         }
+  //       ]
+  //     : [
+  //         {
+  //           label: 'Points',
+  //           icon: airdropIcon,
+  //           url: 'points',
+  //           width: 22,
+  //           onClick: () => {
+  //             setIsMorePopupOpen(false)
+  //             setAnchorEl(null)
+  //             unblurContent()
+  //           },
+  //           isLink: true
+  //         }
+  //       ]),
 
-    {
-      label: 'Stats',
-      icon: statsIcon,
-      url: 'statistics',
-      width: 20,
-      onClick: () => {
-        setIsMorePopupOpen(false)
-        setAnchorEl(null)
-        unblurContent()
-      },
-      isLink: true
-    }
-  ]
+  //   {
+  //     label: 'Stats',
+  //     icon: statsIcon,
+  //     url: 'statistics',
+  //     width: 20,
+  //     onClick: () => {
+  //       setIsMorePopupOpen(false)
+  //       setAnchorEl(null)
+  //       unblurContent()
+  //     },
+  //     isLink: true
+  //   }
+  // ]
 
   const links: INavLinks[] = [
     {
@@ -118,6 +115,47 @@ export const FooterNavbar = () => {
       width: 26,
       isLink: true
     },
+
+    ...(typeOfNetwork === NetworkType.Mainnet
+      ? [
+          {
+            label: 'Stake',
+            icon: lqStakingIcon,
+            url: 'stake',
+
+            isLink: true,
+            width: 29
+          }
+        ]
+      : []),
+    ...(typeOfNetwork === NetworkType.Testnet
+      ? [
+          {
+            label: 'Creator',
+            icon: tokenCreatorIcon,
+            url: 'creator',
+            width: 25,
+            isLink: true
+          }
+        ]
+      : [
+          {
+            label: 'Points',
+            icon: airdropIcon,
+            url: 'points',
+            width: 22,
+
+            isLink: true
+          }
+        ]),
+
+    {
+      label: 'Stats',
+      icon: statsIcon,
+      url: 'statistics',
+      width: 30,
+      isLink: true
+    }
     // {
     //   label: 'Presale',
     //   icon: saleUnselectedIcon,
@@ -127,17 +165,17 @@ export const FooterNavbar = () => {
     //   width: 34
     // },
 
-    {
-      label: 'More',
-      icon: moreIcon,
-      width: 25,
-      isLink: false,
-      onClick: (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
-        setAnchorEl(e.currentTarget as HTMLButtonElement)
-        setIsMorePopupOpen(true)
-        blurContent()
-      }
-    }
+    // {
+    //   label: 'More',
+    //   icon: moreIcon,
+    //   width: 25,
+    //   isLink: false,
+    //   onClick: (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
+    //     setAnchorEl(e.currentTarget as HTMLButtonElement)
+    //     setIsMorePopupOpen(true)
+    //     blurContent()
+    //   }
+    // }
   ]
 
   const location = useLocation()
@@ -161,11 +199,11 @@ export const FooterNavbar = () => {
     ...(typeOfNetwork === NetworkType.Mainnet ? { more: [/^stake\/*/] } : {})
   }
 
-  const isMoreOptionActive = () => {
-    return moreOptions.some(
-      option => option.url === activePath || (option.url && activePath.startsWith(option.url))
-    )
-  }
+  // const isMoreOptionActive = () => {
+  //   return moreOptions.some(
+  //     option => option.url === activePath || (option.url && activePath.startsWith(option.url))
+  //   )
+  // }
 
   const [display, setDisplay] = useState(true)
 
@@ -180,11 +218,11 @@ export const FooterNavbar = () => {
     return () => window.visualViewport!.removeEventListener('resize', resizeHandler)
   }, [])
 
-  const handleClosePopup = () => {
-    setIsMorePopupOpen(false)
-    setAnchorEl(null)
-    unblurContent()
-  }
+  // const handleClosePopup = () => {
+  //   setIsMorePopupOpen(false)
+  //   setAnchorEl(null)
+  //   unblurContent()
+  // }
 
   return (
     <>
@@ -195,15 +233,15 @@ export const FooterNavbar = () => {
         {links.map((link, index) => {
           let active = false
 
-          if (link.label === 'More') {
-            active = isMoreOptionActive()
-          } else {
-            active =
-              link.url === activePath ||
-              (!!link.url &&
-                !!otherRoutesToHighlight[link.url] &&
-                otherRoutesToHighlight[link.url].some(pathRegex => pathRegex.test(activePath)))
-          }
+          // if (link.label === 'More') {
+          //   // active = isMoreOptionActive()
+          // } else {
+          active =
+            link.url === activePath ||
+            (!!link.url &&
+              !!otherRoutesToHighlight[link.url] &&
+              otherRoutesToHighlight[link.url].some(pathRegex => pathRegex.test(activePath)))
+          // }
 
           if (link.isLink && link.url) {
             return (
@@ -285,7 +323,7 @@ export const FooterNavbar = () => {
         })}
       </Box>
 
-      <Popover
+      {/* <Popover
         classes={{ paper: classes.paper }}
         open={isMorePopupOpen}
         anchorEl={anchorEl}
@@ -349,7 +387,7 @@ export const FooterNavbar = () => {
             )
           })}
         </Box>
-      </Popover>
+      </Popover> */}
     </>
   )
 }
