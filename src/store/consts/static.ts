@@ -414,6 +414,7 @@ export const KYSOL_MAIN: Token = {
 }
 
 export const ES_MAIN: Token = {
+  tokenProgram: TOKEN_2022_PROGRAM_ID,
   symbol: 'ES',
   address: new PublicKey('GnBAskb2SQjrLgpTjtgatz4hEugUsYV7XrWU1idV3oqW'),
   decimals: 6,
@@ -434,6 +435,7 @@ export const TUSD_MAIN: Token = {
 }
 
 export const muES_MAIN: Token = {
+  tokenProgram: TOKEN_PROGRAM_ID,
   symbol: 'muES',
   address: new PublicKey('A9qpp2Ejxvy7xE4JxLLqSsqMcjsPUAJpyHTbA2WDJ4E3'),
   decimals: 6,
