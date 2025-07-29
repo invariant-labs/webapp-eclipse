@@ -302,3 +302,15 @@ export const getLabelDate = (
 
   return `${day < 10 ? '0' : ''}${day} ${monthName}`
 }
+
+type RateType = 'APY' | 'APR'
+
+export const convertAPYValue = (apy: number, type: RateType) => {
+  return apy > 9999
+    ? '>9999%'
+    : apy === 0
+      ? type === 'APY'
+        ? '-'
+        : ''
+      : Math.abs(apy).toFixed(2) + '%'
+}
