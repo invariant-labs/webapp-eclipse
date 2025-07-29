@@ -429,25 +429,6 @@ const PoolListItem: React.FC<IProps> = ({
             title='Action'
             value={
               <Box className={classes.action}>
-                {isLocked && (
-                  <TooltipHover
-                    maxWidth='none'
-                    title={
-                      <LockStatsPopover
-                        lockedX={tokenAData.locked}
-                        lockedY={tokenBData.locked}
-                        symbolX={shortenAddress(tokenAData.symbol ?? '')}
-                        symbolY={shortenAddress(tokenBData.symbol ?? '')}
-                        liquidityX={tokenAData.liquidity}
-                        liquidityY={tokenBData.liquidity}
-                      />
-                    }>
-                    <button className={classes.actionButton}>
-                      <img width={32} height={32} src={lockIcon} alt={'Lock info'} />
-                    </button>
-                  </TooltipHover>
-                )}
-
                 <TooltipHover title='Pool details'>
                   <button className={classes.actionButton} onClick={handleOpenPoolDetails}>
                     <img width={32} height={32} src={poolStatsBtnIcon} alt={'Pool details'} />
@@ -492,6 +473,25 @@ const PoolListItem: React.FC<IProps> = ({
                     <img width={32} height={32} src={newTabBtnIcon} alt={'Explorer'} />
                   </button>
                 </TooltipHover>
+
+                {isLocked && (
+                  <TooltipHover
+                    maxWidth='none'
+                    title={
+                      <LockStatsPopover
+                        lockedX={tokenAData.locked}
+                        lockedY={tokenBData.locked}
+                        symbolX={shortenAddress(tokenAData.symbol ?? '')}
+                        symbolY={shortenAddress(tokenBData.symbol ?? '')}
+                        liquidityX={tokenAData.liquidity}
+                        liquidityY={tokenBData.liquidity}
+                      />
+                    }>
+                    <button className={classes.actionButton}>
+                      <img width={32} height={32} src={lockIcon} alt={'Lock info'} />
+                    </button>
+                  </TooltipHover>
+                )}
               </Box>
             }
           />
@@ -527,25 +527,6 @@ const PoolListItem: React.FC<IProps> = ({
         <Grid gap={'12px'} display='flex' container flexDirection='column'>
           <Box className={classes.info}>
             <Grid container gap={'8px'} overflow={'hidden'}>
-              {isMdUp && isLocked && (
-                <Box display='flex' flex={1}>
-                  <TooltipHover
-                    fullSpan
-                    maxWidth='none'
-                    title={
-                      <LockStatsPopover
-                        lockedX={tokenAData.locked}
-                        lockedY={tokenBData.locked}
-                        symbolX={shortenAddress(tokenAData.symbol ?? '')}
-                        symbolY={shortenAddress(tokenBData.symbol ?? '')}
-                        liquidityX={tokenAData.liquidity}
-                        liquidityY={tokenBData.liquidity}
-                      />
-                    }>
-                    <BoxValue title='Locked' icon={lockIcon} />
-                  </TooltipHover>
-                </Box>
-              )}
               {isMdUp && (
                 <BoxValue
                   title='Pool details'
@@ -586,6 +567,26 @@ const PoolListItem: React.FC<IProps> = ({
                   smallerIcon
                 />
               )}
+
+              {isMdUp && isLocked && (
+                <Box display='flex' flex={1}>
+                  <TooltipHover
+                    fullSpan
+                    maxWidth='none'
+                    title={
+                      <LockStatsPopover
+                        lockedX={tokenAData.locked}
+                        lockedY={tokenBData.locked}
+                        symbolX={shortenAddress(tokenAData.symbol ?? '')}
+                        symbolY={shortenAddress(tokenBData.symbol ?? '')}
+                        liquidityX={tokenAData.liquidity}
+                        liquidityY={tokenBData.liquidity}
+                      />
+                    }>
+                    <BoxValue title='Locked' icon={lockIcon} />
+                  </TooltipHover>
+                </Box>
+              )}
             </Grid>
           </Box>
           {isMd && (
@@ -602,6 +603,23 @@ const PoolListItem: React.FC<IProps> = ({
                     }}
                   />
                 )}
+
+                <BoxValue
+                  title={isSm ? 'Details' : 'Pool details'}
+                  icon={poolStatsBtnIcon}
+                  onClick={handleOpenPoolDetails}
+                />
+                <BoxValue
+                  title='View'
+                  icon={newTabBtnIcon}
+                  onClick={() => {
+                    window.open(
+                      `https://eclipsescan.xyz/account/${poolAddress}${networkUrl}`,
+                      '_blank',
+                      'noopener,noreferrer'
+                    )
+                  }}
+                />
 
                 {isLocked && (
                   <Box display='flex' flex={1}>
@@ -622,22 +640,6 @@ const PoolListItem: React.FC<IProps> = ({
                     </TooltipHover>
                   </Box>
                 )}
-                <BoxValue
-                  title={isSm ? 'Details' : 'Pool details'}
-                  icon={poolStatsBtnIcon}
-                  onClick={handleOpenPoolDetails}
-                />
-                <BoxValue
-                  title='View'
-                  icon={newTabBtnIcon}
-                  onClick={() => {
-                    window.open(
-                      `https://eclipsescan.xyz/account/${poolAddress}${networkUrl}`,
-                      '_blank',
-                      'noopener,noreferrer'
-                    )
-                  }}
-                />
               </Grid>
             </Box>
           )}
