@@ -9,7 +9,7 @@ import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import { actions as navigationActions } from '@store/reducers/navigation'
 import { getPromotedPools } from '@store/selectors/leaderboard'
 import { ISearchToken } from '@common/FilterSearch/FilterSearch'
-import { Intervals } from '@store/consts/static'
+import { Intervals, SortTypePoolList } from '@store/consts/static'
 import {
   liquiditySearch,
   showFavourites as showFavouritesSelector
@@ -25,7 +25,7 @@ export const WrappedPoolList: React.FC = () => {
   const currentNetwork = useSelector(network)
   const searchParams = useSelector(liquiditySearch)
   const isLoadingStats = useSelector(isLoading)
-
+  console.log(searchParams.pageNumber)
   const selectedFilters = searchParams.filteredTokens
   const setSelectedFilters = (tokens: ISearchToken[]) => {
     dispatch(
@@ -35,6 +35,7 @@ export const WrappedPoolList: React.FC = () => {
         filteredTokens: tokens
       })
     )
+
     dispatch(
       navigationActions.setSearch({
         section: 'liquidityPool',
@@ -104,7 +105,7 @@ export const WrappedPoolList: React.FC = () => {
 
       return true
     })
-  }, [isLoadingStats, poolsList, selectedFilters, favouritePools, showFavourites])
+  }, [isLoadingStats, poolsList, selectedFilters, favouritePools, showFavourites, searchParams])
 
   const showAPY = useMemo(() => {
     return filteredPoolsList.some(pool => pool.apy !== 0)
@@ -133,6 +134,21 @@ export const WrappedPoolList: React.FC = () => {
         pageNumber: 1
       })
     )
+  }
+
+  const handleChangePagination = (newPage: number) => {
+    console.log('test')
+    dispatch(
+      navigationActions.setSearch({
+        section: 'liquidityPool',
+        type: 'pageNumber',
+        pageNumber: newPage
+      })
+    )
+  }
+
+  const handlePoolsSortType = (sortType: SortTypePoolList) => {
+    dispatch(navigationActions.setSearch({ section: 'liquidityPool', type: 'sortType', sortType }))
   }
 
   return (
@@ -179,6 +195,9 @@ export const WrappedPoolList: React.FC = () => {
       handleFavouritesClick={handleFavouritesClick}
       setSearchPoolsValue={setSelectedFilters}
       searchPoolsValue={selectedFilters}
+      handleChangePagination={handleChangePagination}
+      handleSortType={handlePoolsSortType}
+      searchParams={searchParams}
     />
   )
 }

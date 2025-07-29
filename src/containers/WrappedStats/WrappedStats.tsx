@@ -30,7 +30,7 @@ import { actions as navigationActions } from '@store/reducers/navigation'
 import { VariantType } from 'notistack'
 import { getPromotedPools } from '@store/selectors/leaderboard'
 import { ISearchToken } from '@common/FilterSearch/FilterSearch'
-import { Intervals as IntervalsKeys } from '@store/consts/static'
+import { Intervals as IntervalsKeys, SortTypePoolList } from '@store/consts/static'
 import Overview from '@components/Stats/Overview/Overview'
 import {
   poolSearch,
@@ -280,6 +280,20 @@ export const WrappedStats: React.FC = () => {
     )
   }
 
+  const handleChangePoolPagination = (newPage: number) => {
+    dispatch(
+      navigationActions.setSearch({
+        section: 'statsPool',
+        type: 'pageNumber',
+        pageNumber: newPage
+      })
+    )
+  }
+
+  const handlePoolsSortType = (sortType: SortTypePoolList) => {
+    dispatch(navigationActions.setSearch({ section: 'statsPool', type: 'sortType', sortType }))
+  }
+
   return (
     <Grid container className={classes.wrapper}>
       {liquidityPlotData.length === 0 && !isLoadingStats ? (
@@ -348,7 +362,11 @@ export const WrappedStats: React.FC = () => {
             showFavourites={showFavourites}
             handleFavouritesClick={handleFavouritesClick}
             setSearchPoolsValue={setSearchPoolsValue}
+            setSearchTokensValue={setSearchTokensValue}
             searchPoolsValue={searchPoolsValue}
+            handleChangePagination={handleChangePoolPagination}
+            handleSortType={handlePoolsSortType}
+            searchParams={searchParamsPool}
           />
           <TokensList
             initialLength={tokensList.length}

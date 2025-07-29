@@ -23,8 +23,7 @@ import { colors, theme } from '@static/theme'
 import { FilterSearch, ISearchToken } from '@common/FilterSearch/FilterSearch'
 import { shortenAddress } from '@utils/uiUtils'
 import { actions } from '@store/reducers/navigation'
-import { useDispatch, useSelector } from 'react-redux'
-import { poolSearch } from '@store/selectors/navigation'
+import { useDispatch } from 'react-redux'
 import SortTypeSelector from '../SortTypeSelector/SortTypeSelector'
 import { star, starFill } from '@static/icons'
 
@@ -64,7 +63,15 @@ export interface PoolListInterface {
   showFavourites: boolean
   handleFavouritesClick: () => void
   setSearchPoolsValue: (value: ISearchToken[]) => void
+  setSearchTokensValue?: (value: ISearchToken[]) => void
   searchPoolsValue: ISearchToken[]
+  handleChangePagination: (newPage: number) => void
+  handleSortType: (sortType: SortTypePoolList) => void
+  searchParams: {
+    filteredTokens: ISearchToken[]
+    sortType: SortTypePoolList
+    pageNumber: number
+  }
 }
 
 const tokens = [BTC_TEST, USDC_TEST, WETH_TEST]
@@ -110,24 +117,27 @@ const PoolList: React.FC<PoolListInterface> = ({
   showFavourites,
   handleFavouritesClick,
   setSearchPoolsValue,
-  searchPoolsValue
+  searchPoolsValue,
+  handleChangePagination,
+  handleSortType,
+  searchParams
 }) => {
   const navigate = useNavigate()
   const location = useLocation()
   const dispatch = useDispatch()
-  const searchParam = useSelector(poolSearch)
 
   const [initialDataLength, setInitialDataLength] = useState(initialLength)
   const { classes, cx } = useStyles()
   const filteredTokenX = filteredTokens[0] ?? ''
   const filteredTokenY = filteredTokens[1] ?? ''
-  const page = searchParam.pageNumber
-  const [sortType, setSortType] = useState<SortTypePoolList>(searchParam.sortType)
+  const page = searchParams.pageNumber
+  const [sortType, setSortType] = useState<SortTypePoolList>(searchParams.sortType)
 
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
+
   useEffect(() => {
-    dispatch(actions.setSearch({ section: 'statsPool', type: 'sortType', sortType }))
+    handleSortType(sortType)
   }, [sortType])
 
   const sortedData = useMemo(() => {
@@ -178,16 +188,8 @@ const PoolList: React.FC<PoolListInterface> = ({
     return Math.max(rowNumber - displayedItems, 0)
   }
 
-  const handleChangePagination = (newPage: number) => {
-    dispatch(
-      actions.setSearch({
-        section: 'statsPool',
-        type: 'pageNumber',
-        pageNumber: newPage
-      })
-    )
-  }
   const paginator = (currentPage: number) => {
+    console.log(currentPage)
     const page = currentPage || 1
     const offest = (page - 1) * ITEMS_PER_PAGE
 
@@ -204,7 +206,7 @@ const PoolList: React.FC<PoolListInterface> = ({
     () => (initialDataLength > ITEMS_PER_PAGE ? (isCenterAligment ? 176 : 90) : 79),
     [initialDataLength, isCenterAligment]
   )
-
+  console.log(page)
   return (
     <>
       <Grid className={classes.headerWrapper} container>
