@@ -3,7 +3,7 @@ import { Grid } from '@mui/material'
 import { PoolSnap } from '@store/reducers/stats'
 import { Intervals as IntervalsKeys } from '@store/consts/static'
 import InfoItem from './InfoItem/InfoItem'
-import { mapIntervalToString } from '@utils/uiUtils'
+import { convertAPYValue, mapIntervalToString } from '@utils/uiUtils'
 import { formatNumberWithoutSuffix } from '@utils/utils'
 
 export interface IProps {
@@ -33,9 +33,7 @@ export const InfoUpperSection: React.FC<IProps> = ({
         flexWrap='wrap'>
         <InfoItem
           name='Pool APY'
-          value={
-            statsPoolData.apy > 1000 ? '>1000%' : `${formatNumberWithoutSuffix(statsPoolData.apy)}%`
-          }
+          value={convertAPYValue(statsPoolData.apy, 'APY')}
           isLoadingStats={isLoadingStats}
           poolUnavailable={!poolAddress}
         />
