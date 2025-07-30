@@ -101,7 +101,8 @@ import {
   WEETHS_MAIN,
   sBITZ_MAIN,
   MAX_PLOT_VISIBLE_TICK_RANGE,
-  CHECKER_API_URL
+  CHECKER_API_URL,
+  NoConfig
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
@@ -711,6 +712,7 @@ interface FormatNumberWithSuffixConfig {
   decimalsAfterDot?: number
   alternativeConfig?: boolean
   noSubNumbers?: boolean
+  noConfig?: boolean
 }
 
 export const getThresholdsDecimals = (
@@ -730,16 +732,22 @@ export const formatNumberWithSuffix = (
     noDecimals,
     decimalsAfterDot,
     alternativeConfig,
-    noSubNumbers
+    noSubNumbers,
+    noConfig
   }: Required<FormatNumberWithSuffixConfig> = {
     noDecimals: false,
     decimalsAfterDot: 3,
     alternativeConfig: false,
     noSubNumbers: false,
+    noConfig: false,
     ...config
   }
 
-  const formatConfig = alternativeConfig ? AlternativeFormatConfig : FormatConfig
+  const formatConfig = noConfig
+    ? NoConfig
+    : alternativeConfig
+      ? AlternativeFormatConfig
+      : FormatConfig
 
   const numberAsNumber = Number(number)
   const isNegative = numberAsNumber < 0

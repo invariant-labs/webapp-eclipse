@@ -259,13 +259,13 @@ export const ChangeLiquidityModal: React.FC<IChangeLiquidityModal> = ({
                       src={(xToY ? tokenY.icon : tokenX.icon) || unknownTokenIcon}
                       alt={`${xToY ? tokenY.icon : tokenX.icon} icon`}
                     />
-                    {tokenYPercentage}% /
+                    {isNaN(tokenYPercentage) ? 0 : tokenYPercentage}% /
                     <img
                       className={classes.token}
                       src={(xToY ? tokenX.icon : tokenY.icon) || unknownTokenIcon}
                       alt={`${xToY ? tokenX.icon : tokenY.icon} icon`}
                     />
-                    {tokenXPercentage}%
+                    {isNaN(tokenXPercentage) ? 0 : tokenXPercentage}%
                   </Box>
                 </Box>
               </Box>

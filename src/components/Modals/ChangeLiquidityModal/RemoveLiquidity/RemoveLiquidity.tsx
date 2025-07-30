@@ -718,7 +718,7 @@ export const RemoveLiquidity: React.FC<IProps> = ({
           formatNumberWithSuffix(x, {
             decimalsAfterDot: getThresholdsDecimals(x, thresholdsWithTokenDecimal(xDecimal)),
             noSubNumbers: true,
-            alternativeConfig: true
+            noConfig: true
           }),
           xDecimal
         )
@@ -729,7 +729,7 @@ export const RemoveLiquidity: React.FC<IProps> = ({
           formatNumberWithSuffix(y, {
             decimalsAfterDot: getThresholdsDecimals(y, thresholdsWithTokenDecimal(yDecimal)),
             noSubNumbers: true,
-            alternativeConfig: true
+            noConfig: true
           }),
           yDecimal
         )
@@ -768,7 +768,10 @@ export const RemoveLiquidity: React.FC<IProps> = ({
 
   useEffect(() => {
     setIsSlider(false)
-    setDepositPercentage(Math.round((+tokenADeposit / tokenXLiquidity) * 100))
+
+    const depositPercentage = Math.round((+tokenADeposit / tokenXLiquidity) * 100)
+
+    setDepositPercentage(isNaN(depositPercentage) ? 0 : depositPercentage)
   }, [tokenADeposit])
 
   return (

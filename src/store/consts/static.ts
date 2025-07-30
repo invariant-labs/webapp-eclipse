@@ -742,6 +742,16 @@ export const AlternativeFormatConfig = {
   DecimalsAfterDot: 2
 }
 
+export const NoConfig = {
+  B: 1000000000000000,
+  M: 1000000000000000,
+  K: 1000000000000000,
+  BDecimals: 100,
+  MDecimals: 100,
+  KDecimals: 100,
+  DecimalsAfterDot: 2
+}
+
 export enum PositionTokenBlock {
   None,
   A,
