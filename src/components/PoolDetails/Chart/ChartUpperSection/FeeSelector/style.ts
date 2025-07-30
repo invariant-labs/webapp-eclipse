@@ -23,7 +23,7 @@ export const useStyles = makeStyles()(() => ({
   selected: {
     color: colors.invariant.text,
     display: 'flex',
-    width: 128,
+    width: 132,
     alignItems: 'center',
     justifyContent: 'center',
     border: `2px solid ${colors.invariant.light}`,
