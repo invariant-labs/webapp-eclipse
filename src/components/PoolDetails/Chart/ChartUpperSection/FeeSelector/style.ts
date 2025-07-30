@@ -37,19 +37,23 @@ export const useStyles = makeStyles()(() => ({
     marginLeft: 8
   },
   dropdown: {
-    width: 132,
+    width: 160,
     display: 'flex',
     flexDirection: 'column',
     gap: 6,
     position: 'absolute',
     top: 'calc(100% + 8px)',
-    left: -8,
+    left: -24,
     padding: 8,
     backgroundColor: colors.invariant.component,
     borderRadius: 16,
     boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
     zIndex: 1,
-    overflow: 'hidden'
+    overflow: 'hidden',
+
+    [theme.breakpoints.down('sm')]: {
+      left: -8
+    }
   },
   option: {
     padding: '10px 14px',
@@ -151,6 +155,18 @@ export const useStyles = makeStyles()(() => ({
   },
   selectorDisabled: {
     cursor: 'not-allowed'
+  },
+  valueContainer: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+
+    '& > :first-of-type': {
+      color: colors.invariant.textGrey
+    },
+    '& > :nth-of-type(2)': {
+      color: colors.invariant.text
+    }
   }
 }))
 

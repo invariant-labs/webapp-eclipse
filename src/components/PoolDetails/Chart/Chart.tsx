@@ -29,7 +29,7 @@ export interface IProps {
   selectFeeTier: (value: number) => void
   feeTiers: number[]
   feeTiersWithTvl: Record<number, number>
-  totalTvl: number
+  aggregatedStats: { tvl: number; fees: number; volume: number }
   feeTierIndex: number
   isDisabled: boolean
   disabledFeeTiers: string[]
@@ -61,7 +61,7 @@ export const Chart: React.FC<IProps> = ({
   selectFeeTier,
   feeTiers,
   feeTiersWithTvl,
-  totalTvl,
+  aggregatedStats,
   feeTierIndex,
   isDisabled,
   disabledFeeTiers,
@@ -106,7 +106,7 @@ export const Chart: React.FC<IProps> = ({
           selectFeeTier={selectFeeTier}
           feeTiers={feeTiers}
           feeTiersWithTvl={feeTiersWithTvl}
-          totalTvl={totalTvl}
+          aggregatedStats={aggregatedStats}
           feeTierIndex={feeTierIndex}
           isDisabled={isDisabled}
           disabledFeeTiers={disabledFeeTiers}
@@ -116,6 +116,7 @@ export const Chart: React.FC<IProps> = ({
           initialHideUnknownTokensValue={initialHideUnknownTokensValue}
           setHideUnknownTokensValue={setHideUnknownTokensValue}
           noData={noData}
+          interval={interval}
         />
         <Box className={classes.separator} />
         {(noData && !isLoadingChart) || sameTokensError ? (

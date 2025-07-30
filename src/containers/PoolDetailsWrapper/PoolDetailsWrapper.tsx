@@ -282,7 +282,6 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
         return
       } else {
         setSameTokensError(false)
-        console.log('test')
         dispatch(
           poolsActions.getPoolData(
             new Pair(tokenX.assetAddress, tokenY.assetAddress, {
@@ -322,15 +321,17 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
   }
 
   useEffect(() => {
-    dispatch(actions.getCurrentIntervalStats({ interval: IntervalsKeys.Daily }))
-  }, [initialFee])
+    dispatch(actions.getCurrentIntervalStats({ interval: lastUsedInterval ?? IntervalsKeys.Daily }))
+  }, [initialFee, lastUsedInterval])
 
-  const { feeTiersWithTvl, totalTvl } = useMemo(() => {
+  const { feeTiersWithTvl, totalTvl, totalFees, totalVolume } = useMemo(() => {
     if (tokenX === null || tokenY === null) {
-      return { feeTiersWithTvl: {}, totalTvl: 0 }
+      return { feeTiersWithTvl: {}, totalTvl: 0, totalFees: 0, totalVolume: 0 }
     }
     const feeTiersWithTvl: Record<number, number> = {}
     let totalTvl = 0
+    let totalFees = 0
+    let totalVolume = 0
 
     poolsList.forEach(pool => {
       const xMatch =
@@ -341,15 +342,16 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
       if (xMatch || yMatch) {
         feeTiersWithTvl[pool.fee] = pool.tvl
         totalTvl += pool.tvl
+        totalFees += pool.fee * 0.01 * pool.volume24
+        totalVolume += pool.volume24
       }
     })
 
-    return { feeTiersWithTvl, totalTvl }
-  }, [poolsList, tokenX, tokenY])
+    return { feeTiersWithTvl, totalTvl, totalFees, totalVolume }
+  }, [poolsList, tokenX, tokenY, lastUsedInterval])
 
   const feeTiers = ALL_FEE_TIERS_DATA.map(tier => +printBN(tier.tier.fee, DECIMAL - 2))
-  console.log(feeTiersWithTvl)
-  console.log(feeTiers)
+
   const selectFeeTier = (index: number) => {
     if (index === -1) return
 
@@ -380,7 +382,7 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
   const onRefresh = () => {
     setTriggerRefresh(prev => !prev)
 
-    dispatch(actions.getCurrentIntervalStats({ interval: IntervalsKeys.Daily }))
+    dispatch(actions.getCurrentIntervalStats({ interval: lastUsedInterval ?? IntervalsKeys.Daily }))
 
     if (fee && tickSpacing && tokenX && tokenY) {
       if (tokenX.assetAddress.toString() === tokenY.assetAddress.toString()) {
@@ -502,9 +504,7 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
       )
     }
   }, [])
-  console.log(statsPoolData)
-  console.log(poolData)
-  console.log(sameTokensError)
+
   return (
     <PoolDetails
       network={currentNetwork}
@@ -528,7 +528,7 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
       feeTiers={feeTiers}
       handleBack={handleBack}
       feeTiersWithTvl={feeTiersWithTvl}
-      totalTvl={totalTvl}
+      aggregatedStats={{ tvl: totalTvl, fees: totalFees, volume: totalVolume }}
       feeTierIndex={feeTierIndex}
       onRefresh={onRefresh}
       isFavourite={isFavourite}

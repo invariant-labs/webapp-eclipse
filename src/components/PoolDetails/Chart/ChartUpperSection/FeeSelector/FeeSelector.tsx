@@ -1,19 +1,25 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { Box, ClickAwayListener, Skeleton, Typography, useMediaQuery } from '@mui/material'
+import { Box, ClickAwayListener, Grid, Skeleton, Typography, useMediaQuery } from '@mui/material'
 import useStyles from './style'
 import { DropdownIcon } from '@static/componentIcon/DropdownIcon'
-import { theme } from '@static/theme'
-
+import { colors, theme } from '@static/theme'
+import { Intervals as IntervalsKeys } from '@store/consts/static'
+import { formatNumberWithSuffix } from '@utils/utils'
+import { Separator } from '@common/Separator/Separator'
+import { SwapToken } from '@store/selectors/solanaWallet'
 export interface IProps {
   onSelect: (value: number) => void
   feeTiers: number[]
   currentFeeIndex: number
   promotedPoolTierIndex?: number
   feeTiersWithTvl: Record<number, number>
-  totalTvl: number
+  aggregatedStats: { tvl: number; fees: number; volume: number }
   disabledFeeTiers: string[]
   noData: boolean
   isLoading: boolean
+  interval: IntervalsKeys
+  tokenX: SwapToken | null
+  tokenY: SwapToken | null
 }
 
 export const FeeSelector: React.FC<IProps> = ({
@@ -21,11 +27,14 @@ export const FeeSelector: React.FC<IProps> = ({
   feeTiers,
   currentFeeIndex,
   feeTiersWithTvl,
-  totalTvl,
+  aggregatedStats,
   promotedPoolTierIndex,
   disabledFeeTiers,
   noData,
-  isLoading
+  isLoading,
+  interval,
+  tokenX,
+  tokenY
 }) => {
   const { classes, cx } = useStyles()
   const [open, setOpen] = useState(false)
@@ -53,12 +62,12 @@ export const FeeSelector: React.FC<IProps> = ({
       const value = feeTiersWithTvl[tier]
       if (!doesPoolExist(tier) || value === 0) return '0%'
       if (Object.keys(feeTiersWithTvl).length === 1) return '100%'
-      const pct = Math.round((value / totalTvl) * 100)
+      const pct = Math.round((value / aggregatedStats.tvl) * 100)
       if (pct < 1) return '<1%'
       if (pct > 99) return '>99%'
       return `${pct}%`
     },
-    [doesPoolExist, feeTiersWithTvl, totalTvl]
+    [doesPoolExist, feeTiersWithTvl, aggregatedStats.tvl]
   )
 
   const handleSelect = (tier: number) => {
@@ -101,6 +110,25 @@ export const FeeSelector: React.FC<IProps> = ({
 
             {open && (
               <Box className={classes.dropdown}>
+                <Grid display={'flex'} flexDirection={'column'} gap={1}>
+                  <Typography color={colors.invariant.text}>
+                    {tokenX?.symbol + ' - ' + tokenY?.symbol}
+                  </Typography>
+
+                  <Box className={classes.valueContainer}>
+                    <Typography>TVL {interval}</Typography>
+                    <Typography>{formatNumberWithSuffix(aggregatedStats.tvl)}</Typography>
+                  </Box>
+                  <Box className={classes.valueContainer}>
+                    <Typography>Fees {interval}</Typography>
+                    <Typography>{formatNumberWithSuffix(aggregatedStats.fees)}</Typography>
+                  </Box>
+                  <Box className={classes.valueContainer}>
+                    <Typography>Volume {interval}</Typography>
+                    <Typography>{formatNumberWithSuffix(aggregatedStats.volume)}</Typography>
+                  </Box>
+                </Grid>
+                <Separator color={colors.invariant.light} isHorizontal margin='8px 0' />
                 {feeTiers.map((tier, index) => {
                   const notCreated = !doesPoolExist(tier)
                   const disabled = disabledFeeTiers.includes(tier.toString())
@@ -125,11 +153,15 @@ export const FeeSelector: React.FC<IProps> = ({
                       }}>
                       <Typography className={classes.optionText}>{tier}%</Typography>
                       <Typography className={classes.tvlText}>
-                        {disabled
-                          ? 'Pool disabled'
-                          : notCreated
-                            ? 'Not created'
-                            : getTvlValue(tier) + ' TVL'}
+                        {disabled ? (
+                          'Pool disabled'
+                        ) : notCreated ? (
+                          'Not created'
+                        ) : (
+                          <Grid>
+                            <span>{getTvlValue(tier) + ' TVL'}</span>
+                          </Grid>
+                        )}
                       </Typography>
                     </Box>
                   )

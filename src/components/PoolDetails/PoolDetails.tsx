@@ -34,7 +34,7 @@ export interface IProps {
   feeTiers: number[]
   handleBack: () => void
   feeTiersWithTvl: Record<number, number>
-  totalTvl: number
+  aggregatedStats: { tvl: number; fees: number; volume: number }
   feeTierIndex: number
   onRefresh: () => void
   isFavourite: boolean
@@ -70,7 +70,7 @@ export const PoolDetails: React.FC<IProps> = ({
   feeTiers,
   handleBack,
   feeTiersWithTvl,
-  totalTvl,
+  aggregatedStats,
   feeTierIndex,
   onRefresh,
   isFavourite,
@@ -118,7 +118,7 @@ export const PoolDetails: React.FC<IProps> = ({
           selectFeeTier={selectFeeTier}
           feeTiers={feeTiers}
           feeTiersWithTvl={feeTiersWithTvl}
-          totalTvl={totalTvl}
+          aggregatedStats={aggregatedStats}
           feeTierIndex={feeTierIndex}
           isDisabled={isDisabled}
           disabledFeeTiers={disabledFeeTiers}
