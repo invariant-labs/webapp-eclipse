@@ -99,11 +99,16 @@ export const FeeSelector: React.FC<IProps> = ({
         />
       ) : (
         <Button
-          onClick={handleClick}
+          onClick={event => {
+            if (noData) return
+
+            handleClick(event)
+          }}
           className={cx(classes.selected, {
             [classes.bestSelect]: currentFeeIndex === originalBestTierIndex,
             [classes.promotedSelect]: currentFeeIndex === promotedPoolTierIndex
-          })}>
+          })}
+          style={{ cursor: noData ? 'not-allowed' : 'pointer' }}>
           {noData ? (
             <Typography className={classes.selectedText}>-</Typography>
           ) : (
