@@ -769,10 +769,12 @@ export const RemoveLiquidity: React.FC<IProps> = ({
   useEffect(() => {
     setIsSlider(false)
 
-    const depositPercentage = Math.round((+tokenADeposit / tokenXLiquidity) * 100)
-
+    const value = tokenAInputState.blocked
+      ? +tokenBDeposit / tokenYLiquidity
+      : +tokenADeposit / tokenXLiquidity
+    const depositPercentage = Math.round(value * 100)
     setDepositPercentage(isNaN(depositPercentage) ? 0 : depositPercentage)
-  }, [tokenADeposit])
+  }, [tokenADeposit, tokenBDeposit, tokenXLiquidity, tokenYLiquidity])
 
   return (
     <Grid container className={cx(classes.wrapper, classes.deposit)}>
