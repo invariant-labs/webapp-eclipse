@@ -178,26 +178,30 @@ const TokensList: React.FC<ITokensList> = ({
 
   return (
     <>
-      <Grid container>
-        <Grid container className={classes.headerWrapper}>
-          <Typography className={classes.subheader}>Top tokens</Typography>
-          <Box className={classes.headerContainer}>
-            {!isMd && (
-              <Button className={classes.showFavouritesButton} onClick={handleFavouritesClick}>
-                <img src={showFavourites ? starFill : star} />
-                {
-                  <Typography className={classes.showFavouritesText}>
-                    {!showFavourites ? 'Show ' : 'Hide '}favourites
-                  </Typography>
-                }
-              </Button>
-            )}
-            {!isMd && (
-              <SortTypeSelector
-                currentSort={sortType}
-                onSelect={setSortType}
-                sortGroups={tokenSortGroups}
-              />
+      <Typography className={classes.subheader} mt={isSm ? '24px' : '72px'}>
+        Top tokens
+      </Typography>
+      <Grid container className={classes.headerWrapper}>
+        <Grid container className={classes.tableHeader}>
+          {!isSm && (
+            <Button className={classes.showFavouritesButton} onClick={handleFavouritesClick}>
+              <img src={showFavourites ? starFill : star} />
+              {!isMd && (
+                <Typography className={classes.showFavouritesText}>
+                  {!showFavourites ? 'Show ' : 'Hide '}favourites
+                </Typography>
+              )}
+            </Button>
+          )}
+          <Grid className={classes.headerContainer}>
+            {!isSm && (
+              <Box className={classes.sortWrapper}>
+                <SortTypeSelector
+                  currentSort={sortType}
+                  sortGroups={tokenSortGroups}
+                  onSelect={setSortType}
+                />
+              </Box>
             )}
 
             <FilterSearch
@@ -206,11 +210,12 @@ const TokensList: React.FC<ITokensList> = ({
               selectedFilters={searchTokensValue}
               filtersAmount={2}
               closeOnSelect={true}
+              width={isMd ? 250 : 350}
             />
-          </Box>
+          </Grid>
         </Grid>
-        {isMd && (
-          <Grid container className={classes.tableHeader}>
+        {isSm && (
+          <Grid container className={classes.headerRow}>
             <Button className={classes.showFavouritesButton} onClick={handleFavouritesClick}>
               <img src={showFavourites ? starFill : star} />
               {!isSm && (
@@ -231,7 +236,6 @@ const TokensList: React.FC<ITokensList> = ({
           </Grid>
         )}
       </Grid>
-      <Box className={classes.header} />
       <Grid
         container
         classes={{ root: classes.container }}

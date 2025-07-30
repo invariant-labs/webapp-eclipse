@@ -211,8 +211,8 @@ const PoolList: React.FC<PoolListInterface> = ({
       <Typography className={classes.subheader} mt={isSm ? '24px' : '72px'}>
         Top pools
       </Typography>
-      <Grid container className={classes.tableHeader}>
-        <Grid container className={classes.headerWrapper}>
+      <Grid container className={classes.headerWrapper}>
+        <Grid container className={classes.tableHeader}>
           {!isSm && (
             <Button className={classes.showFavouritesButton} onClick={handleFavouritesClick}>
               <img src={showFavourites ? starFill : star} />
@@ -240,6 +240,7 @@ const PoolList: React.FC<PoolListInterface> = ({
               selectedFilters={searchPoolsValue}
               filtersAmount={2}
               closeOnSelect={true}
+              width={isMd ? 250 : 350}
             />
           </Grid>
         </Grid>

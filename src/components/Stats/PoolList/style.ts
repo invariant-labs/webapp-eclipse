@@ -5,27 +5,23 @@ import { makeStyles } from 'tss-react/mui'
 export const useStyles = makeStyles()(() => ({
   headerWrapper: {
     display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 12,
-    flexWrap: 'nowrap'
-
-    // [theme.breakpoints.down('md')]: {
-    //   marginTop: 24
-    // }
-  },
-  tableHeader: {
-    display: 'flex',
     flexShrink: 1,
     background: colors.invariant.component,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     padding: '12px 16px',
     marginTop: 12,
-    borderBottom: `2px solid ${colors.invariant.light}`,
+    borderBottom: `1px solid ${colors.invariant.light}`,
     [theme.breakpoints.down('sm')]: {
       padding: '12px 8px'
     }
+  },
+  tableHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+    flexWrap: 'nowrap'
   },
   headerRow: {
     display: 'flex',
