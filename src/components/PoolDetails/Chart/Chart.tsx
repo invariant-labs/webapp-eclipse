@@ -118,7 +118,7 @@ export const Chart: React.FC<IProps> = ({
           noData={noData}
         />
         <Box className={classes.separator} />
-        {noData && !statsPoolData?.feesPlot && !isLoadingChart ? (
+        {(noData && !isLoadingChart) || sameTokensError ? (
           <EmptyPlaceholder
             height={426}
             newVersion

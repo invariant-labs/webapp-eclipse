@@ -814,7 +814,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
 
     return { feeTiersWithTvl, totalTvl }
   }, [poolsList, tokenAIndex, tokenBIndex])
-
+  console.log(feeTiersWithTvl)
   const autoSwapPool = useMemo(
     () =>
       tokenAIndex !== null && tokenBIndex !== null

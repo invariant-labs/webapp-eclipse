@@ -88,7 +88,7 @@ export const FeeSelector: React.FC<IProps> = ({
                 [classes.promotedSelect]: currentFeeIndex === promotedPoolTierIndex
               })}>
               {noData ? (
-                <Typography className={classes.selectedText}>No Data</Typography>
+                <Typography className={classes.selectedText}>-</Typography>
               ) : (
                 <>
                   <Typography className={classes.selectedText}>

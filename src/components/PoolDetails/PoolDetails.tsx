@@ -147,7 +147,7 @@ export const PoolDetails: React.FC<IProps> = ({
           switchFavouritePool={switchFavouritePool}
           isPoolDataLoading={isPoolDataLoading}
           poolAddress={poolData?.address.toString() ?? ''}
-          noData={!poolData?.address.toString() && !statsPoolData.fees}
+          noData={!poolData?.address.toString()}
         />
       </Grid>
       {/* <Transactions /> */}

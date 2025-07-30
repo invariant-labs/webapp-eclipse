@@ -282,6 +282,7 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
         return
       } else {
         setSameTokensError(false)
+        console.log('test')
         dispatch(
           poolsActions.getPoolData(
             new Pair(tokenX.assetAddress, tokenY.assetAddress, {
@@ -347,7 +348,8 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
   }, [poolsList, tokenX, tokenY])
 
   const feeTiers = ALL_FEE_TIERS_DATA.map(tier => +printBN(tier.tier.fee, DECIMAL - 2))
-
+  console.log(feeTiersWithTvl)
+  console.log(feeTiers)
   const selectFeeTier = (index: number) => {
     if (index === -1) return
 
@@ -500,7 +502,9 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
       )
     }
   }, [])
-
+  console.log(statsPoolData)
+  console.log(poolData)
+  console.log(sameTokensError)
   return (
     <PoolDetails
       network={currentNetwork}
