@@ -23,7 +23,6 @@ import {
   currentInterval,
   currentPoolData,
   isLoading,
-  lastInterval,
   lastSnapTimestamp,
   poolsStatsWithTokensDetails
 } from '@store/selectors/stats'
@@ -66,7 +65,6 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
   const isLoadingStats = useSelector(isLoading)
 
   const lastUsedInterval = useSelector(currentInterval)
-  const lastFetchedInterval = useSelector(lastInterval)
 
   const poolsList = useSelector(poolsStatsWithTokensDetails)
 
@@ -196,11 +194,10 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
         poolAddress: poolData?.address.toString()
       })
     )
-  }, [lastFetchedInterval, triggerRefresh, poolData?.address.toString()])
+  }, [triggerRefresh, poolData?.address.toString()])
 
   useEffect(() => {
     if (lastUsedInterval || !poolData?.address) return
-
     dispatch(
       actions.getCurrentIntervalPoolStats({
         interval: IntervalsKeys.Daily,

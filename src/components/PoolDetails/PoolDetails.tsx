@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Grid, Typography } from '@mui/material'
 import useStyles from './style'
 import Chart from './Chart/Chart'
@@ -93,6 +93,20 @@ export const PoolDetails: React.FC<IProps> = ({
     localStorage.setItem('HIDE_UNKNOWN_TOKENS', val ? 'true' : 'false')
   }
 
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    setIsLoading(true)
+
+    const timeout = setTimeout(() => {
+      if (!isPoolDataLoading && !isLoadingStats) {
+        setIsLoading(false)
+      }
+    }, 100)
+
+    return () => clearTimeout(timeout)
+  }, [isPoolDataLoading, isLoadingStats])
+
   return (
     <Grid className={classes.wrapper}>
       <Grid onClick={() => handleBack()} className={classes.back} container item>
@@ -111,7 +125,6 @@ export const PoolDetails: React.FC<IProps> = ({
           handleOpenPosition={handleOpenPosition}
           isPoolDataLoading={isPoolDataLoading}
           interval={interval}
-          isLoadingStats={isLoadingStats}
           lastStatsTimestamp={lastStatsTimestamp}
           setChartType={setChartType}
           updateInterval={updateInterval}
@@ -130,6 +143,7 @@ export const PoolDetails: React.FC<IProps> = ({
           noData={!poolData?.address.toString() && !isPoolDataLoading && !isLoadingStats}
           onCreateNewPool={onCreateNewPool}
           sameTokensError={sameTokensError}
+          isLoadingChart={isLoading}
         />
         <PoolInfo
           interval={interval}
@@ -147,7 +161,7 @@ export const PoolDetails: React.FC<IProps> = ({
           switchFavouritePool={switchFavouritePool}
           isPoolDataLoading={isPoolDataLoading}
           poolAddress={poolData?.address.toString() ?? ''}
-          noData={!poolData?.address.toString()}
+          noData={!poolData?.address.toString() && !isLoading}
         />
       </Grid>
       {/* <Transactions /> */}

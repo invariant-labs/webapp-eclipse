@@ -63,6 +63,7 @@ export const PoolInfo: React.FC<IPros> = ({
   }, [tokenX, tokenY, tokenXReserve, tokenYReserve, prices])
 
   if (!tokenX || !tokenY) return null
+  console.log(noData && !isPoolDataLoading)
 
   return (
     <Grid className={classes.wrapper}>
@@ -87,7 +88,7 @@ export const PoolInfo: React.FC<IPros> = ({
       </Box>
 
       <Grid className={classes.container}>
-        {noData && statsPoolData.fees && !isPoolDataLoading ? (
+        {noData && !statsPoolData.fees && !isPoolDataLoading && !isLoadingStats ? (
           <EmptyPlaceholder
             mainTitle='Pool info not found'
             desc=''
