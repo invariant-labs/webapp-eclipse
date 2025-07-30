@@ -55,7 +55,6 @@ export const useStyles = makeStyles()(() => ({
     flexWrap: 'nowrap',
     overflow: 'hidden',
     backgroundColor: colors.invariant.component,
-    // borderRadius: '24px'
     borderBottomLeftRadius: 24,
     borderBottomRightRadius: 24
   },
