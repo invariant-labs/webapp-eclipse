@@ -15,7 +15,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       justifyContent: 'space-between',
       paddingInline: 24,
 
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down(650)]: {
         paddingInline: 8
       }
     },
@@ -60,6 +60,12 @@ const useStyles = makeStyles()((theme: Theme) => {
         boxShadow: '0px 0px 10px rgba(157, 212, 109, 0.5)'
       }
     },
+    changeWalletButtonWrapper: {
+      minWidth: 165,
+      [theme.breakpoints.down(650)]: {
+        minWidth: 0
+      }
+    },
     buttons: {
       display: 'flex',
       width: 'auto',
@@ -71,15 +77,10 @@ const useStyles = makeStyles()((theme: Theme) => {
         flex: '1 1 0%'
       },
 
-      [theme.breakpoints.down('md')]: {
+      [theme.breakpoints.down(650)]: {
         marginLeft: 0,
         width: '100%',
         justifyContent: 'center'
-      },
-
-      [theme.breakpoints.down('sm')]: {
-        justifyContent: 'space-between',
-        gap: 0
       }
     },
     leftButtons: {

@@ -183,39 +183,41 @@ export const Header: React.FC<IHeader> = ({
               }
             }}
           />
-          <Grid display='flex' gap='12px'>
-            <Bar
-              rpcs={rpcs}
-              activeNetwork={typeOfNetwork}
-              activeRPC={rpc}
-              onNetworkChange={onNetworkSelect}
-              onChainChange={onChainSelect}
-              onFaucet={onFaucet}
-            />
 
-            <YourPointsButton />
-          </Grid>
-          <ChangeWalletButton
-            name={
-              walletConnected
-                ? `${address.toString().slice(0, 4)}...${!isSmDown
-                  ? address
-                    .toString()
-                    .slice(address.toString().length - 4, address.toString().length)
-                  : ''
-                }`
-                : isSmDown
-                  ? 'Connect'
-                  : 'Connect wallet'
-            }
-            onConnect={onConnectWallet}
-            connected={walletConnected}
-            onDisconnect={onDisconnectWallet}
-            startIcon={
-              walletConnected ? <DotIcon className={classes.connectedWalletIcon} /> : undefined
-            }
-            onCopyAddress={onCopyAddress}
+          <Bar
+            rpcs={rpcs}
+            activeNetwork={typeOfNetwork}
+            activeRPC={rpc}
+            onNetworkChange={onNetworkSelect}
+            onChainChange={onChainSelect}
+            onFaucet={onFaucet}
           />
+
+          <YourPointsButton />
+          <Grid className={walletConnected ? classes.changeWalletButtonWrapper : ''}>
+            <ChangeWalletButton
+              name={
+                walletConnected
+                  ? `${address.toString().slice(0, 4)}...${
+                      !isSmDown
+                        ? address
+                            .toString()
+                            .slice(address.toString().length - 4, address.toString().length)
+                        : ''
+                    }`
+                  : isSmDown
+                    ? 'Connect'
+                    : 'Connect wallet'
+              }
+              onConnect={onConnectWallet}
+              connected={walletConnected}
+              onDisconnect={onDisconnectWallet}
+              startIcon={
+                walletConnected ? <DotIcon className={classes.connectedWalletIcon} /> : undefined
+              }
+              onCopyAddress={onCopyAddress}
+            />
+          </Grid>
         </Grid>
       </Grid>
     </Grid>
