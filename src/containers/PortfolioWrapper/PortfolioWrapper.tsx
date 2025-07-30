@@ -1,4 +1,10 @@
 import {
+  ALL_FEE_TIERS_DATA,
+  autoSwapPools,
+  DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_ADD_LIQUIDITY,
+  DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_SWAP,
+  DEFAULT_AUTOSWAP_MIN_UTILIZATION,
+  DEFAULT_NEW_POSITION_SLIPPAGE,
   DEFAULT_STRATEGY,
   Intervals,
   NetworkType,
@@ -13,8 +19,12 @@ import { getX, getY } from '@invariant-labs/sdk-eclipse/lib/math'
 import {
   calculateClaimAmount,
   DECIMAL,
+  feeToTickSpacing,
   getMaxTick,
-  getMinTick
+  getMinTick,
+  SimulateSwapAndCreatePositionSimulation,
+  SwapAndCreateSimulationStatus,
+  toDecimal
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { actions, LiquidityPools } from '@store/reducers/positions'
@@ -42,7 +52,7 @@ import {
   overviewSwitch,
   poolTokens
 } from '@store/selectors/solanaWallet'
-import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import {
@@ -54,7 +64,9 @@ import {
   getMockedTokenPrice,
   getTokenPrice,
   printBN,
-  ROUTES
+  ROUTES,
+  simulateAutoSwap,
+  simulateAutoSwapOnTheSamePool
 } from '@utils/utils'
 import { network, timeoutError } from '@store/selectors/solanaConnection'
 import { actions as leaderboardActions } from '@store/reducers/leaderboard'
@@ -79,6 +91,7 @@ import poolsSelectors, {
 import { actions as poolsActions } from '@store/reducers/pools'
 import { actions as positionsActions } from '@store/reducers/positions'
 import { blurContent, unblurContent } from '@utils/uiUtils'
+import { BN } from '@coral-xyz/anchor'
 
 const PortfolioWrapper = () => {
   const BANNER_STORAGE_KEY = 'invariant-es-banner-state'
@@ -675,6 +688,194 @@ const PortfolioWrapper = () => {
     setIsChangeLiquidityModalShown(true)
   }
 
+  const [throttle, setThrottle] = useState<boolean>(false)
+
+  const [simulation, setSimulation] = useState<SimulateSwapAndCreatePositionSimulation | null>(null)
+  const [simulationParams, setSimulationParams] = useState<{
+    xAmount: BN
+    yAmount: BN
+    swapSlippage: BN
+    minUtilizationPercentage: BN
+    positionSlippage: BN
+  } | null>(null)
+
+  const isAutoswapAvailable = useMemo(
+    () =>
+      !!position &&
+      autoSwapPools.some(
+        item =>
+          (item.pair.tokenX.equals(position.tokenX.assetAddress) &&
+            item.pair.tokenY.equals(position.tokenY.assetAddress)) ||
+          (item.pair.tokenX.equals(position.tokenY.assetAddress) &&
+            item.pair.tokenY.equals(position.tokenX.assetAddress))
+      ),
+    [position]
+  )
+
+  const isAutoSwapOnTheSamePool = useMemo(
+    () =>
+      !!position &&
+      autoSwapPools.some(item => item.swapPool.address.equals(position.poolData.address)),
+    [position]
+  )
+
+  const autoSwapPool = useMemo(
+    () =>
+      !!position
+        ? autoSwapPools.find(
+            item =>
+              (item.pair.tokenX.equals(position.tokenX.assetAddress) &&
+                item.pair.tokenY.equals(position.tokenY.assetAddress)) ||
+              (item.pair.tokenX.equals(position.tokenY.assetAddress) &&
+                item.pair.tokenY.equals(position.tokenX.assetAddress))
+          )
+        : undefined,
+    [position]
+  )
+
+  const isSimulationStatus = useCallback(
+    (value: SwapAndCreateSimulationStatus) => {
+      return !!simulation && simulation.status === value
+    },
+    [simulation]
+  )
+
+  useEffect(() => {
+    if (!position || !autoSwapPool) return
+    dispatch(
+      poolsActions.getAutoSwapPoolData(
+        new Pair(position.tokenX.assetAddress, position.tokenY.assetAddress, {
+          fee: ALL_FEE_TIERS_DATA[autoSwapPool.swapPool.feeIndex].tier.fee,
+          tickSpacing:
+            ALL_FEE_TIERS_DATA[autoSwapPool.swapPool.feeIndex].tier.tickSpacing ??
+            feeToTickSpacing(ALL_FEE_TIERS_DATA[autoSwapPool.swapPool.feeIndex].tier.fee)
+        })
+      )
+    )
+  }, [autoSwapPool])
+
+  useEffect(() => {
+    if (autoSwapPoolData && !!position) {
+      dispatch(
+        poolsActions.getTicksAndTickMapForAutoSwap({
+          tokenFrom: position.tokenX.assetAddress,
+          tokenTo: position.tokenY.assetAddress,
+          autoSwapPool: autoSwapPoolData
+        })
+      )
+    }
+  }, [autoSwapPoolData])
+
+  const simulateAutoSwapResult = async () => {
+    if (
+      ticksLoading ||
+      !position ||
+      typeof position?.lowerTick === 'undefined' ||
+      typeof position?.upperTick === 'undefined' ||
+      !autoSwapPoolData ||
+      !autoSwapTicks ||
+      !autoSwapTickMap ||
+      !position.poolData ||
+      !isAutoswapAvailable
+    ) {
+      setSimulation(null)
+      setSimulationParams(null)
+      return
+    }
+
+    const [amountX, amountY] = calculateClaimAmount({
+      position,
+      tickLower: position.lowerTick,
+      tickUpper: position.upperTick,
+      tickCurrent: position.poolData.currentTickIndex,
+      feeGrowthGlobalX: position.poolData.feeGrowthGlobalX,
+      feeGrowthGlobalY: position.poolData.feeGrowthGlobalY
+    })
+
+    if (amountX.eqn(0) && amountY.eqn(0)) {
+      setSimulation(null)
+      setSimulationParams(null)
+      return
+    }
+
+    const slippageToleranceSwap =
+      localStorage.getItem('INVARIANT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_SWAP') ??
+      DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_SWAP
+    const slippageToleranceAddLiquidity =
+      localStorage.getItem('INVARIANT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_ADD_LIQUIDITY') ??
+      DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_ADD_LIQUIDITY
+    const utilization =
+      localStorage.getItem('INVARIANT_AUTOSWAP_MIN_UTILIZATION') ?? DEFAULT_AUTOSWAP_MIN_UTILIZATION
+
+    const swapSlippage = toDecimal(+Number(slippageToleranceSwap).toFixed(4), 2)
+    const positionSlippage = toDecimal(+Number(slippageToleranceAddLiquidity).toFixed(4), 2)
+    const minUtilizationPercentage = toDecimal(+Number(utilization).toFixed(4), 2)
+
+    let result: SimulateSwapAndCreatePositionSimulation | null = null
+
+    if (isAutoSwapOnTheSamePool) {
+      result = await simulateAutoSwapOnTheSamePool(
+        amountX,
+        amountY,
+        autoSwapPoolData,
+        autoSwapTicks,
+        autoSwapTickMap,
+        swapSlippage,
+        position.lowerTickIndex,
+        position.upperTickIndex,
+        minUtilizationPercentage
+      )
+    } else {
+      result = await simulateAutoSwap(
+        amountX,
+        amountY,
+        autoSwapPoolData,
+        autoSwapTicks,
+        autoSwapTickMap,
+        swapSlippage,
+        positionSlippage,
+        position.lowerTickIndex,
+        position.upperTickIndex,
+        position.poolData.sqrtPrice,
+        minUtilizationPercentage
+      )
+    }
+    setSimulationParams({
+      xAmount: amountX,
+      yAmount: amountY,
+      swapSlippage,
+      minUtilizationPercentage,
+      positionSlippage
+    })
+    setSimulation(result)
+  }
+
+  const timeoutRef = useRef<number>(0)
+
+  const simulateWithTimeout = () => {
+    setThrottle(true)
+
+    clearTimeout(timeoutRef.current)
+    const timeout = setTimeout(() => {
+      simulateAutoSwapResult().finally(() => {
+        setThrottle(false)
+      })
+    }, 500)
+    timeoutRef.current = timeout as unknown as number
+  }
+
+  useEffect(() => {
+    simulateWithTimeout()
+  }, [
+    position,
+    autoSwapPoolData,
+    autoSwapTicks,
+    autoSwapTickMap,
+    ticksLoading,
+    isAutoswapAvailable,
+    isAutoSwapOnTheSamePool
+  ])
+
   return isConnected ? (
     <Portfolio
       handleCloseBanner={handleBannerClose}
@@ -861,6 +1062,82 @@ const PortfolioWrapper = () => {
             lowerTick: position.lowerTickIndex,
             upperTick: position.upperTickIndex,
             liquidityDelta: liquidity,
+            minUtilizationPercentage,
+            isSamePool: position.poolData.address.equals(autoSwapPoolData.address),
+            positionIndex: position.positionIndex
+          })
+        )
+      }}
+      compound={() => {
+        if (
+          !position ||
+          throttle ||
+          !simulation ||
+          !autoSwapPoolData ||
+          !autoSwapTickMap ||
+          !simulationParams
+        )
+          return
+
+        const positionPoolIndex = poolsList.findIndex(
+          pool =>
+            pool.fee.eq(position.poolData.fee) &&
+            ((pool.tokenX.equals(position.tokenX.assetAddress) &&
+              pool.tokenY.equals(position.tokenY.assetAddress)) ||
+              (pool.tokenX.equals(position.tokenY.assetAddress) &&
+                pool.tokenY.equals(position.tokenX.assetAddress)))
+        )
+        if (positionPoolIndex === -1) return
+
+        const { xAmount, yAmount, swapSlippage, positionSlippage, minUtilizationPercentage } =
+          simulationParams
+
+        if (isSimulationStatus(SwapAndCreateSimulationStatus.PerfectRatio)) {
+          const positionSlippage =
+            localStorage.getItem('INVARIANT_NEW_POSITION_SLIPPAGE') ?? DEFAULT_NEW_POSITION_SLIPPAGE
+          const slippage = toDecimal(+Number(positionSlippage).toFixed(4), 2)
+
+          dispatch(
+            actions.compound({
+              tokenX: position.tokenX.assetAddress,
+              tokenY: position.tokenY.assetAddress,
+              xAmount,
+              yAmount,
+              positionIndex: position.positionIndex,
+              slippage,
+              liquidity: simulation.position.liquidity
+            })
+          )
+          return
+        }
+        if (!simulation.swapInput || !simulation.swapSimulation) return
+
+        const { xToY, swapAmount, byAmountIn } = simulation.swapInput
+
+        const { crossedTicks, priceAfterSwap: estimatedPriceAfterSwap } = simulation.swapSimulation
+
+        dispatch(
+          actions.compoundWithSwap({
+            xAmount,
+            yAmount,
+            tokenX: position.tokenX.assetAddress,
+            tokenY: position.tokenY.assetAddress,
+            swapAmount,
+            byAmountIn,
+            xToY,
+            swapPool: autoSwapPoolData,
+            swapPoolTickmap: autoSwapTickMap,
+            swapSlippage,
+            estimatedPriceAfterSwap,
+            crossedTicks,
+            positionPair: {
+              fee: position.poolData.fee,
+              tickSpacing: position.poolData.tickSpacing
+            },
+            positionPoolIndex,
+            positionPoolPrice: position.poolData.sqrtPrice,
+            positionSlippage,
+            liquidityDelta: simulation.position.liquidity,
             minUtilizationPercentage,
             isSamePool: position.poolData.address.equals(autoSwapPoolData.address),
             positionIndex: position.positionIndex

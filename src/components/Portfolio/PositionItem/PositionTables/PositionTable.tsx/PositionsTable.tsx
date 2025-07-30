@@ -29,6 +29,7 @@ interface IPositionsTableProps {
   createNewPosition: (element: IPositionItem) => void
   shouldDisable: boolean
   openPosition: (id: string) => void
+  compound: () => void
 }
 
 export const PositionsTable: React.FC<IPositionsTableProps> = ({
@@ -41,7 +42,8 @@ export const PositionsTable: React.FC<IPositionsTableProps> = ({
   handleClaimFee,
   createNewPosition,
   shouldDisable,
-  openPosition
+  openPosition,
+  compound
 }) => {
   const { classes } = usePositionTableStyle({ isScrollHide: positions.length <= 5 || isLoading })
   const navigate = useNavigate()
@@ -109,6 +111,7 @@ export const PositionsTable: React.FC<IPositionsTableProps> = ({
                   handleClaimFee={handleClaimFee}
                   createNewPosition={() => createNewPosition(position)}
                   openPosition={() => openPosition(position.id)}
+                  compound={compound}
                 />
               </TableRow>
             ))}

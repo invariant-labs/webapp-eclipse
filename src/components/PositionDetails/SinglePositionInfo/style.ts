@@ -60,6 +60,25 @@ export const useStyles = makeStyles()(() => ({
     height: 32,
     minWidth: 32
   },
+  feeButtons: {
+    display: 'flex',
+    gap: 8
+  },
+  compoundButton: {
+    background: colors.invariant.pinkLinearGradientOpacity,
+    borderRadius: 12,
+    height: 36,
+    width: 98,
+    color: colors.invariant.dark,
+    textTransform: 'none',
+    ...typography.body1,
+
+    '&:disabled': {
+      pointerEvents: 'all',
+      background: colors.invariant.light,
+      color: colors.invariant.textGrey
+    }
+  },
   claimButton: {
     background: colors.invariant.pinkLinearGradientOpacity,
     borderRadius: 12,

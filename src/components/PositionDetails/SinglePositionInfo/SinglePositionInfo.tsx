@@ -19,6 +19,7 @@ import { Plus } from '@static/componentIcon/Plus'
 
 interface IProp {
   onClickClaimFee: () => void
+  onClickCompound: () => void
   tokenX: ILiquidityToken
   tokenY: ILiquidityToken
   tokenXPriceData?: TokenPriceData
@@ -37,10 +38,12 @@ interface IProp {
   interval: Intervals
   isLocked?: boolean
   showChangeLiquidityModal: (isAddLiquidity: boolean) => void
+  isSimulatingCompound: boolean
 }
 
 const SinglePositionInfo: React.FC<IProp> = ({
   onClickClaimFee,
+  onClickCompound,
   tokenX,
   tokenY,
   tokenXPriceData,
@@ -58,7 +61,8 @@ const SinglePositionInfo: React.FC<IProp> = ({
   isClosing,
   interval,
   isLocked,
-  showChangeLiquidityModal
+  showChangeLiquidityModal,
+  isSimulatingCompound
 }) => {
   const [isFeeTooltipOpen, setIsFeeTooltipOpen] = useState(false)
   const { classes, cx } = useStyles()
@@ -166,25 +170,31 @@ const SinglePositionInfo: React.FC<IProp> = ({
         <Section
           title='Unclaimed fees'
           item={
-            isPreview ? (
-              <TooltipHover title={"Can't claim fees in preview"}>
+            <Box className={classes.feeButtons}>
+              <TooltipHover title={isPreview ? "Can't compound in preview" : ''}>
+                <Button
+                  className={classes.compoundButton}
+                  disabled={
+                    tokenX.claimValue + tokenY.claimValue === 0 ||
+                    isPreview ||
+                    isClosing ||
+                    isSimulatingCompound
+                  }
+                  variant='contained'
+                  onClick={onClickCompound}>
+                  Compound
+                </Button>
+              </TooltipHover>
+              <TooltipHover title={isPreview ? "Can't claim fees in preview" : ''}>
                 <Button
                   className={classes.claimButton}
                   disabled={tokenX.claimValue + tokenY.claimValue === 0 || isPreview || isClosing}
                   variant='contained'
-                  onClick={() => onClickClaimFee()}>
+                  onClick={onClickClaimFee}>
                   Claim
                 </Button>
               </TooltipHover>
-            ) : (
-              <Button
-                className={classes.claimButton}
-                disabled={tokenX.claimValue + tokenY.claimValue === 0 || isPreview || isClosing}
-                variant='contained'
-                onClick={() => onClickClaimFee()}>
-                Claim
-              </Button>
-            )
+            </Box>
           }>
           <UnclaimedFees
             tokenA={
