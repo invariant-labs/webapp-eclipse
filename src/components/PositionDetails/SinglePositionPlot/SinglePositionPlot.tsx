@@ -11,7 +11,7 @@ import {
   truncateString
 } from '@utils/utils'
 import { PlotTickData } from '@store/reducers/positions'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import useStyles from './style'
 import { getMaxTick, getMinTick } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { Stat } from './Stat/Stat'
@@ -233,6 +233,33 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
   const maxPercentage = ((+max - currentPrice) / currentPrice) * 100
   const concentration = calculateConcentration(leftRange.index, rightRange.index)
 
+  const { formattedMin, formattedMax } = useMemo(() => {
+    let formattedMin = formatNumberWithSuffix(min)
+    let formattedMax = formatNumberWithSuffix(max)
+
+    const maxIterations = 4
+    let currentIterations = 0
+    while (formattedMin === formattedMax && currentIterations < maxIterations) {
+      formattedMin = formatNumberWithSuffix(min, {
+        decimalsAfterDot: currentIterations + 4,
+        noSubNumbers: true,
+        alternativeConfig: true
+      })
+      formattedMax = formatNumberWithSuffix(max, {
+        decimalsAfterDot: currentIterations + 4,
+        noSubNumbers: true,
+        alternativeConfig: true
+      })
+
+      currentIterations += 1
+    }
+
+    return {
+      formattedMin,
+      formattedMax
+    }
+  }, [min, max, xToY])
+
   return (
     <Box className={classes.container}>
       <Box className={classes.headerContainer}>
@@ -334,7 +361,7 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
                 value={
                   <Box>
                     <Typography component='span' className={classes.value}>
-                      {isFullRange ? 0 : formatNumberWithoutSuffix(min)}
+                      {isFullRange ? 0 : formattedMin}
                     </Typography>{' '}
                     {!isFullRange &&
                       (xToY
@@ -351,11 +378,7 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
                 value={
                   <Box>
                     <Typography component='span' className={classes.value}>
-                      {isFullRange ? (
-                        <span style={{ fontSize: '24px' }}>∞</span>
-                      ) : (
-                        formatNumberWithoutSuffix(max)
-                      )}
+                      {isFullRange ? <span style={{ fontSize: '24px' }}>∞</span> : formattedMax}
                     </Typography>{' '}
                     {!isFullRange &&
                       (xToY

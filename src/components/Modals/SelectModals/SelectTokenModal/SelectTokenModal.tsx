@@ -106,7 +106,7 @@ const RowItem: React.FC<ListChildComponentProps<RowItemData>> = React.memo(
                 <Typography>
                   {token.assetAddress.toString().slice(0, isXs ? 3 : 4) +
                     '...' +
-                    token.assetAddress.toString().slice(isXs ? -4 : -5, -1)}
+                    token.assetAddress.toString().slice(isXs ? -4 : -5)}
                 </Typography>
                 <img width={8} height={8} src={newTabIcon} alt={'Token address'} />
               </a>

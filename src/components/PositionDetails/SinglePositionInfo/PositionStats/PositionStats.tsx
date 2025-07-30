@@ -7,6 +7,7 @@ import {
   removeAdditionalDecimals
 } from '@utils/utils'
 import { LEADERBOARD_DECIMAL } from '@store/consts/static'
+import { convertAPYValue } from '@utils/uiUtils'
 
 type Props = {
   value: number
@@ -99,7 +100,7 @@ export const PositionStats = ({
             <Skeleton height={17} width={36} variant='rounded' />
           ) : (
             <Typography className={cx(classes.statValue, classes.statValueHiglight)}>
-              {poolApy > 1000 ? '>1000' : poolApy.toFixed(2)}%
+              {convertAPYValue(poolApy, 'APY')}
             </Typography>
           )}
         </Box>
