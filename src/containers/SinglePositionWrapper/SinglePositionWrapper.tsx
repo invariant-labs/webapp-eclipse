@@ -644,7 +644,14 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
             })
           )
         }}
-        changeLiquidity={(liquidity, slippage, isAddLiquidity, xAmount, yAmount) => {
+        changeLiquidity={(
+          liquidity,
+          slippage,
+          isAddLiquidity,
+          isClosePosition,
+          xAmount,
+          yAmount
+        ) => {
           if (isPreview) return
           if (isAddLiquidity) {
             dispatch(
@@ -652,6 +659,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
                 positionIndex: position.positionIndex,
                 liquidity,
                 slippage,
+                isClosePosition,
                 xAmount,
                 yAmount
               })
@@ -662,6 +670,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
                 positionIndex: position.positionIndex,
                 liquidity,
                 slippage,
+                isClosePosition,
                 xAmount,
                 yAmount,
                 onSuccess: () => {

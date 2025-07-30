@@ -179,6 +179,7 @@ export interface ClosePositionData {
 export interface ChangeLiquidityData {
   positionIndex: number
   liquidity: BN
+  isClosePosition: boolean
   xAmount: BN
   yAmount: BN
   slippage: BN

@@ -3727,7 +3727,7 @@ export function* handleRemoveLiquidity(action: PayloadAction<ChangeLiquidityData
   const positionsData = yield* select(positionsWithPoolsData)
   const position = positionsData[data.positionIndex]
 
-  if (data.liquidity.eq(position.liquidity)) {
+  if (data.isClosePosition) {
     return yield* call(handleClosePosition, {
       payload: {
         positionIndex: data.positionIndex,

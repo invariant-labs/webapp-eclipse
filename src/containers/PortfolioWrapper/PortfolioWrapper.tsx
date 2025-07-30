@@ -781,7 +781,7 @@ const PortfolioWrapper = () => {
         )
       }}
       isTimeoutError={isTimeoutError}
-      changeLiquidity={(liquidity, slippage, isAddLiquidity, xAmount, yAmount) => {
+      changeLiquidity={(liquidity, slippage, isAddLiquidity, isClosePosition, xAmount, yAmount) => {
         if (!position) {
           return
         }
@@ -792,6 +792,7 @@ const PortfolioWrapper = () => {
               positionIndex: position.positionIndex,
               liquidity,
               slippage,
+              isClosePosition,
               xAmount,
               yAmount
             })
@@ -802,6 +803,7 @@ const PortfolioWrapper = () => {
               positionIndex: position.positionIndex,
               liquidity,
               slippage,
+              isClosePosition,
               xAmount,
               yAmount,
               onSuccess: () => {

@@ -78,7 +78,12 @@ export interface IProps {
   onDisconnectWallet: () => void
   getPoolData: (pair: Pair) => void
   setShouldNotUpdateRange: () => void
-  changeLiquidity: (liquidity: BN, slippage: BN, isAddLiquidity: boolean) => void
+  changeLiquidity: (
+    liquidity: BN,
+    slippage: BN,
+    isAddLiquidity: boolean,
+    isClosePosition: boolean
+  ) => void
   success: boolean
   inProgress: boolean
   setChangeLiquiditySuccess: (value: boolean) => void
@@ -462,7 +467,7 @@ export const RemoveLiquidity: React.FC<IProps> = ({
     [leftRange, rightRange, currentPriceSqrt]
   )
 
-  const removeLiquidityHandler = slippage => {
+  const removeLiquidityHandler = (slippage, isClosePosition) => {
     if (tokenAIndex === null || tokenBIndex === null) {
       return
     }
@@ -473,12 +478,12 @@ export const RemoveLiquidity: React.FC<IProps> = ({
       setProgress('progress')
     }
 
-    changeLiquidity(liquidity, slippage, false)
+    changeLiquidity(liquidity, slippage, false, isClosePosition)
   }
 
-  const onRemoveLiquidity = async () => {
+  const onRemoveLiquidity = async (isClosePosition = false) => {
     if (tokenAIndex !== null && tokenBIndex !== null) {
-      removeLiquidityHandler(fromFee(new BN(Number(+slippTolerance * 1000))))
+      removeLiquidityHandler(fromFee(new BN(Number(+slippTolerance * 1000))), isClosePosition)
     }
   }
 
@@ -776,6 +781,14 @@ export const RemoveLiquidity: React.FC<IProps> = ({
     setDepositPercentage(isNaN(depositPercentage) ? 0 : depositPercentage)
   }, [tokenADeposit, tokenBDeposit, tokenXLiquidity, tokenYLiquidity])
 
+  const isClosePosition = useMemo(() => {
+    if (+tokenAInputState.blocked) {
+      return +tokenBDeposit > tokenYLiquidity * 0.99
+    } else {
+      return +tokenADeposit > tokenXLiquidity * 0.99
+    }
+  }, [tokenAInputState.blocked, tokenBDeposit, tokenYLiquidity, tokenADeposit, tokenXLiquidity])
+
   return (
     <Grid container className={cx(classes.wrapper, classes.deposit)}>
       <Grid container className={classes.depositHeader}>
@@ -976,13 +989,13 @@ export const RemoveLiquidity: React.FC<IProps> = ({
             className={cx(classes.addButton, progress === 'none' ? classes.hoverButton : undefined)}
             onClick={() => {
               if (progress === 'none' && tokenAIndex !== null && tokenBIndex !== null) {
-                onRemoveLiquidity()
+                onRemoveLiquidity(isClosePosition)
               }
             }}
             disabled={getButtonMessage() !== 'Remove Liquidity'}
             content={
               getButtonMessage() === 'Remove Liquidity'
-                ? +tokenAInputState.value === tokenXLiquidity
+                ? isClosePosition
                   ? 'Close Position'
                   : 'Remove Liquidity'
                 : getButtonMessage()

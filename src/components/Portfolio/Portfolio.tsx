@@ -123,6 +123,7 @@ interface IProps {
     liquidity: BN,
     slippage: BN,
     isAddLiquidity: boolean,
+    isClosePosition: boolean,
     xAmount: BN,
     yAmount: BN
   ) => void
