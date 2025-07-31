@@ -52,6 +52,8 @@ import { EstimatedPointsLabel } from './EstimatedPointsLabel/EstimatedPointsLabe
 import { useNavigate } from 'react-router-dom'
 import { FetcherRecords, Pair, SimulationTwoHopResult } from '@invariant-labs/sdk-eclipse'
 import { theme } from '@static/theme'
+import { SwapMode } from '@store/reducers/navigation'
+import Switcher from '@common/Switcher/Switcher'
 
 export interface Pools {
   tokenX: PublicKey
@@ -136,6 +138,8 @@ export interface ISwap {
   swapAccounts: FetcherRecords
   swapIsLoading: boolean
   wrappedETHBalance: BN | null
+  swapMode: SwapMode
+  setSwapMode: (e: SwapMode) => void
 }
 
 export type SimulationPath = {
@@ -193,7 +197,9 @@ export const Swap: React.FC<ISwap> = ({
   market,
   tokensDict,
   swapAccounts,
-  swapIsLoading
+  swapIsLoading,
+  swapMode,
+  setSwapMode
 }) => {
   const { classes, cx } = useStyles()
 
@@ -1139,7 +1145,19 @@ export const Swap: React.FC<ISwap> = ({
             wavePosition={'top'}
             isAnimating={isFirstPairGivingPoints || isSecondPairGivingPoints}
           />
+          <Switcher
+            onChange={setSwapMode}
+            options={[SwapMode.swap, SwapMode.limitOrder]}
+            value={swapMode}
+            dark
+            fullWidth
+            padding={2}
+            buttonsHeight={44}
+            biggerFont
+            changeFontColor
+          />
           <Typography
+            mt={'24px'}
             className={cx(
               classes.swapLabel,
               (isFirstPairGivingPoints || isSecondPairGivingPoints) && classes.textShadowLabel

@@ -6,6 +6,12 @@ import { SortTypePoolList, SortTypeTokenList } from '@store/consts/static'
 
 export interface INavigation {
   navigationState: INavigationState
+  swapMode: SwapMode
+}
+
+export enum SwapMode {
+  swap = 'Swap',
+  limitOrder = 'Limit Order'
 }
 
 export interface INavigationState {
@@ -70,7 +76,8 @@ const defaultStatus: INavigation = {
       sortType: SortTypePoolList.FEE_24_DESC,
       pageNumber: 1
     }
-  }
+  },
+  swapMode: SwapMode.swap
 }
 
 export const navigationSliceName = 'navigation'
@@ -109,6 +116,10 @@ const navigationSlice = createSlice({
     },
     setShowFavouritesTokens(state, action: PayloadAction<boolean>) {
       state.navigationState.showFavouritesTokens = action.payload
+      return state
+    },
+    setSwapMode(state, action: PayloadAction<SwapMode>) {
+      state.swapMode = action.payload
       return state
     }
   }

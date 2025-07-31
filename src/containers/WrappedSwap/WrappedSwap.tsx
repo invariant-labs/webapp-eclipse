@@ -50,13 +50,15 @@ import { getMarketProgramSync } from '@utils/web3/programs/amm'
 import { getEclipseWallet } from '@utils/web3/wallet'
 import { IWallet } from '@invariant-labs/sdk-eclipse'
 import { actions as swapActions } from '@store/reducers/swap'
+import { SwapMode, actions as navigationActions } from '@store/reducers/navigation'
 
 type Props = {
   initialTokenFrom: string
   initialTokenTo: string
+  swapMode: SwapMode
 }
 
-export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
+export const WrappedSwap = ({ initialTokenFrom, initialTokenTo, swapMode }: Props) => {
   const dispatch = useDispatch()
 
   const connection = getCurrentSolanaConnection()
@@ -127,8 +129,8 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const lastTokenFrom =
     initialTokenFrom && tickerToAddress(networkType, initialTokenFrom)
       ? tickerToAddress(networkType, initialTokenFrom)
-      : localStorage.getItem(`INVARIANT_LAST_TOKEN_FROM_${networkType}`) ??
-        WETH_MAIN.address.toString()
+      : (localStorage.getItem(`INVARIANT_LAST_TOKEN_FROM_${networkType}`) ??
+        WETH_MAIN.address.toString())
 
   const lastTokenTo =
     initialTokenTo && tickerToAddress(networkType, initialTokenTo)
@@ -455,6 +457,10 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
       tokensDict={tokensDict}
       swapAccounts={swapAccounts}
       swapIsLoading={swapIsLoading}
+      swapMode={swapMode}
+      setSwapMode={(e: SwapMode) => {
+        dispatch(navigationActions.setSwapMode(e))
+      }}
     />
   )
 }
