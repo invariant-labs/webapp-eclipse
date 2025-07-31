@@ -822,6 +822,9 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         rightRange={rightRange}
         currentPrice={current}
         onClickCompound={() => {
+          console.log(simulation)
+          console.log(simulationParams)
+          console.log(position, autoSwapPoolData, autoSwapTickMap)
           if (
             isPreview ||
             throttle ||
