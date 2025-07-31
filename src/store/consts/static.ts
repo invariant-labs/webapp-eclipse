@@ -414,6 +414,7 @@ export const KYSOL_MAIN: Token = {
 }
 
 export const ES_MAIN: Token = {
+  tokenProgram: TOKEN_2022_PROGRAM_ID,
   symbol: 'ES',
   address: new PublicKey('GnBAskb2SQjrLgpTjtgatz4hEugUsYV7XrWU1idV3oqW'),
   decimals: 6,
@@ -430,6 +431,16 @@ export const TUSD_MAIN: Token = {
   name: 'Turbo USD',
   logoURI:
     'https://raw.githubusercontent.com/hyperlane-xyz/hyperlane-registry/85fc184f345916356f0d1ad73fb89ea2f15b95d7/deployments/warp_routes/tUSD/logo.svg',
+  coingeckoId: ''
+}
+
+export const muES_MAIN: Token = {
+  tokenProgram: TOKEN_PROGRAM_ID,
+  symbol: 'muES',
+  address: new PublicKey('A9qpp2Ejxvy7xE4JxLLqSsqMcjsPUAJpyHTbA2WDJ4E3'),
+  decimals: 6,
+  name: 'Mushi ES',
+  logoURI: 'https://app.mushi.fi/images/mushi-short-logo.svg',
   coingeckoId: ''
 }
 
@@ -793,7 +804,8 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
       WBTC: WBTC_MAIN.address.toString(),
       NPT: NPT_MAIN.address.toString(),
       USDN: USDN_MAIN.address.toString(),
-      WEETHS: WEETHS_MAIN.address.toString()
+      WEETHS: WEETHS_MAIN.address.toString(),
+      muES_MAIN: muES_MAIN.address.toString()
     }
   }
 }

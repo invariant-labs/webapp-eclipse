@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { Box, Grid, Typography } from '@mui/material'
 import useStyles from './style'
 import { NetworkType } from '@store/consts/static'
@@ -22,14 +22,13 @@ export interface IProps {
   handleOpenPosition: () => void
   isPoolDataLoading: boolean
   interval: IntervalsKeys
-  isLoadingStats: boolean
   lastStatsTimestamp: number
   setChartType: (type: PoolChartSwitch) => void
   updateInterval: (interval: IntervalsKeys) => void
   selectFeeTier: (value: number) => void
   feeTiers: number[]
   feeTiersWithTvl: Record<number, number>
-  totalTvl: number
+  aggregatedStats: { tvl: number; fees: number; volume: number }
   feeTierIndex: number
   isDisabled: boolean
   disabledFeeTiers: string[]
@@ -41,6 +40,7 @@ export interface IProps {
   noData: boolean
   onCreateNewPool: () => void
   sameTokensError: boolean
+  isLoadingChart: boolean
 }
 
 export const Chart: React.FC<IProps> = ({
@@ -54,14 +54,13 @@ export const Chart: React.FC<IProps> = ({
   handleOpenPosition,
   isPoolDataLoading,
   interval,
-  isLoadingStats,
   lastStatsTimestamp,
   setChartType,
   updateInterval,
   selectFeeTier,
   feeTiers,
   feeTiersWithTvl,
-  totalTvl,
+  aggregatedStats,
   feeTierIndex,
   isDisabled,
   disabledFeeTiers,
@@ -72,23 +71,10 @@ export const Chart: React.FC<IProps> = ({
   setHideUnknownTokensValue,
   noData,
   onCreateNewPool,
-  sameTokensError
+  sameTokensError,
+  isLoadingChart
 }) => {
   const { classes } = useStyles()
-
-  const [isLoadingChart, setIsLoadingChart] = useState(true)
-
-  useEffect(() => {
-    setIsLoadingChart(true)
-
-    const timeout = setTimeout(() => {
-      if (!isPoolDataLoading && !isLoadingStats) {
-        setIsLoadingChart(false)
-      }
-    }, 100)
-
-    return () => clearTimeout(timeout)
-  }, [isPoolDataLoading, isLoadingStats])
 
   return (
     <Grid className={classes.wrapper}>
@@ -106,7 +92,7 @@ export const Chart: React.FC<IProps> = ({
           selectFeeTier={selectFeeTier}
           feeTiers={feeTiers}
           feeTiersWithTvl={feeTiersWithTvl}
-          totalTvl={totalTvl}
+          aggregatedStats={aggregatedStats}
           feeTierIndex={feeTierIndex}
           isDisabled={isDisabled}
           disabledFeeTiers={disabledFeeTiers}
@@ -116,9 +102,10 @@ export const Chart: React.FC<IProps> = ({
           initialHideUnknownTokensValue={initialHideUnknownTokensValue}
           setHideUnknownTokensValue={setHideUnknownTokensValue}
           noData={noData}
+          interval={interval}
         />
         <Box className={classes.separator} />
-        {noData && !statsPoolData?.feesPlot && !isLoadingChart ? (
+        {(noData && !isLoadingChart) || sameTokensError ? (
           <EmptyPlaceholder
             height={426}
             newVersion

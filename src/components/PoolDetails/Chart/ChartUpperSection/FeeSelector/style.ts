@@ -2,54 +2,48 @@ import { colors, theme, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => ({
-  wrapper: {
-    position: 'relative',
-    cursor: 'pointer',
-    alignSelf: 'end',
-    zIndex: 15
+  root: {
+    background: colors.invariant.component,
+    width: 200,
+    borderBottomLeftRadius: 16,
+    borderBottomRightRadius: 16,
+    padding: 16,
+    display: 'flex',
+    justifyContent: 'flex-start',
+    flexDirection: 'column',
+    gap: 10
+  },
+  paper: {
+    background: 'transparent',
+    borderRadius: '16px',
+    boxSizing: 'border-box',
+    marginTop: '8px',
+    boxShadow: `0px 2px 8px ${colors.invariant.black}`
   },
   selected: {
     color: colors.invariant.text,
-    paddingBlock: 8,
     display: 'flex',
-    width: 128,
-    flex: 1,
+    width: 132,
     alignItems: 'center',
     justifyContent: 'center',
     border: `2px solid ${colors.invariant.light}`,
     borderRadius: 11,
-    height: 24,
+    height: 44,
 
     [theme.breakpoints.down(1200)]: {
-      paddingBlock: 6
+      height: 40
     }
+  },
+  topContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 4,
+    borderBottom: `1px solid ${colors.invariant.light}`,
+    paddingBottom: 8
   },
   selectedText: {
     ...typography.body1,
     marginRight: 8
-  },
-  arrow: {
-    width: 0,
-    height: 0,
-    borderLeft: '5px solid transparent',
-    borderRight: '5px solid transparent',
-    borderTop: '6px solid #aaa',
-    marginLeft: 8
-  },
-  dropdown: {
-    width: 132,
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 6,
-    position: 'absolute',
-    top: 'calc(100% + 8px)',
-    left: -8,
-    padding: 8,
-    backgroundColor: colors.invariant.component,
-    borderRadius: 16,
-    boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
-    zIndex: 1,
-    overflow: 'hidden'
   },
   option: {
     padding: '10px 14px',
@@ -60,8 +54,10 @@ export const useStyles = makeStyles()(() => ({
     transition: 'background 0.2s ease',
     background: colors.invariant.newDark,
     borderRadius: 11,
+
     '&:hover': {
-      background: colors.invariant.light
+      background: colors.invariant.light,
+      cursor: 'pointer'
     }
   },
   optionText: {
@@ -89,7 +85,8 @@ export const useStyles = makeStyles()(() => ({
 
     '&:hover': {
       background: colors.invariant.component,
-      filter: 'brightness(0.85)'
+      filter: 'brightness(0.85)',
+      cursor: 'not-allowed'
     }
   },
   bestSelect: {
@@ -149,8 +146,19 @@ export const useStyles = makeStyles()(() => ({
       color: colors.invariant.green
     }
   },
-  selectorDisabled: {
-    cursor: 'not-allowed'
+  valueContainer: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+
+    '& > :first-of-type': {
+      color: colors.invariant.textGrey,
+      ...typography.body2
+    },
+    '& > :nth-of-type(2)': {
+      color: colors.invariant.text,
+      ...typography.body1
+    }
   }
 }))
 

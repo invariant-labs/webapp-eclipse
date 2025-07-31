@@ -11,7 +11,7 @@ import useStyles from './style'
 import { VariantType } from 'notistack'
 import { FeeSelector } from './FeeSelector/FeeSelector'
 import Select from '@components/Inputs/Select/Select'
-
+import { Intervals as IntervalsKeys } from '@store/consts/static'
 export interface IProps {
   poolAddress: string
   copyAddressHandler: (message: string, variant: VariantType) => void
@@ -25,7 +25,7 @@ export interface IProps {
   feeTiers: number[]
   feeTierIndex: number
   feeTiersWithTvl: Record<number, number>
-  totalTvl: number
+  aggregatedStats: { tvl: number; fees: number; volume: number }
   isDisabled: boolean
   disabledFeeTiers: string[]
   tokens: SwapToken[]
@@ -34,6 +34,7 @@ export interface IProps {
   initialHideUnknownTokensValue: boolean
   setHideUnknownTokensValue: (value: boolean) => void
   noData: boolean
+  interval: IntervalsKeys
 }
 
 export const ChartUpperSection: React.FC<IProps> = ({
@@ -49,7 +50,7 @@ export const ChartUpperSection: React.FC<IProps> = ({
   feeTiers,
   feeTierIndex,
   feeTiersWithTvl,
-  totalTvl,
+  aggregatedStats,
   isDisabled,
   disabledFeeTiers,
   tokens,
@@ -57,7 +58,8 @@ export const ChartUpperSection: React.FC<IProps> = ({
   handleAddToken,
   initialHideUnknownTokensValue,
   setHideUnknownTokensValue,
-  noData
+  noData,
+  interval
 }) => {
   const { classes } = useStyles({ noData: noData })
   const isTablet = useMediaQuery(theme.breakpoints.down(1200))
@@ -225,10 +227,13 @@ export const ChartUpperSection: React.FC<IProps> = ({
             currentFeeIndex={feeTierIndex}
             promotedPoolTierIndex={promotedPoolTierIndex}
             feeTiersWithTvl={feeTiersWithTvl}
-            totalTvl={totalTvl}
+            aggregatedStats={aggregatedStats}
             disabledFeeTiers={disabledFeeTiers}
             noData={noData}
             isLoading={isLoading}
+            interval={interval}
+            tokenX={tokenX}
+            tokenY={tokenY}
           />
         )}
       </Grid>
@@ -275,10 +280,13 @@ export const ChartUpperSection: React.FC<IProps> = ({
             currentFeeIndex={feeTierIndex}
             promotedPoolTierIndex={promotedPoolTierIndex}
             feeTiersWithTvl={feeTiersWithTvl}
-            totalTvl={totalTvl}
+            aggregatedStats={aggregatedStats}
             disabledFeeTiers={disabledFeeTiers}
             noData={noData}
             isLoading={isLoading}
+            interval={interval}
+            tokenX={tokenX}
+            tokenY={tokenY}
           />
         )}
       </Box>
