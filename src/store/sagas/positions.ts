@@ -5823,7 +5823,6 @@ export function* handleCompound(action: PayloadAction<Compound>): Generator {
   try {
     const positionsData = yield* select(positionsWithPoolsData)
     const position = positionsData[positionIndex]
-
     if (
       position.poolData.tokenX.toString() === WRAPPED_ETH_ADDRESS ||
       position.poolData.tokenY.toString() === WRAPPED_ETH_ADDRESS
@@ -5889,8 +5888,8 @@ export function* handleCompound(action: PayloadAction<Compound>): Generator {
       {
         position: position,
         pool: position.poolData,
-        tokenXProgram: allTokens[position.tokenX.toString()].tokenProgram,
-        tokenYProgram: allTokens[position.tokenY.toString()].tokenProgram
+        tokenXProgram: allTokens[position.tokenX.assetAddress.toString()].tokenProgram,
+        tokenYProgram: allTokens[position.tokenY.assetAddress.toString()].tokenProgram
       }
     )
 
@@ -6187,8 +6186,8 @@ export function* handleCompoundWithETH(action: PayloadAction<Compound>): Generat
       {
         position: position,
         pool: position.poolData,
-        tokenXProgram: allTokens[position.tokenX.toString()].tokenProgram,
-        tokenYProgram: allTokens[position.tokenY.toString()].tokenProgram
+        tokenXProgram: allTokens[position.tokenX.assetAddress.toString()].tokenProgram,
+        tokenYProgram: allTokens[position.tokenY.assetAddress.toString()].tokenProgram
       }
     )
     const changeLiquidityIx = yield* call([marketProgram, marketProgram.changeLiquidityIx], {
