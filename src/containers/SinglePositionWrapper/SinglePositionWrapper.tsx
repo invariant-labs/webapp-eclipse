@@ -807,7 +807,9 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   if (position) {
     return (
       <PositionDetails
-        isSimulatingCompound={throttle || !simulation || !simulationParams}
+        isCompundDisabled={
+          throttle || !simulation || !simulationParams || !position || position.isLocked
+        }
         shouldDisable={disableButton}
         tokenXAddress={position.tokenX.assetAddress}
         tokenYAddress={position.tokenY.assetAddress}

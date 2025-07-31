@@ -156,7 +156,7 @@ interface IProps {
   isAddLiquidity: boolean
   setIsAddLiquidity: (value: boolean) => void
   openPosition?: (index: string) => void
-  isSimulatingCompound: boolean
+  isCompundDisabled: boolean
 }
 
 const PositionDetails: React.FC<IProps> = ({
@@ -233,7 +233,7 @@ const PositionDetails: React.FC<IProps> = ({
   setIsChangeLiquidityModalShown,
   isAddLiquidity,
   setIsAddLiquidity,
-  isSimulatingCompound
+  isCompundDisabled
 }) => {
   const { classes } = useStyles()
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
@@ -560,7 +560,7 @@ const PositionDetails: React.FC<IProps> = ({
                   setIsChangeLiquidityModalShown(true)
                   setIsAddLiquidity(value)
                 }}
-                isSimulatingCompound={isSimulatingCompound}
+                isCompundDisabled={isCompundDisabled}
               />
             </Box>
             <Box className={classes.rightSide}>

@@ -38,7 +38,7 @@ interface IProp {
   interval: Intervals
   isLocked?: boolean
   showChangeLiquidityModal: (isAddLiquidity: boolean) => void
-  isSimulatingCompound: boolean
+  isCompundDisabled: boolean
 }
 
 const SinglePositionInfo: React.FC<IProp> = ({
@@ -62,7 +62,7 @@ const SinglePositionInfo: React.FC<IProp> = ({
   interval,
   isLocked,
   showChangeLiquidityModal,
-  isSimulatingCompound
+  isCompundDisabled
 }) => {
   const [isFeeTooltipOpen, setIsFeeTooltipOpen] = useState(false)
   const { classes, cx } = useStyles()
@@ -171,14 +171,22 @@ const SinglePositionInfo: React.FC<IProp> = ({
           title='Unclaimed fees'
           item={
             <Box className={classes.feeButtons}>
-              <TooltipHover title={isPreview ? "Can't compound in preview" : ''}>
+              <TooltipHover
+                title={
+                  tokenX.claimValue + tokenY.claimValue === 0 ||
+                  isPreview ||
+                  isClosing ||
+                  isCompundDisabled
+                    ? 'Compound not available'
+                    : ''
+                }>
                 <Button
                   className={classes.compoundButton}
                   disabled={
                     tokenX.claimValue + tokenY.claimValue === 0 ||
                     isPreview ||
                     isClosing ||
-                    isSimulatingCompound
+                    isCompundDisabled
                   }
                   variant='contained'
                   onClick={onClickCompound}>

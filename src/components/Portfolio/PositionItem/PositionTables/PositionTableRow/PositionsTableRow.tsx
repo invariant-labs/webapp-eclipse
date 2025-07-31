@@ -45,8 +45,6 @@ interface IPositionsTableRow extends IPositionItem {
   createNewPosition: () => void
   shouldDisable: boolean
   openPosition: () => void
-  compound: () => void
-  compoundDisabled: boolean
 }
 
 export const PositionTableRow: React.FC<IPositionsTableRow> = ({
@@ -78,9 +76,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
   handleClosePosition,
   createNewPosition,
   shouldDisable,
-  openPosition,
-  compound,
-  compoundDisabled
+  openPosition
 }) => {
   const { classes, cx } = useStyles()
   const { classes: skeletonClasses } = useSkeletonStyle()
@@ -453,8 +449,6 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
         onLockPosition={() => setIsLockPositionModalOpen(true)}
         createPosition={createNewPosition}
         onManagePosition={openPosition}
-        compound={compound}
-        compoundDisabled={compoundDisabled}
       />
       <TableCell className={`${classes.pairNameCell} ${classes.cellBase}`}>
         {pairNameContent}
