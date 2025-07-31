@@ -34,7 +34,6 @@ export const useStyles = makeStyles()(() => ({
     radial-gradient(circle at 500px 3100px, rgba(58, 70, 107, 0.3) 0, transparent 750px),
     radial-gradient(circle at 2300px 4900px, rgba(58, 70, 107, 0.2) 0, transparent 1300px)
   `,
-    backgroundColor: '#12182b',
     backgroundRepeat: 'no-repeat',
     backgroundSize: 'cover',
     pointerEvents: 'none'
