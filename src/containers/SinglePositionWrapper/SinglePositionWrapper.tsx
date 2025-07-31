@@ -804,12 +804,28 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     isAutoSwapOnTheSamePool
   ])
 
+  const shouldCompoundLetThrough = useMemo(
+    () =>
+      isSimulationStatus(SwapAndCreateSimulationStatus.Ok) ||
+      isSimulationStatus(SwapAndCreateSimulationStatus.PerfectRatio),
+    [isSimulationStatus]
+  )
+
+  const isCoumpoundDisabled = useMemo(
+    () =>
+      throttle ||
+      !simulation ||
+      !simulationParams ||
+      !position ||
+      position.isLocked ||
+      !shouldCompoundLetThrough,
+    [throttle, simulation, simulationParams, position]
+  )
+
   if (position) {
     return (
       <PositionDetails
-        isCompundDisabled={
-          throttle || !simulation || !simulationParams || !position || position.isLocked
-        }
+        isCompundDisabled={isCoumpoundDisabled}
         shouldDisable={disableButton}
         tokenXAddress={position.tokenX.assetAddress}
         tokenYAddress={position.tokenY.assetAddress}
