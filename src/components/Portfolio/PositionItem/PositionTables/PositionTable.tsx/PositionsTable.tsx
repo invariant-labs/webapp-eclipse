@@ -30,6 +30,7 @@ interface IPositionsTableProps {
   shouldDisable: boolean
   openPosition: (id: string) => void
   compound: () => void
+  compoundDisabled: boolean
 }
 
 export const PositionsTable: React.FC<IPositionsTableProps> = ({
@@ -43,7 +44,8 @@ export const PositionsTable: React.FC<IPositionsTableProps> = ({
   createNewPosition,
   shouldDisable,
   openPosition,
-  compound
+  compound,
+  compoundDisabled
 }) => {
   const { classes } = usePositionTableStyle({ isScrollHide: positions.length <= 5 || isLoading })
   const navigate = useNavigate()
@@ -112,6 +114,7 @@ export const PositionsTable: React.FC<IPositionsTableProps> = ({
                   createNewPosition={() => createNewPosition(position)}
                   openPosition={() => openPosition(position.id)}
                   compound={compound}
+                  compoundDisabled={compoundDisabled}
                 />
               </TableRow>
             ))}

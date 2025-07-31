@@ -33,6 +33,7 @@ interface IPositionItemMobile extends IPositionItem {
   shouldDisable: boolean
   openPosition: () => void
   compound: () => void
+  compoundDisabled: boolean
 }
 
 export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
@@ -63,7 +64,8 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
   shouldDisable,
   createNewPosition,
   openPosition,
-  compound
+  compound,
+  compoundDisabled
 }) => {
   const { classes, cx } = useMobileStyles()
   const airdropIconRef = useRef<any>(null)
@@ -467,6 +469,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
         createPosition={createNewPosition}
         onManagePosition={openPosition}
         compound={compound}
+        compoundDisabled={compoundDisabled}
       />
       <Grid container item className={classes.mdTop}>
         <Grid container item className={classes.iconsAndNames}>

@@ -1068,6 +1068,14 @@ const PortfolioWrapper = () => {
           })
         )
       }}
+      compoundDisabled={
+        !position ||
+        throttle ||
+        !simulation ||
+        !autoSwapPoolData ||
+        !autoSwapTickMap ||
+        !simulationParams
+      }
       compound={() => {
         if (
           !position ||

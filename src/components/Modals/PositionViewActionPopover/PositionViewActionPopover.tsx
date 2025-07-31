@@ -15,6 +15,7 @@ export interface IPositionViewActionPopover {
   isLocked: boolean
   shouldDisable: boolean
   compound: () => void
+  compoundDisabled: boolean
 }
 
 export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = ({
@@ -29,7 +30,8 @@ export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = (
   createPosition,
   unclaimedFeesInUSD,
   shouldDisable,
-  compound
+  compound,
+  compoundDisabled
 }) => {
   const { classes, cx } = useStyles()
   return (
@@ -94,10 +96,10 @@ export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = (
           </Button>
           <Button
             className={cx(classes.listItem)}
-            disabled={isLocked || shouldDisable}
+            disabled={isLocked || shouldDisable || compoundDisabled}
             onClick={() => {
-              onLockPosition()
               compound()
+              handleClose()
             }}>
             <Typography className={classes.name}>Compound</Typography>
           </Button>

@@ -148,6 +148,7 @@ interface IProps {
   isAddLiquidity: boolean
   setIsAddLiquidity: (value: boolean) => void
   openPosition: (index: string) => void
+  compoundDisabled: boolean
 }
 
 const Portfolio: React.FC<IProps> = ({
@@ -216,7 +217,8 @@ const Portfolio: React.FC<IProps> = ({
   setIsChangeLiquidityModalShown,
   isAddLiquidity,
   setIsAddLiquidity,
-  openPosition
+  openPosition,
+  compoundDisabled
 }) => {
   const { classes, cx } = useStyles()
 
@@ -394,6 +396,7 @@ const Portfolio: React.FC<IProps> = ({
           createNewPosition={createNewPosition}
           openPosition={openPosition}
           compound={compound}
+          compoundDisabled={compoundDisabled}
         />
       )
     } else if (isLg && loading) {
@@ -440,6 +443,7 @@ const Portfolio: React.FC<IProps> = ({
           }}
           openPosition={() => openPosition(element.id)}
           compound={compound}
+          compoundDisabled={compoundDisabled}
         />
       </Grid>
     ))
