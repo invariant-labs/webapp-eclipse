@@ -8,6 +8,7 @@ interface SwitcherProps<T> {
   onChange: (value: T) => void
   dark?: boolean
   fullWidth?: boolean
+  itemWidth?: number
 }
 
 function Switcher<T extends string>({
@@ -15,9 +16,10 @@ function Switcher<T extends string>({
   options,
   onChange,
   dark,
-  fullWidth
+  fullWidth,
+  itemWidth
 }: SwitcherProps<T>) {
-  const { classes } = useStyles({ value, dark, fullWidth })
+  const { classes } = useStyles({ value, dark, fullWidth, itemWidth })
 
   const handleChange = (_: any, newValue: T | null) => {
     if (newValue !== null) onChange(newValue)
