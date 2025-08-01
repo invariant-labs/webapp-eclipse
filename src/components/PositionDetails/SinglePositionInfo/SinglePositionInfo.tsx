@@ -16,6 +16,7 @@ import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { Intervals } from '@store/consts/static'
 import { Minus } from '@static/componentIcon/Minus'
 import { Plus } from '@static/componentIcon/Plus'
+import loadingAnimation from '@static/gif/loading.gif'
 
 interface IProp {
   onClickClaimFee: () => void
@@ -39,6 +40,7 @@ interface IProp {
   isLocked?: boolean
   showChangeLiquidityModal: (isAddLiquidity: boolean) => void
   isCompundDisabled: boolean
+  isSimulating: boolean
 }
 
 const SinglePositionInfo: React.FC<IProp> = ({
@@ -62,7 +64,8 @@ const SinglePositionInfo: React.FC<IProp> = ({
   interval,
   isLocked,
   showChangeLiquidityModal,
-  isCompundDisabled
+  isCompundDisabled,
+  isSimulating
 }) => {
   const [isFeeTooltipOpen, setIsFeeTooltipOpen] = useState(false)
   const { classes, cx } = useStyles()
@@ -186,11 +189,20 @@ const SinglePositionInfo: React.FC<IProp> = ({
                     tokenX.claimValue + tokenY.claimValue === 0 ||
                     isPreview ||
                     isClosing ||
-                    isCompundDisabled
+                    isCompundDisabled ||
+                    isSimulating
                   }
                   variant='contained'
                   onClick={onClickCompound}>
-                  Compound
+                  {isSimulating ? (
+                    <img
+                      src={loadingAnimation}
+                      style={{ height: 25, width: 25, zIndex: 10 }}
+                      alt='loading'
+                    />
+                  ) : (
+                    'Compound'
+                  )}
                 </Button>
               </TooltipHover>
               <TooltipHover title={isPreview ? "Can't claim fees in preview" : ''}>

@@ -617,6 +617,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   }, [isChangeLiquidityModalShown])
 
   const [throttle, setThrottle] = useState<boolean>(false)
+  const [isSimulationgRunning, setIsSimulationRunning] = useState<boolean>(false)
 
   const [simulation, setSimulation] = useState<SimulateSwapAndCreatePositionSimulation | null>(null)
   const [simulationParams, setSimulationParams] = useState<{
@@ -695,6 +696,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   }, [autoSwapPoolData])
 
   const simulateAutoSwapResult = async () => {
+    setIsSimulationRunning(true)
     if (
       ticksLoading ||
       !position ||
@@ -708,6 +710,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     ) {
       setSimulation(null)
       setSimulationParams(null)
+      setIsSimulationRunning(false)
       return
     }
 
@@ -723,6 +726,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     if (amountX.eqn(0) && amountY.eqn(0)) {
       setSimulation(null)
       setSimulationParams(null)
+      setIsSimulationRunning(false)
       return
     }
 
@@ -776,6 +780,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       positionSlippage
     })
     setSimulation(result)
+    setIsSimulationRunning(false)
   }
 
   const timeoutRef = useRef<number>(0)
@@ -811,20 +816,26 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     [isSimulationStatus]
   )
 
+  const isSimulating = useMemo(
+    () =>
+      ticksLoading || showFeesLoader || positionPreviewLoading || throttle || isSimulationgRunning,
+    [ticksLoading, showFeesLoader, positionPreviewLoading, throttle, isSimulationgRunning]
+  )
+
   const isCoumpoundDisabled = useMemo(
     () =>
-      throttle ||
       !simulation ||
       !simulationParams ||
       !position ||
       position.isLocked ||
       !shouldCompoundLetThrough,
-    [throttle, simulation, simulationParams, position]
+    [simulation, simulationParams, position, shouldCompoundLetThrough, isSimulating]
   )
 
   if (position) {
     return (
       <PositionDetails
+        isSimulating={isSimulating}
         isCompundDisabled={isCoumpoundDisabled}
         shouldDisable={disableButton}
         tokenXAddress={position.tokenX.assetAddress}
