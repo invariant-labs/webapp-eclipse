@@ -67,6 +67,7 @@ export interface SwapToken {
   logoURI: string
   isUnknown?: boolean
   coingeckoId?: string
+  address: PublicKey
 }
 
 export const swapTokens = createSelector(

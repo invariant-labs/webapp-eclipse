@@ -3,7 +3,11 @@ import { INavigation, navigationSliceName } from '@store/reducers/navigation'
 
 const store = (s: AnyProps) => s[navigationSliceName] as INavigation
 
-export const { navigationState, swapMode } = keySelectors(store, ['navigationState', 'swapMode'])
+export const { navigationState, swapMode, ordersHistory } = keySelectors(store, [
+  'navigationState',
+  'swapMode',
+  'ordersHistory'
+])
 
 export const address = (s: AnyProps) => store(s).navigationState.address
 export const showFavourites = (s: AnyProps) => store(s).navigationState.showFavourites
@@ -12,6 +16,7 @@ export const liquiditySearch = (s: AnyProps) => store(s).navigationState.liquidi
 export const poolSearch = (s: AnyProps) => store(s).navigationState.statsPool
 export const tokenSearch = (s: AnyProps) => store(s).navigationState.statsTokens
 export const portfolioSearch = (s: AnyProps) => store(s).navigationState.portfolioTokens
+export const swapSearch = (s: AnyProps) => store(s).navigationState.swapTokens
 
 export const navigationSelectors = {
   navigationState,
@@ -22,7 +27,9 @@ export const navigationSelectors = {
   tokenSearch,
   portfolioSearch,
   showFavouritesTokens,
-  swapMode
+  swapMode,
+  ordersHistory,
+  swapSearch
 }
 
 export default navigationSelectors

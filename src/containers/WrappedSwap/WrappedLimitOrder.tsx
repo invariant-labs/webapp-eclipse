@@ -5,12 +5,16 @@ import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { PublicKey } from '@solana/web3.js'
 import { useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { TokenPriceData } from '@store/consts/types'
 import { VariantType } from 'notistack'
 import { BN } from '@coral-xyz/anchor'
 import LimitOrder from '@components/Swap/LimitOrder'
 import { Market } from '@invariant-labs/sdk-eclipse'
+import OrderHistory from '@components/Swap/OrderHistory/OrderHistory'
+import { OrdersHistory, actions as navigationActions } from '@store/reducers/navigation'
+import { ordersHistory, swapSearch } from '@store/selectors/navigation'
+import { ISearchToken } from '@common/FilterSearch/FilterSearch'
 
 type Props = {
   walletStatus: Status
@@ -101,6 +105,9 @@ export const WrappedLimitOrder = ({
 }: Props) => {
   const dispatch = useDispatch()
 
+  const switcherType = useSelector(ordersHistory)
+  const searchParamsToken = useSelector(swapSearch)
+
   const { setTokenFrom, setTokenTo } = tokensFromState
 
   const {} = tokensState
@@ -116,6 +123,16 @@ export const WrappedLimitOrder = ({
     }
 
     triggerFetchPrices()
+  }
+
+  const setSearchTokensValue = (tokens: ISearchToken[]) => {
+    dispatch(
+      navigationActions.setSearch({
+        section: 'swapTokens',
+        type: 'filteredTokens',
+        filteredTokens: tokens
+      })
+    )
   }
 
   return (
@@ -168,6 +185,17 @@ export const WrappedLimitOrder = ({
         lockAnimationState={lockAnimationState}
         rotatesState={rotatesState}
         swapState={swapState}
+      />
+
+      <OrderHistory
+        handleSwitcher={(e: OrdersHistory) => {
+          dispatch(navigationActions.setOrderHistory(e))
+        }}
+        swicherType={switcherType}
+        handleRefresh={() => {}}
+        currentNetwork={networkType}
+        selectedFilters={searchParamsToken.filteredTokens}
+        setSelectedFilters={setSearchTokensValue}
       />
     </>
   )

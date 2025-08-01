@@ -334,8 +334,6 @@ export const SwapContainer = ({ initialTokenFrom, initialTokenTo }: Props) => {
       <Box display='flex' justifyContent={'center'}>
         <img src={auditIcon} alt='Audit' style={{ marginTop: '24px' }} width={180} />
       </Box>
-
-      {swapModeType === SwapMode.limitOrder && <OrderHistory />}
     </Grid>
   )
 }
