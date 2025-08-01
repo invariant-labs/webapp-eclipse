@@ -1,8 +1,11 @@
 import { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 import { Swap } from '@components/Swap/Swap'
 import {
+  BITZ_MAIN,
   commonTokensForNetworks,
   DEFAULT_SWAP_SLIPPAGE,
+  sBITZ_MAIN,
+  SwapType,
   WETH_MAIN,
   WRAPPED_ETH_ADDRESS
 } from '@store/consts/static'
@@ -50,7 +53,12 @@ import { getMarketProgramSync } from '@utils/web3/programs/amm'
 import { getEclipseWallet } from '@utils/web3/wallet'
 import { IWallet } from '@invariant-labs/sdk-eclipse'
 import { actions as swapActions } from '@store/reducers/swap'
-
+import { actions as sbitzActions, StakeLiquidityPayload } from '@store/reducers/sBitz'
+import {
+  stakedData,
+  inProgress as bitzInProgress,
+  success as bitzSuccess
+} from '@store/selectors/sBitz'
 type Props = {
   initialTokenFrom: string
   initialTokenTo: string
@@ -71,6 +79,8 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const multiplyer = useSelector(swapMultiplier)
   const isBalanceLoading = useSelector(balanceLoading)
   const { success, inProgress } = useSelector(swapPool)
+  const bitzProgressState = useSelector(bitzInProgress)
+  const bitzSuccessState = useSelector(bitzSuccess)
   const isFetchingNewPool = useSelector(isLoadingLatestPoolsForTransaction)
   const pointsPerUsdFee = useSelector(pointsPerUsd)
   const promotedSwapPairs = useSelector(swapPairs)
@@ -86,7 +96,9 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const [block, setBlock] = useState(state?.referer === 'stats')
   const rpc = useSelector(rpcAddress)
   const wallet = getEclipseWallet()
+  const stakedBitzData = useSelector(stakedData)
   const market = getMarketProgramSync(networkType, rpc, wallet as IWallet)
+  const [swapType, setSwapType] = useState(SwapType.Normal)
   useEffect(() => {
     dispatch(leaderboardActions.getLeaderboardConfig())
   }, [])
@@ -95,11 +107,16 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
     let timeoutId1: NodeJS.Timeout
     let timeoutId2: NodeJS.Timeout
 
-    if (!inProgress && progress === 'progress') {
-      setProgress(success ? 'approvedWithSuccess' : 'approvedWithFail')
+    const { isInProgress, isSuccess } =
+      swapType === SwapType.BitzRoute
+        ? { isInProgress: bitzProgressState, isSuccess: bitzSuccessState }
+        : { isInProgress: inProgress, isSuccess: success }
+
+    if (!isInProgress && progress === 'progress') {
+      setProgress(isSuccess ? 'approvedWithSuccess' : 'approvedWithFail')
 
       timeoutId1 = setTimeout(() => {
-        setProgress(success ? 'success' : 'failed')
+        setProgress(isSuccess ? 'success' : 'failed')
       }, 1000)
 
       timeoutId2 = setTimeout(() => {
@@ -111,7 +128,7 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
       clearTimeout(timeoutId1)
       clearTimeout(timeoutId2)
     }
-  }, [success, inProgress])
+  }, [success, inProgress, bitzProgressState, bitzSuccessState])
 
   useEffect(() => {
     if (tokenFrom !== null && tokenTo !== null && !isFetchingNewPool) {
@@ -357,6 +374,15 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const swapAccounts = useSelector(accounts)
   const swapIsLoading = useSelector(isLoading)
 
+  const onBitzRoute = async (payload: StakeLiquidityPayload, isStake: boolean) => {
+    setProgress('progress')
+    if (isStake) {
+      dispatch(sbitzActions.stake(payload))
+    } else {
+      dispatch(sbitzActions.unstake(payload))
+    }
+  }
+
   return (
     <Swap
       isFetchingNewPool={isFetchingNewPool}
@@ -407,6 +433,13 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
               second: tokenTo
             })
           )
+
+          if (
+            (tokenFrom.equals(BITZ_MAIN.address) || tokenTo.equals(BITZ_MAIN.address)) &&
+            (tokenFrom.equals(sBITZ_MAIN.address) || tokenTo.equals(sBITZ_MAIN.address))
+          ) {
+            dispatch(sbitzActions.getStakedAmountAndBalance())
+          }
         }
       }}
       onConnectWallet={() => {
@@ -455,6 +488,11 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
       tokensDict={tokensDict}
       swapAccounts={swapAccounts}
       swapIsLoading={swapIsLoading}
+      sbitzSupply={stakedBitzData.stakedTokenSupply}
+      totalBitzStaked={stakedBitzData.stakedAmount}
+      onBitzRoute={onBitzRoute}
+      swapType={swapType}
+      setSwapType={setSwapType}
     />
   )
 }

@@ -34,7 +34,8 @@ const emptyPublicKey = new PublicKey(new Uint8Array(32))
 
 export enum SwapType {
   Normal,
-  WithHop
+  WithHop,
+  BitzRoute
 }
 
 export const WETH_ADDRESS = {
