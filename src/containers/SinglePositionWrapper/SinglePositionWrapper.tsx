@@ -19,6 +19,7 @@ import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
 import { network, timeoutError } from '@store/selectors/solanaConnection'
 import {
+  changeLiquidity,
   isLoadingPositionsList,
   lockedPositionsNavigationData,
   plotTicks,
@@ -29,7 +30,7 @@ import {
   singlePositionData,
   showFeesLoader as storeFeesLoader
 } from '@store/selectors/positions'
-import { balance, status } from '@store/selectors/solanaWallet'
+import { balance, balanceLoading, poolTokens, status } from '@store/selectors/solanaWallet'
 import { VariantType } from 'notistack'
 import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -47,9 +48,16 @@ import { getPromotedPools, isLoading as promotedLoading } from '@store/selectors
 import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import { BN } from '@coral-xyz/anchor'
 import { Intervals, LEADERBOARD_DECIMAL } from '@store/consts/static'
-import { poolsArraySortedByFees } from '@store/selectors/pools'
+import poolsSelectors, {
+  autoSwapTicksAndTickMap,
+  poolsArraySortedByFees
+} from '@store/selectors/pools'
 import { estimatePointsForUserPositions } from '@invariant-labs/points-sdk'
 import { address } from '@store/selectors/navigation'
+import { Pair } from '@invariant-labs/sdk-eclipse'
+import { actions as poolsActions } from '@store/reducers/pools'
+import { actions as positionsActions } from '@store/reducers/positions'
+import { blurContent, unblurContent } from '@utils/uiUtils'
 
 export interface IProps {
   id: string
@@ -548,6 +556,49 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     )
   }
 
+  const tokens = useSelector(poolTokens)
+  const isBalanceLoading = useSelector(balanceLoading)
+
+  const onConnectWallet = () => {
+    dispatch(walletActions.connect(false))
+  }
+
+  const onDisconnectWallet = () => {
+    dispatch(walletActions.disconnect())
+  }
+
+  const getPoolData = (pair: Pair) => {
+    dispatch(poolsActions.getPoolData(pair))
+  }
+
+  const setShouldNotUpdateRange = () => {
+    dispatch(positionsActions.setShouldNotUpdateRange(true))
+  }
+
+  const autoSwapPoolData = useSelector(poolsSelectors.autoSwapPool)
+  const { ticks: autoSwapTicks, tickmap: autoSwapTickMap } = useSelector(autoSwapTicksAndTickMap)
+  const isLoadingAutoSwapPool = useSelector(poolsSelectors.isLoadingAutoSwapPool)
+  const isLoadingAutoSwapPoolTicksOrTickMap = useSelector(
+    poolsSelectors.isLoadingAutoSwapPoolTicksOrTickMap
+  )
+  const { success: changeLiquiditySuccess, inProgress: changeLiquidityInProgress } =
+    useSelector(changeLiquidity)
+
+  const setChangeLiquiditySuccess = (value: boolean) => {
+    dispatch(positionsActions.setChangeLiquiditySuccess(value))
+  }
+
+  const [isChangeLiquidityModalShown, setIsChangeLiquidityModalShown] = useState(false)
+  const [isAddLiquidity, setIsAddLiquidity] = useState(true)
+
+  useEffect(() => {
+    if (isChangeLiquidityModalShown) {
+      blurContent()
+    } else {
+      unblurContent()
+    }
+  }, [isChangeLiquidityModalShown])
+
   if (position) {
     return (
       <PositionDetails
@@ -590,6 +641,98 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
                 }
               },
               claimFarmRewards
+            })
+          )
+        }}
+        changeLiquidity={(
+          liquidity,
+          slippage,
+          isAddLiquidity,
+          isClosePosition,
+          xAmount,
+          yAmount
+        ) => {
+          if (isPreview) return
+          if (isAddLiquidity) {
+            dispatch(
+              actions.addLiquidity({
+                positionIndex: position.positionIndex,
+                liquidity,
+                slippage,
+                isClosePosition,
+                xAmount,
+                yAmount
+              })
+            )
+          } else {
+            dispatch(
+              actions.removeLiquidity({
+                positionIndex: position.positionIndex,
+                liquidity,
+                slippage,
+                isClosePosition,
+                xAmount,
+                yAmount,
+                onSuccess: () => {
+                  if (lastPosition && nextPosition) {
+                    navigate(ROUTES.getPositionRoute(lastPosition.id), { replace: true })
+                  } else if (previousPosition) {
+                    navigate(ROUTES.getPositionRoute(previousPosition.id), { replace: true })
+                  } else {
+                    navigate(ROUTES.PORTFOLIO)
+                  }
+
+                  setIsChangeLiquidityModalShown(false)
+                }
+              })
+            )
+          }
+        }}
+        swapAndAddLiquidity={(
+          xAmount,
+          yAmount,
+          swapAmount,
+          xToY,
+          byAmountIn,
+          estimatedPriceAfterSwap,
+          crossedTicks,
+          swapSlippage,
+          positionSlippage,
+          minUtilizationPercentage,
+          poolIndex,
+          liquidity
+        ) => {
+          if (!autoSwapPoolData || !autoSwapTickMap) {
+            return
+          }
+
+          dispatch(
+            actions.swapAndAddLiquidity({
+              xAmount,
+              yAmount,
+              tokenX: (xToY ? position.tokenX : position.tokenY).assetAddress,
+              tokenY: (xToY ? position.tokenY : position.tokenX).assetAddress,
+              swapAmount,
+              byAmountIn,
+              xToY,
+              swapPool: autoSwapPoolData,
+              swapPoolTickmap: autoSwapTickMap,
+              swapSlippage,
+              estimatedPriceAfterSwap,
+              crossedTicks,
+              positionPair: {
+                fee: position.poolData.fee,
+                tickSpacing: position.poolData.tickSpacing
+              },
+              positionPoolIndex: poolIndex,
+              positionPoolPrice: position.poolData.sqrtPrice,
+              positionSlippage,
+              lowerTick: position.lowerTickIndex,
+              upperTick: position.upperTickIndex,
+              liquidityDelta: liquidity,
+              minUtilizationPercentage,
+              isSamePool: position.poolData.address.equals(autoSwapPoolData.address),
+              positionIndex: position.positionIndex
             })
           )
         }}
@@ -654,6 +797,29 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         positionId={id}
         paginationData={paginationData}
         handleChangePagination={handleChangePagination}
+        tokens={tokens}
+        walletStatus={walletStatus}
+        allPools={poolsList}
+        isBalanceLoading={isBalanceLoading}
+        isTimeoutError={isTimeoutError}
+        onConnectWallet={onConnectWallet}
+        onDisconnectWallet={onDisconnectWallet}
+        getPoolData={getPoolData}
+        setShouldNotUpdateRange={setShouldNotUpdateRange}
+        autoSwapPoolData={autoSwapPoolData}
+        autoSwapTicks={autoSwapTicks}
+        autoSwapTickMap={autoSwapTickMap}
+        isLoadingAutoSwapPool={isLoadingAutoSwapPool}
+        isLoadingAutoSwapPoolTicksOrTickMap={isLoadingAutoSwapPoolTicksOrTickMap}
+        ticksData={ticksData}
+        changeLiquiditySuccess={changeLiquiditySuccess}
+        changeLiquidityInProgress={changeLiquidityInProgress}
+        setChangeLiquiditySuccess={setChangeLiquiditySuccess}
+        positionLiquidity={position.liquidity}
+        isChangeLiquidityModalShown={isChangeLiquidityModalShown}
+        setIsChangeLiquidityModalShown={setIsChangeLiquidityModalShown}
+        isAddLiquidity={isAddLiquidity}
+        setIsAddLiquidity={setIsAddLiquidity}
       />
     )
   }

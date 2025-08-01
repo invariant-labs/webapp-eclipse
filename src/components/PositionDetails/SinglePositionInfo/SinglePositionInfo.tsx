@@ -14,6 +14,8 @@ import { calculateAPYAndAPR } from '@utils/utils'
 import { PublicKey } from '@solana/web3.js'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { Intervals } from '@store/consts/static'
+import { Minus } from '@static/componentIcon/Minus'
+import { Plus } from '@static/componentIcon/Plus'
 
 interface IProp {
   onClickClaimFee: () => void
@@ -34,6 +36,7 @@ interface IProp {
   isClosing: boolean
   interval: Intervals
   isLocked?: boolean
+  showChangeLiquidityModal: (isAddLiquidity: boolean) => void
 }
 
 const SinglePositionInfo: React.FC<IProp> = ({
@@ -54,10 +57,11 @@ const SinglePositionInfo: React.FC<IProp> = ({
   isPromotedLoading,
   isClosing,
   interval,
-  isLocked
+  isLocked,
+  showChangeLiquidityModal
 }) => {
   const [isFeeTooltipOpen, setIsFeeTooltipOpen] = useState(false)
-  const { classes } = useStyles()
+  const { classes, cx } = useStyles()
 
   const Overlay = () => (
     <div
@@ -99,7 +103,28 @@ const SinglePositionInfo: React.FC<IProp> = ({
           isLocked={isLocked}
         />
         <Separator size='100%' isHorizontal color={colors.invariant.light} />
-        <Section title='Liquidity'>
+        <Section
+          title='Liquidity'
+          item={
+            <Box className={classes.liquidityButtons}>
+              <Button
+                className={cx(classes.liquidityButton, {
+                  [classes.liquidityButtonDisabled]: isLocked || isPreview
+                })}
+                disabled={isLocked || isPreview}
+                onClick={() => showChangeLiquidityModal(true)}>
+                <Plus />
+              </Button>
+              <Button
+                className={cx(classes.liquidityButton, {
+                  [classes.liquidityButtonDisabled]: isLocked || isPreview
+                })}
+                disabled={isLocked || isPreview}
+                onClick={() => showChangeLiquidityModal(false)}>
+                <Minus />
+              </Button>
+            </Box>
+          }>
           <Liquidity
             tokenA={
               xToY
