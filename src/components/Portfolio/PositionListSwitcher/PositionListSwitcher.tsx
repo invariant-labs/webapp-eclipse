@@ -5,13 +5,11 @@ import { Box, ToggleButton, ToggleButtonGroup } from '@mui/material'
 interface IPositionListSwitcher {
   alignment: LiquidityPools
   setLiquidityPoolsAlignment: (alignment: LiquidityPools) => void
-  lockListDisabled: boolean
 }
 
 export const PositionListSwitcher: React.FC<IPositionListSwitcher> = ({
   alignment,
-  setLiquidityPoolsAlignment,
-  lockListDisabled
+  setLiquidityPoolsAlignment
 }) => {
   const { classes } = useStyles()
 
@@ -42,7 +40,6 @@ export const PositionListSwitcher: React.FC<IPositionListSwitcher> = ({
         </ToggleButton>
         <ToggleButton
           sx={{ padding: 0 }}
-          disabled={lockListDisabled}
           value={LiquidityPools.Locked}
           disableRipple
           className={classes.switchPoolsButton}
