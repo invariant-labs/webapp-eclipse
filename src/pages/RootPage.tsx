@@ -169,6 +169,7 @@ const RootPage: React.FC = memo(() => {
       {signerStatus === Status.Initialized && <EventsHandlers />}
       <div id={toBlur}>
         <Grid className={classes.root}>
+          <div className={classes.background} />
           {showHeader && currentNetwork === NetworkType.Mainnet && (
             <>
               <NormalBanner onClose={handleBannerClose} isHiding={isHiding} />
