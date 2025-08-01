@@ -29,13 +29,11 @@ import {
   ROUTES,
   trimLeadingZeros
 } from '@utils/utils'
-import { Swap as SwapData } from '@store/reducers/swap'
 import { Status } from '@store/reducers/solanaWallet'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { blurContent, createButtonActions, unblurContent } from '@utils/uiUtils'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import ExchangeRate from './ExchangeRate/ExchangeRate'
-import TransactionDetailsBox from './TransactionDetailsBox/TransactionDetailsBox'
+import ExchangeRate from './SwapComponents/ExchangeRate/ExchangeRate'
 import useStyles from './style'
 import { TokenPriceData } from '@store/consts/types'
 import TokensInfo from './TokensInfo/TokensInfo'
@@ -45,16 +43,14 @@ import { DECIMAL, fromFee, SimulationStatus } from '@invariant-labs/sdk-eclipse/
 import { PoolWithAddress } from '@store/reducers/pools'
 import { PublicKey } from '@solana/web3.js'
 import { Tick, Tickmap, Market } from '@invariant-labs/sdk-eclipse/lib/market'
-import { auditIcon, refreshIcon, settingIcon, swapArrowsIcon, warningIcon } from '@static/icons'
+import { refreshIcon, settingIcon, swapArrowsIcon, warningIcon } from '@static/icons'
 import SwapPointsPopover from '@components/Modals/SwapPointsPopover/SwapPointsPopover'
-import AnimatedWaves from './AnimatedWaves/AnimatedWaves'
-import { EstimatedPointsLabel } from './EstimatedPointsLabel/EstimatedPointsLabel'
+import AnimatedWaves from './SwapComponents/AnimatedWaves/AnimatedWaves'
+import { EstimatedPointsLabel } from './SwapComponents/EstimatedPointsLabel/EstimatedPointsLabel'
 import { useNavigate } from 'react-router-dom'
 import { FetcherRecords, Pair, SimulationTwoHopResult } from '@invariant-labs/sdk-eclipse'
 import { theme } from '@static/theme'
-import { SwapMode } from '@store/reducers/navigation'
-import Switcher from '@common/Switcher/Switcher'
-
+import TransactionDetailsBox from './SwapComponents/TransactionDetailsBox/TransactionDetailsBox'
 export interface Pools {
   tokenX: PublicKey
   tokenY: PublicKey
@@ -79,7 +75,6 @@ export interface ISwap {
   isFetchingNewPool: boolean
   onRefresh: (tokenFrom: number | null, tokenTo: number | null) => void
   walletStatus: Status
-  swapData: SwapData
   tokens: SwapToken[]
   pools: PoolWithAddress[]
   tickmap: { [x: string]: Tickmap }
@@ -138,8 +133,29 @@ export interface ISwap {
   swapAccounts: FetcherRecords
   swapIsLoading: boolean
   wrappedETHBalance: BN | null
-  swapMode: SwapMode
-  setSwapMode: (e: SwapMode) => void
+  tokensState: {
+    tokenFromIndex: number | null
+    setTokenFromIndex: React.Dispatch<React.SetStateAction<number | null>>
+    tokenToIndex: number | null
+    setTokenToIndex: React.Dispatch<React.SetStateAction<number | null>>
+  }
+  rateState: {
+    rateReversed: boolean
+    setRateReversed: React.Dispatch<React.SetStateAction<boolean>>
+  }
+  inputState: { inputRef: string; setInputRef: React.Dispatch<React.SetStateAction<string>> }
+  lockAnimationState: {
+    lockAnimation: boolean
+    setLockAnimation: React.Dispatch<React.SetStateAction<boolean>>
+  }
+  swapState: {
+    swap: boolean | null
+    setSwap: React.Dispatch<React.SetStateAction<boolean | null>>
+  }
+  rotatesState: {
+    rotates: number
+    setRotates: React.Dispatch<React.SetStateAction<number>>
+  }
 }
 
 export type SimulationPath = {
@@ -198,34 +214,32 @@ export const Swap: React.FC<ISwap> = ({
   tokensDict,
   swapAccounts,
   swapIsLoading,
-  swapMode,
-  setSwapMode
+  tokensState,
+  rateState,
+  inputState,
+  lockAnimationState,
+  rotatesState,
+  swapState
 }) => {
   const { classes, cx } = useStyles()
 
-  const [tokenFromIndex, setTokenFromIndex] = React.useState<number | null>(null)
-  const [tokenToIndex, setTokenToIndex] = React.useState<number | null>(null)
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
-  const [lockAnimation, setLockAnimation] = React.useState<boolean>(false)
   const [amountFrom, setAmountFrom] = React.useState<string>('')
   const [amountTo, setAmountTo] = React.useState<string>('')
-  const [swap, setSwap] = React.useState<boolean | null>(null)
-  const [rotates, setRotates] = React.useState<number>(0)
   const [slippTolerance, setSlippTolerance] = React.useState<string>(initialSlippage)
   const [throttle, setThrottle] = React.useState<boolean>(false)
   const [settings, setSettings] = React.useState<boolean>(false)
   const [detailsOpen, setDetailsOpen] = React.useState<boolean>(false)
-  const [inputRef, setInputRef] = React.useState<string>(inputTarget.DEFAULT)
   const [isFirstPairGivingPoints, setIsFirstPairGivingPoints] = React.useState<boolean>(false)
   const [isSecondPairGivingPoints, setIsSecondPairGivingPoints] = React.useState<boolean>(false)
-  const [rateReversed, setRateReversed] = React.useState<boolean>(
-    tokenFromIndex && tokenToIndex
-      ? !initialXtoY(
-          tokens[tokenFromIndex].assetAddress.toString(),
-          tokens[tokenToIndex].assetAddress.toString()
-        )
-      : false
-  )
+
+  const { setTokenFromIndex, setTokenToIndex, tokenFromIndex, tokenToIndex } = tokensState
+  const { rateReversed, setRateReversed } = rateState
+  const { inputRef, setInputRef } = inputState
+  const { lockAnimation, setLockAnimation } = lockAnimationState
+  const { rotates, setRotates } = rotatesState
+  const { swap, setSwap } = swapState
+
   const [rateLoading, setRateLoading] = React.useState<boolean>(false)
   const [refresherTime, setRefresherTime] = React.useState<number>(REFRESHER_INTERVAL)
   const [hideUnknownTokens, setHideUnknownTokens] = React.useState<boolean>(
@@ -1053,7 +1067,7 @@ export const Swap: React.FC<ISwap> = ({
   const showImpact = priceImpact > 5 && oraclePriceDiffPercentage < 10 && errorVisible
 
   const warningsCount = [showOracle, showImpact, isUnkown].filter(Boolean).length
-
+  console.log(isAnyBlurShowed)
   return (
     <Grid container className={classes.swapWrapper} alignItems='center'>
       <Grid container className={classes.header}>
@@ -1145,19 +1159,7 @@ export const Swap: React.FC<ISwap> = ({
             wavePosition={'top'}
             isAnimating={isFirstPairGivingPoints || isSecondPairGivingPoints}
           />
-          <Switcher
-            onChange={setSwapMode}
-            options={[SwapMode.swap, SwapMode.limitOrder]}
-            value={swapMode}
-            dark
-            fullWidth
-            padding={2}
-            buttonsHeight={44}
-            biggerFont
-            changeFontColor
-          />
           <Typography
-            mt={'24px'}
             className={cx(
               classes.swapLabel,
               (isFirstPairGivingPoints || isSecondPairGivingPoints) && classes.textShadowLabel
@@ -1580,7 +1582,6 @@ export const Swap: React.FC<ISwap> = ({
           />
         </Grid>
       </Box>
-      <img src={auditIcon} alt='Audit' style={{ marginTop: '24px' }} width={180} />
     </Grid>
   )
 }

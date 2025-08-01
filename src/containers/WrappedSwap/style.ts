@@ -49,7 +49,6 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     position: 'relative',
     paddingBottom: 16,
     rowGap: 8,
-    minHeight: 43,
     flexWrap: 'wrap',
 
     '& h1': {

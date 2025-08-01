@@ -14,6 +14,7 @@ interface SwitcherProps<T> {
   biggerFont?: boolean
   changeFontSize?: boolean
   changeFontColor?: boolean
+  buttonWidth?: number
 }
 
 function Switcher<T extends string>({
@@ -26,9 +27,18 @@ function Switcher<T extends string>({
   buttonsHeight = 32,
   biggerFont = false,
   changeFontSize = false,
-  changeFontColor = false
+  changeFontColor = false,
+  buttonWidth = 60
 }: SwitcherProps<T>) {
-  const { classes } = useStyles({ value, dark, fullWidth, padding, buttonsHeight, biggerFont })
+  const { classes } = useStyles({
+    value,
+    dark,
+    fullWidth,
+    padding,
+    buttonsHeight,
+    biggerFont,
+    buttonWidth
+  })
 
   const handleChange = (_: any, newValue: T | null) => {
     if (newValue !== null) onChange(newValue)

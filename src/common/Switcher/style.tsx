@@ -8,10 +8,11 @@ interface StyleProps {
   padding?: number
   buttonsHeight: number
   biggerFont: boolean
+  buttonWidth: number
 }
 
 const useStyles = makeStyles<StyleProps>()(
-  (theme, { dark, fullWidth, padding, buttonsHeight, biggerFont }) => ({
+  (theme, { dark, fullWidth, padding, buttonsHeight, biggerFont, buttonWidth }) => ({
     container: {
       backgroundColor: dark ? colors.invariant.newDark : colors.invariant.component,
       borderRadius: padding ? padding + 10 : 10,
@@ -61,7 +62,8 @@ const useStyles = makeStyles<StyleProps>()(
       position: 'relative',
       zIndex: 2,
       display: 'flex',
-      width: '100%'
+      width: '100%',
+      justifyContent: 'stretch'
     },
     switchPoolsButton: {
       ...(biggerFont ? typography.heading4 : typography.body2),
@@ -69,8 +71,8 @@ const useStyles = makeStyles<StyleProps>()(
       justifyContent: 'center',
       alignItems: 'center',
       color: 'white',
-      flex: 1,
-      width: 60,
+      flexGrow: 1,
+      width: buttonWidth,
       minWidth: 'unset',
       textTransform: 'none',
       textWrap: 'nowrap',
