@@ -42,9 +42,6 @@ export const useStyles = makeStyles()(() => ({
       width: '100%'
     }
   },
-  row: {
-    marginBottom: 72
-  },
   label: {
     ...typography.body3,
     color: colors.invariant.textGrey,
@@ -63,5 +60,10 @@ export const useStyles = makeStyles()(() => ({
   },
   addZIndex: {
     zIndex: 2
+  },
+  volumeBar: {
+    display: 'flex',
+    flexDirection: 'column',
+    width: '100%'
   }
 }))

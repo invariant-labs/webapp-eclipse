@@ -56,6 +56,7 @@ interface IFilterSearch {
   bp?: Breakpoint
   loading?: boolean
   closeOnSelect?: boolean
+  width?: number | string
 }
 
 const CustomPopper = memo((props: PopperProps) => {
@@ -79,7 +80,8 @@ export const FilterSearch: React.FC<IFilterSearch> = memo(
     filtersAmount,
     bp = 'sm',
     closeOnSelect = false,
-    loading = false
+    loading = false,
+    width = 350
   }) => {
     const tokensListDetails = useSelector(tokensStatsWithTokensDetails)
     const commonTokens = commonTokensForNetworks[networkType]
@@ -165,7 +167,7 @@ export const FilterSearch: React.FC<IFilterSearch> = memo(
 
     const isTokensSelected = selectedFilters.length === filtersAmount
     const isSmall = useMediaQuery(theme.breakpoints.down(bp))
-    const { classes } = useStyles({ isSmall })
+    const { classes } = useStyles({ isSmall, width })
 
     const shouldOpenPopper = useMemo(() => !isTokensSelected && open, [isTokensSelected, open])
 

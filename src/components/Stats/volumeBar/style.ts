@@ -116,9 +116,6 @@ export const useStyles = makeStyles()(() => ({
     color: colors.invariant.green,
     fontWeight: 400
   },
-  rightItems: {
-    display: 'flex'
-  },
   loadingOverlay: {
     position: 'relative',
     '&::after': {
