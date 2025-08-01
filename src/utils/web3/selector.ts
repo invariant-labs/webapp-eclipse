@@ -11,7 +11,7 @@ export const nightlyConnectAdapter: MergedWalletAdapter = (await NightlyConnectA
     appMetadata: {
       name: 'Invariant',
       description: 'Invariant - AMM DEX provided concentrated liquidity',
-      icon: 'https://invariant.app/favicon-192x192.png'
+      icon: 'https://eclipse.invariant.app/favicon-192x192.png'
     },
     url: 'https://nc2.nightly.app'
   },
