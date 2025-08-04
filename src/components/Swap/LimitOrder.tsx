@@ -154,7 +154,7 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
   const [hideUnknownTokens, setHideUnknownTokens] = React.useState<boolean>(
     initialHideUnknownTokensValue
   )
-  console.log(rateReversed)
+
   const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT = useMemo(() => {
     if (network === NetworkType.Testnet) {
       return WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_TEST
@@ -433,6 +433,29 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
                 if (value.match(/^\d*\.?\d*$/)) {
                   setAmountFrom(value)
                   setInputRef(inputTarget.FROM)
+                  if (tokenPriceValue) {
+                    if (rateReversed) {
+                      setAmountTo((+value / +tokenPriceValue).toString())
+                    } else {
+                      setAmountTo((+value * +tokenPriceValue).toString())
+                    }
+                  } else {
+                    if (rateReversed) {
+                      if (!tokenToPriceData || !tokenFromPriceData) return
+                      const marketPrice = +tokenToPriceData?.price / +tokenFromPriceData?.price
+                      setTokenPriceValue(marketPrice.toString())
+                      console.log(marketPrice)
+
+                      setAmountTo((+value / +marketPrice).toString())
+                    } else {
+                      if (!tokenToPriceData || !tokenFromPriceData) return
+                      const marketPrice = +tokenFromPriceData?.price / +tokenToPriceData?.price
+                      console.log(marketPrice)
+                      setTokenPriceValue(marketPrice.toString())
+
+                      setAmountTo((+value * +marketPrice).toString())
+                    }
+                  }
                 }
               }}
               placeholder={`0.${'0'.repeat(6)}`}
@@ -531,6 +554,29 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
                 if (value.match(/^\d*\.?\d*$/)) {
                   setAmountTo(value)
                   setInputRef(inputTarget.TO)
+                  if (tokenPriceValue) {
+                    if (rateReversed) {
+                      setAmountFrom((+tokenPriceValue / +value).toString())
+                    } else {
+                      setAmountFrom((+value / +tokenPriceValue).toString())
+                    }
+                  } else {
+                    if (rateReversed) {
+                      if (!tokenToPriceData || !tokenFromPriceData) return
+
+                      const marketPrice = +tokenToPriceData?.price / +tokenFromPriceData?.price
+                      setTokenPriceValue(marketPrice.toString())
+
+                      setAmountFrom((+marketPrice / +value).toString())
+                    } else {
+                      if (!tokenToPriceData || !tokenFromPriceData) return
+
+                      const marketPrice = +tokenFromPriceData?.price / +tokenToPriceData?.price
+                      setTokenPriceValue(marketPrice.toString())
+
+                      setAmountFrom((+value / +marketPrice).toString())
+                    }
+                  }
                 }
               }}
               placeholder={`0.${'0'.repeat(6)}`}
@@ -572,67 +618,57 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
               network={network}
             />
           </Box>
-          {/* <Box
-            className={classes.unknownWarningContainer}
-            style={{
-              height: errorVisible
-                ? `${warningsCount === 1 ? 34 : warningsCount * 34 + warningsCount * 4}px`
-                : '0px'
-            }}>
-            {oraclePriceDiffPercentage >= 10 && errorVisible && (
-              <TooltipHover title='This swap price my differ from market price' top={100} fullSpan>
-                <Box className={classes.unknownWarning}>
-                  Potential loss {!txDown2 && 'resulting'} from a{' '}
-                  {oraclePriceDiffPercentage.toFixed(2)}% price difference.
-                </Box>
-              </TooltipHover>
-            )}
+          {tokenFromIndex !== null && tokenToIndex !== null && (
+            <>
+              <Typography className={cx(classes.swapLabel)} mt={1.5}>
+                {rateReversed
+                  ? 'Buy ' + tokens[tokenToIndex].symbol
+                  : 'Sell ' + tokens[tokenFromIndex].symbol}{' '}
+                at price
+              </Typography>
+              <BuyTokenInput
+                tokenPrice={rateReversed ? tokenFromPriceData?.price : tokenToPriceData?.price}
+                setValue={value => {
+                  setTokenPriceValue(value)
 
-            <Grid className={classes.unverfiedWrapper}>
-              {tokens[tokenFromIndex ?? '']?.isUnknown && (
-                <TooltipHover
-                  title={`${tokens[tokenFromIndex ?? ''].symbol} is unknown, make sure address is correct before trading`}
-                  top={100}
-                  fullSpan>
-                  <Box className={classes.unknownWarning}>
-                    <img width={16} src={warningIcon} />
-                    {tokens[tokenFromIndex ?? ''].symbol} is not verified
-                  </Box>
-                </TooltipHover>
-              )}
-              {tokens[tokenToIndex ?? '']?.isUnknown && (
-                <TooltipHover
-                  title={`${tokens[tokenToIndex ?? ''].symbol} is unknown, make sure address is correct before trading`}
-                  top={100}
-                  fullSpan>
-                  <Box className={classes.unknownWarning}>
-                    <img width={16} src={warningIcon} />
-                    {tokens[tokenToIndex ?? ''].symbol} is not verified
-                  </Box>
-                </TooltipHover>
-              )}
-            </Grid>
-          </Box> */}
+                  if (rateReversed) {
+                    const amountTo = +amountFrom / +value
+                    setAmountTo(amountTo.toString())
+                  } else {
+                    const amountTo = +amountFrom / +value
+                    setAmountTo(amountTo.toString())
+                  }
+                }}
+                limit={1e14}
+                decimalsLimit={
+                  rateReversed ? tokens[tokenFromIndex].decimals : tokens[tokenToIndex].decimals
+                }
+                currency={
+                  rateReversed ? tokens[tokenFromIndex].symbol : tokens[tokenToIndex].symbol
+                }
+                placeholder='0.0'
+                onBlur={() => {}}
+                value={tokenPriceValue}
+                walletUninitialized={walletStatus !== Status.Initialized}
+                blocked={false}
+                blockerInfo=''
+                setMarketPrice={() => {
+                  setTokenPriceValue(
+                    rateReversed
+                      ? tokenToPriceData?.price.toString() || '0'
+                      : tokenFromPriceData?.price.toString() || '0'
+                  )
+                  if (!tokenToPriceData?.price || !tokenFromPriceData?.price) return
 
-          <Typography className={cx(classes.swapLabel)} mt={1.5}>
-            Buy token at price
-          </Typography>
-          <BuyTokenInput
-            tokenPrice={tokenToPriceData?.price}
-            setValue={value => setTokenPriceValue(value)}
-            limit={1e14}
-            decimalsLimit={
-              tokenToIndex !== null ? tokens[tokenToIndex].decimals : DEFAULT_TOKEN_DECIMAL
-            }
-            currency={tokenToIndex !== null ? tokens[tokenToIndex].symbol : null}
-            placeholder='0.0'
-            onBlur={() => {}}
-            value={tokenPriceValue}
-            walletUninitialized={walletStatus !== Status.Initialized}
-            blocked={false}
-            blockerInfo=''
-            setMarketPrice={() => {}}
-          />
+                  const amountTo =
+                    +amountFrom /
+                    (rateReversed ? tokenToPriceData?.price || 0 : tokenFromPriceData?.price || 0)
+
+                  setAmountTo(amountTo.toString())
+                }}
+              />
+            </>
+          )}
           <Grid container margin={isSm ? '12px 0' : 0}>
             <TokensInfo
               tokenFrom={tokenFromIndex !== null ? tokens[tokenFromIndex] : null}
