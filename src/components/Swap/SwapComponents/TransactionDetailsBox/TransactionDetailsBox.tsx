@@ -4,10 +4,9 @@ import { formatNumberWithoutSuffix, printBN } from '@utils/utils'
 import { useStyles } from './styles'
 import { BN } from '@coral-xyz/anchor'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
-
 import RouteBox from './RouteBox/RouteBox'
-import { SimulationPath } from '../Swap'
 import { DENOMINATOR } from '@invariant-labs/sdk-eclipse/src'
+import { SimulationPath } from '@components/Swap/Swap'
 
 interface IProps {
   open: boolean
