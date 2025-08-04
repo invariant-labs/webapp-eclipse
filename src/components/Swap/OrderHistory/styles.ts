@@ -1,7 +1,15 @@
-import { colors } from '@static/theme'
+import { colors, theme } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => ({
+  wrapper: {
+    maxWidth: 510,
+    marginTop: 24,
+
+    [theme.breakpoints.down('sm')]: {
+      marginInline: 8
+    }
+  },
   header: {
     display: 'flex',
     alignItems: 'center',
@@ -31,10 +39,11 @@ export const useStyles = makeStyles()(() => ({
       opacity: 0.5
     }
   },
-  container: {
+  listContainer: {
     background: colors.invariant.component,
     borderRadius: 24,
     width: '100%',
-    minHeight: 100
+    minHeight: 100,
+    overflow: 'hidden'
   }
 }))

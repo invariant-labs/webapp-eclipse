@@ -196,6 +196,7 @@ export const WrappedLimitOrder = ({
         currentNetwork={networkType}
         selectedFilters={searchParamsToken.filteredTokens}
         setSelectedFilters={setSearchTokensValue}
+        tokensDict={tokensDict}
       />
     </>
   )

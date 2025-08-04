@@ -38,7 +38,6 @@ import { auditIcon } from '@static/icons'
 import { actions as connectionActions } from '@store/reducers/solanaConnection'
 import { Box, Grid, useMediaQuery } from '@mui/material'
 import { theme } from '@static/theme'
-import OrderHistory from '@components/Swap/OrderHistory/OrderHistory'
 
 type Props = {
   initialTokenFrom: string

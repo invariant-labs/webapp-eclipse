@@ -6,7 +6,9 @@ import { OrdersHistory } from '@store/reducers/navigation'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { refreshIcon } from '@static/icons'
 import { FilterSearch, ISearchToken } from '@common/FilterSearch/FilterSearch'
-import { NetworkType } from '@store/consts/static'
+import { NetworkType, SOL_MAIN, USDC_MAIN } from '@store/consts/static'
+import OrderItem from './OrderItem/OrderItem'
+import { SwapToken } from '@store/selectors/solanaWallet'
 
 interface IProps {
   handleSwitcher: (e: OrdersHistory) => void
@@ -15,6 +17,8 @@ interface IProps {
   currentNetwork: NetworkType
   selectedFilters: ISearchToken[]
   setSelectedFilters: (tokens: ISearchToken[]) => void
+
+  tokensDict: Record<string, SwapToken>
 }
 
 const OrderHistory: React.FC<IProps> = ({
@@ -23,12 +27,14 @@ const OrderHistory: React.FC<IProps> = ({
   handleRefresh,
   currentNetwork,
   selectedFilters,
-  setSelectedFilters
+  setSelectedFilters,
+  tokensDict
 }) => {
   const { classes } = useStyles()
 
+  const orders = []
   return (
-    <Grid mt={'24px'}>
+    <Grid className={classes.wrapper}>
       <Switcher
         onChange={handleSwitcher}
         options={[OrdersHistory.your, OrdersHistory.history]}
@@ -56,7 +62,39 @@ const OrderHistory: React.FC<IProps> = ({
             setSelectedFilters={setSelectedFilters}
           />
         </Box>
-        <Grid className={classes.container}></Grid>
+        <Grid className={classes.listContainer}>
+          {orders.map(() => {
+            return null
+          })}
+
+          <OrderItem
+            tokenX={tokensDict[USDC_MAIN.address.toString()]}
+            tokenY={tokensDict[SOL_MAIN.address.toString()]}
+            amount={123}
+            handleCloseOrder={() => {}}
+            orderFilled={79.45565}
+            price={221}
+            itemNumber={0}
+          />
+          <OrderItem
+            tokenX={tokensDict[USDC_MAIN.address.toString()]}
+            tokenY={tokensDict[SOL_MAIN.address.toString()]}
+            amount={123}
+            handleCloseOrder={() => {}}
+            orderFilled={79.45565}
+            price={221}
+            itemNumber={0}
+          />
+          <OrderItem
+            tokenX={tokensDict[USDC_MAIN.address.toString()]}
+            tokenY={tokensDict[SOL_MAIN.address.toString()]}
+            amount={123}
+            handleCloseOrder={() => {}}
+            orderFilled={79.45565}
+            price={221}
+            itemNumber={0}
+          />
+        </Grid>
       </Grid>
     </Grid>
   )

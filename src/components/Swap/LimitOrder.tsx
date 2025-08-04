@@ -23,12 +23,12 @@ import TokensInfo from './TokensInfo/TokensInfo'
 import { VariantType } from 'notistack'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { PublicKey } from '@solana/web3.js'
-
 import { refreshIcon, swapArrowsIcon } from '@static/icons'
 import { useNavigate } from 'react-router-dom'
 import BuyTokenInput from './LimitOrderComponents/BuyTokenInput/BuyTokenInput'
 import { Market } from '@invariant-labs/sdk-eclipse'
 import { theme } from '@static/theme'
+
 export interface Pools {
   tokenX: PublicKey
   tokenY: PublicKey
@@ -126,8 +126,8 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
   isTimeoutError,
   deleteTimeoutError,
   canNavigate,
-  market,
-  tokensDict,
+  // market,
+  // tokensDict,
   rateState,
   tokensState,
   inputState,
@@ -154,7 +154,7 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
   const [hideUnknownTokens, setHideUnknownTokens] = React.useState<boolean>(
     initialHideUnknownTokensValue
   )
-
+  console.log(rateReversed)
   const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT = useMemo(() => {
     if (network === NetworkType.Testnet) {
       return WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_TEST
@@ -380,7 +380,7 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
   const showOracle = oraclePriceDiffPercentage >= 10 && errorVisible
 
   const warningsCount = [showOracle, isUnkown].filter(Boolean).length
-
+  console.log(warningsCount)
   return (
     <Grid container className={classes.swapWrapper} alignItems='center'>
       <Grid container className={classes.header}>
