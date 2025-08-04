@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Box, Button, Grid } from '@mui/material'
 import { useStyles } from './styles'
 import Switcher from '@common/Switcher/Switcher'
@@ -17,7 +17,6 @@ interface IProps {
   currentNetwork: NetworkType
   selectedFilters: ISearchToken[]
   setSelectedFilters: (tokens: ISearchToken[]) => void
-
   tokensDict: Record<string, SwapToken>
 }
 
@@ -32,7 +31,14 @@ const OrderHistory: React.FC<IProps> = ({
 }) => {
   const { classes } = useStyles()
 
-  const orders = []
+  const orderList = useMemo(() => {
+    if (swicherType === OrdersHistory.your) {
+      return []
+    } else {
+      return []
+    }
+  }, [swicherType])
+
   return (
     <Grid className={classes.wrapper}>
       <Switcher
@@ -63,7 +69,7 @@ const OrderHistory: React.FC<IProps> = ({
           />
         </Box>
         <Grid className={classes.listContainer}>
-          {orders.map(() => {
+          {orderList.map(() => {
             return null
           })}
 
@@ -93,6 +99,7 @@ const OrderHistory: React.FC<IProps> = ({
             orderFilled={79.45565}
             price={221}
             itemNumber={0}
+            noBorder
           />
         </Grid>
       </Grid>

@@ -3,6 +3,7 @@ import { Swap } from '@components/Swap/Swap'
 import {
   commonTokensForNetworks,
   DEFAULT_SWAP_SLIPPAGE,
+  Intervals,
   NetworkType,
   WRAPPED_ETH_ADDRESS
 } from '@store/consts/static'
@@ -27,6 +28,7 @@ import { BN } from '@coral-xyz/anchor'
 import { feeds, pointsPerUsd, swapPairs, swapMultiplier } from '@store/selectors/leaderboard'
 import { Market } from '@invariant-labs/sdk-eclipse'
 import { actions as swapActions } from '@store/reducers/swap'
+import { actions as statsActions } from '@store/reducers/stats'
 
 type Props = {
   walletStatus: Status
@@ -130,8 +132,10 @@ export const WrappedSwap = ({
 
   const { progress, setProgress } = progressState
   const { setTokenFrom, setTokenTo, tokenFrom, tokenTo } = tokensFromState
+
   useEffect(() => {
     dispatch(leaderboardActions.getLeaderboardConfig())
+    dispatch(statsActions.getCurrentIntervalStats({ interval: Intervals.Daily }))
   }, [])
 
   useEffect(() => {

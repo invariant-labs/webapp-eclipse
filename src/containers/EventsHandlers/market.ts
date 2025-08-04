@@ -126,6 +126,7 @@ const MarketEvents = () => {
             )
           })
           .finally(() => {
+            console.log('test')
             dispatch(actions.addTokens(tokens))
           })
       } else {

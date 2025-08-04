@@ -18,6 +18,7 @@ interface IProps {
   amount: number
   orderFilled: number
   handleCloseOrder: () => void
+  noBorder?: boolean
 }
 
 const OrderItem: React.FC<IProps> = ({
@@ -27,10 +28,11 @@ const OrderItem: React.FC<IProps> = ({
   price,
   amount,
   orderFilled,
-  handleCloseOrder
+  handleCloseOrder,
+  noBorder
 }) => {
   const [showInfo, setShowInfo] = useState(false)
-  const { classes } = useStyles({ showInfo })
+  const { classes } = useStyles({ showInfo, noBorder })
 
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
