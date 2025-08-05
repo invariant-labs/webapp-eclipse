@@ -1,5 +1,5 @@
 import React from 'react'
-import { Dialog, DialogContent, Box, Typography, Button, useMediaQuery } from '@mui/material'
+import { Dialog, DialogContent, Box, Typography, useMediaQuery } from '@mui/material'
 import { FixedSizeList } from 'react-window'
 import useStyles from './style'
 import { formatDate, formatNumberWithSpaces } from '@utils/utils'
@@ -23,8 +23,7 @@ export interface IContentPointsModal {
 export const ContentPointsModal: React.FC<IContentPointsModal> = ({
   open,
   handleClose,
-  userContentPoints,
-  contentProgramDates
+  userContentPoints
 }) => {
   const itemSize = 56
   const allocations = userContentPoints
