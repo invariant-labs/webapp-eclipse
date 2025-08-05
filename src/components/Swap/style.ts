@@ -524,7 +524,8 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     maxWidth: 510,
     width: '100%',
     borderRadius: 24,
-    border: `1px solid ${colors.invariant.component}`
+    border: `1px solid ${colors.invariant.component}`,
+    boxSizing: 'border-box'
   },
   textShadowLabel: {
     textShadow: '3px 3px 5px #3A466B'

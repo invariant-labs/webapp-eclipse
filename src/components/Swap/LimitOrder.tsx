@@ -12,7 +12,14 @@ import {
   WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_TEST,
   WRAPPED_ETH_ADDRESS
 } from '@store/consts/static'
-import { addressToTicker, convertBalanceToBN, initialXtoY, printBN, ROUTES } from '@utils/utils'
+import {
+  addressToTicker,
+  convertBalanceToBN,
+  initialXtoY,
+  printBN,
+  ROUTES,
+  trimZeros
+} from '@utils/utils'
 import { Status } from '@store/reducers/solanaWallet'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { createButtonActions } from '@utils/uiUtils'
@@ -434,27 +441,40 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
                 if (value.match(/^\d*\.?\d*$/)) {
                   setAmountFrom(value)
                   setInputRef(inputTarget.FROM)
+                  if (tokenToIndex === null) return
+
                   if (tokenPriceValue) {
                     if (rateReversed) {
-                      setAmountTo((+value / +tokenPriceValue).toString())
+                      setAmountTo(
+                        trimZeros(
+                          (+value / +tokenPriceValue).toFixed(tokens[tokenToIndex]?.decimals)
+                        )
+                      )
                     } else {
-                      setAmountTo((+value * +tokenPriceValue).toString())
+                      setAmountTo(
+                        trimZeros(
+                          (+value * +tokenPriceValue).toFixed(tokens[tokenToIndex]?.decimals)
+                        )
+                      )
                     }
                   } else {
                     if (rateReversed) {
                       if (!tokenToPriceData || !tokenFromPriceData) return
                       const marketPrice = +tokenToPriceData?.price / +tokenFromPriceData?.price
                       setTokenPriceValue(marketPrice.toString())
-                      console.log(marketPrice)
 
-                      setAmountTo((+value / +marketPrice).toString())
+                      setAmountTo(
+                        trimZeros((+value / +marketPrice).toFixed(tokens[tokenToIndex]?.decimals))
+                      )
                     } else {
                       if (!tokenToPriceData || !tokenFromPriceData) return
                       const marketPrice = +tokenFromPriceData?.price / +tokenToPriceData?.price
-                      console.log(marketPrice)
+
                       setTokenPriceValue(marketPrice.toString())
 
-                      setAmountTo((+value * +marketPrice).toString())
+                      setAmountTo(
+                        trimZeros((+value * +marketPrice).toFixed(tokens[tokenToIndex]?.decimals))
+                      )
                     }
                   }
                 }
@@ -553,27 +573,39 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
                 if (value.match(/^\d*\.?\d*$/)) {
                   setAmountTo(value)
                   setInputRef(inputTarget.TO)
+
+                  if (tokenFromIndex === null || tokenToIndex === null) return
+
                   if (tokenPriceValue) {
                     if (rateReversed) {
-                      setAmountFrom((+tokenPriceValue / +value).toString())
+                      const amountFrom = +tokenPriceValue / +value
+                      setAmountFrom(trimZeros(amountFrom.toFixed(tokens[tokenFromIndex]?.decimals)))
                     } else {
-                      setAmountFrom((+value / +tokenPriceValue).toString())
+                      const amountFrom = +value / +tokenPriceValue
+                      setAmountFrom(trimZeros(amountFrom.toFixed(tokens[tokenFromIndex]?.decimals)))
                     }
                   } else {
                     if (rateReversed) {
                       if (!tokenToPriceData || !tokenFromPriceData) return
 
                       const marketPrice = +tokenToPriceData?.price / +tokenFromPriceData?.price
-                      setTokenPriceValue(marketPrice.toString())
+                      setTokenPriceValue(
+                        trimZeros(marketPrice.toFixed(tokens[tokenToIndex]?.decimals))
+                      )
+                      const amountFrom = +marketPrice / +value
 
-                      setAmountFrom((+marketPrice / +value).toString())
+                      setAmountFrom(trimZeros(amountFrom.toFixed(tokens[tokenFromIndex]?.decimals)))
                     } else {
                       if (!tokenToPriceData || !tokenFromPriceData) return
 
                       const marketPrice = +tokenFromPriceData?.price / +tokenToPriceData?.price
-                      setTokenPriceValue(marketPrice.toString())
+                      setTokenPriceValue(
+                        trimZeros(marketPrice.toFixed(tokens[tokenToIndex]?.decimals))
+                      )
 
-                      setAmountFrom((+value / +marketPrice).toString())
+                      const amountFrom = +value / +marketPrice
+
+                      setAmountFrom(trimZeros(amountFrom.toFixed(tokens[tokenFromIndex]?.decimals)))
                     }
                   }
                 }
@@ -631,10 +663,10 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
                   setTokenPriceValue(value)
                   if (rateReversed) {
                     const amountTo = +amountFrom / +value
-                    setAmountTo(amountTo.toString())
+                    setAmountTo(trimZeros(amountTo.toFixed(tokens[tokenToIndex]?.decimals)))
                   } else {
                     const amountTo = +amountFrom * +value
-                    setAmountTo(amountTo.toString())
+                    setAmountTo(trimZeros(amountTo.toFixed(tokens[tokenToIndex]?.decimals)))
                   }
                 }}
                 limit={1e14}
@@ -662,7 +694,7 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
                     +amountFrom /
                     (rateReversed ? tokenToPriceData?.price || 0 : tokenFromPriceData?.price || 0)
 
-                  setAmountTo(amountTo.toString())
+                  setAmountTo(trimZeros(amountTo.toFixed(tokens[tokenToIndex]?.decimals)))
                 }}
               />
             </>
