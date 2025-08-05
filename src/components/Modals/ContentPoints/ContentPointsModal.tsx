@@ -82,7 +82,7 @@ export const ContentPointsModal: React.FC<IContentPointsModal> = ({
       <DialogContent sx={{ padding: 0 }}>
         <Box className={classes.contentSection}>
           <Typography className={classes.allocationText}>Your allocations</Typography>
-          <Box className={classes.buttonRow}>
+          {/* <Box className={classes.buttonRow}>
             <Box className={classes.innerRow}>
               <Typography className={classes.dateLabel}>
                 {hidePointsLabel
@@ -98,7 +98,7 @@ export const ContentPointsModal: React.FC<IContentPointsModal> = ({
                 Submit {!hidePointsLabel && 'here'}
               </Button>
             </Box>
-          </Box>
+          </Box> */}
           {allocations.length >= 4 ? (
             <FixedSizeList
               height={itemSize * 3 + 2}
