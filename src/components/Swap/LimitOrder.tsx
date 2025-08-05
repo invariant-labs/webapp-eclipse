@@ -381,6 +381,7 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
 
   const warningsCount = [showOracle, isUnkown].filter(Boolean).length
   console.log(warningsCount)
+
   return (
     <Grid container className={classes.swapWrapper} alignItems='center'>
       <Grid container className={classes.header}>
@@ -503,8 +504,6 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
               className={cx(classes.swapArrowBox)}
               onClick={() => {
                 if (lockAnimation) return
-
-                // setLockAnimation(!lockAnimation)
                 setRotates(rotates + 1)
                 swap !== null ? setSwap(!swap) : setSwap(true)
                 setTimeout(() => {
@@ -630,12 +629,11 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
                 tokenPrice={rateReversed ? tokenFromPriceData?.price : tokenToPriceData?.price}
                 setValue={value => {
                   setTokenPriceValue(value)
-
                   if (rateReversed) {
                     const amountTo = +amountFrom / +value
                     setAmountTo(amountTo.toString())
                   } else {
-                    const amountTo = +amountFrom / +value
+                    const amountTo = +amountFrom * +value
                     setAmountTo(amountTo.toString())
                   }
                 }}
