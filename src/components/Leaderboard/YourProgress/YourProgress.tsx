@@ -67,6 +67,10 @@ export const YourProgress: React.FC<YourProgressProps> = ({
         2
       )
 
+  const userContentPointsSum = formatNumberWithCommas(
+    (userContentPoints?.reduce((acc, a) => acc + a.points, 0) ?? 0).toString()
+  )
+
   return (
     <Grid className={classes.mainWrapper}>
       <Grid className={classes.boxWrapper}>
@@ -114,14 +118,12 @@ export const YourProgress: React.FC<YourProgressProps> = ({
               <ProgressItem
                 isConnected={isConnected}
                 bgImage={mid}
-                withButton={true}
+                withButton={userContentPointsSum !== '0'}
                 tooltip={tooltipContentPoints}
                 label='Content Points'
                 isLoading={isLoadingList}
                 onModalOpen={setContentPointsOpen}
-                value={formatNumberWithCommas(
-                  (userContentPoints?.reduce((acc, a) => acc + a.points, 0) ?? 0).toString()
-                )}
+                value={userContentPointsSum}
               />
               <ProgressItem
                 isConnected={isConnected}
