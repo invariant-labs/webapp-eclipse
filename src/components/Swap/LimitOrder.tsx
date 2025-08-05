@@ -683,18 +683,35 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
                 blocked={false}
                 blockerInfo=''
                 setMarketPrice={() => {
-                  setTokenPriceValue(
-                    rateReversed
-                      ? tokenToPriceData?.price.toString() || '0'
-                      : tokenFromPriceData?.price.toString() || '0'
-                  )
-                  if (!tokenToPriceData?.price || !tokenFromPriceData?.price) return
+                  if (!tokenToPriceData || !tokenFromPriceData) return
 
-                  const amountTo =
-                    +amountFrom /
-                    (rateReversed ? tokenToPriceData?.price || 0 : tokenFromPriceData?.price || 0)
+                  if (rateReversed) {
+                    const marketPrice = +tokenToPriceData?.price / +tokenFromPriceData?.price
 
-                  setAmountTo(trimZeros(amountTo.toFixed(tokens[tokenToIndex]?.decimals)))
+                    setTokenPriceValue(
+                      trimZeros(marketPrice.toFixed(tokens[tokenToIndex]?.decimals))
+                    )
+
+                    const amountTo = +amountFrom || 1 / +marketPrice
+                    setAmountTo(trimZeros(amountTo.toFixed(tokens[tokenToIndex]?.decimals)))
+
+                    if (!amountFrom) {
+                      setAmountFrom('1')
+                    }
+                  } else {
+                    const marketPrice = +tokenFromPriceData?.price / +tokenToPriceData?.price
+
+                    setTokenPriceValue(
+                      trimZeros(marketPrice.toFixed(tokens[tokenToIndex]?.decimals))
+                    )
+
+                    const amountTo = +amountFrom || 1 * +marketPrice
+                    setAmountTo(trimZeros(amountTo.toFixed(tokens[tokenToIndex]?.decimals)))
+
+                    if (!amountFrom) {
+                      setAmountFrom('1')
+                    }
+                  }
                 }}
               />
             </>
