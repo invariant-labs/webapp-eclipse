@@ -246,7 +246,7 @@ export const SwapContainer = ({ initialTokenFrom, initialTokenTo }: Props) => {
 
   return (
     <Grid display='flex' flexDirection='column'>
-      <Box display={'flex'} flex={1} paddingInline={isSm ? '8px' : 0}>
+      <Box display={'flex'} paddingInline={isSm ? '8px' : 0}>
         <Switcher
           onChange={(e: SwapMode) => {
             dispatch(navigationActions.setSwapMode(e))
