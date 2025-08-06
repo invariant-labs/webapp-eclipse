@@ -57,50 +57,6 @@ export const useStyles = makeStyles<{ showInfo?: boolean; noBorder?: boolean }>(
       position: 'relative',
       display: 'flex'
     },
-    action: {
-      display: 'flex',
-      justifyContent: 'flex-end',
-      alignItems: 'center',
-      minWidth: 'max-content',
-      gap: 8,
-      [theme.breakpoints.down('md')]: {
-        visibility: showInfo ? 'visible' : 'hidden',
-        justifyContent: 'flex-end',
-        width: 137,
-        marginLeft: 7,
-        gap: 3
-      },
-      [theme.breakpoints.down('sm')]: {
-        gap: 8,
-        marginLeft: 0,
-        gridColumn: 'span 3',
-        width: '100%',
-        justifyContent: 'flex-end'
-      }
-    },
-    actionButton: {
-      height: 32,
-      width: 32,
-      background: 'none',
-      padding: 0,
-      margin: 0,
-      border: 'none',
-      color: colors.invariant.black,
-      textTransform: 'none',
-      transition: 'filter 0.3s linear',
-
-      '&:hover': {
-        filter: 'brightness(1.2)',
-        cursor: 'pointer',
-        '@media (hover: none)': {
-          filter: 'none'
-        }
-      },
-      [theme.breakpoints.down('sm')]: {
-        height: 28,
-        width: 28
-      }
-    },
     tokenIcon: {
       minWidth: 24,
       maxWidth: 24,
@@ -126,51 +82,6 @@ export const useStyles = makeStyles<{ showInfo?: boolean; noBorder?: boolean }>(
       bottom: -6,
       right: 0
     },
-    clipboardIcon: {
-      marginLeft: 4,
-      width: 18,
-      cursor: 'pointer',
-      color: colors.invariant.lightHover,
-      '&:hover': {
-        color: colors.invariant.text,
-
-        '@media (hover: none)': {
-          color: colors.invariant.lightHover
-        }
-      }
-    },
-    apyLabel: {
-      position: 'relative',
-      display: 'inline-block',
-      ...typography.body2,
-      [theme.breakpoints.down('sm')]: {
-        ...typography.caption2
-      }
-    },
-    aprLabel: {
-      ...typography.caption4,
-      position: 'absolute',
-      top: '100%',
-      left: '100%',
-      color: colors.invariant.textGrey,
-      transform: 'translate(4px, -14px)'
-    },
-    apyValue: {
-      position: 'relative',
-      display: 'inline-block',
-      ...typography.heading4,
-      [theme.breakpoints.down('sm')]: {
-        ...typography.body1
-      }
-    },
-    aprValue: {
-      position: 'absolute',
-      top: '100%',
-      left: '100%',
-      color: colors.invariant.textGrey,
-      transform: 'translate(4px, -14px)',
-      ...typography.caption1
-    },
     extendedRowIcon: {
       justifySelf: 'end',
       alignSelf: 'center',
@@ -184,10 +95,6 @@ export const useStyles = makeStyles<{ showInfo?: boolean; noBorder?: boolean }>(
       transition: 'all 0.3s ease',
       transform: showInfo ? 'rotate(180deg)' : 'rotate(0deg)'
     },
-    favouriteButton: {
-      cursor: 'pointer',
-      flexShrink: 0
-    },
     poolAddress: {
       maxWidth: 100,
       overflow: 'hidden',
@@ -198,7 +105,6 @@ export const useStyles = makeStyles<{ showInfo?: boolean; noBorder?: boolean }>(
       [theme.breakpoints.down('sm')]: {
         ...typography.body1
       }
-    },
-    button: {}
+    }
   })
 )

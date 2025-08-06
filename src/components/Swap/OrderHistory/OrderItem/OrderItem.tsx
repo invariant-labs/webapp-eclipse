@@ -144,7 +144,7 @@ const OrderItem: React.FC<IProps> = ({
         </Grid>
       )}{' '}
       <Button scheme='pink' padding='0 42px' width={'100%'} onClick={handleCloseOrder}>
-        <Box className={classes.button}>Close Order</Box>
+        <Box>Close Order</Box>
       </Button>
     </Grid>
   )

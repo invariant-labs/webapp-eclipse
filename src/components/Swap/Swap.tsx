@@ -1289,7 +1289,6 @@ export const Swap: React.FC<ISwap> = ({
           <Box
             className={cx(
               classes.exchangeRoot,
-              classes.transactionBottom,
               lockAnimation ? classes.amountInputUp : undefined,
               (isFirstPairGivingPoints || isSecondPairGivingPoints) && classes.darkBackground
             )}>
@@ -1514,7 +1513,7 @@ export const Swap: React.FC<ISwap> = ({
                     getStateMessage() === 'Connect a wallet'
                       ? `${classes.swapButton}`
                       : getStateMessage() === 'Exchange' && progress === 'none'
-                        ? `${classes.swapButton} ${classes.ButtonSwapActive}`
+                        ? `${classes.swapButton} ${classes.buttonSwapActive}`
                         : classes.swapButton
                   }
                   disabled={getStateMessage() !== 'Exchange' || progress !== 'none'}
@@ -1544,7 +1543,7 @@ export const Swap: React.FC<ISwap> = ({
                   getStateMessage() === 'Connect a wallet'
                     ? `${classes.swapButton}`
                     : getStateMessage() === 'Exchange' && progress === 'none'
-                      ? `${classes.swapButton} ${classes.ButtonSwapActive}`
+                      ? `${classes.swapButton} ${classes.buttonSwapActive}`
                       : classes.swapButton
                 }
                 disabled={getStateMessage() !== 'Exchange' || progress !== 'none'}

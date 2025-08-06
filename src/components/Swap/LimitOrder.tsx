@@ -553,11 +553,7 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
             Receive
           </Typography>
           <Box
-            className={cx(
-              classes.exchangeRoot,
-              classes.transactionBottom,
-              lockAnimation ? classes.amountInputUp : undefined
-            )}>
+            className={cx(classes.exchangeRoot, lockAnimation ? classes.amountInputUp : undefined)}>
             <ExchangeAmountInput
               value={amountTo}
               balance={
@@ -679,7 +675,6 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
                 placeholder='0.0'
                 onBlur={() => {}}
                 value={tokenPriceValue}
-                walletUninitialized={walletStatus !== Status.Initialized}
                 blocked={false}
                 blockerInfo=''
                 setMarketPrice={() => {
@@ -746,7 +741,7 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
                   getStateMessage() === 'Connect a wallet'
                     ? `${classes.swapButton}`
                     : getStateMessage() === 'Exchange' && progress === 'none'
-                      ? `${classes.swapButton} ${classes.ButtonSwapActive}`
+                      ? `${classes.swapButton} ${classes.buttonSwapActive}`
                       : classes.swapButton
                 }
                 disabled={getStateMessage() !== 'Exchange' || progress !== 'none'}
@@ -763,7 +758,7 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
                 getStateMessage() === 'Connect a wallet'
                   ? `${classes.swapButton}`
                   : getStateMessage() === 'Exchange' && progress === 'none'
-                    ? `${classes.swapButton} ${classes.ButtonSwapActive}`
+                    ? `${classes.swapButton} ${classes.buttonSwapActive}`
                     : classes.swapButton
               }
               disabled={getStateMessage() !== 'Exchange' || progress !== 'none'}

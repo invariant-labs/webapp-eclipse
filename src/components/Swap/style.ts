@@ -317,23 +317,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     background: colors.invariant.newDark,
     borderRadius: 20
   },
-  transactionTop: {
-    marginTop: 10
-  },
-
-  hideBalance: {
-    padding: '5px 15px 5px 15px'
-  },
-
-  transactionBottom: {},
-
-  transtactionData: {
-    border: `1px solid ${colors.invariant.light}`,
-    borderRadius: '10px',
-    padding: '5px 15px 5px 15px',
-    color: colors.invariant.lightGrey
-  },
-  ButtonSwapActive: {
+  buttonSwapActive: {
     transition: 'filter 0.3s linear',
     background: `${colors.invariant.greenLinearGradient} !important`,
     filter: 'brightness(0.8)',
@@ -342,22 +326,6 @@ export const useStyles = makeStyles()((theme: Theme) => ({
       boxShadow:
         '0px 3px 1px -2px rgba(43, 193, 144, 0.2),0px 1px 2px 0px rgba(45, 168, 128, 0.14),0px 0px 5px 7px rgba(59, 183, 142, 0.12)'
     }
-  },
-  infoIcon: {
-    display: 'inline-block',
-    width: 10,
-    height: 10,
-    marginLeft: 4,
-
-    filter: 'brightness(0.8)',
-    pointerEvents: 'none'
-  },
-  exchangeRateContainer: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    gap: 8,
-    flexWrap: 'wrap'
   },
   slippageButton: {
     height: 27,
@@ -449,65 +417,11 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     paddingInline: 8,
     borderRadius: 8
   },
-  pointsBox: {
-    height: 27,
-    padding: '0px 8px',
-    borderRadius: 8,
-    backgroundColor: colors.invariant.component,
-    color: colors.invariant.textGrey,
-    fontSize: 16,
-    fontsWeigth: 510,
-    cursor: 'pointer',
-    userSelect: 'none',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    textTransform: 'none',
-    gap: 4,
-    transition: 'all 0.3s ease-in-out'
-  },
-  pointsAmount: { color: colors.invariant.pink },
-  darkGradientBackground: {
-    background: 'linear-gradient(360deg, #010514 0%, #111931 100%)'
-  },
-  darkGradientBackgroundReverse: {
-    background: 'linear-gradient(360deg, #111931 0%, #010514 100%)'
-  },
   darkBackground: {
     background: colors.invariant.newDark
   },
   componentBackground: {
     background: colors.invariant.component
-  },
-  waveImage: {
-    pointerEvents: 'none',
-    display: 'flex',
-    justifyContent: 'center',
-    '& img': {
-      width: '100%',
-      position: 'absolute',
-      objectFit: 'cover',
-      zIndex: 0
-    }
-  },
-  topWave: {
-    width: '100%',
-    position: 'absolute',
-    top: 0,
-    opacity: 0,
-    left: 0,
-    '& img': {
-      borderTopLeftRadius: 24
-    }
-  },
-  bottomWave: {
-    width: '100%',
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    '& img': {
-      borderBottomRightRadius: 24
-    }
   },
   gradientBorderForContainer: {
     background: 'transparent',
@@ -529,9 +443,6 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
   textShadowLabel: {
     textShadow: '3px 3px 5px #3A466B'
-  },
-  relative: {
-    position: 'relative'
   },
   mobileChangeWrapper: {
     width: '100%',

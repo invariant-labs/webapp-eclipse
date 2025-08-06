@@ -21,7 +21,6 @@ interface IProps {
   priceLoading?: boolean
   limit?: number
   disableBackgroundColor?: boolean
-  walletUninitialized: boolean
   setMarketPrice: () => void
 }
 export const BuyTokenInput: React.FC<IProps> = ({
@@ -40,11 +39,9 @@ export const BuyTokenInput: React.FC<IProps> = ({
   disabled = false,
   priceLoading = false,
   disableBackgroundColor = false,
-  walletUninitialized,
   setMarketPrice
 }) => {
   const { classes } = useStyles({
-    isSelected: !!currency && !walletUninitialized,
     disableBackgroundColor
   })
 
