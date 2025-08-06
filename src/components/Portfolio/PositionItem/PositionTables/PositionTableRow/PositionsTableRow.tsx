@@ -43,6 +43,7 @@ interface IPositionsTableRow extends IPositionItem {
   handleClosePosition: (index: number) => void
   handleClaimFee: (index: number, isLocked: boolean) => void
   createNewPosition: () => void
+  openPoolDetails: () => void
   shouldDisable: boolean
 }
 
@@ -74,6 +75,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
   handleLockPosition,
   handleClosePosition,
   createNewPosition,
+  openPoolDetails,
   shouldDisable
 }) => {
   const { classes, cx } = useStyles()
@@ -446,6 +448,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
         closePosition={() => handleClosePosition(positionSingleData?.positionIndex ?? 0)}
         onLockPosition={() => setIsLockPositionModalOpen(true)}
         createPosition={createNewPosition}
+        openPoolDetails={openPoolDetails}
       />
       <TableCell className={`${classes.pairNameCell} ${classes.cellBase}`}>
         {pairNameContent}

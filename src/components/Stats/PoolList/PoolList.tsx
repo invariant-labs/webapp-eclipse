@@ -1,12 +1,13 @@
+import { useStyles } from './style'
 import React, { useMemo, useEffect, useState } from 'react'
 import PoolListItem from '@components/Stats/PoolListItem/PoolListItem'
-import { useStyles } from './style'
-import { Grid, useMediaQuery } from '@mui/material'
+import { Box, Button, Grid, Typography, useMediaQuery } from '@mui/material'
 import {
   BTC_TEST,
   Intervals,
   ITEMS_PER_PAGE,
   NetworkType,
+  poolSortGroups,
   SortTypePoolList,
   USDC_TEST,
   WETH_TEST
@@ -19,11 +20,12 @@ import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { ROUTES } from '@utils/utils'
 import { colors, theme } from '@static/theme'
-import { ISearchToken } from '@common/FilterSearch/FilterSearch'
+import { FilterSearch, ISearchToken } from '@common/FilterSearch/FilterSearch'
 import { shortenAddress } from '@utils/uiUtils'
 import { actions } from '@store/reducers/navigation'
-import { useDispatch, useSelector } from 'react-redux'
-import { poolSearch } from '@store/selectors/navigation'
+import { useDispatch } from 'react-redux'
+import SortTypeSelector from '../SortTypeSelector/SortTypeSelector'
+import { star, starFill } from '@static/icons'
 
 export interface PoolListInterface {
   initialLength: number
@@ -59,6 +61,17 @@ export interface PoolListInterface {
   interval: Intervals
   switchFavouritePool: (poolAddress: string) => void
   showFavourites: boolean
+  handleFavouritesClick: () => void
+  setSearchPoolsValue: (value: ISearchToken[]) => void
+  setSearchTokensValue?: (value: ISearchToken[]) => void
+  searchPoolsValue: ISearchToken[]
+  handleChangePagination: (newPage: number) => void
+  handleSortType: (sortType: SortTypePoolList) => void
+  searchParams: {
+    filteredTokens: ISearchToken[]
+    sortType: SortTypePoolList
+    pageNumber: number
+  }
 }
 
 const tokens = [BTC_TEST, USDC_TEST, WETH_TEST]
@@ -101,22 +114,30 @@ const PoolList: React.FC<PoolListInterface> = ({
   filteredTokens,
   interval = Intervals.Daily,
   switchFavouritePool,
-  showFavourites
+  showFavourites,
+  handleFavouritesClick,
+  setSearchPoolsValue,
+  searchPoolsValue,
+  handleChangePagination,
+  handleSortType,
+  searchParams
 }) => {
   const navigate = useNavigate()
   const location = useLocation()
   const dispatch = useDispatch()
-  const searchParam = useSelector(poolSearch)
 
   const [initialDataLength, setInitialDataLength] = useState(initialLength)
   const { classes, cx } = useStyles()
   const filteredTokenX = filteredTokens[0] ?? ''
   const filteredTokenY = filteredTokens[1] ?? ''
-  const page = searchParam.pageNumber
-  const [sortType, setSortType] = React.useState(searchParam.sortType)
+  const page = searchParams.pageNumber
+  const [sortType, setSortType] = useState<SortTypePoolList>(searchParams.sortType)
+
+  const isMd = useMediaQuery(theme.breakpoints.down('md'))
+  const isSm = useMediaQuery(theme.breakpoints.down('sm'))
 
   useEffect(() => {
-    dispatch(actions.setSearch({ section: 'statsPool', type: 'sortType', sortType }))
+    handleSortType(sortType)
   }, [sortType])
 
   const sortedData = useMemo(() => {
@@ -167,15 +188,6 @@ const PoolList: React.FC<PoolListInterface> = ({
     return Math.max(rowNumber - displayedItems, 0)
   }
 
-  const handleChangePagination = (newPage: number) => {
-    dispatch(
-      actions.setSearch({
-        section: 'statsPool',
-        type: 'pageNumber',
-        pageNumber: newPage
-      })
-    )
-  }
   const paginator = (currentPage: number) => {
     const page = currentPage || 1
     const offest = (page - 1) * ITEMS_PER_PAGE
@@ -190,133 +202,187 @@ const PoolList: React.FC<PoolListInterface> = ({
   const pages = useMemo(() => Math.ceil(data.length / ITEMS_PER_PAGE), [data])
   const isCenterAligment = useMediaQuery(theme.breakpoints.down(1280))
   const height = useMemo(
-    () => (initialDataLength > ITEMS_PER_PAGE ? (isCenterAligment ? 176 : 90) : 69),
+    () => (initialDataLength > ITEMS_PER_PAGE ? (isCenterAligment ? 176 : 90) : 79),
     [initialDataLength, isCenterAligment]
   )
 
   return (
-    <Grid
-      container
-      classes={{ root: classes.container }}
-      className={cx({ [classes.loadingOverlay]: isLoading })}>
-      <PoolListItem
-        displayType='header'
-        onSort={setSortType}
-        sortType={sortType}
-        network={network}
-        showAPY={showAPY}
-        interval={interval}
-      />
-      {data.length > 0 || isLoading ? (
-        <>
-          {paginator(page).map((element, index) => (
-            <PoolListItem
-              itemNumber={index + 1 + (page - 1) * ITEMS_PER_PAGE}
-              displayType='token'
-              tokenIndex={index + 1 + (page - 1) * ITEMS_PER_PAGE}
-              symbolFrom={element.symbolFrom}
-              symbolTo={element.symbolTo}
-              iconFrom={element.iconFrom}
-              iconTo={element.iconTo}
-              volume={element.volume}
-              TVL={element.TVL}
-              lockedX={element.lockedX}
-              lockedY={element.lockedY}
-              liquidityX={element.liquidityX}
-              liquidityY={element.liquidityY}
-              isLocked={element.lockedX > 0 || element.lockedY > 0}
-              fee={element.fee}
-              apy={element.apy}
-              apyData={element.apyData}
-              key={index}
-              addressFrom={element.addressFrom}
-              addressTo={element.addressTo}
-              network={network}
-              isUnknownFrom={element.isUnknownFrom}
-              isUnknownTo={element.isUnknownTo}
-              poolAddress={element.poolAddress}
-              copyAddressHandler={copyAddressHandler}
-              showAPY={showAPY}
-              points={new BN(element.pointsPerSecond, 'hex').muln(24).muln(60).muln(60)}
-              isPromoted={element.isPromoted}
-              interval={interval}
-              isFavourite={element.isFavourite}
-              switchFavouritePool={switchFavouritePool}
+    <>
+      <Typography className={classes.subheader} mt={isSm ? '24px' : '72px'}>
+        Top pools
+      </Typography>
+      <Grid container className={classes.headerWrapper}>
+        <Grid container className={classes.tableHeader}>
+          {!isSm && (
+            <Button className={classes.showFavouritesButton} onClick={handleFavouritesClick}>
+              <img src={showFavourites ? starFill : star} />
+              {!isMd && (
+                <Typography className={classes.showFavouritesText}>
+                  {!showFavourites ? 'Show ' : 'Hide '}favourites
+                </Typography>
+              )}
+            </Button>
+          )}
+          <Grid className={classes.headerContainer}>
+            {!isSm && (
+              <Box className={classes.sortWrapper}>
+                <SortTypeSelector
+                  currentSort={sortType}
+                  sortGroups={poolSortGroups}
+                  onSelect={setSortType}
+                />
+              </Box>
+            )}
+
+            <FilterSearch
+              networkType={network}
+              setSelectedFilters={setSearchPoolsValue}
+              selectedFilters={searchPoolsValue}
+              filtersAmount={2}
+              closeOnSelect={true}
+              width={isMd ? 250 : 350}
             />
-          ))}
-          {getEmptyRowsCount() > 0 &&
-            new Array(getEmptyRowsCount()).fill('').map((_, index) => (
-              <div
-                key={`empty-row-${index}`}
-                style={{
-                  borderBottom:
-                    getEmptyRowsCount() - 1 === index
-                      ? `2px solid ${colors.invariant.light}`
-                      : `0px solid ${colors.invariant.light}`
-                }}
-                className={cx(classes.emptyRow)}
+          </Grid>
+        </Grid>
+        {isSm && (
+          <Grid container className={classes.headerRow}>
+            <Button className={classes.showFavouritesButton} onClick={handleFavouritesClick}>
+              <img src={showFavourites ? starFill : star} />
+              {!isSm && (
+                <Typography className={classes.showFavouritesText}>
+                  {!showFavourites ? 'Show' : 'Hide'} {!isSm && 'favourites'}
+                </Typography>
+              )}
+            </Button>
+
+            <Box className={classes.sortWrapper}>
+              <SortTypeSelector
+                currentSort={sortType}
+                onSelect={setSortType}
+                sortGroups={poolSortGroups}
+                fullWidth={isSm}
+              />
+            </Box>
+          </Grid>
+        )}
+      </Grid>
+      <Grid
+        container
+        classes={{ root: classes.container }}
+        className={cx({ [classes.loadingOverlay]: isLoading })}>
+        {data.length > 0 || isLoading ? (
+          <>
+            {paginator(page).map((element, index) => (
+              <PoolListItem
+                itemNumber={index + 1 + (page - 1) * ITEMS_PER_PAGE}
+                symbolFrom={element.symbolFrom}
+                symbolTo={element.symbolTo}
+                iconFrom={element.iconFrom}
+                iconTo={element.iconTo}
+                volume={element.volume}
+                TVL={element.TVL}
+                lockedX={element.lockedX}
+                lockedY={element.lockedY}
+                liquidityX={element.liquidityX}
+                liquidityY={element.liquidityY}
+                isLocked={element.lockedX > 0 || element.lockedY > 0}
+                fee={element.fee}
+                apy={element.apy}
+                apyData={element.apyData}
+                key={index}
+                addressFrom={element.addressFrom}
+                addressTo={element.addressTo}
+                network={network}
+                isUnknownFrom={element.isUnknownFrom}
+                isUnknownTo={element.isUnknownTo}
+                poolAddress={element.poolAddress}
+                copyAddressHandler={copyAddressHandler}
+                showAPY={showAPY}
+                points={new BN(element.pointsPerSecond, 'hex').muln(24).muln(60).muln(60)}
+                isPromoted={element.isPromoted}
+                interval={interval}
+                isFavourite={element.isFavourite}
+                switchFavouritePool={switchFavouritePool}
               />
             ))}
-        </>
-      ) : (
-        <Grid container className={classes.emptyContainer}>
-          {showFavourites ? (
-            <EmptyPlaceholder
-              height={initialDataLength < ITEMS_PER_PAGE ? initialDataLength * 69 : 688}
-              newVersion
-              mainTitle={`You don't have any favourite pools yet...`}
-              desc={'You can add them by clicking the star icon next to the pool!'}
-              withButton={false}
-            />
-          ) : (
-            <EmptyPlaceholder
-              newVersion
-              height={initialDataLength < ITEMS_PER_PAGE ? initialDataLength * 69 : 688}
-              mainTitle={`The ${shortenAddress(filteredTokenX.symbol ?? '')}/${shortenAddress(filteredTokenY.symbol ?? '')} pool was not found...`}
-              desc={initialDataLength < 3 ? '' : 'You can create it yourself!'}
-              desc2={initialDataLength < 5 ? '' : 'Or try adjusting your search criteria!'}
-              onAction={() => {
-                dispatch(actions.setNavigation({ address: location.pathname }))
-                navigate(
-                  ROUTES.getNewPositionRoute(
-                    filteredTokenX.address,
-                    filteredTokenY.address,
-                    '0_10'
-                  ),
-                  {
-                    state: { referer: 'stats' }
-                  }
-                )
+            {getEmptyRowsCount() > 0 &&
+              new Array(getEmptyRowsCount()).fill('').map((_, index) => (
+                <div
+                  key={`empty-row-${index}`}
+                  style={{
+                    borderBottom:
+                      getEmptyRowsCount() - 1 === index
+                        ? `2px solid ${colors.invariant.light}`
+                        : `0px solid ${colors.invariant.light}`
+                  }}
+                  className={cx(classes.emptyRow)}
+                />
+              ))}
+          </>
+        ) : (
+          <Grid container className={classes.emptyContainer}>
+            {showFavourites ? (
+              <EmptyPlaceholder
+                height={
+                  initialDataLength < ITEMS_PER_PAGE ? initialDataLength * 79 : isMd ? 852 : 788
+                }
+                newVersion
+                mainTitle={`You don't have any favourite pools yet...`}
+                desc={'You can add them by clicking the star icon next to the pool!'}
+                withButton={false}
+              />
+            ) : (
+              <EmptyPlaceholder
+                newVersion
+                height={
+                  initialDataLength < ITEMS_PER_PAGE ? initialDataLength * 79 : isMd ? 852 : 788
+                }
+                mainTitle={`The ${shortenAddress(filteredTokenX.symbol ?? '')}/${shortenAddress(filteredTokenY.symbol ?? '')} pool was not found...`}
+                desc={initialDataLength < 3 ? '' : 'You can create it yourself!'}
+                desc2={initialDataLength < 5 ? '' : 'Or try adjusting your search criteria!'}
+                onAction={() => {
+                  dispatch(actions.setNavigation({ address: location.pathname }))
+                  navigate(
+                    ROUTES.getNewPositionRoute(
+                      filteredTokenX.address,
+                      filteredTokenY.address,
+                      '0_10'
+                    ),
+                    {
+                      state: { referer: 'stats' }
+                    }
+                  )
+                }}
+                buttonName='Create Pool'
+                withButton={true}
+                withImg={initialDataLength > 3}
+              />
+            )}
+          </Grid>
+        )}
+        <Grid
+          className={classes.pagination}
+          sx={{
+            height: height
+          }}>
+          {pages > 0 && (
+            <InputPagination
+              pages={pages}
+              defaultPage={page}
+              handleChangePage={handleChangePagination}
+              variant='center'
+              page={page}
+              borderTop={false}
+              pagesNumeration={{
+                lowerBound: lowerBound,
+                totalItems: totalItems,
+                upperBound: upperBound
               }}
-              buttonName='Create Pool'
-              withButton={true}
-              withImg={initialDataLength > 3}
             />
           )}
         </Grid>
-      )}
-      <Grid
-        className={classes.pagination}
-        sx={{
-          height: height
-        }}>
-        {pages > 0 && (
-          <InputPagination
-            pages={pages}
-            defaultPage={page}
-            handleChangePage={handleChangePagination}
-            variant='center'
-            page={page}
-            borderTop={false}
-            pagesNumeration={{
-              lowerBound: lowerBound,
-              totalItems: totalItems,
-              upperBound: upperBound
-            }}
-          />
-        )}
       </Grid>
-    </Grid>
+    </>
   )
 }
 export default PoolList

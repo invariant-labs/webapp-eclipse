@@ -10,6 +10,7 @@ import SolarLogo from '@static/png/presale/dexes-chart/solar.png'
 import EclipseLogo from '@static/png/presale/dexes-chart/eclipse.png'
 import { useState } from 'react'
 import useStyles from './style'
+import { SwitcherAlignment } from '@store/consts/types'
 
 const volumeTvlData = [
   {
@@ -74,10 +75,7 @@ const feeTvlData = [
 ]
 
 const availableGradients = ['gradient-invariant', 'gradient-umbra']
-export enum SwitcherAlignment {
-  VOLUME_TVL = 'volume/tvl',
-  FEE_TVL = 'fee/tvl'
-}
+
 export const DEXChart = () => {
   const [alignment, setAlignment] = useState<SwitcherAlignment>(SwitcherAlignment.FEE_TVL)
   const { classes } = useStyles({ alignment })

@@ -42,7 +42,7 @@ const PopularPools: React.FC<IPopularPools> = ({
   const { classes } = useStyles()
 
   return (
-    <Grid container mb={'72px'}>
+    <Grid container>
       <Box display='flex' alignItems='center' justifyContent='space-between' width='100%' mb='16px'>
         <Typography className={classes.title}>Popular pools</Typography>
         <Intervals
