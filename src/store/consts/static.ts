@@ -384,7 +384,7 @@ export const WEETHS_MAIN: Token = {
 export enum RPC {
   TEST = 'https://testnet.dev2.eclipsenetwork.xyz',
   MAIN = 'https://mainnetbeta-rpc.eclipse.xyz',
-  MAIN_HELIUS = 'https://eclipse.helius-rpc.com',
+  // MAIN_HELIUS = 'https://eclipse.shelius-rpc.com',
   MAIN_TRITON = 'https://invarian-eclipse-1c78.mainnet.eclipse.rpcpool.com/',
   MAIN_LGNS = 'https://eclipse.lgns.net',
   DEV = 'https://staging-rpc.dev2.eclipsenetwork.xyz',

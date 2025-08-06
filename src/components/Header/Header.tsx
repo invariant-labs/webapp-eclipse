@@ -95,11 +95,11 @@ export const Header: React.FC<IHeader> = ({
       rpc: RPC.MAIN_TRITON,
       rpcName: 'Triton'
     },
-    {
-      networkType: NetworkType.Mainnet,
-      rpc: RPC.MAIN_HELIUS,
-      rpcName: 'Helius'
-    },
+    // {
+    //   networkType: NetworkType.Mainnet,
+    //   rpc: RPC.MAIN_HELIUS,
+    //   rpcName: 'Helius'
+    // },
     {
       networkType: NetworkType.Mainnet,
       rpc: RPC.MAIN,
