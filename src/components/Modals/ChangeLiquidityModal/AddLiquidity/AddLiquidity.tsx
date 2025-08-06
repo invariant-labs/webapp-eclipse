@@ -790,7 +790,7 @@ export const AddLiquidity: React.FC<IProps> = ({
   const blocked =
     tokenAIndex === null || tokenBIndex === null || tokenAIndex === tokenBIndex || data.length === 0
 
-  const isPriceWarningVisible = !blocked && !isLoadingTicksOrTickmap
+  const isPriceWarningVisible = blocked && !isLoadingTicksOrTickmap
 
   const addLiquidityHandler = (xAmount, yAmount, slippage) => {
     if (tokenAIndex === null || tokenBIndex === null) {
@@ -875,7 +875,7 @@ export const AddLiquidity: React.FC<IProps> = ({
   ) => {
     if (isPriceWarningVisible) {
       blurContent()
-      const ok = await confirm()
+      const ok = confirm('The price can be inncorect')
       if (!ok) return
     }
     swapAndAddLiquidityHandler(
@@ -1631,7 +1631,7 @@ export const AddLiquidity: React.FC<IProps> = ({
             currency={tokenAIndex !== null ? tokens[tokenAIndex].symbol : null}
             currencyIconSrc={tokenAIndex !== null ? tokens[tokenAIndex].logoURI : undefined}
             currencyIsUnknown={
-              tokenAIndex !== null ? tokens[tokenAIndex].isUnknown ?? false : false
+              tokenAIndex !== null ? (tokens[tokenAIndex].isUnknown ?? false) : false
             }
             placeholder='0.0'
             actionButtons={[
@@ -1701,7 +1701,7 @@ export const AddLiquidity: React.FC<IProps> = ({
             currency={tokenBIndex !== null ? tokens[tokenBIndex].symbol : null}
             currencyIconSrc={tokenBIndex !== null ? tokens[tokenBIndex].logoURI : undefined}
             currencyIsUnknown={
-              tokenBIndex !== null ? tokens[tokenBIndex].isUnknown ?? false : false
+              tokenBIndex !== null ? (tokens[tokenBIndex].isUnknown ?? false) : false
             }
             placeholder='0.0'
             actionButtons={[
@@ -1842,6 +1842,7 @@ export const AddLiquidity: React.FC<IProps> = ({
             className={cx(classes.addButton, progress === 'none' ? classes.hoverButton : undefined)}
             onClick={() => {
               if (progress === 'none' && tokenAIndex !== null && tokenBIndex !== null) {
+                console.log('test')
                 if (!isAutoswapOn) {
                   onAddLiquidity(
                     isXtoY
@@ -1864,6 +1865,7 @@ export const AddLiquidity: React.FC<IProps> = ({
                       : convertBalanceToBN(valueB, tokens[tokenBIndex].decimals)
                   )
                 } else {
+                  console.log('test')
                   if (
                     (tokenACheckbox || tokenBCheckbox) &&
                     simulation &&
@@ -1872,6 +1874,7 @@ export const AddLiquidity: React.FC<IProps> = ({
                     isSimulationStatus(SwapAndCreateSimulationStatus.Ok) &&
                     !!autoSwapPoolData
                   ) {
+                    console.log('test')
                     const userMinUtilization = toDecimal(+Number(utilization).toFixed(4), 2)
                     const tokenADecimal = tokens[tokenAIndex].decimals
                     const tokenBDecimal = tokens[tokenBIndex].decimals
@@ -1887,6 +1890,8 @@ export const AddLiquidity: React.FC<IProps> = ({
                     const amountY = autoSwapPoolData.tokenY.equals(tokens[tokenBIndex].assetAddress)
                       ? tokenBValue
                       : tokenAValue
+
+                    console.log('test')
                     onSwapAndAddLiquidity(
                       amountX,
                       amountY,
