@@ -784,10 +784,21 @@ export const RemoveLiquidity: React.FC<IProps> = ({
   const isClosePosition = useMemo(() => {
     if (+tokenAInputState.blocked) {
       return +tokenBDeposit > tokenYLiquidity * 0.99
-    } else {
+    }
+
+    if (+tokenBInputState.blocked) {
       return +tokenADeposit > tokenXLiquidity * 0.99
     }
-  }, [tokenAInputState.blocked, tokenBDeposit, tokenYLiquidity, tokenADeposit, tokenXLiquidity])
+
+    return +tokenADeposit > tokenXLiquidity * 0.99 && +tokenBDeposit > tokenYLiquidity * 0.99
+  }, [
+    tokenAInputState.blocked,
+    tokenBInputState.blocked,
+    tokenBDeposit,
+    tokenYLiquidity,
+    tokenADeposit,
+    tokenXLiquidity
+  ])
 
   return (
     <Grid container className={cx(classes.wrapper, classes.deposit)}>
@@ -816,7 +827,7 @@ export const RemoveLiquidity: React.FC<IProps> = ({
             currency={tokenAIndex !== null ? tokens[tokenAIndex].symbol : null}
             currencyIconSrc={tokenAIndex !== null ? tokens[tokenAIndex].logoURI : undefined}
             currencyIsUnknown={
-              tokenAIndex !== null ? tokens[tokenAIndex].isUnknown ?? false : false
+              tokenAIndex !== null ? (tokens[tokenAIndex].isUnknown ?? false) : false
             }
             placeholder='0.0'
             actionButtons={[
@@ -865,13 +876,14 @@ export const RemoveLiquidity: React.FC<IProps> = ({
             currency={tokenBIndex !== null ? tokens[tokenBIndex].symbol : null}
             currencyIconSrc={tokenBIndex !== null ? tokens[tokenBIndex].logoURI : undefined}
             currencyIsUnknown={
-              tokenBIndex !== null ? tokens[tokenBIndex].isUnknown ?? false : false
+              tokenBIndex !== null ? (tokens[tokenBIndex].isUnknown ?? false) : false
             }
             placeholder='0.0'
             actionButtons={[
               {
                 label: 'Max',
                 onClick: () => {
+                  setIsSlider(true)
                   setDepositPercentage(100)
                 },
                 variant: 'max'
@@ -880,6 +892,7 @@ export const RemoveLiquidity: React.FC<IProps> = ({
                 label: '50%',
                 variant: 'half',
                 onClick: () => {
+                  setIsSlider(true)
                   setDepositPercentage(50)
                 }
               }
