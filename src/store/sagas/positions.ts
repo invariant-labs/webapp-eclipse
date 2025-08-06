@@ -74,7 +74,9 @@ import {
   getTokenProgramId,
   getSwapAmountFromSwapAndAddLiquidity,
   getAddAmountFromSwapAndAddLiquidity,
-  SwapTokenType
+  SwapTokenType,
+  getAddAmountFromCoumpoundWithSwap,
+  getSwapAmountFromCoumpoundWithSwap
 } from '@utils/utils'
 import { actions as connectionActions } from '@store/reducers/solanaConnection'
 import {
@@ -2174,8 +2176,16 @@ export function* handleClaimFeeWithETH({ index, isLocked }: { index: number; isL
         const meta = txDetails.meta
         if (meta?.innerInstructions && meta.innerInstructions) {
           try {
-            const amountX = getAmountFromClaimFeeInstruction(meta, TokenType.TokenX)
-            const amountY = getAmountFromClaimFeeInstruction(meta, TokenType.TokenY)
+            const amountX = getAmountFromClaimFeeInstruction(
+              meta,
+              TokenType.TokenX,
+              marketProgram.programAuthority.address.toString()
+            )
+            const amountY = getAmountFromClaimFeeInstruction(
+              meta,
+              TokenType.TokenY,
+              marketProgram.programAuthority.address.toString()
+            )
 
             const tokenX = allTokens[pair.tokenX.toString()]
             const tokenY = allTokens[pair.tokenY.toString()]
@@ -2402,8 +2412,16 @@ export function* handleClaimFee(action: PayloadAction<{ index: number; isLocked:
         const meta = txDetails.meta
         if (meta?.preTokenBalances && meta.postTokenBalances) {
           try {
-            const amountX = getAmountFromClaimFeeInstruction(meta, TokenType.TokenX)
-            const amountY = getAmountFromClaimFeeInstruction(meta, TokenType.TokenY)
+            const amountX = getAmountFromClaimFeeInstruction(
+              meta,
+              TokenType.TokenX,
+              marketProgram.programAuthority.address.toString()
+            )
+            const amountY = getAmountFromClaimFeeInstruction(
+              meta,
+              TokenType.TokenY,
+              marketProgram.programAuthority.address.toString()
+            )
 
             const tokenX = allTokens[pair.tokenX.toString()]
             const tokenY = allTokens[pair.tokenY.toString()]
@@ -5232,13 +5250,21 @@ export function* handleCompoundWithSwap(action: PayloadAction<CompoundWithSwap>)
         }
 
         const meta = txDetails.meta
-        if (meta?.preTokenBalances && meta.postTokenBalances) {
+        if (meta?.innerInstructions && meta.innerInstructions) {
           try {
-            const amountX = getAmountFromClaimFeeInstruction(meta, TokenType.TokenX)
-            const amountY = getAmountFromClaimFeeInstruction(meta, TokenType.TokenY)
+            const amountX = getAmountFromClaimFeeInstruction(
+              meta,
+              TokenType.TokenX,
+              marketProgram.programAuthority.address.toString()
+            )
+            const amountY = getAmountFromClaimFeeInstruction(
+              meta,
+              TokenType.TokenY,
+              marketProgram.programAuthority.address.toString()
+            )
 
             const tokenX = allTokens[action.payload.tokenX.toString()]
-            const tokenY = allTokens[action.payload.tokenX.toString()]
+            const tokenY = allTokens[action.payload.tokenY.toString()]
 
             yield put(
               snackbarsActions.add({
@@ -5257,8 +5283,6 @@ export function* handleCompoundWithSwap(action: PayloadAction<CompoundWithSwap>)
           } catch {
             // Should never be triggered
           }
-        }
-        if (meta?.innerInstructions && meta.innerInstructions) {
           try {
             const tokenIn = action.payload.xToY
               ? allTokens[swapPair.tokenX.toString()]
@@ -5267,16 +5291,16 @@ export function* handleCompoundWithSwap(action: PayloadAction<CompoundWithSwap>)
               ? allTokens[swapPair.tokenY.toString()]
               : allTokens[swapPair.tokenX.toString()]
 
-            const amountX = getAddAmountFromSwapAndAddLiquidity(meta, TokenType.TokenX)
-            const amountY = getAddAmountFromSwapAndAddLiquidity(meta, TokenType.TokenY)
+            const amountX = getAddAmountFromCoumpoundWithSwap(meta, TokenType.TokenX)
+            const amountY = getAddAmountFromCoumpoundWithSwap(meta, TokenType.TokenY)
 
-            const swapAmountIn = getSwapAmountFromSwapAndAddLiquidity(
+            const swapAmountIn = getSwapAmountFromCoumpoundWithSwap(
               meta,
               marketProgram.programAuthority.address.toString(),
               tokenIn.address.toString(),
               SwapTokenType.TokenIn
             )
-            const swapAmountOut = getSwapAmountFromSwapAndAddLiquidity(
+            const swapAmountOut = getSwapAmountFromCoumpoundWithSwap(
               meta,
               marketProgram.programAuthority.address.toString(),
               tokenOut.address.toString(),
@@ -5633,13 +5657,21 @@ export function* handleCompoundWithSwapWithETH(action: PayloadAction<CompoundWit
         }
 
         const meta = txDetails.meta
-        if (meta?.preTokenBalances && meta.postTokenBalances) {
+        if (meta?.innerInstructions && meta.innerInstructions) {
           try {
-            const amountX = getAmountFromClaimFeeInstruction(meta, TokenType.TokenX)
-            const amountY = getAmountFromClaimFeeInstruction(meta, TokenType.TokenY)
+            const amountX = getAmountFromClaimFeeInstruction(
+              meta,
+              TokenType.TokenX,
+              marketProgram.programAuthority.address.toString()
+            )
+            const amountY = getAmountFromClaimFeeInstruction(
+              meta,
+              TokenType.TokenY,
+              marketProgram.programAuthority.address.toString()
+            )
 
             const tokenX = allTokens[action.payload.tokenX.toString()]
-            const tokenY = allTokens[action.payload.tokenX.toString()]
+            const tokenY = allTokens[action.payload.tokenY.toString()]
 
             yield put(
               snackbarsActions.add({
@@ -5658,8 +5690,6 @@ export function* handleCompoundWithSwapWithETH(action: PayloadAction<CompoundWit
           } catch {
             // Should never be triggered
           }
-        }
-        if (meta?.innerInstructions && meta.innerInstructions) {
           try {
             const tokenIn = action.payload.xToY
               ? allTokens[swapPair.tokenX.toString()]
@@ -5668,16 +5698,16 @@ export function* handleCompoundWithSwapWithETH(action: PayloadAction<CompoundWit
               ? allTokens[swapPair.tokenY.toString()]
               : allTokens[swapPair.tokenX.toString()]
 
-            const amountX = getAddAmountFromSwapAndAddLiquidity(meta, TokenType.TokenX)
-            const amountY = getAddAmountFromSwapAndAddLiquidity(meta, TokenType.TokenY)
+            const amountX = getAddAmountFromCoumpoundWithSwap(meta, TokenType.TokenX)
+            const amountY = getAddAmountFromCoumpoundWithSwap(meta, TokenType.TokenY)
 
-            const swapAmountIn = getSwapAmountFromSwapAndAddLiquidity(
+            const swapAmountIn = getSwapAmountFromCoumpoundWithSwap(
               meta,
               marketProgram.programAuthority.address.toString(),
               tokenIn.address.toString(),
               SwapTokenType.TokenIn
             )
-            const swapAmountOut = getSwapAmountFromSwapAndAddLiquidity(
+            const swapAmountOut = getSwapAmountFromCoumpoundWithSwap(
               meta,
               marketProgram.programAuthority.address.toString(),
               tokenOut.address.toString(),
@@ -5982,13 +6012,21 @@ export function* handleCompound(action: PayloadAction<Compound>): Generator {
         }
 
         const meta = txDetails.meta
-        if (meta?.preTokenBalances && meta.postTokenBalances) {
+        if (meta?.innerInstructions && meta.innerInstructions) {
           try {
-            const amountX = getAmountFromClaimFeeInstruction(meta, TokenType.TokenX)
-            const amountY = getAmountFromClaimFeeInstruction(meta, TokenType.TokenY)
+            const amountX = getAmountFromClaimFeeInstruction(
+              meta,
+              TokenType.TokenX,
+              marketProgram.programAuthority.address.toString()
+            )
+            const amountY = getAmountFromClaimFeeInstruction(
+              meta,
+              TokenType.TokenY,
+              marketProgram.programAuthority.address.toString()
+            )
 
             const tokenX = allTokens[action.payload.tokenX.toString()]
-            const tokenY = allTokens[action.payload.tokenX.toString()]
+            const tokenY = allTokens[action.payload.tokenY.toString()]
 
             yield put(
               snackbarsActions.add({
@@ -6007,8 +6045,6 @@ export function* handleCompound(action: PayloadAction<Compound>): Generator {
           } catch {
             // Should never be triggered
           }
-        }
-        if (meta?.innerInstructions && meta.innerInstructions) {
           try {
             const amountX = getAmountFromInitPositionInstruction(meta, TokenType.TokenX)
             const amountY = getAmountFromInitPositionInstruction(meta, TokenType.TokenY)
@@ -6285,13 +6321,21 @@ export function* handleCompoundWithETH(action: PayloadAction<Compound>): Generat
         }
 
         const meta = txDetails.meta
-        if (meta?.preTokenBalances && meta.postTokenBalances) {
+        if (meta?.innerInstructions && meta.innerInstructions) {
           try {
-            const amountX = getAmountFromClaimFeeInstruction(meta, TokenType.TokenX)
-            const amountY = getAmountFromClaimFeeInstruction(meta, TokenType.TokenY)
+            const amountX = getAmountFromClaimFeeInstruction(
+              meta,
+              TokenType.TokenX,
+              marketProgram.programAuthority.address.toString()
+            )
+            const amountY = getAmountFromClaimFeeInstruction(
+              meta,
+              TokenType.TokenY,
+              marketProgram.programAuthority.address.toString()
+            )
 
             const tokenX = allTokens[action.payload.tokenX.toString()]
-            const tokenY = allTokens[action.payload.tokenX.toString()]
+            const tokenY = allTokens[action.payload.tokenY.toString()]
 
             yield put(
               snackbarsActions.add({
@@ -6310,8 +6354,6 @@ export function* handleCompoundWithETH(action: PayloadAction<Compound>): Generat
           } catch {
             // Should never be triggered
           }
-        }
-        if (meta?.innerInstructions && meta.innerInstructions) {
           try {
             const amountX = getAmountFromInitPositionInstruction(meta, TokenType.TokenX)
             const amountY = getAmountFromInitPositionInstruction(meta, TokenType.TokenY)
