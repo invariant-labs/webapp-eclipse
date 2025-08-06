@@ -3515,13 +3515,16 @@ function* handleAddLiquidityWithETH(action: PayloadAction<ChangeLiquidityData>):
 
     const net = networkTypetoProgramNetwork(networkType)
 
+    const ethAmount =
+      allTokens[position.poolData.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS
+        ? data.xAmount
+        : data.yAmount
+
     const { createIx, initIx, transferIx, unwrapIx } = createNativeAtaWithTransferInstructions(
       wrappedEthAccount.publicKey,
       wallet.publicKey,
       net,
-      allTokens[position.poolData.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS
-        ? data.xAmount
-        : data.yAmount
+      ethAmount ? ethAmount : new BN(0)
     )
 
     let userTokenX =
