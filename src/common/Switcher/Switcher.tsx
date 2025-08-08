@@ -1,6 +1,7 @@
 import { Box } from '@mui/system'
 import { ToggleButton, ToggleButtonGroup } from '@mui/material'
 import useStyles from './style'
+import { colors } from '@static/theme'
 
 interface SwitcherProps<T> {
   value: T
@@ -8,6 +9,12 @@ interface SwitcherProps<T> {
   onChange: (value: T) => void
   dark?: boolean
   fullWidth?: boolean
+  padding?: number
+  buttonsHeight?: number
+  biggerFont?: boolean
+  changeFontSize?: boolean
+  changeFontColor?: boolean
+  buttonWidth?: number
 }
 
 function Switcher<T extends string>({
@@ -15,9 +22,23 @@ function Switcher<T extends string>({
   options,
   onChange,
   dark,
-  fullWidth
+  fullWidth,
+  padding,
+  buttonsHeight = 32,
+  biggerFont = false,
+  changeFontSize = false,
+  changeFontColor = false,
+  buttonWidth = 60
 }: SwitcherProps<T>) {
-  const { classes } = useStyles({ value, dark, fullWidth })
+  const { classes } = useStyles({
+    value,
+    dark,
+    fullWidth,
+    padding,
+    buttonsHeight,
+    biggerFont,
+    buttonWidth
+  })
 
   const handleChange = (_: any, newValue: T | null) => {
     if (newValue !== null) onChange(newValue)
@@ -48,7 +69,12 @@ function Switcher<T extends string>({
                   value={option}
                   disableRipple
                   className={classes.switchPoolsButton}
-                  style={{ fontWeight: value === option ? 700 : 400 }}>
+                  style={{
+                    ...(changeFontSize && { fontWeight: value === option ? 700 : 400 }),
+                    ...(changeFontColor && {
+                      color: option === value ? colors.invariant.text : colors.invariant.light
+                    })
+                  }}>
                   {option}
                 </ToggleButton>
               ))}
