@@ -1,6 +1,6 @@
 import { colors, typography } from '@static/theme'
+import { SwitcherAlignment } from '@store/consts/types'
 import { makeStyles } from 'tss-react/mui'
-import { SwitcherAlignment } from './DEXChart'
 
 interface StyleProps {
   alignment: SwitcherAlignment

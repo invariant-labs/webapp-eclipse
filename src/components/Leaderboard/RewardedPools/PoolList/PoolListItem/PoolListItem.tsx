@@ -136,7 +136,7 @@ const PoolListItem: React.FC<IProps> = ({
         symbol: symbolFrom,
         icon: iconFrom
       }
-  console.log(poolAddress?.toString())
+
   return (
     <Grid maxWidth='100%' className={classes.wrapper}>
       {displayType === 'token' ? (

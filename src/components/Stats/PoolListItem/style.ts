@@ -15,6 +15,13 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
       borderTopRightRadius: 24,
       background: colors.invariant.component,
       borderBottom: `2px solid ${colors.invariant.light}`
+    },
+
+    [theme.breakpoints.up(1160)]: {
+      '&:hover': {
+        cursor: 'pointer',
+        filter: 'brightness(1.05)'
+      }
     }
   },
   symbolsWrapper: {
@@ -42,7 +49,7 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     color: colors.white.main,
     display: 'grid',
     alignItems: 'center',
-    gridTemplateColumns: '70px auto 120px 190px 140px 120px 120px 150px',
+    gridTemplateColumns: '70px auto 110px 160px 140px 120px 120px 150px',
     padding: '20px 26px 14px 24px',
     whiteSpace: 'nowrap',
 
@@ -60,13 +67,13 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     },
 
     [theme.breakpoints.down(1160)]: {
-      gridTemplateColumns: '40px auto 120px 190px 140px 120px 100px'
+      gridTemplateColumns: '40px auto 120px 140px 140px 120px 100px'
     },
 
     [theme.breakpoints.down('md')]: {
       height: !showInfo ? 69 : 155,
 
-      gridTemplateColumns: '30px auto 135px 130px 90px 15px',
+      gridTemplateColumns: '30px auto 130px 120px 90px 15px',
       rowGap: 16,
       cursor: 'pointer'
     },
