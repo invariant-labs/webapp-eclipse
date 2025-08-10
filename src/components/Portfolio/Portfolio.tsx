@@ -508,7 +508,6 @@ const Portfolio: React.FC<IProps> = ({
                 <PositionListSwitcher
                   alignment={alignment}
                   setLiquidityPoolsAlignment={setLiquidityPoolsAlignment}
-                  lockListDisabled={lockedLength === 0}
                 />
               )}
               <Grid className={classes.searchWrapper}>
@@ -525,7 +524,6 @@ const Portfolio: React.FC<IProps> = ({
                     <PositionListSwitcher
                       alignment={alignment}
                       setLiquidityPoolsAlignment={setLiquidityPoolsAlignment}
-                      lockListDisabled={lockedLength === 0}
                     />
                   )}
                 </Grid>
@@ -565,7 +563,6 @@ const Portfolio: React.FC<IProps> = ({
                   <PositionListSwitcher
                     alignment={alignment}
                     setLiquidityPoolsAlignment={setLiquidityPoolsAlignment}
-                    lockListDisabled={lockedLength === 0}
                   />
 
                   <Grid className={classes.fullWidthWrapper}>
