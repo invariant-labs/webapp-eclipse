@@ -54,7 +54,7 @@ import {
   getMaxTick,
   getMinTick
 } from '@invariant-labs/sdk-eclipse/lib/utils'
-import { backIcon, newTabIcon, refreshIcon, settingIcon } from '@static/icons'
+import { backIcon, infoIcon, newTabIcon, refreshIcon, settingIcon } from '@static/icons'
 import FAQModal from '@components/Modals/FAQModal/FAQModal'
 import EstimatedPoints from './EstimatedPoints/EstimatedPoints'
 import { theme } from '@static/theme'
@@ -258,6 +258,7 @@ export const NewPosition: React.FC<INewPosition> = ({
   const navigate = useNavigate()
 
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
+  const shortMarketId = useMediaQuery(theme.breakpoints.between(960, 972))
 
   const [isAutoSwapAvailable, setIsAutoSwapAvailable] = useState(false)
 
@@ -427,8 +428,8 @@ export const NewPosition: React.FC<INewPosition> = ({
   const estimatedScalePoints = useMemo(() => {
     return estimatedPointsForScale(
       positionOpeningMethod === 'concentration'
-        ? (concentrationArray[concentrationIndex] ??
-            concentrationArray[concentrationArray.length - 1])
+        ? concentrationArray[concentrationIndex] ??
+            concentrationArray[concentrationArray.length - 1]
         : calculateConcentration(leftRange, rightRange),
       positionOpeningMethod === 'concentration' ? concentrationArray : rangeConcentrationArray
     )
@@ -549,13 +550,13 @@ export const NewPosition: React.FC<INewPosition> = ({
   const promotedPoolTierIndex =
     tokenAIndex === null || tokenBIndex === null
       ? undefined
-      : (promotedTiers.find(
+      : promotedTiers.find(
           tier =>
             (tier.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
             (tier.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenAIndex].assetAddress))
-        )?.index ?? undefined)
+        )?.index ?? undefined
 
   const getMinSliderIndex = () => {
     let minimumSliderIndex = 0
@@ -1083,7 +1084,7 @@ export const NewPosition: React.FC<INewPosition> = ({
             {poolIndex !== null && poolAddress ? (
               <>
                 <MarketIdLabel
-                  displayLength={4}
+                  displayLength={shortMarketId ? 3 : 4}
                   marketId={poolAddress}
                   copyPoolAddressHandler={copyPoolAddressHandler}
                 />
@@ -1106,34 +1107,62 @@ export const NewPosition: React.FC<INewPosition> = ({
             <Grid className={classes.optionsWrapper}>
               <Hidden mdDown>
                 {tokenAIndex !== null && tokenBIndex !== null && (
-                  <ConcentrationTypeSwitch
-                    onSwitch={val => {
-                      if (val) {
-                        setPositionOpeningMethod('concentration')
-                        onPositionOpeningMethodChange('concentration')
-                        updatePath(
-                          tokenAIndex,
-                          tokenBIndex,
-                          currentFeeIndex,
-                          +concentrationArray[concentrationIndex].toFixed(0),
-                          false
-                        )
-                      } else {
-                        setPositionOpeningMethod('range')
-                        onPositionOpeningMethodChange('range')
-
-                        updatePath(
-                          tokenAIndex,
-                          tokenBIndex,
-                          currentFeeIndex,
-                          +concentrationArray[concentrationIndex].toFixed(0),
-                          true
-                        )
+                  <Box className={classes.switchWrapper}>
+                    <TooltipHover
+                      title={
+                        <Box className={classes.switchTooltipWrapper}>
+                          <Typography className={classes.switchTooltipParagraph}>
+                            Concentration controls how tightly your liquidity is packed around the
+                            current market price. A high value focuses most of your tokens near that
+                            price, boosting fee earnings while the price stays close, but your
+                            position stops working sooner if the price drifts.
+                          </Typography>
+                          <Typography className={classes.switchTooltipParagraph}>
+                            Range sets the exact price band in which your liquidity is active.
+                            Trades inside this band earn you fees and outside of it your liquidity
+                            is idle. A wider range keeps you active longer but spreads liquidity
+                            thinner, while a narrow range concentrates it for greater efficiency as
+                            long as the price remains inside.
+                          </Typography>
+                          <Typography className={classes.switchTooltipParagraph}>
+                            Think of concentration as a quick preset for how narrow or wide you'd
+                            like the band to be, and range as the precise price limits you can
+                            fine-tune.
+                          </Typography>
+                        </Box>
                       }
-                    }}
-                    className={classes.switch}
-                    currentValue={positionOpeningMethod === 'concentration' ? 0 : 1}
-                  />
+                      placement='bottom'>
+                      <img src={infoIcon} alt='info' className={classes.tooltipIconInfo} />
+                    </TooltipHover>
+                    <ConcentrationTypeSwitch
+                      onSwitch={val => {
+                        if (val) {
+                          setPositionOpeningMethod('concentration')
+                          onPositionOpeningMethodChange('concentration')
+                          updatePath(
+                            tokenAIndex,
+                            tokenBIndex,
+                            currentFeeIndex,
+                            +concentrationArray[concentrationIndex].toFixed(0),
+                            false
+                          )
+                        } else {
+                          setPositionOpeningMethod('range')
+                          onPositionOpeningMethodChange('range')
+
+                          updatePath(
+                            tokenAIndex,
+                            tokenBIndex,
+                            currentFeeIndex,
+                            +concentrationArray[concentrationIndex].toFixed(0),
+                            true
+                          )
+                        }
+                      }}
+                      className={classes.switch}
+                      currentValue={positionOpeningMethod === 'concentration' ? 0 : 1}
+                    />
+                  </Box>
                 )}
               </Hidden>
               {tokenAIndex !== tokenBIndex && isMd && (
@@ -1356,21 +1385,48 @@ export const NewPosition: React.FC<INewPosition> = ({
           updateLiquidity={updateLiquidity}
         />
         <Hidden mdUp>
-          <Grid container alignSelf='flex-end' mb={2} width='200px'>
+          <Grid container alignSelf='flex-end' mb={2} width='218px'>
             {tokenAIndex !== null && tokenBIndex !== null && (
-              <ConcentrationTypeSwitch
-                onSwitch={val => {
-                  if (val) {
-                    setPositionOpeningMethod('concentration')
-                    onPositionOpeningMethodChange('concentration')
-                  } else {
-                    setPositionOpeningMethod('range')
-                    onPositionOpeningMethodChange('range')
+              <Box className={classes.switchWrapper}>
+                <TooltipHover
+                  title={
+                    <Box className={classes.switchTooltipWrapper}>
+                      <Typography className={classes.switchTooltipParagraph}>
+                        Concentration controls how tightly your liquidity is packed around the
+                        current market price. A high value focuses most of your tokens near that
+                        price, boosting fee earnings while the price stays close, but your position
+                        stops working sooner if the price drifts.
+                      </Typography>
+                      <Typography className={classes.switchTooltipParagraph}>
+                        Range sets the exact price band in which your liquidity is active. Trades
+                        inside this band earn you fees and outside of it your liquidity is idle. A
+                        wider range keeps you active longer but spreads liquidity thinner, while a
+                        narrow range concentrates it for greater efficiency as long as the price
+                        remains inside.
+                      </Typography>
+                      <Typography className={classes.switchTooltipParagraph}>
+                        Think of concentration as a quick preset for how narrow or wide you'd like
+                        the band to be, and range as the precise price limits you can fine-tune.
+                      </Typography>
+                    </Box>
                   }
-                }}
-                className={classes.switch}
-                currentValue={positionOpeningMethod === 'concentration' ? 0 : 1}
-              />
+                  placement='bottom'>
+                  <img src={infoIcon} alt='info' className={classes.tooltipIconInfo} />
+                </TooltipHover>
+                <ConcentrationTypeSwitch
+                  onSwitch={val => {
+                    if (val) {
+                      setPositionOpeningMethod('concentration')
+                      onPositionOpeningMethodChange('concentration')
+                    } else {
+                      setPositionOpeningMethod('range')
+                      onPositionOpeningMethodChange('range')
+                    }
+                  }}
+                  className={classes.switch}
+                  currentValue={positionOpeningMethod === 'concentration' ? 0 : 1}
+                />
+              </Box>
             )}
           </Grid>
         </Hidden>
