@@ -6,10 +6,12 @@ import Refresher from '@common/Refresher/Refresher'
 import { BN } from '@coral-xyz/anchor'
 import { Box, Button, Collapse, Grid, Typography, useMediaQuery } from '@mui/material'
 import {
+  BITZ_MAIN,
   DEFAULT_TOKEN_DECIMAL,
   inputTarget,
   NetworkType,
   REFRESHER_INTERVAL,
+  sBITZ_MAIN,
   SwapType,
   WETH_MAIN,
   WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_MAIN,
@@ -22,6 +24,7 @@ import {
   convertBalanceToBN,
   findPairs,
   formatNumberWithoutSuffix,
+  handleBitzRoute,
   handleSimulate,
   handleSimulateWithHop,
   initialXtoY,
@@ -52,6 +55,7 @@ import { EstimatedPointsLabel } from './EstimatedPointsLabel/EstimatedPointsLabe
 import { useNavigate } from 'react-router-dom'
 import { FetcherRecords, Pair, SimulationTwoHopResult } from '@invariant-labs/sdk-eclipse'
 import { theme } from '@static/theme'
+import { StakeLiquidityPayload } from '@store/reducers/sBitz'
 
 export interface Pools {
   tokenX: PublicKey
@@ -136,6 +140,11 @@ export interface ISwap {
   swapAccounts: FetcherRecords
   swapIsLoading: boolean
   wrappedETHBalance: BN | null
+  sbitzSupply: BN
+  totalBitzStaked: BN
+  onBitzRoute: (payload: StakeLiquidityPayload, isStake: boolean) => void
+  swapType: SwapType
+  setSwapType: (swapType: SwapType) => void
 }
 
 export type SimulationPath = {
@@ -193,7 +202,12 @@ export const Swap: React.FC<ISwap> = ({
   market,
   tokensDict,
   swapAccounts,
-  swapIsLoading
+  swapIsLoading,
+  sbitzSupply,
+  totalBitzStaked,
+  onBitzRoute,
+  swapType,
+  setSwapType
 }) => {
   const { classes, cx } = useStyles()
 
@@ -263,7 +277,7 @@ export const Swap: React.FC<ISwap> = ({
     secondPriceImpact: null
   })
   const [bestAmount, setBestAmount] = useState(new BN(0))
-  const [swapType, setSwapType] = useState(SwapType.Normal)
+
   const [addBlur, setAddBlur] = useState(false)
   const [wasIsFetchingNewPoolRun, setWasIsFetchingNewPoolRun] = useState(false)
   const [wasSwapIsLoadingRun, setWasSwapIsLoadingRun] = useState(false)
@@ -335,7 +349,7 @@ export const Swap: React.FC<ISwap> = ({
       )
       setIsFirstPairGivingPoints(isFirstPoints)
       setIsSecondPairGivingPoints(isSecondPoints)
-    } else {
+    } else if (swapType === SwapType.Normal) {
       const isPoints = promotedSwapPairs.some(
         item =>
           (new PublicKey(item.tokenX).equals(tokens[tokenToIndex].assetAddress) &&
@@ -344,6 +358,9 @@ export const Swap: React.FC<ISwap> = ({
             new PublicKey(item.tokenY).equals(tokens[tokenToIndex].assetAddress))
       )
       setIsFirstPairGivingPoints(isPoints)
+      setIsSecondPairGivingPoints(false)
+    } else {
+      setIsFirstPairGivingPoints(false)
       setIsSecondPairGivingPoints(false)
     }
 
@@ -401,7 +418,7 @@ export const Swap: React.FC<ISwap> = ({
             )
           : new BN(0)
         setPointsForSwap(firstPoints.add(secondPoints))
-      } else {
+      } else if (swapType === SwapType.Normal) {
         const feePercentage = pools[simulateResult.poolIndex ?? 0]?.fee ?? new BN(0)
         let desiredAmount: string
         let desiredIndex: number | null
@@ -429,6 +446,8 @@ export const Swap: React.FC<ISwap> = ({
           pointsPerUSD
         )
         setPointsForSwap(points)
+      } else {
+        setPointsForSwap(new BN(0))
       }
     } else {
       setPointsForSwap(new BN(0))
@@ -566,7 +585,7 @@ export const Swap: React.FC<ISwap> = ({
     setAddBlur(true)
     if (tokenFromIndex !== null && tokenToIndex !== null && !swapIsLoading) {
       if (inputRef === inputTarget.FROM) {
-        const [simulateValue, simulateWithHopValue] = await Promise.all([
+        const [simulateValue, simulateWithHopValue, bitzRouteValue] = await Promise.all([
           handleSimulate(
             pools,
             poolTicks,
@@ -584,14 +603,22 @@ export const Swap: React.FC<ISwap> = ({
             convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals),
             true,
             swapAccounts
+          ),
+          handleBitzRoute(
+            sbitzSupply,
+            totalBitzStaked,
+            convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals),
+            true,
+            tokens[tokenFromIndex].assetAddress,
+            tokens[tokenToIndex].assetAddress
           )
         ])
 
-        updateSimulation(simulateValue, simulateWithHopValue)
+        updateSimulation(simulateValue, simulateWithHopValue, bitzRouteValue)
         setSimulateResult(simulateValue)
         setSimulateWithHopResult(simulateWithHopValue)
       } else if (inputRef === inputTarget.TO) {
-        const [simulateValue, simulateWithHopValue] = await Promise.all([
+        const [simulateValue, simulateWithHopValue, bitzRouteValue] = await Promise.all([
           handleSimulate(
             pools,
             poolTicks,
@@ -609,10 +636,18 @@ export const Swap: React.FC<ISwap> = ({
             convertBalanceToBN(amountTo, tokens[tokenToIndex].decimals),
             false,
             swapAccounts
+          ),
+          handleBitzRoute(
+            sbitzSupply,
+            totalBitzStaked,
+            convertBalanceToBN(amountTo, tokens[tokenToIndex].decimals),
+            false,
+            tokens[tokenFromIndex].assetAddress,
+            tokens[tokenToIndex].assetAddress
           )
         ])
 
-        updateSimulation(simulateValue, simulateWithHopValue)
+        updateSimulation(simulateValue, simulateWithHopValue, bitzRouteValue)
         setSimulateResult(simulateValue)
         setSimulateWithHopResult(simulateWithHopValue)
       }
@@ -635,13 +670,16 @@ export const Swap: React.FC<ISwap> = ({
       simulation: SimulationTwoHopResult | null
       route: [Pair, Pair] | null
       error: boolean
-    }
+    },
+    bitzRouteResult: BN
   ) => {
     let useTwoHop = false
+    let useBitzRoute = false
 
     const isSimulateError =
       simulateResult.error.length > 0 || simulateResult.amountOut.eq(new BN(0))
     const isSimulateWithHopError = simulateWithHopResult.error
+    const isBitzError = bitzRouteResult.eqn(0)
 
     if (isSimulateError && !isSimulateWithHopError) {
       useTwoHop = true
@@ -666,6 +704,40 @@ export const Swap: React.FC<ISwap> = ({
           !simulateWithHopResult.error
         ) {
           useTwoHop = true
+        }
+      }
+    }
+
+    if (!isBitzError) {
+      if (inputRef === inputTarget.FROM) {
+        if (useTwoHop) {
+          if (bitzRouteResult.gte(simulateWithHopResult?.simulation?.totalAmountOut)) {
+            useBitzRoute = true
+            useTwoHop = false
+          }
+        } else {
+          if (bitzRouteResult.gte(simulateResult?.amountOut)) {
+            useBitzRoute = true
+            useTwoHop = false
+          }
+        }
+      } else {
+        if (useTwoHop) {
+          if (
+            bitzRouteResult.lte(
+              simulateWithHopResult?.simulation?.totalAmountIn.add(
+                simulateWithHopResult?.simulation?.swapHopOne.accumulatedFee
+              )
+            )
+          ) {
+            useBitzRoute = true
+            useTwoHop = false
+          }
+        } else {
+          if (bitzRouteResult.lte(simulateResult?.amountOut)) {
+            useBitzRoute = true
+            useTwoHop = false
+          }
         }
       }
     }
@@ -699,6 +771,26 @@ export const Swap: React.FC<ISwap> = ({
             )
       )
       setSwapType(SwapType.WithHop)
+    } else if (useBitzRoute) {
+      setSimulationPath({
+        tokenFrom: tokens[tokenFromIndex ?? 0],
+        tokenBetween: null,
+        tokenTo: tokens[tokenToIndex ?? 0],
+        firstPair: new Pair(sBITZ_MAIN.address, BITZ_MAIN.address, {
+          fee: new BN(0), // Should be equal to bitz/sbitz stake/unstake fee
+          tickSpacing: 1
+        }),
+        secondPair: null,
+        firstAmount:
+          inputRef === inputTarget.FROM
+            ? convertBalanceToBN(amountFrom, tokens[tokenFromIndex ?? 0].decimals)
+            : bitzRouteResult,
+        secondAmount: null,
+        firstPriceImpact: null,
+        secondPriceImpact: null
+      })
+      setBestAmount(bitzRouteResult)
+      setSwapType(SwapType.BitzRoute)
     } else {
       setSimulationPath({
         tokenFrom: tokens[tokenFromIndex ?? 0],
@@ -1464,6 +1556,7 @@ export const Swap: React.FC<ISwap> = ({
                 priceImpact={priceImpact}
                 isLoadingRate={getStateMessage() === 'Loading' || addBlur}
                 simulationPath={simulationPath}
+                swapType={swapType}
               />
               <TokensInfo
                 tokenFrom={tokenFromIndex !== null ? tokens[tokenFromIndex] : null}
@@ -1501,18 +1594,32 @@ export const Swap: React.FC<ISwap> = ({
                   onClick={() => {
                     if (tokenFromIndex === null || tokenToIndex === null) return
 
-                    onSwap(
-                      fromFee(new BN(Number(+slippTolerance * 1000))),
-                      simulateResult.estimatedPriceAfterSwap,
-                      simulationPath.tokenFrom?.assetAddress ?? PublicKey.default,
-                      simulationPath.tokenBetween?.assetAddress ?? null,
-                      simulationPath.tokenTo?.assetAddress ?? PublicKey.default,
-                      simulationPath.firstPair,
-                      simulationPath.secondPair,
-                      convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals),
-                      convertBalanceToBN(amountTo, tokens[tokenToIndex].decimals),
-                      inputRef === inputTarget.FROM
-                    )
+                    if (swapType === SwapType.BitzRoute) {
+                      const byAmountIn = inputRef === inputTarget.FROM
+                      const amount = byAmountIn
+                        ? convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals)
+                        : convertBalanceToBN(amountTo, tokens[tokenToIndex].decimals)
+                      onBitzRoute(
+                        {
+                          amount,
+                          byAmountIn: inputRef === inputTarget.FROM
+                        },
+                        tokens[tokenFromIndex].assetAddress.equals(BITZ_MAIN.address)
+                      )
+                    } else {
+                      onSwap(
+                        fromFee(new BN(Number(+slippTolerance * 1000))),
+                        simulateResult.estimatedPriceAfterSwap,
+                        simulationPath.tokenFrom?.assetAddress ?? PublicKey.default,
+                        simulationPath.tokenBetween?.assetAddress ?? null,
+                        simulationPath.tokenTo?.assetAddress ?? PublicKey.default,
+                        simulationPath.firstPair,
+                        simulationPath.secondPair,
+                        convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals),
+                        convertBalanceToBN(amountTo, tokens[tokenToIndex].decimals),
+                        inputRef === inputTarget.FROM
+                      )
+                    }
                   }}
                   progress={progress}
                 />
@@ -1531,26 +1638,40 @@ export const Swap: React.FC<ISwap> = ({
                 onClick={() => {
                   if (tokenFromIndex === null || tokenToIndex === null) return
 
-                  onSwap(
-                    // fromFee(new BN(Number(+slippTolerance * 1000))),
-                    // simulateResult.estimatedPriceAfterSwap,
-                    // tokens[tokenFromIndex].assetAddress,
-                    // tokens[tokenToIndex].assetAddress,
-                    // simulateResult.poolIndex,
-                    // convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals),
-                    // convertBalanceToBN(amountTo, tokens[tokenToIndex].decimals),
-                    // inputRef === inputTarget.FROM
-                    fromFee(new BN(Number(+slippTolerance * 1000))),
-                    simulateResult.estimatedPriceAfterSwap,
-                    simulationPath.tokenFrom?.assetAddress ?? PublicKey.default,
-                    simulationPath.tokenBetween?.assetAddress ?? null,
-                    simulationPath.tokenTo?.assetAddress ?? PublicKey.default,
-                    simulationPath.firstPair,
-                    simulationPath.secondPair,
-                    convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals),
-                    convertBalanceToBN(amountTo, tokens[tokenToIndex].decimals),
-                    inputRef === inputTarget.FROM
-                  )
+                  if (swapType === SwapType.BitzRoute) {
+                    const byAmountIn = inputRef === inputTarget.FROM
+                    const amount = byAmountIn
+                      ? convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals)
+                      : convertBalanceToBN(amountTo, tokens[tokenToIndex].decimals)
+                    onBitzRoute(
+                      {
+                        amount,
+                        byAmountIn: inputRef === inputTarget.FROM
+                      },
+                      tokens[tokenFromIndex].assetAddress.equals(BITZ_MAIN.address)
+                    )
+                  } else {
+                    onSwap(
+                      // fromFee(new BN(Number(+slippTolerance * 1000))),
+                      // simulateResult.estimatedPriceAfterSwap,
+                      // tokens[tokenFromIndex].assetAddress,
+                      // tokens[tokenToIndex].assetAddress,
+                      // simulateResult.poolIndex,
+                      // convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals),
+                      // convertBalanceToBN(amountTo, tokens[tokenToIndex].decimals),
+                      // inputRef === inputTarget.FROM
+                      fromFee(new BN(Number(+slippTolerance * 1000))),
+                      simulateResult.estimatedPriceAfterSwap,
+                      simulationPath.tokenFrom?.assetAddress ?? PublicKey.default,
+                      simulationPath.tokenBetween?.assetAddress ?? null,
+                      simulationPath.tokenTo?.assetAddress ?? PublicKey.default,
+                      simulationPath.firstPair,
+                      simulationPath.secondPair,
+                      convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals),
+                      convertBalanceToBN(amountTo, tokens[tokenToIndex].decimals),
+                      inputRef === inputTarget.FROM
+                    )
+                  }
                 }}
                 progress={progress}
               />
