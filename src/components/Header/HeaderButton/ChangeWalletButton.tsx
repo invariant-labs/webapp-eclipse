@@ -26,6 +26,7 @@ export interface IProps {
   width?: string | number
   height?: string | number
   isSwap?: boolean
+  noUnblur?: boolean
 }
 export const ChangeWalletButton: React.FC<IProps> = ({
   name,
@@ -40,7 +41,8 @@ export const ChangeWalletButton: React.FC<IProps> = ({
   onDisconnect,
   isDisabled = false,
   onCopyAddress = () => {},
-  textClassName
+  textClassName,
+  noUnblur
 }) => {
   const { classes, cx } = useStyles()
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
@@ -66,7 +68,9 @@ export const ChangeWalletButton: React.FC<IProps> = ({
   const handleConnect = async () => {
     onConnect()
     setIsOpenSelectWallet(false)
-    unblurContent()
+    if (!noUnblur) {
+      unblurContent()
+    }
     setIsChangeWallet(false)
 
     dispatch(actions.getLeaderboardData({ page: 1, itemsPerPage }))
@@ -74,13 +78,17 @@ export const ChangeWalletButton: React.FC<IProps> = ({
   }
 
   const handleClose = () => {
-    unblurContent()
+    if (!noUnblur) {
+      unblurContent()
+    }
     setOpen(false)
   }
 
   const handleDisconnect = () => {
     onDisconnect()
-    unblurContent()
+    if (!noUnblur) {
+      unblurContent()
+    }
     setOpen(false)
     localStorage.setItem('WALLET_TYPE', '')
     dispatch(actions.resetCurrentUser())
@@ -90,7 +98,9 @@ export const ChangeWalletButton: React.FC<IProps> = ({
 
   const handleChangeWallet = () => {
     setIsChangeWallet(true)
-    unblurContent()
+    if (!noUnblur) {
+      unblurContent()
+    }
     setOpen(false)
     setIsOpenSelectWallet(true)
     blurContent()
@@ -100,7 +110,9 @@ export const ChangeWalletButton: React.FC<IProps> = ({
 
   const handleCopyAddress = () => {
     onCopyAddress()
-    unblurContent()
+    if (!noUnblur) {
+      unblurContent()
+    }
     setOpen(false)
   }
 
@@ -129,11 +141,15 @@ export const ChangeWalletButton: React.FC<IProps> = ({
         anchorEl={anchorEl}
         handleClose={() => {
           setIsOpenSelectWallet(false)
-          unblurContent()
+          if (!noUnblur) {
+            unblurContent()
+          }
         }}
         setIsOpenSelectWallet={() => {
           setIsOpenSelectWallet(false)
-          unblurContent()
+          if (!noUnblur) {
+            unblurContent()
+          }
         }}
         handleConnect={handleConnect}
         open={isOpenSelectWallet}
