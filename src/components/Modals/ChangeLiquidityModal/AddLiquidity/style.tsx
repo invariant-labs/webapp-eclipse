@@ -7,7 +7,6 @@ export const useStyles = makeStyles()(theme => {
       borderRadius: 24,
       flexDirection: 'column',
       backgroundColor: colors.invariant.component,
-      padding: '16px 24px 16px 24px',
       flex: '1 1 0%',
 
       [theme.breakpoints.down('sm')]: {
@@ -44,7 +43,7 @@ export const useStyles = makeStyles()(theme => {
     depositHeader: {
       width: '100%',
       flexDirection: 'column',
-      marginBottom: 24,
+      marginBottom: 12,
       justifyContent: 'center',
       alignItems: 'center',
       gap: 8
@@ -84,7 +83,7 @@ export const useStyles = makeStyles()(theme => {
       width: '100%',
       display: 'flex',
       flexDirection: 'column',
-      gap: 10
+      gap: 12
     },
     inputLabel: {
       ...typography.body3,
@@ -122,9 +121,9 @@ export const useStyles = makeStyles()(theme => {
       }
     },
     addButton: {
-      height: '48px',
+      marginTop: 24,
+      height: '40px',
       width: '100%',
-      margin: '30px 0',
       cursor: 'default'
     },
     hoverButton: {
@@ -271,8 +270,6 @@ export const useStyles = makeStyles()(theme => {
       }
     },
     errorWarning: {
-      display: 'flex',
-      alignItems: 'center',
       height: '100%',
       width: 'fit-content',
       maxWidth: 131,
@@ -284,35 +281,22 @@ export const useStyles = makeStyles()(theme => {
       paddingInline: 8,
       borderRadius: 9,
       textWrap: 'nowrap',
+      display: 'flex',
+      alignItems: 'center',
       [theme.breakpoints.down(370)]: {
         maxWidth: 79,
         padding: '5px 6px'
       }
     },
     whiteIcon: {
-      filter: 'brightness(0) invert(100%)',
-      transition: 'filter 0.7s ease-in-out',
-      minWidth: '12px',
-      minHeight: '12px'
+      width: 20,
+      height: 20,
+      color: colors.white.main
     },
     grayscaleIcon: {
-      filter: 'grayscale(100%)',
-      transition: 'filter 0.7s ease-in-out',
-      minWidth: '12px',
-      minHeight: '12px'
-    },
-    errorIcon: {
-      filter:
-        'brightness(0) saturate(100%) invert(45%) sepia(83%) saturate(1283%) hue-rotate(327deg) brightness(98%) contrast(98%)',
-      transition: 'filter 0.7s ease-in-out',
-      minWidth: '12px',
-      minHeight: '12px'
-    },
-    inputFirst: {
-      marginBottom: 10
-    },
-    inputSecond: {
-      marginBottom: 16
+      width: 20,
+      height: 20,
+      color: colors.invariant.textGrey
     },
     inputWrapper: {
       display: 'flex',
@@ -378,6 +362,33 @@ export const useStyles = makeStyles()(theme => {
       [theme.breakpoints.down(370)]: {
         gap: 4
       }
+    },
+    statCard: {
+      marginTop: 24,
+      padding: 12,
+      background: colors.invariant.light,
+      borderRadius: 13
+    },
+    statRow: {
+      display: 'flex',
+      justifyContent: 'space-between'
+    },
+    statTitle: {
+      ...typography.body2,
+      color: colors.invariant.textGrey
+    },
+    statContent: {
+      ...typography.body1,
+      display: 'flex',
+      gap: 4
+    },
+    deposit: {
+      marginRight: 24
+    },
+    smallIcon: {
+      width: 16,
+      height: 16,
+      borderRadius: '100%'
     }
   }
 })

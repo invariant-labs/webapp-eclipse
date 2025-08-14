@@ -753,6 +753,16 @@ export const AlternativeFormatConfig = {
   DecimalsAfterDot: 2
 }
 
+export const NoConfig = {
+  B: 1000000000000000,
+  M: 1000000000000000,
+  K: 1000000000000000,
+  BDecimals: 100,
+  MDecimals: 100,
+  KDecimals: 100,
+  DecimalsAfterDot: 2
+}
+
 export enum PositionTokenBlock {
   None,
   A,
@@ -823,6 +833,7 @@ export const DEFAULT_NEW_POSITION_SLIPPAGE = '2.00'
 export const DEFAULT_AUTOSWAP_MAX_PRICE_IMPACT = '2.00'
 export const DEFAULT_AUTOSWAP_MIN_UTILIZATION = '95.00'
 export const DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_CREATE_POSITION = '2.50'
+export const DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_ADD_LIQUIDITY = '0.50'
 export const DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_SWAP = '0.50'
 
 export const CHAINS = [

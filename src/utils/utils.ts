@@ -102,6 +102,7 @@ import {
   sBITZ_MAIN,
   MAX_PLOT_VISIBLE_TICK_RANGE,
   CHECKER_API_URL,
+  NoConfig,
   muES_MAIN
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
@@ -712,6 +713,7 @@ interface FormatNumberWithSuffixConfig {
   decimalsAfterDot?: number
   alternativeConfig?: boolean
   noSubNumbers?: boolean
+  noConfig?: boolean
 }
 
 export const getThresholdsDecimals = (
@@ -731,16 +733,22 @@ export const formatNumberWithSuffix = (
     noDecimals,
     decimalsAfterDot,
     alternativeConfig,
-    noSubNumbers
+    noSubNumbers,
+    noConfig
   }: Required<FormatNumberWithSuffixConfig> = {
     noDecimals: false,
     decimalsAfterDot: 3,
     alternativeConfig: false,
     noSubNumbers: false,
+    noConfig: false,
     ...config
   }
 
-  const formatConfig = alternativeConfig ? AlternativeFormatConfig : FormatConfig
+  const formatConfig = noConfig
+    ? NoConfig
+    : alternativeConfig
+      ? AlternativeFormatConfig
+      : FormatConfig
 
   const numberAsNumber = Number(number)
   const isNegative = numberAsNumber < 0
@@ -2580,16 +2588,79 @@ export const getAmountFromInitPositionInstruction = (
       innerInstruction =>
         !!innerInstruction.instructions.find(
           instruction =>
-            (instruction as ParsedInstruction)?.parsed.type === 'transfer' ||
-            (instruction as ParsedInstruction)?.parsed.type === 'transferChecked'
+            (instruction as ParsedInstruction)?.parsed?.type === 'transfer' ||
+            (instruction as ParsedInstruction)?.parsed?.type === 'transferChecked'
         )
     ) ?? meta.innerInstructions[2]
 
   const instruction = innerInstruction.instructions.filter(
     instruction =>
-      (instruction as ParsedInstruction)?.parsed.type === 'transfer' ||
-      (instruction as ParsedInstruction)?.parsed.type === 'transferChecked'
+      (instruction as ParsedInstruction)?.parsed?.type === 'transfer' ||
+      (instruction as ParsedInstruction)?.parsed?.type === 'transferChecked'
   )[type === TokenType.TokenX ? 0 : 1] as ParsedInstruction | undefined
+
+  return instruction?.parsed.info.amount || instruction?.parsed.info.tokenAmount.amount
+}
+
+export const getSwapAmountFromSwapAndAddLiquidity = (
+  meta: ParsedTransactionMeta,
+  marketProgramAuthority: string,
+  token: string,
+  type: SwapTokenType
+): number => {
+  if (!meta.innerInstructions) {
+    return 0
+  }
+
+  const innerInstruction =
+    meta.innerInstructions.find(
+      innerInstruction =>
+        !!innerInstruction.instructions.find(
+          instruction =>
+            (instruction as ParsedInstruction)?.parsed?.type === 'transfer' ||
+            (instruction as ParsedInstruction)?.parsed?.type === 'transferChecked'
+        )
+    ) ?? meta.innerInstructions[0]
+
+  let instruction = innerInstruction.instructions.find(
+    ix => (ix as ParsedInstruction).parsed?.info.mint === token
+  ) as ParsedInstruction | undefined
+
+  if (!instruction) {
+    instruction = innerInstruction.instructions.find(ix =>
+      type === SwapTokenType.TokenIn
+        ? (ix as ParsedInstruction).parsed?.info.authority &&
+          (ix as ParsedInstruction).parsed?.info.authority !== marketProgramAuthority
+        : (ix as ParsedInstruction).parsed?.info.authority === marketProgramAuthority
+    ) as ParsedInstruction | undefined
+  }
+
+  return instruction?.parsed?.info.amount || instruction?.parsed?.info.tokenAmount.amount
+}
+
+export const getAddAmountFromSwapAndAddLiquidity = (
+  meta: ParsedTransactionMeta,
+  type: TokenType
+): number => {
+  if (!meta.innerInstructions) {
+    return 0
+  }
+
+  const innerInstruction =
+    meta.innerInstructions.find(
+      innerInstruction =>
+        !!innerInstruction.instructions.find(
+          instruction =>
+            (instruction as ParsedInstruction)?.parsed?.type === 'transfer' ||
+            (instruction as ParsedInstruction)?.parsed?.type === 'transferChecked'
+        )
+    ) ?? meta.innerInstructions[0]
+
+  const instruction = innerInstruction.instructions.filter(
+    instruction =>
+      (instruction as ParsedInstruction)?.parsed?.type === 'transfer' ||
+      (instruction as ParsedInstruction)?.parsed?.type === 'transferChecked'
+  )[type === TokenType.TokenX ? 2 : 3] as ParsedInstruction | undefined
 
   return instruction?.parsed.info.amount || instruction?.parsed.info.tokenAmount.amount
 }
