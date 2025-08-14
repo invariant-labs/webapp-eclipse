@@ -21,7 +21,8 @@ export const {
   positionData,
   showFeesLoader,
   shouldDisable,
-  positionListSwitcher
+  positionListSwitcher,
+  changeLiquidity
 } = keySelectors(store, [
   'lastPage',
   'positionsList',
@@ -34,7 +35,8 @@ export const {
   'positionData',
   'showFeesLoader',
   'shouldDisable',
-  'positionListSwitcher'
+  'positionListSwitcher',
+  'changeLiquidity'
 ])
 
 export const lastPageSelector = lastPage

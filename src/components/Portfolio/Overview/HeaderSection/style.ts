@@ -22,7 +22,11 @@ export const useStyles = makeStyles()((_theme: Theme) => ({
   },
   headerText: {
     ...typography.heading2,
-    color: colors.invariant.text
+    color: colors.invariant.text,
+
+    [theme.breakpoints.down('sm')]: {
+      ...typography.heading3
+    }
   },
   warning: {
     marginLeft: '8px'

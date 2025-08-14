@@ -4,10 +4,11 @@ import {
   NetworkType,
   POSITIONS_PER_PAGE,
   WETH_CLOSE_POSITION_LAMPORTS_MAIN,
-  WETH_CLOSE_POSITION_LAMPORTS_TEST
+  WETH_CLOSE_POSITION_LAMPORTS_TEST,
+  WRAPPED_ETH_ADDRESS
 } from '@store/consts/static'
 import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
-import { calculatePriceSqrt } from '@invariant-labs/sdk-eclipse'
+import { calculatePriceSqrt, Pair } from '@invariant-labs/sdk-eclipse'
 import { getX, getY } from '@invariant-labs/sdk-eclipse/lib/math'
 import {
   calculateClaimAmount,
@@ -19,14 +20,18 @@ import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { actions, LiquidityPools } from '@store/reducers/positions'
 import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
 import {
+  changeLiquidity,
   isLoadingPositionsList,
   lastPageSelector,
   lockedPositionsWithPoolsData,
+  plotTicks,
   PositionData,
   positionListSwitcher,
   positionsWithPoolsData,
+  positionWithPoolData,
   prices,
-  shouldDisable
+  shouldDisable,
+  singlePositionData
 } from '@store/selectors/positions'
 import {
   address,
@@ -34,13 +39,24 @@ import {
   status,
   swapTokens,
   balance,
-  overviewSwitch
+  overviewSwitch,
+  poolTokens
 } from '@store/selectors/solanaWallet'
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { calcYPerXPriceBySqrtPrice, ensureError, findStrategy, printBN, ROUTES } from '@utils/utils'
-import { network } from '@store/selectors/solanaConnection'
+import {
+  calcPriceBySqrtPrice,
+  calcPriceByTickIndex,
+  calcYPerXPriceBySqrtPrice,
+  ensureError,
+  findStrategy,
+  getMockedTokenPrice,
+  getTokenPrice,
+  printBN,
+  ROUTES
+} from '@utils/utils'
+import { network, timeoutError } from '@store/selectors/solanaConnection'
 import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import { actions as actionsStats } from '@store/reducers/stats'
 import { actions as lockerActions } from '@store/reducers/locker'
@@ -51,10 +67,18 @@ import { theme } from '@static/theme'
 import useStyles from './styles'
 import Portfolio from '@components/Portfolio/Portfolio'
 import { VariantType } from 'notistack'
-import { IPositionItem } from '@store/consts/types'
+import { IPositionItem, TokenPriceData } from '@store/consts/types'
 import { portfolioSearch } from '@store/selectors/navigation'
 import { ISearchToken } from '@common/FilterSearch/FilterSearch'
 import { useProcessedTokens } from '@store/hooks/userOverview/useProcessedToken'
+import { PublicKey } from '@solana/web3.js'
+import poolsSelectors, {
+  autoSwapTicksAndTickMap,
+  poolsArraySortedByFees
+} from '@store/selectors/pools'
+import { actions as poolsActions } from '@store/reducers/pools'
+import { actions as positionsActions } from '@store/reducers/positions'
+import { blurContent, unblurContent } from '@utils/uiUtils'
 
 const PortfolioWrapper = () => {
   const BANNER_STORAGE_KEY = 'invariant-es-banner-state'
@@ -177,6 +201,9 @@ const PortfolioWrapper = () => {
   const handleLockPosition = (index: number) => {
     dispatch(lockerActions.lockPosition({ index, network: currentNetwork }))
   }
+
+  const [isChangeLiquidityModalShown, setIsChangeLiquidityModalShown] = useState(false)
+  const [isAddLiquidity, setIsAddLiquidity] = useState(true)
 
   const canClosePosition = useMemo(() => {
     if (currentNetwork === NetworkType.Testnet) {
@@ -444,6 +471,210 @@ const PortfolioWrapper = () => {
       )
   }
 
+  const [positionId, setPositionId] = useState('')
+  const [tokenXPriceData, setTokenXPriceData] = useState<TokenPriceData | undefined>(undefined)
+  const [tokenYPriceData, setTokenYPriceData] = useState<TokenPriceData | undefined>(undefined)
+
+  const singlePosition = useSelector(singlePositionData(positionId))
+  const positionPreview = useSelector(positionWithPoolData)
+  const position = singlePosition ?? positionPreview ?? undefined
+
+  const tokens = useSelector(poolTokens)
+  const poolsList = useSelector(poolsArraySortedByFees)
+  const autoSwapPoolData = useSelector(poolsSelectors.autoSwapPool)
+  const { ticks: autoSwapTicks, tickmap: autoSwapTickMap } = useSelector(autoSwapTicksAndTickMap)
+  const isLoadingAutoSwapPool = useSelector(poolsSelectors.isLoadingAutoSwapPool)
+  const isLoadingAutoSwapPoolTicksOrTickMap = useSelector(
+    poolsSelectors.isLoadingAutoSwapPoolTicksOrTickMap
+  )
+  const { success: changeLiquiditySuccess, inProgress: changeLiquidityInProgress } =
+    useSelector(changeLiquidity)
+  const isTimeoutError = useSelector(timeoutError)
+  const { allData: ticksData, loading: ticksLoading } = useSelector(plotTicks)
+
+  const tokenXLiquidity = useMemo(() => {
+    if (position) {
+      try {
+        return +printBN(
+          getX(
+            position.liquidity,
+            calculatePriceSqrt(position.upperTickIndex),
+            position.poolData.sqrtPrice,
+            calculatePriceSqrt(position.lowerTickIndex)
+          ),
+          position.tokenX.decimals
+        )
+      } catch {
+        return 0
+      }
+    }
+
+    return 0
+  }, [position])
+
+  const tokenYLiquidity = useMemo(() => {
+    if (position) {
+      try {
+        return +printBN(
+          getY(
+            position.liquidity,
+            calculatePriceSqrt(position.upperTickIndex),
+            position.poolData.sqrtPrice,
+            calculatePriceSqrt(position.lowerTickIndex)
+          ),
+          position.tokenY.decimals
+        )
+      } catch {
+        return 0
+      }
+    }
+
+    return 0
+  }, [position])
+
+  const [tokenXClaim, tokenYClaim] = useMemo(() => {
+    if (
+      position?.ticksLoading === false &&
+      position?.poolData &&
+      typeof position?.lowerTick !== 'undefined' &&
+      typeof position?.upperTick !== 'undefined'
+    ) {
+      const [bnX, bnY] = calculateClaimAmount({
+        position,
+        tickLower: position.lowerTick,
+        tickUpper: position.upperTick,
+        tickCurrent: position.poolData.currentTickIndex,
+        feeGrowthGlobalX: position.poolData.feeGrowthGlobalX,
+        feeGrowthGlobalY: position.poolData.feeGrowthGlobalY
+      })
+
+      return [+printBN(bnX, position.tokenX.decimals), +printBN(bnY, position.tokenY.decimals)]
+    }
+
+    return [0, 0]
+  }, [position])
+
+  useEffect(() => {
+    if (!position) {
+      return
+    }
+    const xAddr = position.tokenX.assetAddress.toString()
+    getTokenPrice(xAddr, currentNetwork)
+      .then(data => setTokenXPriceData({ price: data ?? 0 }))
+      .catch(() => setTokenXPriceData(getMockedTokenPrice(position.tokenX.symbol, currentNetwork)))
+
+    const yAddr = position.tokenY.assetAddress.toString()
+    getTokenPrice(yAddr, currentNetwork)
+      .then(data => setTokenYPriceData({ price: data ?? 0 }))
+      .catch(() => setTokenYPriceData(getMockedTokenPrice(position.tokenY.symbol, currentNetwork)))
+  }, [position?.id])
+
+  const min = useMemo(
+    () =>
+      position
+        ? calcYPerXPriceBySqrtPrice(
+            calculatePriceSqrt(position.lowerTickIndex),
+            position.tokenX.decimals,
+            position.tokenY.decimals
+          )
+        : 0,
+    [position?.lowerTickIndex, position?.id.toString()]
+  )
+  const max = useMemo(
+    () =>
+      position
+        ? calcYPerXPriceBySqrtPrice(
+            calculatePriceSqrt(position.upperTickIndex),
+            position.tokenX.decimals,
+            position.tokenY.decimals
+          )
+        : 0,
+    [position?.upperTickIndex, position?.id.toString()]
+  )
+  const current = useMemo(
+    () =>
+      position?.poolData
+        ? calcPriceBySqrtPrice(
+            position.poolData.sqrtPrice,
+            true,
+            position.tokenX.decimals,
+            position.tokenY.decimals
+          )
+        : 0,
+    [position, position?.id.toString()]
+  )
+
+  const leftRange = useMemo(() => {
+    if (position) {
+      return {
+        index: position.lowerTickIndex,
+        x: calcPriceByTickIndex(
+          position.lowerTickIndex,
+          true,
+          position.tokenX.decimals,
+          position.tokenY.decimals
+        )
+      }
+    }
+
+    return {
+      index: 0,
+      x: 0
+    }
+  }, [position?.id])
+
+  const rightRange = useMemo(() => {
+    if (position) {
+      return {
+        index: position.upperTickIndex,
+        x: calcPriceByTickIndex(
+          position.upperTickIndex,
+          true,
+          position.tokenX.decimals,
+          position.tokenY.decimals
+        )
+      }
+    }
+
+    return {
+      index: 0,
+      x: 0
+    }
+  }, [position?.id])
+
+  const onConnectWallet = () => {
+    dispatch(walletActions.connect(false))
+  }
+
+  const onDisconnectWallet = () => {
+    dispatch(walletActions.disconnect())
+  }
+
+  const getPoolData = (pair: Pair) => {
+    dispatch(poolsActions.getPoolData(pair))
+  }
+
+  const setShouldNotUpdateRange = () => {
+    dispatch(positionsActions.setShouldNotUpdateRange(true))
+  }
+
+  const setChangeLiquiditySuccess = (value: boolean) => {
+    dispatch(positionsActions.setChangeLiquiditySuccess(value))
+  }
+
+  useEffect(() => {
+    if (isChangeLiquidityModalShown) {
+      blurContent()
+    } else {
+      unblurContent()
+    }
+  }, [isChangeLiquidityModalShown])
+
+  const openPosition = (id: string) => {
+    setPositionId(id)
+    setIsChangeLiquidityModalShown(true)
+  }
+
   return isConnected ? (
     <Portfolio
       handleCloseBanner={handleBannerClose}
@@ -484,6 +715,164 @@ const PortfolioWrapper = () => {
       handleOverviewSwitch={option => dispatch(walletActions.setOverviewSwitch(option))}
       processedTokens={processedTokens}
       isProcesing={isProcesing}
+      tokenXAddress={position?.tokenX.assetAddress ?? new PublicKey(WRAPPED_ETH_ADDRESS)}
+      tokenYAddress={position?.tokenY.assetAddress ?? new PublicKey(WRAPPED_ETH_ADDRESS)}
+      leftRange={leftRange}
+      rightRange={rightRange}
+      tokens={tokens}
+      walletStatus={walletStatus}
+      allPools={poolsList}
+      currentPrice={current}
+      tokenX={{
+        name: position?.tokenX.symbol || '',
+        icon: position?.tokenX.logoURI || '',
+        decimal: position?.tokenX.decimals || 0,
+        balance: +printBN(position?.tokenX.balance, position?.tokenX.decimals || 0),
+        liqValue: tokenXLiquidity,
+        claimValue: tokenXClaim,
+        usdValue:
+          typeof tokenXPriceData?.price === 'undefined'
+            ? undefined
+            : tokenXPriceData.price *
+              +printBN(position?.tokenX.balance, position?.tokenX.decimals || 0)
+      }}
+      tokenXPriceData={tokenXPriceData}
+      tokenY={{
+        name: position?.tokenY.symbol || '',
+        icon: position?.tokenY.logoURI || '',
+        decimal: position?.tokenY.decimals || 0,
+        balance: +printBN(position?.tokenY.balance, position?.tokenY.decimals || 0),
+        liqValue: tokenYLiquidity,
+        claimValue: tokenYClaim,
+        usdValue:
+          typeof tokenYPriceData?.price === 'undefined'
+            ? undefined
+            : tokenYPriceData.price *
+              +printBN(position?.tokenY.balance, position?.tokenY.decimals || 0)
+      }}
+      tokenYPriceData={tokenYPriceData}
+      fee={position?.poolData.fee}
+      min={min}
+      max={max}
+      ticksLoading={ticksLoading || !position}
+      onConnectWallet={onConnectWallet}
+      onDisconnectWallet={onDisconnectWallet}
+      getPoolData={getPoolData}
+      setShouldNotUpdateRange={setShouldNotUpdateRange}
+      autoSwapPoolData={autoSwapPoolData}
+      autoSwapTicks={autoSwapTicks}
+      autoSwapTickMap={autoSwapTickMap}
+      isLoadingAutoSwapPool={isLoadingAutoSwapPool}
+      isLoadingAutoSwapPoolTicksOrTickMap={isLoadingAutoSwapPoolTicksOrTickMap}
+      ticksData={ticksData}
+      changeLiquiditySuccess={changeLiquiditySuccess}
+      changeLiquidityInProgress={changeLiquidityInProgress}
+      setChangeLiquiditySuccess={setChangeLiquiditySuccess}
+      reloadHandler={() => {
+        if (!position) {
+          return
+        }
+
+        dispatch(
+          actions.getCurrentPlotTicks({
+            poolIndex: position.poolData.poolIndex,
+            isXtoY: true
+          })
+        )
+      }}
+      isTimeoutError={isTimeoutError}
+      changeLiquidity={(liquidity, slippage, isAddLiquidity, isClosePosition, xAmount, yAmount) => {
+        if (!position) {
+          return
+        }
+
+        if (isAddLiquidity) {
+          dispatch(
+            actions.addLiquidity({
+              positionIndex: position.positionIndex,
+              liquidity,
+              slippage,
+              isClosePosition,
+              xAmount,
+              yAmount
+            })
+          )
+        } else {
+          dispatch(
+            actions.removeLiquidity({
+              positionIndex: position.positionIndex,
+              liquidity,
+              slippage,
+              isClosePosition,
+              xAmount,
+              yAmount,
+              onSuccess: () => {
+                navigate(ROUTES.PORTFOLIO)
+
+                setIsChangeLiquidityModalShown(false)
+              }
+            })
+          )
+        }
+      }}
+      swapAndAddLiquidity={(
+        xAmount,
+        yAmount,
+        swapAmount,
+        xToY,
+        byAmountIn,
+        estimatedPriceAfterSwap,
+        crossedTicks,
+        swapSlippage,
+        positionSlippage,
+        minUtilizationPercentage,
+        poolIndex,
+        liquidity
+      ) => {
+        if (!autoSwapPoolData || !autoSwapTickMap || !position) {
+          return
+        }
+
+        dispatch(
+          actions.swapAndAddLiquidity({
+            xAmount,
+            yAmount,
+            tokenX:
+              (xToY ? position?.tokenX : position?.tokenY)?.assetAddress ||
+              new PublicKey(WRAPPED_ETH_ADDRESS),
+            tokenY:
+              (xToY ? position?.tokenY : position?.tokenX)?.assetAddress ||
+              new PublicKey(WRAPPED_ETH_ADDRESS),
+            swapAmount,
+            byAmountIn,
+            xToY,
+            swapPool: autoSwapPoolData,
+            swapPoolTickmap: autoSwapTickMap,
+            swapSlippage,
+            estimatedPriceAfterSwap,
+            crossedTicks,
+            positionPair: {
+              fee: position.poolData.fee,
+              tickSpacing: position.poolData.tickSpacing
+            },
+            positionPoolIndex: poolIndex,
+            positionPoolPrice: position.poolData.sqrtPrice,
+            positionSlippage,
+            lowerTick: position.lowerTickIndex,
+            upperTick: position.upperTickIndex,
+            liquidityDelta: liquidity,
+            minUtilizationPercentage,
+            isSamePool: position.poolData.address.equals(autoSwapPoolData.address),
+            positionIndex: position.positionIndex
+          })
+        )
+      }}
+      positionLiquidity={position?.liquidity}
+      isChangeLiquidityModalShown={isChangeLiquidityModalShown}
+      setIsChangeLiquidityModalShown={setIsChangeLiquidityModalShown}
+      isAddLiquidity={isAddLiquidity}
+      setIsAddLiquidity={setIsAddLiquidity}
+      openPosition={openPosition}
     />
   ) : (
     <Grid className={classes.emptyContainer}>
