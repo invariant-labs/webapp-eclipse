@@ -4,12 +4,21 @@ import { NetworkType } from '@store/consts/static'
 import { FormData } from '@store/consts/tokenCreator/types'
 import { Pair } from '@invariant-labs/sdk-eclipse'
 import { OrderBook } from '@invariant-labs/sdk-eclipse/src/market'
-import { IncreaseLimitOrderLiquidity } from '@invariant-labs/sdk-eclipse/lib/market'
+import { IncreaseLimitOrderLiquidity, LimitOrder } from '@invariant-labs/sdk-eclipse/lib/market'
+import { PublicKey } from '@solana/web3.js'
 
 export interface IOrderBook {
   currentOrderBook: OrderBook | null
+  userLimitOrders: {
+    account: LimitOrder
+    publicKey: PublicKey
+  }[]
   success: boolean
   inProgress: boolean
+}
+
+export interface IAddOrder extends IncreaseLimitOrderLiquidity {
+  poolTickIndex: number
 }
 
 export interface AddOrderPayload {
@@ -18,7 +27,8 @@ export interface AddOrderPayload {
 const defaultStatus: IOrderBook = {
   currentOrderBook: null,
   success: false,
-  inProgress: false
+  inProgress: false,
+  userLimitOrders: []
 }
 export const orderBookName = 'orderBook'
 
@@ -34,11 +44,23 @@ const orderBookSlice = createSlice({
 
       return state
     },
-    addLimitOrder(state, action: PayloadAction<IncreaseLimitOrderLiquidity>) {
-      console.log('test')
+    addLimitOrder(state, action: PayloadAction<IAddOrder>) {
       return state
     },
     getUserOrders(state) {
+      return state
+    },
+    setUserOrders(
+      state,
+      action: PayloadAction<
+        {
+          account: LimitOrder
+          publicKey: PublicKey
+        }[]
+      >
+    ) {
+      state.userLimitOrders = action.payload
+
       return state
     },
     setOrderSuccess(state, action: PayloadAction<boolean>) {

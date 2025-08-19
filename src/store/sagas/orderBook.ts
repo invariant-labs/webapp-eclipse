@@ -2,21 +2,25 @@ import { actions, AddOrderPayload } from '@store/reducers/orderBook'
 import { all, call, put, select, spawn, takeLatest } from 'typed-redux-saga'
 import { getWallet } from './wallet'
 import {
+  Keypair,
   sendAndConfirmRawTransaction,
   SendTransactionError,
   Transaction,
-  TransactionExpiredTimeoutError
+  TransactionExpiredTimeoutError,
+  VersionedTransaction
 } from '@solana/web3.js'
-import { getMarketProgram } from '@utils/web3/programs/amm'
+import { getLockerProgram, getMarketProgram } from '@utils/web3/programs/amm'
 import { network, rpcAddress } from '@store/selectors/solanaConnection'
 import { getConnection, handleRpcError } from './connection'
-import { IWallet } from '@invariant-labs/sdk-eclipse'
+import { getMaxLockDuration, ILockPositionIx } from '@invariant-labs/locker-eclipse-sdk'
+import { IWallet, Pair } from '@invariant-labs/sdk-eclipse'
 import { PayloadAction } from '@reduxjs/toolkit'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { actions as positionsActions } from '@store/reducers/positions'
 import {
   APPROVAL_DENIED_MESSAGE,
   COMMON_ERROR_MESSAGE,
+  DEFAULT_PUBLICKEY,
   ErrorCodeExtractionKeys,
   SIGNING_SNACKBAR_CONFIG,
   TIMEOUT_ERROR_MESSAGE
@@ -30,6 +34,7 @@ import {
   mapErrorCodeToMessage
 } from '@utils/utils'
 import { closeSnackbar } from 'notistack'
+
 import { IncreaseLimitOrderLiquidity } from '@invariant-labs/sdk-eclipse/lib/market'
 import { actions as connectionActions, RpcStatus } from '@store/reducers/solanaConnection'
 
@@ -63,7 +68,7 @@ export function* handleGetUserOrders() {
       wallet.publicKey
     )
 
-    console.log(userOrders)
+    yield* put(actions.setUserOrders(userOrders))
   } catch (e: unknown) {
     const error = ensureError(e)
     console.log(error)

@@ -242,7 +242,7 @@ export const WrappedLimitOrder = ({
         rotatesState={rotatesState}
         swapState={swapState}
         handleAddOrder={(amount, tickIndex, xToY) => {
-          if (!tokenFrom || !tokenTo || !orderBookPair) return
+          if (!tokenFrom || !tokenTo || !orderBookPair || !poolData) return
 
           dispatch(
             actions.addLimitOrder({
@@ -252,7 +252,8 @@ export const WrappedLimitOrder = ({
               tickIndex,
               userTokenX: tokenFrom,
               userTokenY: tokenTo,
-              xToY
+              xToY,
+              poolTickIndex: poolData?.currentTickIndex
             })
           )
         }}
