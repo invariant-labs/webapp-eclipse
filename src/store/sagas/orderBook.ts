@@ -85,7 +85,6 @@ export function* handleAddLimitOrder(action: PayloadAction<IncreaseLimitOrderLiq
     const rpc = yield* select(rpcAddress)
     const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
     const connection = yield* call(getConnection)
-    console.log(action.payload)
 
     yield put(
       snackbarsActions.add({

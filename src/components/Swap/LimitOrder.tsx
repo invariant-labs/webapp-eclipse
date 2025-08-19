@@ -45,7 +45,8 @@ import { alignTickToSpacing, priceToTickInRange } from '@invariant-labs/sdk-ecli
 import { OrderBook } from '@invariant-labs/sdk-eclipse/lib/market'
 import {
   isLimitOrderBetterThanSwap,
-  limitOrderQuoteByInputToken
+  limitOrderQuoteByInputToken,
+  limitOrderQuoteByOutputToken
 } from '@invariant-labs/sdk-eclipse/src/limit-order'
 import { PoolWithAddress } from '@store/reducers/pools'
 
@@ -483,7 +484,7 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
     //   tokens[tokenToIndex].decimals
     // )
   }
-
+  console.log(rateReversed)
   return (
     <Grid container className={classes.swapWrapper} alignItems='center'>
       <Grid container className={classes.header}>
@@ -545,10 +546,11 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
                     !orderBook
                   )
                     return
-                  if (priceTickIndex === 0 && amountTo == '') return
+
+                  if (validatedTokenPriceAmount === '') return
 
                   const valueBN = convertBalanceToBN(value, tokens[tokenFromIndex].decimals)
-
+                  console.log(isXtoYOrderBook)
                   const amount = limitOrderQuoteByInputToken(
                     valueBN,
                     isXtoYOrderBook,
@@ -696,13 +698,13 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
                   )
                     return
 
-                  if (priceTickIndex === 0 && amountFrom == '') return
+                  if (validatedTokenPriceAmount === '') return
 
                   const valueBN = convertBalanceToBN(value, tokens[tokenToIndex].decimals)
 
-                  const amount = limitOrderQuoteByInputToken(
+                  const amount = limitOrderQuoteByOutputToken(
                     valueBN,
-                    !isXtoYOrderBook,
+                    isXtoYOrderBook,
                     priceTickIndex,
                     orderBookPair.pair.feeTier,
                     orderBook
