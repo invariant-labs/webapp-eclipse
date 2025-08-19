@@ -310,9 +310,14 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
       return 'Select different tokens'
     }
 
+    if (validatedTokenPriceAmount === '') {
+      return 'Set token price'
+    }
+
     if (isLimitOrderAvailable) {
       return 'Set higher price'
     }
+
     if (false) {
       return 'Loading'
     }
@@ -484,7 +489,9 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
     //   tokens[tokenToIndex].decimals
     // )
   }
-  console.log(rateReversed)
+
+  useEffect(() => {}, [rateReversed])
+
   return (
     <Grid container className={classes.swapWrapper} alignItems='center'>
       <Grid container className={classes.header}>
@@ -547,10 +554,13 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
                   )
                     return
 
-                  if (validatedTokenPriceAmount === '') return
+                  if (validatedTokenPriceAmount === '') {
+                    setAmountTo('')
+                    return
+                  }
 
                   const valueBN = convertBalanceToBN(value, tokens[tokenFromIndex].decimals)
-                  console.log(isXtoYOrderBook)
+
                   const amount = limitOrderQuoteByInputToken(
                     valueBN,
                     isXtoYOrderBook,
@@ -698,7 +708,11 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
                   )
                     return
 
-                  if (validatedTokenPriceAmount === '') return
+                  if (validatedTokenPriceAmount === '') {
+                    setAmountFrom('')
+
+                    return
+                  }
 
                   const valueBN = convertBalanceToBN(value, tokens[tokenToIndex].decimals)
 

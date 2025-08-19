@@ -1,6 +1,6 @@
 import { actions, AddOrderPayload } from '@store/reducers/orderBook'
 import { all, call, put, select, spawn, takeLatest } from 'typed-redux-saga'
-import { getWallet } from './wallet'
+import { createAccount, getWallet } from './wallet'
 import {
   Keypair,
   sendAndConfirmRawTransaction,
@@ -31,12 +31,19 @@ import {
   ensureError,
   extractErrorCode,
   extractRuntimeErrorCode,
-  mapErrorCodeToMessage
+  formatNumberWithoutSuffix,
+  getAmountFromLimitOrderInstruction,
+  getTokenProgramId,
+  mapErrorCodeToMessage,
+  printBN,
+  SwapTokenType,
+  TokenType
 } from '@utils/utils'
 import { closeSnackbar } from 'notistack'
-
 import { IncreaseLimitOrderLiquidity } from '@invariant-labs/sdk-eclipse/lib/market'
 import { actions as connectionActions, RpcStatus } from '@store/reducers/solanaConnection'
+import { ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddress } from '@solana/spl-token'
+import { tokens } from '@store/selectors/pools'
 
 export function* handleGetOrderBook(action: PayloadAction<AddOrderPayload>) {
   try {
@@ -85,7 +92,9 @@ export function* handleAddLimitOrder(action: PayloadAction<IncreaseLimitOrderLiq
     const rpc = yield* select(rpcAddress)
     const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
     const connection = yield* call(getConnection)
+    const allTokens = yield* select(tokens)
 
+    const { pair, amount, owner, tickIndex, userTokenX, userTokenY, xToY } = action.payload
     yield put(
       snackbarsActions.add({
         message: 'Adding Limit Order...',
@@ -94,11 +103,48 @@ export function* handleAddLimitOrder(action: PayloadAction<IncreaseLimitOrderLiq
         key: loaderAddOrder
       })
     )
+    console.log('test')
+    // const userTokenXAccoun2t = yield* call(createAccount, action.payload.userTokenX)
+    console.log('test')
+
+    const mintKeypair = Keypair.generate()
+    const positionOwner = Keypair.generate()
+
+    console.log('test')
+    const tokenXProgramId = yield* call(getTokenProgramId, connection, pair.tokenX)
+    const tokenYProgramId = yield* call(getTokenProgramId, connection, pair.tokenY)
+
+    const userTokenXAccount = yield* call(
+      getAssociatedTokenAddress,
+      pair.tokenX,
+      wallet.publicKey,
+      undefined,
+      tokenXProgramId,
+      ASSOCIATED_TOKEN_PROGRAM_ID
+    )
+
+    const userTokenXYccount = yield* call(
+      getAssociatedTokenAddress,
+      pair.tokenY,
+      wallet.publicKey,
+      undefined,
+      tokenYProgramId,
+      ASSOCIATED_TOKEN_PROGRAM_ID
+    )
+
+    console.log(userTokenXAccount.toString())
+    console.log(userTokenXYccount.toString())
 
     const { tx, additionalSigners } = yield* call(
       [marketProgram, marketProgram.increaseLimitOrderLiquidityTx],
       {
-        ...action.payload
+        pair,
+        owner,
+        amount,
+        xToY,
+        tickIndex,
+        userTokenX: userTokenXAccount,
+        userTokenY: userTokenXYccount
       }
     )
 
@@ -182,76 +228,32 @@ export function* handleAddLimitOrder(action: PayloadAction<IncreaseLimitOrderLiq
 
         const meta = txDetails.meta
 
-        console.log(meta)
-        // if (meta?.innerInstructions) {
-        //   try {
-        //     const tokenIn =
-        //       allTokens[isXtoY ? swapPool.tokenX.toString() : swapPool.tokenY.toString()]
-        //     const tokenOut =
-        //       allTokens[isXtoY ? swapPool.tokenY.toString() : swapPool.tokenX.toString()]
+        if (meta?.innerInstructions && meta.innerInstructions) {
+          try {
+            const amountX = getAmountFromLimitOrderInstruction(meta, TokenType.TokenX)
+            const amountY = getAmountFromLimitOrderInstruction(meta, TokenType.TokenY)
 
-        //     const amountIn = getAmountFromSwapInstruction(
-        //       meta,
-        //       marketProgram.programAuthority.address.toString(),
-        //       tokenIn.address.toString(),
-        //       SwapTokenType.TokenIn
-        //     )
-        //     const amountOut = getAmountFromSwapInstruction(
-        //       meta,
-        //       marketProgram.programAuthority.address.toString(),
-        //       tokenOut.address.toString(),
-        //       SwapTokenType.TokenOut
-        //     )
+            const tokenX = allTokens[pair.tokenX.toString()]
+            const tokenY = allTokens[pair.tokenY.toString()]
 
-        //     let points = new BN(0)
-        //     try {
-        //       if (
-        //         leaderboardConfig.swapPairs.some(
-        //           item =>
-        //             (new PublicKey(item.tokenX).equals(swapPool.tokenX) &&
-        //               new PublicKey(item.tokenY).equals(swapPool.tokenY)) ||
-        //             (new PublicKey(item.tokenX).equals(swapPool.tokenY) &&
-        //               new PublicKey(item.tokenY).equals(swapPool.tokenX))
-        //         )
-        //       ) {
-        //         const feed = feeds[tokenFrom.toString()]
-
-        //         if (feed && feed.price) {
-        //           points = calculatePoints(
-        //             new BN(amountIn),
-        //             tokenIn.decimals,
-        //             swapPool.fee,
-        //             feed.price,
-        //             feed.priceDecimals,
-        //             new BN(leaderboardConfig.pointsPerUsd, 'hex')
-        //           ).muln(Number(leaderboardConfig.swapMultiplier))
-        //         }
-        //       }
-        //     } catch {
-        //       // Sanity check in case some leaderboard config is missing
-        //     }
-
-        //     yield put(
-        //       snackbarsActions.add({
-        //         tokensDetails: {
-        //           ikonType: 'swap',
-        //           tokenXAmount: formatNumberWithoutSuffix(printBN(amountIn, tokenIn.decimals)),
-        //           tokenYAmount: formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals)),
-        //           tokenXIcon: tokenIn.logoURI,
-        //           tokenYIcon: tokenOut.logoURI,
-        //           tokenXSymbol: tokenIn.symbol ?? tokenIn.address.toString(),
-        //           tokenYSymbol: tokenOut.symbol ?? tokenOut.address.toString(),
-        //           earnedPoints: points.eqn(0)
-        //             ? undefined
-        //             : formatNumberWithoutSuffix(printBN(points, LEADERBOARD_DECIMAL))
-        //         },
-        //         persist: false
-        //       })
-        //     )
-        //   } catch {
-        //     // Sanity wrapper, should never be triggered
-        //   }
-        // }
+            yield put(
+              snackbarsActions.add({
+                tokensDetails: {
+                  ikonType: 'deposit',
+                  tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals)),
+                  tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals)),
+                  tokenXIcon: tokenX.logoURI,
+                  tokenYIcon: tokenY.logoURI,
+                  tokenXSymbol: tokenX.symbol ?? tokenX.address.toString(),
+                  tokenYSymbol: tokenY.symbol ?? tokenY.address.toString()
+                },
+                persist: false
+              })
+            )
+          } catch {
+            // Should never be triggered
+          }
+        }
       } else {
         yield put(
           snackbarsActions.add({

@@ -2598,6 +2598,33 @@ export const getAmountFromInitPositionInstruction = (
   return instruction?.parsed.info.amount || instruction?.parsed.info.tokenAmount.amount
 }
 
+export const getAmountFromLimitOrderInstruction = (
+  meta: ParsedTransactionMeta,
+  type: TokenType
+): any => {
+  if (!meta.innerInstructions) {
+    return 0
+  }
+
+  const innerInstruction =
+    meta.innerInstructions.find(
+      innerInstruction =>
+        !!innerInstruction.instructions.find(
+          instruction =>
+            (instruction as ParsedInstruction)?.parsed.type === 'transfer' ||
+            (instruction as ParsedInstruction)?.parsed.type === 'transferChecked'
+        )
+    ) ?? meta.innerInstructions[2]
+
+  const instruction = innerInstruction.instructions.filter(
+    instruction =>
+      (instruction as ParsedInstruction)?.parsed.type === 'transfer' ||
+      (instruction as ParsedInstruction)?.parsed.type === 'transferChecked'
+  )[type === TokenType.TokenX ? 0 : 1] as ParsedInstruction | undefined
+
+  return instruction?.parsed.info.amount || instruction?.parsed.info.tokenAmount.amount
+}
+
 export const getAmountFromClaimFeeInstruction = (
   meta: ParsedTransactionMeta,
   type: TokenType
