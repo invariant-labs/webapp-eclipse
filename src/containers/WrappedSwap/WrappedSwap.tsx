@@ -7,7 +7,7 @@ import {
   NetworkType,
   WRAPPED_ETH_ADDRESS
 } from '@store/consts/static'
-import { actions as poolsActions } from '@store/reducers/pools'
+import { actions as poolsActions, PoolWithAddress } from '@store/reducers/pools'
 import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
 import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import { actions } from '@store/reducers/swap'
@@ -85,6 +85,7 @@ type Props = {
     rotates: number
     setRotates: React.Dispatch<React.SetStateAction<number>>
   }
+  allPools: PoolWithAddress[]
 }
 
 export const WrappedSwap = ({
@@ -116,13 +117,13 @@ export const WrappedSwap = ({
   inputState,
   lockAnimationState,
   rotatesState,
-  swapState
+  swapState,
+  allPools
 }: Props) => {
   const dispatch = useDispatch()
 
   const tickmap = useSelector(tickMaps)
   const poolTicksForSimulation = useSelector(nearestPoolTicksForPair)
-  const allPools = useSelector(poolsArraySortedByFees)
   const multiplyer = useSelector(swapMultiplier)
   const { success, inProgress } = useSelector(swapPool)
   const isFetchingNewPool = useSelector(isLoadingLatestPoolsForTransaction)

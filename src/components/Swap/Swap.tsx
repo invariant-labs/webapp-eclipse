@@ -1067,7 +1067,7 @@ export const Swap: React.FC<ISwap> = ({
   const showImpact = priceImpact > 5 && oraclePriceDiffPercentage < 10 && errorVisible
 
   const warningsCount = [showOracle, showImpact, isUnkown].filter(Boolean).length
-  console.log(isAnyBlurShowed)
+
   return (
     <Grid container className={classes.swapWrapper} alignItems='center'>
       <Grid container className={classes.header}>

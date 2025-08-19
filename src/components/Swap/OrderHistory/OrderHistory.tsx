@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { Box, Button, Grid } from '@mui/material'
+import { Box, Button, Grid, Typography } from '@mui/material'
 import { useStyles } from './styles'
 import Switcher from '@common/Switcher/Switcher'
 import { OrdersHistory } from '@store/reducers/navigation'
@@ -9,6 +9,7 @@ import { FilterSearch, ISearchToken } from '@common/FilterSearch/FilterSearch'
 import { NetworkType, SOL_MAIN, USDC_MAIN } from '@store/consts/static'
 import OrderItem from './OrderItem/OrderItem'
 import { SwapToken } from '@store/selectors/solanaWallet'
+import { colors, typography } from '@static/theme'
 
 interface IProps {
   handleSwitcher: (e: OrdersHistory) => void
@@ -41,7 +42,7 @@ const OrderHistory: React.FC<IProps> = ({
 
   return (
     <Grid className={classes.wrapper}>
-      <Switcher
+      {/* <Switcher
         onChange={handleSwitcher}
         options={[OrdersHistory.your, OrdersHistory.history]}
         value={swicherType}
@@ -49,8 +50,11 @@ const OrderHistory: React.FC<IProps> = ({
         padding={2}
         buttonsHeight={44}
         biggerFont
-      />
-      <Grid container display={'flex'} flexDirection={'column'} mt={'24px'}>
+      /> */}
+      <Typography style={{ ...typography.heading4 }} color={colors.invariant.text}>
+        Your orders
+      </Typography>
+      <Grid container display={'flex'} flexDirection={'column'} mt={'12px'}>
         <Box className={classes.header}>
           <TooltipHover title='Refresh'>
             <Grid display='flex' alignItems='center'>

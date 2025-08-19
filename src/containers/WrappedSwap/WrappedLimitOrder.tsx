@@ -4,17 +4,20 @@ import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
 import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { PublicKey } from '@solana/web3.js'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { TokenPriceData } from '@store/consts/types'
 import { VariantType } from 'notistack'
 import { BN } from '@coral-xyz/anchor'
 import LimitOrder from '@components/Swap/LimitOrder'
-import { Market } from '@invariant-labs/sdk-eclipse'
+import { LIMIT_ORDER_TESTNET_POOL_WHITELIST, Market, Pair } from '@invariant-labs/sdk-eclipse'
 import OrderHistory from '@components/Swap/OrderHistory/OrderHistory'
 import { OrdersHistory, actions as navigationActions } from '@store/reducers/navigation'
+import { actions } from '@store/reducers/orderBook'
+import { actions as poolsActions, PoolWithAddress } from '@store/reducers/pools'
 import { ordersHistory, swapSearch } from '@store/selectors/navigation'
 import { ISearchToken } from '@common/FilterSearch/FilterSearch'
+import { currentOrderBook } from '@store/selectors/orderBoook'
 
 type Props = {
   walletStatus: Status
@@ -71,6 +74,8 @@ type Props = {
     rotates: number
     setRotates: React.Dispatch<React.SetStateAction<number>>
   }
+  walletAddress: PublicKey
+  allPools: PoolWithAddress[]
 }
 export const WrappedLimitOrder = ({
   addTokenHandler,
@@ -101,16 +106,18 @@ export const WrappedLimitOrder = ({
   inputState,
   lockAnimationState,
   rotatesState,
-  swapState
+  swapState,
+  walletAddress,
+  allPools
 }: Props) => {
   const dispatch = useDispatch()
 
   const switcherType = useSelector(ordersHistory)
   const searchParamsToken = useSelector(swapSearch)
+  const orderBook = useSelector(currentOrderBook)
 
-  const { setTokenFrom, setTokenTo } = tokensFromState
+  const { setTokenFrom, setTokenTo, tokenFrom, tokenTo } = tokensFromState
 
-  const {} = tokensState
   useEffect(() => {
     dispatch(leaderboardActions.getLeaderboardConfig())
   }, [])
@@ -135,6 +142,55 @@ export const WrappedLimitOrder = ({
     )
   }
 
+  const orderBookPair = useMemo(() => {
+    if (tokenFrom === null || tokenTo === null) {
+      return
+    }
+
+    const isAvailable = LIMIT_ORDER_TESTNET_POOL_WHITELIST.find(pool => {
+      return (
+        (pool.pair.tokenX.toString() === tokenFrom.toString() &&
+          pool.pair.tokenY.toString() === tokenTo.toString()) ||
+        (pool.pair.tokenX.toString() === tokenTo.toString() &&
+          pool.pair.tokenY.toString() === tokenFrom.toString())
+      )
+    })
+
+    return isAvailable
+  }, [LIMIT_ORDER_TESTNET_POOL_WHITELIST, tokenFrom, tokenTo])
+
+  const poolData = useMemo(() => {
+    if (!orderBookPair) return
+
+    const { pair } = orderBookPair
+
+    const poolData = allPools.find(pool => {
+      return (
+        pool.tokenX.equals(pair.tokenX) &&
+        pool.tokenY.equals(pair.tokenY) &&
+        pool.fee.eq(pair.feeTier.fee)
+      )
+    })
+
+    return poolData
+  }, [allPools.length, orderBookPair])
+
+  useEffect(() => {
+    if (!orderBookPair?.pair) return
+    const { pair } = orderBookPair
+
+    dispatch(
+      actions.getOrderBook({
+        pair: pair
+      })
+    )
+
+    dispatch(poolsActions.getPoolData(pair))
+  }, [orderBookPair])
+
+  useEffect(() => {
+    dispatch(actions.getUserOrders())
+  }, [])
   return (
     <>
       <LimitOrder
@@ -185,19 +241,40 @@ export const WrappedLimitOrder = ({
         lockAnimationState={lockAnimationState}
         rotatesState={rotatesState}
         swapState={swapState}
-      />
+        handleAddOrder={(amount, tickIndex, xToY) => {
+          if (!tokenFrom || !tokenTo || !orderBookPair) return
 
-      <OrderHistory
-        handleSwitcher={(e: OrdersHistory) => {
-          dispatch(navigationActions.setOrderHistory(e))
+          dispatch(
+            actions.addLimitOrder({
+              amount,
+              owner: walletAddress,
+              pair: orderBookPair?.pair,
+              tickIndex,
+              userTokenX: tokenFrom,
+              userTokenY: tokenTo,
+              xToY
+            })
+          )
         }}
-        swicherType={switcherType}
-        handleRefresh={() => {}}
-        currentNetwork={networkType}
-        selectedFilters={searchParamsToken.filteredTokens}
-        setSelectedFilters={setSearchTokensValue}
-        tokensDict={tokensDict}
+        orderBookPair={
+          orderBookPair ? { pair: orderBookPair.pair, tickmap: orderBookPair.orderBook } : undefined
+        }
+        orderBook={orderBook}
+        poolData={poolData}
       />
+      {orderBookPair && (
+        <OrderHistory
+          handleSwitcher={(e: OrdersHistory) => {
+            dispatch(navigationActions.setOrderHistory(e))
+          }}
+          swicherType={switcherType}
+          handleRefresh={() => {}}
+          currentNetwork={networkType}
+          selectedFilters={searchParamsToken.filteredTokens}
+          setSelectedFilters={setSearchTokensValue}
+          tokensDict={tokensDict}
+        />
+      )}
     </>
   )
 }

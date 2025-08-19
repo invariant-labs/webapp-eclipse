@@ -85,8 +85,6 @@ export const FilterSearch: React.FC<IFilterSearch> = memo(
     const commonTokens = commonTokensForNetworks[networkType]
     const tokensList = useSelector(swapTokens)
 
-    console.log(tokensListDetails)
-    console.log(tokensList)
     const [open, setOpen] = useState(false)
     const [prices, setPrices] = useState<Record<string, number>>({})
 

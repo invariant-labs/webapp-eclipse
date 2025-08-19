@@ -14,8 +14,13 @@ import {
 } from '@store/consts/static'
 import {
   addressToTicker,
+  calcPriceByTickIndex,
+  calculateSqrtPriceFromBalance,
+  calculateTickFromBalance,
   convertBalanceToBN,
   initialXtoY,
+  nearestTickIndex,
+  priceToSqrtPrice,
   printBN,
   ROUTES,
   trimZeros
@@ -33,8 +38,16 @@ import { PublicKey } from '@solana/web3.js'
 import { refreshIcon, swapArrowsIcon } from '@static/icons'
 import { useNavigate } from 'react-router-dom'
 import BuyTokenInput from './LimitOrderComponents/BuyTokenInput/BuyTokenInput'
-import { Market } from '@invariant-labs/sdk-eclipse'
+import { LIMIT_ORDER_TESTNET_POOL_WHITELIST, Market, Pair } from '@invariant-labs/sdk-eclipse'
 import { theme } from '@static/theme'
+
+import { alignTickToSpacing, priceToTickInRange } from '@invariant-labs/sdk-eclipse/src/tick'
+import { OrderBook } from '@invariant-labs/sdk-eclipse/lib/market'
+import {
+  isLimitOrderBetterThanSwap,
+  limitOrderQuoteByInputToken
+} from '@invariant-labs/sdk-eclipse/src/limit-order'
+import { PoolWithAddress } from '@store/reducers/pools'
 
 export interface Pools {
   tokenX: PublicKey
@@ -106,6 +119,13 @@ export interface ILimitOrder {
     rotates: number
     setRotates: React.Dispatch<React.SetStateAction<number>>
   }
+  handleAddOrder: (amount: BN, tickIndex: number, xToY: boolean) => void
+  orderBookPair?: {
+    pair: Pair
+    tickmap: PublicKey
+  }
+  orderBook: OrderBook | null
+  poolData?: PoolWithAddress
 }
 
 export const LimitOrder: React.FC<ILimitOrder> = ({
@@ -140,15 +160,20 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
   inputState,
   lockAnimationState,
   rotatesState,
-  swapState
+  swapState,
+  handleAddOrder,
+  orderBookPair,
+  orderBook,
+  poolData
 }) => {
   const { classes, cx } = useStyles()
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
 
   const [amountFrom, setAmountFrom] = useState<string>('')
   const [amountTo, setAmountTo] = useState<string>('')
-
-  const [tokenPriceValue, setTokenPriceValue] = useState<string>('')
+  const [tokenPriceAmount, setTokenPriceAmount] = useState<string>('')
+  const [validatedTokenPriceAmount, setValidatedTokenPriceAmount] = useState<string>('')
+  const [priceTickIndex, setPriceTickIndex] = useState(0)
 
   const { setTokenFromIndex, setTokenToIndex, tokenFromIndex, tokenToIndex } = tokensState
   const { rateReversed, setRateReversed } = rateState
@@ -156,11 +181,19 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
   const { lockAnimation, setLockAnimation } = lockAnimationState
   const { rotates, setRotates } = rotatesState
   const { swap, setSwap } = swapState
-
   const [refresherTime, setRefresherTime] = React.useState<number>(REFRESHER_INTERVAL)
   const [hideUnknownTokens, setHideUnknownTokens] = React.useState<boolean>(
     initialHideUnknownTokensValue
   )
+
+  const isXtoYOrderBook = useMemo(() => {
+    if (tokenFromIndex === null) return
+
+    const isXtoY =
+      orderBookPair?.pair.tokenX.toString() === tokens[tokenFromIndex].address.toString()
+
+    return isXtoY
+  }, [tokenFromIndex, orderBookPair, tokens.length])
 
   const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT = useMemo(() => {
     if (network === NetworkType.Testnet) {
@@ -255,6 +288,11 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
   //   return !!swapPool
   // }
 
+  const isLimitOrderAvailable = useMemo(() => {
+    if (isXtoYOrderBook === undefined || !poolData) return
+    return isLimitOrderBetterThanSwap(priceTickIndex, isXtoYOrderBook, poolData)
+  }, [priceTickIndex, isXtoYOrderBook, poolData])
+
   const getStateMessage = () => {
     if (tokenFromIndex !== null && tokenToIndex !== null && amountFrom === '' && amountTo === '') {
       return 'Enter amount'
@@ -271,6 +309,9 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
       return 'Select different tokens'
     }
 
+    if (isLimitOrderAvailable) {
+      return 'Set higher price'
+    }
     if (false) {
       return 'Loading'
     }
@@ -387,7 +428,61 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
   const showOracle = oraclePriceDiffPercentage >= 10 && errorVisible
 
   const warningsCount = [showOracle, isUnkown].filter(Boolean).length
-  console.log(warningsCount)
+
+  const handleSetTokenPrice = (priceInput: number) => {
+    if (
+      tokenFromIndex === null ||
+      tokenToIndex === null ||
+      !orderBookPair ||
+      isXtoYOrderBook === undefined
+    )
+      return
+
+    const nearestTick = nearestTickIndex(
+      priceInput,
+      orderBookPair?.pair.tickSpacing,
+      isXtoYOrderBook,
+      tokens[tokenFromIndex].decimals,
+      tokens[tokenToIndex].decimals
+    )
+
+    setPriceTickIndex(nearestTick)
+
+    const price = calcPriceByTickIndex(
+      nearestTick,
+      isXtoYOrderBook,
+      tokens[tokenFromIndex].decimals,
+      tokens[tokenToIndex].decimals
+    )
+    setValidatedTokenPriceAmount(price.toString())
+
+    return price
+
+    // const sqrtPrice = calculateSqrtPriceFromBalance(
+    //   priceInput,
+    //   orderBookPair?.pair.tickSpacing,
+    //   isXtoY,
+    //   tokens[tokenFromIndex].decimals,
+    //   tokens[tokenToIndex].decimals
+    // )
+
+    // const priceTick = calculateTickFromBalance(
+    //   priceInput,
+    //   orderBookPair?.pair.tickSpacing,
+    //   isXtoY,
+    //   tokens[tokenFromIndex].decimals,
+    //   tokens[tokenToIndex].decimals
+    // )
+
+    // const alignedTick = alignTickToSpacing(priceTick, orderBookPair?.pair.tickSpacing)
+
+    // const price2 = calcPriceByTickIndex(
+    //   alignedTick,
+    //   isXtoY,
+    //   tokens[tokenFromIndex].decimals,
+    //   tokens[tokenToIndex].decimals
+    // )
+  }
 
   return (
     <Grid container className={classes.swapWrapper} alignItems='center'>
@@ -441,42 +536,64 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
                 if (value.match(/^\d*\.?\d*$/)) {
                   setAmountFrom(value)
                   setInputRef(inputTarget.FROM)
-                  if (tokenToIndex === null) return
 
-                  if (tokenPriceValue) {
-                    if (rateReversed) {
-                      setAmountTo(
-                        trimZeros(
-                          (+value / +tokenPriceValue).toFixed(tokens[tokenToIndex]?.decimals)
-                        )
-                      )
-                    } else {
-                      setAmountTo(
-                        trimZeros(
-                          (+value * +tokenPriceValue).toFixed(tokens[tokenToIndex]?.decimals)
-                        )
-                      )
-                    }
-                  } else {
-                    if (rateReversed) {
-                      if (!tokenToPriceData || !tokenFromPriceData) return
-                      const marketPrice = +tokenToPriceData?.price / +tokenFromPriceData?.price
-                      setTokenPriceValue(marketPrice.toString())
+                  if (
+                    tokenFromIndex === null ||
+                    tokenToIndex === null ||
+                    isXtoYOrderBook === undefined ||
+                    !orderBookPair ||
+                    !orderBook
+                  )
+                    return
+                  if (priceTickIndex === 0 && amountTo == '') return
 
-                      setAmountTo(
-                        trimZeros((+value / +marketPrice).toFixed(tokens[tokenToIndex]?.decimals))
-                      )
-                    } else {
-                      if (!tokenToPriceData || !tokenFromPriceData) return
-                      const marketPrice = +tokenFromPriceData?.price / +tokenToPriceData?.price
+                  const valueBN = convertBalanceToBN(value, tokens[tokenFromIndex].decimals)
 
-                      setTokenPriceValue(marketPrice.toString())
+                  const amount = limitOrderQuoteByInputToken(
+                    valueBN,
+                    isXtoYOrderBook,
+                    priceTickIndex,
+                    orderBookPair.pair.feeTier,
+                    orderBook
+                  )
 
-                      setAmountTo(
-                        trimZeros((+value * +marketPrice).toFixed(tokens[tokenToIndex]?.decimals))
-                      )
-                    }
-                  }
+                  const tokenOutAmount = printBN(amount, tokens[tokenToIndex].decimals)
+
+                  setAmountTo(tokenOutAmount)
+                  // if (tokenPriceAmount) {
+                  //   if (rateReversed) {
+                  //     setAmountTo(
+                  //       trimZeros(
+                  //         (+value / +tokenPriceAmount).toFixed(tokens[tokenToIndex]?.decimals)
+                  //       )
+                  //     )
+                  //   } else {
+                  //     setAmountTo(
+                  //       trimZeros(
+                  //         (+value * +tokenPriceAmount).toFixed(tokens[tokenToIndex]?.decimals)
+                  //       )
+                  //     )
+                  //   }
+                  // } else {
+                  //   if (rateReversed) {
+                  //     if (!tokenToPriceData || !tokenFromPriceData) return
+                  //     const marketPrice = +tokenToPriceData?.price / +tokenFromPriceData?.price
+                  //     setTokenPriceAmount(marketPrice.toString())
+
+                  //     setAmountTo(
+                  //       trimZeros((+value / +marketPrice).toFixed(tokens[tokenToIndex]?.decimals))
+                  //     )
+                  //   } else {
+                  //     if (!tokenToPriceData || !tokenFromPriceData) return
+                  //     const marketPrice = +tokenFromPriceData?.price / +tokenToPriceData?.price
+
+                  //     setTokenPriceAmount(marketPrice.toString())
+
+                  //     setAmountTo(
+                  //       trimZeros((+value * +marketPrice).toFixed(tokens[tokenToIndex]?.decimals))
+                  //     )
+                  //   }
+                  // }
                 }
               }}
               placeholder={`0.${'0'.repeat(6)}`}
@@ -570,40 +687,63 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
                   setAmountTo(value)
                   setInputRef(inputTarget.TO)
 
-                  if (tokenFromIndex === null || tokenToIndex === null) return
+                  if (
+                    tokenFromIndex === null ||
+                    tokenToIndex === null ||
+                    isXtoYOrderBook === undefined ||
+                    !orderBookPair ||
+                    !orderBook
+                  )
+                    return
 
-                  if (tokenPriceValue) {
-                    if (rateReversed) {
-                      const amountFrom = +tokenPriceValue / +value
-                      setAmountFrom(trimZeros(amountFrom.toFixed(tokens[tokenFromIndex]?.decimals)))
-                    } else {
-                      const amountFrom = +value / +tokenPriceValue
-                      setAmountFrom(trimZeros(amountFrom.toFixed(tokens[tokenFromIndex]?.decimals)))
-                    }
-                  } else {
-                    if (rateReversed) {
-                      if (!tokenToPriceData || !tokenFromPriceData) return
+                  if (priceTickIndex === 0 && amountFrom == '') return
 
-                      const marketPrice = +tokenToPriceData?.price / +tokenFromPriceData?.price
-                      setTokenPriceValue(
-                        trimZeros(marketPrice.toFixed(tokens[tokenToIndex]?.decimals))
-                      )
-                      const amountFrom = +marketPrice / +value
+                  const valueBN = convertBalanceToBN(value, tokens[tokenToIndex].decimals)
 
-                      setAmountFrom(trimZeros(amountFrom.toFixed(tokens[tokenFromIndex]?.decimals)))
-                    } else {
-                      if (!tokenToPriceData || !tokenFromPriceData) return
+                  const amount = limitOrderQuoteByInputToken(
+                    valueBN,
+                    !isXtoYOrderBook,
+                    priceTickIndex,
+                    orderBookPair.pair.feeTier,
+                    orderBook
+                  )
 
-                      const marketPrice = +tokenFromPriceData?.price / +tokenToPriceData?.price
-                      setTokenPriceValue(
-                        trimZeros(marketPrice.toFixed(tokens[tokenToIndex]?.decimals))
-                      )
+                  const tokenOutAmount = printBN(amount, tokens[tokenFromIndex].decimals)
 
-                      const amountFrom = +value / +marketPrice
+                  setAmountFrom(tokenOutAmount)
 
-                      setAmountFrom(trimZeros(amountFrom.toFixed(tokens[tokenFromIndex]?.decimals)))
-                    }
-                  }
+                  // if (tokenPriceValue) {
+                  //   if (rateReversed) {
+                  //     const amountFrom = +tokenPriceValue / +value
+                  //     setAmountFrom(trimZeros(amountFrom.toFixed(tokens[tokenFromIndex]?.decimals)))
+                  //   } else {
+                  //     const amountFrom = +value / +tokenPriceValue
+                  //     setAmountFrom(trimZeros(amountFrom.toFixed(tokens[tokenFromIndex]?.decimals)))
+                  //   }
+                  // } else {
+                  //   if (rateReversed) {
+                  //     if (!tokenToPriceData || !tokenFromPriceData) return
+
+                  //     const marketPrice = +tokenToPriceData?.price / +tokenFromPriceData?.price
+                  //     setTokenPriceValue(
+                  //       trimZeros(marketPrice.toFixed(tokens[tokenToIndex]?.decimals))
+                  //     )
+                  //     const amountFrom = +marketPrice / +value
+
+                  //     setAmountFrom(trimZeros(amountFrom.toFixed(tokens[tokenFromIndex]?.decimals)))
+                  //   } else {
+                  //     if (!tokenToPriceData || !tokenFromPriceData) return
+
+                  //     const marketPrice = +tokenFromPriceData?.price / +tokenToPriceData?.price
+                  //     setTokenPriceValue(
+                  //       trimZeros(marketPrice.toFixed(tokens[tokenToIndex]?.decimals))
+                  //     )
+
+                  //     const amountFrom = +value / +marketPrice
+
+                  //     setAmountFrom(trimZeros(amountFrom.toFixed(tokens[tokenFromIndex]?.decimals)))
+                  //   }
+                  // }
                 }
               }}
               placeholder={`0.${'0'.repeat(6)}`}
@@ -656,14 +796,17 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
               <BuyTokenInput
                 tokenPrice={rateReversed ? tokenFromPriceData?.price : tokenToPriceData?.price}
                 setValue={value => {
-                  setTokenPriceValue(value)
-                  if (rateReversed) {
-                    const amountTo = +amountFrom / +value
-                    setAmountTo(trimZeros(amountTo.toFixed(tokens[tokenToIndex]?.decimals)))
-                  } else {
-                    const amountTo = +amountFrom * +value
-                    setAmountTo(trimZeros(amountTo.toFixed(tokens[tokenToIndex]?.decimals)))
-                  }
+                  setTokenPriceAmount(value)
+
+                  handleSetTokenPrice(+value)
+
+                  // if (rateReversed) {
+                  //   const amountTo = +amountFrom / +value
+                  //   setAmountTo(trimZeros(amountTo.toFixed(tokens[tokenToIndex]?.decimals)))
+                  // } else {
+                  //   const amountTo = +amountFrom * +value
+                  //   setAmountTo(trimZeros(amountTo.toFixed(tokens[tokenToIndex]?.decimals)))
+                  // }
                 }}
                 limit={1e14}
                 decimalsLimit={
@@ -673,8 +816,10 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
                   rateReversed ? tokens[tokenFromIndex].symbol : tokens[tokenToIndex].symbol
                 }
                 placeholder='0.0'
-                onBlur={() => {}}
-                value={tokenPriceValue}
+                onBlur={() => {
+                  setTokenPriceAmount(validatedTokenPriceAmount)
+                }}
+                value={tokenPriceAmount}
                 blocked={false}
                 blockerInfo=''
                 setMarketPrice={() => {
@@ -683,7 +828,7 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
                   if (rateReversed) {
                     const marketPrice = +tokenToPriceData?.price / +tokenFromPriceData?.price
 
-                    setTokenPriceValue(
+                    setTokenPriceAmount(
                       trimZeros(marketPrice.toFixed(tokens[tokenToIndex]?.decimals))
                     )
 
@@ -696,7 +841,7 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
                   } else {
                     const marketPrice = +tokenFromPriceData?.price / +tokenToPriceData?.price
 
-                    setTokenPriceValue(
+                    setTokenPriceAmount(
                       trimZeros(marketPrice.toFixed(tokens[tokenToIndex]?.decimals))
                     )
 
@@ -763,7 +908,16 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
               }
               disabled={getStateMessage() !== 'Exchange' || progress !== 'none'}
               onClick={() => {
-                if (tokenFromIndex === null || tokenToIndex === null) return
+                if (
+                  tokenFromIndex === null ||
+                  tokenToIndex === null ||
+                  isXtoYOrderBook === undefined
+                )
+                  return
+
+                const amountBn = convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals)
+
+                handleAddOrder(amountBn, priceTickIndex, isXtoYOrderBook)
               }}
               progress={progress}
             />

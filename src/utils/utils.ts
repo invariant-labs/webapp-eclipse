@@ -125,6 +125,10 @@ import { Umi } from '@metaplex-foundation/umi'
 import { StakingStatsResponse } from '@store/reducers/sbitz-stats'
 import { DEFAULT_FEE_TIER, STRATEGIES } from '@store/consts/userStrategies'
 import { HoldersResponse } from '@store/reducers/sBitz'
+import {
+  limitOrderQuoteByInputToken,
+  limitOrderQuoteByOutputToken
+} from '@invariant-labs/sdk-eclipse/src/limit-order'
 
 export const transformBN = (amount: BN): string => {
   return (amount.div(new BN(1e2)).toNumber() / 1e4).toString()
@@ -456,7 +460,7 @@ export const parseLiquidityInRange = (currentTickIndex: number, ticks: Tick[]) =
     return {
       liquidity:
         Math.abs(tick.index - currentTickIndex) > MAX_PLOT_VISIBLE_TICK_RANGE
-          ? 0
+          ? new BN(0)
           : currentLiquidity,
       index: tick.index
     }
@@ -1875,7 +1879,7 @@ export const initialXtoY = (tokenXAddress?: string | null, tokenYAddress?: strin
 }
 
 export const parseFeeToPathFee = (fee: BN): string => {
-  const parsedFee = (fee / Math.pow(10, 8)).toString().padStart(3, '0')
+  const parsedFee = (fee.toNumber() / Math.pow(10, 8)).toString().padStart(3, '0')
   return parsedFee.slice(0, parsedFee.length - 2) + '_' + parsedFee.slice(parsedFee.length - 2)
 }
 
@@ -2657,3 +2661,45 @@ export const fetchMarketBitzStats = async () => {
   )
   return data
 }
+
+// export const handleSimulateLimitOrder = async (
+//   xToYOrder: boolean,
+//   tickIndex: number,
+//   fee: BN,
+//   orderBook: OrderBook,
+//   amountIn?: BN,
+//   amountOut?: BN
+// ): Promise<{
+//   amount: BN
+// }> => {
+//   if (!amountIn && !amountOut) return new BN(0)
+
+//   const { limitOrderRewardRate } = orderBook
+
+//   const isByAmountIn = !!amountIn
+
+//   if (isByAmountIn) {
+//     const amount = limitOrderQuoteByInputToken(
+//       amountIn,
+//       xToYOrder,
+//       tickIndex,
+//       fee,
+//       limitOrderRewardRate
+//     )
+//     console.log(amount)
+
+//     return amount
+//   } else {
+//     const amount = limitOrderQuoteByOutputToken(
+//       amountOut,
+//       xToYOrder,
+//       tickIndex,
+//       fee,
+//       limitOrderRewardRate
+//     )
+
+//     console.log(amount)
+
+//     return amount
+//   }
+// }

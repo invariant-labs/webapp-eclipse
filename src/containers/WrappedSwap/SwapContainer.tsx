@@ -10,7 +10,7 @@ import {
   swapTokens,
   swapTokensDict
 } from '@store/selectors/solanaWallet'
-import { isLoadingPathTokens } from '@store/selectors/pools'
+import { isLoadingPathTokens, poolsArraySortedByFees } from '@store/selectors/pools'
 import { network, rpcAddress, timeoutError } from '@store/selectors/solanaConnection'
 import { useEffect, useState } from 'react'
 import { PublicKey } from '@solana/web3.js'
@@ -61,6 +61,7 @@ export const SwapContainer = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const ethBalance = useSelector(balance)
   const isPathTokensLoading = useSelector(isLoadingPathTokens)
   const isTimeoutError = useSelector(timeoutError)
+  const allPools = useSelector(poolsArraySortedByFees)
 
   const wallet = getEclipseWallet()
   const market = getMarketProgramSync(networkType, rpc, wallet as IWallet)
@@ -293,6 +294,7 @@ export const SwapContainer = ({ initialTokenFrom, initialTokenTo }: Props) => {
             lockAnimationState={{ lockAnimation, setLockAnimation }}
             rotatesState={{ rotates, setRotates }}
             swapState={{ setSwap, swap }}
+            allPools={allPools}
           />
         ) : (
           <WrappedLimitOrder
@@ -327,6 +329,8 @@ export const SwapContainer = ({ initialTokenFrom, initialTokenTo }: Props) => {
             lockAnimationState={{ lockAnimation, setLockAnimation }}
             rotatesState={{ rotates, setRotates }}
             swapState={{ setSwap, swap }}
+            walletAddress={wallet.publicKey}
+            allPools={allPools}
           />
         )}
       </Grid>

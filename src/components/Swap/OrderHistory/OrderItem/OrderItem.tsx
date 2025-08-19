@@ -60,13 +60,13 @@ const OrderItem: React.FC<IProps> = ({
                 <Grid className={classes.imageWrapper}>
                   <img
                     className={classes.tokenIcon}
-                    src={tokenX.logoURI}
+                    src={tokenX?.logoURI || '/unknownToken.svg'}
                     alt='Token from'
                     onError={e => {
                       e.currentTarget.src = unknownTokenIcon
                     }}
                   />
-                  {tokenX.isUnknown && tokenX.logoURI !== '/unknownToken.svg' && (
+                  {tokenX?.isUnknown && tokenX?.logoURI !== '/unknownToken.svg' && (
                     <img className={classes.warningIcon} src={warningIcon} />
                   )}
                 </Grid>
@@ -74,21 +74,21 @@ const OrderItem: React.FC<IProps> = ({
                 <Grid className={classes.imageToWrapper}>
                   <img
                     className={classes.tokenIcon}
-                    src={tokenY.logoURI}
+                    src={tokenY?.logoURI}
                     alt='Token from'
                     onError={e => {
                       e.currentTarget.src = unknownTokenIcon
                     }}
                   />
 
-                  {tokenY.isUnknown && tokenY.logoURI !== '/unknownToken.svg' && (
+                  {tokenY?.isUnknown && tokenY?.logoURI !== '/unknownToken.svg' && (
                     <img className={classes.warningIcon} src={warningIcon} />
                   )}
                 </Grid>
               </Grid>
 
               <Typography className={classes.poolAddress}>
-                {shortenAddress(tokenX.symbol ?? '')}/{shortenAddress(tokenY.symbol ?? '')}
+                {shortenAddress(tokenX?.symbol ?? '')}/{shortenAddress(tokenY?.symbol ?? '')}
               </Typography>
             </Grid>
           }
