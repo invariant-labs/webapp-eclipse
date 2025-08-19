@@ -10,6 +10,9 @@ import { NetworkType, SOL_MAIN, USDC_MAIN } from '@store/consts/static'
 import OrderItem from './OrderItem/OrderItem'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { colors, typography } from '@static/theme'
+import { UserOrdersWithTokensData } from '@store/selectors/orderBoook'
+import { printBN } from '@utils/utils'
+import { simulateDecreaseOrderLiquidity } from '@invariant-labs/sdk-eclipse/src/limit-order'
 
 interface IProps {
   handleSwitcher: (e: OrdersHistory) => void
@@ -19,26 +22,28 @@ interface IProps {
   selectedFilters: ISearchToken[]
   setSelectedFilters: (tokens: ISearchToken[]) => void
   tokensDict: Record<string, SwapToken>
+  userOrders: UserOrdersWithTokensData
 }
 
 const OrderHistory: React.FC<IProps> = ({
-  handleSwitcher,
+  // handleSwitcher,
   swicherType,
   handleRefresh,
   currentNetwork,
   selectedFilters,
   setSelectedFilters,
-  tokensDict
+  tokensDict,
+  userOrders
 }) => {
   const { classes } = useStyles()
 
   const orderList = useMemo(() => {
     if (swicherType === OrdersHistory.your) {
-      return []
+      return userOrders
     } else {
       return []
     }
-  }, [swicherType])
+  }, [swicherType, userOrders.length])
 
   return (
     <Grid className={classes.wrapper}>
@@ -72,39 +77,36 @@ const OrderHistory: React.FC<IProps> = ({
             setSelectedFilters={setSelectedFilters}
           />
         </Box>
-        <Grid className={classes.listContainer}>
-          {orderList.map(() => {
-            return null
-          })}
 
-          <OrderItem
-            tokenX={tokensDict[USDC_MAIN.address.toString()]}
-            tokenY={tokensDict[SOL_MAIN.address.toString()]}
-            amount={123}
-            handleCloseOrder={() => {}}
-            orderFilled={79.45565}
-            price={221}
-            itemNumber={0}
-          />
-          <OrderItem
-            tokenX={tokensDict[USDC_MAIN.address.toString()]}
-            tokenY={tokensDict[SOL_MAIN.address.toString()]}
-            amount={123}
-            handleCloseOrder={() => {}}
-            orderFilled={79.45565}
-            price={221}
-            itemNumber={0}
-          />
-          <OrderItem
-            tokenX={tokensDict[USDC_MAIN.address.toString()]}
-            tokenY={tokensDict[SOL_MAIN.address.toString()]}
-            amount={123}
-            handleCloseOrder={() => {}}
-            orderFilled={79.45565}
-            price={221}
-            itemNumber={0}
-            noBorder
-          />
+        <Grid className={classes.listContainer}>
+          {orderList.length ? (
+            <>
+              {orderList.map((order, index) => {
+                return (
+                  <OrderItem
+                    tokenX={order.tokenFrom}
+                    tokenY={order.tokenTo}
+                    amount={+printBN(order.account.orderTokenAmount, order.tokenFrom.decimals)}
+                    handleCloseOrder={() => {}}
+                    orderFilled={79.45565}
+                    price={221}
+                    itemNumber={index}
+                  />
+                )
+              })}
+            </>
+          ) : (
+            <Grid
+              container
+              display={'flex'}
+              justifyContent={'center'}
+              alignItems={'center'}
+              minHeight={'100px'}>
+              <Typography style={typography.heading4} color={colors.invariant.text}>
+                Create your first limit order
+              </Typography>
+            </Grid>
+          )}
         </Grid>
       </Grid>
     </Grid>

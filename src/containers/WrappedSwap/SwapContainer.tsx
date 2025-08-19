@@ -61,7 +61,11 @@ export const SwapContainer = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const ethBalance = useSelector(balance)
   const isPathTokensLoading = useSelector(isLoadingPathTokens)
   const isTimeoutError = useSelector(timeoutError)
-  const allPools = useSelector(poolsArraySortedByFees)
+
+  //REMOVE FILTER POOLS - for testing purpose
+  const allPools = useSelector(poolsArraySortedByFees).filter(pool => {
+    return pool.fee.toString() === '500000000'
+  })
 
   const wallet = getEclipseWallet()
   const market = getMarketProgramSync(networkType, rpc, wallet as IWallet)

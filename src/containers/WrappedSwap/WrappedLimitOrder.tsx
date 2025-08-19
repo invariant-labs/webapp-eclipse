@@ -10,14 +10,29 @@ import { TokenPriceData } from '@store/consts/types'
 import { VariantType } from 'notistack'
 import { BN } from '@coral-xyz/anchor'
 import LimitOrder from '@components/Swap/LimitOrder'
-import { LIMIT_ORDER_TESTNET_POOL_WHITELIST, Market, Pair } from '@invariant-labs/sdk-eclipse'
+import {
+  calculatePriceSqrt,
+  DENOMINATOR,
+  LIMIT_ORDER_TESTNET_POOL_WHITELIST,
+  Market,
+  Pair
+} from '@invariant-labs/sdk-eclipse'
 import OrderHistory from '@components/Swap/OrderHistory/OrderHistory'
 import { OrdersHistory, actions as navigationActions } from '@store/reducers/navigation'
 import { actions } from '@store/reducers/orderBook'
 import { actions as poolsActions, PoolWithAddress } from '@store/reducers/pools'
 import { ordersHistory, swapSearch } from '@store/selectors/navigation'
 import { ISearchToken } from '@common/FilterSearch/FilterSearch'
-import { currentOrderBook } from '@store/selectors/orderBoook'
+import { currentOrderBook, userOrdersWithTokensData } from '@store/selectors/orderBoook'
+import {
+  DecreaseOrderLiquiditySimulationResult,
+  DecreaseOrderLiquiditySimulationStatus,
+  getLimitOrderOutputAmount,
+  simulateDecreaseOrderLiquidity
+} from '@invariant-labs/sdk-eclipse/src/limit-order'
+import { printBN } from '@utils/utils'
+import { LimitOrder as LimitOrderType, OrderBook } from '@invariant-labs/sdk-eclipse/lib/market'
+import { U64_MAX } from '@invariant-labs/sdk-eclipse/lib/math'
 
 type Props = {
   walletStatus: Status
@@ -115,9 +130,45 @@ export const WrappedLimitOrder = ({
   const switcherType = useSelector(ordersHistory)
   const searchParamsToken = useSelector(swapSearch)
   const orderBook = useSelector(currentOrderBook)
+  const userOrders = useSelector(userOrdersWithTokensData)
 
   const { setTokenFrom, setTokenTo, tokenFrom, tokenTo } = tokensFromState
+  console.log(LIMIT_ORDER_TESTNET_POOL_WHITELIST[0].pair.feeTier.fee.toString())
+  const userOrdersFullData = useMemo(() => {
+    if (!orderBook) return []
 
+    return userOrders.map(order => {
+      const simulateResult = simulateDecreaseOrderLiquidity(
+        orderBook,
+        order.account,
+        order.account.orderTokenAmount
+      )
+      console.log(simulateResult)
+      if (
+        simulateResult.status === DecreaseOrderLiquiditySimulationStatus.PartiallyCompleted ||
+        simulateResult.status === DecreaseOrderLiquiditySimulationStatus.FullyCompleted ||
+        simulateResult.status === DecreaseOrderLiquiditySimulationStatus.NotStarted
+      ) {
+        const amountX = simulateResult.amountOutX
+        const amountY = simulateResult.amountOutY
+
+        console.log(printBN(simulateResult.amountOutX, order.tokenFrom.decimals))
+        console.log(printBN(simulateResult.amountOutY, order.tokenTo.decimals))
+
+        const simulateAmount = order.account.xToY ? amountX : amountY
+
+        const fillPercentageX = DENOMINATOR.sub(
+          simulateAmount.mul(DENOMINATOR).div(order.account.orderTokenAmount)
+        )
+
+        return { ...order, filledPercentage: fillPercentageX.toString() }
+      }
+
+      return { ...order, filledPercentage: '0' }
+    })
+  }, [userOrders, orderBook])
+
+  console.log(userOrdersFullData)
   useEffect(() => {
     dispatch(leaderboardActions.getLeaderboardConfig())
   }, [])
@@ -274,6 +325,7 @@ export const WrappedLimitOrder = ({
           selectedFilters={searchParamsToken.filteredTokens}
           setSelectedFilters={setSearchTokensValue}
           tokensDict={tokensDict}
+          userOrders={userOrders}
         />
       )}
     </>
