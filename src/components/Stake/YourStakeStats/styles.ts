@@ -150,7 +150,6 @@ const useStyles = makeStyles<{ bgImage?: string }>()((_theme, params = {}) => {
       color: colors.invariant.textGrey
     },
     tooltipContentPoints: { ...typography.body2, color: colors.invariant.textGrey },
-    leaderboardHeaderSectionTitle: { ...typography.heading3, color: colors.white.main },
     tooltip: {
       color: colors.invariant.textGrey,
       ...typography.caption4,

@@ -24,11 +24,9 @@ import { actions } from '@store/reducers/stats'
 import TokensList from '@components/Stats/TokensList/TokensList'
 import PoolList from '@components/Stats/PoolList/PoolList'
 import { star, starFill, unknownTokenIcon } from '@static/icons'
-import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import { actions as snackbarActions } from '@store/reducers/snackbars'
 import { actions as navigationActions } from '@store/reducers/navigation'
 import { VariantType } from 'notistack'
-import { getPromotedPools } from '@store/selectors/leaderboard'
 import { FilterSearch, ISearchToken } from '@common/FilterSearch/FilterSearch'
 import { Intervals as IntervalsKeys } from '@store/consts/static'
 import Overview from '@components/Stats/Overview/Overview'
@@ -57,7 +55,6 @@ export const WrappedStats: React.FC = () => {
   const feesPlotData = useSelector(feesPlot)
   const isLoadingStats = useSelector(isLoading)
   const currentNetwork = useSelector(network)
-  const promotedPools = useSelector(getPromotedPools)
   const searchParamsPool = useSelector(poolSearch)
   const searchParamsToken = useSelector(tokenSearch)
   const cumulativeVolumeData = useSelector(cumulativeVolume)
@@ -162,10 +159,6 @@ export const WrappedStats: React.FC = () => {
       })
     )
   }
-
-  useEffect(() => {
-    dispatch(leaderboardActions.getLeaderboardConfig())
-  }, [])
 
   useEffect(() => {
     if (lastFetchedInterval === lastUsedInterval || !lastUsedInterval) return
@@ -343,12 +336,6 @@ export const WrappedStats: React.FC = () => {
                 isUnknownFrom: poolData.tokenXDetails?.isUnknown ?? false,
                 isUnknownTo: poolData.tokenYDetails?.isUnknown ?? false,
                 poolAddress: poolData.poolAddress.toString(),
-                pointsPerSecond:
-                  promotedPools.find(pool => pool.address === poolData.poolAddress.toString())
-                    ?.pointsPerSecond || '0',
-                isPromoted: promotedPools.some(
-                  pool => pool.address === poolData.poolAddress.toString()
-                ),
                 isFavourite: poolData.isFavourite
               }))}
               network={currentNetwork}
