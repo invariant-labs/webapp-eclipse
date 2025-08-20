@@ -1,18 +1,19 @@
 import React, { useMemo } from 'react'
 import { Box, Button, Grid, Typography } from '@mui/material'
 import { useStyles } from './styles'
-import Switcher from '@common/Switcher/Switcher'
 import { OrdersHistory } from '@store/reducers/navigation'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { refreshIcon } from '@static/icons'
 import { FilterSearch, ISearchToken } from '@common/FilterSearch/FilterSearch'
-import { NetworkType, SOL_MAIN, USDC_MAIN } from '@store/consts/static'
+import { NetworkType } from '@store/consts/static'
 import OrderItem from './OrderItem/OrderItem'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { colors, typography } from '@static/theme'
-import { UserOrdersWithTokensData } from '@store/selectors/orderBoook'
 import { printBN } from '@utils/utils'
-import { simulateDecreaseOrderLiquidity } from '@invariant-labs/sdk-eclipse/src/limit-order'
+import { Pair } from '@invariant-labs/sdk-eclipse'
+import { PublicKey } from '@solana/web3.js'
+import { BN } from '@coral-xyz/anchor'
+import { UserOrdersFullData } from '@store/consts/types'
 
 interface IProps {
   handleSwitcher: (e: OrdersHistory) => void
@@ -22,7 +23,8 @@ interface IProps {
   selectedFilters: ISearchToken[]
   setSelectedFilters: (tokens: ISearchToken[]) => void
   tokensDict: Record<string, SwapToken>
-  userOrders: UserOrdersWithTokensData
+  userOrders: UserOrdersFullData[]
+  handleRemoveOrder: (pair: Pair, orderKey: PublicKey, amount: BN) => void
 }
 
 const OrderHistory: React.FC<IProps> = ({
@@ -33,7 +35,8 @@ const OrderHistory: React.FC<IProps> = ({
   selectedFilters,
   setSelectedFilters,
   tokensDict,
-  userOrders
+  userOrders,
+  handleRemoveOrder
 }) => {
   const { classes } = useStyles()
 
@@ -87,10 +90,14 @@ const OrderHistory: React.FC<IProps> = ({
                     tokenX={order.tokenFrom}
                     tokenY={order.tokenTo}
                     amount={+printBN(order.account.orderTokenAmount, order.tokenFrom.decimals)}
-                    handleCloseOrder={() => {}}
-                    orderFilled={79.45565}
-                    price={221}
-                    itemNumber={index}
+                    handleCloseOrder={() =>
+                      handleRemoveOrder(order.pair, order.publicKey, order.account.orderTokenAmount)
+                    }
+                    orderFilled={order.filledPercentage}
+                    price={order.amountPrice}
+                    itemNumber={order.publicKey.toString() + index}
+                    orderValue={order.orderValue}
+                    isXtoY={order.account.xToY}
                   />
                 )
               })}

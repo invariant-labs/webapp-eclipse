@@ -4,7 +4,11 @@ import { NetworkType } from '@store/consts/static'
 import { FormData } from '@store/consts/tokenCreator/types'
 import { Pair } from '@invariant-labs/sdk-eclipse'
 import { OrderBook } from '@invariant-labs/sdk-eclipse/src/market'
-import { IncreaseLimitOrderLiquidity, LimitOrder } from '@invariant-labs/sdk-eclipse/lib/market'
+import {
+  DecreaseLimitOrderLiquidity,
+  IncreaseLimitOrderLiquidity,
+  LimitOrder
+} from '@invariant-labs/sdk-eclipse/lib/market'
 import { PublicKey } from '@solana/web3.js'
 
 export interface IOrderBook {
@@ -20,6 +24,9 @@ export interface IOrderBook {
 export interface IAddOrder extends IncreaseLimitOrderLiquidity {
   poolTickIndex: number
 }
+
+export interface IRemoveOrder
+  extends Omit<DecreaseLimitOrderLiquidity, 'userTokenX' | 'userTokenY'> {}
 
 export interface AddOrderPayload {
   pair: Pair
@@ -44,7 +51,12 @@ const orderBookSlice = createSlice({
 
       return state
     },
-    addLimitOrder(state, action: PayloadAction<IAddOrder>) {
+    addLimitOrder(state, _action: PayloadAction<IAddOrder>) {
+      state.inProgress = true
+      return state
+    },
+    removeLimitOrder(state, _action: PayloadAction<IRemoveOrder>) {
+      state.inProgress = true
       return state
     },
     getUserOrders(state) {

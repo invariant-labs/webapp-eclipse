@@ -6,7 +6,7 @@ import { SwapToken } from '@store/selectors/solanaWallet'
 import { PublicKey } from '@solana/web3.js'
 import { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { TokenPriceData } from '@store/consts/types'
+import { TokenPriceData, UserOrdersFullData } from '@store/consts/types'
 import { VariantType } from 'notistack'
 import { BN } from '@coral-xyz/anchor'
 import LimitOrder from '@components/Swap/LimitOrder'
@@ -23,16 +23,21 @@ import { actions } from '@store/reducers/orderBook'
 import { actions as poolsActions, PoolWithAddress } from '@store/reducers/pools'
 import { ordersHistory, swapSearch } from '@store/selectors/navigation'
 import { ISearchToken } from '@common/FilterSearch/FilterSearch'
-import { currentOrderBook, userOrdersWithTokensData } from '@store/selectors/orderBoook'
+import {
+  currentOrderBook,
+  UserOrdersWithTokensData,
+  userOrdersWithTokensData
+} from '@store/selectors/orderBoook'
 import {
   DecreaseOrderLiquiditySimulationResult,
   DecreaseOrderLiquiditySimulationStatus,
   getLimitOrderOutputAmount,
   simulateDecreaseOrderLiquidity
 } from '@invariant-labs/sdk-eclipse/src/limit-order'
-import { printBN } from '@utils/utils'
+import { calcPriceByTickIndex, printBN } from '@utils/utils'
 import { LimitOrder as LimitOrderType, OrderBook } from '@invariant-labs/sdk-eclipse/lib/market'
 import { U64_MAX } from '@invariant-labs/sdk-eclipse/lib/math'
+import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 
 type Props = {
   walletStatus: Status
@@ -133,8 +138,8 @@ export const WrappedLimitOrder = ({
   const userOrders = useSelector(userOrdersWithTokensData)
 
   const { setTokenFrom, setTokenTo, tokenFrom, tokenTo } = tokensFromState
-  console.log(LIMIT_ORDER_TESTNET_POOL_WHITELIST[0].pair.feeTier.fee.toString())
-  const userOrdersFullData = useMemo(() => {
+
+  const userOrdersFullData: UserOrdersFullData[] = useMemo(() => {
     if (!orderBook) return []
 
     return userOrders.map(order => {
@@ -143,7 +148,7 @@ export const WrappedLimitOrder = ({
         order.account,
         order.account.orderTokenAmount
       )
-      console.log(simulateResult)
+      let filledPercentage = '0'
       if (
         simulateResult.status === DecreaseOrderLiquiditySimulationStatus.PartiallyCompleted ||
         simulateResult.status === DecreaseOrderLiquiditySimulationStatus.FullyCompleted ||
@@ -152,23 +157,49 @@ export const WrappedLimitOrder = ({
         const amountX = simulateResult.amountOutX
         const amountY = simulateResult.amountOutY
 
-        console.log(printBN(simulateResult.amountOutX, order.tokenFrom.decimals))
-        console.log(printBN(simulateResult.amountOutY, order.tokenTo.decimals))
-
         const simulateAmount = order.account.xToY ? amountX : amountY
 
         const fillPercentageX = DENOMINATOR.sub(
           simulateAmount.mul(DENOMINATOR).div(order.account.orderTokenAmount)
         )
 
-        return { ...order, filledPercentage: fillPercentageX.toString() }
+        filledPercentage = (+printBN(fillPercentageX, DECIMAL - 2)).toFixed(2)
       }
 
-      return { ...order, filledPercentage: '0' }
-    })
-  }, [userOrders, orderBook])
+      const poolData = allPools.find(pool => {
+        return pool.address.toString() === order.account.pool.toString()
+      })
 
-  console.log(userOrdersFullData)
+      const price = calcPriceByTickIndex(
+        order.account.tickIndex,
+        order.account.xToY,
+        tokensDict[poolData?.tokenX?.toString() ?? '']?.decimals || 0,
+        tokensDict[poolData?.tokenY?.toString() ?? '']?.decimals || 0
+      )
+
+      const pair = new Pair(order.tokenFrom.address, order.tokenTo.address, {
+        fee: poolData?.fee || new BN(1000000),
+        tickSpacing: poolData?.tickSpacing || 10000
+      })
+
+      const orderValue = printBN(
+        order.account.orderTokenAmount,
+        order.account.xToY ? order.tokenFrom.decimals : order.tokenTo.decimals
+      )
+
+      const tokenPrice =
+        (order.account.xToY ? tokenFromPriceData?.price : tokenToPriceData?.price) || 0
+
+      return {
+        ...order,
+        filledPercentage: filledPercentage,
+        amountPrice: price,
+        pair,
+        orderValue: +orderValue * +tokenPrice
+      }
+    })
+  }, [userOrders, orderBook, allPools.length])
+
   useEffect(() => {
     dispatch(leaderboardActions.getLeaderboardConfig())
   }, [])
@@ -242,6 +273,7 @@ export const WrappedLimitOrder = ({
   useEffect(() => {
     dispatch(actions.getUserOrders())
   }, [])
+
   return (
     <>
       <LimitOrder
@@ -325,7 +357,17 @@ export const WrappedLimitOrder = ({
           selectedFilters={searchParamsToken.filteredTokens}
           setSelectedFilters={setSearchTokensValue}
           tokensDict={tokensDict}
-          userOrders={userOrders}
+          userOrders={userOrdersFullData}
+          handleRemoveOrder={(pair, orderKey, amount) => {
+            dispatch(
+              actions.removeLimitOrder({
+                pair,
+                owner: walletAddress,
+                orderKey,
+                amount
+              })
+            )
+          }}
         />
       )}
     </>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { theme } from '@static/theme'
+import { colors, theme } from '@static/theme'
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 import { useStyles } from './style'
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
@@ -11,25 +11,29 @@ import { SwapToken } from '@store/selectors/solanaWallet'
 import { Button } from '@common/Button/Button'
 
 interface IProps {
-  itemNumber?: number
+  itemNumber?: string
   tokenX: SwapToken
   tokenY: SwapToken
   price: number
   amount: number
-  orderFilled: number
+  orderValue: number
+  orderFilled: string
   handleCloseOrder: () => void
   noBorder?: boolean
+  isXtoY: boolean
 }
 
 const OrderItem: React.FC<IProps> = ({
-  itemNumber = 0,
+  itemNumber = '',
   tokenX,
   tokenY,
   price,
   amount,
+  orderValue,
   orderFilled,
   handleCloseOrder,
-  noBorder
+  noBorder,
+  isXtoY
 }) => {
   const [showInfo, setShowInfo] = useState(false)
   const { classes } = useStyles({ showInfo, noBorder })
@@ -49,7 +53,8 @@ const OrderItem: React.FC<IProps> = ({
         e.stopPropagation()
 
         setShowInfo(prev => !prev)
-      }}>
+      }}
+      key={itemNumber}>
       <Grid container className={classes.mainContent}>
         <ItemValue
           title='Tokens'
@@ -98,7 +103,7 @@ const OrderItem: React.FC<IProps> = ({
           style={{ flexBasis: 110 }}
           minWidth={80}
           title={'Price'}
-          value={`$${formatNumberWithSuffix(price)}`}
+          value={`${formatNumberWithSuffix(price)}`}
         />
 
         {!isSm && (
@@ -106,8 +111,19 @@ const OrderItem: React.FC<IProps> = ({
             <ItemValue
               style={{ flexBasis: 110 }}
               minWidth={80}
-              title={`Amount`}
-              value={`$${formatNumberWithSuffix(amount)}`}
+              title={`Amount in`}
+              value={
+                <Box display={'flex'} gap={'2px'}>
+                  <span>{formatNumberWithSuffix(amount)}</span>
+                  <span>{tokenX.symbol}</span>
+                </Box>
+              }
+            />
+            <ItemValue
+              style={{ flexBasis: 110 }}
+              minWidth={80}
+              title={`Order value`}
+              value={`$${formatNumberWithSuffix(orderValue)}`}
             />
             <ItemValue
               style={{ flexBasis: 100, flexGrow: isMd ? 0 : undefined }}

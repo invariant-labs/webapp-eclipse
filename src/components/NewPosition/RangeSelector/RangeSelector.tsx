@@ -118,7 +118,8 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
 
   const [leftRange, setLeftRange] = useState(getMinTick(tickSpacing))
   const [rightRange, setRightRange] = useState(getMaxTick(tickSpacing))
-
+  console.log(leftRange)
+  console.log(rightRange)
   const [leftInput, setLeftInput] = useState('')
   const [rightInput, setRightInput] = useState('')
 

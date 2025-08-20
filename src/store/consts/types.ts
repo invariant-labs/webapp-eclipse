@@ -2,8 +2,11 @@ import { ActionCreatorWithPayload } from '@reduxjs/toolkit'
 import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
 import { NetworkType } from './static'
-import { Position } from '@invariant-labs/sdk-eclipse/lib/market'
+import { LimitOrder, Position } from '@invariant-labs/sdk-eclipse/lib/market'
 import { PoolWithAddressAndIndex } from '@store/selectors/positions'
+import { PoolWithAddress } from '@store/reducers/pools'
+import { SwapToken } from '@store/selectors/solanaWallet'
+import { Pair } from '@invariant-labs/sdk-eclipse'
 
 declare global {
   interface Window {
@@ -319,4 +322,16 @@ export enum StakeSwitch {
 export enum ChartSwitch {
   volume = 'Volume',
   fees = 'Fees'
+}
+
+export type UserOrdersFullData = {
+  account: LimitOrder
+  publicKey: PublicKey
+  poolData: PoolWithAddress
+  tokenFrom: SwapToken
+  tokenTo: SwapToken
+  filledPercentage: string
+  amountPrice: number
+  pair: Pair
+  orderValue: number
 }
