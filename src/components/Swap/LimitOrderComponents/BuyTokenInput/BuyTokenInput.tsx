@@ -48,7 +48,6 @@ export const BuyTokenInput: React.FC<IProps> = ({
   const inputRef = useRef<HTMLInputElement>(null)
 
   const allowOnlyDigitsAndTrimUnnecessaryZeros: React.ChangeEventHandler<HTMLInputElement> = e => {
-    console.log('tes')
     const inputValue = e.target.value.replace(/,/g, '.')
     const onlyNumbersRegex = /^\d*\.?\d*$/
     const trimDecimal = `^\\d*\\.?\\d{0,${decimalsLimit}}$`

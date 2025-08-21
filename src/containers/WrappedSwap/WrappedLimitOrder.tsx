@@ -205,8 +205,8 @@ export const WrappedLimitOrder = ({
       const price = calcPriceByTickIndex(
         order.account.tickIndex,
         order.account.xToY,
-        tokensDict[poolData?.tokenX?.toString() ?? '']?.decimals || 0,
-        tokensDict[poolData?.tokenY?.toString() ?? '']?.decimals || 0
+        order?.tokenFrom.decimals || 0,
+        order?.tokenTo?.decimals || 0
       )
 
       const pair = new Pair(order.tokenFrom.address, order.tokenTo.address, {
@@ -220,14 +220,14 @@ export const WrappedLimitOrder = ({
       )
 
       const tokenPrice =
-        (order.account.xToY ? tokenFromPriceData?.price : tokenToPriceData?.price) || 0
+        (order.account.xToY ? tokenToPriceData?.price : tokenFromPriceData?.price) || 0
 
       return {
         ...order,
         filledPercentage: filledPercentage,
         amountPrice: price,
         pair,
-        orderValue: +orderValue * +tokenPrice
+        usdValue: +orderValue * +tokenPrice
       }
     })
   }, [userOrders, orderBook, allPools.length])
@@ -389,7 +389,7 @@ export const WrappedLimitOrder = ({
         poolData={poolData}
         isLoading={loadingOrderbook}
       />
-      {orderBookPair && (
+      {orderBookPair && walletStatus === Status.Initialized && (
         <OrderHistory
           handleSwitcher={(e: OrdersHistory) => {
             dispatch(navigationActions.setOrderHistory(e))

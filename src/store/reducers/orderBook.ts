@@ -53,7 +53,6 @@ const orderBookSlice = createSlice({
   initialState: defaultStatus,
   reducers: {
     getOrderBook(state, _action: PayloadAction<AddOrderPayload>) {
-      console.log('test')
       state.isLoadingOrderbook = true
       return state
     },

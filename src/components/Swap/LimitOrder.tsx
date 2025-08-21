@@ -182,8 +182,6 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
     initialHideUnknownTokensValue
   )
 
-  console.log(orderBookPair)
-  console.log(orderBook)
   const isXtoYOrderBook = useMemo(() => {
     if (tokenFromIndex === null) return
 
@@ -192,10 +190,7 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
 
     return isXtoY
   }, [tokenFromIndex, orderBookPair, tokens.length])
-  console.log(poolData?.currentTickIndex)
-  console.log(priceTickIndex)
 
-  console.log(isXtoYOrderBook)
   const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT = useMemo(() => {
     if (network === NetworkType.Testnet) {
       return WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_TEST
@@ -629,13 +624,7 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
 
                 if (validatedTokenPriceAmount === '') return
 
-                console.log(validatedTokenPriceAmount)
-
-                console.log(1 / +validatedTokenPriceAmount)
-                console.log(validatedTokenPriceAmount)
                 handleSetTokenPrice(1 / +validatedTokenPriceAmount, true)
-
-                console.log(1 / +validatedTokenPriceAmount)
 
                 setTokenPriceAmount((1 / +validatedTokenPriceAmount).toString())
               }}>

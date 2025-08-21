@@ -127,9 +127,6 @@ export function* handleAddLimitOrder(action: PayloadAction<IncreaseLimitOrderLiq
       ASSOCIATED_TOKEN_PROGRAM_ID
     )
 
-    console.log(userTokenXAccount.toString())
-    console.log(userTokenYAccount.toString())
-
     const { tx, additionalSigners } = yield* call(
       [marketProgram, marketProgram.increaseLimitOrderLiquidityTx],
       {
@@ -161,12 +158,11 @@ export function* handleAddLimitOrder(action: PayloadAction<IncreaseLimitOrderLiq
 
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
-    console.log(marketProgram.program.programId.toString())
 
     const txid = yield* call(sendAndConfirmRawTransaction, connection, signedTx.serialize(), {
       skipPreflight: false
     })
-    console.log(txid)
+
     if (!txid.length) {
       yield put(actions.setOrderSuccess(false))
 
@@ -218,7 +214,7 @@ export function* handleAddLimitOrder(action: PayloadAction<IncreaseLimitOrderLiq
             return
           }
         }
-        console.log('test')
+
         yield put(
           snackbarsActions.add({
             message: 'Limit order added',
@@ -257,7 +253,6 @@ export function* handleAddLimitOrder(action: PayloadAction<IncreaseLimitOrderLiq
           }
         }
       } else {
-        console.log('test')
         yield put(
           snackbarsActions.add({
             message: 'Limit order added',

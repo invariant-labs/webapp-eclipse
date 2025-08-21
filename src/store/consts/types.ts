@@ -333,5 +333,5 @@ export type UserOrdersFullData = {
   filledPercentage: string
   amountPrice: number
   pair: Pair
-  orderValue: number
+  usdValue: number
 }

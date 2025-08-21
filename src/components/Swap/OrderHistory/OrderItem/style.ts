@@ -15,12 +15,12 @@ export const useStyles = makeStyles<{ showInfo?: boolean; noBorder?: boolean }>(
       borderBottom: noBorder ? '' : `1px solid ${colors.invariant.light}`,
       overflow: 'hidden',
       flexDirection: 'row',
-      height: showInfo ? 147 : 79,
+      height: showInfo ? 158 : 92,
       background: showInfo ? colors.invariant.darkGradient : colors.invariant.component,
 
       [theme.breakpoints.down('sm')]: {
         padding: '12px 8px',
-        height: showInfo ? 213 : 79
+        height: showInfo ? 233 : 92
       }
     },
 
@@ -104,6 +104,18 @@ export const useStyles = makeStyles<{ showInfo?: boolean; noBorder?: boolean }>(
 
       [theme.breakpoints.down('sm')]: {
         ...typography.body1
+      }
+    },
+    adressLabel: {
+      maxWidth: 100,
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap',
+      color: colors.invariant.textGrey,
+      ...typography.caption2,
+
+      [theme.breakpoints.down('sm')]: {
+        ...typography.caption4
       }
     }
   })

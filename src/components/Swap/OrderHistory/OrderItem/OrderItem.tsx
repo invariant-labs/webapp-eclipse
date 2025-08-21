@@ -9,6 +9,7 @@ import { shortenAddress } from '@utils/uiUtils'
 import ItemValue from '@common/TableItem/ItemValue/ItemValue'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { Button } from '@common/Button/Button'
+import ItemValueExtended from '@common/TableItem/ItemValueExtended/ItemValueExtended'
 
 interface IProps {
   itemNumber?: string
@@ -16,7 +17,7 @@ interface IProps {
   tokenY: SwapToken
   price: number
   amount: number
-  orderValue: number
+  usdValue: number
   orderFilled: string
   handleCloseOrder: () => void
   noBorder?: boolean
@@ -29,17 +30,16 @@ const OrderItem: React.FC<IProps> = ({
   tokenY,
   price,
   amount,
-  orderValue,
+  usdValue,
   orderFilled,
   handleCloseOrder,
-  noBorder,
-  isXtoY
+  noBorder
+  // isXtoY
 }) => {
   const [showInfo, setShowInfo] = useState(false)
   const { classes } = useStyles({ showInfo, noBorder })
 
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
-  const isMd = useMediaQuery(theme.breakpoints.down('md'))
 
   useEffect(() => {
     setShowInfo(false)
@@ -56,9 +56,9 @@ const OrderItem: React.FC<IProps> = ({
       }}
       key={itemNumber}>
       <Grid container className={classes.mainContent}>
-        <ItemValue
+        <ItemValueExtended
           title='Tokens'
-          style={{ flexShrink: 1, flexBasis: '300px', minWidth: 80 }}
+          style={{ flexShrink: 0.2, flexBasis: isSm ? 130 : 160, minWidth: 70 }}
           value={
             <Grid display='flex' alignItems='center' gap={1}>
               <Grid className={classes.symbolsWrapper}>
@@ -91,45 +91,45 @@ const OrderItem: React.FC<IProps> = ({
                   )}
                 </Grid>
               </Grid>
-
-              <Typography className={classes.poolAddress}>
-                {shortenAddress(tokenX?.symbol ?? '')}/{shortenAddress(tokenY?.symbol ?? '')}
-              </Typography>
+              <Grid>
+                <Typography className={classes.poolAddress}>
+                  {shortenAddress(tokenX?.symbol ?? '')}/{shortenAddress(tokenY?.symbol ?? '')}
+                </Typography>
+                <Typography className={classes.adressLabel}>Pair name</Typography>
+              </Grid>
             </Grid>
           }
         />
 
-        <ItemValue
-          style={{ flexBasis: 110 }}
+        <ItemValueExtended
+          style={{ flexBasis: isSm ? 80 : 110 }}
           minWidth={80}
           title={'Price'}
           value={`${formatNumberWithSuffix(price)}`}
+          secondValue={tokenY.symbol + ' per ' + tokenX.symbol}
         />
 
         {!isSm && (
           <>
-            <ItemValue
-              style={{ flexBasis: 110 }}
+            <ItemValueExtended
+              style={{ flexBasis: 150 }}
               minWidth={80}
-              title={`Amount in`}
+              title={`Amount`}
               value={
                 <Box display={'flex'} gap={'2px'}>
-                  <span>{formatNumberWithSuffix(amount)}</span>
-                  <span>{tokenX.symbol}</span>
+                  <span>{formatNumberWithSuffix(amount)}</span> <span> {tokenX.symbol}</span>
                 </Box>
               }
+              secondValue={`$${formatNumberWithSuffix(usdValue)}`}
             />
-            <ItemValue
-              style={{ flexBasis: 110 }}
-              minWidth={80}
-              title={`Order value`}
-              value={`$${formatNumberWithSuffix(orderValue)}`}
-            />
-            <ItemValue
-              style={{ flexBasis: 100, flexGrow: isMd ? 0 : undefined }}
+
+            <ItemValueExtended
+              style={{ flexBasis: 80 }}
               minWidth={80}
               title={`Order filled`}
               value={`${orderFilled}%`}
+              secondValue={'out of 100%'}
+              valueColor={colors.invariant.green}
             />
           </>
         )}
@@ -138,28 +138,38 @@ const OrderItem: React.FC<IProps> = ({
       {isSm && (
         <Grid gap={'12px'} display='flex' container flexDirection='column'>
           <Box className={classes.info}>
-            <Grid container gap={'8px'} overflow={'hidden'}>
-              {
-                <>
-                  <ItemValue
-                    style={{ flexBasis: 110 }}
-                    minWidth={80}
-                    title={`Amount`}
-                    value={`$${formatNumberWithSuffix(amount)}`}
-                  />
-                  <ItemValue
-                    style={{ flexBasis: 100, flexGrow: isMd ? 0 : undefined }}
-                    minWidth={80}
-                    title={`Order filled`}
-                    value={`${orderFilled}%`}
-                  />
-                </>
-              }
+            <Grid container display='flex' gap={'8px'} overflow={'hidden'}>
+              <ItemValueExtended
+                style={{ flexBasis: 100, flexGrow: 2 }}
+                minWidth={80}
+                title={`Amount`}
+                value={
+                  <Box display={'flex'} gap={'2px'}>
+                    <span>{formatNumberWithSuffix(amount)}</span> <span> {tokenX.symbol}</span>
+                  </Box>
+                }
+                secondValue={`$${formatNumberWithSuffix(usdValue)}`}
+              />
+              <ItemValueExtended
+                style={{ flexBasis: 100 }}
+                minWidth={80}
+                title={`Order filled`}
+                value={`${orderFilled}%`}
+                secondValue={'out of 100%'}
+                valueColor={colors.invariant.green}
+              />
             </Grid>
           </Box>
         </Grid>
       )}{' '}
-      <Button scheme='pink' padding='0 42px' width={'100%'} onClick={handleCloseOrder}>
+      <Button
+        scheme='pink'
+        padding='0 42px'
+        width={'100%'}
+        onClick={e => {
+          e.stopPropagation()
+          handleCloseOrder()
+        }}>
         <Box>Close Order</Box>
       </Button>
     </Grid>
