@@ -1943,30 +1943,31 @@ export const getMockedTokenPrice = (symbol: string, network: NetworkType): Token
   }
 }
 
-export const getTokenPrice = async (
-  addr: string,
+export async function getTokenPrice(addr: string, network: NetworkType): Promise<number | undefined>
+export async function getTokenPrice(
+  addr: undefined,
   network: NetworkType
-): Promise<number | undefined> => {
+): Promise<Record<string, { price: number }> | undefined>
+export async function getTokenPrice(
+  addr: string | undefined,
+  network: NetworkType
+): Promise<number | Record<string, { price: number }> | undefined> {
   const cachedLastQueryTimestamp = localStorage.getItem('TOKEN_PRICE_LAST_QUERY_TIMESTAMP')
   let lastQueryTimestamp = 0
   if (cachedLastQueryTimestamp) {
     lastQueryTimestamp = Number(cachedLastQueryTimestamp)
   }
-
   const cachedPriceData =
     network === NetworkType.Mainnet
       ? localStorage.getItem('TOKEN_PRICE_DATA')
       : localStorage.getItem('TOKEN_PRICE_DATA_TESTNET')
-
   let priceData: Record<string, { price: number }> | null = null
-
   if (!cachedPriceData || Number(lastQueryTimestamp) + PRICE_QUERY_COOLDOWN <= Date.now()) {
     try {
       const { data } = await axios.get<IPriceData>(
         `${PRICE_API_URL}/${network === NetworkType.Mainnet ? 'eclipse-mainnet' : 'eclipse-testnet'}`
       )
       priceData = data.data
-
       localStorage.setItem(
         network === NetworkType.Mainnet ? 'TOKEN_PRICE_DATA' : 'TOKEN_PRICE_DATA_TESTNET',
         JSON.stringify(priceData)
@@ -1980,7 +1981,6 @@ export const getTokenPrice = async (
     } catch (e: unknown) {
       const error = ensureError(e)
       console.log(error)
-
       localStorage.removeItem(
         network === NetworkType.Mainnet
           ? 'TOKEN_PRICE_LAST_QUERY_TIMESTAMP'
@@ -1993,6 +1993,10 @@ export const getTokenPrice = async (
     }
   } else {
     priceData = JSON.parse(cachedPriceData)
+  }
+
+  if (!addr) {
+    return priceData || undefined
   }
 
   return priceData && priceData[addr] ? priceData[addr].price : undefined
