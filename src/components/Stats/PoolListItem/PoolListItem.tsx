@@ -5,14 +5,7 @@ import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp'
 import { useLocation, useNavigate } from 'react-router-dom'
-import {
-  airdropRainbowIcon,
-  star,
-  starFill,
-  unknownTokenIcon,
-  plusDisabled,
-  warningIcon
-} from '@static/icons'
+import { airdropRainbowIcon, star, starFill, unknownTokenIcon, warningIcon } from '@static/icons'
 import {
   disabledPools,
   Intervals,
