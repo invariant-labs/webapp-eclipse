@@ -272,7 +272,7 @@ export const WrappedLimitOrder = ({
 
   useEffect(() => {
     dispatch(actions.getUserOrders())
-  }, [])
+  }, [walletStatus])
 
   return (
     <>
@@ -326,7 +326,11 @@ export const WrappedLimitOrder = ({
         swapState={swapState}
         handleAddOrder={(amount, tickIndex, xToY) => {
           if (!tokenFrom || !tokenTo || !orderBookPair || !poolData) return
+          console.log('test')
 
+          console.log(tickIndex)
+          console.log(xToY)
+          console.log(poolData?.currentTickIndex)
           dispatch(
             actions.addLimitOrder({
               amount,

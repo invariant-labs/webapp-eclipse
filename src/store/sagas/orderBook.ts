@@ -166,7 +166,7 @@ export function* handleAddLimitOrder(action: PayloadAction<IncreaseLimitOrderLiq
     const txid = yield* call(sendAndConfirmRawTransaction, connection, signedTx.serialize(), {
       skipPreflight: false
     })
-
+    console.log(txid)
     if (!txid.length) {
       yield put(
         snackbarsActions.add({
@@ -177,6 +177,13 @@ export function* handleAddLimitOrder(action: PayloadAction<IncreaseLimitOrderLiq
         })
       )
     } else {
+      const userOrders = yield* call(
+        [marketProgram, marketProgram.getLimitOrdersByUser],
+        wallet.publicKey
+      )
+
+      yield* put(actions.setUserOrders(userOrders))
+
       const txDetails = yield* call([connection, connection.getParsedTransaction], txid, {
         maxSupportedTransactionVersion: 0
       })
@@ -265,6 +272,11 @@ export function* handleAddLimitOrder(action: PayloadAction<IncreaseLimitOrderLiq
     const error = ensureError(e)
     console.log(error)
 
+    closeSnackbar(loaderAddOrder)
+    yield put(snackbarsActions.remove(loaderAddOrder))
+    closeSnackbar(loaderSigningTx)
+    yield put(snackbarsActions.remove(loaderSigningTx))
+
     let msg: string = ''
     if (error instanceof SendTransactionError) {
       const err = error.transactionError
@@ -285,12 +297,7 @@ export function* handleAddLimitOrder(action: PayloadAction<IncreaseLimitOrderLiq
       }
     }
 
-    closeSnackbar(loaderAddOrder)
     // yield put(actions.setShouldDisable(false))
-
-    yield put(snackbarsActions.remove(loaderAddOrder))
-    closeSnackbar(loaderSigningTx)
-    yield put(snackbarsActions.remove(loaderSigningTx))
 
     if (error instanceof TransactionExpiredTimeoutError) {
       yield put(
@@ -360,9 +367,6 @@ export function* handleRemoveLimitOrder(action: PayloadAction<IRemoveOrder>) {
       ASSOCIATED_TOKEN_PROGRAM_ID
     )
 
-    console.log(userTokenXAccount.toString())
-    console.log(userTokenYAccount.toString())
-
     const tx = yield* call([marketProgram, marketProgram.decreaseLimitOrderLiquidityTx], {
       pair,
       owner,
@@ -401,6 +405,13 @@ export function* handleRemoveLimitOrder(action: PayloadAction<IRemoveOrder>) {
         })
       )
     } else {
+      const userOrders = yield* call(
+        [marketProgram, marketProgram.getLimitOrdersByUser],
+        wallet.publicKey
+      )
+
+      yield* put(actions.setUserOrders(userOrders))
+
       const txDetails = yield* call([connection, connection.getParsedTransaction], txid, {
         maxSupportedTransactionVersion: 0
       })

@@ -39,6 +39,7 @@ import { Market, Pair } from '@invariant-labs/sdk-eclipse'
 import { theme } from '@static/theme'
 import { OrderBook, PoolStructure } from '@invariant-labs/sdk-eclipse/lib/market'
 import {
+  isLimitOrderBetterThanSwap,
   limitOrderQuoteByInputToken,
   limitOrderQuoteByOutputToken
 } from '@invariant-labs/sdk-eclipse/src/limit-order'
@@ -180,6 +181,8 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
     initialHideUnknownTokensValue
   )
 
+  console.log(orderBookPair)
+  console.log(orderBook)
   const isXtoYOrderBook = useMemo(() => {
     if (tokenFromIndex === null) return
 
@@ -188,7 +191,10 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
 
     return isXtoY
   }, [tokenFromIndex, orderBookPair, tokens.length])
+  console.log(poolData?.currentTickIndex)
+  console.log(priceTickIndex)
 
+  console.log(isXtoYOrderBook)
   const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT = useMemo(() => {
     if (network === NetworkType.Testnet) {
       return WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_TEST
@@ -289,6 +295,10 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
   }, [priceTickIndex, isXtoYOrderBook, poolData])
 
   const getStateMessage = () => {
+    if (!orderBook || !orderBookPair) {
+      return "Orderbook doesn't exist"
+    }
+
     if (tokenFromIndex !== null && tokenToIndex !== null && amountFrom === '' && amountTo === '') {
       return 'Enter amount'
     }
@@ -380,6 +390,7 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
       setAmountTo('')
     }
   }, [tokenFromIndex, tokenToIndex])
+
   const actions = createButtonActions({
     tokens,
     wrappedTokenAddress: WRAPPED_ETH_ADDRESS,
@@ -806,19 +817,27 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
               <BuyTokenInput
                 tokenPrice={tokenToPriceData?.price}
                 setValue={value => {
+                  if (value === '') {
+                    setTokenPriceAmount('')
+                    setValidatedTokenPriceAmount('')
+                    setAmountTo('')
+
+                    return
+                  }
+
                   setTokenPriceAmount(value)
                   handleSetTokenPrice(+value)
 
                   const { nearestTick } = validateTokenPrice(+value)
-                  if (
-                    amountFrom !== '' &&
-                    amountFrom !== '0' &&
-                    isXtoYOrderBook !== undefined &&
-                    orderBookPair &&
-                    orderBook
-                  ) {
+
+                  if (isXtoYOrderBook !== undefined && orderBookPair && orderBook) {
+                    const parsedAmountFrom = +amountFrom ? amountFrom : '1'
+
+                    if (!+amountFrom || amountFrom === '0') {
+                      setAmountFrom(parsedAmountFrom)
+                    }
                     const tokenFromBNValue = convertBalanceToBN(
-                      amountFrom,
+                      parsedAmountFrom,
                       tokens[tokenFromIndex].decimals
                     )
 
