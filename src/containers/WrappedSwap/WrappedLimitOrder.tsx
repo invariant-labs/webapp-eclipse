@@ -26,6 +26,7 @@ import { ISearchToken } from '@common/FilterSearch/FilterSearch'
 import {
   currentOrderBook,
   isLoadingOrderbook,
+  isLoadingUserOrders,
   loadingState,
   UserOrdersWithTokensData,
   userOrdersWithTokensData
@@ -40,6 +41,7 @@ import { calcPriceByTickIndex, printBN } from '@utils/utils'
 import { LimitOrder as LimitOrderType, OrderBook } from '@invariant-labs/sdk-eclipse/lib/market'
 import { U64_MAX } from '@invariant-labs/sdk-eclipse/lib/math'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
+import { isLoadingLatestPoolsForTransaction } from '@store/selectors/pools'
 
 type Props = {
   walletStatus: Status
@@ -138,12 +140,15 @@ export const WrappedLimitOrder = ({
   const searchParamsToken = useSelector(swapSearch)
   const orderBook = useSelector(currentOrderBook)
   const userOrders = useSelector(userOrdersWithTokensData)
-  const isLoading = useSelector(isLoadingOrderbook)
+  const loadingOrderbook = useSelector(isLoadingOrderbook)
+  const loadingUserOrderes = useSelector(isLoadingUserOrders)
   const { setTokenFrom, setTokenTo, tokenFrom, tokenTo } = tokensFromState
 
   const { inProgress, success } = useSelector(loadingState)
   const { progress, setProgress } = progressState
+  const isFetchingNewPool = useSelector(isLoadingLatestPoolsForTransaction)
 
+  console.log(isFetchingNewPool)
   useEffect(() => {
     let timeoutId1: NodeJS.Timeout
     let timeoutId2: NodeJS.Timeout
@@ -231,14 +236,22 @@ export const WrappedLimitOrder = ({
     dispatch(leaderboardActions.getLeaderboardConfig())
   }, [])
 
-  const onRefresh = (tokenFromIndex: number | null, tokenToIndex: number | null) => {
+  const onRefresh = () => {
     dispatch(walletActions.getBalance())
 
-    if (tokenFromIndex === null || tokenToIndex == null) {
-      return
-    }
-
     triggerFetchPrices()
+
+    if (!orderBookPair?.pair) return
+    const { pair } = orderBookPair
+
+    dispatch(
+      actions.getOrderBook({
+        pair: pair
+      })
+    )
+
+    dispatch(poolsActions.getPoolData(pair))
+    dispatch(actions.getUserOrders())
   }
 
   const setSearchTokensValue = (tokens: ISearchToken[]) => {
@@ -374,7 +387,7 @@ export const WrappedLimitOrder = ({
         }
         orderBook={orderBook}
         poolData={poolData}
-        isLoading={isLoading}
+        isLoading={loadingOrderbook}
       />
       {orderBookPair && (
         <OrderHistory
@@ -382,7 +395,7 @@ export const WrappedLimitOrder = ({
             dispatch(navigationActions.setOrderHistory(e))
           }}
           swicherType={switcherType}
-          handleRefresh={() => {}}
+          handleRefresh={onRefresh}
           currentNetwork={networkType}
           selectedFilters={searchParamsToken.filteredTokens}
           setSelectedFilters={setSearchTokensValue}
@@ -399,7 +412,7 @@ export const WrappedLimitOrder = ({
             )
           }}
           walletStatus={walletStatus}
-          isLoading={isLoading}
+          isLoading={loadingUserOrderes}
         />
       )}
     </>

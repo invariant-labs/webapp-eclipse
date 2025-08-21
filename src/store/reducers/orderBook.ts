@@ -23,6 +23,7 @@ export interface IOrderBook {
     success: boolean
   }
   isLoadingOrderbook: boolean
+  isLoadingUserOrders: boolean
 }
 
 export interface IAddOrder extends IncreaseLimitOrderLiquidity {
@@ -42,6 +43,7 @@ const defaultStatus: IOrderBook = {
     success: true
   },
   isLoadingOrderbook: false,
+  isLoadingUserOrders: false,
   userLimitOrders: []
 }
 export const orderBookName = 'orderBook'
@@ -51,6 +53,7 @@ const orderBookSlice = createSlice({
   initialState: defaultStatus,
   reducers: {
     getOrderBook(state, _action: PayloadAction<AddOrderPayload>) {
+      console.log('test')
       state.isLoadingOrderbook = true
       return state
     },
@@ -68,6 +71,7 @@ const orderBookSlice = createSlice({
       return state
     },
     getUserOrders(state) {
+      state.isLoadingUserOrders = true
       return state
     },
     setUserOrders(
@@ -79,6 +83,7 @@ const orderBookSlice = createSlice({
         }[]
       >
     ) {
+      state.isLoadingUserOrders = false
       state.userLimitOrders = action.payload
 
       return state

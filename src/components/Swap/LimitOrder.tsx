@@ -65,7 +65,7 @@ export interface Pools {
 }
 
 export interface ILimitOrder {
-  onRefresh: (tokenFrom: number | null, tokenTo: number | null) => void
+  onRefresh: () => void
   walletStatus: Status
   tokens: SwapToken[]
   onSetPair: (tokenFrom: PublicKey | null, tokenTo: PublicKey | null) => void
@@ -178,7 +178,6 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
   const { lockAnimation, setLockAnimation } = lockAnimationState
   const { rotates, setRotates } = rotatesState
   const { swap, setSwap } = swapState
-  const [refresherTime, setRefresherTime] = React.useState<number>(REFRESHER_INTERVAL)
   const [hideUnknownTokens, setHideUnknownTokens] = React.useState<boolean>(
     initialHideUnknownTokensValue
   )
@@ -209,7 +208,7 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
 
   useEffect(() => {
     if (isTimeoutError) {
-      onRefresh(tokenFromIndex, tokenToIndex)
+      onRefresh()
       deleteTimeoutError()
     }
   }, [isTimeoutError])
@@ -248,18 +247,6 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
       tokenToIndex === null ? null : tokens[tokenToIndex].assetAddress
     )
   }, [tokenFromIndex, tokenToIndex])
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (refresherTime > 0 && tokenFromIndex !== null && tokenToIndex !== null) {
-        setRefresherTime(refresherTime - 1)
-      } else {
-        handleRefresh()
-      }
-    }, 1000)
-
-    return () => clearTimeout(timeout)
-  }, [refresherTime, tokenFromIndex, tokenToIndex])
 
   useEffect(() => {
     if (inputRef !== inputTarget.DEFAULT) {
@@ -372,21 +359,6 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
     }
   }, [lockAnimation])
 
-  const handleRefresh = async () => {
-    setErrorVisible(false)
-    onRefresh(tokenFromIndex, tokenToIndex)
-    setRefresherTime(REFRESHER_INTERVAL)
-  }
-
-  useEffect(() => {
-    setRefresherTime(REFRESHER_INTERVAL)
-
-    if (tokenFromIndex === tokenToIndex) {
-      setAmountFrom('')
-      setAmountTo('')
-    }
-  }, [tokenFromIndex, tokenToIndex])
-
   const actions = createButtonActions({
     tokens,
     wrappedTokenAddress: WRAPPED_ETH_ADDRESS,
@@ -493,7 +465,7 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
             <TooltipHover title='Refresh'>
               <Grid className={classes.refreshIconContainer}>
                 <Button
-                  onClick={handleRefresh}
+                  onClick={onRefresh}
                   className={classes.refreshIconBtn}
                   disabled={
                     priceFromLoading ||
