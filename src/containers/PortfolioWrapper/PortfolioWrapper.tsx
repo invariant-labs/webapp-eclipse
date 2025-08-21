@@ -676,25 +676,36 @@ const PortfolioWrapper = () => {
     }
   }, [prices])
 
+  const positionList = [...list, ...lockedList]
   useEffect(() => {
-    const loadPrices = async () => {
-      const tokenArray = tokensList.filter(token => {
-        const balance = printBN(token.balance, token.decimals)
-        return parseFloat(balance) > 0
-      })
-      const priceResults = await Promise.all(
-        tokenArray.map(async token => ({
-          token,
-          price: (await getTokenPrice(token.address.toString(), currentNetwork)) ?? 0
-        }))
-      )
+    const loadPrices = async (): Promise<void> => {
       const newPrices: Record<string, number> = {}
-      for (const { token, price } of priceResults) newPrices[token.address.toString()] = price ?? 0
+      const uniqueAddresses = new Set<string>()
+
+      tokensList.forEach(token => {
+        if (parseFloat(printBN(token.balance, token.decimals)) > 0) {
+          uniqueAddresses.add(token.address.toString())
+        }
+      })
+
+      positionList.forEach(position => {
+        uniqueAddresses.add(position.tokenX.assetAddress.toString())
+        uniqueAddresses.add(position.tokenY.assetAddress.toString())
+      })
+
+      const pricePromises: Promise<void>[] = Array.from(uniqueAddresses).map(
+        async (address: string): Promise<void> => {
+          const price: number = (await getTokenPrice(address, currentNetwork)) ?? 0
+          newPrices[address] = price
+        }
+      )
+
+      await Promise.all(pricePromises)
       setPrices(newPrices)
     }
 
     loadPrices()
-  }, [tokensList])
+  }, [tokensList, positionList])
 
   return isConnected ? (
     <Portfolio
