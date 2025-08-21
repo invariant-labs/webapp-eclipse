@@ -702,7 +702,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       return false
     }
 
-    if (POOLS_TO_HIDE_POINTS_PER_24H.includes(allPools[poolIndex].address.toString())) {
+    if (POOLS_TO_HIDE_POINTS_PER_24H.includes(allPools[poolIndex]?.address.toString())) {
       return false
     }
 

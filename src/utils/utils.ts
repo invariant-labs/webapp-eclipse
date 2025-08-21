@@ -1883,7 +1883,7 @@ export const initialXtoY = (tokenXAddress?: string | null, tokenYAddress?: strin
 }
 
 export const parseFeeToPathFee = (fee: BN): string => {
-  const parsedFee = (fee.toNumber() / Math.pow(10, 8)).toString().padStart(3, '0')
+  const parsedFee = (+fee.toString() / Math.pow(10, 8)).toString().padStart(3, '0')
   return parsedFee.slice(0, parsedFee.length - 2) + '_' + parsedFee.slice(parsedFee.length - 2)
 }
 
@@ -2578,9 +2578,9 @@ export enum TokenType {
 export const getAmountFromInitPositionInstruction = (
   meta: ParsedTransactionMeta,
   type: TokenType
-): number => {
+): BN => {
   if (!meta.innerInstructions) {
-    return 0
+    return new BN(0)
   }
 
   const innerInstruction =
@@ -2766,45 +2766,3 @@ export const fetchMarketBitzStats = async () => {
   )
   return data
 }
-
-// export const handleSimulateLimitOrder = async (
-//   xToYOrder: boolean,
-//   tickIndex: number,
-//   fee: BN,
-//   orderBook: OrderBook,
-//   amountIn?: BN,
-//   amountOut?: BN
-// ): Promise<{
-//   amount: BN
-// }> => {
-//   if (!amountIn && !amountOut) return new BN(0)
-
-//   const { limitOrderRewardRate } = orderBook
-
-//   const isByAmountIn = !!amountIn
-
-//   if (isByAmountIn) {
-//     const amount = limitOrderQuoteByInputToken(
-//       amountIn,
-//       xToYOrder,
-//       tickIndex,
-//       fee,
-//       limitOrderRewardRate
-//     )
-//     console.log(amount)
-
-//     return amount
-//   } else {
-//     const amount = limitOrderQuoteByOutputToken(
-//       amountOut,
-//       xToYOrder,
-//       tickIndex,
-//       fee,
-//       limitOrderRewardRate
-//     )
-
-//     console.log(amount)
-
-//     return amount
-//   }
-// }

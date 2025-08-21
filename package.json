@@ -70,7 +70,6 @@
   },
   "devDependencies": {
     "@rollup/plugin-inject": "^5.0.5",
-    "@types/bn.js": "^5.2.0",
     "@types/node": "^20.12.7",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
