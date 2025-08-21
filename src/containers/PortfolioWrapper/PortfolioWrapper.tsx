@@ -29,7 +29,7 @@ import {
   positionListSwitcher,
   positionsWithPoolsData,
   positionWithPoolData,
-  prices,
+  prices as priceData,
   shouldDisable,
   singlePositionData
 } from '@store/selectors/positions'
@@ -95,7 +95,7 @@ const PortfolioWrapper = () => {
   const currentNetwork = useSelector(network)
   const tokensList = useSelector(swapTokens)
   const isBalanceLoading = useSelector(balanceLoading)
-  const pricesData = useSelector(prices)
+  const pricesData = useSelector(priceData)
   const ethBalance = useSelector(balance)
   const [isHiding, setIsHiding] = useState(false)
   const [showBanner, setShowBanner] = useState(() => {
@@ -470,7 +470,7 @@ const PortfolioWrapper = () => {
         )
       )
   }
-
+  const [prices, setPrices] = useState<Record<string, number>>({})
   const [positionId, setPositionId] = useState('')
   const [tokenXPriceData, setTokenXPriceData] = useState<TokenPriceData | undefined>(undefined)
   const [tokenYPriceData, setTokenYPriceData] = useState<TokenPriceData | undefined>(undefined)
@@ -559,14 +559,14 @@ const PortfolioWrapper = () => {
       return
     }
     const xAddr = position.tokenX.assetAddress.toString()
-    getTokenPrice(xAddr, currentNetwork)
-      .then(data => setTokenXPriceData({ price: data ?? 0 }))
-      .catch(() => setTokenXPriceData(getMockedTokenPrice(position.tokenX.symbol, currentNetwork)))
+    setTokenXPriceData({
+      price: prices[xAddr] ?? getMockedTokenPrice(position.tokenX.symbol, currentNetwork)
+    })
 
     const yAddr = position.tokenY.assetAddress.toString()
-    getTokenPrice(yAddr, currentNetwork)
-      .then(data => setTokenYPriceData({ price: data ?? 0 }))
-      .catch(() => setTokenYPriceData(getMockedTokenPrice(position.tokenY.symbol, currentNetwork)))
+    setTokenYPriceData({
+      price: prices[yAddr] ?? getMockedTokenPrice(position.tokenY.symbol, currentNetwork)
+    })
   }, [position?.id])
 
   const min = useMemo(
@@ -675,8 +675,45 @@ const PortfolioWrapper = () => {
     setIsChangeLiquidityModalShown(true)
   }
 
+  useEffect(() => {
+    if (Object.keys(prices).length > 0) {
+      dispatch(actions.setPrices(prices))
+    }
+  }, [prices])
+  const positionList = [...list, ...lockedList]
+  useEffect(() => {
+    const loadPrices = async () => {
+      const uniqueTokens = new Set<string>()
+      positionList.forEach(position => {
+        uniqueTokens.add(position.tokenX.assetAddress.toString())
+        uniqueTokens.add(position.tokenY.assetAddress.toString())
+      })
+
+      const tokenArray = Array.from(uniqueTokens)
+      const priceResults = await Promise.all(
+        tokenArray.map(async token => ({
+          token,
+          price: await getTokenPrice(token, currentNetwork)
+        }))
+      )
+
+      const newPrices = priceResults.reduce(
+        (acc, { token, price }) => ({
+          ...acc,
+          [token]: price ?? 0
+        }),
+        {}
+      )
+
+      setPrices(newPrices)
+    }
+
+    loadPrices()
+  }, [positionList.length])
+
   return isConnected ? (
     <Portfolio
+      prices={prices}
       handleCloseBanner={handleBannerClose}
       showBanner={showBanner}
       isHiding={isHiding}
