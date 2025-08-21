@@ -7,7 +7,7 @@ import { makeStyles } from 'tss-react/mui'
 export const useStyles = makeStyles<{ roundIcon?: boolean }>()((_theme, { roundIcon = true }) => ({
   customSnackbarContainer: {
     bottom: '90px !important',
-    zIndex: '100 !important'
+    zIndex: '10000 !important'
   },
   wrapper: {
     display: 'flex',
