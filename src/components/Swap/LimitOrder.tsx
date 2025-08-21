@@ -15,12 +15,9 @@ import {
 import {
   addressToTicker,
   calcPriceByTickIndex,
-  calculateSqrtPriceFromBalance,
-  calculateTickFromBalance,
   convertBalanceToBN,
   initialXtoY,
   nearestTickIndex,
-  priceToSqrtPrice,
   printBN,
   ROUTES,
   trimZeros
@@ -38,18 +35,14 @@ import { PublicKey } from '@solana/web3.js'
 import { refreshIcon, swapArrowsIcon } from '@static/icons'
 import { useNavigate } from 'react-router-dom'
 import BuyTokenInput from './LimitOrderComponents/BuyTokenInput/BuyTokenInput'
-import { LIMIT_ORDER_TESTNET_POOL_WHITELIST, Market, Pair } from '@invariant-labs/sdk-eclipse'
+import { Market, Pair } from '@invariant-labs/sdk-eclipse'
 import { theme } from '@static/theme'
-
-import { alignTickToSpacing, priceToTickInRange } from '@invariant-labs/sdk-eclipse/src/tick'
 import { OrderBook, PoolStructure } from '@invariant-labs/sdk-eclipse/lib/market'
 import {
   limitOrderQuoteByInputToken,
   limitOrderQuoteByOutputToken
 } from '@invariant-labs/sdk-eclipse/src/limit-order'
 import { PoolWithAddress } from '@store/reducers/pools'
-import { tokensData } from '@store/selectors/stats'
-
 export interface Pools {
   tokenX: PublicKey
   tokenY: PublicKey
@@ -196,11 +189,6 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
     return isXtoY
   }, [tokenFromIndex, orderBookPair, tokens.length])
 
-  console.log(isXtoYOrderBook)
-
-  console.log(tokenFromIndex !== null ? tokens[tokenFromIndex].symbol : '')
-  console.log(tokenToIndex !== null ? tokens[tokenToIndex].symbol : '')
-
   const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT = useMemo(() => {
     if (network === NetworkType.Testnet) {
       return WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_TEST
@@ -285,14 +273,6 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
     }
   }, [tokenFromIndex, tokenToIndex])
 
-  // const getIsXToY = (fromToken: PublicKey, toToken: PublicKey) => {
-  //   const swapPool = pools.find(
-  //     pool =>
-  //       (fromToken.equals(pool.tokenX) && toToken.equals(pool.tokenY)) ||
-  //       (fromToken.equals(pool.tokenY) && toToken.equals(pool.tokenX))
-  //   )
-  //   return !!swapPool
-  // }
   const isLimitOrderBetterThanSwap = (
     tickIndex: number,
     xToY: boolean,
@@ -308,11 +288,6 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
     return isLimitOrderBetterThanSwap(priceTickIndex, isXtoYOrderBook, poolData)
   }, [priceTickIndex, isXtoYOrderBook, poolData])
 
-  console.log(isXtoYOrderBook)
-  console.log(priceTickIndex)
-  console.log(poolData?.currentTickIndex)
-
-  console.log(isLimitOrderAvailable)
   const getStateMessage = () => {
     if (tokenFromIndex !== null && tokenToIndex !== null && amountFrom === '' && amountTo === '') {
       return 'Enter amount'
@@ -447,14 +422,14 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
     tokenToIndex
   ])
 
-  const unknownFrom = tokens[tokenFromIndex ?? '']?.isUnknown
-  const unknownTo = tokens[tokenToIndex ?? '']?.isUnknown
-  const isUnkown = unknownFrom || unknownTo
-  const showOracle = oraclePriceDiffPercentage >= 10 && errorVisible
+  // const unknownFrom = tokens[tokenFromIndex ?? '']?.isUnknown
+  // const unknownTo = tokens[tokenToIndex ?? '']?.isUnknown
+  // const isUnkown = unknownFrom || unknownTo
+  // const showOracle = oraclePriceDiffPercentage >= 10 && errorVisible
 
-  const warningsCount = [showOracle, isUnkown].filter(Boolean).length
+  // const warningsCount = [showOracle, isUnkown].filter(Boolean).length
 
-  const validateTokenPrice = (input: number) => {
+  const validateTokenPrice = (input: number, reverseXtoY?: boolean) => {
     if (
       tokenFromIndex === null ||
       tokenToIndex === null ||
@@ -466,14 +441,14 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
     const nearestTick = nearestTickIndex(
       input,
       orderBookPair?.pair.tickSpacing,
-      isXtoYOrderBook,
+      reverseXtoY ? !isXtoYOrderBook : isXtoYOrderBook,
       tokens[tokenFromIndex].decimals,
       tokens[tokenToIndex].decimals
     )
 
     const price = calcPriceByTickIndex(
       nearestTick,
-      isXtoYOrderBook,
+      reverseXtoY ? !isXtoYOrderBook : isXtoYOrderBook,
       tokens[tokenFromIndex].decimals,
       tokens[tokenToIndex].decimals
     )
@@ -481,8 +456,8 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
     return { price, nearestTick }
   }
 
-  const handleSetTokenPrice = (priceInput: number) => {
-    const { price, nearestTick } = validateTokenPrice(priceInput)
+  const handleSetTokenPrice = (priceInput: number, reverseXtoY?: boolean) => {
+    const { price, nearestTick } = validateTokenPrice(priceInput, reverseXtoY)
 
     if (
       tokenFromIndex === null ||
@@ -497,31 +472,6 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
     setValidatedTokenPriceAmount(price.toString())
 
     return price
-
-    // const sqrtPrice = calculateSqrtPriceFromBalance(
-    //   priceInput,
-    //   orderBookPair?.pair.tickSpacing,
-    //   isXtoY,
-    //   tokens[tokenFromIndex].decimals,
-    //   tokens[tokenToIndex].decimals
-    // )
-
-    // const priceTick = calculateTickFromBalance(
-    //   priceInput,
-    //   orderBookPair?.pair.tickSpacing,
-    //   isXtoY,
-    //   tokens[tokenFromIndex].decimals,
-    //   tokens[tokenToIndex].decimals
-    // )
-
-    // const alignedTick = alignTickToSpacing(priceTick, orderBookPair?.pair.tickSpacing)
-
-    // const price2 = calcPriceByTickIndex(
-    //   alignedTick,
-    //   isXtoY,
-    //   tokens[tokenFromIndex].decimals,
-    //   tokens[tokenToIndex].decimals
-    // )
   }
 
   return (
@@ -699,7 +649,14 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
                 }, 10)
 
                 if (validatedTokenPriceAmount === '') return
-                handleSetTokenPrice(1 / +validatedTokenPriceAmount)
+
+                console.log(validatedTokenPriceAmount)
+
+                console.log(1 / +validatedTokenPriceAmount)
+                console.log(validatedTokenPriceAmount)
+                handleSetTokenPrice(1 / +validatedTokenPriceAmount, true)
+
+                console.log(1 / +validatedTokenPriceAmount)
 
                 setTokenPriceAmount((1 / +validatedTokenPriceAmount).toString())
               }}>

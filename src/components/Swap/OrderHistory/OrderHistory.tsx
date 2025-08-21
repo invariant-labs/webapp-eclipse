@@ -14,6 +14,7 @@ import { Pair } from '@invariant-labs/sdk-eclipse'
 import { PublicKey } from '@solana/web3.js'
 import { BN } from '@coral-xyz/anchor'
 import { UserOrdersFullData } from '@store/consts/types'
+import { Status } from '@store/reducers/solanaWallet'
 
 interface IProps {
   handleSwitcher: (e: OrdersHistory) => void
@@ -25,6 +26,7 @@ interface IProps {
   tokensDict: Record<string, SwapToken>
   userOrders: UserOrdersFullData[]
   handleRemoveOrder: (pair: Pair, orderKey: PublicKey, amount: BN) => void
+  walletStatus: Status
 }
 
 const OrderHistory: React.FC<IProps> = ({
@@ -36,7 +38,8 @@ const OrderHistory: React.FC<IProps> = ({
   setSelectedFilters,
   tokensDict,
   userOrders,
-  handleRemoveOrder
+  handleRemoveOrder,
+  walletStatus
 }) => {
   const { classes } = useStyles()
 
@@ -110,7 +113,9 @@ const OrderHistory: React.FC<IProps> = ({
               alignItems={'center'}
               minHeight={'100px'}>
               <Typography style={typography.heading4} color={colors.invariant.text}>
-                Create your first limit order
+                {walletStatus !== Status.Initialized
+                  ? 'Connect wallet to see your orderes'
+                  : 'Create your first limit order'}
               </Typography>
             </Grid>
           )}

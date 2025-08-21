@@ -368,6 +368,7 @@ export const WrappedLimitOrder = ({
               })
             )
           }}
+          walletStatus={walletStatus}
         />
       )}
     </>
