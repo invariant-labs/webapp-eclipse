@@ -577,7 +577,7 @@ export function* getMarketBitzStats(): Generator {
 
     const bitzAmount = totalBitzSupply - sBitzAmount
 
-    const marketCapSBitz = (price ?? 0) * stakedTokenSupplyAmount
+    const marketCapSBitz = (Number(price) ?? 0) * stakedTokenSupplyAmount
 
     yield* put(
       actions.setCurrentStats({
