@@ -121,6 +121,7 @@ export interface ILimitOrder {
   }
   orderBook: OrderBook | null
   poolData?: PoolWithAddress
+  isLoading: boolean
 }
 
 export const LimitOrder: React.FC<ILimitOrder> = ({
@@ -159,7 +160,8 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
   handleAddOrder,
   orderBookPair,
   orderBook,
-  poolData
+  poolData,
+  isLoading
 }) => {
   const { classes, cx } = useStyles()
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
@@ -322,15 +324,9 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
       return 'Set higher price'
     }
 
-    if (false) {
+    if (isLoading) {
       return 'Loading'
     }
-
-    // if (
-    //   !getIsXToY(tokens[tokenFromIndex].assetAddress, tokens[tokenToIndex].assetAddress) &&
-    // ) {
-    //   return "Route doesn't exist."
-    // }
 
     if (
       convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals).gt(
@@ -359,7 +355,7 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
       return 'Insufficient amount'
     }
 
-    return 'Exchange'
+    return 'Add limit order'
   }
 
   useEffect(() => {
@@ -936,11 +932,11 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
                 className={
                   getStateMessage() === 'Connect a wallet'
                     ? `${classes.swapButton}`
-                    : getStateMessage() === 'Exchange' && progress === 'none'
+                    : getStateMessage() === 'Add limit order' && progress === 'none'
                       ? `${classes.swapButton} ${classes.buttonSwapActive}`
                       : classes.swapButton
                 }
-                disabled={getStateMessage() !== 'Exchange' || progress !== 'none'}
+                disabled={getStateMessage() !== 'Add limit order' || progress !== 'none'}
                 onClick={() => {
                   if (tokenFromIndex === null || tokenToIndex === null) return
                 }}
@@ -953,11 +949,11 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
               className={
                 getStateMessage() === 'Connect a wallet'
                   ? `${classes.swapButton}`
-                  : getStateMessage() === 'Exchange' && progress === 'none'
+                  : getStateMessage() === 'Add limit order' && progress === 'none'
                     ? `${classes.swapButton} ${classes.buttonSwapActive}`
                     : classes.swapButton
               }
-              disabled={getStateMessage() !== 'Exchange' || progress !== 'none'}
+              disabled={getStateMessage() !== 'Add limit order' || progress !== 'none'}
               onClick={() => {
                 if (
                   tokenFromIndex === null ||

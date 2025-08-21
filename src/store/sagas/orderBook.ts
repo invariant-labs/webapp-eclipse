@@ -168,6 +168,8 @@ export function* handleAddLimitOrder(action: PayloadAction<IncreaseLimitOrderLiq
     })
     console.log(txid)
     if (!txid.length) {
+      yield put(actions.setOrderSuccess(false))
+
       yield put(
         snackbarsActions.add({
           message: 'Adding limit order failed. Please try again',
@@ -216,7 +218,7 @@ export function* handleAddLimitOrder(action: PayloadAction<IncreaseLimitOrderLiq
             return
           }
         }
-
+        console.log('test')
         yield put(
           snackbarsActions.add({
             message: 'Limit order added',
@@ -225,7 +227,7 @@ export function* handleAddLimitOrder(action: PayloadAction<IncreaseLimitOrderLiq
             txid
           })
         )
-
+        yield put(actions.setOrderSuccess(true))
         const meta = txDetails.meta
 
         if (meta?.innerInstructions && meta.innerInstructions) {
@@ -255,6 +257,7 @@ export function* handleAddLimitOrder(action: PayloadAction<IncreaseLimitOrderLiq
           }
         }
       } else {
+        console.log('test')
         yield put(
           snackbarsActions.add({
             message: 'Limit order added',
@@ -263,6 +266,8 @@ export function* handleAddLimitOrder(action: PayloadAction<IncreaseLimitOrderLiq
             txid
           })
         )
+
+        yield put(actions.setOrderSuccess(true))
       }
     }
 
@@ -276,6 +281,8 @@ export function* handleAddLimitOrder(action: PayloadAction<IncreaseLimitOrderLiq
     yield put(snackbarsActions.remove(loaderAddOrder))
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
+
+    yield put(actions.setOrderSuccess(false))
 
     let msg: string = ''
     if (error instanceof SendTransactionError) {

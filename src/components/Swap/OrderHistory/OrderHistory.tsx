@@ -27,6 +27,7 @@ interface IProps {
   userOrders: UserOrdersFullData[]
   handleRemoveOrder: (pair: Pair, orderKey: PublicKey, amount: BN) => void
   walletStatus: Status
+  isLoading: boolean
 }
 
 const OrderHistory: React.FC<IProps> = ({
@@ -39,7 +40,8 @@ const OrderHistory: React.FC<IProps> = ({
   tokensDict,
   userOrders,
   handleRemoveOrder,
-  walletStatus
+  walletStatus,
+  isLoading
 }) => {
   const { classes } = useStyles()
 

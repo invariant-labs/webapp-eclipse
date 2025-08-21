@@ -25,6 +25,8 @@ import { ordersHistory, swapSearch } from '@store/selectors/navigation'
 import { ISearchToken } from '@common/FilterSearch/FilterSearch'
 import {
   currentOrderBook,
+  isLoadingOrderbook,
+  loadingState,
   UserOrdersWithTokensData,
   userOrdersWithTokensData
 } from '@store/selectors/orderBoook'
@@ -136,8 +138,33 @@ export const WrappedLimitOrder = ({
   const searchParamsToken = useSelector(swapSearch)
   const orderBook = useSelector(currentOrderBook)
   const userOrders = useSelector(userOrdersWithTokensData)
-
+  const isLoading = useSelector(isLoadingOrderbook)
   const { setTokenFrom, setTokenTo, tokenFrom, tokenTo } = tokensFromState
+
+  const { inProgress, success } = useSelector(loadingState)
+  const { progress, setProgress } = progressState
+
+  useEffect(() => {
+    let timeoutId1: NodeJS.Timeout
+    let timeoutId2: NodeJS.Timeout
+
+    if (!inProgress && progress === 'progress') {
+      setProgress(success ? 'approvedWithSuccess' : 'approvedWithFail')
+
+      timeoutId1 = setTimeout(() => {
+        setProgress(success ? 'success' : 'failed')
+      }, 1000)
+
+      timeoutId2 = setTimeout(() => {
+        setProgress('none')
+      }, 3000)
+    }
+
+    return () => {
+      clearTimeout(timeoutId1)
+      clearTimeout(timeoutId2)
+    }
+  }, [success, inProgress])
 
   const userOrdersFullData: UserOrdersFullData[] = useMemo(() => {
     if (!orderBook) return []
@@ -326,11 +353,9 @@ export const WrappedLimitOrder = ({
         swapState={swapState}
         handleAddOrder={(amount, tickIndex, xToY) => {
           if (!tokenFrom || !tokenTo || !orderBookPair || !poolData) return
-          console.log('test')
 
-          console.log(tickIndex)
-          console.log(xToY)
-          console.log(poolData?.currentTickIndex)
+          setProgress('progress')
+
           dispatch(
             actions.addLimitOrder({
               amount,
@@ -349,6 +374,7 @@ export const WrappedLimitOrder = ({
         }
         orderBook={orderBook}
         poolData={poolData}
+        isLoading={isLoading}
       />
       {orderBookPair && (
         <OrderHistory
@@ -373,6 +399,7 @@ export const WrappedLimitOrder = ({
             )
           }}
           walletStatus={walletStatus}
+          isLoading={isLoading}
         />
       )}
     </>

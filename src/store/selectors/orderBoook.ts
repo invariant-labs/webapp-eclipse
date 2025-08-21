@@ -6,10 +6,10 @@ import { swapTokensDict } from './solanaWallet'
 
 const store = (s: AnyProps) => s[orderBookName] as IOrderBook
 
-export const { currentOrderBook, userLimitOrders } = keySelectors(store, [
-  'currentOrderBook',
-  'userLimitOrders'
-])
+export const { currentOrderBook, userLimitOrders, isLoadingOrderbook, loadingState } = keySelectors(
+  store,
+  ['currentOrderBook', 'userLimitOrders', 'isLoadingOrderbook', 'loadingState']
+)
 
 export const userOrdersWithTokensData = createSelector(
   userLimitOrders,
@@ -39,6 +39,11 @@ export const userOrdersWithTokensData = createSelector(
 
 export type UserOrdersWithTokensData = ReturnType<typeof userOrdersWithTokensData>
 
-export const snackbarsSelectors = { currentOrderBook, userLimitOrders }
+export const snackbarsSelectors = {
+  currentOrderBook,
+  userLimitOrders,
+  isLoadingOrderbook,
+  loadingState
+}
 
 export default snackbarsSelectors

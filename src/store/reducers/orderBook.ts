@@ -17,8 +17,12 @@ export interface IOrderBook {
     account: LimitOrder
     publicKey: PublicKey
   }[]
-  success: boolean
-  inProgress: boolean
+
+  loadingState: {
+    inProgress: boolean
+    success: boolean
+  }
+  isLoadingOrderbook: boolean
 }
 
 export interface IAddOrder extends IncreaseLimitOrderLiquidity {
@@ -33,8 +37,11 @@ export interface AddOrderPayload {
 }
 const defaultStatus: IOrderBook = {
   currentOrderBook: null,
-  success: false,
-  inProgress: false,
+  loadingState: {
+    inProgress: false,
+    success: true
+  },
+  isLoadingOrderbook: false,
   userLimitOrders: []
 }
 export const orderBookName = 'orderBook'
@@ -44,19 +51,20 @@ const orderBookSlice = createSlice({
   initialState: defaultStatus,
   reducers: {
     getOrderBook(state, _action: PayloadAction<AddOrderPayload>) {
+      state.isLoadingOrderbook = true
       return state
     },
     setOrderBook(state, action: PayloadAction<OrderBook | null>) {
       state.currentOrderBook = action.payload
+      state.isLoadingOrderbook = false
 
       return state
     },
     addLimitOrder(state, _action: PayloadAction<IAddOrder>) {
-      state.inProgress = true
+      state.loadingState.inProgress = true
       return state
     },
     removeLimitOrder(state, _action: PayloadAction<IRemoveOrder>) {
-      state.inProgress = true
       return state
     },
     getUserOrders(state) {
@@ -76,8 +84,8 @@ const orderBookSlice = createSlice({
       return state
     },
     setOrderSuccess(state, action: PayloadAction<boolean>) {
-      state.inProgress = false
-      state.success = action.payload
+      state.loadingState.inProgress = false
+      state.loadingState.success = action.payload
       return state
     }
   }
