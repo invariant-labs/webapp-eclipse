@@ -1,7 +1,6 @@
 import { PublicKey } from '@solana/web3.js'
-import { NetworkType } from '@store/consts/static'
 import { SwapToken } from '@store/selectors/solanaWallet'
-import { printBN, getTokenPrice, ensureError } from '@utils/utils'
+import { printBN } from '@utils/utils'
 import { useEffect, useState } from 'react'
 
 export interface ProcessedToken {
@@ -15,9 +14,9 @@ export interface ProcessedToken {
 }
 
 export const useProcessedTokens = (
+  prices: Record<string, number>,
   tokensList: SwapToken[],
-  isBalanceLoading: boolean,
-  network: NetworkType
+  isBalanceLoading: boolean
 ) => {
   const [processedTokens, setProcessedTokens] = useState<ProcessedToken[]>([])
   const [isProcesing, setIsProcesing] = useState<boolean>(true)
@@ -32,15 +31,7 @@ export const useProcessedTokens = (
       const processed = await Promise.all(
         nonZeroTokens.map(async token => {
           const balance = Number(printBN(token.balance, token.decimals).replace(',', '.'))
-
-          let price = 0
-          try {
-            const priceData = await getTokenPrice(token.assetAddress.toString() ?? '', network)
-            price = priceData ?? 0
-          } catch (e: unknown) {
-            const error = ensureError(e)
-            console.error(`Failed to fetch price for ${token.symbol}:`, error)
-          }
+          const priceData = prices[token.assetAddress.toString()]
 
           return {
             id: token.assetAddress,
@@ -49,7 +40,7 @@ export const useProcessedTokens = (
             isUnknown: token.isUnknown,
             decimal: token.decimals,
             amount: balance,
-            value: balance * price
+            value: balance * priceData
           }
         })
       )

@@ -85,7 +85,7 @@ const PortfolioWrapper = () => {
   const BANNER_HIDE_DURATION = 1000 * 60 * 60 * 24 // 24 hours
   const { classes } = useStyles()
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
-
+  const [prices, setPrices] = useState<Record<string, number>>({})
   const walletAddress = useSelector(address)
   const list = useSelector(positionsWithPoolsData)
   const lockedList = useSelector(lockedPositionsWithPoolsData)
@@ -115,11 +115,7 @@ const PortfolioWrapper = () => {
   const positionListAlignment = useSelector(positionListSwitcher)
   const overviewSelectedTab = useSelector(overviewSwitch)
   const searchParamsToken = useSelector(portfolioSearch)
-  const { processedTokens, isProcesing } = useProcessedTokens(
-    tokensList,
-    isBalanceLoading,
-    currentNetwork
-  )
+  const { processedTokens, isProcesing } = useProcessedTokens(prices, tokensList, isBalanceLoading)
 
   const [maxToken] = [...processedTokens].sort((a, b) => b.value - a.value)
 
@@ -470,7 +466,6 @@ const PortfolioWrapper = () => {
         )
       )
   }
-  const [prices, setPrices] = useState<Record<string, number>>({})
   const [positionId, setPositionId] = useState('')
   const [tokenXPriceData, setTokenXPriceData] = useState<TokenPriceData | undefined>(undefined)
   const [tokenYPriceData, setTokenYPriceData] = useState<TokenPriceData | undefined>(undefined)
@@ -680,36 +675,26 @@ const PortfolioWrapper = () => {
       dispatch(actions.setPrices(prices))
     }
   }, [prices])
-  const positionList = [...list, ...lockedList]
+
   useEffect(() => {
     const loadPrices = async () => {
-      const uniqueTokens = new Set<string>()
-      positionList.forEach(position => {
-        uniqueTokens.add(position.tokenX.assetAddress.toString())
-        uniqueTokens.add(position.tokenY.assetAddress.toString())
+      const tokenArray = tokensList.filter(token => {
+        const balance = printBN(token.balance, token.decimals)
+        return parseFloat(balance) > 0
       })
-
-      const tokenArray = Array.from(uniqueTokens)
       const priceResults = await Promise.all(
         tokenArray.map(async token => ({
           token,
-          price: await getTokenPrice(token, currentNetwork)
+          price: (await getTokenPrice(token.address.toString(), currentNetwork)) ?? 0
         }))
       )
-
-      const newPrices = priceResults.reduce(
-        (acc, { token, price }) => ({
-          ...acc,
-          [token]: price ?? 0
-        }),
-        {}
-      )
-
+      const newPrices: Record<string, number> = {}
+      for (const { token, price } of priceResults) newPrices[token.address.toString()] = price ?? 0
       setPrices(newPrices)
     }
 
     loadPrices()
-  }, [positionList.length])
+  }, [tokensList])
 
   return isConnected ? (
     <Portfolio
