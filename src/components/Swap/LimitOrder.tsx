@@ -7,7 +7,6 @@ import {
   DEFAULT_TOKEN_DECIMAL,
   inputTarget,
   NetworkType,
-  REFRESHER_INTERVAL,
   WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_MAIN,
   WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_TEST,
   WRAPPED_ETH_ADDRESS
@@ -39,7 +38,6 @@ import { Market, Pair } from '@invariant-labs/sdk-eclipse'
 import { theme } from '@static/theme'
 import { OrderBook, PoolStructure } from '@invariant-labs/sdk-eclipse/lib/market'
 import {
-  isLimitOrderBetterThanSwap,
   limitOrderQuoteByInputToken,
   limitOrderQuoteByOutputToken
 } from '@invariant-labs/sdk-eclipse/src/limit-order'
@@ -361,47 +359,6 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
     onAmountSet: setAmountFrom,
     onSelectInput: () => setInputRef(inputTarget.FROM)
   })
-
-  const oraclePriceDiffPercentage = useMemo(() => {
-    if (!tokenFromPriceData || !tokenToPriceData) return 0
-
-    const tokenFromValue = tokenFromPriceData.price * +amountFrom
-    const tokenToValue = tokenToPriceData.price * +amountTo
-    if (tokenFromValue === 0 || tokenToValue === 0) return 0
-    if (tokenToValue > tokenFromValue) return 0
-
-    return Math.abs((tokenFromValue - tokenToValue) / tokenFromValue) * 100
-  }, [tokenFromPriceData, tokenToPriceData, amountFrom, amountTo])
-
-  const [errorVisible, setErrorVisible] = useState(false)
-
-  useEffect(() => {
-    const hasUnknown =
-      tokens[tokenFromIndex ?? '']?.isUnknown || tokens[tokenToIndex ?? '']?.isUnknown
-
-    const riskWarning = !priceToLoading && !priceFromLoading
-
-    if (hasUnknown) {
-      setErrorVisible(true)
-      return
-    }
-    const id = setTimeout(() => setErrorVisible(riskWarning), 150)
-    return () => clearTimeout(id)
-  }, [
-    oraclePriceDiffPercentage,
-    priceFromLoading,
-    priceToLoading,
-    tokens,
-    tokenFromIndex,
-    tokenToIndex
-  ])
-
-  // const unknownFrom = tokens[tokenFromIndex ?? '']?.isUnknown
-  // const unknownTo = tokens[tokenToIndex ?? '']?.isUnknown
-  // const isUnkown = unknownFrom || unknownTo
-  // const showOracle = oraclePriceDiffPercentage >= 10 && errorVisible
-
-  // const warningsCount = [showOracle, isUnkown].filter(Boolean).length
 
   const validateTokenPrice = (input: number, reverseXtoY?: boolean) => {
     if (
@@ -836,15 +793,15 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
 
                   setTokenPriceAmount(price.toString())
 
-                  if (
-                    amountFrom !== '' &&
-                    amountFrom !== '0' &&
-                    isXtoYOrderBook !== undefined &&
-                    orderBookPair &&
-                    orderBook
-                  ) {
+                  if (isXtoYOrderBook !== undefined && orderBookPair && orderBook) {
+                    const parsedAmountFrom = +amountFrom ? amountFrom : '1'
+
+                    if (!+amountFrom || amountFrom === '0') {
+                      setAmountFrom(parsedAmountFrom)
+                    }
+
                     const tokenFromBNValue = convertBalanceToBN(
-                      amountFrom,
+                      parsedAmountFrom,
                       tokens[tokenFromIndex].decimals
                     )
 

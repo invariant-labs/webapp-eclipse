@@ -19,7 +19,6 @@ import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { convertAPYValue, shortenAddress } from '@utils/uiUtils'
 import { VariantType } from 'notistack'
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
-
 import { BN } from '@coral-xyz/anchor'
 import { useDispatch } from 'react-redux'
 import { actions } from '@store/reducers/navigation'

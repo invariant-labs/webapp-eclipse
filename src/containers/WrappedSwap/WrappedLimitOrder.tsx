@@ -4,14 +4,13 @@ import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
 import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { PublicKey } from '@solana/web3.js'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { TokenPriceData, UserOrdersFullData } from '@store/consts/types'
 import { VariantType } from 'notistack'
 import { BN } from '@coral-xyz/anchor'
 import LimitOrder from '@components/Swap/LimitOrder'
 import {
-  calculatePriceSqrt,
   DENOMINATOR,
   LIMIT_ORDER_TESTNET_POOL_WHITELIST,
   Market,
@@ -28,20 +27,14 @@ import {
   isLoadingOrderbook,
   isLoadingUserOrders,
   loadingState,
-  UserOrdersWithTokensData,
   userOrdersWithTokensData
 } from '@store/selectors/orderBoook'
 import {
-  DecreaseOrderLiquiditySimulationResult,
   DecreaseOrderLiquiditySimulationStatus,
-  getLimitOrderOutputAmount,
   simulateDecreaseOrderLiquidity
 } from '@invariant-labs/sdk-eclipse/src/limit-order'
 import { calcPriceByTickIndex, printBN } from '@utils/utils'
-import { LimitOrder as LimitOrderType, OrderBook } from '@invariant-labs/sdk-eclipse/lib/market'
-import { U64_MAX } from '@invariant-labs/sdk-eclipse/lib/math'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
-import { isLoadingLatestPoolsForTransaction } from '@store/selectors/pools'
 
 type Props = {
   walletStatus: Status
@@ -55,10 +48,6 @@ type Props = {
     setTokenTo: React.Dispatch<React.SetStateAction<PublicKey | null>>
   }
   isBalanceLoading: boolean
-  progressState: {
-    progress: ProgressState
-    setProgress: React.Dispatch<React.SetStateAction<ProgressState>>
-  }
   ethBalance: BN
   market: Market
   triggerFetchPrices: () => void
@@ -114,7 +103,6 @@ export const WrappedLimitOrder = ({
   networkType,
   priceFromLoading,
   priceToLoading,
-  progressState,
   setHideUnknownTokensValue,
   tokensFromState,
   tokensDict,
@@ -143,12 +131,9 @@ export const WrappedLimitOrder = ({
   const loadingOrderbook = useSelector(isLoadingOrderbook)
   const loadingUserOrderes = useSelector(isLoadingUserOrders)
   const { setTokenFrom, setTokenTo, tokenFrom, tokenTo } = tokensFromState
-
   const { inProgress, success } = useSelector(loadingState)
-  const { progress, setProgress } = progressState
-  const isFetchingNewPool = useSelector(isLoadingLatestPoolsForTransaction)
+  const [progress, setProgress] = useState<ProgressState>('none')
 
-  console.log(isFetchingNewPool)
   useEffect(() => {
     let timeoutId1: NodeJS.Timeout
     let timeoutId2: NodeJS.Timeout
@@ -356,7 +341,7 @@ export const WrappedLimitOrder = ({
           dispatch(walletActions.disconnect())
         }}
         onRefresh={onRefresh}
-        progress={progressState.progress}
+        progress={progress}
         walletStatus={walletStatus}
         rateState={rateState}
         tokensState={tokensState}

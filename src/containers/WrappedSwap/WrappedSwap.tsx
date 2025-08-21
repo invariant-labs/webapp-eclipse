@@ -13,14 +13,13 @@ import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import { actions } from '@store/reducers/swap'
 import {
   isLoadingLatestPoolsForTransaction,
-  poolsArraySortedByFees,
   tickMaps,
   nearestPoolTicksForPair
 } from '@store/selectors/pools'
 import { accounts as solanaAccounts, SwapToken } from '@store/selectors/solanaWallet'
 import { swap as swapPool, accounts, isLoading } from '@store/selectors/swap'
 import { PublicKey } from '@solana/web3.js'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { TokenPriceData } from '@store/consts/types'
 import { VariantType } from 'notistack'
@@ -42,10 +41,6 @@ type Props = {
     setTokenTo: React.Dispatch<React.SetStateAction<PublicKey | null>>
   }
   isBalanceLoading: boolean
-  progressState: {
-    progress: ProgressState
-    setProgress: React.Dispatch<React.SetStateAction<ProgressState>>
-  }
   ethBalance: BN
   market: Market
   triggerFetchPrices: () => void
@@ -101,7 +96,6 @@ export const WrappedSwap = ({
   networkType,
   priceFromLoading,
   priceToLoading,
-  progressState,
   setHideUnknownTokensValue,
   tokensFromState,
   tokensDict,
@@ -131,7 +125,7 @@ export const WrappedSwap = ({
   const promotedSwapPairs = useSelector(swapPairs)
   const priceFeeds = useSelector(feeds)
 
-  const { progress, setProgress } = progressState
+  const [progress, setProgress] = useState<ProgressState>('none')
   const { setTokenFrom, setTokenTo, tokenFrom, tokenTo } = tokensFromState
 
   useEffect(() => {

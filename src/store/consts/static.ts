@@ -723,11 +723,11 @@ export const ADDRESSES_TO_REVERT_TOKEN_PAIRS: string[] = [
   USDC_MAIN.address.toString(),
   USDT_MAIN.address.toString(),
   TUSD_MAIN.address.toString(),
+  WETH_MAIN.address.toString(),
+  TETH_MAIN.address.toString(),
   SOL_MAIN.address.toString(),
   KYSOL_MAIN.address.toString(),
   EZSOL_MAIN.address.toString(),
-  WETH_MAIN.address.toString(),
-  TETH_MAIN.address.toString(),
   TIA_MAIN.address.toString(),
   BITZ_MAIN.address.toString(),
   sBITZ_MAIN.address.toString()

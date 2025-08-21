@@ -1,6 +1,6 @@
 import { Box, Grid, Input, Typography } from '@mui/material'
 import loadingAnimation from '@static/gif/loading.gif'
-import { formatNumberWithoutSuffix, getScaleFromString } from '@utils/utils'
+import { formatNumberWithoutSuffix } from '@utils/utils'
 import React, { CSSProperties, useRef } from 'react'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import useStyles from './style'
@@ -61,17 +61,10 @@ export const BuyTokenInput: React.FC<IProps> = ({
       const caretPosition = e.target.selectionStart
 
       let parsed = inputValue
-      const zerosRegex = /^0+\d+\.?\d*$/
-      if (zerosRegex.test(parsed)) {
-        parsed = parsed.replace(/^0+/, '')
-      }
+
       const dotRegex = /^\.\d*$/
       if (dotRegex.test(parsed)) {
         parsed = `0${parsed}`
-      }
-      if (getScaleFromString(parsed) > decimalsLimit) {
-        const parts = parsed.split('.')
-        parsed = parts[0] + '.' + parts[1].slice(0, decimalsLimit)
       }
 
       const diff = startValue.length - parsed.length

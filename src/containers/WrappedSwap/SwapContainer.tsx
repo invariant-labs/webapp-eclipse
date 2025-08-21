@@ -14,7 +14,6 @@ import { isLoadingPathTokens, poolsArraySortedByFees } from '@store/selectors/po
 import { network, rpcAddress, timeoutError } from '@store/selectors/solanaConnection'
 import { useEffect, useState } from 'react'
 import { PublicKey } from '@solana/web3.js'
-import { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 import { getEclipseWallet } from '@utils/web3/wallet'
 import { getMarketProgramSync } from '@utils/web3/programs/amm'
 import { IWallet } from '@invariant-labs/sdk-eclipse'
@@ -71,7 +70,6 @@ export const SwapContainer = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const market = getMarketProgramSync(networkType, rpc, wallet as IWallet)
 
   const [block, setBlock] = useState(state?.referer === 'stats')
-  const [progress, setProgress] = useState<ProgressState>('none')
   const [tokenFrom, setTokenFrom] = useState<PublicKey | null>(null)
   const [tokenTo, setTokenTo] = useState<PublicKey | null>(null)
   const [inputRef, setInputRef] = useState<string>(inputTarget.DEFAULT)
@@ -85,6 +83,7 @@ export const SwapContainer = ({ initialTokenFrom, initialTokenTo }: Props) => {
         )
       : false
   )
+
   const [lockAnimation, setLockAnimation] = useState<boolean>(false)
   const [swap, setSwap] = useState<boolean | null>(null)
   const [rotates, setRotates] = useState<number>(0)
@@ -272,7 +271,6 @@ export const SwapContainer = ({ initialTokenFrom, initialTokenTo }: Props) => {
             tokensDict={tokensDict}
             isBalanceLoading={isBalanceLoading}
             tokensFromState={{ tokenFrom, tokenTo, setTokenFrom, setTokenTo }}
-            progressState={{ progress, setProgress }}
             networkType={networkType}
             ethBalance={ethBalance}
             market={market}
@@ -307,7 +305,6 @@ export const SwapContainer = ({ initialTokenFrom, initialTokenTo }: Props) => {
             tokensDict={tokensDict}
             isBalanceLoading={isBalanceLoading}
             tokensFromState={{ tokenFrom, tokenTo, setTokenFrom, setTokenTo }}
-            progressState={{ progress, setProgress }}
             networkType={networkType}
             ethBalance={ethBalance}
             market={market}

@@ -125,10 +125,6 @@ import { Umi } from '@metaplex-foundation/umi'
 import { StakingStatsResponse } from '@store/reducers/sbitz-stats'
 import { DEFAULT_FEE_TIER, STRATEGIES } from '@store/consts/userStrategies'
 import { HoldersResponse } from '@store/reducers/sBitz'
-import {
-  limitOrderQuoteByInputToken,
-  limitOrderQuoteByOutputToken
-} from '@invariant-labs/sdk-eclipse/src/limit-order'
 
 export const transformBN = (amount: BN): string => {
   return (amount.div(new BN(1e2)).toNumber() / 1e4).toString()
@@ -2614,7 +2610,18 @@ export const getAmountFromLimitOrderInstruction = (
             (instruction as ParsedInstruction)?.parsed.type === 'transfer' ||
             (instruction as ParsedInstruction)?.parsed.type === 'transferChecked'
         )
-    ) ?? meta.innerInstructions[2]
+    ) ?? meta.innerInstructions[0]
+  console.log(innerInstruction)
+  const innerInstruction2 =
+    meta.innerInstructions.find(
+      innerInstruction =>
+        !!innerInstruction.instructions.find(
+          instruction =>
+            (instruction as ParsedInstruction)?.parsed.type === 'transfer' ||
+            (instruction as ParsedInstruction)?.parsed.type === 'transferChecked'
+        )
+    ) ?? meta.innerInstructions[1]
+  console.log(innerInstruction2)
 
   const instruction = innerInstruction.instructions.filter(
     instruction =>

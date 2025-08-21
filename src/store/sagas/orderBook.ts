@@ -1,26 +1,21 @@
 import { actions, AddOrderPayload, IRemoveOrder } from '@store/reducers/orderBook'
 import { all, call, put, select, spawn, takeLatest } from 'typed-redux-saga'
-import { createAccount, getWallet } from './wallet'
+import { getWallet } from './wallet'
 import {
-  Keypair,
   sendAndConfirmRawTransaction,
   SendTransactionError,
   Transaction,
-  TransactionExpiredTimeoutError,
-  VersionedTransaction
+  TransactionExpiredTimeoutError
 } from '@solana/web3.js'
-import { getLockerProgram, getMarketProgram } from '@utils/web3/programs/amm'
+import { getMarketProgram } from '@utils/web3/programs/amm'
 import { network, rpcAddress } from '@store/selectors/solanaConnection'
 import { getConnection, handleRpcError } from './connection'
-import { getMaxLockDuration, ILockPositionIx } from '@invariant-labs/locker-eclipse-sdk'
-import { IWallet, Pair } from '@invariant-labs/sdk-eclipse'
+import { IWallet } from '@invariant-labs/sdk-eclipse'
 import { PayloadAction } from '@reduxjs/toolkit'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
-import { actions as positionsActions } from '@store/reducers/positions'
 import {
   APPROVAL_DENIED_MESSAGE,
   COMMON_ERROR_MESSAGE,
-  DEFAULT_PUBLICKEY,
   ErrorCodeExtractionKeys,
   SIGNING_SNACKBAR_CONFIG,
   TIMEOUT_ERROR_MESSAGE
@@ -39,10 +34,7 @@ import {
   TokenType
 } from '@utils/utils'
 import { closeSnackbar } from 'notistack'
-import {
-  DecreaseLimitOrderLiquidity,
-  IncreaseLimitOrderLiquidity
-} from '@invariant-labs/sdk-eclipse/lib/market'
+import { IncreaseLimitOrderLiquidity } from '@invariant-labs/sdk-eclipse/lib/market'
 import { actions as connectionActions, RpcStatus } from '@store/reducers/solanaConnection'
 import { ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddress } from '@solana/spl-token'
 import { tokens } from '@store/selectors/pools'
@@ -227,10 +219,12 @@ export function* handleAddLimitOrder(action: PayloadAction<IncreaseLimitOrderLiq
         const meta = txDetails.meta
 
         if (meta?.innerInstructions && meta.innerInstructions) {
+          console.log(meta?.innerInstructions)
           try {
             const amountX = getAmountFromLimitOrderInstruction(meta, TokenType.TokenX)
             const amountY = getAmountFromLimitOrderInstruction(meta, TokenType.TokenY)
-
+            console.log(amountX)
+            console.log(amountY)
             const tokenX = allTokens[pair.tokenX.toString()]
             const tokenY = allTokens[pair.tokenY.toString()]
 

@@ -5,7 +5,7 @@ import { OrdersHistory } from '@store/reducers/navigation'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { refreshIcon } from '@static/icons'
 import { FilterSearch, ISearchToken } from '@common/FilterSearch/FilterSearch'
-import { BTC_TEST, NetworkType, USDC_TEST, WETH_TEST } from '@store/consts/static'
+import { BTC_TEST, NetworkType, WETH_TEST } from '@store/consts/static'
 import OrderItem from './OrderItem/OrderItem'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { colors, theme, typography } from '@static/theme'
@@ -17,17 +17,15 @@ import { UserOrdersFullData } from '@store/consts/types'
 import { Status } from '@store/reducers/solanaWallet'
 import { useDispatch, useSelector } from 'react-redux'
 import { actions } from '@store/reducers/navigation'
-import { swapSearch, tokenSearch } from '@store/selectors/navigation'
+import { swapSearch } from '@store/selectors/navigation'
 import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
 import { InputPagination } from '@common/Pagination/InputPagination/InputPagination'
 import OrderItemPlaceholder from './OrderItemPlaceholder/OrderItemPlaceholder'
-import { backgroundClip } from 'html2canvas/dist/types/css/property-descriptors/background-clip'
 
 const ORDERS_PER_PAGE = 5
-const tokens = [BTC_TEST, USDC_TEST, WETH_TEST]
 
 const generateMockData = () => {
-  return Array.from({ length: ORDERS_PER_PAGE }, (_, index) => ({
+  return Array.from({ length: ORDERS_PER_PAGE }, _ => ({
     account: {
       age: 1,
       bump: 1,
@@ -70,10 +68,8 @@ const OrderHistory: React.FC<IProps> = ({
   currentNetwork,
   selectedFilters,
   setSelectedFilters,
-  tokensDict,
   userOrders,
   handleRemoveOrder,
-  walletStatus,
   isLoading
 }) => {
   const dispatch = useDispatch()
@@ -107,13 +103,6 @@ const OrderHistory: React.FC<IProps> = ({
         pageNumber: newPage
       })
     )
-  }
-
-  const getEmptyRowsCount = () => {
-    const displayedItems = paginator(page).data.length
-    const rowNumber = initialDataLength < ORDERS_PER_PAGE ? initialDataLength : ORDERS_PER_PAGE
-
-    return Math.max(rowNumber - displayedItems, 0)
   }
 
   function paginator(currentPage: number) {

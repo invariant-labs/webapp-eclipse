@@ -1,7 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { PayloadType } from '../consts/types'
-import { NetworkType } from '@store/consts/static'
-import { FormData } from '@store/consts/tokenCreator/types'
 import { Pair } from '@invariant-labs/sdk-eclipse'
 import { OrderBook } from '@invariant-labs/sdk-eclipse/src/market'
 import {
