@@ -9,10 +9,6 @@ import {
   airdropRainbowIcon,
   star,
   starFill,
-  horizontalSwapIcon,
-  lockIcon,
-  newTabBtnIcon,
-  plusIcon,
   unknownTokenIcon,
   plusDisabled,
   warningIcon
@@ -44,6 +40,11 @@ import { BN } from '@coral-xyz/anchor'
 import { CustomPopover } from '@common/Popover/CustomPopover'
 import { useDispatch } from 'react-redux'
 import { actions } from '@store/reducers/navigation'
+import { NewTabBtn } from '@static/componentIcon/NewTabBtn'
+import { HorizontalSwapButton } from '@static/componentIcon/HorizontalSwapButton'
+import { LockIconButton } from '@static/componentIcon/LockIconButton'
+import { PlusIconDisabled } from '@static/componentIcon/PlusIconDisabled'
+import { PlusIcon } from '@static/componentIcon/PlusIcon'
 
 interface IProps {
   TVL?: number
@@ -250,25 +251,21 @@ const PoolListItem: React.FC<IProps> = ({
   const { convertedApy, convertedApr } = calculateAPYAndAPR(apy, poolAddress, volume, fee, TVL)
   const ActionsButtons = (
     <Box className={classes.action}>
-      <button className={classes.actionButton} onClick={handleOpenSwap}>
-        <img width={28} src={horizontalSwapIcon} alt={'Exchange'} />
+      <button style={{ marginBottom: 3 }} className={classes.actionButton} onClick={handleOpenSwap}>
+        <HorizontalSwapButton width={28} />
       </button>
 
       <button
         disabled={isDisabled}
-        style={isDisabled ? { cursor: 'not-allowed' } : {}}
+        style={isDisabled ? { cursor: 'not-allowed', marginBottom: 3 } : { marginBottom: 3 }}
         className={classes.actionButton}
         onClick={handleOpenPosition}>
-        <img
-          width={28}
-          style={isDisabled ? { opacity: 0.6 } : {}}
-          src={isDisabled ? plusDisabled : plusIcon}
-          alt={'Open'}
-        />
+        {isDisabled ? <PlusIconDisabled width={28} opacity={0.6} /> : <PlusIcon width={28} />}
       </button>
 
       <button
         className={classes.actionButton}
+        style={{ marginBottom: 3 }}
         onClick={() => {
           window.open(
             `https://eclipsescan.xyz/account/${poolAddress}${networkUrl}`,
@@ -276,7 +273,7 @@ const PoolListItem: React.FC<IProps> = ({
             'noopener,noreferrer'
           )
         }}>
-        <img width={28} src={newTabBtnIcon} alt={'Exchange'} />
+        <NewTabBtn width={28} />
       </button>
       {isLocked && (
         <CustomPopover
@@ -292,8 +289,8 @@ const PoolListItem: React.FC<IProps> = ({
           }
           centerOnScreen
           increasePadding>
-          <button className={classes.actionButton}>
-            <img width={28} src={lockIcon} alt={'Lock info'} />
+          <button style={{ marginBottom: 3 }} className={classes.actionButton}>
+            <LockIconButton width={28} />
           </button>
         </CustomPopover>
       )}
@@ -466,14 +463,14 @@ const PoolListItem: React.FC<IProps> = ({
                     />
                   }>
                   <button className={classes.actionButton}>
-                    <img width={32} height={32} src={lockIcon} alt={'Lock info'} />
+                    <LockIconButton />
                   </button>
                 </TooltipHover>
               )}
 
               <TooltipHover title='Exchange'>
                 <button className={classes.actionButton} onClick={handleOpenSwap}>
-                  <img width={32} height={32} src={horizontalSwapIcon} alt={'Exchange'} />
+                  <HorizontalSwapButton />
                 </button>
               </TooltipHover>
 
@@ -483,13 +480,7 @@ const PoolListItem: React.FC<IProps> = ({
                   style={isDisabled ? { cursor: 'not-allowed' } : {}}
                   className={classes.actionButton}
                   onClick={handleOpenPosition}>
-                  <img
-                    width={32}
-                    height={32}
-                    style={isDisabled ? { opacity: 0.6 } : {}}
-                    src={isDisabled ? plusDisabled : plusIcon}
-                    alt={'Open'}
-                  />
+                  {isDisabled ? <PlusIconDisabled opacity={0.6} /> : <PlusIcon />}
                 </button>
               </TooltipHover>
 
@@ -503,7 +494,7 @@ const PoolListItem: React.FC<IProps> = ({
                       'noopener,noreferrer'
                     )
                   }>
-                  <img width={32} height={32} src={newTabBtnIcon} alt={'Exchange'} />
+                  <NewTabBtn />
                 </button>
               </TooltipHover>
             </Box>
