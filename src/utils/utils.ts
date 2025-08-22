@@ -1,6 +1,5 @@
 import {
   calculatePriceSqrt,
-  DENOMINATOR,
   FetcherRecords,
   getTokenProgramAddress,
   MAX_TICK,
@@ -80,7 +79,6 @@ import {
   WETH_MAIN,
   KYSOL_MAIN,
   EZSOL_MAIN,
-  LEADERBOARD_DECIMAL,
   POSITIONS_PER_PAGE,
   MAX_CROSSES_IN_SINGLE_TX_WITH_LUTS,
   ES_MAIN,
@@ -1943,59 +1941,52 @@ export const getMockedTokenPrice = (symbol: string, network: NetworkType): Token
   }
 }
 
-export const getTokenPrice = async (
-  addr: string,
-  network: NetworkType
-): Promise<number | undefined> => {
-  const cachedLastQueryTimestamp = localStorage.getItem('TOKEN_PRICE_LAST_QUERY_TIMESTAMP')
-  let lastQueryTimestamp = 0
-  if (cachedLastQueryTimestamp) {
-    lastQueryTimestamp = Number(cachedLastQueryTimestamp)
-  }
+type PriceMap = Record<string, { price: number }>
+type TokenPriceReturn<T extends string | undefined> = T extends string
+  ? number | undefined
+  : PriceMap | undefined
 
-  const cachedPriceData =
-    network === NetworkType.Mainnet
-      ? localStorage.getItem('TOKEN_PRICE_DATA')
-      : localStorage.getItem('TOKEN_PRICE_DATA_TESTNET')
+export async function getTokenPrice<T extends string | undefined = undefined>(
+  network: NetworkType,
+  addr?: T
+): Promise<TokenPriceReturn<T>> {
+  const isMainnet = network === NetworkType.Mainnet
+  const DATA_KEY = isMainnet ? 'TOKEN_PRICE_DATA' : 'TOKEN_PRICE_DATA_TESTNET'
+  const TS_KEY = isMainnet
+    ? 'TOKEN_PRICE_LAST_QUERY_TIMESTAMP'
+    : 'TOKEN_PRICE_LAST_QUERY_TIMESTAMP_TESTNET'
 
-  let priceData: Record<string, { price: number }> | null = null
+  const cachedLastQueryTimestamp = localStorage.getItem(TS_KEY)
+  const lastQueryTimestamp = cachedLastQueryTimestamp ? Number(cachedLastQueryTimestamp) : 0
 
-  if (!cachedPriceData || Number(lastQueryTimestamp) + PRICE_QUERY_COOLDOWN <= Date.now()) {
+  const cachedPriceData = localStorage.getItem(DATA_KEY)
+
+  let priceData: PriceMap | null = null
+
+  if (!cachedPriceData || lastQueryTimestamp + PRICE_QUERY_COOLDOWN <= Date.now()) {
     try {
       const { data } = await axios.get<IPriceData>(
-        `${PRICE_API_URL}/${network === NetworkType.Mainnet ? 'eclipse-mainnet' : 'eclipse-testnet'}`
+        `${PRICE_API_URL}/${isMainnet ? 'eclipse-mainnet' : 'eclipse-testnet'}`
       )
       priceData = data.data
-
-      localStorage.setItem(
-        network === NetworkType.Mainnet ? 'TOKEN_PRICE_DATA' : 'TOKEN_PRICE_DATA_TESTNET',
-        JSON.stringify(priceData)
-      )
-      localStorage.setItem(
-        network === NetworkType.Mainnet
-          ? 'TOKEN_PRICE_LAST_QUERY_TIMESTAMP'
-          : 'TOKEN_PRICE_LAST_QUERY_TIMESTAMP_TESTNET',
-        String(Date.now())
-      )
+      localStorage.setItem(DATA_KEY, JSON.stringify(priceData))
+      localStorage.setItem(TS_KEY, String(Date.now()))
     } catch (e: unknown) {
       const error = ensureError(e)
       console.log(error)
-
-      localStorage.removeItem(
-        network === NetworkType.Mainnet
-          ? 'TOKEN_PRICE_LAST_QUERY_TIMESTAMP'
-          : 'TOKEN_PRICE_LAST_QUERY_TIMESTAMP_TESTNET'
-      )
-      localStorage.removeItem(
-        network === NetworkType.Mainnet ? 'TOKEN_PRICE_DATA' : 'TOKEN_PRICE_DATA_TESTNET'
-      )
+      localStorage.removeItem(TS_KEY)
+      localStorage.removeItem(DATA_KEY)
       priceData = null
     }
   } else {
-    priceData = JSON.parse(cachedPriceData)
+    priceData = JSON.parse(cachedPriceData) as PriceMap
   }
 
-  return priceData && priceData[addr] ? priceData[addr].price : undefined
+  if (addr) {
+    return (priceData && priceData[addr] ? priceData[addr].price : undefined) as TokenPriceReturn<T>
+  }
+
+  return (priceData ?? undefined) as TokenPriceReturn<T>
 }
 
 export const getTicksList = async (
@@ -2181,24 +2172,6 @@ export const generateHash = (str: string): string => {
   return Math.abs(hash).toString(16).padStart(8, '0')
 }
 
-export const calculatePoints = (
-  amount: BN,
-  decimals: number,
-  feePercentage: BN,
-  priceFeed: string,
-  priceDecimals: number,
-  pointsPerUSD: BN
-) => {
-  const nominator = amount
-    .mul(feePercentage)
-    .mul(new BN(priceFeed))
-    .mul(pointsPerUSD)
-    .mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL)))
-  const denominator = new BN(10).pow(new BN(priceDecimals + decimals))
-
-  return nominator.div(denominator).div(new BN(DENOMINATOR))
-}
-
 export const getConcentrationIndex = (concentrationArray: number[], neededValue: number = 34) => {
   if (neededValue > concentrationArray[concentrationArray.length - 1]) {
     return concentrationArray.length - 1
@@ -2333,7 +2306,6 @@ export const ROUTES = {
   POSITION_WITH_ID: '/position/:id',
   PORTFOLIO: '/portfolio',
   CREATOR: '/creator',
-  POINTS: '/points',
   STAKE: '/stake',
 
   getExchangeRoute: (item1?: string, item2?: string): string => {

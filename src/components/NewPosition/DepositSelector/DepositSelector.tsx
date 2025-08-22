@@ -126,7 +126,6 @@ export interface IDepositSelector {
   setTokenBIndex: (index: number | null) => void
   canNavigate: boolean
   isCurrentPoolExisting: boolean
-  promotedPoolTierIndex: number | undefined
   feeTiersWithTvl: Record<number, number>
   totalTvl: number
   isLoadingStats: boolean
@@ -173,7 +172,6 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   priceB,
   onReverseTokens,
   poolIndex,
-  promotedPoolTierIndex,
   handleAddToken,
   commonTokens,
   initialHideUnknownTokensValue,
@@ -996,7 +994,6 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           }}
           feeTiers={feeTiers}
           showOnlyPercents
-          promotedPoolTierIndex={promotedPoolTierIndex}
           currentValue={feeTierIndex}
           feeTiersWithTvl={feeTiersWithTvl}
           totalTvl={totalTvl}

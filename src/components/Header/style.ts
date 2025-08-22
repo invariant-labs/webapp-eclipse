@@ -32,7 +32,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       minWidth: 40,
       height: 30,
       marginRight: 8,
-      [theme.breakpoints.up(650)]: {
+      [theme.breakpoints.up(430)]: {
         display: 'none'
       },
       [theme.breakpoints.down('sm')]: {
@@ -73,11 +73,10 @@ const useStyles = makeStyles()((theme: Theme) => {
 
       [theme.breakpoints.down('md')]: {
         marginLeft: 0,
-        width: '100%',
-        justifyContent: 'center'
+        width: '100%'
       },
 
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down(430)]: {
         justifyContent: 'space-between',
         gap: 0
       }
@@ -129,7 +128,7 @@ const useStyles = makeStyles()((theme: Theme) => {
     leftSide: {
       width: 'auto',
       justifyContent: 'flex-start',
-      [theme.breakpoints.down(650)]: {
+      [theme.breakpoints.down(430)]: {
         display: 'none'
       },
 

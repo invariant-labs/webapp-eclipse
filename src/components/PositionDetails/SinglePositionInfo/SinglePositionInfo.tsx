@@ -27,12 +27,9 @@ interface IProp {
   showFeesLoader?: boolean
   poolDetails: PoolDetailsType | null
   showPoolDetailsLoader?: boolean
-  arePointsDistributed: boolean
-  points24: number
   poolAddress: PublicKey
   isPreview: boolean
   showPositionLoader?: boolean
-  isPromotedLoading: boolean
   isClosing: boolean
   interval: Intervals
   isLocked?: boolean
@@ -52,9 +49,6 @@ const SinglePositionInfo: React.FC<IProp> = ({
   poolDetails,
   poolAddress,
   isPreview,
-  points24,
-  arePointsDistributed,
-  isPromotedLoading,
   isClosing,
   interval,
   isLocked,
@@ -86,7 +80,6 @@ const SinglePositionInfo: React.FC<IProp> = ({
       {isFeeTooltipOpen && <Overlay />}
       <Box className={classes.container}>
         <PositionStats
-          isPromotedLoading={isPromotedLoading}
           value={
             tokenX.liqValue * (tokenXPriceData?.price ?? 0) +
             tokenY.liqValue * (tokenYPriceData?.price ?? 0)
@@ -96,11 +89,8 @@ const SinglePositionInfo: React.FC<IProp> = ({
             tokenY.claimValue * (tokenYPriceData?.price ?? 0)
           }
           poolApy={convertedApy}
-          points24={points24}
-          arePointsDistributed={arePointsDistributed}
           isLoading={showPositionLoader}
           showPoolDetailsLoader={showPoolDetailsLoader}
-          isLocked={isLocked}
         />
         <Separator size='100%' isHorizontal color={colors.invariant.light} />
         <Section

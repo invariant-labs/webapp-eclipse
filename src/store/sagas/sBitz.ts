@@ -544,7 +544,7 @@ export function* getMarketBitzStats(): Generator {
   const rpc = yield* select(rpcAddress)
   const wallet = yield* call(getWallet)
   const connection = yield* call(getConnection)
-  const price = yield* call(getTokenPrice, sBITZ_MAIN.address.toString(), networkType)
+  const price = yield* call(getTokenPrice, networkType, sBITZ_MAIN.address.toString())
   const stakingProgram = yield* call(getStakingProgram, networkType, rpc, wallet as IWallet)
   try {
     const { stakedAmount, stakedTokenSupply } = yield* call([
@@ -577,7 +577,7 @@ export function* getMarketBitzStats(): Generator {
 
     const bitzAmount = totalBitzSupply - sBitzAmount
 
-    const marketCapSBitz = (price ?? 0) * stakedTokenSupplyAmount
+    const marketCapSBitz = (Number(price) ?? 0) * stakedTokenSupplyAmount
 
     yield* put(
       actions.setCurrentStats({

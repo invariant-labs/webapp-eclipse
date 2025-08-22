@@ -2,7 +2,6 @@ import { Box, Grid } from '@mui/material'
 import { StyledCloseButton, StyledText, useStyles } from '../style'
 import { TokensDetailsProps } from '@common/Snackbar'
 import {
-  airdropRainbowIcon,
   circleDolarIcon,
   closeIcon,
   depositIcon,
@@ -37,7 +36,6 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
   tokenXSymbol,
   tokenBetweenSymbol,
   tokenYSymbol,
-  earnedPoints,
   handleDismiss,
   tokenXAmountAutoSwap,
   tokenYAmountAutoSwap,
@@ -98,7 +96,7 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
     <>
       <Box
         className={classes.customSnackbarWrapper}
-        paddingTop={earnedPoints || tokenXAmountAutoSwap ? '8px' : '0'}>
+        paddingTop={tokenXAmountAutoSwap ? '8px' : '0'}>
         <Grid display='flex' flexDirection='column' flex={1} ml={1} gap={0.7}>
           {tokenXIconAutoSwap && tokenYAmountAutoSwap && (
             <>
@@ -219,22 +217,6 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
                 ) : (
                   <img src={tokenYIcon} className={classes.tokenIcon} />
                 )}
-              </Grid>
-            </>
-          )}
-
-          {earnedPoints && (
-            <>
-              <Separator color={colors.invariant.light} isHorizontal margin='0px 8px 0px 20px' />
-              <Grid>
-                <Grid className={classes.wrapper} gap={0.5}>
-                  <Box width={18}>
-                    <img src={airdropRainbowIcon} />
-                  </Box>
-                  <StyledText>Earned</StyledText>
-                  <StyledText color={colors.invariant.pink}>{earnedPoints}</StyledText>
-                  <StyledText>Points</StyledText>
-                </Grid>
               </Grid>
             </>
           )}

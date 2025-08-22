@@ -116,8 +116,7 @@ const useStyles = makeStyles<StyleProps>()((theme, { interval, dark, fullWidth }
       letterSpacing: '-0.03em',
       paddingTop: 6,
       paddingBottom: 6
-    },
-    leaderboardHeaderSectionTitle: { ...typography.heading3, color: colors.white.main }
+    }
   }
 })
 

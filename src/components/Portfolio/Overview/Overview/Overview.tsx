@@ -14,20 +14,19 @@ import {
   totalUnlaimedFees,
   lockedPositionsWithPoolsData
 } from '@store/selectors/positions'
-import { getTokenPrice } from '@utils/utils'
 import MobileOverview from '../MobileOverview/MobileOverview'
 import { useAverageLogoColor } from '@store/hooks/userOverview/useAverageLogoColor'
 import { useAgregatedPositions } from '@store/hooks/userOverview/useAgregatedPositions'
 import { actions, PositionWithAddress } from '@store/reducers/positions'
 import { LegendOverview } from '../LegendOverview/LegendOverview'
 import { SwapToken } from '@store/selectors/solanaWallet'
-import { network } from '@store/selectors/solanaConnection'
 import { IPositionItem } from '@store/consts/types'
 import { EmptyState } from './EmptyState/EmptyState'
 import LegendSkeleton from './skeletons/LegendSkeleton'
 
 interface OverviewProps {
   poolAssets: IPositionItem[]
+  prices: Record<string, number>
 }
 
 export interface ISinglePositionData extends PositionWithAddress {
@@ -38,7 +37,7 @@ export interface ISinglePositionData extends PositionWithAddress {
   isLocked: boolean
 }
 
-export const Overview: React.FC<OverviewProps> = () => {
+export const Overview: React.FC<OverviewProps> = ({ prices }) => {
   const normalPositionList = useSelector(positionsWithPoolsData)
   const lockedPositionList = useSelector(lockedPositionsWithPoolsData)
   const positionList = [...normalPositionList, ...lockedPositionList]
@@ -48,8 +47,7 @@ export const Overview: React.FC<OverviewProps> = () => {
   const isLoadingList = useSelector(isLoadingPositionsList)
   const { classes } = useStyles()
   const dispatch = useDispatch()
-  const currentNetwork = useSelector(network)
-  const [prices, setPrices] = useState<Record<string, number>>({})
+
   const [logoColors, setLogoColors] = useState<Record<string, string>>({})
   const [pendingColorLoads, setPendingColorLoads] = useState<Set<string>>(new Set())
   const { total: unclaimedFees, isLoading: unClaimedFeesLoading } = useSelector(totalUnlaimedFees)
@@ -100,42 +98,6 @@ export const Overview: React.FC<OverviewProps> = () => {
 
     return tokens
   }, [sortedTokens, isDataReady])
-
-  useEffect(() => {
-    if (Object.keys(prices).length > 0) {
-      dispatch(actions.setPrices(prices))
-    }
-  }, [prices])
-
-  useEffect(() => {
-    const loadPrices = async () => {
-      const uniqueTokens = new Set<string>()
-      positionList.forEach(position => {
-        uniqueTokens.add(position.tokenX.assetAddress.toString())
-        uniqueTokens.add(position.tokenY.assetAddress.toString())
-      })
-
-      const tokenArray = Array.from(uniqueTokens)
-      const priceResults = await Promise.all(
-        tokenArray.map(async token => ({
-          token,
-          price: await getTokenPrice(token, currentNetwork)
-        }))
-      )
-
-      const newPrices = priceResults.reduce(
-        (acc, { token, price }) => ({
-          ...acc,
-          [token]: price ?? 0
-        }),
-        {}
-      )
-
-      setPrices(newPrices)
-    }
-
-    loadPrices()
-  }, [positionList.length])
 
   useEffect(() => {
     sortedTokens.forEach(position => {

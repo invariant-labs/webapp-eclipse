@@ -33,11 +33,7 @@ export const useTabsStyles = makeStyles<{
   isBestTierHiddenOnLeft: boolean
   isBestTierHiddenOnRight: boolean
   hasValidBestTier: boolean
-  isPromotedPool: boolean
-}>()((
-  _theme,
-  { isBestTierHiddenOnLeft, isBestTierHiddenOnRight, hasValidBestTier, isPromotedPool }
-) => {
+}>()((_theme, { isBestTierHiddenOnLeft, isBestTierHiddenOnRight, hasValidBestTier }) => {
   return {
     root: {
       overflow: 'visible',
@@ -59,19 +55,15 @@ export const useTabsStyles = makeStyles<{
       width: 24,
       '&:first-of-type svg': {
         fill:
-          isPromotedPool && isBestTierHiddenOnLeft
-            ? colors.invariant.pink
-            : !isPromotedPool && hasValidBestTier && isBestTierHiddenOnLeft
-              ? colors.invariant.green
-              : colors.invariant.text
+          hasValidBestTier && isBestTierHiddenOnLeft
+            ? colors.invariant.green
+            : colors.invariant.text
       },
       '&:last-of-type svg': {
         fill:
-          isPromotedPool && isBestTierHiddenOnRight
-            ? colors.invariant.pink
-            : !isPromotedPool && hasValidBestTier && isBestTierHiddenOnRight
-              ? colors.invariant.green
-              : colors.invariant.text
+          hasValidBestTier && isBestTierHiddenOnRight
+            ? colors.invariant.green
+            : colors.invariant.text
       },
       '&:hover svg': {
         transition: '0.3s',
@@ -116,27 +108,6 @@ export const useSingleTabStyles = makeStyles()(() => {
       borderRadius: 10,
       '&:hover': {
         color: colors.invariant.green
-      }
-    },
-    promoted: {
-      color: colors.invariant.pink,
-      borderRadius: 10,
-      border: '2px solid transparent',
-      backgroundImage: `linear-gradient(${colors.invariant.newDark},${colors.invariant.newDark}), linear-gradient(0deg, #2EE09A, #EF84F5)`,
-      backgroundOrigin: 'border-box',
-      backgroundClip: 'padding-box, border-box',
-      '&:hover': {
-        color: colors.invariant.pink,
-        backgroundImage:
-          'linear-gradient(#2A365C, #2A365C), linear-gradient(0deg, #2EE09A, #EF84F5)',
-        backgroundOrigin: 'border-box',
-        backgroundClip: 'padding-box, border-box'
-      },
-      '&.Mui-selected': {
-        backgroundImage:
-          'linear-gradient(#2A365C, #2A365C), linear-gradient(0deg, #2EE09A, #EF84F5)',
-        backgroundOrigin: 'border-box',
-        backgroundClip: 'padding-box, border-box'
       }
     },
     selected: {
