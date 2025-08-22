@@ -181,19 +181,19 @@ export const SelectTokenModal: React.FC<ISelectTokenModal> = memo(
     }, [tokens])
 
     useEffect(() => {
-      tokensWithIndexes.forEach(token => {
-        const balanceStr = printBN(token.balance, token.decimals)
-        const balance = Number(balanceStr)
-        if (balance > 0) {
-          const addr = token.assetAddress.toString()
-          if (prices[addr] === undefined) {
-            getTokenPrice(addr, network).then(price => {
-              setPrices(prev => ({ ...prev, [addr]: price || 0 }))
-            })
-          }
+      const loadPrices = async (): Promise<void> => {
+        const prices = await getTokenPrice(network)
+        if (prices) {
+          const transformedPrices = Object.fromEntries(
+            Object.entries(prices).map(([key, value]) => [key, value.price])
+          )
+
+          setPrices(transformedPrices)
         }
-      })
-    }, [tokensWithIndexes])
+      }
+
+      loadPrices()
+    }, [])
 
     const commonTokensList = useMemo(
       () =>

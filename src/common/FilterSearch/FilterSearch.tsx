@@ -16,7 +16,7 @@ import {
   Typography,
   useMediaQuery
 } from '@mui/material'
-import React, { forwardRef, useMemo, useState, useCallback, memo, useEffect } from 'react'
+import React, { forwardRef, useMemo, useState, useCallback, memo } from 'react'
 import { commonTokensForNetworks, NetworkType } from '@store/consts/static'
 import { theme, typography } from '@static/theme'
 import useStyles from './styles'
@@ -28,7 +28,7 @@ import { searchIcon, unknownTokenIcon } from '@static/icons'
 import { tokensStatsWithTokensDetails } from '@store/selectors/stats'
 import ListboxComponent from './Helpers/ListBoxComponent'
 import { BN } from '@coral-xyz/anchor'
-import { getTokenPrice, printBN } from '@utils/utils'
+import { printBN } from '@utils/utils'
 import { PublicKey } from '@solana/web3.js'
 
 type Breakpoint = 'md' | 'sm'
@@ -85,7 +85,6 @@ export const FilterSearch: React.FC<IFilterSearch> = memo(
     const commonTokens = commonTokensForNetworks[networkType]
     const tokensList = useSelector(swapTokens)
     const [open, setOpen] = useState(false)
-    const [prices, setPrices] = useState<Record<string, number>>({})
 
     const tokenListMap = useMemo(() => {
       const map = new Map<string, ITokenBalance>()
@@ -100,37 +99,16 @@ export const FilterSearch: React.FC<IFilterSearch> = memo(
       [commonTokens]
     )
 
-    useEffect(() => {
-      const fetchPrices = async () => {
-        const pricePromises = tokensListDetails.map(async tokenData => {
-          const details = tokenData.tokenDetails
-          const tokenAddress = details?.address?.toString() ?? tokenData.address.toString()
-          const price = await getTokenPrice(tokenAddress, networkType)
-          return { tokenAddress, price }
-        })
-        const results = await Promise.all(pricePromises)
-        const newPrices: Record<string, number> = {}
-        results.forEach(({ tokenAddress, price }) => {
-          if (price !== undefined) {
-            newPrices[tokenAddress] = price
-          }
-        })
-        setPrices(newPrices)
-      }
-      fetchPrices()
-    }, [tokensListDetails])
-
     const mappedTokens: ISearchToken[] = useMemo(() => {
       return tokensListDetails
         .map(tokenData => {
           const details = tokenData.tokenDetails
           const tokenAddress = details?.address?.toString() ?? tokenData.address.toString()
           const tokenFromList = tokenListMap.get(tokenAddress)
-          const tokenPrice = prices[tokenAddress]
           const decimals = tokenData.tokenDetails?.decimals ?? tokenFromList?.decimals ?? 0
           const balanceUSD =
-            tokenPrice && tokenFromList?.balance
-              ? +printBN(tokenFromList.balance, decimals) * tokenPrice
+            tokenData.price && tokenFromList?.balance
+              ? +printBN(tokenFromList.balance, decimals) * tokenData.price
               : 0
 
           return {
