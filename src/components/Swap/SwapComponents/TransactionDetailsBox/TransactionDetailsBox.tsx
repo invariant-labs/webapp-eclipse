@@ -1,5 +1,5 @@
 import React from 'react'
-import { Grid, Skeleton, Typography } from '@mui/material'
+import { Box, Grid, Skeleton, Typography } from '@mui/material'
 import { formatNumberWithoutSuffix, printBN } from '@utils/utils'
 import { useStyles } from './styles'
 import { BN } from '@coral-xyz/anchor'
@@ -11,10 +11,13 @@ import { SimulationPath } from '@components/Swap/Swap'
 interface IProps {
   open: boolean
   exchangeRate: { val: number; symbol: string; decimal: number }
-  slippage: number
-  priceImpact: BN
+  slippage?: number
+  priceImpact?: number
   isLoadingRate?: boolean
-  simulationPath: SimulationPath
+  simulationPath?: SimulationPath
+  feeTier?: string
+  makerProfit?: { percentage: string; value: string; tokenSymbol: string }
+  platformFee?: string
 }
 
 const TransactionDetailsBox: React.FC<IProps> = ({
@@ -23,24 +26,29 @@ const TransactionDetailsBox: React.FC<IProps> = ({
   slippage,
   priceImpact,
   isLoadingRate = false,
-  simulationPath
+  simulationPath,
+  feeTier,
+  makerProfit,
+  platformFee
 }) => {
   const { classes } = useStyles({ open })
 
-  const feePercent = Number(
-    printBN(
-      simulationPath.firstPair?.feeTier.fee.add(
-        DENOMINATOR.sub(simulationPath.firstPair?.feeTier.fee)
-          .mul(simulationPath.secondPair?.feeTier.fee ?? new BN(0))
-          .div(DENOMINATOR) ?? new BN(0)
-      ) ?? new BN(0),
-      DECIMAL - 2
-    )
-  )
+  const feePercent = simulationPath
+    ? Number(
+        printBN(
+          simulationPath.firstPair?.feeTier.fee.add(
+            DENOMINATOR.sub(simulationPath.firstPair?.feeTier.fee)
+              .mul(simulationPath.secondPair?.feeTier.fee ?? new BN(0))
+              .div(DENOMINATOR) ?? new BN(0)
+          ) ?? new BN(0),
+          DECIMAL - 2
+        )
+      )
+    : null
 
   return (
     <Grid container className={classes.wrapper}>
-      <RouteBox simulationPath={simulationPath} isLoadingRate={isLoadingRate} />
+      {simulationPath && <RouteBox simulationPath={simulationPath} isLoadingRate={isLoadingRate} />}
       <Grid container direction='column' wrap='nowrap' className={classes.innerWrapper}>
         <Grid container justifyContent='space-between' className={classes.row}>
           <Typography className={classes.label}>Exchange rate:</Typography>
@@ -55,29 +63,59 @@ const TransactionDetailsBox: React.FC<IProps> = ({
           )}
         </Grid>
 
-        <Grid container className={classes.row}>
-          <Typography className={classes.label}>Fee:</Typography>
-          {isLoadingRate ? (
-            <Skeleton width={80} height={20} variant='rounded' animation='wave' />
-          ) : (
-            <Typography className={classes.value}>{`${feePercent.toFixed(2)}%`}</Typography>
-          )}
-        </Grid>
+        {(feePercent || feeTier) && (
+          <Grid container className={classes.row}>
+            <Typography className={classes.label}>{feeTier ? 'Pool fee:' : 'Fee:'}</Typography>
+            {isLoadingRate ? (
+              <Skeleton width={80} height={20} variant='rounded' animation='wave' />
+            ) : (
+              <Typography className={classes.value}>
+                {feeTier ? feeTier : `${feePercent?.toFixed(2)}%`}
+              </Typography>
+            )}
+          </Grid>
+        )}
 
-        <Grid container className={classes.row}>
-          <Typography className={classes.label}>Price impact:</Typography>
-          {isLoadingRate ? (
-            <Skeleton width={80} height={20} variant='rounded' animation='wave' />
-          ) : (
-            <Typography className={classes.value}>
-              {priceImpact < 0.01 ? '<0.01%' : `${priceImpact.toFixed(2)}%`}
-            </Typography>
-          )}
-        </Grid>
-        <Grid container className={classes.row}>
-          <Typography className={classes.label}>Slippage tolerance:</Typography>
-          <Typography className={classes.value}>{slippage}%</Typography>
-        </Grid>
+        {priceImpact && (
+          <Grid container className={classes.row}>
+            <Typography className={classes.label}>Price impact:</Typography>
+            {isLoadingRate ? (
+              <Skeleton width={80} height={20} variant='rounded' animation='wave' />
+            ) : (
+              <Typography className={classes.value}>
+                {priceImpact < 0.01 ? '<0.01%' : `${priceImpact.toFixed(2)}%`}
+              </Typography>
+            )}
+          </Grid>
+        )}
+        {slippage && (
+          <Grid container className={classes.row}>
+            <Typography className={classes.label}>Slippage tolerance:</Typography>
+            <Typography className={classes.value}>{slippage}%</Typography>
+          </Grid>
+        )}
+        {platformFee && (
+          <Grid container className={classes.row}>
+            <Typography className={classes.label}>Platform fee:</Typography>
+            <Typography className={classes.value}>{platformFee}%</Typography>
+          </Grid>
+        )}
+        {makerProfit && (
+          <>
+            <Grid container className={classes.row}>
+              <Typography className={classes.label}>Order maker profit:</Typography>
+              <Box display='flex' alignItems={'center'}>
+                <Typography className={classes.value} mr={'4px'}>
+                  {formatNumberWithoutSuffix(makerProfit.value) + ' ' + makerProfit.tokenSymbol}
+                </Typography>
+                <Typography className={classes.value}>- {makerProfit.percentage}% </Typography>
+              </Box>
+            </Grid>
+            <Grid container className={classes.row}>
+              <div />
+            </Grid>
+          </>
+        )}
       </Grid>
     </Grid>
   )

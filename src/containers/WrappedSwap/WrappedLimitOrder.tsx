@@ -210,8 +210,7 @@ export const WrappedLimitOrder = ({
 
       const tokenPrice =
         (order.account.xToY ? tokenToPriceData?.price : tokenFromPriceData?.price) || 0
-      console.log(+orderValue * +tokenPrice)
-      console.log(order.account.xToY)
+
       return [
         {
           ...order,

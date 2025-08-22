@@ -134,7 +134,7 @@ export const printBNandTrimZeros = (amount: BN, decimals: number, decimalPlaces?
   return trimZeros(Number(printBN(amount, decimals)).toFixed(decimalPlaces ?? decimals))
 }
 
-export const printBN = (amount: BN, decimals: number): string => {
+export const printBN = (amount: BN | undefined, decimals: number): string => {
   if (!amount) {
     return '0'
   }

@@ -5,7 +5,6 @@ import { BN } from '@coral-xyz/anchor'
 import { Box, Button, Grid, Typography, useMediaQuery } from '@mui/material'
 import {
   DEFAULT_TOKEN_DECIMAL,
-  inputTarget,
   NetworkType,
   WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_MAIN,
   WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_TEST,
@@ -34,7 +33,7 @@ import { PublicKey } from '@solana/web3.js'
 import { refreshIcon, swapArrowsIcon } from '@static/icons'
 import { useNavigate } from 'react-router-dom'
 import BuyTokenInput from './LimitOrderComponents/BuyTokenInput/BuyTokenInput'
-import { Market, Pair } from '@invariant-labs/sdk-eclipse'
+import { DENOMINATOR, Market, Pair } from '@invariant-labs/sdk-eclipse'
 import { theme } from '@static/theme'
 import { OrderBook, PoolStructure } from '@invariant-labs/sdk-eclipse/lib/market'
 import {
@@ -42,6 +41,10 @@ import {
   limitOrderQuoteByOutputToken
 } from '@invariant-labs/sdk-eclipse/src/limit-order'
 import { PoolWithAddress } from '@store/reducers/pools'
+import TransactionDetailsBox from './SwapComponents/TransactionDetailsBox/TransactionDetailsBox'
+import ExchangeRate from './SwapComponents/ExchangeRate/ExchangeRate'
+import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
+
 export interface Pools {
   tokenX: PublicKey
   tokenY: PublicKey
@@ -151,7 +154,7 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
   // tokensDict,
   rateState,
   tokensState,
-  inputState,
+  // inputState,
   lockAnimationState,
   rotatesState,
   swapState,
@@ -169,16 +172,18 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
   const [tokenPriceAmount, setTokenPriceAmount] = useState<string>('')
   const [validatedTokenPriceAmount, setValidatedTokenPriceAmount] = useState<string>('')
   const [priceTickIndex, setPriceTickIndex] = useState(0)
+  const [bnAmountOut, setBnAmountTo] = useState(new BN(0))
 
   const { setTokenFromIndex, setTokenToIndex, tokenFromIndex, tokenToIndex } = tokensState
   const { rateReversed, setRateReversed } = rateState
-  const { inputRef, setInputRef } = inputState
   const { lockAnimation, setLockAnimation } = lockAnimationState
   const { rotates, setRotates } = rotatesState
   const { swap, setSwap } = swapState
   const [hideUnknownTokens, setHideUnknownTokens] = React.useState<boolean>(
     initialHideUnknownTokensValue
   )
+  const [detailsOpen, setDetailsOpen] = React.useState<boolean>(false)
+  const [addBlur, _setAddBlur] = useState(false)
 
   const isXtoYOrderBook = useMemo(() => {
     if (tokenFromIndex === null) return
@@ -240,15 +245,6 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
       tokenToIndex === null ? null : tokens[tokenToIndex].assetAddress
     )
   }, [tokenFromIndex, tokenToIndex])
-
-  useEffect(() => {
-    if (inputRef !== inputTarget.DEFAULT) {
-      const temp: string = amountFrom
-      setAmountFrom(amountTo)
-      setAmountTo(temp)
-      setInputRef(inputRef === inputTarget.FROM ? inputTarget.TO : inputTarget.FROM)
-    }
-  }, [swap])
 
   useEffect(() => {
     if (tokenFromIndex !== null && tokenToIndex !== null) {
@@ -356,8 +352,7 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
     tokens,
     wrappedTokenAddress: WRAPPED_ETH_ADDRESS,
     minAmount: WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT,
-    onAmountSet: setAmountFrom,
-    onSelectInput: () => setInputRef(inputTarget.FROM)
+    onAmountSet: setAmountFrom
   })
 
   const validateTokenPrice = (input: number, reverseXtoY?: boolean) => {
@@ -404,6 +399,50 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
 
     return price
   }
+
+  const orderRewardRate = printBN(orderBook?.limitOrderRewardRate, DECIMAL - 2)
+
+  const rewardValue = useMemo(() => {
+    const poolFee = orderBookPair?.pair.feeTier.fee
+    const rewardRate = orderBook?.limitOrderRewardRate
+    if (!poolFee || !rewardRate || tokenToIndex === null) return '0'
+
+    const reward = bnAmountOut
+      .mul(poolFee)
+      .mul(rewardRate)
+      .div(DENOMINATOR.mul(DENOMINATOR).add(poolFee.mul(rewardRate)))
+
+    return printBN(reward, tokens[tokenToIndex].decimals)
+  }, [orderBookPair, bnAmountOut.toString()])
+
+  const handleOpenTransactionDetails = () => {
+    setDetailsOpen(!detailsOpen)
+  }
+
+  const swapRate =
+    tokenFromIndex === null || tokenToIndex === null || amountFrom === '' || amountTo === ''
+      ? 0
+      : +amountTo / +amountFrom
+
+  const hasShowRateMessage = () => {
+    return (
+      getStateMessage() === 'Insufficient balance' ||
+      getStateMessage() === 'Add limit order' ||
+      getStateMessage() === 'Set higher price' ||
+      getStateMessage() === 'Loading' ||
+      getStateMessage() === 'Connect a wallet' ||
+      getStateMessage() === 'Insufficient ETH'
+    )
+  }
+
+  const canShowDetails =
+    tokenFromIndex !== null &&
+    tokenToIndex !== null &&
+    hasShowRateMessage() &&
+    (getStateMessage() === 'Loading' ||
+      (swapRate !== 0 && swapRate !== Infinity && !isNaN(swapRate))) &&
+    amountFrom !== '' &&
+    amountTo !== ''
 
   return (
     <Grid container className={classes.swapWrapper} alignItems='center'>
@@ -456,7 +495,6 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
               setValue={value => {
                 if (value.match(/^\d*\.?\d*$/)) {
                   setAmountFrom(value)
-                  setInputRef(inputTarget.FROM)
 
                   if (
                     tokenFromIndex === null ||
@@ -469,6 +507,7 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
 
                   if (validatedTokenPriceAmount === '') {
                     setAmountTo('')
+                    setBnAmountTo(new BN(0))
                     return
                   }
 
@@ -484,41 +523,8 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
 
                   const tokenOutAmount = printBN(amount, tokens[tokenToIndex].decimals)
 
+                  setBnAmountTo(amount)
                   setAmountTo(tokenOutAmount)
-                  // if (tokenPriceAmount) {
-                  //   if (rateReversed) {
-                  //     setAmountTo(
-                  //       trimZeros(
-                  //         (+value / +tokenPriceAmount).toFixed(tokens[tokenToIndex]?.decimals)
-                  //       )
-                  //     )
-                  //   } else {
-                  //     setAmountTo(
-                  //       trimZeros(
-                  //         (+value * +tokenPriceAmount).toFixed(tokens[tokenToIndex]?.decimals)
-                  //       )
-                  //     )
-                  //   }
-                  // } else {
-                  //   if (rateReversed) {
-                  //     if (!tokenToPriceData || !tokenFromPriceData) return
-                  //     const marketPrice = +tokenToPriceData?.price / +tokenFromPriceData?.price
-                  //     setTokenPriceAmount(marketPrice.toString())
-
-                  //     setAmountTo(
-                  //       trimZeros((+value / +marketPrice).toFixed(tokens[tokenToIndex]?.decimals))
-                  //     )
-                  //   } else {
-                  //     if (!tokenToPriceData || !tokenFromPriceData) return
-                  //     const marketPrice = +tokenFromPriceData?.price / +tokenToPriceData?.price
-
-                  //     setTokenPriceAmount(marketPrice.toString())
-
-                  //     setAmountTo(
-                  //       trimZeros((+value * +marketPrice).toFixed(tokens[tokenToIndex]?.decimals))
-                  //     )
-                  //   }
-                  // }
                 }
               }}
               placeholder={`0.${'0'.repeat(6)}`}
@@ -575,7 +581,6 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
                   setTokenFromIndex(tokenToIndex)
                   setTokenToIndex(tmp)
 
-                  setInputRef(inputTarget.FROM)
                   setAmountFrom(tmpAmount)
                 }, 10)
 
@@ -616,7 +621,6 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
               setValue={value => {
                 if (value.match(/^\d*\.?\d*$/)) {
                   setAmountTo(value)
-                  setInputRef(inputTarget.TO)
 
                   if (
                     tokenFromIndex === null ||
@@ -635,6 +639,7 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
 
                   const valueBN = convertBalanceToBN(value, tokens[tokenToIndex].decimals)
 
+                  setBnAmountTo(valueBN)
                   const amount = limitOrderQuoteByOutputToken(
                     valueBN,
                     isXtoYOrderBook,
@@ -724,10 +729,10 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
             <>
               {tokenToIndex !== null && tokenFromIndex !== null ? (
                 <Typography className={cx(classes.swapLabel)} mt={1.5}>
-                  {rateReversed
-                    ? 'Buy ' + tokens[tokenToIndex].symbol
-                    : 'Sell ' + tokens[tokenFromIndex].symbol}{' '}
-                  at price
+                  {/* {rateReversed ? 'Buy ' : 'Sell '}  */}
+                  {'Sell '}
+                  {tokens[tokenFromIndex].symbol}
+                  {' at price'}
                 </Typography>
               ) : (
                 <Typography className={cx(classes.swapLabel)} mt={1.5}>
@@ -743,7 +748,7 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
                     setTokenPriceAmount('')
                     setValidatedTokenPriceAmount('')
                     setAmountTo('')
-
+                    setBnAmountTo(new BN(0))
                     return
                   }
 
@@ -772,6 +777,8 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
                     )
 
                     const tokenOutAmount = printBN(amountOutBN, tokens[tokenToIndex].decimals)
+
+                    setBnAmountTo(amountOutBN)
 
                     setAmountTo(tokenOutAmount)
                   }
@@ -829,12 +836,78 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
 
                     const tokenOutAmount = printBN(amountOutBN, tokens[tokenToIndex].decimals)
 
+                    setBnAmountTo(amountOutBN)
                     setAmountTo(tokenOutAmount)
                   }
                 }}
               />
             </>
           }
+
+          <Box className={classes.mobileChangeRatioWrapper}>
+            <Box className={classes.transactionDetailsInner}>
+              <button
+                onClick={
+                  validatedTokenPriceAmount !== '' &&
+                  hasShowRateMessage() &&
+                  amountFrom !== '' &&
+                  amountTo !== ''
+                    ? handleOpenTransactionDetails
+                    : undefined
+                }
+                className={cx(
+                  tokenFromIndex !== null &&
+                    tokenToIndex !== null &&
+                    hasShowRateMessage() &&
+                    amountFrom !== '' &&
+                    amountTo !== ''
+                    ? classes.HiddenTransactionButton
+                    : classes.transactionDetailDisabled,
+                  classes.transactionDetailsButton
+                )}>
+                <Grid className={classes.transactionDetailsWrapper}>
+                  <Typography className={classes.transactionDetailsHeader}>
+                    {detailsOpen && canShowDetails ? 'Hide' : 'Show'} transaction details
+                  </Typography>
+                </Grid>
+              </button>
+            </Box>
+            {canShowDetails ? (
+              <Box className={cx(classes.exchangeRateWrapper)}>
+                <ExchangeRate
+                  onClick={() => setRateReversed(!rateReversed)}
+                  tokenFromSymbol={tokens[rateReversed ? tokenToIndex : tokenFromIndex].symbol}
+                  tokenToSymbol={tokens[rateReversed ? tokenFromIndex : tokenToIndex].symbol}
+                  amount={rateReversed ? 1 / swapRate : swapRate}
+                  tokenToDecimals={tokens[rateReversed ? tokenFromIndex : tokenToIndex].decimals}
+                  loading={false}
+                />
+              </Box>
+            ) : null}
+          </Box>
+          <TransactionDetailsBox
+            open={detailsOpen && canShowDetails}
+            exchangeRate={{
+              val: rateReversed ? 1 / swapRate : swapRate,
+              symbol: canShowDetails
+                ? tokens[rateReversed ? tokenFromIndex : tokenToIndex].symbol
+                : '',
+              decimal: canShowDetails
+                ? tokens[rateReversed ? tokenFromIndex : tokenToIndex].decimals
+                : 0
+            }}
+            isLoadingRate={getStateMessage() === 'Loading' || addBlur}
+            feeTier={`${+printBN(orderBookPair?.pair.feeTier.fee, DECIMAL - 2).toString()}%`}
+            makerProfit={{
+              percentage: (
+                (+printBN(orderBookPair?.pair.feeTier.fee, DECIMAL - 2) * +orderRewardRate) /
+                100
+              ).toString(),
+              value: rewardValue,
+              tokenSymbol: tokenToIndex !== null ? tokens[tokenToIndex].symbol : ''
+            }}
+            platformFee={'0'}
+          />
           <Grid container margin={isSm ? '12px 0' : 0}>
             <TokensInfo
               tokenFrom={tokenFromIndex !== null ? tokens[tokenFromIndex] : null}

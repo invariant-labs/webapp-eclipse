@@ -454,6 +454,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     }
   },
   mobileChangeRatioWrapper: {
+    marginTop: 12,
     display: 'flex',
     width: '100%',
     justifyContent: 'space-between',
