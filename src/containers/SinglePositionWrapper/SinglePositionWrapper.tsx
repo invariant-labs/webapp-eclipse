@@ -376,7 +376,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     }
     setPricesLoading(true)
     const xAddr = position.tokenX.assetAddress.toString()
-    getTokenPrice(xAddr, currentNetwork)
+    getTokenPrice(currentNetwork, xAddr)
       .then(data => setTokenXPriceData({ price: data ?? 0 }))
       .catch(() => setTokenXPriceData(getMockedTokenPrice(position.tokenX.symbol, currentNetwork)))
       .finally(() => {
@@ -384,7 +384,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       })
 
     const yAddr = position.tokenY.assetAddress.toString()
-    getTokenPrice(yAddr, currentNetwork)
+    getTokenPrice(currentNetwork, yAddr)
       .then(data => setTokenYPriceData({ price: data ?? 0 }))
       .catch(() => setTokenYPriceData(getMockedTokenPrice(position.tokenY.symbol, currentNetwork)))
       .finally(() => {

@@ -147,6 +147,7 @@ interface IProps {
   isAddLiquidity: boolean
   setIsAddLiquidity: (value: boolean) => void
   openPosition: (index: string) => void
+  prices: Record<string, number>
 }
 
 const Portfolio: React.FC<IProps> = ({
@@ -214,7 +215,8 @@ const Portfolio: React.FC<IProps> = ({
   setIsChangeLiquidityModalShown,
   isAddLiquidity,
   setIsAddLiquidity,
-  openPosition
+  openPosition,
+  prices
 }) => {
   const { classes, cx } = useStyles()
 
@@ -501,7 +503,7 @@ const Portfolio: React.FC<IProps> = ({
         {isDownLg && !isMd && (
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <Overview poolAssets={data} />
+              <Overview poolAssets={data} prices={prices} />
               <Box className={classes.footer}>
                 <Box className={classes.footerItem}>{renderPositionDetails()}</Box>
               </Box>
@@ -578,7 +580,7 @@ const Portfolio: React.FC<IProps> = ({
             <Box>
               {overviewSelectedTab === OverviewSwitcher.Overview && (
                 <>
-                  <Overview poolAssets={data} />
+                  <Overview poolAssets={data} prices={prices} />
                   <Box className={classes.footer}>
                     <Box className={classes.footerItem}>{renderPositionDetails()}</Box>
                   </Box>
@@ -621,7 +623,7 @@ const Portfolio: React.FC<IProps> = ({
         {!isDownLg && (
           <>
             <Box display={'flex'}>
-              <Overview poolAssets={data} />
+              <Overview poolAssets={data} prices={prices} />
               <YourWallet
                 currentNetwork={currentNetwork}
                 handleSnackbar={handleSnackbar}
