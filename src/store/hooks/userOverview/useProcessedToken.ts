@@ -1,6 +1,6 @@
 import { PublicKey } from '@solana/web3.js'
 import { SwapToken } from '@store/selectors/solanaWallet'
-import { printBN } from '@utils/utils'
+import { ensureError, printBN } from '@utils/utils'
 import { useEffect, useState } from 'react'
 
 export interface ProcessedToken {
@@ -28,22 +28,28 @@ export const useProcessedTokens = (
         return parseFloat(balance) > 0
       })
 
-      const processed = await Promise.all(
-        nonZeroTokens.map(async token => {
-          const balance = Number(printBN(token.balance, token.decimals).replace(',', '.'))
-          const priceData = prices[token.assetAddress.toString()]
+      const processed = nonZeroTokens.map(token => {
+        const balance = Number(printBN(token.balance, token.decimals).replace(',', '.'))
+        let price = 0
 
-          return {
-            id: token.assetAddress,
-            symbol: token.symbol,
-            icon: token.logoURI,
-            isUnknown: token.isUnknown,
-            decimal: token.decimals,
-            amount: balance,
-            value: balance * priceData
-          }
-        })
-      )
+        try {
+          const priceData = prices[token.assetAddress.toString()]
+          price = priceData ?? 0
+        } catch (e: unknown) {
+          const error = ensureError(e)
+          console.error(`Failed to get price for ${token.symbol}:`, error)
+        }
+
+        return {
+          id: token.assetAddress,
+          symbol: token.symbol,
+          icon: token.logoURI,
+          isUnknown: token.isUnknown,
+          decimal: token.decimals,
+          amount: balance,
+          value: balance * price
+        }
+      })
 
       setProcessedTokens(processed)
       setIsProcesing(false)
