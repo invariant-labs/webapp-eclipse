@@ -25,24 +25,28 @@ export const userOrdersWithTokensData = createSelector(
   pools,
   swapTokensDict,
   (limitOrders, allPools, allTokens) => {
-    return limitOrders.map(order => {
-      const pool = allPools[order.account.pool.toString()]
+    return limitOrders
+      .map(order => {
+        const pool = allPools[order.account.pool.toString()]
 
-      const tokenFrom = order.account.xToY
-        ? allTokens[pool.tokenX.toString()]
-        : allTokens[pool.tokenY.toString()]
+        if (!pool) return
 
-      const tokenTo = order.account.xToY
-        ? allTokens[pool.tokenY.toString()]
-        : allTokens[pool.tokenX.toString()]
+        const tokenFrom = order.account.xToY
+          ? allTokens[pool.tokenX.toString()]
+          : allTokens[pool.tokenY.toString()]
 
-      return {
-        poolData: pool,
-        tokenFrom,
-        tokenTo,
-        ...order
-      }
-    })
+        const tokenTo = order.account.xToY
+          ? allTokens[pool.tokenY.toString()]
+          : allTokens[pool.tokenX.toString()]
+
+        return {
+          poolData: pool,
+          tokenFrom,
+          tokenTo,
+          ...order
+        }
+      })
+      .filter(Boolean)
   }
 )
 

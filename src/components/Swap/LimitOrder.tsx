@@ -720,17 +720,25 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
               network={network}
             />
           </Box>
-          {tokenFromIndex !== null && tokenToIndex !== null && (
+          {
             <>
-              <Typography className={cx(classes.swapLabel)} mt={1.5}>
-                {rateReversed
-                  ? 'Buy ' + tokens[tokenToIndex].symbol
-                  : 'Sell ' + tokens[tokenFromIndex].symbol}{' '}
-                at price
-              </Typography>
+              {tokenToIndex !== null && tokenFromIndex !== null ? (
+                <Typography className={cx(classes.swapLabel)} mt={1.5}>
+                  {rateReversed
+                    ? 'Buy ' + tokens[tokenToIndex].symbol
+                    : 'Sell ' + tokens[tokenFromIndex].symbol}{' '}
+                  at price
+                </Typography>
+              ) : (
+                <Typography className={cx(classes.swapLabel)} mt={1.5}>
+                  But price
+                </Typography>
+              )}
               <BuyTokenInput
                 tokenPrice={tokenToPriceData?.price}
                 setValue={value => {
+                  if (tokenToIndex === null || tokenFromIndex === null) return
+
                   if (value === '') {
                     setTokenPriceAmount('')
                     setValidatedTokenPriceAmount('')
@@ -769,8 +777,8 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
                   }
                 }}
                 limit={1e14}
-                decimalsLimit={tokens[tokenToIndex].decimals}
-                currency={tokens[tokenToIndex].symbol}
+                decimalsLimit={tokenToIndex !== null ? tokens[tokenToIndex].decimals : 0}
+                currency={tokenToIndex !== null ? tokens[tokenToIndex].symbol : ''}
                 placeholder='0.0'
                 onBlur={() => {
                   setTokenPriceAmount(validatedTokenPriceAmount)
@@ -779,7 +787,13 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
                 blocked={false}
                 blockerInfo=''
                 setMarketPrice={() => {
-                  if (!tokenToPriceData || !tokenFromPriceData) return
+                  if (
+                    !tokenToPriceData ||
+                    !tokenFromPriceData ||
+                    tokenToIndex === null ||
+                    tokenFromIndex === null
+                  )
+                    return
 
                   const marketPrice = +tokenFromPriceData?.price / +tokenToPriceData?.price
 
@@ -820,7 +834,7 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
                 }}
               />
             </>
-          )}
+          }
           <Grid container margin={isSm ? '12px 0' : 0}>
             <TokensInfo
               tokenFrom={tokenFromIndex !== null ? tokens[tokenFromIndex] : null}
