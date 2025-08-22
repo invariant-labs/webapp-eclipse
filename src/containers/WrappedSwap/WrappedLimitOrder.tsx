@@ -87,7 +87,7 @@ type Props = {
     rotates: number
     setRotates: React.Dispatch<React.SetStateAction<number>>
   }
-  walletAddress: PublicKey
+  walletAddress?: PublicKey
   allPools: PoolWithAddress[]
 }
 export const WrappedLimitOrder = ({
@@ -350,7 +350,7 @@ export const WrappedLimitOrder = ({
         rotatesState={rotatesState}
         swapState={swapState}
         handleAddOrder={(amount, tickIndex, xToY) => {
-          if (!tokenFrom || !tokenTo || !orderBookPair || !poolData) return
+          if (!tokenFrom || !tokenTo || !orderBookPair || !poolData || !walletAddress) return
 
           setProgress('progress')
 
@@ -387,6 +387,8 @@ export const WrappedLimitOrder = ({
           tokensDict={tokensDict}
           userOrders={userOrdersFullData}
           handleRemoveOrder={(pair, orderKey, amount) => {
+            if (!walletAddress) return
+
             dispatch(
               actions.removeLimitOrder({
                 pair,

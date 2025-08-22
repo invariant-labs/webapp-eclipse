@@ -330,7 +330,7 @@ export const SwapContainer = ({ initialTokenFrom, initialTokenTo }: Props) => {
             lockAnimationState={{ lockAnimation, setLockAnimation }}
             rotatesState={{ rotates, setRotates }}
             swapState={{ setSwap, swap }}
-            walletAddress={wallet.publicKey}
+            walletAddress={wallet?.publicKey}
             allPools={allPools}
           />
         )}
