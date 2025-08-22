@@ -156,15 +156,18 @@ export const WrappedLimitOrder = ({
     }
   }, [success, inProgress])
 
-  const userOrdersFullData: UserOrdersFullData[] = useMemo(() => {
+  const userOrdersFullData = useMemo<UserOrdersFullData[]>(() => {
     if (!orderBook) return []
 
-    return userOrders.map(order => {
+    return userOrders.flatMap(order => {
+      if (!order) return []
+
       const simulateResult = simulateDecreaseOrderLiquidity(
         orderBook,
         order.account,
         order.account.orderTokenAmount
       )
+
       let filledPercentage = '0'
       if (
         simulateResult.status === DecreaseOrderLiquiditySimulationStatus.PartiallyCompleted ||
@@ -183,9 +186,9 @@ export const WrappedLimitOrder = ({
         filledPercentage = (+printBN(fillPercentageX, DECIMAL - 2)).toFixed(2)
       }
 
-      const poolData = allPools.find(pool => {
-        return pool.address.toString() === order.account.pool.toString()
-      })
+      const poolData = allPools.find(
+        pool => pool.address.toString() === order.account.pool.toString()
+      )
 
       const price = calcPriceByTickIndex(
         order.account.tickIndex,
@@ -207,15 +210,17 @@ export const WrappedLimitOrder = ({
       const tokenPrice =
         (order.account.xToY ? tokenToPriceData?.price : tokenFromPriceData?.price) || 0
 
-      return {
-        ...order,
-        filledPercentage: filledPercentage,
-        amountPrice: price,
-        pair,
-        usdValue: +orderValue * +tokenPrice
-      }
+      return [
+        {
+          ...order,
+          filledPercentage,
+          amountPrice: price,
+          pair,
+          usdValue: +orderValue * +tokenPrice
+        }
+      ]
     })
-  }, [userOrders, orderBook, allPools.length])
+  }, [userOrders, orderBook, allPools.length, tokenToPriceData?.price, tokenFromPriceData?.price])
 
   useEffect(() => {
     dispatch(leaderboardActions.getLeaderboardConfig())
