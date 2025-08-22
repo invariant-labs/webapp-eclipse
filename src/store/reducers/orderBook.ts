@@ -8,6 +8,7 @@ import {
   LimitOrder
 } from '@invariant-labs/sdk-eclipse/lib/market'
 import { PublicKey } from '@solana/web3.js'
+import { DecreaseOrderLiquiditySimulationStatus } from '@invariant-labs/sdk-eclipse/src/limit-order'
 
 export interface IOrderBook {
   currentOrderBook: OrderBook | null
@@ -29,7 +30,10 @@ export interface IAddOrder extends IncreaseLimitOrderLiquidity {
 }
 
 export interface IRemoveOrder
-  extends Omit<DecreaseLimitOrderLiquidity, 'userTokenX' | 'userTokenY'> {}
+  extends Omit<DecreaseLimitOrderLiquidity, 'userTokenX' | 'userTokenY'> {
+  xToY: boolean
+  status: DecreaseOrderLiquiditySimulationStatus
+}
 
 export interface AddOrderPayload {
   pair: Pair

@@ -2673,34 +2673,31 @@ export const getAmountFromLimitOrderInstruction = (
     return 0
   }
 
-  const innerInstruction =
-    meta.innerInstructions.find(
-      innerInstruction =>
-        !!innerInstruction.instructions.find(
-          instruction =>
-            (instruction as ParsedInstruction)?.parsed.type === 'transfer' ||
-            (instruction as ParsedInstruction)?.parsed.type === 'transferChecked'
-        )
-    ) ?? meta.innerInstructions[0]
-  console.log(innerInstruction)
-  const innerInstruction2 =
-    meta.innerInstructions.find(
-      innerInstruction =>
-        !!innerInstruction.instructions.find(
-          instruction =>
-            (instruction as ParsedInstruction)?.parsed.type === 'transfer' ||
-            (instruction as ParsedInstruction)?.parsed.type === 'transferChecked'
-        )
-    ) ?? meta.innerInstructions[1]
-  console.log(innerInstruction2)
+  try {
+    const innerInstruction =
+      meta.innerInstructions.find(
+        innerInstruction =>
+          !!innerInstruction.instructions.find(
+            instruction =>
+              (instruction as ParsedInstruction)?.parsed.type === 'transfer' ||
+              (instruction as ParsedInstruction)?.parsed.type === 'transferChecked'
+          )
+      ) ?? meta.innerInstructions[0]
 
-  const instruction = innerInstruction.instructions.filter(
-    instruction =>
-      (instruction as ParsedInstruction)?.parsed.type === 'transfer' ||
-      (instruction as ParsedInstruction)?.parsed.type === 'transferChecked'
-  )[type === TokenType.TokenX ? 0 : 1] as ParsedInstruction | undefined
+    const instruction = innerInstruction.instructions.filter(
+      instruction =>
+        (instruction as ParsedInstruction)?.parsed.type === 'transfer' ||
+        (instruction as ParsedInstruction)?.parsed.type === 'transferChecked'
+    )[type === TokenType.TokenX ? 0 : 1] as ParsedInstruction | undefined
 
-  return instruction?.parsed.info.amount || instruction?.parsed.info.tokenAmount.amount
+    if (!instruction) {
+      return 0
+    }
+
+    return instruction?.parsed.info.amount || instruction?.parsed.info.tokenAmount.amount
+  } catch (error) {
+    return 0
+  }
 }
 
 export const getAmountFromClaimFeeInstruction = (

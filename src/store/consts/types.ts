@@ -7,6 +7,7 @@ import { PoolWithAddressAndIndex } from '@store/selectors/positions'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { Pair } from '@invariant-labs/sdk-eclipse'
+import { DecreaseOrderLiquiditySimulationStatus } from '@invariant-labs/sdk-eclipse/src/limit-order'
 
 declare global {
   interface Window {
@@ -334,4 +335,5 @@ export type UserOrdersFullData = {
   amountPrice: number
   pair: Pair
   usdValue: number
+  status: DecreaseOrderLiquiditySimulationStatus
 }

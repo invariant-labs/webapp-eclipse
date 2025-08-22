@@ -38,6 +38,7 @@ import { IncreaseLimitOrderLiquidity } from '@invariant-labs/sdk-eclipse/lib/mar
 import { actions as connectionActions, RpcStatus } from '@store/reducers/solanaConnection'
 import { ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddress } from '@solana/spl-token'
 import { tokens } from '@store/selectors/pools'
+import { DecreaseOrderLiquiditySimulationStatus } from '@invariant-labs/sdk-eclipse/src/limit-order'
 
 export function* handleGetOrderBook(action: PayloadAction<AddOrderPayload>) {
   try {
@@ -219,25 +220,23 @@ export function* handleAddLimitOrder(action: PayloadAction<IncreaseLimitOrderLiq
         const meta = txDetails.meta
 
         if (meta?.innerInstructions && meta.innerInstructions) {
-          console.log(meta?.innerInstructions)
           try {
-            const amountX = getAmountFromLimitOrderInstruction(meta, TokenType.TokenX)
-            const amountY = getAmountFromLimitOrderInstruction(meta, TokenType.TokenY)
-            console.log(amountX)
-            console.log(amountY)
-            const tokenX = allTokens[pair.tokenX.toString()]
-            const tokenY = allTokens[pair.tokenY.toString()]
+            const amountX = getAmountFromLimitOrderInstruction(
+              meta,
+              xToY ? TokenType.TokenX : TokenType.TokenY
+            )
+
+            const token = allTokens[xToY ? pair.tokenX.toString() : pair.tokenY.toString()]
 
             yield put(
               snackbarsActions.add({
                 tokensDetails: {
                   ikonType: 'deposit',
-                  tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals)),
-                  tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals)),
-                  tokenXIcon: tokenX.logoURI,
-                  tokenYIcon: tokenY.logoURI,
-                  tokenXSymbol: tokenX.symbol ?? tokenX.address.toString(),
-                  tokenYSymbol: tokenY.symbol ?? tokenY.address.toString()
+                  tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, token.decimals)),
+
+                  tokenXIcon: token.logoURI,
+
+                  tokenXSymbol: token.symbol ?? token.address.toString()
                 },
                 persist: false
               })
@@ -332,7 +331,7 @@ export function* handleRemoveLimitOrder(action: PayloadAction<IRemoveOrder>) {
     const connection = yield* call(getConnection)
     const allTokens = yield* select(tokens)
 
-    const { pair, amount, owner, orderKey } = action.payload
+    const { pair, amount, owner, orderKey, xToY, status } = action.payload
     yield put(
       snackbarsActions.add({
         message: 'Closing Limit Order...',
@@ -457,13 +456,27 @@ export function* handleRemoveLimitOrder(action: PayloadAction<IRemoveOrder>) {
             const amountX = getAmountFromLimitOrderInstruction(meta, TokenType.TokenX)
             const amountY = getAmountFromLimitOrderInstruction(meta, TokenType.TokenY)
 
-            const tokenX = allTokens[pair.tokenX.toString()]
-            const tokenY = allTokens[pair.tokenY.toString()]
+            const tokenX =
+              allTokens[
+                status === DecreaseOrderLiquiditySimulationStatus.NotStarted
+                  ? xToY
+                    ? pair.tokenX.toString()
+                    : pair.tokenY.toString()
+                  : pair.tokenX.toString()
+              ]
+            const tokenY =
+              allTokens[
+                status === DecreaseOrderLiquiditySimulationStatus.NotStarted
+                  ? xToY
+                    ? pair.tokenY.toString()
+                    : pair.tokenX.toString()
+                  : pair.tokenY.toString()
+              ]
 
             yield put(
               snackbarsActions.add({
                 tokensDetails: {
-                  ikonType: 'deposit',
+                  ikonType: 'withdraw',
                   tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals)),
                   tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals)),
                   tokenXIcon: tokenX.logoURI,

@@ -21,6 +21,7 @@ import { swapSearch } from '@store/selectors/navigation'
 import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
 import { InputPagination } from '@common/Pagination/InputPagination/InputPagination'
 import OrderItemPlaceholder from './OrderItemPlaceholder/OrderItemPlaceholder'
+import { DecreaseOrderLiquiditySimulationStatus } from '@invariant-labs/sdk-eclipse/src/limit-order'
 
 const ORDERS_PER_PAGE = 5
 
@@ -56,7 +57,13 @@ interface IProps {
   setSelectedFilters: (tokens: ISearchToken[]) => void
   tokensDict: Record<string, SwapToken>
   userOrders: UserOrdersFullData[]
-  handleRemoveOrder: (pair: Pair, orderKey: PublicKey, amount: BN) => void
+  handleRemoveOrder: (
+    pair: Pair,
+    orderKey: PublicKey,
+    amount: BN,
+    xToY: boolean,
+    status: DecreaseOrderLiquiditySimulationStatus
+  ) => void
   walletStatus: Status
   isLoading: boolean
 }
@@ -198,7 +205,9 @@ const OrderHistory: React.FC<IProps> = ({
                         handleRemoveOrder(
                           order.pair,
                           order.publicKey,
-                          order.account.orderTokenAmount
+                          order.account.orderTokenAmount,
+                          order.account.xToY,
+                          order.status
                         )
                       }
                       orderFilled={order.filledPercentage}

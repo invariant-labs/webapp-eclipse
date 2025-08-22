@@ -167,7 +167,8 @@ export const WrappedLimitOrder = ({
         order.account,
         order.account.orderTokenAmount
       )
-
+      console.log(order.account.tickIndex)
+      console.log()
       let filledPercentage = '0'
       if (
         simulateResult.status === DecreaseOrderLiquiditySimulationStatus.PartiallyCompleted ||
@@ -182,14 +183,14 @@ export const WrappedLimitOrder = ({
         const fillPercentageX = DENOMINATOR.sub(
           simulateAmount.mul(DENOMINATOR).div(order.account.orderTokenAmount)
         )
-
+        console.log(+printBN(fillPercentageX, DECIMAL - 2))
         filledPercentage = (+printBN(fillPercentageX, DECIMAL - 2)).toFixed(2)
       }
 
       const poolData = allPools.find(
         pool => pool.address.toString() === order.account.pool.toString()
       )
-
+      console.log(poolData?.currentTickIndex)
       const price = calcPriceByTickIndex(
         order.account.tickIndex,
         order.account.xToY,
@@ -209,14 +210,16 @@ export const WrappedLimitOrder = ({
 
       const tokenPrice =
         (order.account.xToY ? tokenToPriceData?.price : tokenFromPriceData?.price) || 0
-
+      console.log(+orderValue * +tokenPrice)
+      console.log(order.account.xToY)
       return [
         {
           ...order,
           filledPercentage,
           amountPrice: price,
           pair,
-          usdValue: +orderValue * +tokenPrice
+          usdValue: +orderValue * +tokenPrice,
+          status: simulateResult.status
         }
       ]
     })
@@ -358,7 +361,7 @@ export const WrappedLimitOrder = ({
           if (!tokenFrom || !tokenTo || !orderBookPair || !poolData || !walletAddress) return
 
           setProgress('progress')
-
+          console.log(walletAddress)
           dispatch(
             actions.addLimitOrder({
               amount,
@@ -379,7 +382,7 @@ export const WrappedLimitOrder = ({
         poolData={poolData}
         isLoading={loadingOrderbook}
       />
-      {orderBookPair && walletStatus === Status.Initialized && (
+      {walletStatus === Status.Initialized && (
         <OrderHistory
           handleSwitcher={(e: OrdersHistory) => {
             dispatch(navigationActions.setOrderHistory(e))
@@ -391,7 +394,7 @@ export const WrappedLimitOrder = ({
           setSelectedFilters={setSearchTokensValue}
           tokensDict={tokensDict}
           userOrders={userOrdersFullData}
-          handleRemoveOrder={(pair, orderKey, amount) => {
+          handleRemoveOrder={(pair, orderKey, amount, xToY, status) => {
             if (!walletAddress) return
 
             dispatch(
@@ -399,7 +402,9 @@ export const WrappedLimitOrder = ({
                 pair,
                 owner: walletAddress,
                 orderKey,
-                amount
+                amount,
+                xToY,
+                status
               })
             )
           }}
