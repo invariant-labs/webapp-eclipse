@@ -678,7 +678,7 @@ const PortfolioWrapper = () => {
 
   useEffect(() => {
     const loadPrices = async (): Promise<void> => {
-      const prices = await getTokenPrice(undefined, currentNetwork)
+      const prices = await getTokenPrice(currentNetwork)
       if (prices) {
         const transformedPrices = Object.fromEntries(
           Object.entries(prices).map(([key, value]) => [key, value.price])

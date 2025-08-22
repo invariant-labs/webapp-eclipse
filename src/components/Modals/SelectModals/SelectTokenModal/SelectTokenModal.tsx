@@ -182,7 +182,7 @@ export const SelectTokenModal: React.FC<ISelectTokenModal> = memo(
 
     useEffect(() => {
       const loadPrices = async (): Promise<void> => {
-        const prices = await getTokenPrice(undefined, network)
+        const prices = await getTokenPrice(network)
         if (prices) {
           const transformedPrices = Object.fromEntries(
             Object.entries(prices).map(([key, value]) => [key, value.price])
