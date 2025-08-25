@@ -117,9 +117,11 @@ export interface IProps {
     liquidity: BN,
     slippage: BN,
     isAddLiquidity: boolean,
+    isClosePosition: boolean,
     xAmount: BN,
     yAmount: BN
   ) => void
+
   swapAndAddLiquidity: (
     xAmount: BN,
     yAmount: BN,
@@ -803,7 +805,9 @@ export const AddLiquidity: React.FC<IProps> = ({
       setProgress('progress')
     }
 
-    changeLiquidity(liquidity, slippage, true, xAmount, yAmount)
+    changeLiquidity(liquidity, slippage, true, false, xAmount, yAmount)
+    console.log(xAmount)
+    console.log(yAmount)
   }
 
   const onAddLiquidity = async (xAmount, yAmount) => {
@@ -1842,7 +1846,6 @@ export const AddLiquidity: React.FC<IProps> = ({
             className={cx(classes.addButton, progress === 'none' ? classes.hoverButton : undefined)}
             onClick={() => {
               if (progress === 'none' && tokenAIndex !== null && tokenBIndex !== null) {
-                console.log('test')
                 if (!isAutoswapOn) {
                   onAddLiquidity(
                     isXtoY
@@ -1865,7 +1868,6 @@ export const AddLiquidity: React.FC<IProps> = ({
                       : convertBalanceToBN(valueB, tokens[tokenBIndex].decimals)
                   )
                 } else {
-                  console.log('test')
                   if (
                     (tokenACheckbox || tokenBCheckbox) &&
                     simulation &&
@@ -1874,7 +1876,6 @@ export const AddLiquidity: React.FC<IProps> = ({
                     isSimulationStatus(SwapAndCreateSimulationStatus.Ok) &&
                     !!autoSwapPoolData
                   ) {
-                    console.log('test')
                     const userMinUtilization = toDecimal(+Number(utilization).toFixed(4), 2)
                     const tokenADecimal = tokens[tokenAIndex].decimals
                     const tokenBDecimal = tokens[tokenBIndex].decimals
@@ -1891,7 +1892,6 @@ export const AddLiquidity: React.FC<IProps> = ({
                       ? tokenBValue
                       : tokenAValue
 
-                    console.log('test')
                     onSwapAndAddLiquidity(
                       amountX,
                       amountY,
