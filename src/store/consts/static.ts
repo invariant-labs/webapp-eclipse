@@ -17,6 +17,7 @@ import { TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import sBitzIcon from '@static/png/sBitzIcon.png'
 import BitzIcon from '@static/png/bitzIcon.png'
 import rewardsArray from '@store/consts/rewards/rewardsArray.json'
+import invtLogo from '@static/png/invtTokenLogo.png'
 
 export enum NetworkType {
   Local = 'Local',
@@ -444,6 +445,16 @@ export const muES_MAIN: Token = {
   coingeckoId: ''
 }
 
+export const INVT_MAIN: Token = {
+  tokenProgram: TOKEN_2022_PROGRAM_ID,
+  symbol: 'INVT',
+  address: new PublicKey('EqwchrrGFppZYpTVAQH7ETm2QhSpu6eHV5fwZtUamfSM'),
+  decimals: 4,
+  name: 'Invariant',
+  logoURI: invtLogo,
+  coingeckoId: ''
+}
+
 const DEFAULT_PUBLICKEY = new PublicKey(0)
 const MAX_U64 = new BN('18446744073709551615')
 
@@ -646,7 +657,7 @@ export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
     BITZ_MAIN.address,
     ES_MAIN.address,
     sBITZ_MAIN.address,
-    TUSD_MAIN.address
+    INVT_MAIN.address
   ],
   Testnet: [USDC_TEST.address, BTC_TEST.address, WETH_TEST.address],
   Local: []
@@ -815,7 +826,8 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
       NPT: NPT_MAIN.address.toString(),
       USDN: USDN_MAIN.address.toString(),
       WEETHS: WEETHS_MAIN.address.toString(),
-      muES_MAIN: muES_MAIN.address.toString()
+      muES_MAIN: muES_MAIN.address.toString(),
+      TUSD_MAIN: TUSD_MAIN.address.toString()
     }
   }
 }
