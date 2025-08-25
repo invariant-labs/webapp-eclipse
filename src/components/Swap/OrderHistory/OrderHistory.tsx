@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { alpha, Box, Button, Grid, Typography, useMediaQuery } from '@mui/material'
+import { alpha, Box, Button, Grid, Typography } from '@mui/material'
 import { useStyles } from './styles'
 import { OrdersHistory } from '@store/reducers/navigation'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
@@ -8,7 +8,7 @@ import { FilterSearch, ISearchToken } from '@common/FilterSearch/FilterSearch'
 import { BTC_TEST, NetworkType, WETH_TEST } from '@store/consts/static'
 import OrderItem from './OrderItem/OrderItem'
 import { SwapToken } from '@store/selectors/solanaWallet'
-import { colors, theme, typography } from '@static/theme'
+import { colors, typography } from '@static/theme'
 import { printBN } from '@utils/utils'
 import { Pair } from '@invariant-labs/sdk-eclipse'
 import { Keypair, PublicKey } from '@solana/web3.js'
@@ -19,9 +19,9 @@ import { useDispatch, useSelector } from 'react-redux'
 import { actions } from '@store/reducers/navigation'
 import { swapSearch } from '@store/selectors/navigation'
 import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
-import { InputPagination } from '@common/Pagination/InputPagination/InputPagination'
 import OrderItemPlaceholder from './OrderItemPlaceholder/OrderItemPlaceholder'
 import { DecreaseOrderLiquiditySimulationStatus } from '@invariant-labs/sdk-eclipse/src/limit-order'
+import { PaginationList } from '@common/Pagination/Pagination/Pagination'
 
 const ORDERS_PER_PAGE = 5
 
@@ -131,16 +131,7 @@ const OrderHistory: React.FC<IProps> = ({
     }
   }
 
-  const totalItems = useMemo(() => userOrders.length, [userOrders])
-  const lowerBound = useMemo(() => (page - 1) * ORDERS_PER_PAGE + 1, [page])
-  const upperBound = useMemo(() => Math.min(page * ORDERS_PER_PAGE, totalItems), [totalItems, page])
-
   const pages = useMemo(() => Math.ceil(userOrders.length / ORDERS_PER_PAGE), [userOrders.length])
-  const isCenterAligment = useMediaQuery(theme.breakpoints.down(1280))
-  const height = useMemo(
-    () => (initialDataLength > ORDERS_PER_PAGE ? (isCenterAligment ? 176 : 90) : 60),
-    [initialDataLength, isCenterAligment]
-  )
 
   return (
     <Grid className={classes.wrapper}>
@@ -241,21 +232,15 @@ const OrderHistory: React.FC<IProps> = ({
             <Grid
               className={classes.pagination}
               sx={{
-                height: height
+                height: 60
               }}>
               {pages > 1 && (
-                <InputPagination
+                <PaginationList
                   pages={pages}
                   defaultPage={page}
                   handleChangePage={handleChangePagination}
                   variant='center'
                   page={page}
-                  borderTop={false}
-                  pagesNumeration={{
-                    lowerBound: lowerBound,
-                    totalItems: totalItems,
-                    upperBound: upperBound
-                  }}
                 />
               )}
             </Grid>

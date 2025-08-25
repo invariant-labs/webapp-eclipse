@@ -59,11 +59,16 @@ const OrderItem: React.FC<IProps> = ({
   useEffect(() => {
     let timeoutId1: NodeJS.Timeout
     let timeoutId2: NodeJS.Timeout
-    if (orderPublicKey !== orderKey) return
+    if (orderPublicKey !== orderKey) {
+      setProgress('none')
+    }
 
     if (!inProgress && progress === 'progress') {
       setProgress(success ? 'approvedWithSuccess' : 'approvedWithFail')
 
+      if (success) {
+        setProgress('none')
+      }
       timeoutId1 = setTimeout(() => {
         setProgress(success ? 'success' : 'failed')
       }, 1000)
@@ -77,7 +82,7 @@ const OrderItem: React.FC<IProps> = ({
       clearTimeout(timeoutId1)
       clearTimeout(timeoutId2)
     }
-  }, [success, inProgress])
+  }, [success, inProgress, orderPublicKey, orderKey])
 
   const getStateMessage = () => {
     return 'Close order'
@@ -207,7 +212,10 @@ const OrderItem: React.FC<IProps> = ({
             ? `${classes.closeButton} ${classes.buttonCloseActive}`
             : classes.closeButton
         }
-        disabled={getStateMessage() !== 'Close order' || progress !== 'none'}
+        disabled={
+          (getStateMessage() !== 'Close order' || progress !== 'none') &&
+          orderPublicKey === loadingCloseOrderState.orderKey
+        }
         onClick={e => {
           e.stopPropagation()
           setProgress('progress')
@@ -215,6 +223,7 @@ const OrderItem: React.FC<IProps> = ({
           handleCloseOrder()
         }}
         progress={progress}
+        animateAvailable={orderPublicKey === loadingCloseOrderState.orderKey}
       />
     </Grid>
   )

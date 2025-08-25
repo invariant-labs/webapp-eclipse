@@ -109,6 +109,7 @@ const orderBookSlice = createSlice({
       console.log(action.payload)
       state.loadingCloseOrder.inProgress = false
       state.loadingCloseOrder.success = action.payload
+      state.loadingCloseOrder.orderKey = action.payload ? '' : state.loadingCloseOrder.orderKey
 
       return state
     },
