@@ -30,7 +30,7 @@ import TokensInfo from './TokensInfo/TokensInfo'
 import { VariantType } from 'notistack'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { PublicKey } from '@solana/web3.js'
-import { refreshIcon, swapArrowsIcon } from '@static/icons'
+import { refreshIcon, swapArrowsIcon, warningIcon } from '@static/icons'
 import { useNavigate } from 'react-router-dom'
 import BuyTokenInput from './LimitOrderComponents/BuyTokenInput/BuyTokenInput'
 import { DENOMINATOR, Market, Pair } from '@invariant-labs/sdk-eclipse'
@@ -184,6 +184,7 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
   )
   const [detailsOpen, setDetailsOpen] = React.useState<boolean>(false)
   const [addBlur, _setAddBlur] = useState(false)
+  const [errorVisible, setErrorVisible] = useState(false)
 
   const isXtoYOrderBook = useMemo(() => {
     if (tokenFromIndex === null) return
@@ -443,6 +444,34 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
       (swapRate !== 0 && swapRate !== Infinity && !isNaN(swapRate))) &&
     amountFrom !== '' &&
     amountTo !== ''
+
+  const showBlur = useMemo(() => {
+    return addBlur || lockAnimation || getStateMessage() === 'Loading'
+  }, [addBlur, lockAnimation, getStateMessage])
+
+  useEffect(() => {
+    const hasUnknown =
+      tokens[tokenFromIndex ?? '']?.isUnknown || tokens[tokenToIndex ?? '']?.isUnknown
+
+    const riskWarning =
+      !priceToLoading && !priceFromLoading && !showBlur && (orderBook === null || !orderBookPair)
+
+    if (hasUnknown) {
+      setErrorVisible(true)
+      return
+    }
+    const id = setTimeout(() => setErrorVisible(riskWarning), 150)
+    return () => clearTimeout(id)
+  }, [
+    priceFromLoading,
+    priceToLoading,
+    showBlur,
+    tokens,
+    tokenFromIndex,
+    tokenToIndex,
+    orderBookPair,
+    orderBook
+  ])
 
   return (
     <Grid container className={classes.swapWrapper} alignItems='center'>
@@ -843,7 +872,44 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
               />
             </>
           }
+          <Box
+            className={classes.unknownWarningContainer}
+            style={{
+              height: errorVisible ? `34px` : '0px'
+            }}>
+            {(!orderBook || !orderBookPair) && tokenFromIndex !== null && tokenToIndex !== null && (
+              <TooltipHover title='This swap price my differ from market price' top={100} fullSpan>
+                <Box className={classes.unknownWarning}>
+                  {` Can't create limit order for pair ${tokens[tokenFromIndex].symbol} -  ${tokens[tokenToIndex].symbol}`}
+                </Box>
+              </TooltipHover>
+            )}
 
+            <Grid className={classes.unverfiedWrapper}>
+              {tokens[tokenFromIndex ?? '']?.isUnknown && (
+                <TooltipHover
+                  title={`${tokens[tokenFromIndex ?? ''].symbol} is unknown, make sure address is correct before trading`}
+                  top={100}
+                  fullSpan>
+                  <Box className={classes.unknownWarning}>
+                    <img width={16} src={warningIcon} />
+                    {tokens[tokenFromIndex ?? ''].symbol} is not verified
+                  </Box>
+                </TooltipHover>
+              )}
+              {tokens[tokenToIndex ?? '']?.isUnknown && (
+                <TooltipHover
+                  title={`${tokens[tokenToIndex ?? ''].symbol} is unknown, make sure address is correct before trading`}
+                  top={100}
+                  fullSpan>
+                  <Box className={classes.unknownWarning}>
+                    <img width={16} src={warningIcon} />
+                    {tokens[tokenToIndex ?? ''].symbol} is not verified
+                  </Box>
+                </TooltipHover>
+              )}
+            </Grid>
+          </Box>
           <Box className={classes.mobileChangeRatioWrapper}>
             <Box className={classes.transactionDetailsInner}>
               <button
