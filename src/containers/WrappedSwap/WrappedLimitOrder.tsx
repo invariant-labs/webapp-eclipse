@@ -213,7 +213,6 @@ export const WrappedLimitOrder = ({
       const tokenPrice =
         (order.account.xToY ? tokenToPriceData?.price : tokenFromPriceData?.price) || 0
 
-      console.log(order)
       return [
         {
           ...order,

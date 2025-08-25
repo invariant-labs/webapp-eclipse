@@ -23,6 +23,10 @@ export const useStyles = makeStyles<{ showInfo?: boolean; noBorder?: boolean }>(
         padding: '12px 8px',
         height: showInfo ? 233 : 92
       }
+
+      // '&:last-of-type': {
+      //   borderBottom: 'none'
+      // }
     },
 
     info: {

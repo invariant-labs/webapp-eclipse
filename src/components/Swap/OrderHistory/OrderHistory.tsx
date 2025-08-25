@@ -133,6 +133,31 @@ const OrderHistory: React.FC<IProps> = ({
 
   const pages = useMemo(() => Math.ceil(userOrders.length / ORDERS_PER_PAGE), [userOrders.length])
 
+  const filteredOrders = useMemo(() => {
+    if (selectedFilters.length === 0) return userOrders
+
+    return userOrders.filter(order => {
+      const tokenX = order.tokenFrom.address.toString()
+      const tokenY = order.tokenTo.address.toString()
+
+      if (selectedFilters.length === 1) {
+        const filterToken = selectedFilters[0].address.toString()
+        return tokenX === filterToken || tokenY === filterToken
+      }
+
+      if (selectedFilters.length === 2) {
+        const filterToken1 = selectedFilters[0].address.toString()
+        const filterToken2 = selectedFilters[1].address.toString()
+        return (
+          (tokenX === filterToken1 && tokenY === filterToken2) ||
+          (tokenX === filterToken2 && tokenY === filterToken1)
+        )
+      }
+
+      return true
+    })
+  }, [userOrders])
+
   return (
     <Grid className={classes.wrapper}>
       {/* <Switcher
@@ -188,7 +213,7 @@ const OrderHistory: React.FC<IProps> = ({
             [classes.loadingOverlay]: isLoading
           })}>
           <>
-            {userOrders.length > 0 ? (
+            {filteredOrders.length > 0 ? (
               <Box minHeight={92 * ORDERS_PER_PAGE}>
                 {paginator(page).data.map((order, index) => {
                   return isLoading ? (
@@ -214,6 +239,12 @@ const OrderHistory: React.FC<IProps> = ({
                       isXtoY={order.account.xToY}
                       loadingCloseOrderState={loadingCloseOrderState}
                       orderPublicKey={order.publicKey.toString()}
+                      // noBorder={
+                      //   (filteredOrders.length % ORDERS_PER_PAGE === 0 &&
+                      //     (ORDERS_PER_PAGE % index) + 1 === 0) ||
+                      //   (filteredOrders.length < ORDERS_PER_PAGE &&
+                      //     index + 1 === filteredOrders.length)
+                      // }
                     />
                   )
                 })}
