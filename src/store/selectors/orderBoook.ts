@@ -14,11 +14,13 @@ export const {
   userLimitOrders,
   isLoadingOrderbook,
   loadingState,
+  loadingCloseOrder,
   isLoadingUserOrders
 } = keySelectors(store, [
   'currentOrderBook',
   'userLimitOrders',
   'isLoadingOrderbook',
+  'loadingCloseOrder',
   'loadingState',
   'isLoadingUserOrders'
 ])
@@ -60,6 +62,7 @@ export const snackbarsSelectors = {
   currentOrderBook,
   userLimitOrders,
   isLoadingOrderbook,
+  loadingCloseOrder,
   loadingState,
   isLoadingUserOrders
 }

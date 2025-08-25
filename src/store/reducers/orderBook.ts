@@ -21,6 +21,11 @@ export interface IOrderBook {
     inProgress: boolean
     success: boolean
   }
+  loadingCloseOrder: {
+    inProgress: boolean
+    success: boolean
+    orderKey: string
+  }
   isLoadingOrderbook: boolean
   isLoadingUserOrders: boolean
 }
@@ -43,6 +48,11 @@ const defaultStatus: IOrderBook = {
   loadingState: {
     inProgress: false,
     success: true
+  },
+  loadingCloseOrder: {
+    inProgress: false,
+    success: true,
+    orderKey: ''
   },
   isLoadingOrderbook: false,
   isLoadingUserOrders: false,
@@ -68,7 +78,11 @@ const orderBookSlice = createSlice({
       state.loadingState.inProgress = true
       return state
     },
-    removeLimitOrder(state, _action: PayloadAction<IRemoveOrder>) {
+    removeLimitOrder(state, action: PayloadAction<IRemoveOrder>) {
+      state.loadingCloseOrder.inProgress = true
+      state.loadingCloseOrder.success = true
+      state.loadingCloseOrder.orderKey = action.payload.orderKey.toString()
+
       return state
     },
     getUserOrders(state) {
@@ -86,6 +100,15 @@ const orderBookSlice = createSlice({
     ) {
       state.isLoadingUserOrders = false
       state.userLimitOrders = action.payload
+
+      state.loadingCloseOrder.inProgress = false
+      state.loadingCloseOrder.orderKey = ''
+      return state
+    },
+    setCloseOrderSuccess(state, action: PayloadAction<boolean>) {
+      console.log(action.payload)
+      state.loadingCloseOrder.inProgress = false
+      state.loadingCloseOrder.success = action.payload
 
       return state
     },

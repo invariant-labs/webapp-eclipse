@@ -480,7 +480,7 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
     orderBookPair,
     orderBook
   ])
-  console.log(priceToLoading)
+
   return (
     <Grid container className={classes.swapWrapper} alignItems='center'>
       <Grid container className={classes.header}>

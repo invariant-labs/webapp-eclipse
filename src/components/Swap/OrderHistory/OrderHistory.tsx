@@ -66,6 +66,11 @@ interface IProps {
   ) => void
   walletStatus: Status
   isLoading: boolean
+  loadingCloseOrderState: {
+    inProgress: boolean
+    success: boolean
+    orderKey: string
+  }
 }
 
 const OrderHistory: React.FC<IProps> = ({
@@ -77,7 +82,8 @@ const OrderHistory: React.FC<IProps> = ({
   setSelectedFilters,
   userOrders,
   handleRemoveOrder,
-  isLoading
+  isLoading,
+  loadingCloseOrderState
 }) => {
   const dispatch = useDispatch()
   const { classes, cx } = useStyles()
@@ -215,6 +221,8 @@ const OrderHistory: React.FC<IProps> = ({
                       itemNumber={order.publicKey.toString() + index}
                       usdValue={order.usdValue}
                       isXtoY={order.account.xToY}
+                      loadingCloseOrderState={loadingCloseOrderState}
+                      orderPublicKey={order.publicKey.toString()}
                     />
                   )
                 })}

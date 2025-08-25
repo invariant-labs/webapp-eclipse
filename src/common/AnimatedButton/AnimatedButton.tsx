@@ -18,7 +18,7 @@ interface Props {
   content: string
   disabled?: boolean
   progress: ProgressState
-  onClick: () => void
+  onClick?: React.MouseEventHandler<HTMLButtonElement>
   className?: string
   sx?: SxProps<Theme>
   type?: 'button' | 'submit' | 'reset'

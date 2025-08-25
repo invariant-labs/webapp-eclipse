@@ -1,3 +1,4 @@
+import { alpha } from '@mui/material'
 import { colors, theme, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
@@ -116,6 +117,20 @@ export const useStyles = makeStyles<{ showInfo?: boolean; noBorder?: boolean }>(
 
       [theme.breakpoints.down('sm')]: {
         ...typography.caption4
+      }
+    },
+    closeButton: {
+      width: '100%',
+      height: 40,
+      borderRadius: 11
+    },
+    buttonCloseActive: {
+      transition: 'filter 0.3s linear',
+      background: `${colors.invariant.pinkLinearGradient} !important`,
+      filter: 'brightness(0.8)',
+      '&:hover': {
+        filter: 'brightness(1.15)',
+        boxShadow: `0px 0px 12px 0px ${alpha(colors.invariant.pink, 0.35)}`
       }
     }
   })

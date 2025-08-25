@@ -7,8 +7,8 @@ import { formatNumberWithSuffix } from '@utils/utils'
 import { unknownTokenIcon, warningIcon } from '@static/icons'
 import { shortenAddress } from '@utils/uiUtils'
 import { SwapToken } from '@store/selectors/solanaWallet'
-import { Button } from '@common/Button/Button'
 import ItemValueExtended from '@common/TableItem/ItemValueExtended/ItemValueExtended'
+import AnimatedButton, { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 
 interface IProps {
   itemNumber?: string
@@ -21,6 +21,12 @@ interface IProps {
   handleCloseOrder: () => void
   noBorder?: boolean
   isXtoY: boolean
+  loadingCloseOrderState: {
+    inProgress: boolean
+    success: boolean
+    orderKey: string
+  }
+  orderPublicKey: string
 }
 
 const OrderItem: React.FC<IProps> = ({
@@ -32,17 +38,50 @@ const OrderItem: React.FC<IProps> = ({
   usdValue,
   orderFilled,
   handleCloseOrder,
-  noBorder
-  // isXtoY
+  noBorder,
+  // isXtoY,
+  loadingCloseOrderState,
+  orderPublicKey
 }) => {
   const [showInfo, setShowInfo] = useState(false)
   const { classes } = useStyles({ showInfo, noBorder })
 
+  const [progress, setProgress] = useState<ProgressState>('none')
+
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
+
+  const { inProgress, orderKey, success } = loadingCloseOrderState
 
   useEffect(() => {
     setShowInfo(false)
   }, [itemNumber])
+
+  useEffect(() => {
+    let timeoutId1: NodeJS.Timeout
+    let timeoutId2: NodeJS.Timeout
+    if (orderPublicKey !== orderKey) return
+
+    if (!inProgress && progress === 'progress') {
+      setProgress(success ? 'approvedWithSuccess' : 'approvedWithFail')
+
+      timeoutId1 = setTimeout(() => {
+        setProgress(success ? 'success' : 'failed')
+      }, 1000)
+
+      timeoutId2 = setTimeout(() => {
+        setProgress('none')
+      }, 3000)
+    }
+
+    return () => {
+      clearTimeout(timeoutId1)
+      clearTimeout(timeoutId2)
+    }
+  }, [success, inProgress])
+
+  const getStateMessage = () => {
+    return 'Close order'
+  }
 
   return (
     <Grid
@@ -160,17 +199,23 @@ const OrderItem: React.FC<IProps> = ({
             </Grid>
           </Box>
         </Grid>
-      )}{' '}
-      <Button
-        scheme='pink'
-        padding='0 42px'
-        width={'100%'}
+      )}
+      <AnimatedButton
+        content={getStateMessage()}
+        className={
+          getStateMessage() === 'Close order' && progress === 'none'
+            ? `${classes.closeButton} ${classes.buttonCloseActive}`
+            : classes.closeButton
+        }
+        disabled={getStateMessage() !== 'Close order' || progress !== 'none'}
         onClick={e => {
           e.stopPropagation()
+          setProgress('progress')
+
           handleCloseOrder()
-        }}>
-        <Box>Close Order</Box>
-      </Button>
+        }}
+        progress={progress}
+      />
     </Grid>
   )
 }

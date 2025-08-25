@@ -26,6 +26,7 @@ import {
   currentOrderBook,
   isLoadingOrderbook,
   isLoadingUserOrders,
+  loadingCloseOrder,
   loadingState,
   userOrdersWithTokensData
 } from '@store/selectors/orderBoook'
@@ -134,6 +135,8 @@ export const WrappedLimitOrder = ({
   const { inProgress, success } = useSelector(loadingState)
   const [progress, setProgress] = useState<ProgressState>('none')
 
+  const loadingCloseOrderState = useSelector(loadingCloseOrder)
+
   useEffect(() => {
     let timeoutId1: NodeJS.Timeout
     let timeoutId2: NodeJS.Timeout
@@ -167,8 +170,7 @@ export const WrappedLimitOrder = ({
         order.account,
         order.account.orderTokenAmount
       )
-      console.log(order.account.tickIndex)
-      console.log()
+
       let filledPercentage = '0'
       if (
         simulateResult.status === DecreaseOrderLiquiditySimulationStatus.PartiallyCompleted ||
@@ -183,14 +185,14 @@ export const WrappedLimitOrder = ({
         const fillPercentageX = DENOMINATOR.sub(
           simulateAmount.mul(DENOMINATOR).div(order.account.orderTokenAmount)
         )
-        console.log(+printBN(fillPercentageX, DECIMAL - 2))
+
         filledPercentage = (+printBN(fillPercentageX, DECIMAL - 2)).toFixed(2)
       }
 
       const poolData = allPools.find(
         pool => pool.address.toString() === order.account.pool.toString()
       )
-      console.log(poolData?.currentTickIndex)
+
       const price = calcPriceByTickIndex(
         order.account.tickIndex,
         order.account.xToY,
@@ -211,6 +213,7 @@ export const WrappedLimitOrder = ({
       const tokenPrice =
         (order.account.xToY ? tokenToPriceData?.price : tokenFromPriceData?.price) || 0
 
+      console.log(order)
       return [
         {
           ...order,
@@ -409,6 +412,7 @@ export const WrappedLimitOrder = ({
           }}
           walletStatus={walletStatus}
           isLoading={loadingUserOrderes}
+          loadingCloseOrderState={loadingCloseOrderState}
         />
       )}
     </>

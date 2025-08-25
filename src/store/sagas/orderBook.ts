@@ -391,6 +391,8 @@ export function* handleRemoveLimitOrder(action: PayloadAction<IRemoveOrder>) {
     })
 
     if (!txid.length) {
+      yield put(actions.setCloseOrderSuccess(false))
+
       yield put(
         snackbarsActions.add({
           message: 'Closing limit order failed. Please try again',
@@ -422,7 +424,7 @@ export function* handleRemoveLimitOrder(action: PayloadAction<IRemoveOrder>) {
               .split(ErrorCodeExtractionKeys.Dot)[0]
               .trim()
             const message = mapErrorCodeToMessage(Number(errorCode))
-            yield put(actions.setOrderSuccess(false))
+            yield put(actions.setCloseOrderSuccess(false))
 
             closeSnackbar(loaderRemoveOrder)
             yield put(snackbarsActions.remove(loaderRemoveOrder))
@@ -448,6 +450,7 @@ export function* handleRemoveLimitOrder(action: PayloadAction<IRemoveOrder>) {
             txid
           })
         )
+        yield put(actions.setCloseOrderSuccess(true))
 
         const meta = txDetails.meta
 
@@ -500,6 +503,8 @@ export function* handleRemoveLimitOrder(action: PayloadAction<IRemoveOrder>) {
             txid
           })
         )
+
+        yield put(actions.setCloseOrderSuccess(true))
       }
     }
 
@@ -508,6 +513,13 @@ export function* handleRemoveLimitOrder(action: PayloadAction<IRemoveOrder>) {
   } catch (e: unknown) {
     const error = ensureError(e)
     console.log(error)
+
+    yield put(actions.setCloseOrderSuccess(false))
+
+    closeSnackbar(loaderRemoveOrder)
+    yield put(snackbarsActions.remove(loaderRemoveOrder))
+    closeSnackbar(loaderSigningTx)
+    yield put(snackbarsActions.remove(loaderSigningTx))
 
     let msg: string = ''
     if (error instanceof SendTransactionError) {
@@ -528,13 +540,6 @@ export function* handleRemoveLimitOrder(action: PayloadAction<IRemoveOrder>) {
         msg = ensureApprovalDenied(error) ? APPROVAL_DENIED_MESSAGE : COMMON_ERROR_MESSAGE
       }
     }
-
-    closeSnackbar(loaderRemoveOrder)
-    // yield put(actions.setShouldDisable(false))
-
-    yield put(snackbarsActions.remove(loaderRemoveOrder))
-    closeSnackbar(loaderSigningTx)
-    yield put(snackbarsActions.remove(loaderSigningTx))
 
     if (error instanceof TransactionExpiredTimeoutError) {
       yield put(
