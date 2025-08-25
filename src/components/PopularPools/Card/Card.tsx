@@ -109,7 +109,7 @@ const Card: React.FC<ICard> = ({
       ROUTES.getNewPositionRoute(
         tokenA,
         tokenB,
-        parseFeeToPathFee(Math.round(fee * 10 ** (DECIMAL - 2)))
+        parseFeeToPathFee(new BN(Math.round(fee * 10 ** (DECIMAL - 2))))
       ),
       { state: { referer: 'liquidity' } }
     )

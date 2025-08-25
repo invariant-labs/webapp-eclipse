@@ -140,7 +140,7 @@ export const FilterSearch: React.FC<IFilterSearch> = memo(
             symbol: details?.symbol ?? tokenData.address.toString(),
             address: tokenAddress,
             balanceUSD: balanceUSD,
-            balance: tokenFromList ? tokenFromList.balance : 0,
+            balance: tokenFromList ? tokenFromList.balance : new BN(0),
             decimals: tokenFromList ? tokenFromList.decimals : 0,
             isUnknown: details?.isUnknown ?? false
           }

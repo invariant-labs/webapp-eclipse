@@ -40,17 +40,16 @@ export const YourPointsButton: React.FC<IProps> = ({ disabled = false }) => {
         sx={{ whiteSpace: 'nowrap' }}
         padding={isXs ? `0 2px` : undefined}
         onClick={handleClick}>
-
         <>
           {isXs ? (
             <KeyboardArrowDownIcon id='downIcon' />
           ) : currentNetwork === NetworkType.Mainnet ? (
-            `Points: ${trimZeros(formatLargeNumber(+printBN(new BN(currentUser.total?.points, 'hex'), LEADERBOARD_DECIMAL))) ?? 0}`
+            `Points: ${trimZeros(formatLargeNumber(+printBN(new BN(currentUser.total?.points || '0', 'hex'), LEADERBOARD_DECIMAL))) ?? 0}`
           ) : (
             'Points'
           )}
         </>
-      </Button >
+      </Button>
       <YourPointsModal open={openNetworks} anchorEl={anchorEl} handleClose={handleClose} />
     </>
   )

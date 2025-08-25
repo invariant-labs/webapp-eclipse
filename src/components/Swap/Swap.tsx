@@ -164,10 +164,10 @@ export type SimulationPath = {
   tokenTo: SwapToken | null
   firstPair: BN | null
   secondPair: BN | null
-  firstAmount: BN | null
-  secondAmount: BN | null
-  firstPriceImpact: BN | null
-  secondPriceImpact: BN | null
+  firstAmount: BN
+  secondAmount: BN
+  firstPriceImpact: BN
+  secondPriceImpact: BN
 }
 
 export const Swap: React.FC<ISwap> = ({
@@ -277,10 +277,10 @@ export const Swap: React.FC<ISwap> = ({
     tokenTo: null,
     firstPair: null,
     secondPair: null,
-    firstAmount: null,
-    secondAmount: null,
-    firstPriceImpact: null,
-    secondPriceImpact: null
+    firstAmount: new BN(0),
+    secondAmount: new BN(0),
+    firstPriceImpact: new BN(0),
+    secondPriceImpact: new BN(0)
   })
   const [bestAmount, setBestAmount] = useState(new BN(0))
   const [swapType, setSwapType] = useState(SwapType.Normal)
@@ -300,8 +300,8 @@ export const Swap: React.FC<ISwap> = ({
   }, [network])
 
   const priceImpact = Math.max(
-    +printBN(+simulationPath.firstPriceImpact, DECIMAL - 2),
-    +printBN(+simulationPath.secondPriceImpact, DECIMAL - 2)
+    +printBN(simulationPath.firstPriceImpact, DECIMAL - 2),
+    +printBN(simulationPath.secondPriceImpact, DECIMAL - 2)
   )
 
   const timeoutRef = useRef<number>(0)
@@ -979,7 +979,7 @@ export const Swap: React.FC<ISwap> = ({
     onSelectInput: () => setInputRef(inputTarget.FROM)
   })
 
-  const stringPointsValue = useMemo(() => printBN(pointsForSwap, 8), [pointsForSwap])
+  const stringPointsValue = useMemo(() => printBN(pointsForSwap || new BN(0), 8), [pointsForSwap])
   const { decimalIndex, isLessThanOne } = useMemo(() => {
     const dotIndex = stringPointsValue.indexOf('.')
     let decimalIndex
@@ -1140,8 +1140,8 @@ export const Swap: React.FC<ISwap> = ({
       <Collapse in={wrappedETHAccountExist} className={classes.collapseWrapper}>
         <Grid className={classes.unwrapContainer}>
           {shortenText
-            ? `You have ${!shortenTextXS ? 'wrapped' : ''} ${formatNumberWithoutSuffix(printBN(wrappedETHBalance, WETH_MAIN.decimals))} ${shortenTextXS ? 'W' : ''}ETH`
-            : `          You currently hold ${formatNumberWithoutSuffix(printBN(wrappedETHBalance, WETH_MAIN.decimals))} wrapped Ether in your
+            ? `You have ${!shortenTextXS ? 'wrapped' : ''} ${formatNumberWithoutSuffix(printBN(wrappedETHBalance || new BN(0), WETH_MAIN.decimals))} ${shortenTextXS ? 'W' : ''}ETH`
+            : `          You currently hold ${formatNumberWithoutSuffix(printBN(wrappedETHBalance || new BN(0), WETH_MAIN.decimals))} wrapped Ether in your
           wallet`}
           <span className={classes.unwrapNowButton} onClick={unwrapWETH}>
             Unwrap now

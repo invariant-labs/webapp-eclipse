@@ -8,6 +8,7 @@ import {
 } from '@utils/utils'
 import { LEADERBOARD_DECIMAL } from '@store/consts/static'
 import { convertAPYValue } from '@utils/uiUtils'
+import { BN } from '@coral-xyz/anchor'
 
 type Props = {
   value: number
@@ -80,12 +81,12 @@ export const PositionStats = ({
               <Typography className={classes.statName}>Points 24H:</Typography>
               <Typography className={classes.statValue}>
                 {+removeAdditionalDecimals(
-                  formatNumberWithCommas(printBN(points24, LEADERBOARD_DECIMAL)),
+                  formatNumberWithCommas(printBN(new BN(points24), LEADERBOARD_DECIMAL)),
                   2
                 ) === 0
                   ? '<0.01'
                   : removeAdditionalDecimals(
-                      formatNumberWithCommas(printBN(points24, LEADERBOARD_DECIMAL)),
+                      formatNumberWithCommas(printBN(new BN(points24), LEADERBOARD_DECIMAL)),
                       2
                     )}
               </Typography>

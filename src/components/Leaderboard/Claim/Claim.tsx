@@ -53,7 +53,10 @@ export const Claim: React.FC<ClaimProps> = ({
                   {currentUser
                     ? removeAdditionalDecimals(
                         formatNumberWithCommas(
-                          printBN(new BN(currentUser.total?.points, 'hex'), LEADERBOARD_DECIMAL)
+                          printBN(
+                            new BN(currentUser.total?.points || '0', 'hex'),
+                            LEADERBOARD_DECIMAL
+                          )
                         ),
                         2
                       )

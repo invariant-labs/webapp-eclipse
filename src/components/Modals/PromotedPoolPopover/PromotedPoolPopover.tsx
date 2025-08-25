@@ -8,7 +8,7 @@ import { QuestionMark } from '@components/Leaderboard/QuestionMark/QuestionMark'
 import { convertAPYValue } from '@utils/uiUtils'
 export interface IPromotedPoolPopover {
   isActive?: boolean
-  apr?: BN
+  apr?: number
   apy?: number
   estPoints?: BN
   points: BN

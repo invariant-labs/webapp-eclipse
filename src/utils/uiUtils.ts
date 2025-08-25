@@ -89,10 +89,10 @@ export const createButtonActions = (config: MaxButtonConfig) => {
     maxSale: (
       tokenIndex: number | null,
       currentRound: number,
-      deposited: number,
+      deposited: BN,
       whitelistWalletLimit: BN,
-      currentAmount?: BN,
-      targetAmount?: BN
+      currentAmount: BN,
+      targetAmount: BN
     ) => {
       if (tokenIndex === null || currentRound === undefined || currentRound === null) {
         return
@@ -103,7 +103,7 @@ export const createButtonActions = (config: MaxButtonConfig) => {
       let maxAllowedAmount: BN
 
       if (currentRound <= 3) {
-        maxAllowedAmount = whitelistWalletLimit.sub(new BN(deposited))
+        maxAllowedAmount = whitelistWalletLimit.sub(deposited)
       } else {
         maxAllowedAmount = targetAmount.sub(currentAmount)
       }

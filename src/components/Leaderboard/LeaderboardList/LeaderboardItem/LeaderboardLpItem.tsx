@@ -142,10 +142,10 @@ const LeaderboardLpItem: React.FC<LeaderboardLpItemProps> = props => {
         </Typography>
 
         <Typography>
-          {new BN(points, 'hex').isZero()
+          {new BN(points || '0', 'hex').isZero()
             ? 0
             : formatNumberWithCommas(
-                Number(printBN(new BN(points, 'hex'), LEADERBOARD_DECIMAL)).toFixed(2)
+                Number(printBN(new BN(points || '0', 'hex'), LEADERBOARD_DECIMAL)).toFixed(2)
               )}
         </Typography>
         {!isMd && <Typography>{positions}</Typography>}
