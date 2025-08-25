@@ -279,6 +279,7 @@ const ColumnChart: React.FC<StatsInterface> = ({
             onChange={setChartType}
             options={[ChartSwitch.volume, ChartSwitch.fees]}
             dark
+            changeFontColor
           />
         </Grid>
 

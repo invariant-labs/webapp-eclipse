@@ -340,6 +340,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       feeToTickSpacing(ALL_FEE_TIERS_DATA[feeIndex].tier.fee),
     [feeIndex]
   )
+
   const [midPrice, setMidPrice] = useState<InitMidPrice>({
     index: 0,
     x: 1,
@@ -701,7 +702,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       return false
     }
 
-    if (POOLS_TO_HIDE_POINTS_PER_24H.includes(allPools[poolIndex].address.toString())) {
+    if (POOLS_TO_HIDE_POINTS_PER_24H.includes(allPools[poolIndex]?.address.toString())) {
       return false
     }
 

@@ -524,7 +524,7 @@ export function* handleGetStakedAmountAndBalance() {
       actions.setStakedAmountAndBalance({
         stakedAmount,
         stakedTokenSupply,
-        bitzTotalBalance: bitzAccountAmountInfo.value.amount
+        bitzTotalBalance: new BN(bitzAccountAmountInfo.value.amount)
       })
     )
   } catch (error: any) {
@@ -570,7 +570,7 @@ export function* getMarketBitzStats(): Generator {
 
     const stakedTokenSupplyAmount = +printBN(stakedTokenSupply, BITZ_MAIN.decimals)
     const sBitzAmount = +printBN(stakedAmount, BITZ_MAIN.decimals)
-    const totalBitzSupply = +printBN(totalBalance, BITZ_MAIN.decimals)
+    const totalBitzSupply = +printBN(new BN(totalBalance), BITZ_MAIN.decimals)
     const bitzSupplyAmount = +printBN(bitzSupply, BITZ_MAIN.decimals)
     const response = yield* call(fetchMarketBitzStats)
     const holders = response.data[sBITZ_MAIN.address.toString()].holders

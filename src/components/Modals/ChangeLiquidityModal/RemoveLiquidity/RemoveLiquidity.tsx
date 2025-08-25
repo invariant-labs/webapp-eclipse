@@ -82,7 +82,9 @@ export interface IProps {
     liquidity: BN,
     slippage: BN,
     isAddLiquidity: boolean,
-    isClosePosition: boolean
+    isClosePosition: boolean,
+    xAmount: BN,
+    yAmount: BN
   ) => void
   success: boolean
   inProgress: boolean
@@ -478,7 +480,7 @@ export const RemoveLiquidity: React.FC<IProps> = ({
       setProgress('progress')
     }
 
-    changeLiquidity(liquidity, slippage, false, isClosePosition)
+    changeLiquidity(liquidity, slippage, false, isClosePosition, new BN(0), new BN(0))
   }
 
   const onRemoveLiquidity = async (isClosePosition = false) => {

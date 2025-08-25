@@ -149,27 +149,27 @@ const LeaderboardTotalItem: React.FC<LeaderboardTotalItemProps> = props => {
         </Typography>
 
         <Typography>
-          {new BN(points, 'hex').isZero()
+          {new BN(points || '0', 'hex').isZero()
             ? 0
             : formatNumberWithCommas(
-                Number(printBN(new BN(points, 'hex'), LEADERBOARD_DECIMAL)).toFixed(2)
+                Number(printBN(new BN(points || '0', 'hex'), LEADERBOARD_DECIMAL)).toFixed(2)
               )}
         </Typography>
         {!isMd && (
           <Typography>
-            {new BN(swapPoints, 'hex').isZero()
+            {new BN(swapPoints || '0', 'hex').isZero()
               ? 0
               : formatNumberWithCommas(
-                  Number(printBN(new BN(swapPoints, 'hex'), LEADERBOARD_DECIMAL)).toFixed(2)
+                  Number(printBN(new BN(swapPoints || '0', 'hex'), LEADERBOARD_DECIMAL)).toFixed(2)
                 )}
           </Typography>
         )}
         {!isMd && (
           <Typography>
-            {new BN(lpPoints, 'hex').isZero()
+            {new BN(lpPoints || '0', 'hex').isZero()
               ? 0
               : formatNumberWithCommas(
-                  Number(printBN(new BN(lpPoints, 'hex'), LEADERBOARD_DECIMAL)).toFixed(2)
+                  Number(printBN(new BN(lpPoints || '0', 'hex'), LEADERBOARD_DECIMAL)).toFixed(2)
                 )}
           </Typography>
         )}

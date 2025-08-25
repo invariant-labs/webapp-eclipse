@@ -139,7 +139,7 @@ export const BuyComponent: React.FC<IProps> = ({
       return 'Enter token amount'
     }
 
-    if (valueAsBN.ltn(minDeposit)) {
+    if (valueAsBN.lt(minDeposit)) {
       return `Minimal deposit is ${printBN(minDeposit, mintDecimals)} ${tokens[tokenIndex].symbol}`
     }
 
@@ -278,7 +278,7 @@ export const BuyComponent: React.FC<IProps> = ({
               currency={tokenIndex !== null ? tokens[tokenIndex].symbol : null}
               currencyIconSrc={tokenIndex !== null ? tokens[tokenIndex].logoURI : undefined}
               currencyIsUnknown={
-                tokenIndex !== null ? tokens[tokenIndex].isUnknown ?? false : false
+                tokenIndex !== null ? (tokens[tokenIndex].isUnknown ?? false) : false
               }
               disableBackgroundColor
               placeholder='0.0'

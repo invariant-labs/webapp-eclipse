@@ -79,7 +79,7 @@ import poolsSelectors, {
 import { actions as poolsActions } from '@store/reducers/pools'
 import { actions as positionsActions } from '@store/reducers/positions'
 import { blurContent, unblurContent } from '@utils/uiUtils'
-
+import { BN } from '@coral-xyz/anchor'
 const PortfolioWrapper = () => {
   const BANNER_STORAGE_KEY = 'invariant-es-banner-state'
   const BANNER_HIDE_DURATION = 1000 * 60 * 60 * 24 // 24 hours
@@ -751,7 +751,7 @@ const PortfolioWrapper = () => {
               +printBN(position?.tokenY.balance, position?.tokenY.decimals || 0)
       }}
       tokenYPriceData={tokenYPriceData}
-      fee={position?.poolData.fee}
+      fee={position?.poolData.fee || new BN(0)}
       min={min}
       max={max}
       ticksLoading={ticksLoading || !position}
@@ -785,7 +785,8 @@ const PortfolioWrapper = () => {
         if (!position) {
           return
         }
-
+        console.log(xAmount)
+        console.log(yAmount)
         if (isAddLiquidity) {
           dispatch(
             actions.addLiquidity({
@@ -867,7 +868,7 @@ const PortfolioWrapper = () => {
           })
         )
       }}
-      positionLiquidity={position?.liquidity}
+      positionLiquidity={position?.liquidity || new BN(0)}
       isChangeLiquidityModalShown={isChangeLiquidityModalShown}
       setIsChangeLiquidityModalShown={setIsChangeLiquidityModalShown}
       isAddLiquidity={isAddLiquidity}

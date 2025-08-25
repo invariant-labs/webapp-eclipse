@@ -539,7 +539,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       return estimatePointsForUserPositions(
         [position],
         position.poolData,
-        new BN(pointsPerSecond, 'hex').mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL)))
+        new BN(pointsPerSecond || 0, 'hex').mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL)))
       )
     } catch {
       return 0
@@ -653,6 +653,9 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
           yAmount
         ) => {
           if (isPreview) return
+          console.log(liquidity)
+          console.log(xAmount)
+          console.log(yAmount)
           if (isAddLiquidity) {
             dispatch(
               actions.addLiquidity({

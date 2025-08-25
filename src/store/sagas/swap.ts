@@ -430,8 +430,12 @@ export function* handleSwapWithETH(): Generator {
             snackbarsActions.add({
               tokensDetails: {
                 ikonType: 'swap',
-                tokenXAmount: formatNumberWithoutSuffix(printBN(amountIn, tokenIn.decimals)),
-                tokenYAmount: formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals)),
+                tokenXAmount: formatNumberWithoutSuffix(
+                  printBN(new BN(amountIn), tokenIn.decimals)
+                ),
+                tokenYAmount: formatNumberWithoutSuffix(
+                  printBN(new BN(amountOut), tokenOut.decimals)
+                ),
                 tokenXIcon: tokenIn.logoURI,
                 tokenYIcon: tokenOut.logoURI,
                 tokenXSymbol: tokenIn.symbol ?? tokenIn.address.toString(),
@@ -909,11 +913,15 @@ export function* handleTwoHopSwapWithETH(): Generator {
             snackbarsActions.add({
               tokensDetails: {
                 ikonType: 'swap',
-                tokenXAmount: formatNumberWithoutSuffix(printBN(amountIn, tokenIn.decimals)),
-                tokenBetweenAmount: formatNumberWithoutSuffix(
-                  printBN(amountBetween, tokenBetween.decimals)
+                tokenXAmount: formatNumberWithoutSuffix(
+                  printBN(new BN(amountIn), tokenIn.decimals)
                 ),
-                tokenYAmount: formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals)),
+                tokenBetweenAmount: formatNumberWithoutSuffix(
+                  printBN(new BN(amountBetween), tokenBetween.decimals)
+                ),
+                tokenYAmount: formatNumberWithoutSuffix(
+                  printBN(new BN(amountOut), tokenOut.decimals)
+                ),
                 tokenXIcon: tokenIn.logoURI,
                 tokenBetweenIcon: tokenBetween.logoURI,
                 tokenYIcon: tokenOut.logoURI,
@@ -1330,11 +1338,15 @@ export function* handleTwoHopSwap(): Generator {
               snackbarsActions.add({
                 tokensDetails: {
                   ikonType: 'swap',
-                  tokenXAmount: formatNumberWithoutSuffix(printBN(amountIn, tokenIn.decimals)),
-                  tokenBetweenAmount: formatNumberWithoutSuffix(
-                    printBN(amountBetween, tokenBetween.decimals)
+                  tokenXAmount: formatNumberWithoutSuffix(
+                    printBN(new BN(amountIn), tokenIn.decimals)
                   ),
-                  tokenYAmount: formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals)),
+                  tokenBetweenAmount: formatNumberWithoutSuffix(
+                    printBN(new BN(amountBetween), tokenBetween.decimals)
+                  ),
+                  tokenYAmount: formatNumberWithoutSuffix(
+                    printBN(new BN(amountOut), tokenOut.decimals)
+                  ),
                   tokenXIcon: tokenIn.logoURI,
                   tokenBetweenIcon: tokenBetween.logoURI,
                   tokenYIcon: tokenOut.logoURI,
@@ -1719,8 +1731,12 @@ export function* handleSwap(): Generator {
               snackbarsActions.add({
                 tokensDetails: {
                   ikonType: 'swap',
-                  tokenXAmount: formatNumberWithoutSuffix(printBN(amountIn, tokenIn.decimals)),
-                  tokenYAmount: formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals)),
+                  tokenXAmount: formatNumberWithoutSuffix(
+                    printBN(new BN(amountIn), tokenIn.decimals)
+                  ),
+                  tokenYAmount: formatNumberWithoutSuffix(
+                    printBN(new BN(amountOut), tokenOut.decimals)
+                  ),
                   tokenXIcon: tokenIn.logoURI,
                   tokenYIcon: tokenOut.logoURI,
                   tokenXSymbol: tokenIn.symbol ?? tokenIn.address.toString(),

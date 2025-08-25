@@ -72,8 +72,8 @@ export interface IChangeLiquidityModal {
     slippage: BN,
     isAddLiquidity: boolean,
     isClosePosition: boolean,
-    xAmount?: BN,
-    yAmount?: BN
+    xAmount: BN,
+    yAmount: BN
   ) => void
   swapAndAddLiquidity: (
     xAmount: BN,

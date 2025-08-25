@@ -19,7 +19,6 @@ import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { convertAPYValue, shortenAddress } from '@utils/uiUtils'
 import { VariantType } from 'notistack'
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
-
 import { BN } from '@coral-xyz/anchor'
 import { useDispatch } from 'react-redux'
 import { actions } from '@store/reducers/navigation'
@@ -136,7 +135,7 @@ const PoolListItem: React.FC<IProps> = ({
         symbol: symbolFrom,
         icon: iconFrom
       }
-  console.log(poolAddress?.toString())
+
   return (
     <Grid maxWidth='100%' className={classes.wrapper}>
       {displayType === 'token' ? (

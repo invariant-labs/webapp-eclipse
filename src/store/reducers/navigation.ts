@@ -6,6 +6,18 @@ import { SortTypePoolList, SortTypeTokenList } from '@store/consts/static'
 
 export interface INavigation {
   navigationState: INavigationState
+  swapMode: SwapMode
+  ordersHistory: OrdersHistory
+}
+
+export enum SwapMode {
+  swap = 'Swap',
+  limitOrder = 'Limit Order'
+}
+
+export enum OrdersHistory {
+  your = 'Your orders',
+  history = 'History'
 }
 
 export interface INavigationState {
@@ -32,6 +44,11 @@ export interface INavigationState {
     sortType: SortTypePoolList
     pageNumber: number
   }
+  swapTokens: {
+    filteredTokens: ISearchToken[]
+    sortType: SortTypePoolList
+    pageNumber: number
+  }
 }
 
 export interface SetNavigationPayload {
@@ -43,7 +60,7 @@ export interface SetSearchPayload {
   sortType?: SortTypePoolList | SortTypeTokenList
   pageNumber?: number
   type: 'sortType' | 'pageNumber' | 'filteredTokens'
-  section: 'liquidityPool' | 'statsPool' | 'statsTokens' | 'portfolioTokens'
+  section: 'liquidityPool' | 'statsPool' | 'statsTokens' | 'portfolioTokens' | 'swapTokens'
 }
 const defaultStatus: INavigation = {
   navigationState: {
@@ -69,8 +86,15 @@ const defaultStatus: INavigation = {
       filteredTokens: [],
       sortType: SortTypePoolList.FEE_24_DESC,
       pageNumber: 1
+    },
+    swapTokens: {
+      filteredTokens: [],
+      sortType: SortTypePoolList.FEE_24_DESC,
+      pageNumber: 1
     }
-  }
+  },
+  swapMode: SwapMode.swap,
+  ordersHistory: OrdersHistory.your
 }
 
 export const navigationSliceName = 'navigation'
@@ -87,6 +111,7 @@ const navigationSlice = createSlice({
       const { type, section, ...updateData } = action.payload
 
       switch (section) {
+        case 'swapTokens':
         case 'liquidityPool':
         case 'statsPool':
         case 'portfolioTokens':
@@ -109,6 +134,14 @@ const navigationSlice = createSlice({
     },
     setShowFavouritesTokens(state, action: PayloadAction<boolean>) {
       state.navigationState.showFavouritesTokens = action.payload
+      return state
+    },
+    setSwapMode(state, action: PayloadAction<SwapMode>) {
+      state.swapMode = action.payload
+      return state
+    },
+    setOrderHistory(state, action: PayloadAction<OrdersHistory>) {
+      state.ordersHistory = action.payload
       return state
     }
   }

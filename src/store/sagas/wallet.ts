@@ -59,7 +59,7 @@ export function* getWallet(): SagaGenerator<WalletAdapter> {
   const wallet = yield* call(getEclipseWallet)
   return wallet
 }
-export function* getBalance(pubKey: PublicKey): SagaGenerator<BN> {
+export function* getBalance(pubKey: PublicKey): Generator {
   yield* put(actions.setIsEthBalanceLoading(true))
   const connection = yield* call(getConnection)
   const balance = yield* call([connection, connection.getBalance], pubKey)
@@ -657,7 +657,8 @@ export function* handleUnwrapWETH(): Generator {
   Object.entries(allAccounts).map(([address, token]) => {
     if (
       address === WRAPPED_ETH_ADDRESS &&
-      token.balance.gt(new BN(0) && wrappedEthAccountPublicKeys.length < 10)
+      token.balance.gt(new BN(0)) &&
+      wrappedEthAccountPublicKeys.length < 10
     ) {
       wrappedEthAccountPublicKeys.push(token.address)
     }
