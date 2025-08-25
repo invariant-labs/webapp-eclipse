@@ -103,7 +103,8 @@ import {
   MAX_PLOT_VISIBLE_TICK_RANGE,
   CHECKER_API_URL,
   NoConfig,
-  muES_MAIN
+  muES_MAIN,
+  INVT_MAIN
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
@@ -943,7 +944,8 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
         [NPT_MAIN.address.toString()]: NPT_MAIN,
         [USDN_MAIN.address.toString()]: USDN_MAIN,
         [WEETHS_MAIN.address.toString()]: WEETHS_MAIN,
-        [muES_MAIN.address.toString()]: muES_MAIN
+        [muES_MAIN.address.toString()]: muES_MAIN,
+        [INVT_MAIN.address.toString()]: INVT_MAIN
       }
     case NetworkType.Devnet:
       return {
