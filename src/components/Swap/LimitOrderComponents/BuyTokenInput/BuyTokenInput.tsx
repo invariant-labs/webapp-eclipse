@@ -1,5 +1,4 @@
-import { Box, Grid, Input, Typography } from '@mui/material'
-import loadingAnimation from '@static/gif/loading.gif'
+import { Box, Grid, Input, Skeleton, Typography } from '@mui/material'
 import { formatNumberWithoutSuffix } from '@utils/utils'
 import React, { CSSProperties, useRef } from 'react'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
@@ -118,7 +117,13 @@ export const BuyTokenInput: React.FC<IProps> = ({
           <Grid className={classes.percentages} container>
             {currency ? (
               priceLoading ? (
-                <img src={loadingAnimation} className={classes.loading} alt='loading' />
+                <Skeleton
+                  variant='rounded'
+                  height={20}
+                  width={100}
+                  animation='wave'
+                  sx={{ borderRadius: '8px' }}
+                />
               ) : tokenPrice ? (
                 <Box sx={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
                   {percentageChange && (

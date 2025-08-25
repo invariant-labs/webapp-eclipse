@@ -185,7 +185,15 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
   const [detailsOpen, setDetailsOpen] = React.useState<boolean>(false)
   const [addBlur, _setAddBlur] = useState(false)
   const [errorVisible, setErrorVisible] = useState(false)
+  const [priceLoading, setPriceLoading] = useState(false)
 
+  useEffect(() => {
+    if (!priceFromLoading && !priceToLoading) {
+      setPriceLoading(false)
+    } else {
+      setPriceLoading(true)
+    }
+  }, [priceFromLoading, priceToLoading])
   const isXtoYOrderBook = useMemo(() => {
     if (tokenFromIndex === null) return
 
@@ -472,7 +480,7 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
     orderBookPair,
     orderBook
   ])
-
+  console.log(priceToLoading)
   return (
     <Grid container className={classes.swapWrapper} alignItems='center'>
       <Grid container className={classes.header}>
@@ -603,14 +611,50 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
                 if (lockAnimation) return
                 setRotates(rotates + 1)
                 swap !== null ? setSwap(!swap) : setSwap(true)
+
+                setPriceLoading(true)
                 setTimeout(() => {
-                  const tmpAmount = amountTo
+                  if (tokenToIndex === null) {
+                    setAmountFrom('')
+                  } else {
+                    const tmpAmountFrom = amountTo
 
-                  const tmp = tokenFromIndex
-                  setTokenFromIndex(tokenToIndex)
-                  setTokenToIndex(tmp)
+                    const tmp = tokenFromIndex
+                    setTokenFromIndex(tokenToIndex)
+                    setTokenToIndex(tmp)
 
-                  setAmountFrom(tmpAmount)
+                    setAmountFrom(tmpAmountFrom)
+
+                    if (
+                      tokenFromIndex === null ||
+                      isXtoYOrderBook === undefined ||
+                      !orderBook ||
+                      !orderBookPair
+                    ) {
+                      setBnAmountTo(new BN(0))
+                      setAmountTo('')
+
+                      return
+                    }
+
+                    const valueBN = convertBalanceToBN(
+                      tmpAmountFrom,
+                      tokens[tokenFromIndex].decimals
+                    )
+
+                    const amountBN = limitOrderQuoteByInputToken(
+                      valueBN,
+                      !isXtoYOrderBook,
+                      priceTickIndex,
+                      orderBookPair.pair.feeTier,
+                      orderBook
+                    )
+
+                    const tokenOutAmount = printBN(amountBN, tokens[tokenToIndex].decimals)
+
+                    setBnAmountTo(amountBN)
+                    setAmountTo(tokenOutAmount)
+                  }
                 }, 10)
 
                 if (validatedTokenPriceAmount === '') return
@@ -770,6 +814,7 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
               )}
               <BuyTokenInput
                 tokenPrice={tokenToPriceData?.price}
+                priceLoading={priceLoading}
                 setValue={value => {
                   if (tokenToIndex === null || tokenFromIndex === null) return
 
