@@ -171,7 +171,7 @@ export const WrappedLimitOrder = ({
         order.account.orderTokenAmount
       )
 
-      let filledPercentage = '0'
+      let filledPercentage = '0.00'
       if (
         simulateResult.status === DecreaseOrderLiquiditySimulationStatus.PartiallyCompleted ||
         simulateResult.status === DecreaseOrderLiquiditySimulationStatus.FullyCompleted ||
