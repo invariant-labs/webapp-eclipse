@@ -178,8 +178,8 @@ export const WrappedStake: React.FC = () => {
     const sBitzAddr = sBITZ_MAIN.address.toString()
 
     Promise.allSettled([
-      getTokenPrice(bitzAddr, networkType),
-      getTokenPrice(sBitzAddr, networkType)
+      getTokenPrice(networkType, bitzAddr),
+      getTokenPrice(networkType, sBitzAddr)
     ])
       .then(([bitzRes, sBitzRes]) => {
         const bitzPrice =

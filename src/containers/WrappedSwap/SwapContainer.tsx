@@ -91,8 +91,8 @@ export const SwapContainer = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const lastTokenFrom =
     initialTokenFrom && tickerToAddress(networkType, initialTokenFrom)
       ? tickerToAddress(networkType, initialTokenFrom)
-      : (localStorage.getItem(`INVARIANT_LAST_TOKEN_FROM_${networkType}`) ??
-        WETH_MAIN.address.toString())
+      : localStorage.getItem(`INVARIANT_LAST_TOKEN_FROM_${networkType}`) ??
+        WETH_MAIN.address.toString()
 
   const lastTokenTo =
     initialTokenTo && tickerToAddress(networkType, initialTokenTo)
@@ -201,7 +201,7 @@ export const SwapContainer = ({ initialTokenFrom, initialTokenTo }: Props) => {
 
     if (addr) {
       setPriceFromLoading(true)
-      getTokenPrice(addr, networkType)
+      getTokenPrice(networkType, addr)
         .then(data => setTokenFromPriceData({ price: data ?? 0 }))
         .catch(() =>
           setTokenFromPriceData(
@@ -225,7 +225,7 @@ export const SwapContainer = ({ initialTokenFrom, initialTokenTo }: Props) => {
     const addr = tokensDict[tokenTo.toString()]?.assetAddress.toString()
     if (addr) {
       setPriceToLoading(true)
-      getTokenPrice(addr, networkType)
+      getTokenPrice(networkType, addr)
         .then(data => setTokenToPriceData({ price: data ?? 0 }))
         .catch(() =>
           setTokenToPriceData(
