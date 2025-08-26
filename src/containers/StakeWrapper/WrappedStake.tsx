@@ -145,7 +145,7 @@ export const WrappedStake: React.FC = () => {
   const estimated24Yield = useMemo(() => {
     const { sbitzPredictedYield } = computeBitzSbitzRewards(
       +printBN(sBitzBalance, sBITZ_MAIN.decimals),
-      +printBN(stakedBitzData.bitzTotalBalance, BITZ_MAIN.decimals),
+      +printBN(stakedBitzData.bitzTotalBalance || new BN(0), BITZ_MAIN.decimals),
       1
     )
     return sbitzPredictedYield[0] || 0
@@ -358,8 +358,8 @@ export const WrappedStake: React.FC = () => {
                 dispatch(walletActions.disconnect())
               }}
               sBitzApyApr={sBitzApyApr}
-              stakedTokenSupply={stakedBitzData.stakedTokenSupply}
-              stakedAmount={stakedBitzData.stakedAmount}
+              stakedTokenSupply={stakedBitzData.stakedTokenSupply || new BN(0)}
+              stakedAmount={stakedBitzData.stakedAmount || new BN(0)}
               stakeDataLoading={stakeLoading}
               changeStakeTab={(tab: StakeSwitch) => {
                 dispatch(actions.setStakeTab({ tab }))

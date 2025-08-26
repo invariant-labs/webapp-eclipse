@@ -8,6 +8,7 @@ import html2canvas from 'html2canvas'
 import grayLogo from '@static/png/gray-logo.png'
 import { formatNumberWithoutSuffix, printBN } from '@utils/utils'
 import { closeSmallIcon } from '@static/icons'
+import { BN } from '@coral-xyz/anchor'
 
 interface IProps {
   open: boolean
@@ -84,7 +85,7 @@ export const ShareComponent: React.FC<IProps> = ({
         <Box className={classes.allocationContainer}>
           <Box className={cx(classes.allocationWrapper, classes.allocationWrapperDisplay)}>
             <Typography className={cx(classes.allocation, classes.allocationDisplay)}>
-              {formatNumberWithoutSuffix(printBN(allocation, mintDecimals))} INVT
+              {formatNumberWithoutSuffix(printBN(new BN(allocation), mintDecimals))} INVT
             </Typography>
           </Box>
         </Box>
@@ -112,7 +113,7 @@ export const ShareComponent: React.FC<IProps> = ({
           <Box className={classes.allocationContainer}>
             <Box className={classes.allocationWrapper}>
               <Typography className={classes.allocation}>
-                {formatNumberWithoutSuffix(printBN(allocation, mintDecimals))} INVT
+                {formatNumberWithoutSuffix(printBN(new BN(allocation), mintDecimals))} INVT
               </Typography>
             </Box>
           </Box>

@@ -162,8 +162,8 @@ export type SimulationPath = {
   tokenFrom: SwapToken | null
   tokenBetween: SwapToken | null
   tokenTo: SwapToken | null
-  firstPair: BN | null
-  secondPair: BN | null
+  firstPair: Pair | null
+  secondPair: Pair | null
   firstAmount: BN
   secondAmount: BN
   firstPriceImpact: BN
@@ -404,7 +404,7 @@ export const Swap: React.FC<ISwap> = ({
           ? calculatePoints(
               simulationPath.firstAmount ?? new BN(0),
               simulationPath.tokenFrom?.decimals ?? 0,
-              simulationPath.firstPair.feeTier.fee ?? new BN(0),
+              simulationPath.firstPair?.feeTier.fee ?? new BN(0),
               firstFeed?.price ?? '0',
               firstFeed?.priceDecimals ?? 0,
               pointsPerUSD
@@ -414,7 +414,7 @@ export const Swap: React.FC<ISwap> = ({
           ? calculatePoints(
               simulationPath.secondAmount ?? new BN(0),
               simulationPath.tokenBetween?.decimals ?? 0,
-              simulationPath.secondPair.feeTier.fee ?? new BN(0),
+              simulationPath.secondPair?.feeTier.fee ?? new BN(0),
               secondFeed?.price ?? '0',
               secondFeed?.priceDecimals ?? 0,
               pointsPerUSD
@@ -734,9 +734,9 @@ export const Swap: React.FC<ISwap> = ({
         ) ?? { fee: new BN(0) },
         secondPair: null,
         firstAmount: convertBalanceToBN(amountFrom, tokens[tokenFromIndex ?? 0].decimals),
-        secondAmount: null,
+        secondAmount: new BN(0),
         firstPriceImpact: simulateResult.priceImpact,
-        secondPriceImpact: null
+        secondPriceImpact: new BN(0)
       })
       setBestAmount(simulateResult.amountOut)
       setSwapType(SwapType.Normal)
@@ -1518,7 +1518,12 @@ export const Swap: React.FC<ISwap> = ({
                   }
                   disabled={getStateMessage() !== 'Exchange' || progress !== 'none'}
                   onClick={() => {
-                    if (tokenFromIndex === null || tokenToIndex === null) return
+                    if (
+                      tokenFromIndex === null ||
+                      tokenToIndex === null ||
+                      !simulationPath.firstPair
+                    )
+                      return
 
                     onSwap(
                       fromFee(new BN(Number(+slippTolerance * 1000))),
@@ -1548,7 +1553,8 @@ export const Swap: React.FC<ISwap> = ({
                 }
                 disabled={getStateMessage() !== 'Exchange' || progress !== 'none'}
                 onClick={() => {
-                  if (tokenFromIndex === null || tokenToIndex === null) return
+                  if (tokenFromIndex === null || tokenToIndex === null || !simulationPath.firstPair)
+                    return
 
                   onSwap(
                     // fromFee(new BN(Number(+slippTolerance * 1000))),

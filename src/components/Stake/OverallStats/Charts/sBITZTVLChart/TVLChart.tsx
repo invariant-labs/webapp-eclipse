@@ -247,7 +247,7 @@ const TVLChart: React.FC<StatsInterface> = ({
                     <text
                       style={{ fill: colors.invariant.textGrey, ...typography.tiny2 }}
                       textAnchor='start'
-                      dominantBaseline='center'>
+                      dominantBaseline='middle'>
                       {trimZeros(formatLargeNumber(value))}
                     </text>
                   </g>
