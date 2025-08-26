@@ -802,8 +802,7 @@ const PortfolioWrapper = () => {
         if (!position) {
           return
         }
-        console.log(xAmount)
-        console.log(yAmount)
+
         if (isAddLiquidity) {
           dispatch(
             actions.addLiquidity({

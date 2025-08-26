@@ -2915,8 +2915,6 @@ export function* handleClosePositionWithETH(data: ClosePositionData) {
 
             const tokenX = allTokens[pair.tokenX.toString()]
             const tokenY = allTokens[pair.tokenY.toString()]
-            console.log(amountX)
-            console.log(amountY)
 
             yield put(
               snackbarsActions.add({

@@ -362,7 +362,7 @@ export const WrappedLimitOrder = ({
           if (!tokenFrom || !tokenTo || !orderBookPair || !poolData || !walletAddress) return
 
           setProgress('progress')
-          console.log(walletAddress)
+
           dispatch(
             actions.addLimitOrder({
               amount,

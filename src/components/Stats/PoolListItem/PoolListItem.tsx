@@ -249,8 +249,6 @@ const PoolListItem: React.FC<IProps> = ({
   //HOTFIX
   const { convertedApy, convertedApr } = calculateAPYAndAPR(apy, poolAddress, volume, fee, TVL)
 
-  console.log(convertedApy)
-  console.log(convertedApr)
   const ActionsButtons = (
     <Box className={classes.action}>
       <button className={classes.actionButton} onClick={handleOpenSwap}>

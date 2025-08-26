@@ -462,7 +462,11 @@ export const LimitOrder: React.FC<ILimitOrder> = ({
       tokens[tokenFromIndex ?? '']?.isUnknown || tokens[tokenToIndex ?? '']?.isUnknown
 
     const riskWarning =
-      !priceToLoading && !priceFromLoading && !showBlur && (orderBook === null || !orderBookPair)
+      !priceToLoading &&
+      !priceFromLoading &&
+      (orderBook === null || !orderBookPair) &&
+      tokenFromIndex !== null &&
+      tokenToIndex !== null
 
     if (hasUnknown) {
       setErrorVisible(true)

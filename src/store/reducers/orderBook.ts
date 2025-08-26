@@ -106,7 +106,6 @@ const orderBookSlice = createSlice({
       return state
     },
     setCloseOrderSuccess(state, action: PayloadAction<boolean>) {
-      console.log(action.payload)
       state.loadingCloseOrder.inProgress = false
       state.loadingCloseOrder.success = action.payload
       state.loadingCloseOrder.orderKey = action.payload ? '' : state.loadingCloseOrder.orderKey
