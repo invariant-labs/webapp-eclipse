@@ -29,7 +29,7 @@ import {
   positionListSwitcher,
   positionsWithPoolsData,
   positionWithPoolData,
-  prices,
+  prices as priceData,
   shouldDisable,
   singlePositionData
 } from '@store/selectors/positions'
@@ -85,7 +85,7 @@ const PortfolioWrapper = () => {
   const BANNER_HIDE_DURATION = 1000 * 60 * 60 * 24 // 24 hours
   const { classes } = useStyles()
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
-
+  const [prices, setPrices] = useState<Record<string, number>>({})
   const walletAddress = useSelector(address)
   const list = useSelector(positionsWithPoolsData)
   const lockedList = useSelector(lockedPositionsWithPoolsData)
@@ -95,7 +95,7 @@ const PortfolioWrapper = () => {
   const currentNetwork = useSelector(network)
   const tokensList = useSelector(swapTokens)
   const isBalanceLoading = useSelector(balanceLoading)
-  const pricesData = useSelector(prices)
+  const pricesData = useSelector(priceData)
   const ethBalance = useSelector(balance)
   const [isHiding, setIsHiding] = useState(false)
   const [showBanner, setShowBanner] = useState(() => {
@@ -115,11 +115,7 @@ const PortfolioWrapper = () => {
   const positionListAlignment = useSelector(positionListSwitcher)
   const overviewSelectedTab = useSelector(overviewSwitch)
   const searchParamsToken = useSelector(portfolioSearch)
-  const { processedTokens, isProcesing } = useProcessedTokens(
-    tokensList,
-    isBalanceLoading,
-    currentNetwork
-  )
+  const { processedTokens, isProcesing } = useProcessedTokens(prices, tokensList, isBalanceLoading)
 
   const [maxToken] = [...processedTokens].sort((a, b) => b.value - a.value)
 
@@ -470,7 +466,6 @@ const PortfolioWrapper = () => {
         )
       )
   }
-
   const [positionId, setPositionId] = useState('')
   const [tokenXPriceData, setTokenXPriceData] = useState<TokenPriceData | undefined>(undefined)
   const [tokenYPriceData, setTokenYPriceData] = useState<TokenPriceData | undefined>(undefined)
@@ -559,14 +554,14 @@ const PortfolioWrapper = () => {
       return
     }
     const xAddr = position.tokenX.assetAddress.toString()
-    getTokenPrice(xAddr, currentNetwork)
-      .then(data => setTokenXPriceData({ price: data ?? 0 }))
-      .catch(() => setTokenXPriceData(getMockedTokenPrice(position.tokenX.symbol, currentNetwork)))
+    setTokenXPriceData({
+      price: prices[xAddr] ?? getMockedTokenPrice(position.tokenX.symbol, currentNetwork)
+    })
 
     const yAddr = position.tokenY.assetAddress.toString()
-    getTokenPrice(yAddr, currentNetwork)
-      .then(data => setTokenYPriceData({ price: data ?? 0 }))
-      .catch(() => setTokenYPriceData(getMockedTokenPrice(position.tokenY.symbol, currentNetwork)))
+    setTokenYPriceData({
+      price: prices[yAddr] ?? getMockedTokenPrice(position.tokenY.symbol, currentNetwork)
+    })
   }, [position?.id])
 
   const min = useMemo(
@@ -675,8 +670,30 @@ const PortfolioWrapper = () => {
     setIsChangeLiquidityModalShown(true)
   }
 
+  useEffect(() => {
+    if (Object.keys(prices).length > 0) {
+      dispatch(actions.setPrices(prices))
+    }
+  }, [prices])
+
+  useEffect(() => {
+    const loadPrices = async (): Promise<void> => {
+      const prices = await getTokenPrice(currentNetwork)
+      if (prices) {
+        const transformedPrices = Object.fromEntries(
+          Object.entries(prices).map(([key, value]) => [key, value.price])
+        )
+
+        setPrices(transformedPrices)
+      }
+    }
+
+    loadPrices()
+  }, [])
+
   return isConnected ? (
     <Portfolio
+      prices={prices}
       handleCloseBanner={handleBannerClose}
       showBanner={showBanner}
       isHiding={isHiding}

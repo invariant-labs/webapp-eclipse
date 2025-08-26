@@ -238,7 +238,7 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
 
     if (addr) {
       setPriceFromLoading(true)
-      getTokenPrice(addr, networkType)
+      getTokenPrice(networkType, addr)
         .then(data => setTokenFromPriceData({ price: data ?? 0 }))
         .catch(() =>
           setTokenFromPriceData(
@@ -262,7 +262,7 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
     const addr = tokensDict[tokenTo.toString()]?.assetAddress.toString()
     if (addr) {
       setPriceToLoading(true)
-      getTokenPrice(addr, networkType)
+      getTokenPrice(networkType, addr)
         .then(data => setTokenToPriceData({ price: data ?? 0 }))
         .catch(() =>
           setTokenToPriceData(
