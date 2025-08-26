@@ -64,7 +64,7 @@ export const MobilePoolListItem: React.FC<IProps> = ({
       ROUTES.getNewPositionRoute(
         tokenA,
         tokenB,
-        parseFeeToPathFee(Math.round(fee * 10 ** (DECIMAL - 2)))
+        parseFeeToPathFee(new BN(Math.round(fee * 10 ** (DECIMAL - 2))))
       ),
       { state: { referer: 'stats' } }
     )
@@ -200,7 +200,7 @@ export const MobilePoolListItem: React.FC<IProps> = ({
                     <QuestionMark marginLeft={'40%'} height={'24px'} />
                   ) : (
                     formatNumberWithCommas(
-                      printBN(new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60), 0)
+                      printBN(new BN(pointsPerSecond || '0', 'hex').muln(24).muln(60).muln(60), 0)
                     )
                   )
                 ) : (
