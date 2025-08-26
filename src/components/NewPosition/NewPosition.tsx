@@ -634,7 +634,7 @@ export const NewPosition: React.FC<INewPosition> = ({
     isRange?: boolean
   ) => {
     if (canNavigate) {
-      const parsedFee = parseFeeToPathFee(+ALL_FEE_TIERS_DATA[fee].tier.fee)
+      const parsedFee = parseFeeToPathFee(ALL_FEE_TIERS_DATA[fee].tier.fee)
 
       clearTimeout(urlUpdateTimeoutRef.current)
 
@@ -968,6 +968,7 @@ export const NewPosition: React.FC<INewPosition> = ({
       )
     }
   }
+
   const onSwapAndAddLiquidity = async (
     xAmount,
     yAmount,

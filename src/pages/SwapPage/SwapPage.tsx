@@ -1,7 +1,7 @@
-import WrappedSwap from '@containers/WrappedSwap/WrappedSwap'
 import useStyles from './styles'
 import { Grid } from '@mui/material'
 import { useParams } from 'react-router-dom'
+import SwapContainer from '@containers/WrappedSwap/SwapContainer'
 
 export const SwapPage: React.FC = () => {
   const { classes } = useStyles()
@@ -12,7 +12,7 @@ export const SwapPage: React.FC = () => {
 
   return (
     <Grid className={classes.container}>
-      <WrappedSwap initialTokenFrom={initialTokenFrom} initialTokenTo={initialTokenTo} />
+      <SwapContainer initialTokenFrom={initialTokenFrom} initialTokenTo={initialTokenTo} />
     </Grid>
   )
 }

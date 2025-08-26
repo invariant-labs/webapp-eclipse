@@ -10,6 +10,7 @@ import { TokenArc } from '../TokenArc/TokenArc'
 import { TimeData } from '@store/reducers/sbitz-stats'
 import { formatNumberWithoutSuffix, printBN } from '@utils/utils'
 import { useMemo } from 'react'
+import { BN } from '@coral-xyz/anchor'
 
 interface Props {
   isLoadingStats: boolean
@@ -32,8 +33,8 @@ export const StakedStats = ({
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
 
   const { stakedPercentage, directStakePercentage } = useMemo(() => {
-    const allBitzStaked = +printBN(totalBitzStaked, sBITZ_MAIN.decimals)
-    const bitz = +printBN(bitzStaked, sBITZ_MAIN.decimals)
+    const allBitzStaked = +printBN(new BN(totalBitzStaked), sBITZ_MAIN.decimals)
+    const bitz = +printBN(new BN(bitzStaked), sBITZ_MAIN.decimals)
     const ratio = (bitz / allBitzStaked) * 100
     const stakedPercentage = isNaN(ratio) ? '0' : ratio > 0.01 ? ratio.toFixed(2) : '<0.01'
     const directStakePercentage = isNaN(+stakedPercentage) ? '99.99' : 100 - +stakedPercentage
@@ -56,7 +57,7 @@ export const StakedStats = ({
                   {formatNumberWithoutSuffix(
                     isLoadingStats
                       ? Math.random() * 10000
-                      : printBN(bitzStaked, sBITZ_MAIN.decimals)
+                      : printBN(new BN(bitzStaked), sBITZ_MAIN.decimals)
                   )}
                 </Typography>
               </Box>
@@ -91,7 +92,7 @@ export const StakedStats = ({
                   {formatNumberWithoutSuffix(
                     isLoadingStats
                       ? Math.random() * 10000
-                      : printBN(bitzSupply, sBITZ_MAIN.decimals)
+                      : printBN(new BN(bitzSupply), sBITZ_MAIN.decimals)
                   )}
                 </Typography>
               </Box>

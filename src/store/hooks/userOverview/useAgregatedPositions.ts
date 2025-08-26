@@ -5,6 +5,7 @@ import { PublicKey } from '@solana/web3.js'
 import { TokenPositionEntry } from '@store/types/userOverview'
 import { printBN } from '@utils/utils'
 import { useMemo } from 'react'
+import { BN } from '@coral-xyz/anchor'
 interface TokenPosition {
   tokenX: {
     symbol: string
@@ -22,11 +23,11 @@ interface TokenPosition {
     logoURI: string
     isUnknown?: boolean
   }
-  liquidity: number
+  liquidity: BN
   upperTickIndex: number
   lowerTickIndex: number
   poolData: {
-    sqrtPrice: number
+    sqrtPrice: BN
   }
   id: string
 }
@@ -35,7 +36,7 @@ const calculateTokenValue = (
   position: TokenPosition,
   isTokenX: boolean,
   prices: Record<string, number>
-): { value: number; amountBN: number } => {
+): { value: number; amountBN: BN } => {
   const token = isTokenX ? position.tokenX : position.tokenY
   const getValue = isTokenX ? getX : getY
 
@@ -98,14 +99,27 @@ const updateOrCreatePosition = (
   ]
 }
 
+const mapToTokenPosition = (position: ISinglePositionData): TokenPosition => ({
+  tokenX: position.tokenX,
+  tokenY: position.tokenY,
+  liquidity: position.liquidity,
+  upperTickIndex: position.upperTickIndex,
+  lowerTickIndex: position.lowerTickIndex,
+  poolData: {
+    sqrtPrice: position.poolData.sqrtPrice
+  },
+  id: position.positionIndex.toString()
+})
+
 export const useAgregatedPositions = (
   positionList: ISinglePositionData[],
   prices: Record<string, number>
 ) => {
   const positions = useMemo(() => {
     return positionList.reduce((acc: TokenPositionEntry[], position) => {
-      acc = updateOrCreatePosition(acc, position, true, prices)
-      acc = updateOrCreatePosition(acc, position, false, prices)
+      const mapped = mapToTokenPosition(position)
+      acc = updateOrCreatePosition(acc, mapped, true, prices)
+      acc = updateOrCreatePosition(acc, mapped, false, prices)
       return acc
     }, [])
   }, [positionList, prices])

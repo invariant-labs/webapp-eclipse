@@ -66,7 +66,10 @@ export const YourPointsModal: React.FC<ISelectNetworkModal> = ({ anchorEl, open,
                       value:
                         trimZeros(
                           formatLargeNumber(
-                            +printBN(new BN(userStats.total?.points, 'hex'), LEADERBOARD_DECIMAL)
+                            +printBN(
+                              new BN(userStats.total?.points || '0', 'hex'),
+                              LEADERBOARD_DECIMAL
+                            )
                           )
                         ) ?? 0,
                       label: 'Your Points',
