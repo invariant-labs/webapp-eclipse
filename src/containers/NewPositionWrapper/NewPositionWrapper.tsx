@@ -1075,7 +1075,8 @@ export const NewPositionWrapper: React.FC<IProps> = ({
 
         const lowerTickIndex = Math.min(leftTickIndex, rightTickIndex)
         const upperTickIndex = Math.max(leftTickIndex, rightTickIndex)
-
+        console.log(xAmount)
+        console.log(yAmount)
         dispatch(
           positionsActions.initPosition({
             tokenX: tokens[isXtoY ? tokenAIndex : tokenBIndex].assetAddress,
@@ -1086,8 +1087,8 @@ export const NewPositionWrapper: React.FC<IProps> = ({
             liquidityDelta: liquidity,
             initPool: poolIndex === null,
             initTick: poolIndex === null ? midPrice.index : undefined,
-            xAmount: Math.floor(xAmount),
-            yAmount: Math.floor(yAmount),
+            xAmount: Math.floor(xAmount.toNumber()),
+            yAmount: Math.floor(yAmount.toNumber()),
             slippage,
             tickSpacing,
             knownPrice: poolIndex === null ? midPrice.sqrtPrice : allPools[poolIndex].sqrtPrice,
