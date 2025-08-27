@@ -14,14 +14,12 @@ import { ES_MAIN, WETH_MAIN } from '@store/consts/static'
 
 interface IECBanner {
   isCloseButton?: boolean
-  page: 'overview' | 'points'
   isHiding?: boolean
   handleCloseBanner?: () => void
 }
 
 export const ECBanner: React.FC<IECBanner> = ({
   isCloseButton = true,
-  page,
   isHiding = false,
   handleCloseBanner = () => {}
 }) => {
@@ -51,7 +49,7 @@ export const ECBanner: React.FC<IECBanner> = ({
       benefits from projects across the entire ecosystem.
     </Grid>
   )
-  const breakpoint = page === 'points' ? theme.breakpoints.values.lg : 1200
+  const breakpoint = 1200
   const changeDirection = useMediaQuery(theme.breakpoints.down(breakpoint))
   const { classes } = useStyles({ breakpoint, isHiding })
   return (

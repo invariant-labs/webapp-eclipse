@@ -122,14 +122,6 @@ export const useStyles = makeStyles()(() => ({
     color: colors.invariant.green,
     border: `1px solid ${colors.invariant.green}`
   },
-
-  airdropIcon: {
-    height: 24,
-    marginRight: 8
-  },
-  airdropIconInActive: {
-    filter: 'grayscale(100%)'
-  },
   backText: {
     ...typography.body2,
     color: colors.invariant.textGrey

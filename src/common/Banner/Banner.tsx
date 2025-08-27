@@ -1,38 +1,23 @@
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
-import { airdropIcon, closeSmallGreenIcon, closeSmallIcon } from '@static/icons'
+import { closeSmallGreenIcon, closeSmallIcon } from '@static/icons'
 import { theme } from '@static/theme'
-import { useNavigate } from 'react-router-dom'
 import useStyles from './styles'
-import { ROUTES } from '@utils/utils'
-import { ES_MAIN, WETH_MAIN } from '@store/consts/static'
 
 interface INormalBannerProps {
   onClose: () => void
   isHiding: boolean
 }
 
-export const NormalBanner = ({ onClose, isHiding }: INormalBannerProps) => {
-  const navigate = useNavigate()
+export const Banner = ({ onClose, isHiding }: INormalBannerProps) => {
   const bannerHeight = 'fit-content'
   const isSmallDevice = useMediaQuery(theme.breakpoints.down('sm'))
 
   const { classes } = useStyles({ isHiding })
 
-  const airdrop = <Box component='img' src={airdropIcon} className={classes.airdrop} />
-
   const text = (
     <span>
-      {!isSmallDevice && `Invariant Points are live!`} ES/ETH is now the next pool distributing
-      points! Check it out
-      <span
-        className={classes.text}
-        onClick={() => {
-          navigate(ROUTES.getNewPositionRoute(ES_MAIN.symbol, WETH_MAIN.symbol, '0_30'))
-
-          if (isSmallDevice) {
-            onClose()
-          }
-        }}>
+      Invariant Checker is live! Check it out
+      <span className={classes.text} onClick={() => window.open('https://claims.invariant.app')}>
         here!
       </span>
       {/* {!isSmallDevice && `...`} And see also distribution of points in the
@@ -83,7 +68,6 @@ export const NormalBanner = ({ onClose, isHiding }: INormalBannerProps) => {
           }}>
           <Box className={classes.airdropWrapper}>
             <Grid className={classes.labelWrapper}>
-              {airdrop}
               <Box
                 sx={{
                   fontSize: { xs: '14px', sm: '16px' }
@@ -101,7 +85,6 @@ export const NormalBanner = ({ onClose, isHiding }: INormalBannerProps) => {
           <Box className={classes.container}>
             <Box className={classes.modal}>
               <Box className={classes.header}>
-                {airdrop}
                 <Typography>Announcement</Typography>
                 {close}
               </Box>

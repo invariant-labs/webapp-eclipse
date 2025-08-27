@@ -11,7 +11,6 @@ import useStyles from './style'
 import { ISelectChain, ISelectNetwork } from '@store/consts/types'
 import { RpcStatus } from '@store/reducers/solanaConnection'
 import { PublicKey } from '@solana/web3.js'
-import { YourPointsButton } from './HeaderButton/YourPointsButton'
 import { BN } from '@coral-xyz/anchor'
 import { Bar } from '@components/Bar/Bar'
 import { ROUTES } from '@utils/utils'
@@ -60,7 +59,6 @@ export const Header: React.FC<IHeader> = ({
     'portfolio',
     // 'presale',
     ...(typeOfNetwork === NetworkType.Testnet ? ['creator'] : []),
-    ...(typeOfNetwork === NetworkType.Mainnet ? ['points'] : []),
     'stake',
     'statistics'
   ]
@@ -71,7 +69,6 @@ export const Header: React.FC<IHeader> = ({
     portfolio: [/^portfolio\/*/, /^newPosition\/*/, /^position\/*/],
     stake: [/^stake\/*/],
     // presale: [/^presale\/*/],
-    ...(typeOfNetwork === NetworkType.Mainnet ? { leaderboard: [/^points\/*/] } : {}),
     ...(typeOfNetwork === NetworkType.Testnet ? { creator: [/^creator\/*/] } : {})
   }
 
@@ -183,18 +180,16 @@ export const Header: React.FC<IHeader> = ({
               }
             }}
           />
-          <Grid display='flex' gap='12px'>
-            <Bar
-              rpcs={rpcs}
-              activeNetwork={typeOfNetwork}
-              activeRPC={rpc}
-              onNetworkChange={onNetworkSelect}
-              onChainChange={onChainSelect}
-              onFaucet={onFaucet}
-            />
 
-            <YourPointsButton />
-          </Grid>
+          <Bar
+            rpcs={rpcs}
+            activeNetwork={typeOfNetwork}
+            activeRPC={rpc}
+            onNetworkChange={onNetworkSelect}
+            onChainChange={onChainSelect}
+            onFaucet={onFaucet}
+          />
+
           <ChangeWalletButton
             name={
               walletConnected
