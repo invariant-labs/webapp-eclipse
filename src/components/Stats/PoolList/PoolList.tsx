@@ -14,7 +14,6 @@ import {
 import { InputPagination } from '@common/Pagination/InputPagination/InputPagination'
 import { VariantType } from 'notistack'
 import { Keypair } from '@solana/web3.js'
-import { BN } from '@coral-xyz/anchor'
 import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { ROUTES } from '@utils/utils'
@@ -237,8 +236,6 @@ const PoolList: React.FC<PoolListInterface> = ({
               poolAddress={element.poolAddress}
               copyAddressHandler={copyAddressHandler}
               showAPY={showAPY}
-              points={new BN(element.pointsPerSecond, 'hex').muln(24).muln(60).muln(60)}
-              isPromoted={element.isPromoted}
               interval={interval}
               isFavourite={element.isFavourite}
               switchFavouritePool={switchFavouritePool}
