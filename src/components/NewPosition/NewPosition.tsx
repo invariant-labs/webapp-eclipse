@@ -1,7 +1,7 @@
 import { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 import Slippage from '@components/Modals/Slippage/Slippage'
 import Refresher from '@common/Refresher/Refresher'
-import { Box, Button, Grid, Hidden, Typography, useMediaQuery } from '@mui/material'
+import { Box, Button, Fade, Grid, Hidden, Typography, useMediaQuery } from '@mui/material'
 import {
   ADDRESSES_TO_REVERT_TOKEN_PAIRS,
   ALL_FEE_TIERS_DATA,
@@ -9,6 +9,7 @@ import {
   DepositOptions,
   NetworkType,
   PositionTokenBlock,
+  promotedTiers,
   REFRESHER_INTERVAL,
   USDC_MAIN,
   USDT_MAIN
@@ -54,7 +55,10 @@ import {
   getMinTick
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { backIcon, newTabIcon, refreshIcon, settingIcon } from '@static/icons'
+import FAQModal from '@components/Modals/FAQModal/FAQModal'
+import EstimatedPoints from './EstimatedPoints/EstimatedPoints'
 import { theme } from '@static/theme'
+import PointsLabel from './EstimatedPoints/PointsLabel'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { Tick, Tickmap } from '@invariant-labs/sdk-eclipse/lib/market'
 import { Button as MuiButton } from '@mui/material'
@@ -146,6 +150,12 @@ export interface INewPosition {
   onConnectWallet: () => void
   onDisconnectWallet: () => void
   canNavigate: boolean
+  estimatedPointsPerDay: BN
+  estimatedPointsForScale: (
+    currentConcentration: number,
+    concentrationArray: number[]
+  ) => { min: BN; middle: BN; max: BN }
+  isPromotedPool: boolean
   feeTiersWithTvl: Record<number, number>
   totalTvl: number
   isLoadingStats: boolean
@@ -222,6 +232,9 @@ export const NewPosition: React.FC<INewPosition> = ({
   onConnectWallet,
   onDisconnectWallet,
   canNavigate,
+  estimatedPointsPerDay,
+  estimatedPointsForScale,
+  isPromotedPool,
   feeTiersWithTvl,
   totalTvl,
   isLoadingStats,
@@ -271,6 +284,7 @@ export const NewPosition: React.FC<INewPosition> = ({
   const [alignment, setAlignment] = useState<DepositOptions>(DepositOptions.Basic)
 
   const [settings, setSettings] = React.useState<boolean>(false)
+  const [isFAQModalOpen, setIsFAQModalOpen] = React.useState<boolean>(false)
 
   const [slippTolerance, setSlippTolerance] = React.useState<string>(initialSlippage)
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
@@ -305,6 +319,28 @@ export const NewPosition: React.FC<INewPosition> = ({
     return bestTierIndex
   }, [ALL_FEE_TIERS_DATA, feeTiersWithTvl])
 
+  const rangeConcentrationArray = useMemo(() => {
+    const leftMinTick = isXtoY ? getMinTick(tickSpacing) : getMaxTick(tickSpacing)
+    const rightMaxTick = isXtoY ? getMaxTick(tickSpacing) : getMinTick(tickSpacing)
+
+    const maxConcForRange = calculateConcentration(0, tickSpacing)
+    const minConcForRange = calculateConcentration(leftMinTick, rightMaxTick)
+    const rangeConcentration = [...concentrationArray]
+    rangeConcentration.unshift(minConcForRange)
+    rangeConcentration.push(maxConcForRange)
+
+    return rangeConcentration
+  }, [concentrationArray, tickSpacing])
+
+  const concentrationIndexForRange = useMemo(() => {
+    const index = rangeConcentrationArray.findIndex(value => {
+      return (
+        Math.floor(value) >= Math.floor(+calculateConcentration(leftRange, rightRange).toFixed(2))
+      )
+    })
+    return index !== -1 ? index : 0
+  }, [rangeConcentrationArray, leftRange, rightRange, positionOpeningMethod])
+
   useEffect(() => {
     if (isLoadingTicksOrTickmap || isWaitingForNewPool) return
     setIsAutoSwapAvailable(
@@ -326,6 +362,7 @@ export const NewPosition: React.FC<INewPosition> = ({
     isWaitingForNewPool,
     isLoadingTicksOrTickmap
   ])
+  const isDepositEmptyOrZero = (val: string) => val === '' || +val === 0
 
   const isAutoswapOn = useMemo(
     () =>
@@ -386,6 +423,16 @@ export const NewPosition: React.FC<INewPosition> = ({
     updateLiquidity(result.liquidity)
     return trimLeadingZeros(printBN(result.amount, tokens[printIndex].decimals))
   }
+
+  const estimatedScalePoints = useMemo(() => {
+    return estimatedPointsForScale(
+      positionOpeningMethod === 'concentration'
+        ? (concentrationArray[concentrationIndex] ??
+            concentrationArray[concentrationArray.length - 1])
+        : calculateConcentration(leftRange, rightRange),
+      positionOpeningMethod === 'concentration' ? concentrationArray : rangeConcentrationArray
+    )
+  }, [estimatedPointsPerDay, tokenADeposit, tokenBDeposit, positionOpeningMethod])
 
   const getTicksInsideRange = (left: number, right: number, isXtoY: boolean) => {
     const leftMax = isXtoY ? getMinTick(tickSpacing) : getMaxTick(tickSpacing)
@@ -500,6 +547,17 @@ export const NewPosition: React.FC<INewPosition> = ({
     }
   }
 
+  const promotedPoolTierIndex =
+    tokenAIndex === null || tokenBIndex === null
+      ? undefined
+      : (promotedTiers.find(
+          tier =>
+            (tier.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
+              tier.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
+            (tier.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
+              tier.tokenY.equals(tokens[tokenAIndex].assetAddress))
+        )?.index ?? undefined)
+
   const getMinSliderIndex = () => {
     let minimumSliderIndex = 0
 
@@ -549,6 +607,16 @@ export const NewPosition: React.FC<INewPosition> = ({
   const handleCloseSettings = () => {
     unblurContent()
     setSettings(false)
+  }
+
+  const handleClickFAQ = () => {
+    blurContent()
+    setIsFAQModalOpen(true)
+  }
+
+  const handleCloseFAQ = () => {
+    unblurContent()
+    setIsFAQModalOpen(false)
   }
 
   const setSlippage = (slippage: string): void => {
@@ -943,6 +1011,47 @@ export const NewPosition: React.FC<INewPosition> = ({
       <Grid container className={classes.headerContainer}>
         <Box className={classes.titleContainer}>
           <Typography className={classes.title}>Add new position</Typography>
+
+          {isMd && (
+            <Fade in={isPromotedPool} timeout={250}>
+              <div>
+                <PointsLabel
+                  handleClickFAQ={handleClickFAQ}
+                  concentrationArray={
+                    positionOpeningMethod === 'concentration'
+                      ? concentrationArray
+                      : rangeConcentrationArray
+                  }
+                  concentrationIndex={
+                    positionOpeningMethod === 'concentration'
+                      ? concentrationIndex
+                      : concentrationIndexForRange
+                  }
+                  estimatedPointsPerDay={estimatedPointsPerDay}
+                  estimatedScalePoints={estimatedScalePoints}
+                  isConnected={walletStatus === Status.Init}
+                  showWarning={
+                    (isAutoswapOn &&
+                      isDepositEmptyOrZero(tokenADeposit) &&
+                      isDepositEmptyOrZero(tokenBDeposit)) ||
+                    (!isAutoswapOn &&
+                      (isDepositEmptyOrZero(tokenADeposit) ||
+                        isDepositEmptyOrZero(tokenBDeposit))) ||
+                    (!tokenACheckbox && isDepositEmptyOrZero(tokenBDeposit)) ||
+                    (!tokenBCheckbox && isDepositEmptyOrZero(tokenADeposit)) ||
+                    (!tokenACheckbox && !tokenBCheckbox)
+                  }
+                  singleDepositWarning={
+                    tokenAIndex !== null &&
+                    tokenBIndex !== null &&
+                    !isWaitingForNewPool &&
+                    !!blockedToken
+                  }
+                  positionOpeningMethod={positionOpeningMethod}
+                />
+              </div>
+            </Fade>
+          )}
           {tokenAIndex !== tokenBIndex && !isMd && (
             <TooltipHover title='Refresh' right={8}>
               {isCurrentPoolExisting ? (
@@ -1221,6 +1330,7 @@ export const NewPosition: React.FC<INewPosition> = ({
           onDisconnectWallet={onDisconnectWallet}
           canNavigate={canNavigate}
           isCurrentPoolExisting={isCurrentPoolExisting}
+          promotedPoolTierIndex={promotedPoolTierIndex}
           feeTiersWithTvl={feeTiersWithTvl}
           totalTvl={totalTvl}
           isLoadingStats={isLoadingStats}
@@ -1364,6 +1474,47 @@ export const NewPosition: React.FC<INewPosition> = ({
         )}
       </Grid>
 
+      <Fade
+        in={isPromotedPool}
+        timeout={250}
+        style={{ width: '100%' }}
+        unmountOnExit={isMd}
+        mountOnEnter={isMd}>
+        <div>
+          <EstimatedPoints
+            handleClickFAQ={handleClickFAQ}
+            concentrationArray={
+              positionOpeningMethod === 'concentration'
+                ? concentrationArray
+                : rangeConcentrationArray
+            }
+            concentrationIndex={
+              positionOpeningMethod === 'concentration'
+                ? concentrationIndex
+                : concentrationIndexForRange
+            }
+            estimatedPointsPerDay={estimatedPointsPerDay}
+            estimatedScalePoints={estimatedScalePoints}
+            isConnected={walletStatus === Status.Init}
+            showWarning={
+              (isAutoswapOn &&
+                isDepositEmptyOrZero(tokenADeposit) &&
+                isDepositEmptyOrZero(tokenBDeposit)) ||
+              (!isAutoswapOn &&
+                (isDepositEmptyOrZero(tokenADeposit) || isDepositEmptyOrZero(tokenBDeposit))) ||
+              (!tokenACheckbox && isDepositEmptyOrZero(tokenBDeposit)) ||
+              (!tokenBCheckbox && isDepositEmptyOrZero(tokenADeposit)) ||
+              (!tokenACheckbox && !tokenBCheckbox)
+            }
+            singleDepositWarning={
+              tokenAIndex !== null && tokenBIndex !== null && !isWaitingForNewPool && !!blockedToken
+            }
+            positionOpeningMethod={positionOpeningMethod}
+          />
+        </div>
+      </Fade>
+
+      <FAQModal handleClose={handleCloseFAQ} open={isFAQModalOpen} />
       {ConfirmDialog}
     </Grid>
   )

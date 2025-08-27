@@ -1,13 +1,23 @@
 import { Box, Skeleton, Typography } from '@mui/material'
 import { useStyles } from './style'
-import { formatNumberWithSuffix } from '@utils/utils'
+import {
+  formatNumberWithCommas,
+  formatNumberWithSuffix,
+  printBN,
+  removeAdditionalDecimals
+} from '@utils/utils'
+import { LEADERBOARD_DECIMAL } from '@store/consts/static'
 import { convertAPYValue } from '@utils/uiUtils'
 
 type Props = {
   value: number
   pendingFees: number
   poolApy: number
+  points24: number
+  arePointsDistributed: boolean
   isLoading: boolean
+  isPromotedLoading: boolean
+  isLocked?: boolean
   showPoolDetailsLoader?: boolean
 }
 
@@ -15,7 +25,11 @@ export const PositionStats = ({
   value,
   pendingFees,
   poolApy,
+  points24,
+  arePointsDistributed,
   isLoading,
+  isPromotedLoading,
+  isLocked = false,
   showPoolDetailsLoader = false
 }: Props) => {
   const { classes, cx } = useStyles()
@@ -58,6 +72,28 @@ export const PositionStats = ({
         </Box>
       </Box>
       <Box className={classes.statWrapper}>
+        <Box className={cx(classes.statContainer, classes.statCOntainerRainbow)}>
+          {isLoading || isPromotedLoading ? (
+            <Skeleton height={20} width={140} variant='rounded' />
+          ) : arePointsDistributed && !isLocked ? (
+            <>
+              <Typography className={classes.statName}>Points 24H:</Typography>
+              <Typography className={classes.statValue}>
+                {+removeAdditionalDecimals(
+                  formatNumberWithCommas(printBN(points24, LEADERBOARD_DECIMAL)),
+                  2
+                ) === 0
+                  ? '<0.01'
+                  : removeAdditionalDecimals(
+                      formatNumberWithCommas(printBN(points24, LEADERBOARD_DECIMAL)),
+                      2
+                    )}
+              </Typography>
+            </>
+          ) : (
+            <Typography className={classes.statName}>No points distribution</Typography>
+          )}
+        </Box>
         <Box className={cx(classes.statContainer, classes.statContainerHiglight)}>
           <Typography className={classes.statName}>Pool APY:</Typography>
           {showPoolDetailsLoader ? (

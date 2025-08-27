@@ -257,6 +257,18 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
       width: 28
     }
   },
+  airdropIcon: {
+    marginRight: 15,
+    marginBottom: 6,
+    [theme.breakpoints.down(1160)]: {
+      marginRight: 25
+    },
+
+    [theme.breakpoints.down('sm')]: {
+      marginRight: 6,
+      marginBottom: 12
+    }
+  },
   iconContainer: {
     minWidth: 24,
     maxWidth: 24,

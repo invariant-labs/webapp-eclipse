@@ -2,13 +2,13 @@ import { Box, Typography } from '@mui/material'
 import useStyles from './styles'
 import React from 'react'
 
-interface ITimerProps {
+interface ILeaderboardTimerProps {
   hours: string
   minutes: string
   seconds: string
   isSmall?: boolean
 }
-export const Timer: React.FC<ITimerProps> = ({ hours, minutes, seconds, isSmall }) => {
+export const Timer: React.FC<ILeaderboardTimerProps> = ({ hours, minutes, seconds, isSmall }) => {
   const { classes } = useStyles({ isSmall: isSmall || false })
 
   return (

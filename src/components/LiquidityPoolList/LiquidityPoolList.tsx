@@ -13,15 +13,7 @@ import {
 import { InputPagination } from '@common/Pagination/InputPagination/InputPagination'
 import { VariantType } from 'notistack'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Keypair } from '@solana/web3.js'
-import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
-import { ROUTES } from '@utils/utils'
-import { colors, theme } from '@static/theme'
-import { ISearchToken } from '@common/FilterSearch/FilterSearch'
-import { shortenAddress } from '@utils/uiUtils'
-import { actions } from '@store/reducers/navigation'
-import { useDispatch, useSelector } from 'react-redux'
-import { liquiditySearch } from '@store/selectors/navigation'
+
 export interface PoolListInterface {
   initialLength: number
   data: Array<{
@@ -57,6 +49,17 @@ export interface PoolListInterface {
   switchFavouritePool: (poolAddress: string) => void
   showFavourites: boolean
 }
+
+import { Keypair } from '@solana/web3.js'
+import { BN } from '@coral-xyz/anchor'
+import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
+import { ROUTES } from '@utils/utils'
+import { colors, theme } from '@static/theme'
+import { ISearchToken } from '@common/FilterSearch/FilterSearch'
+import { shortenAddress } from '@utils/uiUtils'
+import { actions } from '@store/reducers/navigation'
+import { useDispatch, useSelector } from 'react-redux'
+import { liquiditySearch } from '@store/selectors/navigation'
 
 const ITEMS_PER_PAGE = 10
 
@@ -252,6 +255,8 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
               poolAddress={element.poolAddress}
               copyAddressHandler={copyAddressHandler}
               showAPY={showAPY}
+              points={new BN(element.pointsPerSecond, 'hex').muln(24).muln(60).muln(60)}
+              isPromoted={element.isPromoted}
               isFavourite={element.isFavourite}
               switchFavouritePool={switchFavouritePool}
             />

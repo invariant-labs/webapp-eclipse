@@ -5,6 +5,9 @@ import { blurContent, unblurContent } from '@utils/uiUtils'
 import ConnectWallet from '@components/Modals/ConnectWallet/ConnectWallet'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import SelectWalletModal from '@components/Modals/SelectWalletModal/SelectWalletModal'
+import { useDispatch, useSelector } from 'react-redux'
+import { actions } from '@store/reducers/leaderboard'
+import { leaderboardSelectors } from '@store/selectors/leaderboard'
 import { Button } from '@common/Button/Button'
 // import { actions as saleActions } from '@store/reducers/archive/sale'
 export interface IProps {
@@ -47,6 +50,9 @@ export const ChangeWalletButton: React.FC<IProps> = ({
   const [isOpenSelectWallet, setIsOpenSelectWallet] = React.useState<boolean>(false)
   const [isChangeWallet, setIsChangeWallet] = React.useState<boolean>(false)
 
+  const dispatch = useDispatch()
+  const itemsPerPage = useSelector(leaderboardSelectors.itemsPerPage)
+
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (!connected) {
       setIsOpenSelectWallet(true)
@@ -67,6 +73,7 @@ export const ChangeWalletButton: React.FC<IProps> = ({
     }
     setIsChangeWallet(false)
 
+    dispatch(actions.getLeaderboardData({ page: 1, itemsPerPage }))
     // dispatch(saleActions.getUserStats())
   }
 
@@ -84,6 +91,8 @@ export const ChangeWalletButton: React.FC<IProps> = ({
     }
     setOpen(false)
     localStorage.setItem('WALLET_TYPE', '')
+    dispatch(actions.resetCurrentUser())
+    dispatch(actions.resetContentPoints())
     // dispatch(saleActions.resetUserStats())
   }
 

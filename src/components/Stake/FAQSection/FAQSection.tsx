@@ -56,9 +56,9 @@ export const FAQSection = () => {
       question: 'What are the benefits of having sBITZ?',
       answer: (
         <Typography className={classes.typography}>
-          For you, it’s a way to earn additional yield <b>(Higher APY, LP fees)</b> while still
-          earning BITZ staking rewards. For Eclipse DeFi, it’s a solution to the{' '}
-          <b>liquidity problem</b> for BITZ.
+          For you, it’s a way to earn additional yield{' '}
+          <b>(Higher APY, LP fees, Invariant Points)</b> while still earning BITZ staking rewards.
+          For Eclipse DeFi, it’s a solution to the <b>liquidity problem</b> for BITZ.
         </Typography>
       )
     },
@@ -105,9 +105,9 @@ export const FAQSection = () => {
             }}>
             sBITZ-ETH pool.
           </b>{' '}
-          This way, on top of earning <b>staking rewards</b>, you’ll also earn <b>trading fees</b>.
-          More yield opportunities on other protocols within the Eclipse DeFi ecosystem should be
-          available soon.
+          This way, on top of earning <b>staking rewards</b>, you’ll also earn <b>trading fees</b>{' '}
+          and <b>Invariant Points.</b> More yield opportunities on other protocols within the
+          Eclipse DeFi ecosystem should be available soon.
         </Typography>
       )
     },
