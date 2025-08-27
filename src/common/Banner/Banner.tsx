@@ -16,7 +16,7 @@ export const Banner = ({ onClose, isHiding }: INormalBannerProps) => {
 
   const text = (
     <span>
-      {!isSmallDevice && `Invariant Checker is live!`} Check it out
+      Invariant Checker is live! Check it out
       <span className={classes.text} onClick={() => window.open('https://claims.invariant.app')}>
         here!
       </span>
