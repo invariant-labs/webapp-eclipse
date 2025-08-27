@@ -9,7 +9,6 @@ export interface IFeeSwitch {
   showOnlyPercents?: boolean
   feeTiers: number[]
   currentValue: number
-  promotedPoolTierIndex: number | undefined
   feeTiersWithTvl: Record<number, number>
   showTVL?: boolean
   disabledFeeTiers: string[]
@@ -22,7 +21,6 @@ export const FeeSwitch: React.FC<IFeeSwitch> = ({
   onSelect,
   showOnlyPercents = false,
   feeTiers,
-  promotedPoolTierIndex,
   showTVL,
   currentValue,
   feeTiersWithTvl,
@@ -35,7 +33,6 @@ export const FeeSwitch: React.FC<IFeeSwitch> = ({
   const [blocked, setBlocked] = useState(false)
   const { classes: singleTabClasses } = useSingleTabStyles()
   const [bestTierNode, setBestTierNode] = useState<HTMLElement | null>(null)
-  const isPromotedPool = promotedPoolTierIndex !== undefined && promotedPoolTierIndex !== null
 
   const enabledFeeTiers = feeTiers.filter(tier => {
     const isDisabled = disabledFeeTiers.includes(tier.toString())
@@ -56,9 +53,9 @@ export const FeeSwitch: React.FC<IFeeSwitch> = ({
 
   const feeTiersTVLValues = Object.values(feeTiersWithTvl)
   const bestFee = feeTiersTVLValues.length > 0 ? Math.max(...feeTiersTVLValues) : 0
-  const originalBestTierIndex = isPromotedPool
-    ? promotedPoolTierIndex!
-    : feeTiers.findIndex(tier => feeTiersWithTvl[tier] === bestFee && bestFee > 0)
+  const originalBestTierIndex = feeTiers.findIndex(
+    tier => feeTiersWithTvl[tier] === bestFee && bestFee > 0
+  )
 
   const bestTierIndex = originalToFilteredIndex.get(originalBestTierIndex) ?? -1
   const hasValidBestTier = bestTierIndex !== -1
@@ -102,7 +99,7 @@ export const FeeSwitch: React.FC<IFeeSwitch> = ({
 
   useLayoutEffect(() => {
     checkBestTierVisibility()
-  }, [bestTierNode, enabledFeeTiers, promotedPoolTierIndex])
+  }, [bestTierNode, enabledFeeTiers])
 
   useLayoutEffect(() => {
     window.addEventListener('resize', checkBestTierVisibility)
@@ -115,8 +112,7 @@ export const FeeSwitch: React.FC<IFeeSwitch> = ({
   const { classes: tabsClasses } = useTabsStyles({
     isBestTierHiddenOnLeft,
     isBestTierHiddenOnRight,
-    hasValidBestTier,
-    isPromotedPool
+    hasValidBestTier
   })
 
   const handleChange = (_: React.SyntheticEvent, newFilteredValue: number) => {
@@ -129,10 +125,6 @@ export const FeeSwitch: React.FC<IFeeSwitch> = ({
       }
     }
   }
-  const filteredPromotedPoolTierIndex =
-    promotedPoolTierIndex !== undefined
-      ? originalToFilteredIndex.get(promotedPoolTierIndex)
-      : undefined
 
   useLayoutEffect(() => {
     const currentTier = feeTiers[currentValue]
@@ -176,9 +168,7 @@ export const FeeSwitch: React.FC<IFeeSwitch> = ({
                     <Typography
                       className={cx(classes.tabTvl, {
                         [classes.tabSelectedTvl]:
-                          filteredCurrentValue === filteredIndex ||
-                          filteredPromotedPoolTierIndex === filteredIndex ||
-                          bestTierIndex === filteredIndex
+                          filteredCurrentValue === filteredIndex || bestTierIndex === filteredIndex
                       })}>
                       TVL {getTvlValue(tier)}%
                     </Typography>
@@ -190,9 +180,7 @@ export const FeeSwitch: React.FC<IFeeSwitch> = ({
                     <Typography
                       className={cx(classes.tabTvl, {
                         [classes.tabSelectedTvl]:
-                          filteredCurrentValue === filteredIndex ||
-                          filteredPromotedPoolTierIndex === filteredIndex ||
-                          bestTierIndex === filteredIndex
+                          filteredCurrentValue === filteredIndex || bestTierIndex === filteredIndex
                       })}>
                       {doesPoolExist(tier)
                         ? `$${
@@ -214,11 +202,7 @@ export const FeeSwitch: React.FC<IFeeSwitch> = ({
               classes={{
                 root: cx(
                   singleTabClasses.root,
-                  filteredIndex === filteredPromotedPoolTierIndex
-                    ? singleTabClasses.promoted
-                    : filteredIndex === bestTierIndex
-                      ? singleTabClasses.best
-                      : undefined
+                  filteredIndex === bestTierIndex ? singleTabClasses.best : undefined
                 ),
                 selected: singleTabClasses.selected
               }}

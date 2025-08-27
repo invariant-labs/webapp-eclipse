@@ -29,7 +29,6 @@ import {
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { BN } from '@coral-xyz/anchor'
 import { priceToTickInRange } from '@invariant-labs/sdk-eclipse/src/tick'
-import { boostPointsIcon } from '@static/icons'
 
 export interface IPoolInit {
   updatePath: (concIndex: number) => void
@@ -396,7 +395,6 @@ export const PoolInit: React.FC<IPoolInit> = ({
           <Typography className={classes.subheader}>Set price range</Typography>
           {positionOpeningMethod === 'range' && (
             <Grid className={classes.rangeConcentration}>
-              <img src={boostPointsIcon} alt='Concentration' width='14px' />
               <Typography>Concentration </Typography>
               <Typography>{calculateConcentration(leftRange, rightRange).toFixed(2)}x</Typography>
             </Grid>
