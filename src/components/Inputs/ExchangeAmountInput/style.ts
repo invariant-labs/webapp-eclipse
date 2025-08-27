@@ -21,6 +21,9 @@ export const useStyles = makeStyles()((theme: Theme) => ({
       textAlign: 'right'
     }
   },
+  pointsPairBackground: {
+    background: 'transparent'
+  },
   actionButton: {
     ...typography.tiny2,
     borderRadius: 4,

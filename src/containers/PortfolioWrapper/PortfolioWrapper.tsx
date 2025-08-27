@@ -57,6 +57,7 @@ import {
   ROUTES
 } from '@utils/utils'
 import { network, timeoutError } from '@store/selectors/solanaConnection'
+import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import { actions as actionsStats } from '@store/reducers/stats'
 import { actions as lockerActions } from '@store/reducers/locker'
 import { actions as snackbarActions } from '@store/reducers/snackbars'
@@ -445,6 +446,9 @@ const PortfolioWrapper = () => {
       })
     )
   }
+  useEffect(() => {
+    dispatch(leaderboardActions.getLeaderboardConfig())
+  }, [dispatch])
 
   const onAddPositionClick = () => {
     dispatch(navigationActions.setNavigation({ address: location.pathname }))

@@ -47,6 +47,7 @@ interface IProps {
   showBlur: boolean
   hiddenUnknownTokens?: boolean
   network?: NetworkType
+  isPairGivingPoints?: boolean
   actionButtons?: ActionButton[]
   hideSelect?: boolean
   notRoundIcon?: boolean
@@ -79,6 +80,7 @@ export const ExchangeAmountInput: React.FC<IProps> = ({
   actionButtons = [],
   hiddenUnknownTokens = false,
   network = NetworkType.Mainnet,
+  isPairGivingPoints = false,
   hideSelect = false,
   notRoundIcon = false
 }) => {
@@ -178,7 +180,11 @@ export const ExchangeAmountInput: React.FC<IProps> = ({
           <Input
             inputRef={inputRef}
             error={!!error}
-            className={cx(classes.amountInput, className)}
+            className={cx(
+              classes.amountInput,
+              className,
+              isPairGivingPoints && classes.pointsPairBackground
+            )}
             classes={{ input: classes.input }}
             style={style}
             value={value}

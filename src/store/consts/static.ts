@@ -588,6 +588,53 @@ export const autoSwapPools = [
     }
   }
 ]
+export const promotedTiers = [
+  {
+    tokenX: USDC_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    index: 3
+  },
+  {
+    tokenX: SOL_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    index: 3
+  },
+  {
+    tokenX: TETH_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    index: 0
+  },
+  {
+    tokenX: SOL_MAIN.address,
+    tokenY: USDC_MAIN.address,
+    index: 3
+  },
+  {
+    tokenX: BITZ_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    index: 6
+  },
+  {
+    tokenX: USDC_MAIN.address,
+    tokenY: TUSD_MAIN.address,
+    index: 0
+  },
+  {
+    tokenX: WETH_MAIN.address,
+    tokenY: sBITZ_MAIN.address,
+    index: 6
+  },
+  {
+    tokenX: ES_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    index: 5
+  },
+  {
+    tokenX: USDC_MAIN.address,
+    tokenY: ES_MAIN.address,
+    index: 5
+  }
+]
 
 export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
   Devnet: [USDC_DEV.address, BTC_DEV.address, WETH_DEV.address],
@@ -932,7 +979,17 @@ export const rewards = [...rewardsArray].sort(
   (a, b) => new Date(b.distributionDate).getTime() - new Date(a.distributionDate).getTime()
 ) as Reward[]
 
+export const LEADERBOARD_DECIMAL = 8
+
 export const LAUNCH_DATE = '2024-12-10T17:20:00'
+
+export enum PointsPageContent {
+  Leaderboard = 'leaderboard',
+  FAQ = 'faq',
+  Claim = 'claim'
+}
+
+export type LeaderBoardType = 'Liquidity' | 'Swap' | 'Total'
 
 export const BANNER_STORAGE_KEY = 'invariant-warning-banner'
 export const BANNER_HIDE_DURATION = 1000 * 60 * 60 * 1 // 1 hour
@@ -945,6 +1002,7 @@ export enum OverviewSwitcher {
 }
 
 export const STATS_CACHE_TIME = 30 * 60 * 1000
+export const LEADERBOARD_API_URL = 'https://api.invariant.app/api'
 export const PRICE_API_URL = 'https://api.invariant.app/price'
 export const CHECKER_API_URL = 'https://api.invariant.app/check'
 
@@ -1117,5 +1175,10 @@ export const PORTFOLIO_STAKE_COLLAPSE_DELAY = 200
 export const ES_ETH_POOLS = {
   '0_03': '6ciuuX2AZ3RFU6fJh2XrzJurZdRWuDeMonNsb7xzztp1'
 }
+export const POOLS_TO_HIDE_POINTS_PER_24H: string[] = [
+  // ES_ETH_POOLS['0_03'],
+  // '8gSs6K4NVZSh4Rd5ABcNTos5sJ6wVRTR4xr5LgNLMt58'
+]
+
 export const PROOF_OF_INCLUSION_CACHE_KEY = 'PROOF_OF_INCLUSION_V2'
 export const PROOF_OF_INCLUSION_CACHE_TTL = 1000 * 60 * 60 * 1 // 1 hour

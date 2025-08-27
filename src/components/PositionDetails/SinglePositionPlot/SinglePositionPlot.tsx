@@ -15,6 +15,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import useStyles from './style'
 import { getMaxTick, getMinTick } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { Stat } from './Stat/Stat'
+import { boostPointsBoldIcon } from '@static/icons'
 import { RangeIndicator } from './RangeIndicator/RangeIndicator'
 import { ILiquidityToken } from '@store/consts/types'
 import { colors } from '@static/theme'
@@ -328,7 +329,12 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
             }
           />
           <Stat
-            name={<Box className={classes.concentrationContainer}>CONCENTRATION</Box>}
+            name={
+              <Box className={classes.concentrationContainer}>
+                <img className={classes.concentrationIcon} src={boostPointsBoldIcon} />
+                CONCENTRATION
+              </Box>
+            }
             value={
               <Typography className={classes.concentrationValue}>
                 {concentration.toFixed(2)}x

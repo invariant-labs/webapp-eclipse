@@ -13,6 +13,7 @@ interface IProps {
   tokenToPrice?: number
   tokenFromPrice?: number
   copyTokenAddressHandler: (message: string, variant: VariantType) => void
+  isPairGivingPoints: boolean
 }
 
 const TokensInfo: React.FC<IProps> = ({
@@ -21,12 +22,13 @@ const TokensInfo: React.FC<IProps> = ({
   network,
   tokenToPrice,
   tokenFromPrice,
-  copyTokenAddressHandler
+  copyTokenAddressHandler,
+  isPairGivingPoints
 }) => {
-  const { classes } = useWrapperStyles()
+  const { classes, cx } = useWrapperStyles()
 
   return (
-    <Grid container className={classes.wrapper}>
+    <Grid container className={cx(classes.wrapper, isPairGivingPoints && classes.darkBackground)}>
       <SingleToken
         token={tokenFrom}
         tokenPrice={tokenFromPrice}

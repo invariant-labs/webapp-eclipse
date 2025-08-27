@@ -44,11 +44,15 @@ import { lockerState } from '@store/selectors/locker'
 import { theme } from '@static/theme'
 import { actions as statsActions } from '@store/reducers/stats'
 import { isLoading, lastInterval, poolsStatsWithTokensDetails } from '@store/selectors/stats'
-import { Intervals } from '@store/consts/static'
+import { getPromotedPools, isLoading as promotedLoading } from '@store/selectors/leaderboard'
+import { actions as leaderboardActions } from '@store/reducers/leaderboard'
+import { BN } from '@coral-xyz/anchor'
+import { Intervals, LEADERBOARD_DECIMAL } from '@store/consts/static'
 import poolsSelectors, {
   autoSwapTicksAndTickMap,
   poolsArraySortedByFees
 } from '@store/selectors/pools'
+import { estimatePointsForUserPositions } from '@invariant-labs/points-sdk'
 import { address } from '@store/selectors/navigation'
 import { Pair } from '@invariant-labs/sdk-eclipse'
 import { actions as poolsActions } from '@store/reducers/pools'
@@ -512,8 +516,38 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     }
   }, [poolsList, position])
 
+  useEffect(() => {
+    dispatch(leaderboardActions.getLeaderboardConfig())
+  }, [])
+
+  const promotedPools = useSelector(getPromotedPools)
+  const isPromotedLoading = useSelector(promotedLoading)
+  const isPromoted = promotedPools.some(
+    pool => pool.address === position?.poolData.address.toString()
+  )
+
+  const calculatePoints24 = () => {
+    if (!position) {
+      return 0
+    }
+
+    const pointsPerSecond = promotedPools.find(
+      pool => pool.address === position?.poolData.address.toString()
+    )?.pointsPerSecond
+
+    try {
+      return estimatePointsForUserPositions(
+        [position],
+        position.poolData,
+        new BN(pointsPerSecond, 'hex').mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL)))
+      )
+    } catch {
+      return 0
+    }
+  }
   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
 
+  const points24 = calculatePoints24()
   const handleBack = (isConnected: boolean) => {
     const path = locationHistory === ROUTES.ROOT ? ROUTES.PORTFOLIO : locationHistory
     const isNavigatingFromNewPosition = path === location.pathname
@@ -752,8 +786,11 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         poolDetails={poolDetails}
         onGoBackClick={() => handleBack(isConnected)}
         showPoolDetailsLoader={isLoadingStats}
+        isPromoted={isPromoted}
+        points24={points24}
         isPreview={isPreview}
         showPositionLoader={position.ticksLoading}
+        isPromotedLoading={isPromotedLoading}
         pricesLoading={pricesLoading}
         previousPosition={previousPosition}
         nextPosition={nextPosition}

@@ -1,4 +1,4 @@
-import { useEffect, useCallback, memo, useRef, useState, useLayoutEffect } from 'react'
+import { useEffect, useCallback, memo, useState, useLayoutEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useLocation, Outlet } from 'react-router-dom'
 import EventsHandlers from '@containers/EventsHandlers'
@@ -6,32 +6,25 @@ import FooterWrapper from '@containers/FooterWrapper'
 import HeaderWrapper from '@containers/HeaderWrapper/HeaderWrapper'
 import { Grid } from '@mui/material'
 import { Status, actions as solanaConnectionActions } from '@store/reducers/solanaConnection'
-import { status as connectionStatus, network } from '@store/selectors/solanaConnection'
+import { status as connectionStatus } from '@store/selectors/solanaConnection'
 import { toBlur } from '@utils/uiUtils'
 import useStyles from './style'
 import { status } from '@store/selectors/solanaWallet'
 import { Status as WalletStatus } from '@store/reducers/solanaWallet'
 import { actions as walletActions } from '@store/reducers/solanaWallet'
+import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import { actions } from '@store/reducers/positions'
 import { DEFAULT_PUBLICKEY, NetworkType } from '@store/consts/static'
+import { network } from '@store/selectors/solanaConnection'
+import { NormalBanner } from '@components/Leaderboard/LeaderboardBanner/NormalBanner'
 import { getEclipseWallet } from '@utils/web3/wallet'
+import { leaderboardSelectors } from '@store/selectors/leaderboard'
 import { ensureError, ROUTES } from '@utils/utils'
-import { Banner } from '@common/Banner/Banner'
 
-const BANNER_STORAGE_KEY = 'invariant-banner-state-8'
+const BANNER_STORAGE_KEY = 'invariant-banner-state-7'
 const BANNER_HIDE_DURATION = 1000 * 60 * 60 * 24 // 24 hours
 
 const RootPage: React.FC = memo(() => {
-  const dispatch = useDispatch()
-  const signerStatus = useSelector(connectionStatus)
-  const walletStatus = useSelector(status)
-  const navigate = useNavigate()
-  const currentNetwork = useSelector(network)
-
-  const { classes } = useStyles()
-  const location = useLocation()
-
-  const [isHiding, setIsHiding] = useState(false)
   const [showHeader, setShowHeader] = useState(() => {
     const storedData = localStorage.getItem(BANNER_STORAGE_KEY)
     if (storedData) {
@@ -46,6 +39,15 @@ const RootPage: React.FC = memo(() => {
     return true
   })
 
+  const [isHiding, setIsHiding] = useState(false)
+  const dispatch = useDispatch()
+  const signerStatus = useSelector(connectionStatus)
+  const walletStatus = useSelector(status)
+  const navigate = useNavigate()
+  const currentNetwork = useSelector(network)
+  const { classes } = useStyles()
+  const location = useLocation()
+
   const metaData = new Map([
     [ROUTES.EXCHANGE, 'Invariant | Exchange'],
     [ROUTES.LIQUIDITY, 'Invariant | Liquidity'],
@@ -53,6 +55,7 @@ const RootPage: React.FC = memo(() => {
     [ROUTES.NEW_POSITION, 'Invariant | New Position'],
     // [ROUTES.SALE, 'Invariant | Presale'],
     [ROUTES.POSITION, 'Invariant | Position Details'],
+    [ROUTES.POINTS, 'Invariant | Points'],
     [ROUTES.STATISTICS, 'Invariant | Statistics'],
     [ROUTES.CREATOR, 'Invariant | Creator'],
     [ROUTES.STAKE, 'Invariant | Stake']
@@ -80,7 +83,7 @@ const RootPage: React.FC = memo(() => {
   }, [initConnection])
 
   const walletAddressRef = useRef('')
-
+  const itemsPerPage = useSelector(leaderboardSelectors.itemsPerPage)
   useEffect(() => {
     const intervalId = setInterval(() => {
       const addr = getEclipseWallet()?.publicKey.toString()
@@ -100,6 +103,7 @@ const RootPage: React.FC = memo(() => {
       ) {
         walletAddressRef.current = addr
         dispatch(walletActions.changeWalletInExtension())
+        dispatch(leaderboardActions.getLeaderboardData({ page: 1, itemsPerPage }))
         dispatch(actions.getPositionsList())
         // dispatch(saleActions.getUserStats())
       }
@@ -167,7 +171,7 @@ const RootPage: React.FC = memo(() => {
         <Grid className={classes.root}>
           {showHeader && currentNetwork === NetworkType.Mainnet && (
             <>
-              <Banner onClose={handleBannerClose} isHiding={isHiding} />
+              <NormalBanner onClose={handleBannerClose} isHiding={isHiding} />
             </>
           )}
           <HeaderWrapper />

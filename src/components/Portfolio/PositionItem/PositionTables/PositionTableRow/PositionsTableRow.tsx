@@ -1,11 +1,15 @@
 import { Grid, TableCell, Typography, useMediaQuery, Box, Skeleton } from '@mui/material'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { MinMaxChart } from '../../components/MinMaxChart/MinMaxChart'
 import { colors, theme } from '@static/theme'
-import { swapListIcon, warning2Icon, warningIcon } from '@static/icons'
+import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
+import { BN } from '@coral-xyz/anchor'
+import { airdropRainbowIcon, swapListIcon, warning2Icon, warningIcon } from '@static/icons'
 import { initialXtoY, tickerToAddress, formatNumberWithoutSuffix } from '@utils/utils'
 import { useSelector } from 'react-redux'
+import { usePromotedPool } from '@store/hooks/positionList/usePromotedPool'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
+import PositionStatusTooltip from '../../components/PositionStatusTooltip/PositionStatusTooltip'
 import PositionViewActionPopover from '@components/Modals/PositionViewActionPopover/PositionViewActionPopover'
 import React from 'react'
 import { blurContent, unblurContent } from '@utils/uiUtils'
@@ -19,6 +23,8 @@ import { useStyles } from './style'
 import { useSkeletonStyle } from '../skeletons/skeletons'
 import { ILiquidityToken } from '@store/consts/types'
 import { ReactFitty } from 'react-fitty'
+import { POOLS_TO_HIDE_POINTS_PER_24H } from '@store/consts/static'
+
 interface ILoadingStates {
   pairName?: boolean
   feeTier?: boolean
@@ -47,6 +53,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
   isUnknownX,
   isUnknownY,
   tokenXIcon,
+  poolAddress,
   tokenYIcon,
   currentPrice,
   isFullRange,
@@ -57,6 +64,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
   max,
   valueX,
   valueY,
+  poolData,
   isActive = false,
   tokenXLiq,
   tokenYLiq,
@@ -76,6 +84,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
     initialXtoY(tickerToAddress(network, tokenXName), tickerToAddress(network, tokenYName))
   )
   const positionSingleData = useSelector(singlePositionData(id ?? ''))
+  const airdropIconRef = useRef<any>(null)
   const isXs = useMediaQuery(theme.breakpoints.down('xs'))
   const isDesktop = useMediaQuery(theme.breakpoints.up('lg'))
   const [isLockPositionModalOpen, setIsLockPositionModalOpen] = useState(false)
@@ -102,6 +111,12 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
     positionSingleData,
     xToY
   })
+
+  const { isPromoted, pointsPerSecond, estimated24hPoints } = usePromotedPool(
+    poolAddress,
+    position,
+    poolData
+  )
 
   const pairNameContent = useMemo(() => {
     if (isItemLoading('pairName')) {
@@ -313,6 +328,62 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
     )
   }, [loading])
 
+  const promotedIconContent = useMemo(() => {
+    if (isPromoted && isActive && !positionSingleData?.isLocked) {
+      return (
+        <>
+          <PromotedPoolPopover
+            showEstPointsFirst
+            isActive={true}
+            headerText={
+              <>
+                This position is currently <b>earning points</b>
+              </>
+            }
+            pointsLabel={'Total points distributed across the pool per 24H:'}
+            estPoints={
+              POOLS_TO_HIDE_POINTS_PER_24H.includes(poolAddress.toString())
+                ? new BN(0)
+                : estimated24hPoints
+            }
+            points={
+              POOLS_TO_HIDE_POINTS_PER_24H.includes(poolAddress.toString())
+                ? new BN(0)
+                : new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60)
+            }>
+            <div ref={airdropIconRef} className={classes.actionButton}>
+              <img
+                src={airdropRainbowIcon}
+                alt={'Airdrop'}
+                style={{
+                  height: '32px',
+                  width: '30px'
+                }}
+              />
+            </div>
+          </PromotedPoolPopover>
+        </>
+      )
+    }
+
+    return (
+      <TooltipHover
+        title={
+          <PositionStatusTooltip
+            isActive={isActive}
+            isPromoted={isPromoted}
+            isLocked={positionSingleData?.isLocked ?? false}
+          />
+        }
+        placement='top'
+        increasePadding>
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <img src={airdropRainbowIcon} alt={'Airdrop'} className={classes.airdropIcon} />
+        </div>
+      </TooltipHover>
+    )
+  }, [isPromoted, estimated24hPoints, pointsPerSecond])
+
   const [isActionPopoverOpen, setActionPopoverOpen] = React.useState<boolean>(false)
 
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
@@ -384,7 +455,10 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
       </TableCell>
 
       <TableCell className={`${classes.cellBase} ${classes.feeTierCell}`}>
-        <Box sx={{ display: 'flex' }}>{feeFragment}</Box>
+        <Box sx={{ display: 'flex' }}>
+          {promotedIconContent}
+          {feeFragment}
+        </Box>
       </TableCell>
 
       <TableCell className={`${classes.cellBase} ${classes.tokenRatioCell}`}>

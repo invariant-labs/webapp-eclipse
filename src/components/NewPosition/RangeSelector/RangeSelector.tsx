@@ -18,6 +18,7 @@ import ConcentrationSlider from '../ConcentrationSlider/ConcentrationSlider'
 import useStyles from './style'
 import { PositionOpeningMethod } from '@store/consts/types'
 import { getMaxTick, getMinTick } from '@invariant-labs/sdk-eclipse/lib/utils'
+import { boostPointsIcon } from '@static/icons'
 import PriceWarning from './PriceWarning/PriceWarning'
 
 export interface IRangeSelector {
@@ -601,6 +602,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
           <Typography className={classes.subheader}>Set price range</Typography>
           {positionOpeningMethod === 'range' && (
             <Grid className={classes.rangeConcentration}>
+              <img src={boostPointsIcon} alt='Concentration' width='14px' />
               <Typography>Concentration </Typography>
               <Typography>{calculateConcentration(leftRange, rightRange).toFixed(2)}x</Typography>
             </Grid>

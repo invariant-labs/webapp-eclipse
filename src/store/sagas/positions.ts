@@ -31,8 +31,10 @@ import {
 } from '@solana/web3.js'
 import {
   APPROVAL_DENIED_MESSAGE,
+  autoSwapPools,
   COMMON_ERROR_MESSAGE,
   ErrorCodeExtractionKeys,
+  LEADERBOARD_DECIMAL,
   SIGNING_SNACKBAR_CONFIG,
   TIMEOUT_ERROR_MESSAGE,
   WRAPPED_ETH_ADDRESS
@@ -48,6 +50,7 @@ import { network, rpcAddress } from '@store/selectors/solanaConnection'
 import { closeSnackbar } from 'notistack'
 import { getLockerProgram, getMarketProgram } from '@utils/web3/programs/amm'
 import {
+  calculatePoints,
   createLiquidityPlot,
   createLoaderKey,
   createPlaceholderLiquidityPlot,
@@ -75,7 +78,8 @@ import { actions as connectionActions } from '@store/reducers/solanaConnection'
 import {
   calculateClaimAmount,
   createNativeAtaInstructions,
-  createNativeAtaWithTransferInstructions
+  createNativeAtaWithTransferInstructions,
+  FEE_TIERS
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { networkTypetoProgramNetwork } from '@utils/web3/connection'
 import { ClaimAllFee } from '@invariant-labs/sdk-eclipse/lib/market'
@@ -84,6 +88,7 @@ import { BN } from '@coral-xyz/anchor'
 import { parseTick, Position } from '@invariant-labs/sdk-eclipse/lib/market'
 import { getAssociatedTokenAddressSync, NATIVE_MINT } from '@solana/spl-token'
 import { unknownTokenIcon } from '@static/icons'
+import { config, priceFeeds } from '@store/selectors/leaderboard'
 
 function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionData>): Generator {
   const data = action.payload
@@ -747,6 +752,8 @@ export function* handleSwapAndInitPositionWithETH(
       })
     )
 
+    const feeds = yield* select(priceFeeds)
+    const leaderboardConfig = yield* select(config)
     const connection = yield* call(getConnection)
     const wallet = yield* call(getWallet)
     const networkType = yield* select(network)
@@ -981,6 +988,37 @@ export function* handleSwapAndInitPositionWithETH(
               (depositInstructions[xToY ? 1 : 0] as ParsedInstruction).parsed?.info?.tokenAmount
                 ?.amount
 
+            const match = autoSwapPools.find(
+              ({ pair }) =>
+                (pair.tokenX.equals(tokenX.address) && pair.tokenY.equals(tokenY.address)) ||
+                (pair.tokenX.equals(tokenY.address) && pair.tokenY.equals(tokenX.address))
+            )
+
+            const feeTier = match?.swapPool.feeIndex ?? null
+
+            let points = new BN(0)
+
+            if (
+              leaderboardConfig.swapPairs.some(
+                item =>
+                  (new PublicKey(item.tokenX).equals(action.payload.swapPool.tokenX) &&
+                    new PublicKey(item.tokenY).equals(action.payload.swapPool.tokenY)) ||
+                  (new PublicKey(item.tokenY).equals(action.payload.swapPool.tokenX) &&
+                    new PublicKey(item.tokenX).equals(action.payload.swapPool.tokenY))
+              )
+            ) {
+              const feed = feeds[tokenX.address.toString()]
+
+              points = calculatePoints(
+                new BN(fromExchangeAmount),
+                tokenX.decimals,
+                FEE_TIERS[feeTier ?? ''].fee,
+                feed.price,
+                feed.priceDecimals,
+                new BN(leaderboardConfig.pointsPerUsd, 'hex')
+              ).muln(Number(leaderboardConfig.swapMultiplier))
+            }
+
             yield put(
               snackbarsActions.add({
                 tokensDetails: {
@@ -998,7 +1036,10 @@ export function* handleSwapAndInitPositionWithETH(
                     printBN(toExchangeAmount, tokenY.decimals)
                   ),
                   tokenXIconAutoSwap: tokenX.logoURI,
-                  tokenYIconAutoSwap: tokenY.logoURI
+                  tokenYIconAutoSwap: tokenY.logoURI,
+                  earnedPoints: points.eqn(0)
+                    ? undefined
+                    : formatNumberWithoutSuffix(printBN(points, LEADERBOARD_DECIMAL))
                 },
 
                 persist: false
@@ -1099,6 +1140,8 @@ export function* handleSwapAndInitPosition(
     const connection = yield* call(getConnection)
     const wallet = yield* call(getWallet)
     const networkType = yield* select(network)
+    const feeds = yield* select(priceFeeds)
+    const leaderboardConfig = yield* select(config)
     const rpc = yield* select(rpcAddress)
     const userPositionList = yield* select(positionsList)
     const allPools = yield* select(poolsArraySortedByFees)
@@ -1302,10 +1345,40 @@ export function* handleSwapAndInitPosition(
                   (ix as ParsedInstruction).parsed.info?.mint === tokenY.address.toString()
               )?.parsed.info.tokenAmount.amount
 
+            const match = autoSwapPools.find(
+              ({ pair }) =>
+                (pair.tokenX.equals(tokenX.address) && pair.tokenY.equals(tokenY.address)) ||
+                (pair.tokenX.equals(tokenY.address) && pair.tokenY.equals(tokenX.address))
+            )
+
+            const feeTier = match?.swapPool.feeIndex ?? null
+
             const amountX = tokenXDeposit?.amount
             const amountY = tokenYDeposit?.amount
             const tokenXDecimal = tokenXDeposit?.decimals
             const tokenYDecimal = tokenYDeposit?.decimals
+            let points = new BN(0)
+
+            if (
+              leaderboardConfig.swapPairs.some(
+                item =>
+                  (new PublicKey(item.tokenX).equals(action.payload.swapPool.tokenX) &&
+                    new PublicKey(item.tokenY).equals(action.payload.swapPool.tokenY)) ||
+                  (new PublicKey(item.tokenY).equals(action.payload.swapPool.tokenX) &&
+                    new PublicKey(item.tokenX).equals(action.payload.swapPool.tokenY))
+              )
+            ) {
+              const feed = feeds[tokenX.address.toString()]
+
+              points = calculatePoints(
+                new BN(tokenXExchange),
+                tokenX.decimals,
+                FEE_TIERS[feeTier ?? ''].fee,
+                feed.price,
+                feed.priceDecimals,
+                new BN(leaderboardConfig.pointsPerUsd, 'hex')
+              ).muln(Number(leaderboardConfig.swapMultiplier))
+            }
 
             yield put(
               snackbarsActions.add({
@@ -1324,7 +1397,10 @@ export function* handleSwapAndInitPosition(
                     printBN(tokenYExchange, tokenY.decimals)
                   ),
                   tokenXIconAutoSwap: tokenX.logoURI,
-                  tokenYIconAutoSwap: tokenY.logoURI
+                  tokenYIconAutoSwap: tokenY.logoURI,
+                  earnedPoints: points.eqn(0)
+                    ? undefined
+                    : formatNumberWithoutSuffix(printBN(points, LEADERBOARD_DECIMAL))
                 },
 
                 persist: false
@@ -4201,6 +4277,8 @@ export function* handleSwapAndAddLiquidity(
     const connection = yield* call(getConnection)
     const wallet = yield* call(getWallet)
     const networkType = yield* select(network)
+    const feeds = yield* select(priceFeeds)
+    const leaderboardConfig = yield* select(config)
     const rpc = yield* select(rpcAddress)
     const allPools = yield* select(poolsArraySortedByFees)
 
@@ -4376,6 +4454,37 @@ export function* handleSwapAndAddLiquidity(
             const tokenX = allTokens[swapPair.tokenX.toString()]
             const tokenY = allTokens[swapPair.tokenY.toString()]
 
+            const match = autoSwapPools.find(
+              ({ pair }) =>
+                (pair.tokenX.equals(tokenX.address) && pair.tokenY.equals(tokenY.address)) ||
+                (pair.tokenX.equals(tokenY.address) && pair.tokenY.equals(tokenX.address))
+            )
+
+            const feeTier = match?.swapPool.feeIndex ?? null
+
+            let points = new BN(0)
+
+            if (
+              leaderboardConfig.swapPairs.some(
+                item =>
+                  (new PublicKey(item.tokenX).equals(action.payload.swapPool.tokenX) &&
+                    new PublicKey(item.tokenY).equals(action.payload.swapPool.tokenY)) ||
+                  (new PublicKey(item.tokenY).equals(action.payload.swapPool.tokenX) &&
+                    new PublicKey(item.tokenX).equals(action.payload.swapPool.tokenY))
+              )
+            ) {
+              const feed = feeds[tokenX.address.toString()]
+
+              points = calculatePoints(
+                new BN(swapAmountIn),
+                tokenX.decimals,
+                FEE_TIERS[feeTier ?? ''].fee,
+                feed.price,
+                feed.priceDecimals,
+                new BN(leaderboardConfig.pointsPerUsd, 'hex')
+              ).muln(Number(leaderboardConfig.swapMultiplier))
+            }
+
             yield put(
               snackbarsActions.add({
                 tokensDetails: {
@@ -4393,7 +4502,10 @@ export function* handleSwapAndAddLiquidity(
                     printBN(swapAmountOut, tokenOut.decimals)
                   ),
                   tokenXIconAutoSwap: tokenIn.logoURI,
-                  tokenYIconAutoSwap: tokenOut.logoURI
+                  tokenYIconAutoSwap: tokenOut.logoURI,
+                  earnedPoints: points.eqn(0)
+                    ? undefined
+                    : formatNumberWithoutSuffix(printBN(points, LEADERBOARD_DECIMAL))
                 },
 
                 persist: false
@@ -4486,6 +4598,9 @@ export function* handleSwapAndAddLiquidityWithETH(
         key: loaderAddLiquidity
       })
     )
+
+    const feeds = yield* select(priceFeeds)
+    const leaderboardConfig = yield* select(config)
     const connection = yield* call(getConnection)
     const wallet = yield* call(getWallet)
     const networkType = yield* select(network)
@@ -4697,6 +4812,37 @@ export function* handleSwapAndAddLiquidityWithETH(
             const tokenX = allTokens[swapPair.tokenX.toString()]
             const tokenY = allTokens[swapPair.tokenY.toString()]
 
+            const match = autoSwapPools.find(
+              ({ pair }) =>
+                (pair.tokenX.equals(tokenX.address) && pair.tokenY.equals(tokenY.address)) ||
+                (pair.tokenX.equals(tokenY.address) && pair.tokenY.equals(tokenX.address))
+            )
+
+            const feeTier = match?.swapPool.feeIndex ?? null
+
+            let points = new BN(0)
+
+            if (
+              leaderboardConfig.swapPairs.some(
+                item =>
+                  (new PublicKey(item.tokenX).equals(action.payload.swapPool.tokenX) &&
+                    new PublicKey(item.tokenY).equals(action.payload.swapPool.tokenY)) ||
+                  (new PublicKey(item.tokenY).equals(action.payload.swapPool.tokenX) &&
+                    new PublicKey(item.tokenX).equals(action.payload.swapPool.tokenY))
+              )
+            ) {
+              const feed = feeds[tokenX.address.toString()]
+
+              points = calculatePoints(
+                new BN(swapAmountIn),
+                tokenX.decimals,
+                FEE_TIERS[feeTier ?? ''].fee,
+                feed.price,
+                feed.priceDecimals,
+                new BN(leaderboardConfig.pointsPerUsd, 'hex')
+              ).muln(Number(leaderboardConfig.swapMultiplier))
+            }
+
             yield put(
               snackbarsActions.add({
                 tokensDetails: {
@@ -4714,7 +4860,10 @@ export function* handleSwapAndAddLiquidityWithETH(
                     printBN(swapAmountOut, tokenOut.decimals)
                   ),
                   tokenXIconAutoSwap: tokenIn.logoURI,
-                  tokenYIconAutoSwap: tokenOut.logoURI
+                  tokenYIconAutoSwap: tokenOut.logoURI,
+                  earnedPoints: points.eqn(0)
+                    ? undefined
+                    : formatNumberWithoutSuffix(printBN(points, LEADERBOARD_DECIMAL))
                 },
 
                 persist: false

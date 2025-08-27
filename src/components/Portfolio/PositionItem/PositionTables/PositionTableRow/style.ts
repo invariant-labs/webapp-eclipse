@@ -23,6 +23,13 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     bottom: -3,
     right: -6
   },
+  airdropIcon: {
+    flexShrink: '0',
+    height: '32px',
+    width: '32px',
+    opacity: 0.3,
+    filter: 'grayscale(1)'
+  },
   itemCellContainer: {
     width: '100%',
     justifyContent: 'space-between',

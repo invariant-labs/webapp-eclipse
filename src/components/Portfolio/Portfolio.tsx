@@ -492,7 +492,9 @@ const Portfolio: React.FC<IProps> = ({
         positionLiquidity={positionLiquidity}
       />
 
-      {showBanner && <ECBanner handleCloseBanner={handleCloseBanner} isHiding={isHiding} />}
+      {showBanner && (
+        <ECBanner handleCloseBanner={handleCloseBanner} isHiding={isHiding} page='overview' />
+      )}
       <Box className={classes.overviewContainer}>
         <Box>
           <Grid display={'flex'} marginBottom={isDownLg ? '12px' : '16px'}>
