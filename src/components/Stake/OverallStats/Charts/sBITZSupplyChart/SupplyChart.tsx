@@ -117,7 +117,7 @@ const SupplyChart: React.FC<LiquidityInterface> = ({
                 <text
                   style={{ fill: colors.invariant.textGrey, ...typography.tiny2 }}
                   textAnchor='start'
-                  dominantBaseline='center'>
+                  dominantBaseline='central'>
                   {trimZeros(formatLargeNumber(value))}
                 </text>
               </g>
