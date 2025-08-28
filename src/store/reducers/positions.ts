@@ -62,6 +62,7 @@ export interface IPositionsStore {
   currentPositionId: string
   initPosition: StatusStore
   changeLiquidity: StatusStore
+  compound: StatusStore
   shouldNotUpdateRange: boolean
   prices: {
     data: Record<string, number>
@@ -204,6 +205,40 @@ export enum LiquidityPools {
   Locked = 'Locked'
 }
 
+export interface Compound {
+  tokenX: PublicKey
+  tokenY: PublicKey
+  positionIndex: number
+  liquidity: BN
+  slippage: BN
+  xAmount: BN
+  yAmount: BN
+}
+export interface CompoundWithSwap {
+  tokenX: PublicKey
+  tokenY: PublicKey
+  swapPool: PoolStructure
+  isSamePool: boolean
+  positionPair: { fee: BN; tickSpacing: number }
+  positionPoolPrice: BN
+  positionSlippage: BN
+  xAmount: BN
+  yAmount: BN
+  swapSlippage: BN
+  swapAmount: BN
+  xToY: boolean
+  byAmountIn: boolean
+  estimatedPriceAfterSwap: BN
+  minUtilizationPercentage: BN
+  liquidityDelta: BN
+  positionIndex: number
+  crossedTicks: number[]
+  positionPoolIndex: number
+  swapPoolTickmap: Tickmap
+  lowerTick: number
+  upperTick: number
+}
+
 export const defaultState: IPositionsStore = {
   lastPage: 1,
   currentPoolIndex: null,
@@ -228,6 +263,10 @@ export const defaultState: IPositionsStore = {
     success: false
   },
   changeLiquidity: {
+    inProgress: false,
+    success: false
+  },
+  compound: {
     inProgress: false,
     success: false
   },
@@ -403,6 +442,22 @@ const positionsSlice = createSlice({
     },
     setPositionListSwitcher(state, action: PayloadAction<LiquidityPools>) {
       state.positionListSwitcher = action.payload
+      return state
+    },
+    compoundWithSwap(state, _action: PayloadAction<CompoundWithSwap>) {
+      state.compound.inProgress = true
+      state.showFeesLoader = true
+      return state
+    },
+    compound(state, _action: PayloadAction<Compound>) {
+      state.compound.inProgress = true
+      state.showFeesLoader = true
+      return state
+    },
+    setCompoundSuccess(state, action: PayloadAction<boolean>) {
+      state.compound.inProgress = false
+      state.showFeesLoader = false
+      state.compound.success = action.payload
       return state
     }
   }
