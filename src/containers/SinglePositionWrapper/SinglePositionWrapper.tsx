@@ -52,8 +52,6 @@ import { lockerState } from '@store/selectors/locker'
 import { theme } from '@static/theme'
 import { actions as statsActions } from '@store/reducers/stats'
 import { isLoading, lastInterval, poolsStatsWithTokensDetails } from '@store/selectors/stats'
-import { getPromotedPools, isLoading as promotedLoading } from '@store/selectors/leaderboard'
-import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import { BN } from '@coral-xyz/anchor'
 import {
   ALL_FEE_TIERS_DATA,
@@ -62,8 +60,7 @@ import {
   DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_SWAP,
   DEFAULT_AUTOSWAP_MIN_UTILIZATION,
   DEFAULT_NEW_POSITION_SLIPPAGE,
-  Intervals,
-  LEADERBOARD_DECIMAL
+  Intervals
 } from '@store/consts/static'
 import poolsSelectors, {
   autoSwapTicksAndTickMap,
@@ -869,6 +866,8 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
 
           dispatch(
             actions.compoundWithSwap({
+              lowerTick: position.lowerTickIndex,
+              upperTick: position.upperTickIndex,
               xAmount,
               yAmount,
               tokenX: position.tokenX.assetAddress,

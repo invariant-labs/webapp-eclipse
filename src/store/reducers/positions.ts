@@ -235,6 +235,8 @@ export interface CompoundWithSwap {
   crossedTicks: number[]
   positionPoolIndex: number
   swapPoolTickmap: Tickmap
+  lowerTick: number
+  upperTick: number
 }
 
 export const defaultState: IPositionsStore = {

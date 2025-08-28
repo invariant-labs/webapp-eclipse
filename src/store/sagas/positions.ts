@@ -4931,6 +4931,8 @@ export function* handleCompoundWithSwap(action: PayloadAction<CompoundWithSwap>)
     minUtilizationPercentage,
     liquidityDelta,
     positionIndex,
+    lowerTick,
+    upperTick,
     crossedTicks,
     positionPoolIndex,
     swapPoolTickmap
@@ -4958,8 +4960,6 @@ export function* handleCompoundWithSwap(action: PayloadAction<CompoundWithSwap>)
     const connection = yield* call(getConnection)
     const wallet = yield* call(getWallet)
     const networkType = yield* select(network)
-    const feeds = yield* select(priceFeeds)
-    const leaderboardConfig = yield* select(config)
     const rpc = yield* select(rpcAddress)
     const allPools = yield* select(poolsArraySortedByFees)
 
@@ -5005,38 +5005,64 @@ export function* handleCompoundWithSwap(action: PayloadAction<CompoundWithSwap>)
           positionSlippage
         }
 
-    const tx = yield* call(
-      [marketProgram, marketProgram.versionedCoumpoundTx],
+    const claimFeePair = isSamePool
+      ? swapPair
+      : new Pair(tokenX, tokenY, {
+          fee: positionPair.fee,
+          tickSpacing: positionPair.tickSpacing
+        })
+
+    const claimIx = yield* call(
+      [marketProgram, marketProgram.claimFeeIx],
       {
-        liquidityDelta: liquidityDelta,
-        slippage: swapSlippage,
-        xToY: xToY,
-        amount: swapAmount,
-        estimatedPriceAfterSwap: estimatedPriceAfterSwap,
-        byAmountIn: byAmountIn,
-        swapPair,
-        minUtilizationPercentage: minUtilizationPercentage,
-        amountX: xAmount,
-        amountY: yAmount,
-        positionIndex,
+        pair: claimFeePair,
         userTokenX,
         userTokenY,
         owner: wallet.publicKey,
-        swapAndCreateOnDifferentPools: swapAndAddOnDifferentPools
+        index: positionIndex
+      },
+      {
+        position: position,
+        pool: position.poolData,
+        tokenXProgram: allTokens[position.tokenX.assetAddress.toString()].tokenProgram,
+        tokenYProgram: allTokens[position.tokenY.assetAddress.toString()].tokenProgram
+      }
+    )
+
+    const tx = yield* call(
+      [marketProgram, marketProgram.versionedSwapAndIncreaseLiquidityTx],
+      {
+        amountX: xAmount,
+        amountY: yAmount,
+        swapPair,
+        userTokenX,
+        userTokenY,
+        owner: wallet.publicKey,
+        slippage: swapSlippage,
+        amount: swapAmount,
+        xToY,
+        byAmountIn,
+        estimatedPriceAfterSwap,
+        minUtilizationPercentage,
+        swapAndCreateOnDifferentPools: swapAndAddOnDifferentPools,
+        liquidityDelta,
+        positionIndex
       },
       { tickIndexes: crossedTicks },
       {
-        changeLiquidityAndClaim: {
+        position: {
           pool: positionPoolIndex !== null ? allPools[positionPoolIndex] : undefined,
-          position,
-          tokenXProgramAddress: allTokens[tokenX.toString()].tokenProgram,
-          tokenYProgramAddress: allTokens[tokenY.toString()].tokenProgram
+          lowerTick,
+          upperTick,
+          tokenXProgramAddress: allTokens[action.payload.tokenX.toString()].tokenProgram,
+          tokenYProgramAddress: allTokens[action.payload.tokenY.toString()].tokenProgram
         },
         swap: {
           tickmap: swapPoolTickmap,
           pool: swapPool
         }
-      }
+      },
+      [claimIx]
     )
 
     yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
@@ -5164,37 +5190,6 @@ export function* handleCompoundWithSwap(action: PayloadAction<CompoundWithSwap>)
             const tokenX = allTokens[swapPair.tokenX.toString()]
             const tokenY = allTokens[swapPair.tokenY.toString()]
 
-            const match = autoSwapPools.find(
-              ({ pair }) =>
-                (pair.tokenX.equals(tokenX.address) && pair.tokenY.equals(tokenY.address)) ||
-                (pair.tokenX.equals(tokenY.address) && pair.tokenY.equals(tokenX.address))
-            )
-
-            const feeTier = match?.swapPool.feeIndex ?? null
-
-            let points = new BN(0)
-
-            if (
-              leaderboardConfig.swapPairs.some(
-                item =>
-                  (new PublicKey(item.tokenX).equals(action.payload.swapPool.tokenX) &&
-                    new PublicKey(item.tokenY).equals(action.payload.swapPool.tokenY)) ||
-                  (new PublicKey(item.tokenY).equals(action.payload.swapPool.tokenX) &&
-                    new PublicKey(item.tokenX).equals(action.payload.swapPool.tokenY))
-              )
-            ) {
-              const feed = feeds[tokenX.address.toString()]
-
-              points = calculatePoints(
-                new BN(swapAmountIn),
-                tokenX.decimals,
-                FEE_TIERS[feeTier ?? ''].fee,
-                feed.price,
-                feed.priceDecimals,
-                new BN(leaderboardConfig.pointsPerUsd, 'hex')
-              ).muln(Number(leaderboardConfig.swapMultiplier))
-            }
-
             yield put(
               snackbarsActions.add({
                 tokensDetails: {
@@ -5212,10 +5207,7 @@ export function* handleCompoundWithSwap(action: PayloadAction<CompoundWithSwap>)
                     printBN(swapAmountOut, tokenOut.decimals)
                   ),
                   tokenXIconAutoSwap: tokenIn.logoURI,
-                  tokenYIconAutoSwap: tokenOut.logoURI,
-                  earnedPoints: points.eqn(0)
-                    ? undefined
-                    : formatNumberWithoutSuffix(printBN(points, LEADERBOARD_DECIMAL))
+                  tokenYIconAutoSwap: tokenOut.logoURI
                 },
 
                 persist: false
@@ -5312,6 +5304,8 @@ export function* handleCompoundWithSwapWithETH(action: PayloadAction<CompoundWit
     liquidityDelta,
     positionIndex,
     crossedTicks,
+    lowerTick,
+    upperTick,
     positionPoolIndex,
     swapPoolTickmap
   } = action.payload
@@ -5329,8 +5323,6 @@ export function* handleCompoundWithSwapWithETH(action: PayloadAction<CompoundWit
     const allTokens = yield* select(tokens)
     const allPositionsData = yield* select(positionsWithPoolsData)
     const position = allPositionsData[positionIndex]
-    const feeds = yield* select(priceFeeds)
-    const leaderboardConfig = yield* select(config)
     const connection = yield* call(getConnection)
     const wallet = yield* call(getWallet)
     const networkType = yield* select(network)
@@ -5403,34 +5395,59 @@ export function* handleCompoundWithSwapWithETH(action: PayloadAction<CompoundWit
       (allTokens[swapPair.tokenY.toString()].address.toString() === WRAPPED_ETH_ADDRESS &&
         yAmount.eq(new BN(0)))
 
-    const prependedIxs = [createIx, ...(isInitialEthZero ? [] : [transferIx]), initIx]
+    const claimFeePair = isSamePool
+      ? swapPair
+      : new Pair(tokenX, tokenY, {
+          fee: positionPair.fee,
+          tickSpacing: positionPair.tickSpacing
+        })
 
-    const tx = yield* call(
-      [marketProgram, marketProgram.versionedCoumpoundTx],
+    const claimIx = yield* call(
+      [marketProgram, marketProgram.claimFeeIx],
       {
-        liquidityDelta: liquidityDelta,
-        slippage: swapSlippage,
-        xToY: xToY,
-        amount: swapAmount,
-        estimatedPriceAfterSwap: estimatedPriceAfterSwap,
-        byAmountIn: byAmountIn,
-        swapPair,
-        minUtilizationPercentage: minUtilizationPercentage,
-        amountX: xAmount,
-        amountY: yAmount,
-        positionIndex,
+        pair: claimFeePair,
         userTokenX,
         userTokenY,
         owner: wallet.publicKey,
-        swapAndCreateOnDifferentPools: swapAndAddOnDifferentPools
+        index: positionIndex
+      },
+      {
+        position: position,
+        pool: position.poolData,
+        tokenXProgram: allTokens[position.tokenX.assetAddress.toString()].tokenProgram,
+        tokenYProgram: allTokens[position.tokenY.assetAddress.toString()].tokenProgram
+      }
+    )
+
+    const prependedIxs = [createIx, ...(isInitialEthZero ? [] : [transferIx]), initIx, claimIx]
+
+    const tx = yield* call(
+      [marketProgram, marketProgram.versionedSwapAndIncreaseLiquidityTx],
+      {
+        amountX: xAmount,
+        amountY: yAmount,
+        swapPair,
+        userTokenX,
+        userTokenY,
+        owner: wallet.publicKey,
+        slippage: swapSlippage,
+        amount: swapAmount,
+        xToY,
+        byAmountIn,
+        estimatedPriceAfterSwap,
+        minUtilizationPercentage,
+        swapAndCreateOnDifferentPools: swapAndAddOnDifferentPools,
+        liquidityDelta,
+        positionIndex
       },
       { tickIndexes: crossedTicks },
       {
-        changeLiquidityAndClaim: {
+        position: {
           pool: positionPoolIndex !== null ? allPools[positionPoolIndex] : undefined,
-          position,
-          tokenXProgramAddress: allTokens[tokenX.toString()].tokenProgram,
-          tokenYProgramAddress: allTokens[tokenY.toString()].tokenProgram
+          lowerTick,
+          upperTick,
+          tokenXProgramAddress: allTokens[action.payload.tokenX.toString()].tokenProgram,
+          tokenYProgramAddress: allTokens[action.payload.tokenY.toString()].tokenProgram
         },
         swap: {
           tickmap: swapPoolTickmap,
@@ -5571,37 +5588,6 @@ export function* handleCompoundWithSwapWithETH(action: PayloadAction<CompoundWit
             const tokenX = allTokens[swapPair.tokenX.toString()]
             const tokenY = allTokens[swapPair.tokenY.toString()]
 
-            const match = autoSwapPools.find(
-              ({ pair }) =>
-                (pair.tokenX.equals(tokenX.address) && pair.tokenY.equals(tokenY.address)) ||
-                (pair.tokenX.equals(tokenY.address) && pair.tokenY.equals(tokenX.address))
-            )
-
-            const feeTier = match?.swapPool.feeIndex ?? null
-
-            let points = new BN(0)
-
-            if (
-              leaderboardConfig.swapPairs.some(
-                item =>
-                  (new PublicKey(item.tokenX).equals(action.payload.swapPool.tokenX) &&
-                    new PublicKey(item.tokenY).equals(action.payload.swapPool.tokenY)) ||
-                  (new PublicKey(item.tokenY).equals(action.payload.swapPool.tokenX) &&
-                    new PublicKey(item.tokenX).equals(action.payload.swapPool.tokenY))
-              )
-            ) {
-              const feed = feeds[tokenX.address.toString()]
-
-              points = calculatePoints(
-                new BN(swapAmountIn),
-                tokenX.decimals,
-                FEE_TIERS[feeTier ?? ''].fee,
-                feed.price,
-                feed.priceDecimals,
-                new BN(leaderboardConfig.pointsPerUsd, 'hex')
-              ).muln(Number(leaderboardConfig.swapMultiplier))
-            }
-
             yield put(
               snackbarsActions.add({
                 tokensDetails: {
@@ -5619,10 +5605,7 @@ export function* handleCompoundWithSwapWithETH(action: PayloadAction<CompoundWit
                     printBN(swapAmountOut, tokenOut.decimals)
                   ),
                   tokenXIconAutoSwap: tokenIn.logoURI,
-                  tokenYIconAutoSwap: tokenOut.logoURI,
-                  earnedPoints: points.eqn(0)
-                    ? undefined
-                    : formatNumberWithoutSuffix(printBN(points, LEADERBOARD_DECIMAL))
+                  tokenYIconAutoSwap: tokenOut.logoURI
                 },
 
                 persist: false
