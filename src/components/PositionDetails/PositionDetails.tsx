@@ -105,11 +105,8 @@ interface IProps {
   poolDetails: PoolDetails | null
   onGoBackClick: () => void
   showPoolDetailsLoader: boolean
-  isPromoted: boolean
-  points24: number
   isPreview: boolean
   showPositionLoader?: boolean
-  isPromotedLoading: boolean
   shouldDisable: boolean
   pricesLoading: boolean
   previousPosition: INavigatePosition | null
@@ -200,10 +197,7 @@ const PositionDetails: React.FC<IProps> = ({
   onGoBackClick,
   poolDetails,
   showPoolDetailsLoader,
-  isPromoted,
   showPositionLoader = false,
-  points24,
-  isPromotedLoading,
   pricesLoading,
   previousPosition,
   nextPosition,
@@ -498,7 +492,6 @@ const PositionDetails: React.FC<IProps> = ({
                 : { icon: tokenX.icon, ticker: tokenX.name }
             }
             fee={+printBN(fee, DECIMAL - 2)}
-            isPromoted={isPromoted}
             poolAddress={poolAddress.toString()}
             networkUrl={networkUrl}
             isLocked={isLocked}
@@ -550,11 +543,8 @@ const PositionDetails: React.FC<IProps> = ({
                 poolDetails={poolDetails}
                 showPoolDetailsLoader={showPoolDetailsLoader}
                 showPositionLoader={showPositionLoader}
-                arePointsDistributed={isActive && isPromoted}
-                points24={points24}
                 poolAddress={poolAddress}
                 isPreview={showPreviewInfo}
-                isPromotedLoading={isPromotedLoading}
                 isClosing={shouldDisable}
                 interval={interval}
                 isLocked={isLocked}
