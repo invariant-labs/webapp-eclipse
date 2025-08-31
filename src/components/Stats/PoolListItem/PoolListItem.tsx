@@ -1,17 +1,16 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { colors, theme } from '@static/theme'
 import { useStyles } from './style'
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { airdropRainbowIcon, star, starFill, unknownTokenIcon, warningIcon } from '@static/icons'
+import { star, starFill, unknownTokenIcon, warningIcon } from '@static/icons'
 import {
   disabledPools,
   Intervals,
   ITEMS_PER_PAGE,
   NetworkType,
-  POOLS_TO_HIDE_POINTS_PER_24H,
   SortTypePoolList
 } from '@store/consts/static'
 import {
@@ -28,8 +27,6 @@ import { VariantType } from 'notistack'
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
 import { convertAPYValue, mapIntervalToString, shortenAddress } from '@utils/uiUtils'
 import LockStatsPopover from '@components/Modals/LockStatsPopover/LockStatsPopover'
-import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
-import { BN } from '@coral-xyz/anchor'
 import { CustomPopover } from '@common/Popover/CustomPopover'
 import { useDispatch } from 'react-redux'
 import { actions } from '@store/reducers/navigation'
@@ -67,11 +64,9 @@ interface IProps {
   isUnknownFrom?: boolean
   isUnknownTo?: boolean
   isLocked?: boolean
-  isPromoted?: boolean
   poolAddress?: string
   copyAddressHandler?: (message: string, variant: VariantType) => void
   showAPY: boolean
-  points?: BN
   itemNumber?: number
   interval?: Intervals
   isFavourite?: boolean
@@ -101,10 +96,8 @@ const PoolListItem: React.FC<IProps> = ({
   isUnknownFrom,
   isUnknownTo,
   isLocked,
-  isPromoted,
   poolAddress,
   copyAddressHandler,
-  points,
   showAPY,
   itemNumber = 0,
   interval = Intervals.Daily,
@@ -119,12 +112,9 @@ const PoolListItem: React.FC<IProps> = ({
   const hideInterval = useMediaQuery(theme.breakpoints.between(600, 650))
   const showCopyIcon = useMediaQuery(theme.breakpoints.up(380))
   const isMd = useMediaQuery(theme.breakpoints.down(1160))
-  const airdropIconRef = useRef<HTMLDivElement>(null)
-  const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
   const intervalSuffix = mapIntervalToString(interval)
   const dispatch = useDispatch()
   const location = useLocation()
-  const isMobile = useMediaQuery(theme.breakpoints.down('lg'))
 
   const isXtoY = initialXtoY(addressFrom ?? '', addressTo ?? '')
 
@@ -378,45 +368,6 @@ const PoolListItem: React.FC<IProps> = ({
             sx={{ justifyContent: isSm ? 'flex-start' : 'space-between' }}>
             {fee && typeof fee === 'number' && (
               <Typography sx={{ marginLeft: isSm ? 2 : 0 }}>{fee}%</Typography>
-            )}
-            {isPromoted && (
-              <PromotedPoolPopover
-                apr={convertedApr}
-                apy={convertedApy}
-                points={
-                  poolAddress
-                    ? POOLS_TO_HIDE_POINTS_PER_24H.includes(poolAddress?.toString())
-                      ? new BN(0)
-                      : points
-                    : new BN(0)
-                }>
-                <Box
-                  className={cx(classes.actionButton, classes.airdropIcon)}
-                  ref={airdropIconRef}
-                  onPointerEnter={() => {
-                    if (!isMobile) {
-                      setIsPromotedPoolPopoverOpen(true)
-                    }
-                  }}
-                  onPointerLeave={() => {
-                    if (!isMobile) {
-                      setIsPromotedPoolPopoverOpen(false)
-                    }
-                  }}
-                  onClick={() => {
-                    if (isMobile) {
-                      setIsPromotedPoolPopoverOpen(!isPromotedPoolPopoverOpen)
-                    }
-                  }}
-                  mr={3}>
-                  <img
-                    width={24}
-                    height={isSm ? 24 : 32}
-                    src={airdropRainbowIcon}
-                    alt={'Airdrop'}
-                  />
-                </Box>
-              </PromotedPoolPopover>
             )}
           </Box>
 
