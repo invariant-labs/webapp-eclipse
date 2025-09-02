@@ -7,6 +7,8 @@ import {
   actions,
   ChangeLiquidityData,
   ClosePositionData,
+  Compound,
+  CompoundWithSwap,
   GetCurrentTicksData,
   InitPositionData,
   PositionWithAddress,
@@ -72,7 +74,9 @@ import {
   getTokenProgramId,
   getSwapAmountFromSwapAndAddLiquidity,
   getAddAmountFromSwapAndAddLiquidity,
-  SwapTokenType
+  SwapTokenType,
+  getAddAmountFromCoumpoundWithSwap,
+  getSwapAmountFromCoumpoundWithSwap
 } from '@utils/utils'
 import { actions as connectionActions } from '@store/reducers/solanaConnection'
 import {
