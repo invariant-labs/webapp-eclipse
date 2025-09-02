@@ -2660,7 +2660,8 @@ export const getAddAmountFromSwapAndAddLiquidity = (
 
 export const getAmountFromClaimFeeInstruction = (
   meta: ParsedTransactionMeta,
-  type: TokenType
+  type: TokenType,
+  programAuthority: string
 ): number => {
   const transfers =
     meta.innerInstructions
@@ -2675,13 +2676,13 @@ export const getAmountFromClaimFeeInstruction = (
     const [a, b] = [transfers[i], transfers[i + 1]]
     if (
       (a as any).stackHeight === (b as any).stackHeight &&
-      a.parsed.info.authority === b.parsed.info.authority
+      a.parsed.info.authority === programAuthority &&
+      b.parsed.info.authority === programAuthority
     ) {
       const chosen = type === TokenType.TokenX ? a : b
       return chosen.parsed.info.amount ?? chosen.parsed.info.tokenAmount?.amount ?? 0
     }
   }
-
   const chosen = transfers[type === TokenType.TokenX ? 0 : 1]
   return chosen?.parsed.info.amount ?? chosen?.parsed.info.tokenAmount?.amount ?? 0
 }
@@ -2720,4 +2721,134 @@ export const fetchMarketBitzStats = async () => {
     `https://api.invariant.app/explorer/get-holders?address=${sBITZ}`
   )
   return data
+}
+
+export const getSwapAmountFromCoumpoundWithSwap = (
+  meta: ParsedTransactionMeta,
+  marketProgramAuthority: string,
+  token: string,
+  type: SwapTokenType
+): number => {
+  if (!meta.innerInstructions?.length) return 0
+
+  const innerInstruction =
+    [...meta.innerInstructions].reverse().find(ii => {
+      const transfers = ii.instructions.filter(
+        ix =>
+          (ix as ParsedInstruction)?.parsed?.type === 'transfer' ||
+          (ix as ParsedInstruction)?.parsed?.type === 'transferChecked'
+      ) as ParsedInstruction[]
+
+      if (transfers.length < 2) return false
+
+      const auths = Array.from(
+        new Set(
+          transfers.map(ix => (ix as ParsedInstruction)?.parsed?.info?.authority).filter(Boolean)
+        )
+      )
+      return auths.length >= 2
+    }) ?? meta.innerInstructions[meta.innerInstructions.length - 1]
+
+  const transfers = innerInstruction.instructions.filter(
+    ix =>
+      (ix as ParsedInstruction)?.parsed?.type === 'transfer' ||
+      (ix as ParsedInstruction)?.parsed?.type === 'transferChecked'
+  ) as ParsedInstruction[]
+
+  let swapA: ParsedInstruction | undefined
+  let swapB: ParsedInstruction | undefined
+  for (let i = 0; i < transfers.length - 1; i++) {
+    const a = transfers[i]
+    const b = transfers[i + 1]
+    const aAuth = (a as any)?.parsed?.info?.authority
+    const bAuth = (b as any)?.parsed?.info?.authority
+    if (aAuth && bAuth && aAuth !== bAuth) {
+      swapA = a
+      swapB = b
+      break
+    }
+  }
+
+  let chosen: ParsedInstruction | undefined
+
+  if (swapA && swapB) {
+    if (type === SwapTokenType.TokenIn) {
+      chosen = (swapA as any).parsed.info.authority !== marketProgramAuthority ? swapA : swapB
+    } else {
+      chosen = (swapA as any).parsed.info.authority === marketProgramAuthority ? swapA : swapB
+    }
+  }
+
+  if (!chosen) {
+    chosen = transfers.find(ix => (ix as any)?.parsed?.info?.mint === token)
+    if (!chosen) {
+      chosen = transfers.find(ix =>
+        type === SwapTokenType.TokenIn
+          ? (ix as any)?.parsed?.info?.authority &&
+            (ix as any)?.parsed?.info?.authority !== marketProgramAuthority
+          : (ix as any)?.parsed?.info?.authority === marketProgramAuthority
+      )
+    }
+  }
+
+  return (
+    (chosen as any)?.parsed?.info?.amount ?? (chosen as any)?.parsed?.info?.tokenAmount?.amount ?? 0
+  )
+}
+
+export const getAddAmountFromCoumpoundWithSwap = (
+  meta: ParsedTransactionMeta,
+  type: TokenType
+): number => {
+  if (!meta.innerInstructions?.length) return 0
+
+  const innerInstruction =
+    [...meta.innerInstructions].reverse().find(ii => {
+      const transfers = ii.instructions.filter(
+        ix =>
+          (ix as ParsedInstruction)?.parsed?.type === 'transfer' ||
+          (ix as ParsedInstruction)?.parsed?.type === 'transferChecked'
+      ) as ParsedInstruction[]
+
+      if (transfers.length < 2) return false
+
+      const auths = Array.from(
+        new Set(
+          transfers.map(ix => (ix as ParsedInstruction)?.parsed?.info?.authority).filter(Boolean)
+        )
+      )
+      return auths.length >= 2
+    }) ?? meta.innerInstructions[meta.innerInstructions.length - 1]
+
+  const transfers = innerInstruction.instructions.filter(
+    ix =>
+      (ix as ParsedInstruction)?.parsed?.type === 'transfer' ||
+      (ix as ParsedInstruction)?.parsed?.type === 'transferChecked'
+  ) as ParsedInstruction[]
+
+  let addA: ParsedInstruction | undefined
+  let addB: ParsedInstruction | undefined
+  for (let i = transfers.length - 2; i >= 0; i--) {
+    const a = transfers[i] as any
+    const b = transfers[i + 1] as any
+    const aAuth = a?.parsed?.info?.authority
+    const bAuth = b?.parsed?.info?.authority
+    const aSH = a?.stackHeight
+    const bSH = b?.stackHeight
+    if (aAuth && bAuth && aAuth === bAuth && (aSH == null || bSH == null || aSH === bSH)) {
+      addA = transfers[i]
+      addB = transfers[i + 1]
+      break
+    }
+  }
+
+  if (!addA || !addB) {
+    addA = transfers[2]
+    addB = transfers[3]
+  }
+
+  const chosen = type === TokenType.TokenX ? addA : addB
+  return (
+    (chosen as any)?.parsed?.info?.amount ?? (chosen as any)?.parsed?.info?.tokenAmount?.amount ?? 0
+  )
 }
