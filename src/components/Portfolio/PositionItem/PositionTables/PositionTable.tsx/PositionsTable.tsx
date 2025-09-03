@@ -27,6 +27,7 @@ interface IPositionsTableProps {
   handleClosePosition: (index: number) => void
   handleClaimFee: (index: number, isLocked: boolean) => void
   createNewPosition: (element: IPositionItem) => void
+  openPoolDetails: (element: IPositionItem) => void
   shouldDisable: boolean
   openPosition: (id: string) => void
 }
@@ -40,6 +41,7 @@ export const PositionsTable: React.FC<IPositionsTableProps> = ({
   handleClosePosition,
   handleClaimFee,
   createNewPosition,
+  openPoolDetails,
   shouldDisable,
   openPosition
 }) => {
@@ -109,6 +111,7 @@ export const PositionsTable: React.FC<IPositionsTableProps> = ({
                   handleClaimFee={handleClaimFee}
                   createNewPosition={() => createNewPosition(position)}
                   openPosition={() => openPosition(position.id)}
+                  openPoolDetails={() => openPoolDetails(position)}
                 />
               </TableRow>
             ))}

@@ -149,5 +149,14 @@ export const useStyles = makeStyles()(() => ({
     alignItems: 'center',
     gap: 8,
     width: 'calc(100% - 480px)'
+  },
+  poolStats: {
+    '&:hover': {
+      filter: 'brightness(1.4)',
+      cursor: 'pointer',
+      '@media (hover: none)': {
+        filter: 'brightness(1)'
+      }
+    }
   }
 }))

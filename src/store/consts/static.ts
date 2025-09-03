@@ -1119,3 +1119,51 @@ export const ES_ETH_POOLS = {
 }
 export const PROOF_OF_INCLUSION_CACHE_KEY = 'PROOF_OF_INCLUSION_V2'
 export const PROOF_OF_INCLUSION_CACHE_TTL = 1000 * 60 * 60 * 1 // 1 hour
+
+export const promotedTiers = [
+  {
+    tokenX: USDC_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    index: 3
+  },
+  {
+    tokenX: SOL_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    index: 3
+  },
+  {
+    tokenX: TETH_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    index: 0
+  },
+  {
+    tokenX: SOL_MAIN.address,
+    tokenY: USDC_MAIN.address,
+    index: 3
+  },
+  {
+    tokenX: BITZ_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    index: 6
+  },
+  {
+    tokenX: USDC_MAIN.address,
+    tokenY: TUSD_MAIN.address,
+    index: 0
+  },
+  {
+    tokenX: WETH_MAIN.address,
+    tokenY: sBITZ_MAIN.address,
+    index: 6
+  },
+  {
+    tokenX: ES_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    index: 5
+  },
+  {
+    tokenX: USDC_MAIN.address,
+    tokenY: ES_MAIN.address,
+    index: 5
+  }
+]

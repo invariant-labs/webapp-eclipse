@@ -374,6 +374,25 @@ const Portfolio: React.FC<IProps> = ({
     navigate(ROUTES.getNewPositionRoute(tokenA, tokenB, parsedFee))
   }
 
+  const openPoolDetails = (element: IPositionItem) => {
+    const address1 = addressToTicker(currentNetwork, element.tokenXName)
+    const address2 = addressToTicker(currentNetwork, element.poolData.tokenY.toString())
+    const parsedFee = parseFeeToPathFee(element.poolData.fee)
+    const isXtoY = initialXtoY(
+      element.poolData.tokenX.toString(),
+      element.poolData.tokenY.toString()
+    )
+
+    const tokenA = isXtoY ? address1 : address2
+    const tokenB = isXtoY ? address2 : address1
+
+    unblurContent()
+
+    dispatch(actions.setNavigation({ address: location.pathname }))
+
+    navigate(ROUTES.getPoolDetailsRoute(tokenA, tokenB, parsedFee))
+  }
+
   const [allowPropagation, setAllowPropagation] = useState(true)
   const renderContent = () => {
     if (showNoConnected) {
@@ -392,6 +411,7 @@ const Portfolio: React.FC<IProps> = ({
           handleClosePosition={handleClosePosition}
           handleClaimFee={handleClaimFee}
           createNewPosition={createNewPosition}
+          openPoolDetails={openPoolDetails}
           openPosition={openPosition}
         />
       )
@@ -438,6 +458,7 @@ const Portfolio: React.FC<IProps> = ({
             createNewPosition(element)
           }}
           openPosition={() => openPosition(element.id)}
+          openPoolDetails={() => openPoolDetails(element)}
         />
       </Grid>
     ))
