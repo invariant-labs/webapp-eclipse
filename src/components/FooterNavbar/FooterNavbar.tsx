@@ -3,7 +3,6 @@ import useStyles from './style'
 import { Link, useLocation } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import {
-  airdropIcon,
   liquidityIcon,
   lqStakingIcon,
   statsIcon,
@@ -64,21 +63,7 @@ export const FooterNavbar = () => {
   //           }
   //         }
   //       ]
-  //     : [
-  //         {
-  //           label: 'Points',
-  //           icon: airdropIcon,
-  //           url: 'points',
-  //           width: 22,
-  //           onClick: () => {
-  //             setIsMorePopupOpen(false)
-  //             setAnchorEl(null)
-  //             unblurContent()
-  //           },
-  //           isLink: true
-  //         }
-  //       ]),
-
+  //     : []),
   //   {
   //     label: 'Stats',
   //     icon: statsIcon,
@@ -138,16 +123,7 @@ export const FooterNavbar = () => {
             isLink: true
           }
         ]
-      : [
-          {
-            label: 'Points',
-            icon: airdropIcon,
-            url: 'points',
-            width: 22,
-
-            isLink: true
-          }
-        ]),
+      : []),
 
     {
       label: 'Stats',
@@ -194,7 +170,6 @@ export const FooterNavbar = () => {
     sale: [/^presale\/*/],
     portfolio: [/^portfolio\/*/, /^newPosition\/*/, /^position\/*/],
 
-    ...(typeOfNetwork === NetworkType.Mainnet ? { leaderboard: [/^points\/*/] } : {}),
     ...(typeOfNetwork === NetworkType.Testnet ? { creator: [/^creator\/*/] } : {}),
     ...(typeOfNetwork === NetworkType.Mainnet ? { more: [/^stake\/*/] } : {})
   }

@@ -384,7 +384,7 @@ export const WEETHS_MAIN: Token = {
 export enum RPC {
   TEST = 'https://testnet.dev2.eclipsenetwork.xyz',
   MAIN = 'https://mainnetbeta-rpc.eclipse.xyz',
-  MAIN_HELIUS = 'https://eclipse.helius-rpc.com',
+  // MAIN_HELIUS = 'https://eclipse.shelius-rpc.com',
   MAIN_TRITON = 'https://invarian-eclipse-1c78.mainnet.eclipse.rpcpool.com/',
   MAIN_LGNS = 'https://eclipse.lgns.net',
   DEV = 'https://staging-rpc.dev2.eclipsenetwork.xyz',
@@ -588,53 +588,6 @@ export const autoSwapPools = [
     }
   }
 ]
-export const promotedTiers = [
-  {
-    tokenX: USDC_MAIN.address,
-    tokenY: WETH_MAIN.address,
-    index: 3
-  },
-  {
-    tokenX: SOL_MAIN.address,
-    tokenY: WETH_MAIN.address,
-    index: 3
-  },
-  {
-    tokenX: TETH_MAIN.address,
-    tokenY: WETH_MAIN.address,
-    index: 0
-  },
-  {
-    tokenX: SOL_MAIN.address,
-    tokenY: USDC_MAIN.address,
-    index: 3
-  },
-  {
-    tokenX: BITZ_MAIN.address,
-    tokenY: WETH_MAIN.address,
-    index: 6
-  },
-  {
-    tokenX: USDC_MAIN.address,
-    tokenY: TUSD_MAIN.address,
-    index: 0
-  },
-  {
-    tokenX: WETH_MAIN.address,
-    tokenY: sBITZ_MAIN.address,
-    index: 6
-  },
-  {
-    tokenX: ES_MAIN.address,
-    tokenY: WETH_MAIN.address,
-    index: 5
-  },
-  {
-    tokenX: USDC_MAIN.address,
-    tokenY: ES_MAIN.address,
-    index: 5
-  }
-]
 
 export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
   Devnet: [USDC_DEV.address, BTC_DEV.address, WETH_DEV.address],
@@ -753,6 +706,16 @@ export const AlternativeFormatConfig = {
   DecimalsAfterDot: 2
 }
 
+export const NoConfig = {
+  B: 1000000000000000,
+  M: 1000000000000000,
+  K: 1000000000000000,
+  BDecimals: 100,
+  MDecimals: 100,
+  KDecimals: 100,
+  DecimalsAfterDot: 2
+}
+
 export enum PositionTokenBlock {
   None,
   A,
@@ -823,6 +786,7 @@ export const DEFAULT_NEW_POSITION_SLIPPAGE = '2.00'
 export const DEFAULT_AUTOSWAP_MAX_PRICE_IMPACT = '2.00'
 export const DEFAULT_AUTOSWAP_MIN_UTILIZATION = '95.00'
 export const DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_CREATE_POSITION = '2.50'
+export const DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_ADD_LIQUIDITY = '0.50'
 export const DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_SWAP = '0.50'
 
 export const CHAINS = [
@@ -968,17 +932,7 @@ export const rewards = [...rewardsArray].sort(
   (a, b) => new Date(b.distributionDate).getTime() - new Date(a.distributionDate).getTime()
 ) as Reward[]
 
-export const LEADERBOARD_DECIMAL = 8
-
 export const LAUNCH_DATE = '2024-12-10T17:20:00'
-
-export enum PointsPageContent {
-  Leaderboard = 'leaderboard',
-  FAQ = 'faq',
-  Claim = 'claim'
-}
-
-export type LeaderBoardType = 'Liquidity' | 'Swap' | 'Total'
 
 export const BANNER_STORAGE_KEY = 'invariant-warning-banner'
 export const BANNER_HIDE_DURATION = 1000 * 60 * 60 * 1 // 1 hour
@@ -991,7 +945,6 @@ export enum OverviewSwitcher {
 }
 
 export const STATS_CACHE_TIME = 30 * 60 * 1000
-export const LEADERBOARD_API_URL = 'https://api.invariant.app/api'
 export const PRICE_API_URL = 'https://api.invariant.app/price'
 export const CHECKER_API_URL = 'https://api.invariant.app/check'
 
@@ -1164,10 +1117,53 @@ export const PORTFOLIO_STAKE_COLLAPSE_DELAY = 200
 export const ES_ETH_POOLS = {
   '0_03': '6ciuuX2AZ3RFU6fJh2XrzJurZdRWuDeMonNsb7xzztp1'
 }
-export const POOLS_TO_HIDE_POINTS_PER_24H: string[] = [
-  // ES_ETH_POOLS['0_03'],
-  // '8gSs6K4NVZSh4Rd5ABcNTos5sJ6wVRTR4xr5LgNLMt58'
-]
-
 export const PROOF_OF_INCLUSION_CACHE_KEY = 'PROOF_OF_INCLUSION_V2'
 export const PROOF_OF_INCLUSION_CACHE_TTL = 1000 * 60 * 60 * 1 // 1 hour
+
+export const promotedTiers = [
+  {
+    tokenX: USDC_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    index: 3
+  },
+  {
+    tokenX: SOL_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    index: 3
+  },
+  {
+    tokenX: TETH_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    index: 0
+  },
+  {
+    tokenX: SOL_MAIN.address,
+    tokenY: USDC_MAIN.address,
+    index: 3
+  },
+  {
+    tokenX: BITZ_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    index: 6
+  },
+  {
+    tokenX: USDC_MAIN.address,
+    tokenY: TUSD_MAIN.address,
+    index: 0
+  },
+  {
+    tokenX: WETH_MAIN.address,
+    tokenY: sBITZ_MAIN.address,
+    index: 6
+  },
+  {
+    tokenX: ES_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    index: 5
+  },
+  {
+    tokenX: USDC_MAIN.address,
+    tokenY: ES_MAIN.address,
+    index: 5
+  }
+]

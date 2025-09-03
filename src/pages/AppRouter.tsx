@@ -8,7 +8,6 @@ import {
 } from 'react-router-dom'
 import { NetworkType } from '@store/consts/static'
 import { network } from '@store/selectors/solanaConnection'
-import LeaderBoardPage from './LeaderboardPage/LeaderboardPage'
 import ListPage from './ListPage/ListPage'
 import NewPositionPage from './NewPositionPage/NewPositionPage'
 import PortfolioPage from './PortfolioPage/PortfolioPage'
@@ -36,9 +35,6 @@ const createRouter = (currentNetwork: NetworkType) =>
         <Route path={ROUTES.POOL_DETAILS_WITH_PARAMS} element={<PoolDetailsPage />} />
         {currentNetwork === NetworkType.Testnet && (
           <Route path={ROUTES.CREATOR} element={<TokenCreatorPage />} />
-        )}
-        {currentNetwork === NetworkType.Mainnet && (
-          <Route path={ROUTES.POINTS} element={<LeaderBoardPage />} />
         )}
         <Route path='*' element={<Navigate to={ROUTES.EXCHANGE} replace />} />
       </Route>

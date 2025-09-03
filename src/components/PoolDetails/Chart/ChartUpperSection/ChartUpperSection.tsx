@@ -98,12 +98,12 @@ export const ChartUpperSection: React.FC<IProps> = ({
     const tierIndex =
       tokenX === null || tokenY === null
         ? undefined
-        : (promotedTiers.find(
+        : promotedTiers.find(
             tier =>
               (tier.tokenX.equals(tokenX.assetAddress) &&
                 tier.tokenY.equals(tokenY.assetAddress)) ||
               (tier.tokenX.equals(tokenY.assetAddress) && tier.tokenY.equals(tokenX.assetAddress))
-          )?.index ?? undefined)
+          )?.index ?? undefined
 
     return tierIndex
   }, [tokenX, tokenY])

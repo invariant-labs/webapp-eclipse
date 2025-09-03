@@ -9,6 +9,7 @@ export interface IPositionViewActionPopover {
   closePosition: () => void
   claimFee: () => void
   handleClose: () => void
+  onManagePosition: () => void
   onLockPosition: () => void
   createPosition: () => void
   openPoolDetails: () => void
@@ -23,6 +24,7 @@ export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = (
   isLocked,
   claimFee,
   closePosition,
+  onManagePosition,
   onLockPosition,
   createPosition,
   openPoolDetails,
@@ -72,19 +74,28 @@ export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = (
             }}>
             <Typography className={classes.name}>Close position</Typography>
           </Button>
+          <Button
+            className={cx(classes.listItem)}
+            disabled={isLocked || shouldDisable}
+            onClick={() => {
+              onManagePosition()
+              handleClose()
+            }}>
+            <Typography className={classes.name}>Manage position</Typography>
+          </Button>
+          <Button
+            className={cx(classes.listItem)}
+            disabled={isLocked || shouldDisable}
+            onClick={() => {
+              onLockPosition()
+              handleClose()
+            }}>
+            <Typography className={classes.name}>Lock position</Typography>
+          </Button>
+          <Button className={cx(classes.listItem)} onClick={openPoolDetails}>
+            <Typography className={classes.name}>Pool details</Typography>
+          </Button>
         </Grid>
-        <Button
-          className={cx(classes.listItem)}
-          disabled={isLocked || shouldDisable}
-          onClick={() => {
-            onLockPosition()
-            handleClose()
-          }}>
-          <Typography className={classes.name}>Lock position</Typography>
-        </Button>
-        <Button className={cx(classes.listItem)} onClick={openPoolDetails}>
-          <Typography className={classes.name}>Pool details</Typography>
-        </Button>
       </Grid>
     </Popover>
   )
