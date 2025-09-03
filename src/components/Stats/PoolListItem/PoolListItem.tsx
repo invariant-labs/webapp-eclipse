@@ -125,7 +125,6 @@ const PoolListItem: React.FC<IProps> = ({
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
   const isSmd = useMediaQuery(theme.breakpoints.down('md'))
   const hideInterval = useMediaQuery(theme.breakpoints.between(600, 650))
-  const showCopyIcon = useMediaQuery(theme.breakpoints.up(380))
   const isMd = useMediaQuery(theme.breakpoints.down(1160))
   const airdropIconRef = useRef<HTMLDivElement>(null)
   const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
