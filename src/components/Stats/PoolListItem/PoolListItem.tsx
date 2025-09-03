@@ -15,7 +15,8 @@ import {
   plusIcon,
   unknownTokenIcon,
   plusDisabled,
-  warningIcon
+  warningIcon,
+  poolStatsBtnIcon
 } from '@static/icons'
 import {
   disabledPools,
@@ -120,6 +121,7 @@ const PoolListItem: React.FC<IProps> = ({
   const [showInfo, setShowInfo] = useState(false)
   const { classes, cx } = useStyles({ showInfo })
   const navigate = useNavigate()
+  const isExSm = useMediaQuery(theme.breakpoints.down(380))
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
   const isSmd = useMediaQuery(theme.breakpoints.down('md'))
   const hideInterval = useMediaQuery(theme.breakpoints.between(600, 650))
@@ -193,6 +195,20 @@ const PoolListItem: React.FC<IProps> = ({
       ),
       { state: { referer: 'stats' } }
     )
+  }
+
+  const handleOpenPoolDetails = () => {
+    const address1 = addressToTicker(network, tokenAData.address ?? '')
+    const address2 = addressToTicker(network, tokenBData.address ?? '')
+    const parsedFee = parseFeeToPathFee(Math.round(fee * 10 ** (DECIMAL - 2)))
+    const isXtoY = initialXtoY(tokenAData.address ?? '', tokenBData.address ?? '')
+
+    const tokenA = isXtoY ? address1 : address2
+    const tokenB = isXtoY ? address2 : address1
+
+    dispatch(actions.setNavigation({ address: location.pathname }))
+
+    navigate(ROUTES.getPoolDetailsRoute(tokenA, tokenB, parsedFee), { state: { referer: 'stats' } })
   }
 
   const networkUrl = useMemo(() => {
@@ -297,6 +313,10 @@ const PoolListItem: React.FC<IProps> = ({
           </button>
         </CustomPopover>
       )}
+
+      <button className={classes.actionButton} onClick={handleOpenPoolDetails}>
+        <img width={28} src={poolStatsBtnIcon} alt={'Pool Details'} />
+      </button>
     </Box>
   )
 
@@ -305,6 +325,8 @@ const PoolListItem: React.FC<IProps> = ({
       {displayType === 'token' ? (
         <Grid
           onClick={() => {
+            if (!isMd) handleOpenPoolDetails()
+
             if (isSmd) setShowInfo(prev => !prev)
           }}
           container
@@ -371,7 +393,7 @@ const PoolListItem: React.FC<IProps> = ({
                 {shortenAddress(tokenAData.symbol ?? '')}/{shortenAddress(tokenBData.symbol ?? '')}
               </Typography>
             )}
-            {showCopyIcon && (
+            {!isExSm && (
               <TooltipHover title='Copy pool address'>
                 <FileCopyOutlinedIcon
                   onClick={(e: React.MouseEvent) => {
@@ -471,9 +493,9 @@ const PoolListItem: React.FC<IProps> = ({
                 </TooltipHover>
               )}
 
-              <TooltipHover title='Exchange'>
-                <button className={classes.actionButton} onClick={handleOpenSwap}>
-                  <img width={32} height={32} src={horizontalSwapIcon} alt={'Exchange'} />
+              <TooltipHover title='Pool details'>
+                <button className={classes.actionButton} onClick={handleOpenPoolDetails}>
+                  <img width={32} height={32} src={poolStatsBtnIcon} alt={'Pool details'} />
                 </button>
               </TooltipHover>
 
@@ -482,7 +504,10 @@ const PoolListItem: React.FC<IProps> = ({
                   disabled={isDisabled}
                   style={isDisabled ? { cursor: 'not-allowed' } : {}}
                   className={classes.actionButton}
-                  onClick={handleOpenPosition}>
+                  onClick={e => {
+                    e.stopPropagation()
+                    handleOpenPosition()
+                  }}>
                   <img
                     width={32}
                     height={32}
@@ -496,13 +521,14 @@ const PoolListItem: React.FC<IProps> = ({
               <TooltipHover title='Open in explorer'>
                 <button
                   className={classes.actionButton}
-                  onClick={() =>
+                  onClick={e => {
+                    e.stopPropagation()
                     window.open(
                       `https://eclipsescan.xyz/account/${poolAddress}${networkUrl}`,
                       '_blank',
                       'noopener,noreferrer'
                     )
-                  }>
+                  }}>
                   <img width={32} height={32} src={newTabBtnIcon} alt={'Exchange'} />
                 </button>
               </TooltipHover>
