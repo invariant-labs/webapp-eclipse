@@ -68,7 +68,7 @@ export const PoolInfo: React.FC<IPros> = ({
   return (
     <Grid className={classes.wrapper}>
       <Box display='flex' justifyContent='space-between' alignItems='center'>
-        <Typography className={classes.header}>Pool Info</Typography>
+        <Typography className={classes.header}>Overview</Typography>
         <Box display='flex' alignItems='center' gap={'8px'}>
           {!noData && (
             <img
