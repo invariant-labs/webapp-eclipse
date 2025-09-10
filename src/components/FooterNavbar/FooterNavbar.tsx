@@ -168,6 +168,7 @@ export const FooterNavbar = () => {
     liquidity: [/^liquidity\/*/],
     exchange: [/^exchange\/*/],
     sale: [/^presale\/*/],
+    lock: [/^lock\/*/],
     portfolio: [/^portfolio\/*/, /^newPosition\/*/, /^position\/*/],
 
     ...(typeOfNetwork === NetworkType.Testnet ? { creator: [/^creator\/*/] } : {}),

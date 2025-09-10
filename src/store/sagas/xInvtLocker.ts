@@ -32,24 +32,21 @@ import {
   ensureError,
   extractErrorCode,
   extractRuntimeErrorCode,
-  fetchMarketBitzStats,
   formatNumberWithoutSuffix,
-  getTokenPrice,
   mapErrorCodeToMessage,
   printBN
 } from '@utils/utils'
 import { closeSnackbar } from 'notistack'
 import {
-  AccountLayout,
   getAssociatedTokenAddressSync,
   TOKEN_2022_PROGRAM_ID,
   TOKEN_PROGRAM_ID
 } from '@solana/spl-token'
 import { accounts } from '@store/selectors/solanaWallet'
 import { BN } from '@coral-xyz/anchor'
-import { getBitzSupply } from '@invariant-labs/sbitz'
-export function* handleStake(action: PayloadAction<StakeLiquidityPayload>) {
-  const loaderStaking = createLoaderKey()
+
+export function* handleLock(action: PayloadAction<StakeLiquidityPayload>) {
+  const loaderLocking = createLoaderKey()
   const loaderSigningTx = createLoaderKey()
 
   const { amount: bitzAmount, byAmountIn } = action.payload
@@ -64,10 +61,10 @@ export function* handleStake(action: PayloadAction<StakeLiquidityPayload>) {
   try {
     yield put(
       snackbarsActions.add({
-        message: 'Staking BITZ...',
+        message: 'Locking INVT...',
         variant: 'pending',
         persist: true,
-        key: loaderStaking
+        key: loaderLocking
       })
     )
 
@@ -114,8 +111,8 @@ export function* handleStake(action: PayloadAction<StakeLiquidityPayload>) {
     if (!txid.length) {
       yield put(actions.setProgressState({ inProgress: false, success: false }))
 
-      closeSnackbar(loaderStaking)
-      yield put(snackbarsActions.remove(loaderStaking))
+      closeSnackbar(loaderLocking)
+      yield put(snackbarsActions.remove(loaderLocking))
     } else {
       const txDetails = yield* call([connection, connection.getParsedTransaction], txid, {
         maxSupportedTransactionVersion: 0
@@ -135,8 +132,8 @@ export function* handleStake(action: PayloadAction<StakeLiquidityPayload>) {
 
             yield put(actions.setProgressState({ inProgress: false, success: false }))
 
-            closeSnackbar(loaderStaking)
-            yield put(snackbarsActions.remove(loaderStaking))
+            closeSnackbar(loaderLocking)
+            yield put(snackbarsActions.remove(loaderLocking))
             closeSnackbar(loaderSigningTx)
             yield put(snackbarsActions.remove(loaderSigningTx))
 
@@ -153,7 +150,7 @@ export function* handleStake(action: PayloadAction<StakeLiquidityPayload>) {
 
         yield put(
           snackbarsActions.add({
-            message: 'BITZ staked successfully',
+            message: 'INVT locked successfully',
             variant: 'success',
             persist: false,
             txid
@@ -205,7 +202,7 @@ export function* handleStake(action: PayloadAction<StakeLiquidityPayload>) {
       } else {
         yield put(
           snackbarsActions.add({
-            message: 'BITZ staked successfully',
+            message: 'INVT locked successfully',
             variant: 'success',
             persist: false,
             txid
@@ -216,8 +213,8 @@ export function* handleStake(action: PayloadAction<StakeLiquidityPayload>) {
 
     yield put(actions.setProgressState({ inProgress: false, success: true }))
 
-    closeSnackbar(loaderStaking)
-    yield put(snackbarsActions.remove(loaderStaking))
+    closeSnackbar(loaderLocking)
+    yield put(snackbarsActions.remove(loaderLocking))
   } catch (e: unknown) {
     yield put(actions.setProgressState({ inProgress: false, success: false }))
 
@@ -246,8 +243,8 @@ export function* handleStake(action: PayloadAction<StakeLiquidityPayload>) {
 
     yield put(actions.setProgressState({ inProgress: false, success: false }))
 
-    closeSnackbar(loaderStaking)
-    yield put(snackbarsActions.remove(loaderStaking))
+    closeSnackbar(loaderLocking)
+    yield put(snackbarsActions.remove(loaderLocking))
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
 
@@ -276,8 +273,8 @@ export function* handleStake(action: PayloadAction<StakeLiquidityPayload>) {
   }
 }
 
-export function* handleUnstake(action: PayloadAction<StakeLiquidityPayload>) {
-  const loaderUnstaking = createLoaderKey()
+export function* handleUnlock(action: PayloadAction<StakeLiquidityPayload>) {
+  const loaderUnlocking = createLoaderKey()
   const loaderSigningTx = createLoaderKey()
 
   const { amount: sbitzAmount, byAmountIn } = action.payload
@@ -294,7 +291,7 @@ export function* handleUnstake(action: PayloadAction<StakeLiquidityPayload>) {
         message: 'Unstaking sBITZ...',
         variant: 'pending',
         persist: true,
-        key: loaderUnstaking
+        key: loaderUnlocking
       })
     )
 
@@ -341,8 +338,8 @@ export function* handleUnstake(action: PayloadAction<StakeLiquidityPayload>) {
     if (!txid.length) {
       yield put(actions.setProgressState({ inProgress: false, success: false }))
 
-      closeSnackbar(loaderUnstaking)
-      yield put(snackbarsActions.remove(loaderUnstaking))
+      closeSnackbar(loaderUnlocking)
+      yield put(snackbarsActions.remove(loaderUnlocking))
     } else {
       const txDetails = yield* call([connection, connection.getParsedTransaction], txid, {
         maxSupportedTransactionVersion: 0
@@ -362,8 +359,8 @@ export function* handleUnstake(action: PayloadAction<StakeLiquidityPayload>) {
 
             yield put(actions.setProgressState({ inProgress: false, success: false }))
 
-            closeSnackbar(loaderUnstaking)
-            yield put(snackbarsActions.remove(loaderUnstaking))
+            closeSnackbar(loaderUnlocking)
+            yield put(snackbarsActions.remove(loaderUnlocking))
             closeSnackbar(loaderSigningTx)
             yield put(snackbarsActions.remove(loaderSigningTx))
 
@@ -443,8 +440,8 @@ export function* handleUnstake(action: PayloadAction<StakeLiquidityPayload>) {
 
     yield put(actions.setProgressState({ inProgress: false, success: true }))
 
-    closeSnackbar(loaderUnstaking)
-    yield put(snackbarsActions.remove(loaderUnstaking))
+    closeSnackbar(loaderUnlocking)
+    yield put(snackbarsActions.remove(loaderUnlocking))
   } catch (e: unknown) {
     yield put(actions.setProgressState({ inProgress: false, success: false }))
 
@@ -473,8 +470,8 @@ export function* handleUnstake(action: PayloadAction<StakeLiquidityPayload>) {
 
     yield put(actions.setProgressState({ inProgress: false, success: false }))
 
-    closeSnackbar(loaderUnstaking)
-    yield put(snackbarsActions.remove(loaderUnstaking))
+    closeSnackbar(loaderUnlocking)
+    yield put(snackbarsActions.remove(loaderUnlocking))
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
 
@@ -503,120 +500,14 @@ export function* handleUnstake(action: PayloadAction<StakeLiquidityPayload>) {
   }
 }
 
-export function* handleGetStakedAmountAndBalance() {
-  const networkType = yield* select(network)
-  const rpc = yield* select(rpcAddress)
-  const wallet = yield* call(getWallet)
-  const connection = yield* call(getConnection)
-
-  const stakingProgram = yield* call(getStakingProgram, networkType, rpc, wallet as IWallet)
-  try {
-    const { stakedAmount, stakedTokenSupply } = yield* call([
-      stakingProgram,
-      stakingProgram.getStakedAmountAndStakedTokenSupply
-    ])
-
-    const [boost] = stakingProgram.getBoostAddressAndBump(BITZ_MAIN.address)
-    const ata = getAssociatedTokenAddressSync(BITZ_MAIN.address, boost, true)
-    const bitzAccountAmountInfo = yield* call([connection, connection.getTokenAccountBalance], ata)
-
-    yield put(
-      actions.setStakedAmountAndBalance({
-        stakedAmount,
-        stakedTokenSupply,
-        bitzTotalBalance: new BN(bitzAccountAmountInfo.value.amount)
-      })
-    )
-  } catch (error: any) {
-    console.error('Failed to get staked amount and balance:', error)
-    yield put(
-      actions.setStakedAmountAndBalance({
-        stakedAmount: null,
-        stakedTokenSupply: null,
-        bitzTotalBalance: null
-      })
-    )
-  }
-}
-
-export function* getMarketBitzStats(): Generator {
-  const networkType = yield* select(network)
-  const rpc = yield* select(rpcAddress)
-  const wallet = yield* call(getWallet)
-  const connection = yield* call(getConnection)
-  const price = yield* call(getTokenPrice, networkType, sBITZ_MAIN.address.toString())
-  const stakingProgram = yield* call(getStakingProgram, networkType, rpc, wallet as IWallet)
-  try {
-    const { stakedAmount, stakedTokenSupply } = yield* call([
-      stakingProgram,
-      stakingProgram.getStakedAmountAndStakedTokenSupply
-    ])
-
-    const bitzSupply = yield* call(getBitzSupply, connection)
-
-    const tokenAccounts = yield* call(
-      [connection, connection.getTokenAccountsByOwner],
-      new PublicKey(BITZ_TOKENS_ADDR),
-      {
-        mint: BITZ_MAIN.address
-      }
-    )
-
-    let totalBalance = 0n
-    for (const { account } of tokenAccounts.value) {
-      const data = AccountLayout.decode(account.data)
-      totalBalance += BigInt(data.amount.toString())
-    }
-
-    const stakedTokenSupplyAmount = +printBN(stakedTokenSupply, BITZ_MAIN.decimals)
-    const sBitzAmount = +printBN(stakedAmount, BITZ_MAIN.decimals)
-    const totalBitzSupply = +printBN(new BN(totalBalance), BITZ_MAIN.decimals)
-    const bitzSupplyAmount = +printBN(bitzSupply, BITZ_MAIN.decimals)
-    const response = yield* call(fetchMarketBitzStats)
-    const holders = response.data[sBITZ_MAIN.address.toString()].holders
-
-    const bitzAmount = totalBitzSupply - sBitzAmount
-
-    const marketCapSBitz = (Number(price) ?? 0) * stakedTokenSupplyAmount
-
-    yield* put(
-      actions.setCurrentStats({
-        bitzAmount,
-        marketCap: marketCapSBitz,
-        sBitzSupply: stakedTokenSupplyAmount,
-        totalSupply: bitzSupplyAmount,
-        sBitzAmount,
-        holders
-      })
-    )
-  } catch (e: unknown) {
-    const error = ensureError(e)
-    console.log(error)
-
-    yield* put(actions.setLoadingStats(false))
-
-    yield* call(handleRpcError, error.message)
-  }
-}
-
-export function* marketBitzStatsHandler(): Generator {
-  yield* takeLatest(actions.getCurrentStats, getMarketBitzStats)
-}
-
 export function* stakeHandler(): Generator {
-  yield* takeLatest(actions.stake, handleStake)
+  yield* takeLatest(actions.stake, handleLock)
 }
 
 export function* unstakeHandler(): Generator {
-  yield* takeLatest(actions.unstake, handleUnstake)
-}
-
-export function* stakedAmountAndBalanceHandler(): Generator {
-  yield* takeLatest(actions.getStakedAmountAndBalance, handleGetStakedAmountAndBalance)
+  yield* takeLatest(actions.unstake, handleUnlock)
 }
 
 export function* stakeSaga(): Generator {
-  yield all(
-    [stakeHandler, unstakeHandler, stakedAmountAndBalanceHandler, marketBitzStatsHandler].map(spawn)
-  )
+  yield all([stakeHandler, unstakeHandler].map(spawn))
 }

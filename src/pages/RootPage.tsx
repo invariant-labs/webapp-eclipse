@@ -55,7 +55,8 @@ const RootPage: React.FC = memo(() => {
     [ROUTES.POSITION, 'Invariant | Position Details'],
     [ROUTES.STATISTICS, 'Invariant | Statistics'],
     [ROUTES.CREATOR, 'Invariant | Creator'],
-    [ROUTES.STAKE, 'Invariant | Stake']
+    [ROUTES.STAKE, 'Invariant | Stake'],
+    [ROUTES.LOCK, 'Invariant | Lock']
   ])
 
   useEffect(() => {
