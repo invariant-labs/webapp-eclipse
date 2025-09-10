@@ -36,6 +36,7 @@ import {
   success as successState,
   inProgress
 } from '@store/selectors/xInvt'
+import { StatsLocker } from '@components/XInvtLocker/StatsLocker/StatsLocker'
 
 export const LockWrapper: React.FC = () => {
   const { classes } = useStyles()
@@ -177,48 +178,9 @@ export const LockWrapper: React.FC = () => {
   return (
     <Grid container className={classes.wrapper}>
       <SBitzBanner />
-      <Box className={classes.animatedContainer}>
+      <Box className={classes.panelsWrapper}>
+        <StatsLocker />
         <Box className={classes.liquidityStakingWrapper}>
-          <Box className={classes.titleWrapper}>
-            <Box className={classes.titleTextWrapper}>
-              <Typography component='h1'>INVT locking</Typography>
-              <Box className={classes.subheaderDescription}>
-                <Link
-                  to='https://docs.invariant.app/docs/sbitz'
-                  target='_blank'
-                  className={classes.learnMoreLink}>
-                  <span> {isSm ? 'More' : 'Learn More'}</span>{' '}
-                  <LaunchIcon classes={{ root: classes.clipboardIcon }} />
-                </Link>
-              </Box>
-            </Box>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              {/* <Button
-                className={classes.statsExpanderButton}
-                onClick={() => toggleExpand()}
-                disabled={!isConnected}>
-                <p>
-                  <img
-                    src={isExpanded ? EyeHide : EyeShow}
-                    width={20}
-                    height={20}
-                    style={{ opacity: isConnected ? 1 : 0.3 }}
-                  />
-                  Portfolio
-                </p>
-              </Button> */}
-              <TooltipHover title='Refresh'>
-                <Grid className={classes.refreshIconContainer}>
-                  <Button
-                    onClick={onRefresh}
-                    className={classes.refreshIconBtn}
-                    disabled={isBalanceLoading || isLoadingStats}>
-                    <img src={refreshIcon} className={classes.refreshIcon} alt='Refresh' />
-                  </Button>
-                </Grid>
-              </TooltipHover>
-            </Box>
-          </Box>
           <Box className={classes.stakingContentWrapper}>
             <XInvtLocker
               walletStatus={walletStatus}

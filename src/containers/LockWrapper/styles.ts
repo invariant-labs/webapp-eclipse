@@ -340,6 +340,12 @@ export const useStyles = makeStyles()(() => ({
   },
   stakedBitzContainer: {
     width: '100%'
+  },
+  panelsWrapper: {
+    width: '100%',
+    display: 'flex',
+    gap: 20,
+    justifyContent: 'center'
   }
 }))
 
