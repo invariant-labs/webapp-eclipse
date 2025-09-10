@@ -1,15 +1,10 @@
 import { Box, Button, Grid, Skeleton, Typography } from '@mui/material'
 import { formatNumberWithSuffix } from '@utils/utils'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useMobileStyles } from './style'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { initialXtoY, tickerToAddress } from '@utils/utils'
-import { airdropRainbowIcon, swapListIcon, warning2Icon, warningIcon } from '@static/icons'
-import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
-import { BN } from '@coral-xyz/anchor'
-import { usePromotedPool } from '@store/hooks/positionList/usePromotedPool'
-import { NetworkType, POOLS_TO_HIDE_POINTS_PER_24H } from '@store/consts/static'
-import { network as currentNetwork } from '@store/selectors/solanaConnection'
+import { swapListIcon, warning2Icon, warningIcon } from '@static/icons'
 import { useSelector } from 'react-redux'
 import { useTokenValues } from '@store/hooks/positionList/useTokenValues'
 import { singlePositionData } from '@store/selectors/positions'
@@ -20,7 +15,6 @@ import { lockerState } from '@store/selectors/locker'
 import { ILiquidityToken } from '@store/consts/types'
 import { ISinglePositionData } from '@components/Portfolio/Overview/Overview/Overview'
 import { IPositionItem } from '@store/consts/types'
-import { InactivePoolsPopover } from '../components/InactivePoolsPopover/InactivePoolsPopover'
 import { MinMaxChart } from '../components/MinMaxChart/MinMaxChart'
 import { ReactFitty } from 'react-fitty'
 
@@ -40,7 +34,6 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
   tokenXIcon,
   isUnknownX,
   isUnknownY,
-  poolAddress,
   tokenYIcon,
   fee,
   min,
@@ -49,7 +42,6 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
   id,
   isFullRange,
   setAllowPropagation,
-  poolData,
   isActive = false,
   currentPrice,
   tokenXLiq,
@@ -64,9 +56,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
   openPosition
 }) => {
   const { classes, cx } = useMobileStyles()
-  const airdropIconRef = useRef<any>(null)
-  const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
-  const [isPromotedPoolInactive, setIsPromotedPoolInactive] = useState(false)
+
   const positionSingleData: ISinglePositionData | undefined = useSelector(
     singlePositionData(id ?? '')
   )
@@ -81,58 +71,16 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
     }
   }, [isLockPositionModalOpen])
 
-  const networkSelector = useSelector(currentNetwork)
-
-  const { isPromoted, pointsPerSecond, estimated24hPoints } = usePromotedPool(
-    poolAddress,
-    position,
-    poolData
-  )
-
-  const handlePopoverState = (isOpen: boolean) => {
-    if (isOpen) {
-      setAllowPropagation(false)
-    } else {
-      setTimeout(() => {
-        setAllowPropagation(true)
-      }, 500)
-    }
-  }
-  const handleInteraction = (event: React.MouseEvent) => {
-    event.stopPropagation()
-    setIsPromotedPoolPopoverOpen(!isPromotedPoolPopoverOpen)
-    setAllowPropagation(false)
-  }
   useEffect(() => {
     const PROPAGATION_ALLOW_TIME = 500
 
-    const handleClickOutside = (event: MouseEvent) => {
-      const isClickInAirdropIcon =
-        airdropIconRef.current &&
-        (airdropIconRef.current as HTMLElement).contains(event.target as Node)
-      const isClickInPromotedPopover = document
-        .querySelector('.promoted-pool-popover')
-        ?.contains(event.target as Node)
-      const isClickInInactivePopover = document
-        .querySelector('.promoted-pool-inactive-popover')
-        ?.contains(event.target as Node)
-
-      if (!isClickInAirdropIcon && !isClickInPromotedPopover && !isClickInInactivePopover) {
-        if (isPromotedPoolPopoverOpen) {
-          setIsPromotedPoolPopoverOpen(false)
-        }
-
-        if (isPromotedPoolInactive) {
-          setIsPromotedPoolInactive(false)
-        }
-
-        setTimeout(() => {
-          setAllowPropagation(true)
-        }, PROPAGATION_ALLOW_TIME)
-      }
+    const handleClickOutside = () => {
+      setTimeout(() => {
+        setAllowPropagation(true)
+      }, PROPAGATION_ALLOW_TIME)
     }
 
-    if (isPromotedPoolPopoverOpen || isPromotedPoolInactive || isLockPositionModalOpen) {
+    if (isLockPositionModalOpen) {
       document.addEventListener('click', handleClickOutside)
     } else {
       document.removeEventListener('click', handleClickOutside)
@@ -141,96 +89,12 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
     return () => {
       document.removeEventListener('click', handleClickOutside)
     }
-  }, [isPromotedPoolPopoverOpen, isPromotedPoolInactive, isLockPositionModalOpen])
+  }, [isLockPositionModalOpen])
 
   useEffect(() => {
     setAllowPropagation(!isLockPositionModalOpen)
   }, [isLockPositionModalOpen])
-  const promotedIconFragment = useMemo(() => {
-    if (isPromoted && isActive && !positionSingleData?.isLocked) {
-      return (
-        <>
-          <PromotedPoolPopover
-            showEstPointsFirst
-            isActive={isActive}
-            headerText={
-              <>
-                This position is currently <b>earning points</b>
-              </>
-            }
-            pointsLabel={'Total points distributed across the pool per 24H:'}
-            estPoints={
-              POOLS_TO_HIDE_POINTS_PER_24H.includes(poolAddress.toString())
-                ? new BN(0)
-                : estimated24hPoints
-            }
-            points={
-              POOLS_TO_HIDE_POINTS_PER_24H.includes(poolAddress.toString())
-                ? new BN(0)
-                : new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60)
-            }>
-            <div
-              className={classes.actionButton}
-              onClick={() => {
-                setIsPromotedPoolPopoverOpen(!isPromotedPoolPopoverOpen)
-                setAllowPropagation(false)
-              }}>
-              <img src={airdropRainbowIcon} alt={'Airdrop'} style={{ height: '32px' }} />
-            </div>
-          </PromotedPoolPopover>
-        </>
-      )
-    }
 
-    return (
-      <>
-        <InactivePoolsPopover
-          isActive={isActive}
-          isPromoted={isPromoted}
-          isLocked={positionSingleData?.isLocked ?? false}>
-          <div
-            className={classes.actionButton}
-            onClick={() => {
-              const newState = !isPromotedPoolInactive
-              setIsPromotedPoolInactive(newState)
-              handlePopoverState(newState)
-            }}
-            onPointerEnter={() => {
-              if (window.matchMedia('(hover: hover)').matches) {
-                setIsPromotedPoolInactive(true)
-                handlePopoverState(true)
-              }
-            }}
-            onPointerLeave={() => {
-              if (window.matchMedia('(hover: hover)').matches) {
-                setIsPromotedPoolInactive(false)
-                handlePopoverState(false)
-              }
-            }}>
-            <img
-              src={airdropRainbowIcon}
-              alt={'Airdrop'}
-              style={{
-                height: '32px',
-                opacity: 0.3,
-                filter: 'grayscale(1)'
-              }}
-            />
-          </div>
-        </InactivePoolsPopover>
-      </>
-    )
-  }, [
-    isPromoted,
-    isActive,
-    isPromotedPoolPopoverOpen,
-    isPromotedPoolInactive,
-    classes.actionButton,
-    handleInteraction,
-    airdropIconRef,
-    estimated24hPoints,
-    pointsPerSecond
-  ])
   const [xToY, setXToY] = useState<boolean>(
     initialXtoY(tickerToAddress(network, tokenXName), tickerToAddress(network, tokenYName))
   )
@@ -508,8 +372,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
             </Box>
           </Box>
 
-          <Box ref={airdropIconRef} className={classes.actionButtonContainer}>
-            {networkSelector === NetworkType.Mainnet && <>{promotedIconFragment}</>}
+          <Box className={classes.actionButtonContainer}>
             <Button
               className={classes.button}
               onClick={e => {

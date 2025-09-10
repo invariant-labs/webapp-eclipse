@@ -9,7 +9,7 @@ import {
 } from '@store/consts/static'
 import { actions as poolsActions, PoolWithAddress } from '@store/reducers/pools'
 import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
-import { actions as leaderboardActions } from '@store/reducers/leaderboard'
+
 import { actions } from '@store/reducers/swap'
 import {
   isLoadingLatestPoolsForTransaction,
@@ -24,7 +24,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import { TokenPriceData } from '@store/consts/types'
 import { VariantType } from 'notistack'
 import { BN } from '@coral-xyz/anchor'
-import { feeds, pointsPerUsd, swapPairs, swapMultiplier } from '@store/selectors/leaderboard'
 import { Market } from '@invariant-labs/sdk-eclipse'
 import { actions as swapActions } from '@store/reducers/swap'
 import { actions as statsActions } from '@store/reducers/stats'
@@ -118,18 +117,14 @@ export const WrappedSwap = ({
 
   const tickmap = useSelector(tickMaps)
   const poolTicksForSimulation = useSelector(nearestPoolTicksForPair)
-  const multiplyer = useSelector(swapMultiplier)
+
   const { success, inProgress } = useSelector(swapPool)
   const isFetchingNewPool = useSelector(isLoadingLatestPoolsForTransaction)
-  const pointsPerUsdFee = useSelector(pointsPerUsd)
-  const promotedSwapPairs = useSelector(swapPairs)
-  const priceFeeds = useSelector(feeds)
 
   const [progress, setProgress] = useState<ProgressState>('none')
   const { setTokenFrom, setTokenTo, tokenFrom, tokenTo } = tokensFromState
 
   useEffect(() => {
-    dispatch(leaderboardActions.getLeaderboardConfig())
     dispatch(statsActions.getCurrentIntervalStats({ interval: Intervals.Daily }))
   }, [])
 
@@ -325,10 +320,6 @@ export const WrappedSwap = ({
       isTimeoutError={isTimeoutError}
       deleteTimeoutError={deleteTimeoutError}
       canNavigate={canNavigate}
-      pointsPerUsdFee={pointsPerUsdFee}
-      feeds={priceFeeds}
-      promotedSwapPairs={promotedSwapPairs}
-      swapMultiplier={multiplyer}
       market={market}
       tokensDict={tokensDict}
       swapAccounts={swapAccounts}

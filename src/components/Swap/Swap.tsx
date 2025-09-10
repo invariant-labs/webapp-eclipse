@@ -18,7 +18,6 @@ import {
 } from '@store/consts/static'
 import {
   addressToTicker,
-  calculatePoints,
   convertBalanceToBN,
   findPairs,
   formatNumberWithoutSuffix,
@@ -44,9 +43,6 @@ import { PoolWithAddress } from '@store/reducers/pools'
 import { PublicKey } from '@solana/web3.js'
 import { Tick, Tickmap, Market } from '@invariant-labs/sdk-eclipse/lib/market'
 import { refreshIcon, settingIcon, swapArrowsIcon, warningIcon } from '@static/icons'
-import SwapPointsPopover from '@components/Modals/SwapPointsPopover/SwapPointsPopover'
-import AnimatedWaves from './SwapComponents/AnimatedWaves/AnimatedWaves'
-import { EstimatedPointsLabel } from './SwapComponents/EstimatedPointsLabel/EstimatedPointsLabel'
 import { useNavigate } from 'react-router-dom'
 import { FetcherRecords, Pair, SimulationTwoHopResult } from '@invariant-labs/sdk-eclipse'
 import { theme } from '@static/theme'
@@ -117,17 +113,6 @@ export interface ISwap {
   isTimeoutError: boolean
   deleteTimeoutError: () => void
   canNavigate: boolean
-  pointsPerUsdFee: number
-  feeds: Record<
-    string,
-    {
-      pricePublishTime: number
-      priceDecimals: number
-      price: string
-    }
-  >
-  promotedSwapPairs: { tokenX: string; tokenY: string }[]
-  swapMultiplier: string
   market: Market
   tokensDict: Record<string, SwapToken>
   swapAccounts: FetcherRecords
@@ -206,10 +191,6 @@ export const Swap: React.FC<ISwap> = ({
   isTimeoutError,
   deleteTimeoutError,
   canNavigate,
-  pointsPerUsdFee,
-  feeds,
-  promotedSwapPairs,
-  swapMultiplier,
   market,
   tokensDict,
   swapAccounts,
@@ -230,8 +211,6 @@ export const Swap: React.FC<ISwap> = ({
   const [throttle, setThrottle] = React.useState<boolean>(false)
   const [settings, setSettings] = React.useState<boolean>(false)
   const [detailsOpen, setDetailsOpen] = React.useState<boolean>(false)
-  const [isFirstPairGivingPoints, setIsFirstPairGivingPoints] = React.useState<boolean>(false)
-  const [isSecondPairGivingPoints, setIsSecondPairGivingPoints] = React.useState<boolean>(false)
 
   const { setTokenFromIndex, setTokenToIndex, tokenFromIndex, tokenToIndex } = tokensState
   const { rateReversed, setRateReversed } = rateState
@@ -248,7 +227,6 @@ export const Swap: React.FC<ISwap> = ({
   const txDown = useMediaQuery(theme.breakpoints.down(483))
   const txDown2 = useMediaQuery(theme.breakpoints.down(360))
 
-  const [pointsForSwap, setPointsForSwap] = React.useState<BN | null>(null)
   const [simulateResult, setSimulateResult] = React.useState<{
     amountOut: BN
     poolIndex: number
@@ -322,53 +300,6 @@ export const Swap: React.FC<ISwap> = ({
     if (tokenFromIndex === null || tokenToIndex === null) return
     if (!tokens[tokenFromIndex] || !tokens[tokenToIndex]) return
 
-    if (swapType === SwapType.WithHop) {
-      const isFirstPoints = promotedSwapPairs.some(
-        item =>
-          (new PublicKey(item.tokenX).equals(
-            simulationPath.tokenFrom?.assetAddress ?? new PublicKey('')
-          ) &&
-            new PublicKey(item.tokenY).equals(
-              simulationPath.tokenBetween?.assetAddress ?? new PublicKey('')
-            )) ||
-          (new PublicKey(item.tokenX).equals(
-            simulationPath.tokenBetween?.assetAddress ?? new PublicKey('')
-          ) &&
-            new PublicKey(item.tokenY).equals(
-              simulationPath.tokenFrom?.assetAddress ?? new PublicKey('')
-            ))
-      )
-      const isSecondPoints = promotedSwapPairs.some(
-        item =>
-          (new PublicKey(item.tokenX).equals(
-            simulationPath.tokenBetween?.assetAddress ?? new PublicKey('')
-          ) &&
-            new PublicKey(item.tokenY).equals(
-              simulationPath.tokenTo?.assetAddress ?? new PublicKey('')
-            )) ||
-          (new PublicKey(item.tokenX).equals(
-            simulationPath.tokenTo?.assetAddress ?? new PublicKey('')
-          ) &&
-            new PublicKey(item.tokenY).equals(
-              simulationPath.tokenBetween?.assetAddress ?? new PublicKey('')
-            ))
-      )
-      setIsFirstPairGivingPoints(isFirstPoints)
-      setIsSecondPairGivingPoints(isSecondPoints)
-    } else {
-      const isPoints = promotedSwapPairs.some(
-        item =>
-          (new PublicKey(item.tokenX).equals(tokens[tokenToIndex].assetAddress) &&
-            new PublicKey(item.tokenY).equals(tokens[tokenFromIndex].assetAddress)) ||
-          (new PublicKey(item.tokenX).equals(tokens[tokenFromIndex].assetAddress) &&
-            new PublicKey(item.tokenY).equals(tokens[tokenToIndex].assetAddress))
-      )
-      setIsFirstPairGivingPoints(isPoints)
-      setIsSecondPairGivingPoints(false)
-    }
-
-    setPointsForSwap(null)
-
     clearTimeout(urlUpdateTimeoutRef.current)
     urlUpdateTimeoutRef.current = setTimeout(() => {
       const fromTicker = addressToTicker(network, tokens[tokenFromIndex].assetAddress.toString())
@@ -386,74 +317,10 @@ export const Swap: React.FC<ISwap> = ({
     tokenToIndex,
     tokens.length,
     network,
-    promotedSwapPairs,
     simulationPath.tokenFrom,
     simulationPath.tokenBetween,
     simulationPath.tokenTo
   ])
-
-  useEffect(() => {
-    if (simulateResult && (isFirstPairGivingPoints || isSecondPairGivingPoints)) {
-      const pointsPerUSD = new BN(pointsPerUsdFee, 'hex')
-
-      if (swapType === SwapType.WithHop) {
-        const firstFeed = feeds[simulationPath.tokenFrom?.assetAddress.toString() ?? '']
-        const secondFeed = feeds[simulationPath.tokenBetween?.assetAddress.toString() ?? '']
-
-        const firstPoints = isFirstPairGivingPoints
-          ? calculatePoints(
-              simulationPath.firstAmount ?? new BN(0),
-              simulationPath.tokenFrom?.decimals ?? 0,
-              simulationPath.firstPair?.feeTier.fee ?? new BN(0),
-              firstFeed?.price ?? '0',
-              firstFeed?.priceDecimals ?? 0,
-              pointsPerUSD
-            )
-          : new BN(0)
-        const secondPoints = isSecondPairGivingPoints
-          ? calculatePoints(
-              simulationPath.secondAmount ?? new BN(0),
-              simulationPath.tokenBetween?.decimals ?? 0,
-              simulationPath.secondPair?.feeTier.fee ?? new BN(0),
-              secondFeed?.price ?? '0',
-              secondFeed?.priceDecimals ?? 0,
-              pointsPerUSD
-            )
-          : new BN(0)
-        setPointsForSwap(firstPoints.add(secondPoints))
-      } else {
-        const feePercentage = pools[simulateResult.poolIndex ?? 0]?.fee ?? new BN(0)
-        let desiredAmount: string
-        let desiredIndex: number | null
-        if (inputRef === inputTarget.FROM) {
-          desiredIndex = tokenFromIndex
-          desiredAmount = amountFrom
-        } else {
-          desiredIndex = tokenToIndex
-          desiredAmount = amountTo
-        }
-        const feed = feeds[tokens[desiredIndex!].assetAddress.toString()]
-        const amount = convertBalanceToBN(desiredAmount, tokens[desiredIndex!].decimals)
-
-        if (!feed || !feed.price || simulateResult.amountOut.eqn(0)) {
-          setPointsForSwap(new BN(0))
-          return
-        }
-
-        const points = calculatePoints(
-          amount,
-          tokens[desiredIndex!].decimals,
-          feePercentage,
-          feed.price,
-          feed.priceDecimals,
-          pointsPerUSD
-        )
-        setPointsForSwap(points)
-      }
-    } else {
-      setPointsForSwap(new BN(0))
-    }
-  }, [simulateResult, simulateWithHopResult, isFirstPairGivingPoints, isSecondPairGivingPoints])
 
   useEffect(() => {
     if (!!tokens.length && tokenFromIndex === null && tokenToIndex === null && canNavigate) {
@@ -979,34 +846,6 @@ export const Swap: React.FC<ISwap> = ({
     onSelectInput: () => setInputRef(inputTarget.FROM)
   })
 
-  const stringPointsValue = useMemo(() => printBN(pointsForSwap || new BN(0), 8), [pointsForSwap])
-  const { decimalIndex, isLessThanOne } = useMemo(() => {
-    const dotIndex = stringPointsValue.indexOf('.')
-    let decimalIndex
-    if (dotIndex === -1) {
-      decimalIndex = 2
-    } else {
-      for (let i = dotIndex + 1; i < stringPointsValue.length; i++) {
-        if (stringPointsValue[i] !== '0') {
-          decimalIndex = i - dotIndex
-          break
-        }
-      }
-    }
-
-    const isLessThanOne = Number(stringPointsValue) < 1
-    return { decimalIndex, isLessThanOne }
-  }, [stringPointsValue])
-
-  const isAnyBlurShowed =
-    lockAnimation ||
-    (getStateMessage() === 'Loading' &&
-      (inputRef === inputTarget.TO || inputRef === inputTarget.DEFAULT)) ||
-    lockAnimation ||
-    (getStateMessage() === 'Loading' &&
-      (inputRef === inputTarget.FROM || inputRef === inputTarget.DEFAULT)) ||
-    pointsForSwap === null
-
   const oraclePriceDiffPercentage = useMemo(() => {
     if (!tokenFromPriceData || !tokenToPriceData) return 0
 
@@ -1073,24 +912,6 @@ export const Swap: React.FC<ISwap> = ({
       <Grid container className={classes.header}>
         <Box className={classes.leftSection}>
           <Typography component='h1'>Swap tokens</Typography>
-          {network === NetworkType.Mainnet ? (
-            <SwapPointsPopover
-              isPairGivingPoints={isFirstPairGivingPoints || isSecondPairGivingPoints}
-              network={network}
-              promotedSwapPairs={promotedSwapPairs}>
-              <div>
-                <EstimatedPointsLabel
-                  isAnimating={isFirstPairGivingPoints || isSecondPairGivingPoints}
-                  decimalIndex={decimalIndex}
-                  pointsForSwap={pointsForSwap}
-                  swapMultiplier={swapMultiplier}
-                  isLessThanOne={isLessThanOne}
-                  stringPointsValue={stringPointsValue}
-                  isAnyBlurShowed={isAnyBlurShowed}
-                />
-              </div>
-            </SwapPointsPopover>
-          ) : null}
         </Box>
 
         <Box className={classes.rightSection}>
@@ -1148,29 +969,13 @@ export const Swap: React.FC<ISwap> = ({
           </span>
         </Grid>
       </Collapse>
-      <Box
-        className={cx(
-          classes.borderContainer,
-          (isFirstPairGivingPoints || isSecondPairGivingPoints) &&
-            classes.gradientBorderForContainer
-        )}>
+      <Box className={classes.borderContainer}>
         <Grid container className={classes.root} direction='column'>
-          <AnimatedWaves
-            wavePosition={'top'}
-            isAnimating={isFirstPairGivingPoints || isSecondPairGivingPoints}
-          />
-          <Typography
-            className={cx(
-              classes.swapLabel,
-              (isFirstPairGivingPoints || isSecondPairGivingPoints) && classes.textShadowLabel
-            )}>
-            Pay
-          </Typography>
+          <Typography className={classes.swapLabel}>Pay</Typography>
           <Box
             className={cx(
               classes.exchangeRoot,
-              lockAnimation ? classes.amountInputDown : undefined,
-              (isFirstPairGivingPoints || isSecondPairGivingPoints) && classes.darkBackground
+              lockAnimation ? classes.amountInputDown : undefined
             )}>
             <ExchangeAmountInput
               value={amountFrom}
@@ -1233,16 +1038,12 @@ export const Swap: React.FC<ISwap> = ({
               }
               hiddenUnknownTokens={hideUnknownTokens}
               network={network}
-              isPairGivingPoints={isFirstPairGivingPoints || isSecondPairGivingPoints}
             />
           </Box>
 
           <Box className={classes.tokenComponentTextContainer}>
             <Box
-              className={cx(
-                classes.swapArrowBox,
-                (isFirstPairGivingPoints || isSecondPairGivingPoints) && classes.darkBackground
-              )}
+              className={classes.swapArrowBox}
               onClick={() => {
                 setIsReversingTokens(true)
                 if (lockAnimation) return
@@ -1261,12 +1062,7 @@ export const Swap: React.FC<ISwap> = ({
                   setAmountFrom(tmpAmount)
                 }, 10)
               }}>
-              <Box
-                className={cx(
-                  classes.swapImgRoot,
-                  (isFirstPairGivingPoints || isSecondPairGivingPoints) &&
-                    classes.componentBackground
-                )}>
+              <Box className={classes.swapImgRoot}>
                 <img
                   src={swapArrowsIcon}
                   style={{
@@ -1278,19 +1074,14 @@ export const Swap: React.FC<ISwap> = ({
               </Box>
             </Box>
           </Box>
-          <Typography
-            className={cx(
-              classes.swapLabel,
-              (isFirstPairGivingPoints || isSecondPairGivingPoints) && classes.textShadowLabel
-            )}
-            mt={1.5}>
+          <Typography className={classes.swapLabel} mt={1.5}>
             Receive
           </Typography>
           <Box
             className={cx(
               classes.exchangeRoot,
-              lockAnimation ? classes.amountInputUp : undefined,
-              (isFirstPairGivingPoints || isSecondPairGivingPoints) && classes.darkBackground
+              classes.transactionBottom,
+              lockAnimation ? classes.amountInputUp : undefined
             )}>
             <ExchangeAmountInput
               value={amountTo}
@@ -1353,7 +1144,6 @@ export const Swap: React.FC<ISwap> = ({
               }
               hiddenUnknownTokens={hideUnknownTokens}
               network={network}
-              isPairGivingPoints={isFirstPairGivingPoints || isSecondPairGivingPoints}
             />
           </Box>
           <Box
@@ -1449,12 +1239,7 @@ export const Swap: React.FC<ISwap> = ({
                     )}
                 </Box>
                 {canShowDetails ? (
-                  <Box
-                    className={cx(
-                      classes.exchangeRateWrapper,
-                      (isFirstPairGivingPoints || isSecondPairGivingPoints) &&
-                        classes.darkBackground
-                    )}>
+                  <Box className={classes.exchangeRateWrapper}>
                     <ExchangeRate
                       onClick={() => setRateReversed(!rateReversed)}
                       tokenFromSymbol={tokens[rateReversed ? tokenToIndex : tokenFromIndex].symbol}
@@ -1491,7 +1276,6 @@ export const Swap: React.FC<ISwap> = ({
                 tokenFromPrice={tokenFromPriceData?.price}
                 copyTokenAddressHandler={copyTokenAddressHandler}
                 network={network}
-                isPairGivingPoints={isFirstPairGivingPoints || isSecondPairGivingPoints}
               />
             </Box>
             {walletStatus !== Status.Initialized && getStateMessage() !== 'Loading' ? (
@@ -1581,10 +1365,6 @@ export const Swap: React.FC<ISwap> = ({
               />
             )}
           </Box>
-          <AnimatedWaves
-            wavePosition={'bottom'}
-            isAnimating={isFirstPairGivingPoints || isSecondPairGivingPoints}
-          />
         </Grid>
       </Box>
     </Grid>

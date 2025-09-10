@@ -1,7 +1,6 @@
 import { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 import { commonTokensForNetworks, NetworkType } from '@store/consts/static'
 import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
-import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { PublicKey } from '@solana/web3.js'
 import { useEffect, useMemo, useState } from 'react'
@@ -225,10 +224,6 @@ export const WrappedLimitOrder = ({
       ]
     })
   }, [userOrders, orderBook, allPools.length, tokenToPriceData?.price, tokenFromPriceData?.price])
-
-  useEffect(() => {
-    dispatch(leaderboardActions.getLeaderboardConfig())
-  }, [])
 
   const onRefresh = () => {
     dispatch(walletActions.getBalance())

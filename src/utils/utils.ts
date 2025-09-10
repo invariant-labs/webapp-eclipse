@@ -1,6 +1,5 @@
 import {
   calculatePriceSqrt,
-  DENOMINATOR,
   FetcherRecords,
   getTokenProgramAddress,
   MAX_TICK,
@@ -80,7 +79,6 @@ import {
   WETH_MAIN,
   KYSOL_MAIN,
   EZSOL_MAIN,
-  LEADERBOARD_DECIMAL,
   POSITIONS_PER_PAGE,
   MAX_CROSSES_IN_SINGLE_TX_WITH_LUTS,
   ES_MAIN,
@@ -2174,24 +2172,6 @@ export const generateHash = (str: string): string => {
   return Math.abs(hash).toString(16).padStart(8, '0')
 }
 
-export const calculatePoints = (
-  amount: BN,
-  decimals: number,
-  feePercentage: BN,
-  priceFeed: string,
-  priceDecimals: number,
-  pointsPerUSD: BN
-) => {
-  const nominator = amount
-    .mul(feePercentage)
-    .mul(new BN(priceFeed))
-    .mul(pointsPerUSD)
-    .mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL)))
-  const denominator = new BN(10).pow(new BN(priceDecimals + decimals))
-
-  return nominator.div(denominator).div(new BN(DENOMINATOR))
-}
-
 export const getConcentrationIndex = (concentrationArray: number[], neededValue: number = 34) => {
   if (neededValue > concentrationArray[concentrationArray.length - 1]) {
     return concentrationArray.length - 1
@@ -2326,7 +2306,6 @@ export const ROUTES = {
   POSITION_WITH_ID: '/position/:id',
   PORTFOLIO: '/portfolio',
   CREATOR: '/creator',
-  POINTS: '/points',
   STAKE: '/stake',
 
   getExchangeRoute: (item1?: string, item2?: string): string => {

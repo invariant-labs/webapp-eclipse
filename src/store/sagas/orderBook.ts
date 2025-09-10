@@ -225,7 +225,7 @@ export function* handleAddLimitOrder(action: PayloadAction<IncreaseLimitOrderLiq
               meta,
               xToY ? TokenType.TokenX : TokenType.TokenY
             )
-
+            console.log(amountX)
             const token = allTokens[xToY ? pair.tokenX.toString() : pair.tokenY.toString()]
 
             yield put(
