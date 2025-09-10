@@ -132,7 +132,7 @@ export const printBNandTrimZeros = (amount: BN, decimals: number, decimalPlaces?
   return trimZeros(Number(printBN(amount, decimals)).toFixed(decimalPlaces ?? decimals))
 }
 
-export const printBN = (amount: BN, decimals: number): string => {
+export const printBN = (amount: BN | undefined, decimals: number): string => {
   if (!amount) {
     return '0'
   }
@@ -455,7 +455,7 @@ export const parseLiquidityInRange = (currentTickIndex: number, ticks: Tick[]) =
     return {
       liquidity:
         Math.abs(tick.index - currentTickIndex) > MAX_PLOT_VISIBLE_TICK_RANGE
-          ? 0
+          ? new BN(0)
           : currentLiquidity,
       index: tick.index
     }
@@ -1881,7 +1881,7 @@ export const initialXtoY = (tokenXAddress?: string | null, tokenYAddress?: strin
 }
 
 export const parseFeeToPathFee = (fee: BN): string => {
-  const parsedFee = (fee / Math.pow(10, 8)).toString().padStart(3, '0')
+  const parsedFee = (+fee.toString() / Math.pow(10, 8)).toString().padStart(3, '0')
   return parsedFee.slice(0, parsedFee.length - 2) + '_' + parsedFee.slice(parsedFee.length - 2)
 }
 
@@ -2550,9 +2550,9 @@ export enum TokenType {
 export const getAmountFromInitPositionInstruction = (
   meta: ParsedTransactionMeta,
   type: TokenType
-): number => {
+): BN => {
   if (!meta.innerInstructions) {
-    return 0
+    return new BN(0)
   }
 
   const innerInstruction =
@@ -2635,6 +2635,41 @@ export const getAddAmountFromSwapAndAddLiquidity = (
   )[type === TokenType.TokenX ? 2 : 3] as ParsedInstruction | undefined
 
   return instruction?.parsed.info.amount || instruction?.parsed.info.tokenAmount.amount
+}
+
+export const getAmountFromLimitOrderInstruction = (
+  meta: ParsedTransactionMeta,
+  type: TokenType
+): any => {
+  if (!meta.innerInstructions) {
+    return 0
+  }
+
+  try {
+    const innerInstruction =
+      meta.innerInstructions.find(
+        innerInstruction =>
+          !!innerInstruction.instructions.find(
+            instruction =>
+              (instruction as ParsedInstruction)?.parsed.type === 'transfer' ||
+              (instruction as ParsedInstruction)?.parsed.type === 'transferChecked'
+          )
+      ) ?? meta.innerInstructions[0]
+
+    const instruction = innerInstruction.instructions.filter(
+      instruction =>
+        (instruction as ParsedInstruction)?.parsed.type === 'transfer' ||
+        (instruction as ParsedInstruction)?.parsed.type === 'transferChecked'
+    )[type === TokenType.TokenX ? 0 : 1] as ParsedInstruction | undefined
+
+    if (!instruction) {
+      return 0
+    }
+
+    return instruction?.parsed.info.amount || instruction?.parsed.info.tokenAmount.amount
+  } catch (error) {
+    return 0
+  }
 }
 
 export const getAmountFromClaimFeeInstruction = (

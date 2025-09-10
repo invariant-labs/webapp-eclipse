@@ -28,13 +28,11 @@ import {
   ROUTES,
   trimLeadingZeros
 } from '@utils/utils'
-import { Swap as SwapData } from '@store/reducers/swap'
 import { Status } from '@store/reducers/solanaWallet'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { blurContent, createButtonActions, unblurContent } from '@utils/uiUtils'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import ExchangeRate from './ExchangeRate/ExchangeRate'
-import TransactionDetailsBox from './TransactionDetailsBox/TransactionDetailsBox'
+import ExchangeRate from './SwapComponents/ExchangeRate/ExchangeRate'
 import useStyles from './style'
 import { TokenPriceData } from '@store/consts/types'
 import TokensInfo from './TokensInfo/TokensInfo'
@@ -44,11 +42,11 @@ import { DECIMAL, fromFee, SimulationStatus } from '@invariant-labs/sdk-eclipse/
 import { PoolWithAddress } from '@store/reducers/pools'
 import { PublicKey } from '@solana/web3.js'
 import { Tick, Tickmap, Market } from '@invariant-labs/sdk-eclipse/lib/market'
-import { auditIcon, refreshIcon, settingIcon, swapArrowsIcon, warningIcon } from '@static/icons'
+import { refreshIcon, settingIcon, swapArrowsIcon, warningIcon } from '@static/icons'
 import { useNavigate } from 'react-router-dom'
 import { FetcherRecords, Pair, SimulationTwoHopResult } from '@invariant-labs/sdk-eclipse'
 import { theme } from '@static/theme'
-
+import TransactionDetailsBox from './SwapComponents/TransactionDetailsBox/TransactionDetailsBox'
 export interface Pools {
   tokenX: PublicKey
   tokenY: PublicKey
@@ -73,7 +71,6 @@ export interface ISwap {
   isFetchingNewPool: boolean
   onRefresh: (tokenFrom: number | null, tokenTo: number | null) => void
   walletStatus: Status
-  swapData: SwapData
   tokens: SwapToken[]
   pools: PoolWithAddress[]
   tickmap: { [x: string]: Tickmap }
@@ -121,18 +118,41 @@ export interface ISwap {
   swapAccounts: FetcherRecords
   swapIsLoading: boolean
   wrappedETHBalance: BN | null
+  tokensState: {
+    tokenFromIndex: number | null
+    setTokenFromIndex: React.Dispatch<React.SetStateAction<number | null>>
+    tokenToIndex: number | null
+    setTokenToIndex: React.Dispatch<React.SetStateAction<number | null>>
+  }
+  rateState: {
+    rateReversed: boolean
+    setRateReversed: React.Dispatch<React.SetStateAction<boolean>>
+  }
+  inputState: { inputRef: string; setInputRef: React.Dispatch<React.SetStateAction<string>> }
+  lockAnimationState: {
+    lockAnimation: boolean
+    setLockAnimation: React.Dispatch<React.SetStateAction<boolean>>
+  }
+  swapState: {
+    swap: boolean | null
+    setSwap: React.Dispatch<React.SetStateAction<boolean | null>>
+  }
+  rotatesState: {
+    rotates: number
+    setRotates: React.Dispatch<React.SetStateAction<number>>
+  }
 }
 
 export type SimulationPath = {
   tokenFrom: SwapToken | null
   tokenBetween: SwapToken | null
   tokenTo: SwapToken | null
-  firstPair: BN | null
-  secondPair: BN | null
-  firstAmount: BN | null
-  secondAmount: BN | null
-  firstPriceImpact: BN | null
-  secondPriceImpact: BN | null
+  firstPair: Pair | null
+  secondPair: Pair | null
+  firstAmount: BN
+  secondAmount: BN
+  firstPriceImpact: BN
+  secondPriceImpact: BN
 }
 
 export const Swap: React.FC<ISwap> = ({
@@ -174,31 +194,31 @@ export const Swap: React.FC<ISwap> = ({
   market,
   tokensDict,
   swapAccounts,
-  swapIsLoading
+  swapIsLoading,
+  tokensState,
+  rateState,
+  inputState,
+  lockAnimationState,
+  rotatesState,
+  swapState
 }) => {
   const { classes, cx } = useStyles()
 
-  const [tokenFromIndex, setTokenFromIndex] = React.useState<number | null>(null)
-  const [tokenToIndex, setTokenToIndex] = React.useState<number | null>(null)
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
-  const [lockAnimation, setLockAnimation] = React.useState<boolean>(false)
   const [amountFrom, setAmountFrom] = React.useState<string>('')
   const [amountTo, setAmountTo] = React.useState<string>('')
-  const [swap, setSwap] = React.useState<boolean | null>(null)
-  const [rotates, setRotates] = React.useState<number>(0)
   const [slippTolerance, setSlippTolerance] = React.useState<string>(initialSlippage)
   const [throttle, setThrottle] = React.useState<boolean>(false)
   const [settings, setSettings] = React.useState<boolean>(false)
   const [detailsOpen, setDetailsOpen] = React.useState<boolean>(false)
-  const [inputRef, setInputRef] = React.useState<string>(inputTarget.DEFAULT)
-  const [rateReversed, setRateReversed] = React.useState<boolean>(
-    tokenFromIndex && tokenToIndex
-      ? !initialXtoY(
-          tokens[tokenFromIndex].assetAddress.toString(),
-          tokens[tokenToIndex].assetAddress.toString()
-        )
-      : false
-  )
+
+  const { setTokenFromIndex, setTokenToIndex, tokenFromIndex, tokenToIndex } = tokensState
+  const { rateReversed, setRateReversed } = rateState
+  const { inputRef, setInputRef } = inputState
+  const { lockAnimation, setLockAnimation } = lockAnimationState
+  const { rotates, setRotates } = rotatesState
+  const { swap, setSwap } = swapState
+
   const [rateLoading, setRateLoading] = React.useState<boolean>(false)
   const [refresherTime, setRefresherTime] = React.useState<number>(REFRESHER_INTERVAL)
   const [hideUnknownTokens, setHideUnknownTokens] = React.useState<boolean>(
@@ -235,10 +255,10 @@ export const Swap: React.FC<ISwap> = ({
     tokenTo: null,
     firstPair: null,
     secondPair: null,
-    firstAmount: null,
-    secondAmount: null,
-    firstPriceImpact: null,
-    secondPriceImpact: null
+    firstAmount: new BN(0),
+    secondAmount: new BN(0),
+    firstPriceImpact: new BN(0),
+    secondPriceImpact: new BN(0)
   })
   const [bestAmount, setBestAmount] = useState(new BN(0))
   const [swapType, setSwapType] = useState(SwapType.Normal)
@@ -258,8 +278,8 @@ export const Swap: React.FC<ISwap> = ({
   }, [network])
 
   const priceImpact = Math.max(
-    +printBN(+simulationPath.firstPriceImpact, DECIMAL - 2),
-    +printBN(+simulationPath.secondPriceImpact, DECIMAL - 2)
+    +printBN(simulationPath.firstPriceImpact, DECIMAL - 2),
+    +printBN(simulationPath.secondPriceImpact, DECIMAL - 2)
   )
 
   const timeoutRef = useRef<number>(0)
@@ -581,9 +601,9 @@ export const Swap: React.FC<ISwap> = ({
         ) ?? { fee: new BN(0) },
         secondPair: null,
         firstAmount: convertBalanceToBN(amountFrom, tokens[tokenFromIndex ?? 0].decimals),
-        secondAmount: null,
+        secondAmount: new BN(0),
         firstPriceImpact: simulateResult.priceImpact,
-        secondPriceImpact: null
+        secondPriceImpact: new BN(0)
       })
       setBestAmount(simulateResult.amountOut)
       setSwapType(SwapType.Normal)
@@ -941,8 +961,8 @@ export const Swap: React.FC<ISwap> = ({
       <Collapse in={wrappedETHAccountExist} className={classes.collapseWrapper}>
         <Grid className={classes.unwrapContainer}>
           {shortenText
-            ? `You have ${!shortenTextXS ? 'wrapped' : ''} ${formatNumberWithoutSuffix(printBN(wrappedETHBalance, WETH_MAIN.decimals))} ${shortenTextXS ? 'W' : ''}ETH`
-            : `          You currently hold ${formatNumberWithoutSuffix(printBN(wrappedETHBalance, WETH_MAIN.decimals))} wrapped Ether in your
+            ? `You have ${!shortenTextXS ? 'wrapped' : ''} ${formatNumberWithoutSuffix(printBN(wrappedETHBalance || new BN(0), WETH_MAIN.decimals))} ${shortenTextXS ? 'W' : ''}ETH`
+            : `          You currently hold ${formatNumberWithoutSuffix(printBN(wrappedETHBalance || new BN(0), WETH_MAIN.decimals))} wrapped Ether in your
           wallet`}
           <span className={classes.unwrapNowButton} onClick={unwrapWETH}>
             Unwrap now
@@ -1277,12 +1297,17 @@ export const Swap: React.FC<ISwap> = ({
                     getStateMessage() === 'Connect a wallet'
                       ? `${classes.swapButton}`
                       : getStateMessage() === 'Exchange' && progress === 'none'
-                        ? `${classes.swapButton} ${classes.ButtonSwapActive}`
+                        ? `${classes.swapButton} ${classes.buttonSwapActive}`
                         : classes.swapButton
                   }
                   disabled={getStateMessage() !== 'Exchange' || progress !== 'none'}
                   onClick={() => {
-                    if (tokenFromIndex === null || tokenToIndex === null) return
+                    if (
+                      tokenFromIndex === null ||
+                      tokenToIndex === null ||
+                      !simulationPath.firstPair
+                    )
+                      return
 
                     onSwap(
                       fromFee(new BN(Number(+slippTolerance * 1000))),
@@ -1307,12 +1332,13 @@ export const Swap: React.FC<ISwap> = ({
                   getStateMessage() === 'Connect a wallet'
                     ? `${classes.swapButton}`
                     : getStateMessage() === 'Exchange' && progress === 'none'
-                      ? `${classes.swapButton} ${classes.ButtonSwapActive}`
+                      ? `${classes.swapButton} ${classes.buttonSwapActive}`
                       : classes.swapButton
                 }
                 disabled={getStateMessage() !== 'Exchange' || progress !== 'none'}
                 onClick={() => {
-                  if (tokenFromIndex === null || tokenToIndex === null) return
+                  if (tokenFromIndex === null || tokenToIndex === null || !simulationPath.firstPair)
+                    return
 
                   onSwap(
                     // fromFee(new BN(Number(+slippTolerance * 1000))),
@@ -1341,7 +1367,6 @@ export const Swap: React.FC<ISwap> = ({
           </Box>
         </Grid>
       </Box>
-      <img src={auditIcon} alt='Audit' style={{ marginTop: '24px' }} width={180} />
     </Grid>
   )
 }

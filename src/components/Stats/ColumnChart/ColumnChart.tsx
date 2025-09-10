@@ -279,6 +279,7 @@ const ColumnChart: React.FC<StatsInterface> = ({
             onChange={setChartType}
             options={[ChartSwitch.volume, ChartSwitch.fees]}
             dark
+            changeFontColor
           />
         </Grid>
 
@@ -323,7 +324,7 @@ const ColumnChart: React.FC<StatsInterface> = ({
                     <text
                       style={{ fill: colors.invariant.textGrey, ...typography.tiny2 }}
                       textAnchor='start'
-                      dominantBaseline='center'>
+                      dominantBaseline='middle'>
                       {trimZeros(formatLargeNumber(value))}
                     </text>
                   </g>

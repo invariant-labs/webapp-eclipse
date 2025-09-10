@@ -4,6 +4,7 @@ import { NetworkType } from '@store/consts/static'
 import { getSolanaConnection, networkTypetoProgramNetwork } from '../connection'
 import { Locker } from '@invariant-labs/locker-eclipse-sdk'
 import { LiquidityStaking } from '@invariant-labs/sbitz'
+
 let _market: Market
 let _locker: Locker
 let _staking: LiquidityStaking

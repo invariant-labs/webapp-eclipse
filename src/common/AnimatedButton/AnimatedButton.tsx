@@ -18,10 +18,11 @@ interface Props {
   content: string
   disabled?: boolean
   progress: ProgressState
-  onClick: () => void
+  onClick?: React.MouseEventHandler<HTMLButtonElement>
   className?: string
   sx?: SxProps<Theme>
   type?: 'button' | 'submit' | 'reset'
+  animateAvailable?: boolean
 }
 
 const AnimatedButton: React.FC<Props> = ({
@@ -31,11 +32,15 @@ const AnimatedButton: React.FC<Props> = ({
   onClick,
   className,
   sx,
-  type = 'button'
+  type = 'button',
+  animateAvailable = true
 }) => {
   const { classes } = useStyles()
 
   const getMessage = () => {
+    if (!animateAvailable) {
+      return <p className={classes.buttonContent}>{content}</p>
+    }
     if (progress === 'none') {
       return <p className={classes.buttonContent}>{content}</p>
     }
@@ -56,6 +61,9 @@ const AnimatedButton: React.FC<Props> = ({
   }
 
   const getClasses = () => {
+    if (!animateAvailable) {
+      return ''
+    }
     if (progress === 'progress') {
       return `${classes.button} ${classes.backgroundRelease}`
     }

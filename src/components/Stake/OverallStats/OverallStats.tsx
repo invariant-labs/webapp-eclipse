@@ -8,6 +8,7 @@ import { Separator } from '@common/Separator/Separator'
 import { useStyles } from './style'
 import { TimeData } from '@store/reducers/sbitz-stats'
 import { formatNumberWithoutSuffix, printBN } from '@utils/utils'
+import { BN } from '@coral-xyz/anchor'
 
 interface Props {
   isLoadingStats: boolean
@@ -41,7 +42,9 @@ export const OverallStats = ({
               <Typography className={classes.statsTitle}>sBITZ supply</Typography>
               <Typography className={classes.statsValue}>
                 {formatNumberWithoutSuffix(
-                  isLoadingStats ? Math.random() * 10000 : printBN(sbitzSupply, sBITZ_MAIN.decimals)
+                  isLoadingStats
+                    ? Math.random() * 10000
+                    : printBN(new BN(sbitzSupply), sBITZ_MAIN.decimals)
                 )}
               </Typography>
             </Box>
@@ -72,7 +75,9 @@ export const OverallStats = ({
               <Typography className={classes.statsTitle}>BITZ staked</Typography>
               <Typography className={classes.statsValue}>
                 {formatNumberWithoutSuffix(
-                  isLoadingStats ? Math.random() * 10000 : +printBN(bitzStaked, BITZ_MAIN.decimals)
+                  isLoadingStats
+                    ? Math.random() * 10000
+                    : +printBN(new BN(bitzStaked), BITZ_MAIN.decimals)
                 )}
               </Typography>
             </Box>

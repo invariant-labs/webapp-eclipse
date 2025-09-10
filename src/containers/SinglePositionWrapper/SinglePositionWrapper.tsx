@@ -619,6 +619,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
           yAmount
         ) => {
           if (isPreview) return
+
           if (isAddLiquidity) {
             dispatch(
               actions.addLiquidity({

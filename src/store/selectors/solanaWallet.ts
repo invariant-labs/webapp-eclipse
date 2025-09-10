@@ -67,13 +67,14 @@ export interface SwapToken {
   logoURI: string
   isUnknown?: boolean
   coingeckoId?: string
+  address: PublicKey
 }
 
 export const swapTokens = createSelector(
   accounts,
   tokens,
   balance,
-  (allAccounts, tokens, ethBalance) => {
+  (allAccounts, tokens, ethBalance): SwapToken[] => {
     return Object.values(tokens).map(token => ({
       ...token,
       assetAddress: token.address,

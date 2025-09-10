@@ -168,7 +168,7 @@ const PoolListItem: React.FC<IProps> = ({
       ROUTES.getNewPositionRoute(
         tokenA,
         tokenB,
-        parseFeeToPathFee(Math.round(fee * 10 ** (DECIMAL - 2)))
+        parseFeeToPathFee(new BN(Math.round(fee * 10 ** (DECIMAL - 2))))
       ),
       { state: { referer: 'stats' } }
     )
@@ -237,6 +237,7 @@ const PoolListItem: React.FC<IProps> = ({
 
   //HOTFIX
   const { convertedApy, convertedApr } = calculateAPYAndAPR(apy, poolAddress, volume, fee, TVL)
+
   const ActionsButtons = (
     <Box className={classes.action}>
       <button className={classes.actionButton} onClick={handleOpenSwap}>

@@ -777,8 +777,8 @@ export function* handleSwapAndInitPositionWithETH(
       wallet.publicKey,
       net,
       allTokens[action.payload.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS
-        ? action.payload.xAmount
-        : action.payload.yAmount
+        ? action.payload.xAmount.toNumber()
+        : action.payload.yAmount.toNumber()
     )
 
     let userTokenX =
@@ -2106,8 +2106,12 @@ export function* handleClaimFeeWithETH({ index, isLocked }: { index: number; isL
               snackbarsActions.add({
                 tokensDetails: {
                   ikonType: 'claim',
-                  tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals)),
-                  tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals)),
+                  tokenXAmount: formatNumberWithoutSuffix(
+                    printBN(new BN(amountX), tokenX.decimals)
+                  ),
+                  tokenYAmount: formatNumberWithoutSuffix(
+                    printBN(new BN(amountY), tokenY.decimals)
+                  ),
                   tokenXIcon: tokenX.logoURI,
                   tokenYIcon: tokenY.logoURI,
                   tokenXSymbol: tokenX.symbol ?? tokenX.address.toString(),
@@ -2334,8 +2338,12 @@ export function* handleClaimFee(action: PayloadAction<{ index: number; isLocked:
               snackbarsActions.add({
                 tokensDetails: {
                   ikonType: 'claim',
-                  tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals)),
-                  tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals)),
+                  tokenXAmount: formatNumberWithoutSuffix(
+                    printBN(new BN(amountX), tokenX.decimals)
+                  ),
+                  tokenYAmount: formatNumberWithoutSuffix(
+                    printBN(new BN(amountY), tokenY.decimals)
+                  ),
                   tokenXIcon: tokenX.logoURI,
                   tokenYIcon: tokenY.logoURI,
                   tokenXSymbol: tokenX.symbol ?? tokenX.address.toString(),
@@ -2836,8 +2844,12 @@ export function* handleClosePositionWithETH(data: ClosePositionData) {
               snackbarsActions.add({
                 tokensDetails: {
                   ikonType: 'withdraw',
-                  tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals)),
-                  tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals)),
+                  tokenXAmount: formatNumberWithoutSuffix(
+                    printBN(new BN(amountX), tokenX.decimals)
+                  ),
+                  tokenYAmount: formatNumberWithoutSuffix(
+                    printBN(new BN(amountY), tokenY.decimals)
+                  ),
                   tokenXIcon: tokenX.logoURI,
                   tokenYIcon: tokenY.logoURI,
                   tokenXSymbol: tokenX.symbol ?? tokenX.address.toString(),
@@ -3050,8 +3062,12 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
               snackbarsActions.add({
                 tokensDetails: {
                   ikonType: 'withdraw',
-                  tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals)),
-                  tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals)),
+                  tokenXAmount: formatNumberWithoutSuffix(
+                    printBN(new BN(amountX), tokenX.decimals)
+                  ),
+                  tokenYAmount: formatNumberWithoutSuffix(
+                    printBN(new BN(amountY), tokenY.decimals)
+                  ),
                   tokenXIcon: tokenX.logoURI,
                   tokenYIcon: tokenY.logoURI,
                   tokenXSymbol: tokenX.symbol ?? tokenX.address.toString(),
@@ -3428,7 +3444,7 @@ function* handleAddLiquidityWithETH(action: PayloadAction<ChangeLiquidityData>):
       wrappedEthAccount.publicKey,
       wallet.publicKey,
       net,
-      ethAmount ? ethAmount : new BN(0)
+      ethAmount ? ethAmount.toNumber() : 0
     )
 
     let userTokenX =
@@ -4380,17 +4396,21 @@ export function* handleSwapAndAddLiquidity(
               snackbarsActions.add({
                 tokensDetails: {
                   ikonType: 'deposit',
-                  tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals)),
-                  tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals)),
+                  tokenXAmount: formatNumberWithoutSuffix(
+                    printBN(new BN(amountX), tokenX.decimals)
+                  ),
+                  tokenYAmount: formatNumberWithoutSuffix(
+                    printBN(new BN(amountY), tokenY.decimals)
+                  ),
                   tokenXIcon: tokenX.logoURI,
                   tokenYIcon: tokenY.logoURI,
                   tokenXSymbol: tokenX.symbol ?? tokenX.address.toString(),
                   tokenYSymbol: tokenY.symbol ?? tokenY.address.toString(),
                   tokenXAmountAutoSwap: formatNumberWithoutSuffix(
-                    printBN(swapAmountIn, tokenIn.decimals)
+                    printBN(new BN(swapAmountIn), tokenIn.decimals)
                   ),
                   tokenYAmountAutoSwap: formatNumberWithoutSuffix(
-                    printBN(swapAmountOut, tokenOut.decimals)
+                    printBN(new BN(swapAmountOut), tokenOut.decimals)
                   ),
                   tokenXIconAutoSwap: tokenIn.logoURI,
                   tokenYIconAutoSwap: tokenOut.logoURI
@@ -4514,8 +4534,8 @@ export function* handleSwapAndAddLiquidityWithETH(
       wallet.publicKey,
       net,
       allTokens[swapPair.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS
-        ? action.payload.xAmount
-        : action.payload.yAmount
+        ? action.payload.xAmount.toNumber()
+        : action.payload.yAmount.toNumber()
     )
 
     let userTokenX =
@@ -4701,17 +4721,21 @@ export function* handleSwapAndAddLiquidityWithETH(
               snackbarsActions.add({
                 tokensDetails: {
                   ikonType: 'deposit',
-                  tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals)),
-                  tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals)),
+                  tokenXAmount: formatNumberWithoutSuffix(
+                    printBN(new BN(amountX), tokenX.decimals)
+                  ),
+                  tokenYAmount: formatNumberWithoutSuffix(
+                    printBN(new BN(amountY), tokenY.decimals)
+                  ),
                   tokenXIcon: tokenX.logoURI,
                   tokenYIcon: tokenY.logoURI,
                   tokenXSymbol: tokenX.symbol ?? tokenX.address.toString(),
                   tokenYSymbol: tokenY.symbol ?? tokenY.address.toString(),
                   tokenXAmountAutoSwap: formatNumberWithoutSuffix(
-                    printBN(swapAmountIn, tokenIn.decimals)
+                    printBN(new BN(swapAmountIn), tokenIn.decimals)
                   ),
                   tokenYAmountAutoSwap: formatNumberWithoutSuffix(
-                    printBN(swapAmountOut, tokenOut.decimals)
+                    printBN(new BN(swapAmountOut), tokenOut.decimals)
                   ),
                   tokenXIconAutoSwap: tokenIn.logoURI,
                   tokenYIconAutoSwap: tokenOut.logoURI

@@ -3,84 +3,130 @@ import { Swap } from '@components/Swap/Swap'
 import {
   commonTokensForNetworks,
   DEFAULT_SWAP_SLIPPAGE,
-  WETH_MAIN,
+  Intervals,
+  NetworkType,
   WRAPPED_ETH_ADDRESS
 } from '@store/consts/static'
-import { actions as poolsActions } from '@store/reducers/pools'
-import { actions as snackbarsActions } from '@store/reducers/snackbars'
-import { actions as walletActions } from '@store/reducers/solanaWallet'
-import { actions as connectionActions } from '@store/reducers/solanaConnection'
+import { actions as poolsActions, PoolWithAddress } from '@store/reducers/pools'
+import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
+
 import { actions } from '@store/reducers/swap'
 import {
   isLoadingLatestPoolsForTransaction,
-  poolsArraySortedByFees,
   tickMaps,
-  nearestPoolTicksForPair,
-  isLoadingPathTokens
+  nearestPoolTicksForPair
 } from '@store/selectors/pools'
-import { network, rpcAddress, timeoutError } from '@store/selectors/solanaConnection'
-import {
-  status,
-  swapTokens,
-  swapTokensDict,
-  balanceLoading,
-  balance,
-  accounts as solanaAccounts
-} from '@store/selectors/solanaWallet'
+import { accounts as solanaAccounts, SwapToken } from '@store/selectors/solanaWallet'
 import { swap as swapPool, accounts, isLoading } from '@store/selectors/swap'
 import { PublicKey } from '@solana/web3.js'
 import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import {
-  addNewTokenToLocalStorage,
-  getTokenPrice,
-  getMockedTokenPrice,
-  getNewTokenOrThrow,
-  tickerToAddress
-} from '@utils/utils'
-
 import { TokenPriceData } from '@store/consts/types'
-import { getCurrentSolanaConnection } from '@utils/web3/connection'
 import { VariantType } from 'notistack'
 import { BN } from '@coral-xyz/anchor'
-import { useLocation } from 'react-router-dom'
-import { getMarketProgramSync } from '@utils/web3/programs/amm'
-import { getEclipseWallet } from '@utils/web3/wallet'
-import { IWallet } from '@invariant-labs/sdk-eclipse'
+import { Market } from '@invariant-labs/sdk-eclipse'
 import { actions as swapActions } from '@store/reducers/swap'
+import { actions as statsActions } from '@store/reducers/stats'
 
 type Props = {
-  initialTokenFrom: string
-  initialTokenTo: string
+  walletStatus: Status
+  tokensList: SwapToken[]
+  tokensDict: Record<string, SwapToken>
+  networkType: NetworkType
+  tokensFromState: {
+    tokenFrom: PublicKey | null
+    setTokenFrom: React.Dispatch<React.SetStateAction<PublicKey | null>>
+    tokenTo: PublicKey | null
+    setTokenTo: React.Dispatch<React.SetStateAction<PublicKey | null>>
+  }
+  isBalanceLoading: boolean
+  ethBalance: BN
+  market: Market
+  triggerFetchPrices: () => void
+  initialHideUnknownTokensValue: boolean
+  setHideUnknownTokensValue: (val: boolean) => void
+  copyTokenAddressHandler: (message: string, variant: VariantType) => void
+  tokenToPriceData?: TokenPriceData
+  tokenFromPriceData?: TokenPriceData
+  priceFromLoading: boolean
+  priceToLoading: boolean
+  addTokenHandler: (address: string) => void
+  canNavigate: boolean
+  initialTokenFromIndex: number | null
+  initialTokenToIndex: number | null
+  deleteTimeoutError: () => void
+  isTimeoutError: boolean
+  tokensState: {
+    tokenFromIndex: number | null
+    setTokenFromIndex: React.Dispatch<React.SetStateAction<number | null>>
+    tokenToIndex: number | null
+    setTokenToIndex: React.Dispatch<React.SetStateAction<number | null>>
+  }
+  rateState: {
+    rateReversed: boolean
+    setRateReversed: React.Dispatch<React.SetStateAction<boolean>>
+  }
+  inputState: { inputRef: string; setInputRef: React.Dispatch<React.SetStateAction<string>> }
+  lockAnimationState: {
+    lockAnimation: boolean
+    setLockAnimation: React.Dispatch<React.SetStateAction<boolean>>
+  }
+  swapState: {
+    swap: boolean | null
+    setSwap: React.Dispatch<React.SetStateAction<boolean | null>>
+  }
+  rotatesState: {
+    rotates: number
+    setRotates: React.Dispatch<React.SetStateAction<number>>
+  }
+  allPools: PoolWithAddress[]
 }
 
-export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
+export const WrappedSwap = ({
+  addTokenHandler,
+  canNavigate,
+  copyTokenAddressHandler,
+  ethBalance,
+  initialHideUnknownTokensValue,
+  initialTokenFromIndex,
+  initialTokenToIndex,
+  isBalanceLoading,
+  market,
+  networkType,
+  priceFromLoading,
+  priceToLoading,
+  setHideUnknownTokensValue,
+  tokensFromState,
+  tokensDict,
+  tokensList,
+  triggerFetchPrices,
+  walletStatus,
+  tokenFromPriceData,
+  tokenToPriceData,
+  deleteTimeoutError,
+  isTimeoutError,
+  tokensState,
+  rateState,
+  inputState,
+  lockAnimationState,
+  rotatesState,
+  swapState,
+  allPools
+}: Props) => {
   const dispatch = useDispatch()
 
-  const connection = getCurrentSolanaConnection()
-
-  const walletStatus = useSelector(status)
-  const swap = useSelector(swapPool)
   const tickmap = useSelector(tickMaps)
   const poolTicksForSimulation = useSelector(nearestPoolTicksForPair)
-  const allPools = useSelector(poolsArraySortedByFees)
-  const tokensList = useSelector(swapTokens)
-  const tokensDict = useSelector(swapTokensDict)
-  const isBalanceLoading = useSelector(balanceLoading)
+
   const { success, inProgress } = useSelector(swapPool)
   const isFetchingNewPool = useSelector(isLoadingLatestPoolsForTransaction)
-  const networkType = useSelector(network)
+
   const [progress, setProgress] = useState<ProgressState>('none')
-  const [tokenFrom, setTokenFrom] = useState<PublicKey | null>(null)
-  const [tokenTo, setTokenTo] = useState<PublicKey | null>(null)
-  const ethBalance = useSelector(balance)
-  const isTimeoutError = useSelector(timeoutError)
-  const isPathTokensLoading = useSelector(isLoadingPathTokens)
-  const { state } = useLocation()
-  const [block, setBlock] = useState(state?.referer === 'stats')
-  const rpc = useSelector(rpcAddress)
-  const wallet = getEclipseWallet()
-  const market = getMarketProgramSync(networkType, rpc, wallet as IWallet)
+  const { setTokenFrom, setTokenTo, tokenFrom, tokenTo } = tokensFromState
+
+  useEffect(() => {
+    dispatch(statsActions.getCurrentIntervalStats({ interval: Intervals.Daily }))
+  }, [])
 
   useEffect(() => {
     let timeoutId1: NodeJS.Timeout
@@ -115,157 +161,6 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
     }
   }, [isFetchingNewPool])
 
-  const lastTokenFrom =
-    initialTokenFrom && tickerToAddress(networkType, initialTokenFrom)
-      ? tickerToAddress(networkType, initialTokenFrom)
-      : localStorage.getItem(`INVARIANT_LAST_TOKEN_FROM_${networkType}`) ??
-        WETH_MAIN.address.toString()
-
-  const lastTokenTo =
-    initialTokenTo && tickerToAddress(networkType, initialTokenTo)
-      ? tickerToAddress(networkType, initialTokenTo)
-      : localStorage.getItem(`INVARIANT_LAST_TOKEN_TO_${networkType}`)
-
-  const initialTokenFromIndex =
-    lastTokenFrom === null
-      ? null
-      : Object.values(tokensList).findIndex(token => {
-          try {
-            return token.assetAddress.equals(new PublicKey(lastTokenFrom))
-          } catch {
-            return false
-          }
-        })
-  const initialTokenToIndex =
-    lastTokenTo === null
-      ? null
-      : Object.values(tokensList).findIndex(token => {
-          try {
-            return token.assetAddress.equals(new PublicKey(lastTokenTo))
-          } catch {
-            return false
-          }
-        })
-
-  useEffect(() => {
-    const tokens: string[] = []
-
-    if (initialTokenFromIndex === -1 && lastTokenFrom && !tokensDict[lastTokenFrom]) {
-      tokens.push(lastTokenFrom)
-    }
-
-    if (initialTokenToIndex === -1 && lastTokenTo && !tokensDict[lastTokenTo]) {
-      tokens.push(lastTokenTo)
-    }
-
-    if (tokens.length) {
-      dispatch(poolsActions.getPathTokens(tokens))
-    }
-
-    setBlock(false)
-  }, [tokensList])
-
-  const canNavigate = connection !== null && !isPathTokensLoading && !block
-
-  const addTokenHandler = (address: string) => {
-    if (
-      connection !== null &&
-      tokensList.findIndex(token => token.address.toString() === address) === -1
-    ) {
-      getNewTokenOrThrow(address, connection)
-        .then(data => {
-          dispatch(poolsActions.addTokens(data))
-          addNewTokenToLocalStorage(address, networkType)
-          dispatch(
-            snackbarsActions.add({
-              message: 'Token added',
-              variant: 'success',
-              persist: false
-            })
-          )
-        })
-        .catch(() => {
-          dispatch(
-            snackbarsActions.add({
-              message: 'Token add failed',
-              variant: 'error',
-              persist: false
-            })
-          )
-        })
-    } else {
-      dispatch(
-        snackbarsActions.add({
-          message: 'Token already in list',
-          variant: 'info',
-          persist: false
-        })
-      )
-    }
-  }
-
-  const initialHideUnknownTokensValue =
-    localStorage.getItem('HIDE_UNKNOWN_TOKENS') === 'true' ||
-    localStorage.getItem('HIDE_UNKNOWN_TOKENS') === null
-
-  const setHideUnknownTokensValue = (val: boolean) => {
-    localStorage.setItem('HIDE_UNKNOWN_TOKENS', val ? 'true' : 'false')
-  }
-
-  const [triggerFetchPrice, setTriggerFetchPrice] = useState(false)
-
-  const [tokenFromPriceData, setTokenFromPriceData] = useState<TokenPriceData | undefined>(
-    undefined
-  )
-
-  const [priceFromLoading, setPriceFromLoading] = useState(false)
-
-  useEffect(() => {
-    if (tokenFrom === null) {
-      return
-    }
-
-    const addr = tokensDict[tokenFrom.toString()]?.assetAddress.toString()
-
-    if (addr) {
-      setPriceFromLoading(true)
-      getTokenPrice(networkType, addr)
-        .then(data => setTokenFromPriceData({ price: data ?? 0 }))
-        .catch(() =>
-          setTokenFromPriceData(
-            getMockedTokenPrice(tokensDict[tokenFrom.toString()].symbol, networkType)
-          )
-        )
-        .finally(() => setPriceFromLoading(false))
-    } else {
-      setTokenFromPriceData(undefined)
-    }
-  }, [tokenFrom, triggerFetchPrice])
-
-  const [tokenToPriceData, setTokenToPriceData] = useState<TokenPriceData | undefined>(undefined)
-  const [priceToLoading, setPriceToLoading] = useState(false)
-
-  useEffect(() => {
-    if (tokenTo === null) {
-      return
-    }
-
-    const addr = tokensDict[tokenTo.toString()]?.assetAddress.toString()
-    if (addr) {
-      setPriceToLoading(true)
-      getTokenPrice(networkType, addr)
-        .then(data => setTokenToPriceData({ price: data ?? 0 }))
-        .catch(() =>
-          setTokenToPriceData(
-            getMockedTokenPrice(tokensDict[tokenTo.toString()].symbol, networkType)
-          )
-        )
-        .finally(() => setPriceToLoading(false))
-    } else {
-      setTokenToPriceData(undefined)
-    }
-  }, [tokenTo, triggerFetchPrice])
-
   const initialSlippage = localStorage.getItem('INVARIANT_SWAP_SLIPPAGE') ?? DEFAULT_SWAP_SLIPPAGE
 
   const onSlippageChange = (slippage: string) => {
@@ -279,37 +174,27 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
       return
     }
 
-    setTriggerFetchPrice(!triggerFetchPrice)
+    triggerFetchPrices()
 
     dispatch(
       poolsActions.getAllPoolsForPairData({
-        first: tokensList[tokenFromIndex].address,
-        second: tokensList[tokenToIndex].address
+        first: tokensList[tokenFromIndex].assetAddress,
+        second: tokensList[tokenToIndex].assetAddress
       })
     )
 
     dispatch(
       swapActions.getTwoHopSwapData({
-        tokenFrom: tokensList[tokenFromIndex].address,
-        tokenTo: tokensList[tokenToIndex].address
+        tokenFrom: tokensList[tokenFromIndex].assetAddress,
+        tokenTo: tokensList[tokenToIndex].assetAddress
       })
     )
 
     dispatch(
       poolsActions.getNearestTicksForPair({
-        tokenFrom: tokensList[tokenFromIndex].address,
-        tokenTo: tokensList[tokenToIndex].address,
+        tokenFrom: tokensList[tokenFromIndex].assetAddress,
+        tokenTo: tokensList[tokenToIndex].assetAddress,
         allPools
-      })
-    )
-  }
-
-  const copyTokenAddressHandler = (message: string, variant: VariantType) => {
-    dispatch(
-      snackbarsActions.add({
-        message,
-        variant,
-        persist: false
       })
     )
   }
@@ -409,7 +294,6 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
       walletStatus={walletStatus}
       tokens={tokensList}
       pools={allPools}
-      swapData={swap}
       progress={progress}
       poolTicks={poolTicksForSimulation}
       isWaitingForNewPool={isFetchingNewPool}
@@ -434,14 +318,18 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
       wrappedETHAccountExist={wrappedETHAccountExist}
       wrappedETHBalance={wrappedETHBalance}
       isTimeoutError={isTimeoutError}
-      deleteTimeoutError={() => {
-        dispatch(connectionActions.setTimeoutError(false))
-      }}
+      deleteTimeoutError={deleteTimeoutError}
       canNavigate={canNavigate}
       market={market}
       tokensDict={tokensDict}
       swapAccounts={swapAccounts}
       swapIsLoading={swapIsLoading}
+      rateState={rateState}
+      tokensState={tokensState}
+      inputState={inputState}
+      lockAnimationState={lockAnimationState}
+      rotatesState={rotatesState}
+      swapState={swapState}
     />
   )
 }

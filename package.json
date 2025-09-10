@@ -21,7 +21,7 @@
     "@invariant-labs/locker-eclipse-sdk": "^0.0.23",
     "@invariant-labs/sbitz": "^0.0.19",
     "@invariant-labs/sale-sdk": "^0.0.51",
-    "@invariant-labs/sdk-eclipse": "^0.0.131",
+    "@invariant-labs/sdk-eclipse": "^0.0.155",
     "@irys/web-upload": "*",
     "@irys/web-upload-solana": "^0.1.7",
     "@metaplex-foundation/mpl-token-metadata": "^3.2.1",
@@ -69,6 +69,7 @@
   },
   "devDependencies": {
     "@rollup/plugin-inject": "^5.0.5",
+    "@types/bn.js": "^5.2.0",
     "@types/node": "^20.12.7",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
