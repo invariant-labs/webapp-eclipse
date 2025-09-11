@@ -2,23 +2,17 @@ import { Box, Grid, Typography } from '@mui/material'
 import useStyles from './style'
 import Switcher from './Switcher/Switcher'
 import { useCallback, useLayoutEffect, useMemo, useState } from 'react'
-import { BITZ_MAIN, inputTarget } from '@store/consts/static'
+import { inputTarget, INVT_MAIN } from '@store/consts/static'
 import ExchangeAmountInput from '@components/Inputs/ExchangeAmountInput/ExchangeAmountInput'
 import { Status } from '@store/reducers/solanaWallet'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import SwapSeparator from './SwapSeparator/SwapSeparator'
-import { Separator } from '@common/Separator/Separator'
-import { colors } from '@static/theme'
-import TransactionDetails from './TransactionDetails/TransactionDetails'
 import { convertBalanceToBN, printBN, trimDecimalZeros } from '@utils/utils'
-import ApyTooltip from './ApyTooltip/ApyTooltip'
 import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
 import AnimatedButton, { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 import { LockerSwitch } from '@store/consts/types'
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
-import { TOKEN_DECIMALS } from '@invariant-labs/sbitz/lib/consts'
-import { calculateTokensStake, calculateTokensUnstake } from '@invariant-labs/sbitz'
 import { LockLiquidityPayload } from '@store/reducers/xInvt'
 
 export interface ILocker {
@@ -28,18 +22,14 @@ export interface ILocker {
   handleUnlock: (props: LockLiquidityPayload) => void
   onConnectWallet: () => void
   onDisconnectWallet: () => void
-  sBitzApyApr: { apy: number; apr: number }
-  stakedTokenSupply: BN
-  stakedAmount: BN
-  stakeDataLoading: boolean
   changeLockerTab: (tab: LockerSwitch) => void
   currentLockerTab: LockerSwitch
   ethBalance: BN
   isBalanceLoading: boolean
   lockInput: string
   unlockInput: string
-  setStakeInput: (val: string) => void
-  setUnstakeInput: (val: string) => void
+  setLockInput: (val: string) => void
+  setUnlockInput: (val: string) => void
   progress: ProgressState
   setProgress: (val: ProgressState) => void
   tokenFrom: SwapToken
@@ -55,18 +45,14 @@ export const XInvtLocker: React.FC<ILocker> = ({
   handleUnlock,
   onConnectWallet,
   onDisconnectWallet,
-  sBitzApyApr,
-  stakedTokenSupply,
-  stakedAmount,
-  stakeDataLoading,
   currentLockerTab,
   changeLockerTab,
   // ethBalance,
   isBalanceLoading,
   lockInput,
   unlockInput,
-  setStakeInput,
-  setUnstakeInput,
+  setLockInput,
+  setUnlockInput,
   progress,
   setProgress,
   tokenFrom,
@@ -84,12 +70,12 @@ export const XInvtLocker: React.FC<ILocker> = ({
   const setAmountFrom = useCallback(
     (val: string) => {
       if (currentLockerTab === LockerSwitch.Lock) {
-        setStakeInput(val)
+        setLockInput(val)
       } else {
-        setUnstakeInput(val)
+        setUnlockInput(val)
       }
     },
-    [currentLockerTab, setStakeInput, setUnstakeInput]
+    [currentLockerTab, setLockInput, setUnlockInput]
   )
 
   const [amountTo, setAmountTo] = useState<string>('')
@@ -112,7 +98,7 @@ export const XInvtLocker: React.FC<ILocker> = ({
   ) => {
     const balance = tokens[tokenAddress.toString()]?.balance || new BN(0)
     if (action === 'max') {
-      const valueString = trimDecimalZeros(printBN(balance, TOKEN_DECIMALS))
+      const valueString = trimDecimalZeros(printBN(balance, INVT_MAIN.decimals))
       if (ref === inputTarget.FROM) {
         setAmountFrom(valueString)
       } else {
@@ -120,7 +106,7 @@ export const XInvtLocker: React.FC<ILocker> = ({
       }
     } else if (action === 'half') {
       const value = balance.div(new BN(2)) || new BN(0)
-      const valueString = trimDecimalZeros(printBN(value, TOKEN_DECIMALS))
+      const valueString = trimDecimalZeros(printBN(value, INVT_MAIN.decimals))
       if (ref === inputTarget.FROM) {
         setAmountFrom(valueString)
       } else {
@@ -130,7 +116,7 @@ export const XInvtLocker: React.FC<ILocker> = ({
   }
 
   const getStateMessage = () => {
-    if (isBalanceLoading || stakeDataLoading) {
+    if (isBalanceLoading) {
       return 'Loading...'
     }
     // if (ethBalance.lt(WETH_MIN_STAKE_UNSTAKE_LAMPORTS)) {
@@ -144,7 +130,7 @@ export const XInvtLocker: React.FC<ILocker> = ({
       tokenFrom &&
       tokenFrom.balance &&
       amountFrom.length > 0 &&
-      tokenFrom.balance.lt(new BN(convertBalanceToBN(amountFrom, TOKEN_DECIMALS)))
+      tokenFrom.balance.lt(new BN(convertBalanceToBN(amountFrom, INVT_MAIN.decimals)))
     )
       return `Not enough ${tokenFrom.symbol}`
 
@@ -156,27 +142,30 @@ export const XInvtLocker: React.FC<ILocker> = ({
   }
 
   const calculateOtherTokenAmount = useCallback(
-    (value: string, isStake?: boolean, byAmountIn?: boolean) => {
-      if (!stakedAmount || !stakedTokenSupply) return new BN(0)
-      const isStakeAction = isStake ?? tokenFrom.assetAddress.equals(BITZ_MAIN.address)
-      const amount = convertBalanceToBN(value, TOKEN_DECIMALS)
-      if (isStakeAction) {
-        return calculateTokensStake(
-          stakedTokenSupply,
-          stakedAmount,
-          amount,
-          byAmountIn ?? inputRef === inputTarget.FROM
-        )
+    (value: string, isLock?: boolean, byAmountIn?: boolean) => {
+      // if (!stakedAmount || !stakedTokenSupply) return new BN(0)
+      const isLockAction = isLock ?? tokenFrom.assetAddress.equals(INVT_MAIN.address)
+      const amount = convertBalanceToBN(value, INVT_MAIN.decimals)
+      if (isLockAction) {
+        // return calculateTokensStake(
+        //   stakedTokenSupply,
+        //   stakedAmount,
+        //   amount,
+        //   byAmountIn ?? inputRef === inputTarget.FROM
+        // )
+        return () => 0
       } else {
-        return calculateTokensUnstake(
-          stakedTokenSupply,
-          stakedAmount,
-          amount,
-          byAmountIn ?? inputRef === inputTarget.FROM
-        )
+        //   return calculateTokensUnstake(
+        //     stakedTokenSupply,
+        //     stakedAmount,
+        //     amount,
+        //     byAmountIn ?? inputRef === inputTarget.FROM
+        //   )
+
+        return () => 0
       }
     },
-    [stakeDataLoading, stakedAmount, stakedTokenSupply, tokenFrom, tokenTo, inputRef]
+    [, tokenFrom, tokenTo, inputRef]
   )
 
   useLayoutEffect(() => {
@@ -184,7 +173,7 @@ export const XInvtLocker: React.FC<ILocker> = ({
       if (!amountFrom || Number(amountFrom) === 0) {
         setAmountTo('')
       } else {
-        setAmountTo(printBN(calculateOtherTokenAmount(amountFrom), TOKEN_DECIMALS))
+        setAmountTo(printBN(calculateOtherTokenAmount(amountFrom), INVT_MAIN.decimals))
       }
       return
     }
@@ -192,7 +181,7 @@ export const XInvtLocker: React.FC<ILocker> = ({
       if (!amountTo || Number(amountTo) === 0) {
         setAmountFrom('')
       } else {
-        setAmountFrom(printBN(calculateOtherTokenAmount(amountTo), TOKEN_DECIMALS))
+        setAmountFrom(printBN(calculateOtherTokenAmount(amountTo), INVT_MAIN.decimals))
       }
       return
     }
@@ -259,12 +248,6 @@ export const XInvtLocker: React.FC<ILocker> = ({
         rotateRight={currentLockerTab === LockerSwitch.Lock}
         isRotating={isRotating}
       />
-      <Box mb={'16px'} display='flex' justifyContent='space-between' alignItems='center'>
-        <Typography className={classes.title}>You receive</Typography>
-        {currentLockerTab === LockerSwitch.Lock && (
-          <ApyTooltip sBitzApyApr={sBitzApyApr} stakeDataLoading={stakeDataLoading} />
-        )}
-      </Box>
       <ExchangeAmountInput
         value={amountTo}
         balance={printBN(tokenTo?.balance || new BN(0), tokenTo?.decimals)}
