@@ -4,9 +4,10 @@ import { makeStyles } from 'tss-react/mui'
 
 interface StyleProps {
   rotateRight: boolean
+  disabled?: boolean
 }
 
-const useStyles = makeStyles<StyleProps>()((_theme, { rotateRight }) => {
+const useStyles = makeStyles<StyleProps>()((_theme, { rotateRight, disabled }) => {
   const rotate = keyframes`
     0% {
       transform: rotate(0deg);
@@ -43,13 +44,14 @@ const useStyles = makeStyles<StyleProps>()((_theme, { rotateRight }) => {
       padding: 8,
       width: 16,
       height: 16,
-      cursor: 'pointer',
+
       border: `1px solid ${colors.invariant.light}`,
       borderRadius: '50%',
       backgroundColor: colors.invariant.component,
       transition: 'filter 0.3s ease',
       '&:hover': {
-        filter: 'brightness(1.2)'
+        filter: disabled ? 'none' : 'brightness(1.2)',
+        cursor: disabled ? 'default' : 'pointer'
       }
     },
     rotate: {

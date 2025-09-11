@@ -26,7 +26,6 @@ import {
   inProgress
 } from '@store/selectors/xInvt'
 import { StatsLocker } from '@components/XInvtLocker/StatsLocker/StatsLocker'
-import { SBitzBanner } from '@components/Stake/SBitzBanner/SBitzBanner'
 import useStyles from './styles'
 
 export const LockWrapper: React.FC = () => {
@@ -117,7 +116,6 @@ export const LockWrapper: React.FC = () => {
 
   return (
     <Grid container className={classes.wrapper}>
-      <SBitzBanner />
       <Box className={classes.titleWrapper}>
         <Box className={classes.titleTextWrapper}>
           <Typography component='h1'>INVT locking</Typography>
@@ -172,6 +170,7 @@ export const LockWrapper: React.FC = () => {
           tokenTo={tokenTo}
           priceLoading={priceLoading}
           invtPrice={invtPrice}
+          unlockDisabled={true}
         />
       </Box>
     </Grid>

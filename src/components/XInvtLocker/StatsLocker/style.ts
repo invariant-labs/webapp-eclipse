@@ -4,9 +4,9 @@ import { makeStyles } from 'tss-react/mui'
 export const useStyles = makeStyles()(() => ({
   statsWrapper: {
     display: 'flex',
+    flex: 1,
     flexDirection: 'column',
     boxSizing: 'border-box',
-    height: 480,
     maxWidth: 510,
     width: '100%',
     gap: 20,

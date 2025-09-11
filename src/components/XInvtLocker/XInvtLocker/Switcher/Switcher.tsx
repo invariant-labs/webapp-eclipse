@@ -7,6 +7,7 @@ import { LiquidityPlus } from '@static/componentIcon/LiquidityPlus'
 import { LiquidityMinus } from '@static/componentIcon/LiquidityMinus'
 import { LockerSwitch } from '@store/consts/types'
 import { inputTarget } from '@store/consts/static'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 
 interface ISwitcher {
   switchTab: string
@@ -65,11 +66,12 @@ const Switcher: React.FC<ISwitcher> = ({
             <LiquidityPlus
               style={
                 switchTab === LockerSwitch.Lock
-                  ? { color: colors.invariant.text, transform: 'scale(1.2)' }
+                  ? { color: colors.invariant.text }
                   : { color: colors.invariant.light }
               }
             />
           </ToggleButton>
+
           <ToggleButton
             value={LockerSwitch.Unlock}
             disableRipple
@@ -79,14 +81,20 @@ const Switcher: React.FC<ISwitcher> = ({
                 switchTab === LockerSwitch.Unlock ? colors.invariant.text : colors.invariant.light
             }}
             disabled={disabled}>
-            Redeem INVT{' '}
-            <LiquidityMinus
-              style={
-                switchTab === LockerSwitch.Unlock
-                  ? { color: colors.invariant.text, transform: 'scale(1.2)' }
-                  : { color: colors.invariant.light }
-              }
-            />
+            <TooltipHover
+              title={disabled ? 'Available after end of lock period' : ''}
+              className={classes.tooltip}>
+              <>
+                Redeem INVT{' '}
+                <LiquidityMinus
+                  style={
+                    switchTab === LockerSwitch.Unlock
+                      ? { color: colors.invariant.text }
+                      : { color: colors.invariant.light }
+                  }
+                />
+              </>
+            </TooltipHover>
           </ToggleButton>
         </ToggleButtonGroup>
       </Box>

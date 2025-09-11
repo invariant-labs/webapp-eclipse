@@ -5,7 +5,8 @@ export const useStyles = makeStyles()(() => ({
     marginTop: 24,
     maxWidth: '100%',
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'column',
+    flex: 1
   }
 }))
 

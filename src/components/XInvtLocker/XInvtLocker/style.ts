@@ -10,8 +10,8 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     width: '100%',
     background: colors.invariant.component,
     borderRadius: 24,
-
-    padding: '16px 24px 22px 24px',
+    flex: 1,
+    padding: 24,
     [theme.breakpoints.down('sm')]: {
       padding: '12px 8px'
     }

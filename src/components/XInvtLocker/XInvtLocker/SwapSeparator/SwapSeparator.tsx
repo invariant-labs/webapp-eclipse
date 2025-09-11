@@ -7,10 +7,16 @@ export interface ISwapSeparator {
   onClick: () => void
   rotateRight: boolean
   isRotating: boolean
+  disabled?: boolean
 }
 
-export const SwapSeparator: React.FC<ISwapSeparator> = ({ onClick, rotateRight, isRotating }) => {
-  const { classes, cx } = useStyles({ rotateRight })
+export const SwapSeparator: React.FC<ISwapSeparator> = ({
+  onClick,
+  rotateRight,
+  isRotating,
+  disabled
+}) => {
+  const { classes, cx } = useStyles({ rotateRight, disabled })
 
   return (
     <Grid container className={classes.wrapper}>

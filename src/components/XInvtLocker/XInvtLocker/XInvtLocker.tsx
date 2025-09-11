@@ -38,6 +38,7 @@ export interface ILocker {
   tokenTo: SwapToken
   priceLoading: boolean
   invtPrice: number
+  unlockDisabled: boolean
 }
 
 export const XInvtLocker: React.FC<ILocker> = ({
@@ -60,7 +61,8 @@ export const XInvtLocker: React.FC<ILocker> = ({
   tokenFrom,
   tokenTo,
   priceLoading,
-  invtPrice
+  invtPrice,
+  unlockDisabled
 }) => {
   const { classes } = useStyles()
 
@@ -168,7 +170,7 @@ export const XInvtLocker: React.FC<ILocker> = ({
           return () => 0
         }
     },
-    [, tokenFrom, tokenTo, inputRef]
+    [tokenFrom, tokenTo, inputRef]
   )
 
   useLayoutEffect(() => {
@@ -198,7 +200,7 @@ export const XInvtLocker: React.FC<ILocker> = ({
         setInputRef={setInputRef}
         isRotating={isRotating}
         setIsRotating={setIsRotating}
-        disabled
+        disabled={unlockDisabled}
       />
       <Box mt='24px' mb={'12px'} display='flex' justifyContent='space-between' alignItems='center'>
         <Typography className={classes.title}>
@@ -248,9 +250,10 @@ export const XInvtLocker: React.FC<ILocker> = ({
         limit={1e14}
       />
       <SwapSeparator
-        onClick={handleSwitchTokens}
+        onClick={unlockDisabled ? () => {} : handleSwitchTokens}
         rotateRight={currentLockerTab === LockerSwitch.Lock}
         isRotating={isRotating}
+        disabled={unlockDisabled}
       />
       <Box mb={'12px'} display='flex' justifyContent='space-between' alignItems='center'>
         <Typography className={classes.title}>Recive</Typography>

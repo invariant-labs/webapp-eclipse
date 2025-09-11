@@ -322,9 +322,10 @@ export const useStyles = makeStyles()(() => ({
     display: 'flex',
     gap: 20,
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'stretch',
     [theme.breakpoints.down('md')]: {
-      flexDirection: 'column'
+      flexDirection: 'column',
+      alignItems: 'center'
     }
   }
 }))

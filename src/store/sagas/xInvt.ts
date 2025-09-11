@@ -10,7 +10,6 @@ import { actions as RPCAction, RpcStatus } from '@store/reducers/solanaConnectio
 import {
   APPROVAL_DENIED_MESSAGE,
   BITZ_MAIN,
-  BITZ_TOKENS_ADDR,
   COMMON_ERROR_MESSAGE,
   ErrorCodeExtractionKeys,
   sBITZ_MAIN,
@@ -18,7 +17,6 @@ import {
   TIMEOUT_ERROR_MESSAGE
 } from '@store/consts/static'
 import {
-  PublicKey,
   sendAndConfirmRawTransaction,
   SendTransactionError,
   Transaction,

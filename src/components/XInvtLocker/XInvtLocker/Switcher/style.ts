@@ -111,6 +111,13 @@ const useStyles = makeStyles<StyleProps>()((theme, { switchTab }) => {
       '& svg *': {
         transition: 'color 0.3s ease'
       }
+    },
+    tooltip: {
+      ...typography.heading4,
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      gap: 8
     }
   }
 })
