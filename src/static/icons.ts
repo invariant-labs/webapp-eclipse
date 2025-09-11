@@ -113,6 +113,8 @@ import greenInfoIcon from './svg/greenInfo.svg'
 import swapArrowClean from './svg/swapArrowClean.svg'
 import saleSelectedIcon from './svg/sale-selected.svg'
 import saleUnselectedIcon from './svg/sale-unselected.svg'
+import InvtLogoIcon from './svg/INVT.svg'
+import xInvtLogoIcon from './svg/xINVT.svg'
 
 export {
   hornsUSDC,
@@ -229,7 +231,9 @@ export {
   greenInfoIcon,
   swapArrowClean,
   saleSelectedIcon,
-  saleUnselectedIcon
+  saleUnselectedIcon,
+  InvtLogoIcon,
+  xInvtLogoIcon
 }
 
 export const chainIcons = {

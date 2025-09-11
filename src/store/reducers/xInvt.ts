@@ -55,7 +55,7 @@ const xinvtLockerSlice = createSlice({
       return state
     },
 
-    setStakeTab(state, action: PayloadAction<{ tab: LockerSwitch }>) {
+    setLockTab(state, action: PayloadAction<{ tab: LockerSwitch }>) {
       state.lockerTab = action.payload.tab
       return state
     },
