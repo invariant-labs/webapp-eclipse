@@ -144,28 +144,29 @@ export const XInvtLocker: React.FC<ILocker> = ({
   }
 
   const calculateOtherTokenAmount = useCallback(
-    (value: string, isLock?: boolean, byAmountIn?: boolean) => {
+    (value: string, isLock?: boolean, _byAmountIn?: boolean) => {
       // if (!stakedAmount || !stakedTokenSupply) return new BN(0)
       const isLockAction = isLock ?? tokenFrom.assetAddress.equals(INVT_MAIN.address)
       const amount = convertBalanceToBN(value, INVT_MAIN.decimals)
-      if (isLockAction) {
-        // return calculateTokensStake(
-        //   stakedTokenSupply,
-        //   stakedAmount,
-        //   amount,
-        //   byAmountIn ?? inputRef === inputTarget.FROM
-        // )
-        return () => 0
-      } else {
-        //   return calculateTokensUnstake(
-        //     stakedTokenSupply,
-        //     stakedAmount,
-        //     amount,
-        //     byAmountIn ?? inputRef === inputTarget.FROM
-        //   )
+      if (amount)
+        if (isLockAction) {
+          // return calculateTokensStake(
+          //   stakedTokenSupply,
+          //   stakedAmount,
+          //   amount,
+          //   byAmountIn ?? inputRef === inputTarget.FROM
+          // )
+          return () => 0
+        } else {
+          //   return calculateTokensUnstake(
+          //     stakedTokenSupply,
+          //     stakedAmount,
+          //     amount,
+          //     byAmountIn ?? inputRef === inputTarget.FROM
+          //   )
 
-        return () => 0
-      }
+          return () => 0
+        }
     },
     [, tokenFrom, tokenTo, inputRef]
   )
