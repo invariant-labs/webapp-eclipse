@@ -14,6 +14,7 @@ interface ISwitcher {
   setInputRef: (val: inputTarget) => void
   isRotating: boolean
   setIsRotating: (isRotating: boolean) => void
+  disabled?: boolean
 }
 
 const Switcher: React.FC<ISwitcher> = ({
@@ -21,14 +22,18 @@ const Switcher: React.FC<ISwitcher> = ({
   setSwitchTab,
   isRotating,
   setInputRef,
-  setIsRotating
+  setIsRotating,
+  disabled
 }) => {
   const { classes } = useStyles({ switchTab })
 
   const handleIntervalChange = (_: any, newTab: string) => {
+    if (disabled) return
     if (!newTab) return
+
     setIsRotating(true)
     setInputRef(inputTarget.FROM)
+
     if (newTab === 'Unlock') {
       setSwitchTab(LockerSwitch.Unlock)
     } else if (newTab === 'Lock') {
@@ -37,7 +42,7 @@ const Switcher: React.FC<ISwitcher> = ({
 
     setTimeout(() => setIsRotating(false), 500)
   }
-  console.log(switchTab)
+
   return (
     <Box className={classes.mainWrapper}>
       <Box className={classes.switchPoolsContainer}>
@@ -56,11 +61,11 @@ const Switcher: React.FC<ISwitcher> = ({
               color:
                 switchTab === LockerSwitch.Lock ? colors.invariant.text : colors.invariant.light
             }}>
-            {LockerSwitch.Lock}{' '}
+            Get xINVT{' '}
             <LiquidityPlus
               style={
                 switchTab === LockerSwitch.Lock
-                  ? { color: colors.invariant.green, transform: 'scale(1.2)' }
+                  ? { color: colors.invariant.text, transform: 'scale(1.2)' }
                   : { color: colors.invariant.light }
               }
             />
@@ -72,12 +77,13 @@ const Switcher: React.FC<ISwitcher> = ({
             style={{
               color:
                 switchTab === LockerSwitch.Unlock ? colors.invariant.text : colors.invariant.light
-            }}>
-            {LockerSwitch.Unlock}{' '}
+            }}
+            disabled={disabled}>
+            Redeem INVT{' '}
             <LiquidityMinus
               style={
                 switchTab === LockerSwitch.Unlock
-                  ? { color: colors.invariant.green, transform: 'scale(1.2)' }
+                  ? { color: colors.invariant.text, transform: 'scale(1.2)' }
                   : { color: colors.invariant.light }
               }
             />

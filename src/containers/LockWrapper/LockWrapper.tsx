@@ -76,6 +76,9 @@ export const LockWrapper: React.FC = () => {
       .finally(() => {
         setPriceLoading(false)
       })
+      .catch(() => {
+        setPriceLoading(false)
+      })
   }
 
   useEffect(() => {
