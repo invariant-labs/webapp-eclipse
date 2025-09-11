@@ -45,8 +45,7 @@ export interface ILocker {
   tokenFrom: SwapToken
   tokenTo: SwapToken
   priceLoading: boolean
-  sBitzPrice: number
-  bitzPrice: number
+  invtPrice: number
 }
 
 export const XInvtLocker: React.FC<ILocker> = ({
@@ -72,9 +71,8 @@ export const XInvtLocker: React.FC<ILocker> = ({
   setProgress,
   tokenFrom,
   tokenTo,
-  priceLoading
-  // sBitzPrice,
-  // bitzPrice
+  priceLoading,
+  invtPrice
 }) => {
   const { classes } = useStyles()
 
@@ -247,7 +245,7 @@ export const XInvtLocker: React.FC<ILocker> = ({
         current={tokenFrom}
         hideBalances={walletStatus !== Status.Initialized}
         commonTokens={[]}
-        tokenPrice={0} // set price
+        tokenPrice={invtPrice}
         priceLoading={priceLoading}
         isBalanceLoading={isBalanceLoading}
         showMaxButton={true}
@@ -283,7 +281,7 @@ export const XInvtLocker: React.FC<ILocker> = ({
         current={tokenTo}
         hideBalances={walletStatus !== Status.Initialized}
         commonTokens={[]}
-        tokenPrice={0} // set price
+        tokenPrice={invtPrice}
         priceLoading={priceLoading}
         isBalanceLoading={isBalanceLoading}
         showMaxButton={true}
@@ -292,13 +290,7 @@ export const XInvtLocker: React.FC<ILocker> = ({
         notRoundIcon
         limit={1e14}
       />
-      <Separator isHorizontal width={1} color={colors.invariant.light} margin='16px 0' />
-      <TransactionDetails
-        tokenFromTicker={tokenFrom.symbol}
-        tokenToTicker={tokenTo.symbol}
-        tokenToAmount={printBN(calculateOtherTokenAmount('1', undefined, true), TOKEN_DECIMALS)}
-        stakedDataLoading={stakeDataLoading}
-      />
+
       {walletStatus !== Status.Initialized ? (
         <ChangeWalletButton
           margin={'24px 0 0 0'}

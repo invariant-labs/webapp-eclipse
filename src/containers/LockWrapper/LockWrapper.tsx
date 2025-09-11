@@ -1,8 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import useStyles from './styles'
 import { Box, Button, Grid, Typography, useMediaQuery } from '@mui/material'
-import { Link } from 'react-router-dom'
-import LaunchIcon from '@mui/icons-material/Launch'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   balance,
@@ -19,14 +17,13 @@ import { isLoading } from '@store/selectors/sbitz-stats'
 import { network } from '@store/selectors/solanaConnection'
 import { BN } from '@coral-xyz/anchor'
 import { computeBitzAprApy } from '@invariant-labs/sbitz'
-import { sBITZ_MAIN, BITZ_MAIN } from '@store/consts/static'
+import { INVT_MAIN, xINVT_MAIN } from '@store/consts/static'
 import { getTokenPrice, printBN } from '@utils/utils'
 import { LockerSwitch } from '@store/consts/types'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { refreshIcon } from '@static/icons'
 import { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 import { theme } from '@static/theme'
-import { SBitzBanner } from '@components/Stake/SBitzBanner/SBitzBanner'
 
 import XInvtLocker from '@components/XInvtLocker/XInvtLocker/XInvtLocker'
 import {
@@ -55,8 +52,7 @@ export const LockWrapper: React.FC = () => {
   // const stakeLoading = useSelector(stakeDataLoading)
   const currentLockerTab = useSelector(lockerTab)
 
-  const [bitzPrice, setBitzPrice] = useState(0)
-  const [sBitzPrice, setSBitzPrice] = useState(0)
+  const [invtPrice, setInvtPrice] = useState(0)
   const [progress, setProgress] = useState<ProgressState>('none')
   const [priceLoading, setPriceLoading] = useState(false)
 
@@ -64,42 +60,37 @@ export const LockWrapper: React.FC = () => {
 
   const sBitzApyApr = useMemo(() => {
     if (!stakedBitzData.bitzTotalBalance) return { apr: 0, apy: 0 }
-    return computeBitzAprApy(+printBN(stakedBitzData.bitzTotalBalance, BITZ_MAIN.decimals))
+    return computeBitzAprApy(+printBN(stakedBitzData.bitzTotalBalance, INVT_MAIN.decimals))
   }, [stakedBitzData])
 
   const tokenFrom: SwapToken = useMemo(
     () =>
       currentLockerTab === LockerSwitch.Lock
-        ? tokens[BITZ_MAIN.address.toString()]
-        : tokens[sBITZ_MAIN.address.toString()],
+        ? tokens[INVT_MAIN.address.toString()]
+        : tokens[xINVT_MAIN.address.toString()],
     [currentLockerTab, tokens]
   )
 
   const tokenTo: SwapToken = useMemo(
     () =>
       currentLockerTab === LockerSwitch.Unlock
-        ? tokens[BITZ_MAIN.address.toString()]
-        : tokens[sBITZ_MAIN.address.toString()],
+        ? tokens[INVT_MAIN.address.toString()]
+        : tokens[xINVT_MAIN.address.toString()],
     [currentLockerTab, tokens]
   )
 
   const fetchPrices = () => {
     setPriceLoading(true)
 
-    const bitzAddr = BITZ_MAIN.address.toString()
-    const sBitzAddr = sBITZ_MAIN.address.toString()
+    const invtAddr = INVT_MAIN.address.toString()
 
-    Promise.allSettled([
-      getTokenPrice(networkType, bitzAddr),
-      getTokenPrice(networkType, sBitzAddr)
-    ])
-      .then(([bitzRes, sBitzRes]) => {
-        const bitzPrice =
+    Promise.allSettled([getTokenPrice(networkType, invtAddr)])
+
+      .then(([bitzRes]) => {
+        const invtPrice =
           bitzRes.status === 'fulfilled' && bitzRes.value != null ? bitzRes.value : 0
-        const sBitzPrice =
-          sBitzRes.status === 'fulfilled' && sBitzRes.value != null ? sBitzRes.value : 0
-        setBitzPrice(bitzPrice ?? 0)
-        setSBitzPrice(sBitzPrice ?? 0)
+
+        setInvtPrice(invtPrice ?? 0)
       })
       .finally(() => {
         setPriceLoading(false)
@@ -176,37 +167,13 @@ export const LockWrapper: React.FC = () => {
   // }, [walletStatus])
   return (
     <Grid container className={classes.wrapper}>
-      <SBitzBanner />
       <Box className={classes.animatedContainer}>
         <Box className={classes.liquidityStakingWrapper}>
           <Box className={classes.titleWrapper}>
             <Box className={classes.titleTextWrapper}>
               <Typography component='h1'>INVT locking</Typography>
-              <Box className={classes.subheaderDescription}>
-                <Link
-                  to='https://docs.invariant.app/docs/sbitz'
-                  target='_blank'
-                  className={classes.learnMoreLink}>
-                  <span> {isSm ? 'More' : 'Learn More'}</span>{' '}
-                  <LaunchIcon classes={{ root: classes.clipboardIcon }} />
-                </Link>
-              </Box>
             </Box>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              {/* <Button
-                className={classes.statsExpanderButton}
-                onClick={() => toggleExpand()}
-                disabled={!isConnected}>
-                <p>
-                  <img
-                    src={isExpanded ? EyeHide : EyeShow}
-                    width={20}
-                    height={20}
-                    style={{ opacity: isConnected ? 1 : 0.3 }}
-                  />
-                  Portfolio
-                </p>
-              </Button> */}
               <TooltipHover title='Refresh'>
                 <Grid className={classes.refreshIconContainer}>
                   <Button
@@ -258,22 +225,8 @@ export const LockWrapper: React.FC = () => {
               tokenFrom={tokenFrom}
               tokenTo={tokenTo}
               priceLoading={priceLoading}
-              sBitzPrice={sBitzPrice}
-              bitzPrice={bitzPrice}
+              invtPrice={invtPrice}
             />
-            {/* <Box
-              className={`${classes.yourStatsWrapper} ${isExpanded && isConnected ? classes.yourStatsVisible : ''}`}>
-              {shouldRenderStats && isConnected && (
-                <YourStakeProgress
-                  sBitzBalance={sBitzBalance}
-                  bitzToWithdraw={bitzToWithdraw}
-                  bitzPrice={bitzPrice}
-                  isLoading={stakeLoading || isBalanceLoading}
-                  isConnected={isConnected}
-                  yield24={estimated24Yield}
-                />
-              )}
-            </Box> */}
           </Box>
         </Box>
       </Box>
