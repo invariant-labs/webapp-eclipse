@@ -14,6 +14,8 @@ import AnimatedButton, { ProgressState } from '@common/AnimatedButton/AnimatedBu
 import { LockerSwitch } from '@store/consts/types'
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
 import { LockLiquidityPayload } from '@store/reducers/xInvt'
+import { LockIcon } from '@static/componentIcon/LockIcon'
+import { colors, typography } from '@static/theme'
 
 export interface ILocker {
   walletStatus: Status
@@ -196,8 +198,9 @@ export const XInvtLocker: React.FC<ILocker> = ({
         setInputRef={setInputRef}
         isRotating={isRotating}
         setIsRotating={setIsRotating}
+        disabled
       />
-      <Box mt='32px' mb={'16px'} display='flex' justifyContent='space-between' alignItems='center'>
+      <Box mt='24px' mb={'12px'} display='flex' justifyContent='space-between' alignItems='center'>
         <Typography className={classes.title}>
           {currentLockerTab === LockerSwitch.Lock ? 'Lock' : 'Unlock'}
         </Typography>
@@ -249,6 +252,18 @@ export const XInvtLocker: React.FC<ILocker> = ({
         rotateRight={currentLockerTab === LockerSwitch.Lock}
         isRotating={isRotating}
       />
+      <Box mb={'12px'} display='flex' justifyContent='space-between' alignItems='center'>
+        <Typography className={classes.title}>Recive</Typography>
+        <Box className={classes.lockPeriod}>
+          <LockIcon color={colors.invariant.textGrey} width={14} height={14} />
+          <Typography style={{ ...typography.caption4 }} color={colors.invariant.textGrey}>
+            Lock period:{' '}
+          </Typography>
+          <Typography style={{ ...typography.caption3 }} color={colors.invariant.green}>
+            3 months
+          </Typography>
+        </Box>
+      </Box>
       <ExchangeAmountInput
         value={amountTo}
         balance={printBN(tokenTo?.balance || new BN(0), tokenTo?.decimals)}
