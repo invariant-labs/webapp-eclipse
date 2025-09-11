@@ -147,27 +147,13 @@ export const XInvtLocker: React.FC<ILocker> = ({
 
   const calculateOtherTokenAmount = useCallback(
     (value: string, isLock?: boolean, _byAmountIn?: boolean) => {
-      // if (!stakedAmount || !stakedTokenSupply) return new BN(0)
       const isLockAction = isLock ?? tokenFrom.assetAddress.equals(INVT_MAIN.address)
       const amount = convertBalanceToBN(value, INVT_MAIN.decimals)
       if (amount)
         if (isLockAction) {
-          // return calculateTokensStake(
-          //   stakedTokenSupply,
-          //   stakedAmount,
-          //   amount,
-          //   byAmountIn ?? inputRef === inputTarget.FROM
-          // )
-          return () => 0
+          return amount
         } else {
-          //   return calculateTokensUnstake(
-          //     stakedTokenSupply,
-          //     stakedAmount,
-          //     amount,
-          //     byAmountIn ?? inputRef === inputTarget.FROM
-          //   )
-
-          return () => 0
+          return amount
         }
     },
     [tokenFrom, tokenTo, inputRef]
@@ -272,6 +258,7 @@ export const XInvtLocker: React.FC<ILocker> = ({
         balance={printBN(tokenTo?.balance || new BN(0), tokenTo?.decimals)}
         decimal={tokenTo?.decimals}
         setValue={value => {
+          if (unlockDisabled) return
           if (value.match(/^\d*\.?\d*$/)) {
             setAmountTo(value)
             setInputRef(inputTarget.TO)
@@ -291,6 +278,7 @@ export const XInvtLocker: React.FC<ILocker> = ({
         hideSelect
         notRoundIcon
         limit={1e14}
+        disabled={unlockDisabled}
       />
 
       {walletStatus !== Status.Initialized ? (
@@ -317,12 +305,10 @@ export const XInvtLocker: React.FC<ILocker> = ({
             const amount = inputRef === inputTarget.FROM ? amountFrom : amountTo
             if (currentLockerTab === LockerSwitch.Lock) {
               handleLock({
-                byAmountIn: inputRef === inputTarget.FROM,
                 amount: convertBalanceToBN(amount, tokenFrom.decimals)
               })
             } else {
               handleUnlock({
-                byAmountIn: inputRef === inputTarget.FROM,
                 amount: convertBalanceToBN(amount, tokenFrom.decimals)
               })
             }

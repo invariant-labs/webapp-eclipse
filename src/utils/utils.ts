@@ -960,7 +960,9 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
         [BTC_TEST.address.toString()]: BTC_TEST,
         [WETH_TEST.address.toString()]: WETH_TEST,
         [MOON_TEST.address.toString()]: MOON_TEST,
-        [S22_TEST.address.toString()]: S22_TEST
+        [S22_TEST.address.toString()]: S22_TEST,
+        [INVT_MAIN.address.toString()]: INVT_MAIN,
+        [xINVT_MAIN.address.toString()]: xINVT_MAIN
       }
     default:
       return {}
