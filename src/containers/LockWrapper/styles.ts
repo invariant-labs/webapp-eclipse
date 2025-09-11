@@ -156,16 +156,16 @@ export const useStyles = makeStyles()(() => ({
   },
   titleWrapper: {
     display: 'flex',
-    width: '100%',
+    maxWidth: 1040,
     height: '27px',
-    maxWidth: 510,
-    [theme.breakpoints.down('md')]: {
-      maxWidth: '100%'
-    },
+    width: '100%',
     marginBottom: '16px',
     justifyContent: 'space-between',
     alignItems: 'center',
-    gap: 12
+    gap: 12,
+    [theme.breakpoints.down('md')]: {
+      maxWidth: 510
+    }
   },
 
   titleTextWrapper: {
@@ -221,25 +221,7 @@ export const useStyles = makeStyles()(() => ({
       alignItems: 'center'
     }
   },
-  liquidityStakingWrapper: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    flexDirection: 'column',
-    transition: 'transform 0.4s ease-in-out, width 0.4s ease-in-out',
-    willChange: 'transform, width',
-    backfaceVisibility: 'hidden',
-    transform: 'translateZ(0)',
-    zIndex: 2,
-    maxWidth: '510px',
-    width: '100%',
 
-    [theme.breakpoints.down('md')]: {
-      transform: 'none !important',
-      maxWidth: '410px',
-      width: '100%'
-    }
-  },
   liquidityStakingExpanded: {
     transform: 'translateX(-80px)',
     maxWidth: '510px'
@@ -331,13 +313,7 @@ export const useStyles = makeStyles()(() => ({
     justifyContent: 'flex-end',
     marginBottom: '16px'
   },
-  stakingContentWrapper: {
-    display: 'flex',
-    width: '100%',
-    [theme.breakpoints.down('md')]: {
-      flexDirection: 'column-reverse'
-    }
-  },
+
   stakedBitzContainer: {
     width: '100%'
   },

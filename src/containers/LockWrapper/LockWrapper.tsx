@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import useStyles from './styles'
 import { Box, Button, Grid, Typography } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
 import {
@@ -27,6 +26,8 @@ import {
   inProgress
 } from '@store/selectors/xInvt'
 import { StatsLocker } from '@components/XInvtLocker/StatsLocker/StatsLocker'
+import { SBitzBanner } from '@components/Stake/SBitzBanner/SBitzBanner'
+import useStyles from './styles'
 
 export const LockWrapper: React.FC = () => {
   const { classes } = useStyles()
@@ -114,65 +115,61 @@ export const LockWrapper: React.FC = () => {
   return (
     <Grid container className={classes.wrapper}>
       <SBitzBanner />
+      <Box className={classes.titleWrapper}>
+        <Box className={classes.titleTextWrapper}>
+          <Typography component='h1'>INVT locking</Typography>
+        </Box>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <TooltipHover title='Refresh'>
+            <Grid className={classes.refreshIconContainer}>
+              <Button
+                onClick={onRefresh}
+                className={classes.refreshIconBtn}
+                disabled={isBalanceLoading}>
+                <img src={refreshIcon} className={classes.refreshIcon} alt='Refresh' />
+              </Button>
+            </Grid>
+          </TooltipHover>
+        </Box>
+      </Box>
       <Box className={classes.panelsWrapper}>
         <StatsLocker />
-        <Box className={classes.liquidityStakingWrapper}>
-          <Box className={classes.titleWrapper}>
-            <Box className={classes.titleTextWrapper}>
-              <Typography component='h1'>INVT locking</Typography>
-            </Box>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <TooltipHover title='Refresh'>
-                <Grid className={classes.refreshIconContainer}>
-                  <Button
-                    onClick={onRefresh}
-                    className={classes.refreshIconBtn}
-                    disabled={isBalanceLoading}>
-                    <img src={refreshIcon} className={classes.refreshIcon} alt='Refresh' />
-                  </Button>
-                </Grid>
-              </TooltipHover>
-            </Box>
-          </Box>
-          <Box className={classes.stakingContentWrapper}>
-            <XInvtLocker
-              walletStatus={walletStatus}
-              tokens={tokens}
-              handleLock={(props: LockLiquidityPayload) => {
-                dispatch(actions.lock(props))
-              }}
-              handleUnlock={(props: LockLiquidityPayload) => {
-                dispatch(actions.unlock(props))
-              }}
-              onConnectWallet={() => {
-                dispatch(walletActions.connect(false))
-              }}
-              onDisconnectWallet={() => {
-                dispatch(walletActions.disconnect())
-              }}
-              changeLockerTab={(tab: LockerSwitch) => {
-                dispatch(actions.setLockTab({ tab }))
-              }}
-              currentLockerTab={currentLockerTab}
-              ethBalance={ethBalance}
-              isBalanceLoading={isBalanceLoading}
-              lockInput={lockInput}
-              unlockInput={unlockInput}
-              setLockInput={(val: string) => {
-                dispatch(actions.setLockInputVal({ val }))
-              }}
-              setUnlockInput={(val: string) => {
-                dispatch(actions.setUnlockInputVal({ val }))
-              }}
-              progress={progress}
-              setProgress={setProgress}
-              tokenFrom={tokenFrom}
-              tokenTo={tokenTo}
-              priceLoading={priceLoading}
-              invtPrice={invtPrice}
-            />
-          </Box>
-        </Box>
+        <XInvtLocker
+          walletStatus={walletStatus}
+          tokens={tokens}
+          handleLock={(props: LockLiquidityPayload) => {
+            dispatch(actions.lock(props))
+          }}
+          handleUnlock={(props: LockLiquidityPayload) => {
+            dispatch(actions.unlock(props))
+          }}
+          onConnectWallet={() => {
+            dispatch(walletActions.connect(false))
+          }}
+          onDisconnectWallet={() => {
+            dispatch(walletActions.disconnect())
+          }}
+          changeLockerTab={(tab: LockerSwitch) => {
+            dispatch(actions.setLockTab({ tab }))
+          }}
+          currentLockerTab={currentLockerTab}
+          ethBalance={ethBalance}
+          isBalanceLoading={isBalanceLoading}
+          lockInput={lockInput}
+          unlockInput={unlockInput}
+          setLockInput={(val: string) => {
+            dispatch(actions.setLockInputVal({ val }))
+          }}
+          setUnlockInput={(val: string) => {
+            dispatch(actions.setUnlockInputVal({ val }))
+          }}
+          progress={progress}
+          setProgress={setProgress}
+          tokenFrom={tokenFrom}
+          tokenTo={tokenTo}
+          priceLoading={priceLoading}
+          invtPrice={invtPrice}
+        />
       </Box>
     </Grid>
   )
