@@ -345,7 +345,11 @@ export const useStyles = makeStyles()(() => ({
     width: '100%',
     display: 'flex',
     gap: 20,
-    justifyContent: 'center'
+    justifyContent: 'center',
+    alignItems: 'center',
+    [theme.breakpoints.down('md')]: {
+      flexDirection: 'column'
+    }
   }
 }))
 
