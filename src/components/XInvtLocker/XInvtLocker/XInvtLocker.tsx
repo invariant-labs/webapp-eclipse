@@ -15,6 +15,7 @@ import { LockerSwitch } from '@store/consts/types'
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
 import { LockLiquidityPayload } from '@store/reducers/xInvt'
 import { ProgressBar } from '@common/ProgressBar/ProgressBar'
+import { colors, typography } from '@static/theme'
 
 export interface ILocker {
   walletStatus: Status
