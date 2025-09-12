@@ -172,7 +172,7 @@ export const LockWrapper: React.FC = () => {
           tokenTo={tokenTo}
           priceLoading={priceLoading}
           invtPrice={invtPrice}
-          unlockDisabled={false}
+          unlockDisabled={true}
         />
         <StatsLocker
           percentage={20}
