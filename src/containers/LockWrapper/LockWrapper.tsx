@@ -84,11 +84,14 @@ export const LockWrapper: React.FC = () => {
 
   useEffect(() => {
     dispatch(walletActions.getBalance())
+    dispatch(actions.getCurrentStats())
+    console.log('test')
     fetchPrices()
   }, [dispatch])
 
   const onRefresh = () => {
     dispatch(walletActions.getBalance())
+    dispatch(actions.getCurrentStats())
     fetchPrices()
   }
 
@@ -170,7 +173,7 @@ export const LockWrapper: React.FC = () => {
           tokenTo={tokenTo}
           priceLoading={priceLoading}
           invtPrice={invtPrice}
-          unlockDisabled={true}
+          unlockDisabled={false}
         />
       </Box>
     </Grid>

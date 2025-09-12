@@ -1,20 +1,19 @@
 import { PayloadAction } from '@reduxjs/toolkit'
-import { actions, StakeLiquidityPayload } from '@store/reducers/sBitz'
 import { all, call, put, select, spawn, takeLatest } from 'typed-redux-saga'
 import { network, rpcAddress } from '@store/selectors/solanaConnection'
 import { getWallet } from './wallet'
-import { getStakingProgram } from '@utils/web3/programs/amm'
+import { getXInvtLockerProgram } from '@utils/web3/programs/amm'
 import { IWallet } from '@invariant-labs/sdk-eclipse'
 import { actions as connectionActions } from '@store/reducers/solanaConnection'
 import { actions as RPCAction, RpcStatus } from '@store/reducers/solanaConnection'
 import {
   APPROVAL_DENIED_MESSAGE,
-  BITZ_MAIN,
   COMMON_ERROR_MESSAGE,
   ErrorCodeExtractionKeys,
-  sBITZ_MAIN,
+  INVT_MAIN,
   SIGNING_SNACKBAR_CONFIG,
-  TIMEOUT_ERROR_MESSAGE
+  TIMEOUT_ERROR_MESSAGE,
+  xINVT_MAIN
 } from '@store/consts/static'
 import {
   sendAndConfirmRawTransaction,
@@ -35,26 +34,21 @@ import {
   printBN
 } from '@utils/utils'
 import { closeSnackbar } from 'notistack'
-import {
-  getAssociatedTokenAddressSync,
-  TOKEN_2022_PROGRAM_ID,
-  TOKEN_PROGRAM_ID
-} from '@solana/spl-token'
-import { accounts } from '@store/selectors/solanaWallet'
+import { getAssociatedTokenAddressSync, TOKEN_2022_PROGRAM_ID } from '@solana/spl-token'
 import { BN } from '@coral-xyz/anchor'
+import { actions, LockLiquidityPayload } from '@store/reducers/xInvt'
 
-export function* handleLock(action: PayloadAction<StakeLiquidityPayload>) {
+export function* handleLock(action: PayloadAction<LockLiquidityPayload>) {
   const loaderLocking = createLoaderKey()
   const loaderSigningTx = createLoaderKey()
 
-  const { amount: bitzAmount, byAmountIn } = action.payload
+  const { amount: invtAmount } = action.payload
 
   const networkType = yield* select(network)
   const rpc = yield* select(rpcAddress)
-  const walletAccounts = yield* select(accounts)
   const wallet = yield* call(getWallet)
   const connection = yield* call(getConnection)
-  const stakingProgram = yield* call(getStakingProgram, networkType, rpc, wallet as IWallet)
+  const xInvtProgram = yield* call(getXInvtLockerProgram, networkType, rpc, wallet as IWallet)
 
   try {
     yield put(
@@ -66,26 +60,28 @@ export function* handleLock(action: PayloadAction<StakeLiquidityPayload>) {
       })
     )
 
-    const ata = getAssociatedTokenAddressSync(
-      sBITZ_MAIN.address,
+    const invtAta = getAssociatedTokenAddressSync(
+      INVT_MAIN.address,
       wallet.publicKey,
       false,
       TOKEN_2022_PROGRAM_ID
     )
 
-    const stakeIx = yield* call(
-      [stakingProgram, stakingProgram.stakeIx],
-      {
-        byAmountIn,
-        amount: bitzAmount,
-        mint: BITZ_MAIN.address,
-        stakedMint: sBITZ_MAIN.address,
-        createStakedATA: !walletAccounts[ata.toString()]
-      },
-      wallet.publicKey
+    const xInvtAta = getAssociatedTokenAddressSync(
+      xINVT_MAIN.address,
+      wallet.publicKey,
+      false,
+      TOKEN_2022_PROGRAM_ID
     )
 
-    const tx = new Transaction().add(...stakeIx)
+    const mintIx = yield* call([xInvtProgram, xInvtProgram.mintIx], {
+      amount: invtAmount,
+      payer: wallet.publicKey,
+      userTokenAccount: invtAta,
+      userLockedTokenAccount: xInvtAta
+    })
+
+    const tx = new Transaction().add(mintIx)
 
     const { blockhash, lastValidBlockHeight } = yield* call([
       connection,
@@ -159,10 +155,10 @@ export function* handleLock(action: PayloadAction<StakeLiquidityPayload>) {
 
         if (meta?.preTokenBalances && meta.postTokenBalances) {
           const accountXPredicate = entry =>
-            entry.mint === BITZ_MAIN.address.toString() &&
+            entry.mint === INVT_MAIN.address.toString() &&
             entry.owner === wallet.publicKey.toString()
           const accountYPredicate = entry =>
-            entry.mint === sBITZ_MAIN.address.toString() &&
+            entry.mint === xINVT_MAIN.address.toString() &&
             entry.owner === wallet.publicKey.toString()
 
           const preAccountX = meta.preTokenBalances.find(accountXPredicate)
@@ -183,13 +179,13 @@ export function* handleLock(action: PayloadAction<StakeLiquidityPayload>) {
               yield put(
                 snackbarsActions.add({
                   tokensDetails: {
-                    ikonType: 'stake',
-                    tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, BITZ_MAIN.decimals)),
-                    tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, sBITZ_MAIN.decimals)),
-                    tokenXIcon: BITZ_MAIN.logoURI,
-                    tokenYIcon: sBITZ_MAIN.logoURI,
-                    tokenXSymbol: BITZ_MAIN.symbol ?? BITZ_MAIN.address.toString(),
-                    tokenYSymbol: sBITZ_MAIN.symbol ?? sBITZ_MAIN.address.toString()
+                    ikonType: 'lock',
+                    tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, INVT_MAIN.decimals)),
+                    tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, xINVT_MAIN.decimals)),
+                    tokenXIcon: INVT_MAIN.logoURI,
+                    tokenYIcon: xINVT_MAIN.logoURI,
+                    tokenXSymbol: INVT_MAIN.symbol ?? INVT_MAIN.address.toString(),
+                    tokenYSymbol: xINVT_MAIN.symbol ?? xINVT_MAIN.address.toString()
                   },
                   persist: false
                 })
@@ -271,48 +267,50 @@ export function* handleLock(action: PayloadAction<StakeLiquidityPayload>) {
   }
 }
 
-export function* handleUnlock(action: PayloadAction<StakeLiquidityPayload>) {
+export function* handleUnlock(action: PayloadAction<LockLiquidityPayload>) {
   const loaderUnlocking = createLoaderKey()
   const loaderSigningTx = createLoaderKey()
 
-  const { amount: sbitzAmount, byAmountIn } = action.payload
+  const { amount: xInvtAmount } = action.payload
 
   const networkType = yield* select(network)
   const rpc = yield* select(rpcAddress)
-  const walletAccounts = yield* select(accounts)
   const wallet = yield* call(getWallet)
   const connection = yield* call(getConnection)
-  const stakingProgram = yield* call(getStakingProgram, networkType, rpc, wallet as IWallet)
+  const xInvtProgram = yield* call(getXInvtLockerProgram, networkType, rpc, wallet as IWallet)
+
   try {
     yield put(
       snackbarsActions.add({
-        message: 'Unstaking sBITZ...',
+        message: 'Unlocking INVT...',
         variant: 'pending',
         persist: true,
         key: loaderUnlocking
       })
     )
 
-    const ata = getAssociatedTokenAddressSync(
-      BITZ_MAIN.address,
+    const invtAta = getAssociatedTokenAddressSync(
+      INVT_MAIN.address,
       wallet.publicKey,
       false,
-      TOKEN_PROGRAM_ID
+      TOKEN_2022_PROGRAM_ID
     )
 
-    const unstakeIx = yield* call(
-      [stakingProgram, stakingProgram.unstakeIx],
-      {
-        byAmountIn,
-        amount: sbitzAmount,
-        mint: BITZ_MAIN.address,
-        stakedMint: sBITZ_MAIN.address,
-        createAta: !walletAccounts[ata.toString()]
-      },
-      wallet.publicKey
+    const xInvtAta = getAssociatedTokenAddressSync(
+      xINVT_MAIN.address,
+      wallet.publicKey,
+      false,
+      TOKEN_2022_PROGRAM_ID
     )
 
-    const tx = new Transaction().add(...unstakeIx)
+    const unstakeIx = yield* call([xInvtProgram, xInvtProgram.burnIx], {
+      amount: xInvtAmount,
+      payer: wallet.publicKey,
+      userTokenAccount: invtAta,
+      userLockedTokenAccount: xInvtAta
+    })
+
+    const tx = new Transaction().add(unstakeIx)
 
     const { blockhash, lastValidBlockHeight } = yield* call([
       connection,
@@ -375,7 +373,7 @@ export function* handleUnlock(action: PayloadAction<StakeLiquidityPayload>) {
 
         yield put(
           snackbarsActions.add({
-            message: 'sBITZ unstaked successfully',
+            message: 'INVT unlocked successfully',
             variant: 'success',
             persist: false,
             txid
@@ -386,10 +384,10 @@ export function* handleUnlock(action: PayloadAction<StakeLiquidityPayload>) {
 
         if (meta?.preTokenBalances && meta.postTokenBalances) {
           const accountXPredicate = entry =>
-            entry.mint === sBITZ_MAIN.address.toString() &&
+            entry.mint === xINVT_MAIN.address.toString() &&
             entry.owner === wallet.publicKey.toString()
           const accountYPredicate = entry =>
-            entry.mint === BITZ_MAIN.address.toString() &&
+            entry.mint === INVT_MAIN.address.toString() &&
             entry.owner === wallet.publicKey.toString()
 
           const preAccountX = meta.preTokenBalances.find(accountXPredicate)
@@ -410,13 +408,13 @@ export function* handleUnlock(action: PayloadAction<StakeLiquidityPayload>) {
               yield put(
                 snackbarsActions.add({
                   tokensDetails: {
-                    ikonType: 'unstake',
-                    tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, sBITZ_MAIN.decimals)),
-                    tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, BITZ_MAIN.decimals)),
-                    tokenXIcon: sBITZ_MAIN.logoURI,
-                    tokenYIcon: BITZ_MAIN.logoURI,
-                    tokenXSymbol: sBITZ_MAIN.symbol ?? sBITZ_MAIN.address.toString(),
-                    tokenYSymbol: BITZ_MAIN.symbol ?? BITZ_MAIN.address.toString()
+                    ikonType: 'unlock',
+                    tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, xINVT_MAIN.decimals)),
+                    tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, INVT_MAIN.decimals)),
+                    tokenXIcon: xINVT_MAIN.logoURI,
+                    tokenYIcon: INVT_MAIN.logoURI,
+                    tokenXSymbol: xINVT_MAIN.symbol ?? xINVT_MAIN.address.toString(),
+                    tokenYSymbol: INVT_MAIN.symbol ?? INVT_MAIN.address.toString()
                   },
                   persist: false
                 })
@@ -427,7 +425,7 @@ export function* handleUnlock(action: PayloadAction<StakeLiquidityPayload>) {
       } else {
         yield put(
           snackbarsActions.add({
-            message: 'sBITZ unstaked successfully',
+            message: 'INVT unlocked successfully',
             variant: 'success',
             persist: false,
             txid
@@ -498,14 +496,71 @@ export function* handleUnlock(action: PayloadAction<StakeLiquidityPayload>) {
   }
 }
 
+export function* getInvtStats() {
+  const networkType = yield* select(network)
+  const rpc = yield* select(rpcAddress)
+  const wallet = yield* call(getWallet)
+  // const connection = yield* call(getConnection)
+  const xInvtProgram = yield* call(getXInvtLockerProgram, networkType, rpc, wallet as IWallet)
+  try {
+    const invtState = yield* call([xInvtProgram, xInvtProgram.getState])
+
+    // const stateAddress = xInvtProgram.getStateAddress()
+
+    // console.log(stateAddress)
+
+    // const tokenAccounts = yield* call(
+    //   [connection, connection.getTokenAccountsByOwner],
+    //   new PublicKey(BITZ_TOKENS_ADDR),
+    //   {
+    //     mint: BITZ_MAIN.address
+    //   }
+    // )
+
+    // let totalBalance = 0n
+    // for (const { account } of tokenAccounts.value) {
+    //   const data = AccountLayout.decode(account.data)
+    //   totalBalance += BigInt(data.amount.toString())
+    // }
+
+    // const stakedTokenSupplyAmount = +printBN(stakedTokenSupply, BITZ_MAIN.decimals)
+    // const sBitzAmount = +printBN(stakedAmount, BITZ_MAIN.decimals)
+    // const totalBitzSupply = +printBN(new BN(totalBalance), BITZ_MAIN.decimals)
+    // const bitzSupplyAmount = +printBN(bitzSupply, BITZ_MAIN.decimals)
+    // const response = yield* call(fetchMarketBitzStats)
+    // const holders = response.data[sBITZ_MAIN.address.toString()].holders
+
+    // const bitzAmount = totalBitzSupply - sBitzAmount
+
+    // const marketCapSBitz = (Number(price) ?? 0) * stakedTokenSupplyAmount
+
+    yield* put(
+      actions.setCurrentStats({
+        totalXInvt: +printBN(invtState.lockedInvt, xINVT_MAIN.decimals)
+      })
+    )
+  } catch (e: unknown) {
+    const error = ensureError(e)
+    console.log(error)
+
+    yield* put(actions.setLoadingStats(false))
+
+    yield* call(handleRpcError, error.message)
+  }
+}
+
 export function* stakeHandler(): Generator {
-  yield* takeLatest(actions.stake, handleLock)
+  yield* takeLatest(actions.lock, handleLock)
 }
 
 export function* unstakeHandler(): Generator {
-  yield* takeLatest(actions.unstake, handleUnlock)
+  yield* takeLatest(actions.unlock, handleUnlock)
 }
 
-export function* stakeSaga(): Generator {
-  yield all([stakeHandler, unstakeHandler].map(spawn))
+export function* getInvtStatsHandler(): Generator {
+  yield* takeLatest(actions.getCurrentStats, getInvtStats)
+}
+
+export function* xInvtSaga(): Generator {
+  yield all([stakeHandler, unstakeHandler, getInvtStatsHandler].map(spawn))
 }

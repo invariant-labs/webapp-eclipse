@@ -4,11 +4,15 @@ import { BN } from '@coral-xyz/anchor'
 
 export interface LockLiquidityPayload {
   amount: BN
-  byAmountIn: boolean
 }
 
 export interface LoadingStates {
   lockOperation: boolean
+  invtMarketData: boolean
+}
+
+export interface InvtMarketData {
+  totalXInvt: number | null
 }
 
 export interface IxInvt {
@@ -19,17 +23,22 @@ export interface IxInvt {
   lockerTab: LockerSwitch
   lockInputVal: string
   unlockInputVal: string
+  invtMarketData: InvtMarketData
 }
 
 const defaultStatus: IxInvt = {
   inProgress: false,
   success: false,
   loadingStates: {
-    lockOperation: false
+    lockOperation: false,
+    invtMarketData: false
   },
   lockerTab: LockerSwitch.Lock,
   lockInputVal: '',
-  unlockInputVal: ''
+  unlockInputVal: '',
+  invtMarketData: {
+    totalXInvt: 0
+  }
 }
 
 export const xInvtSliceName = 'xInvt'
@@ -65,6 +74,19 @@ const xinvtLockerSlice = createSlice({
     },
     setUnlockInputVal(state, action: PayloadAction<{ val: string }>) {
       state.unlockInputVal = action.payload.val
+      return state
+    },
+    getCurrentStats(state) {
+      state.loadingStates.invtMarketData = true
+      return state
+    },
+    setCurrentStats(state, action: PayloadAction<InvtMarketData>) {
+      state.loadingStates.invtMarketData = false
+      state.invtMarketData = action.payload
+      return state
+    },
+    setLoadingStats(state, action: PayloadAction<boolean>) {
+      state.loadingStates.invtMarketData = action.payload
       return state
     }
   }
