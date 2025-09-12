@@ -1,6 +1,5 @@
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import useStyles from './style'
-import { Separator } from '@common/Separator/Separator'
 import { colors, theme } from '@static/theme'
 import { ProgressBar } from '@common/ProgressBar/ProgressBar'
 import React from 'react'
@@ -29,12 +28,6 @@ export const StatsLocker: React.FC<StatsLocker> = ({
       <Box className={classes.statsWrapper}>
         <Grid className={classes.titleWrapper}>
           <Typography component='h5'>Global Stats</Typography>
-          <Box className={classes.lockPeriod}>
-            <Typography component='span' color={colors.invariant.textGrey}>
-              3 months yield:{' '}
-            </Typography>
-            <Typography color={colors.invariant.green}>{threeMonthsYield}%</Typography>
-          </Box>
         </Grid>
         <Box className={classes.yourStatsBoxesWrapper} mb={'auto'}>
           <Box className={classes.statsBox}>
@@ -46,10 +39,26 @@ export const StatsLocker: React.FC<StatsLocker> = ({
             <Typography component='h2'>3M INVT</Typography>
           </Box>
         </Box>
-        <ProgressBar percentage={percentage} />
-
-        {!isSm && <Separator isHorizontal color={colors.invariant.light} size={'100%'} width={1} />}
-
+        <Box className={classes.yourStatsBoxesWrapper} mb={'auto'}>
+          <Box className={classes.lockPeriod}>
+            <Typography component='h3' color={colors.invariant.textGrey}>
+              Rewards
+            </Typography>
+            <Typography color={colors.invariant.green} component='h3'>
+              1,5M INVT
+            </Typography>
+          </Box>
+          <Box className={classes.lockPeriod}>
+            <Typography component='h3' color={colors.invariant.textGrey}>
+              3 months yield:{' '}
+            </Typography>
+            <Typography color={colors.invariant.green} component='h3'>
+              {threeMonthsYield}%
+            </Typography>
+          </Box>
+        </Box>
+        <ProgressBar percentage={percentage} gap={1} />
+        {/* {!isSm && <Separator isHorizontal color={colors.invariant.light} size={'100%'} width={1} />} */}
         {!isSm && (
           <>
             <Typography component='h5' mt={'auto'}>
@@ -65,8 +74,8 @@ export const StatsLocker: React.FC<StatsLocker> = ({
                 <Typography component='h2'>{yourShare}%</Typography>
               </Box>
               <Box className={classes.globalStatsBox}>
-                <Typography component='h3'>Lock period</Typography>
-                <Typography component='h2'>3 months</Typography>
+                <Typography component='h3'>Your income</Typography>
+                <Typography component='h2'>123 INVT</Typography>
               </Box>
             </Box>
           </>
@@ -89,8 +98,8 @@ export const StatsLocker: React.FC<StatsLocker> = ({
                 <Typography component='h2'>{yourShare}%</Typography>
               </Box>
               <Box className={classes.globalStatsBox}>
-                <Typography component='h3'>Lock period</Typography>
-                <Typography component='h2'>3 months</Typography>
+                <Typography component='h3'>Your income</Typography>
+                <Typography component='h2'>123 INVT</Typography>
               </Box>
             </Box>
           </Box>

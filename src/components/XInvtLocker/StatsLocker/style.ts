@@ -155,13 +155,15 @@ const useStyles = makeStyles()(() => ({
 
   lockPeriod: {
     display: 'flex',
-    background: colors.invariant.newDark,
+    // background: colors.invariant.newDark,
+    border: `1px solid ${colors.invariant.light}`,
+    justifyContent: 'center',
     padding: '8px 24px',
     borderRadius: 24,
     gap: 4,
+    flex: 1,
     alignItems: 'center',
     '& span': {
-      fontWeight: 400,
       [theme.breakpoints.down('sm')]: {
         ...typography.caption4
       }

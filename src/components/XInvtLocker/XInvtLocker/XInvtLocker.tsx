@@ -16,6 +16,7 @@ import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButt
 import { LockLiquidityPayload } from '@store/reducers/xInvt'
 import { ProgressBar } from '@common/ProgressBar/ProgressBar'
 import { colors, typography } from '@static/theme'
+import { LockIcon } from '@static/componentIcon/LockIcon'
 
 export interface ILocker {
   walletStatus: Status
@@ -188,21 +189,7 @@ export const XInvtLocker: React.FC<ILocker> = ({
         setIsRotating={setIsRotating}
         disabled={unlockDisabled}
       />
-      <Box display='flex' marginTop={2} gap={1} flexDirection='column'>
-        <Typography sx={{ color: colors.invariant.text, ...typography.heading4 }}>
-          Lock deadline
-        </Typography>
-        <ProgressBar
-          height={15}
-          percentage={90}
-          displayCenterText={false}
-          gap={1}
-          startValue='4'
-          startUnit=' days'
-          endUnit=' days'
-          progressBarColor={colors.invariant.silver}
-        />
-      </Box>
+
       <Box mt='24px' mb={'12px'} display='flex' justifyContent='space-between' alignItems='center'>
         <Typography className={classes.title}>
           {currentLockerTab === LockerSwitch.Lock ? 'Lock' : 'Unlock'}
@@ -258,6 +245,15 @@ export const XInvtLocker: React.FC<ILocker> = ({
       />
       <Box mb={'12px'} display='flex' justifyContent='space-between' alignItems='center'>
         <Typography className={classes.title}>Recive</Typography>
+        <Box className={classes.lockPeriod}>
+          <LockIcon color={colors.invariant.textGrey} width={14} height={14} />
+          <Typography style={{ ...typography.caption4 }} color={colors.invariant.textGrey}>
+            Lock period:{' '}
+          </Typography>
+          <Typography style={{ ...typography.caption3 }} color={colors.invariant.green}>
+            3 months
+          </Typography>
+        </Box>
       </Box>
       <ExchangeAmountInput
         value={amountTo}
@@ -286,6 +282,22 @@ export const XInvtLocker: React.FC<ILocker> = ({
         limit={1e14}
         disabled={unlockDisabled}
       />
+
+      <Box display='flex' marginTop={2} gap={0} flexDirection='column'>
+        {/* <Typography sx={{ color: colors.invariant.text, ...typography.body1 }}>
+          Lock deadline
+        </Typography> */}
+        <ProgressBar
+          height={14}
+          percentage={90}
+          displayCenterText={false}
+          gap={1}
+          startValue='Lock available until'
+          startUnit=''
+          endUnit=' days'
+          progressBarColor={colors.invariant.silver}
+        />
+      </Box>
 
       {walletStatus !== Status.Initialized ? (
         <ChangeWalletButton
