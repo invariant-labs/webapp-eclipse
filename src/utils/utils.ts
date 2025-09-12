@@ -103,7 +103,9 @@ import {
   NoConfig,
   muES_MAIN,
   INVT_MAIN,
-  xINVT_MAIN
+  xINVT_MAIN,
+  INVT_TEST,
+  xINVT_TEST
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
@@ -961,8 +963,8 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
         [WETH_TEST.address.toString()]: WETH_TEST,
         [MOON_TEST.address.toString()]: MOON_TEST,
         [S22_TEST.address.toString()]: S22_TEST,
-        [INVT_MAIN.address.toString()]: INVT_MAIN,
-        [xINVT_MAIN.address.toString()]: xINVT_MAIN
+        [INVT_TEST.address.toString()]: INVT_TEST,
+        [xINVT_TEST.address.toString()]: xINVT_TEST
       }
     default:
       return {}

@@ -173,7 +173,7 @@ export const LockWrapper: React.FC = () => {
           tokenTo={tokenTo}
           priceLoading={priceLoading}
           invtPrice={invtPrice}
-          unlockDisabled={true}
+          unlockDisabled={false}
         />
       </Box>
     </Grid>

@@ -12,6 +12,7 @@ import {
 import {
   airdropQuantities,
   airdropTokens,
+  INVT_TEST,
   NetworkType,
   WETH_MIN_FAUCET_FEE_MAIN,
   WETH_MIN_FAUCET_FEE_TEST,
@@ -236,9 +237,10 @@ export function* handleAirdrop(): Generator {
         })
       )
 
+      console.log(airdropAdmin.publicKey.toString())
       // transfer sol
-      // yield* call([connection, connection.requestAirdrop], airdropAdmin.publicKey, 1 * 1e9)
-      // yield* call(transferAirdropSOL)
+      yield* call([connection, connection.requestAirdrop], airdropAdmin.publicKey, 1 * 1e9)
+      yield* call(transferAirdropSOL)
       yield* call(getTokenAirdrop, airdropTokens[networkType], airdropQuantities[networkType])
 
       yield put(
@@ -375,17 +377,31 @@ export function* getTokenAirdrop(addresses: PublicKey[], quantities: number[]): 
   const instructions: TransactionInstruction[] = []
   yield* call(setEmptyAccounts, addresses)
   const tokensAccounts = yield* select(accounts)
+
   for (const [index, address] of addresses.entries()) {
-    instructions.push(
-      createMintToInstruction(
-        address,
-        tokensAccounts[address.toString()].address,
-        airdropAdmin.publicKey,
-        quantities[index],
-        [],
-        TOKEN_PROGRAM_ID
+    if (address === INVT_TEST.address) {
+      instructions.push(
+        createMintToInstruction(
+          address,
+          tokensAccounts[address.toString()].address,
+          airdropAdmin.publicKey,
+          quantities[index],
+          [],
+          TOKEN_2022_PROGRAM_ID
+        )
       )
-    )
+    } else {
+      instructions.push(
+        createMintToInstruction(
+          address,
+          tokensAccounts[address.toString()].address,
+          airdropAdmin.publicKey,
+          quantities[index],
+          [],
+          TOKEN_PROGRAM_ID
+        )
+      )
+    }
   }
   const tx = instructions.reduce((tx, ix) => tx.add(ix), new Transaction())
   const connection = yield* call(getConnection)
@@ -400,9 +416,11 @@ export function* getTokenAirdrop(addresses: PublicKey[], quantities: number[]): 
 
   const signedTx = (yield* call([wallet, wallet.signTransaction], tx)) as Transaction
 
-  yield* call([connection, connection.sendRawTransaction], signedTx.serialize(), {
+  const txId = yield* call([connection, connection.sendRawTransaction], signedTx.serialize(), {
     skipPreflight: true
   })
+
+  console.log(txId)
 }
 
 export function* signAndSend(wallet: WalletAdapter, tx: Transaction): SagaGenerator<string> {

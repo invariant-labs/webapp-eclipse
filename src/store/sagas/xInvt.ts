@@ -179,7 +179,7 @@ export function* handleLock(action: PayloadAction<LockLiquidityPayload>) {
               yield put(
                 snackbarsActions.add({
                   tokensDetails: {
-                    ikonType: 'stake',
+                    ikonType: 'lock',
                     tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, INVT_MAIN.decimals)),
                     tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, xINVT_MAIN.decimals)),
                     tokenXIcon: INVT_MAIN.logoURI,
@@ -408,7 +408,7 @@ export function* handleUnlock(action: PayloadAction<LockLiquidityPayload>) {
               yield put(
                 snackbarsActions.add({
                   tokensDetails: {
-                    ikonType: 'unstake',
+                    ikonType: 'unlock',
                     tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, xINVT_MAIN.decimals)),
                     tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, INVT_MAIN.decimals)),
                     tokenXIcon: xINVT_MAIN.logoURI,
