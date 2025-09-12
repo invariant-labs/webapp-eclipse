@@ -1,7 +1,19 @@
 import { colors, theme, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
-export const useStyles = makeStyles()(() => ({
+const useStyles = makeStyles()(() => ({
+  wrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    maxWidth: 510,
+    width: '100%',
+
+    '& h5': {
+      ...typography.heading4,
+      color: colors.invariant.text,
+      marginBottom: 12
+    }
+  },
   statsWrapper: {
     display: 'flex',
     flex: 1,
@@ -15,16 +27,26 @@ export const useStyles = makeStyles()(() => ({
 
     background: colors.invariant.component,
     '& h5': {
+      display: 'flex',
+      alignItems: 'center',
       ...typography.heading4,
-      color: colors.invariant.text
+      lineHeight: 1,
+
+      color: colors.invariant.text,
+      [theme.breakpoints.down('sm')]: {
+        display: 'none'
+      }
     },
     [theme.breakpoints.down('sm')]: {
-      background: colors.invariant.component,
-      gap: 0,
-      justifyContent: 'space-between',
-      padding: '12px 0',
-      height: 'auto'
+      padding: '8px',
+      '&:not(:last-child)': {
+        marginBottom: 12
+      }
     }
+  },
+  titleWrapper: {
+    display: 'flex',
+    justifyContent: 'space-between'
   },
   yourStatsBoxesWrapper: {
     display: 'flex',
@@ -42,14 +64,26 @@ export const useStyles = makeStyles()(() => ({
     gap: 12,
     border: `1px solid ${colors.invariant.light}`,
     borderRadius: 24,
+    [theme.breakpoints.down('sm')]: {
+      height: 80
+    },
     '& h3': {
       fontWeight: 400,
       fontSize: '20px',
       lineHeight: '28px',
       letterSpacing: '-3%',
-      color: colors.invariant.textGrey
+      color: colors.invariant.textGrey,
+      [theme.breakpoints.down('sm')]: {
+        ...typography.caption2
+      }
     },
-    '& h2': { ...typography.heading2, color: colors.invariant.text }
+    '& h2': {
+      ...typography.heading2,
+      color: colors.invariant.text,
+      [theme.breakpoints.down('sm')]: {
+        ...typography.heading3
+      }
+    }
   },
   singleBoxStat: {
     display: 'flex',
@@ -63,14 +97,26 @@ export const useStyles = makeStyles()(() => ({
     gap: 12,
     borderRadius: 24,
     background: colors.invariant.newDark,
+    [theme.breakpoints.down('sm')]: {
+      height: 80
+    },
     '& h3': {
       fontWeight: 400,
       fontSize: '20px',
       lineHeight: '28px',
       letterSpacing: '-3%',
-      color: colors.invariant.textGrey
+      color: colors.invariant.textGrey,
+      [theme.breakpoints.down('sm')]: {
+        ...typography.caption2
+      }
     },
-    '& h2': { ...typography.heading2, color: colors.invariant.text }
+    '& h2': {
+      ...typography.heading2,
+      color: colors.invariant.text,
+      [theme.breakpoints.down('sm')]: {
+        ...typography.heading3
+      }
+    }
   },
   globalStatsBox: {
     display: 'flex',
@@ -79,6 +125,9 @@ export const useStyles = makeStyles()(() => ({
     alignItems: 'center',
     boxSizing: 'border-box',
     height: 95,
+    [theme.breakpoints.down('sm')]: {
+      height: 80
+    },
     width: '100%',
     maxWidth: 242,
     gap: 12,
@@ -89,28 +138,45 @@ export const useStyles = makeStyles()(() => ({
       fontSize: '20px',
       lineHeight: '28px',
       letterSpacing: '-3%',
-      color: colors.invariant.textGrey
-    },
-    '& h2': { ...typography.heading2, color: colors.invariant.text }
-  },
-  mobileStatsBox: {
-    padding: 24,
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    borderBottom: `1px solid ${colors.invariant.light}`,
-    '&:last-child': {
-      borderBottom: 'none'
-    },
-    '& h4': {
       color: colors.invariant.textGrey,
-      fontSize: '20px',
-      lineHeight: '28px',
-      letterSpacing: '-3%',
-      fontWeight: 400
+      [theme.breakpoints.down('sm')]: {
+        ...typography.caption2
+      }
     },
     '& h2': {
       ...typography.heading2,
+      color: colors.invariant.text,
+
+      [theme.breakpoints.down('sm')]: {
+        ...typography.heading3
+      }
+    }
+  },
+
+  lockPeriod: {
+    display: 'flex',
+    background: colors.invariant.newDark,
+    padding: '8px 24px',
+    borderRadius: 24,
+    gap: 4,
+    alignItems: 'center',
+    '& span': {
+      fontWeight: 400,
+      [theme.breakpoints.down('sm')]: {
+        ...typography.caption4
+      }
+    },
+    '& p': { [theme.breakpoints.down('sm')]: { ...typography.caption3 } },
+    [theme.breakpoints.down('sm')]: {
+      width: '100%',
+      justifyContent: 'center'
+    }
+  },
+  mobileStatsWrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    '& h5': {
+      ...typography.heading4,
       color: colors.invariant.text
     }
   }

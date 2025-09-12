@@ -137,7 +137,6 @@ export const LockWrapper: React.FC = () => {
         </Box>
       </Box>
       <Box className={classes.panelsWrapper}>
-        <StatsLocker />
         <XInvtLocker
           walletStatus={walletStatus}
           tokens={tokens}
@@ -174,6 +173,13 @@ export const LockWrapper: React.FC = () => {
           priceLoading={priceLoading}
           invtPrice={invtPrice}
           unlockDisabled={true}
+        />
+        <StatsLocker
+          percentage={20}
+          threeMonthsYield='10'
+          totalStaked='4,299'
+          yourShare='7,23'
+          yourStaked='73,238'
         />
       </Box>
     </Grid>

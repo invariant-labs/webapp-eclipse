@@ -16,6 +16,7 @@ import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButt
 import { LockLiquidityPayload } from '@store/reducers/xInvt'
 import { LockIcon } from '@static/componentIcon/LockIcon'
 import { colors, typography } from '@static/theme'
+import { ProgressBar } from '@common/ProgressBar/ProgressBar'
 
 export interface ILocker {
   walletStatus: Status
@@ -188,6 +189,21 @@ export const XInvtLocker: React.FC<ILocker> = ({
         setIsRotating={setIsRotating}
         disabled={unlockDisabled}
       />
+      <Box display='flex' marginTop={2} gap={1} flexDirection='column'>
+        <Typography sx={{ color: colors.invariant.text, ...typography.heading4 }}>
+          Lock deadline
+        </Typography>
+        <ProgressBar
+          height={15}
+          percentage={90}
+          displayCenterText={false}
+          gap={1}
+          startValue='4'
+          startUnit=' days'
+          endUnit=' days'
+          progressBarColor={colors.invariant.silver}
+        />
+      </Box>
       <Box mt='24px' mb={'12px'} display='flex' justifyContent='space-between' alignItems='center'>
         <Typography className={classes.title}>
           {currentLockerTab === LockerSwitch.Lock ? 'Lock' : 'Unlock'}
