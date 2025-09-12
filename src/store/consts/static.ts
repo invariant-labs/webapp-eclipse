@@ -446,25 +446,47 @@ export const muES_MAIN: Token = {
   coingeckoId: ''
 }
 
-export const INVT_MAIN: Token = {
+// export const INVT_MAIN: Token = {
+//   tokenProgram: TOKEN_2022_PROGRAM_ID,
+//   symbol: 'INVT',
+//   address: new PublicKey('EqwchrrGFppZYpTVAQH7ETm2QhSpu6eHV5fwZtUamfSM'),
+//   decimals: 4,
+//   name: 'Invariant',
+//   logoURI: invtLogo,
+//   coingeckoId: ''
+// }
+
+// export const xINVT_MAIN: Token = {
+//   tokenProgram: TOKEN_2022_PROGRAM_ID,
+//   symbol: 'xINVT',
+//   address: new PublicKey('EqwchrrGFppZYpTVAQH7ETm2QhSpu6eHV5fwZtUamfSK'), //replace
+//   decimals: 4,
+//   name: 'xInvariant',
+//   logoURI: xInvtLogo,
+//   coingeckoId: ''
+// }
+
+export const INVT_TEST: Token = {
   tokenProgram: TOKEN_2022_PROGRAM_ID,
   symbol: 'INVT',
-  address: new PublicKey('EqwchrrGFppZYpTVAQH7ETm2QhSpu6eHV5fwZtUamfSM'),
+  address: new PublicKey('GHcF3FdS9LtUEgzKmyz2XNDjSryLmZtNBch8ixbGdLR3'),
   decimals: 4,
   name: 'Invariant',
   logoURI: invtLogo,
   coingeckoId: ''
 }
 
-export const xINVT_MAIN: Token = {
+export const xINVT_TEST: Token = {
   tokenProgram: TOKEN_2022_PROGRAM_ID,
   symbol: 'xINVT',
-  address: new PublicKey('EqwchrrGFppZYpTVAQH7ETm2QhSpu6eHV5fwZtUamfSK'), //replace
+  address: new PublicKey('43Fd6ZdBxkUfqa6DSphjL9St2eyQVQZ7GisYExt8NTNc'),
   decimals: 4,
   name: 'xInvariant',
   logoURI: xInvtLogo,
   coingeckoId: ''
 }
+export const INVT_MAIN = INVT_TEST
+export const xINVT_MAIN = xINVT_TEST
 
 const DEFAULT_PUBLICKEY = new PublicKey(0)
 const MAX_U64 = new BN('18446744073709551615')
@@ -477,14 +499,15 @@ export const tokensPrices: Record<NetworkType, Record<string, TokenPriceData>> =
     BTC_TEST: { price: 64572.0 },
     WETH_TEST: { price: 3430.21 },
     MOON_TEST: { price: 0.00000005735 },
-    S22_TEST: { price: 0.01 }
+    S22_TEST: { price: 0.01 },
+    INVT_TEST: { price: 0.2 }
   },
   Local: {}
 }
 export const tokens: Record<NetworkType, Token[]> = {
   Devnet: [USDC_DEV, BTC_DEV],
   Mainnet: [],
-  Testnet: [USDC_TEST, BTC_TEST],
+  Testnet: [USDC_TEST, BTC_TEST, INVT_TEST],
   Local: []
 }
 
@@ -623,21 +646,25 @@ export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
     sBITZ_MAIN.address,
     INVT_MAIN.address
   ],
-  Testnet: [USDC_TEST.address, BTC_TEST.address, WETH_TEST.address],
+  Testnet: [USDC_TEST.address, BTC_TEST.address, WETH_TEST.address, INVT_TEST.address],
   Local: []
 }
 
 export const airdropTokens: Record<NetworkType, PublicKey[]> = {
   Devnet: [USDC_DEV.address, BTC_DEV.address],
   Mainnet: [],
-  Testnet: [USDC_TEST.address, BTC_TEST.address],
+  Testnet: [USDC_TEST.address, BTC_TEST.address, INVT_TEST.address],
   Local: []
 }
 
 export const airdropQuantities: Record<NetworkType, number[]> = {
   Devnet: [100 * 10 ** USDC_DEV.decimals, 0.0025 * 10 ** BTC_DEV.decimals],
   Mainnet: [],
-  Testnet: [2 * 10 ** USDC_TEST.decimals, 0.00005 * 10 ** BTC_TEST.decimals],
+  Testnet: [
+    2 * 10 ** USDC_TEST.decimals,
+    0.00005 * 10 ** BTC_TEST.decimals,
+    50 * 10 ** INVT_TEST.decimals
+  ],
   Local: []
 }
 

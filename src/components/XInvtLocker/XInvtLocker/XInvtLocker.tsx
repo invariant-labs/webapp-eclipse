@@ -14,8 +14,6 @@ import AnimatedButton, { ProgressState } from '@common/AnimatedButton/AnimatedBu
 import { LockerSwitch } from '@store/consts/types'
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
 import { LockLiquidityPayload } from '@store/reducers/xInvt'
-import { LockIcon } from '@static/componentIcon/LockIcon'
-import { colors, typography } from '@static/theme'
 import { ProgressBar } from '@common/ProgressBar/ProgressBar'
 
 export interface ILocker {
@@ -259,15 +257,6 @@ export const XInvtLocker: React.FC<ILocker> = ({
       />
       <Box mb={'12px'} display='flex' justifyContent='space-between' alignItems='center'>
         <Typography className={classes.title}>Recive</Typography>
-        <Box className={classes.lockPeriod}>
-          <LockIcon color={colors.invariant.textGrey} width={14} height={14} />
-          <Typography style={{ ...typography.caption4 }} color={colors.invariant.textGrey}>
-            Lock period:{' '}
-          </Typography>
-          <Typography style={{ ...typography.caption3 }} color={colors.invariant.green}>
-            3 months
-          </Typography>
-        </Box>
       </Box>
       <ExchangeAmountInput
         value={amountTo}

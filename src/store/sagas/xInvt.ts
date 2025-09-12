@@ -179,7 +179,7 @@ export function* handleLock(action: PayloadAction<LockLiquidityPayload>) {
               yield put(
                 snackbarsActions.add({
                   tokensDetails: {
-                    ikonType: 'stake',
+                    ikonType: 'lock',
                     tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, INVT_MAIN.decimals)),
                     tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, xINVT_MAIN.decimals)),
                     tokenXIcon: INVT_MAIN.logoURI,
@@ -408,7 +408,7 @@ export function* handleUnlock(action: PayloadAction<LockLiquidityPayload>) {
               yield put(
                 snackbarsActions.add({
                   tokensDetails: {
-                    ikonType: 'unstake',
+                    ikonType: 'unlock',
                     tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, xINVT_MAIN.decimals)),
                     tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, INVT_MAIN.decimals)),
                     tokenXIcon: xINVT_MAIN.logoURI,
@@ -500,7 +500,7 @@ export function* getInvtStats() {
   const networkType = yield* select(network)
   const rpc = yield* select(rpcAddress)
   const wallet = yield* call(getWallet)
-  const connection = yield* call(getConnection)
+  // const connection = yield* call(getConnection)
   const xInvtProgram = yield* call(getXInvtLockerProgram, networkType, rpc, wallet as IWallet)
   try {
     const invtState = yield* call([xInvtProgram, xInvtProgram.getState])
@@ -517,7 +517,7 @@ export function* getInvtStats() {
     //   }
     // )
 
-    let totalBalance = 0n
+    // let totalBalance = 0n
     // for (const { account } of tokenAccounts.value) {
     //   const data = AccountLayout.decode(account.data)
     //   totalBalance += BigInt(data.amount.toString())
