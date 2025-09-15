@@ -5,14 +5,20 @@ const store = (s: AnyProps) => s[xInvtSliceName] as IxInvt
 
 const selectLoadingStates = (state: AnyProps) => store(state).loadingStates
 
-export const { inProgress, success, lockerTab, lockInputVal, unlockInputVal } = keySelectors(
-  store,
-  ['inProgress', 'success', 'lockerTab', 'lockInputVal', 'unlockInputVal']
-)
+export const { invtMarketData, inProgress, success, lockerTab, lockInputVal, unlockInputVal } =
+  keySelectors(store, [
+    'invtMarketData',
+    'inProgress',
+    'success',
+    'lockerTab',
+    'lockInputVal',
+    'unlockInputVal'
+  ])
 
 export const lockOperationLoading = (state: AnyProps) => selectLoadingStates(state).lockOperation
 
 export const xInvtSelectors = {
+  invtMarketData,
   inProgress,
   success,
   lockOperationLoading,

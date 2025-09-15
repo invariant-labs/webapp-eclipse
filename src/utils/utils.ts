@@ -2709,3 +2709,41 @@ export const fetchMarketBitzStats = async () => {
   )
   return data
 }
+
+export interface YieldIncome {
+  currentYield: number
+  currentReward: number
+  projectedYield: number
+  projectedReward: number
+}
+
+export function calculateYield(currentlyStaked: number, userStakeAmount: number): YieldIncome {
+  const TOTAL_REWARDS = 1_500_000
+
+  const totalAfterStaking = currentlyStaked + userStakeAmount
+
+  let currentYield = 0
+  let currentReward = 0
+
+  if (currentlyStaked > 0) {
+    const hypotheticalShare = 1 / currentlyStaked
+    currentReward = hypotheticalShare * TOTAL_REWARDS
+    currentYield = (currentReward / 1) * 100
+  }
+
+  let projectedYield = 0
+  let projectedReward = 0
+
+  if (totalAfterStaking > 0 && userStakeAmount > 0) {
+    const userShare = userStakeAmount / totalAfterStaking
+    projectedReward = userShare * TOTAL_REWARDS
+    projectedYield = (projectedReward / userStakeAmount) * 100
+  }
+
+  return {
+    currentYield: Math.round(currentYield * 100) / 100,
+    currentReward: Math.round(currentReward * 100) / 100,
+    projectedYield: Math.round(projectedYield * 100) / 100,
+    projectedReward: Math.round(projectedReward * 100) / 100
+  }
+}
