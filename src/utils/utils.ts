@@ -2750,6 +2750,10 @@ export function calculateYield(currentlyStaked: number, userStakeAmount: number)
 
 export function displayYieldComparison(currentlyStaked: number, userStakeAmount: number) {
   const result = calculateYield(currentlyStaked, userStakeAmount)
+  const totalAfterStaking = currentlyStaked + userStakeAmount
+  const TOTAL_REWARDS = 1_500_000
+
+  const newYieldPerToken = totalAfterStaking > 0 ? (1 / totalAfterStaking) * TOTAL_REWARDS * 100 : 0
 
   return {
     currentStakeInfo: {
@@ -2760,19 +2764,15 @@ export function displayYieldComparison(currentlyStaked: number, userStakeAmount:
     userProjection: {
       userStakeAmount: userStakeAmount,
       userShare:
-        currentlyStaked + userStakeAmount > 0
-          ? Math.round((userStakeAmount / (currentlyStaked + userStakeAmount)) * 100 * 100) / 100 +
-            '%'
+        totalAfterStaking > 0
+          ? Math.round((userStakeAmount / totalAfterStaking) * 100 * 100) / 100 + '%'
           : '0%',
       expectedYield: result.projectedYield + '%',
       expectedReward: result.projectedReward
     },
     impact: {
-      yieldChange:
-        result.currentYield > 0
-          ? Math.round((result.projectedYield - result.currentYield) * 100) / 100 + '%'
-          : 'N/A',
-      newStakeSize: currentlyStaked + userStakeAmount
+      newYield: Math.round(newYieldPerToken * 100) / 100 + '%',
+      newStakeSize: totalAfterStaking
     }
   }
 }
