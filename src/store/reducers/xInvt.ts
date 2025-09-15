@@ -12,7 +12,11 @@ export interface LoadingStates {
 }
 
 export interface InvtMarketData {
-  totalXInvt: number | null
+  lockedInvt: number | null
+  burnEndTime: string | null
+  burnStartTime: string | null
+  mintEndTime: string | null
+  mintStartTime: string | null
 }
 
 export interface IxInvt {
@@ -37,7 +41,11 @@ const defaultStatus: IxInvt = {
   lockInputVal: '',
   unlockInputVal: '',
   invtMarketData: {
-    totalXInvt: 0
+    lockedInvt: 0,
+    burnEndTime: '',
+    burnStartTime: '',
+    mintEndTime: '',
+    mintStartTime: ''
   }
 }
 

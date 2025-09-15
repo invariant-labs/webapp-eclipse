@@ -2709,3 +2709,70 @@ export const fetchMarketBitzStats = async () => {
   )
   return data
 }
+
+export interface YieldIncome {
+  currentYield: number
+  currentReward: number
+  projectedYield: number
+  projectedReward: number
+}
+
+export function calculateYield(currentlyStaked: number, userStakeAmount: number): YieldIncome {
+  const TOTAL_REWARDS = 1_500_000
+
+  const totalAfterStaking = currentlyStaked + userStakeAmount
+
+  let currentYield = 0
+  let currentReward = 0
+
+  if (currentlyStaked > 0) {
+    const rewardPerToken = TOTAL_REWARDS / currentlyStaked
+    currentReward = rewardPerToken
+    currentYield = (rewardPerToken / 1) * 100
+  }
+
+  let projectedYield = 0
+  let projectedReward = 0
+
+  if (totalAfterStaking > 0 && userStakeAmount > 0) {
+    const userShare = userStakeAmount / totalAfterStaking
+    projectedReward = userShare * TOTAL_REWARDS
+    projectedYield = (projectedReward / userStakeAmount) * 100
+  }
+
+  return {
+    currentYield: Math.round(currentYield * 100) / 100,
+    currentReward: Math.round(currentReward * 100) / 100,
+    projectedYield: Math.round(projectedYield * 100) / 100,
+    projectedReward: Math.round(projectedReward * 100) / 100
+  }
+}
+
+export function displayYieldComparison(currentlyStaked: number, userStakeAmount: number) {
+  const result = calculateYield(currentlyStaked, userStakeAmount)
+  const totalAfterStaking = currentlyStaked + userStakeAmount
+  const TOTAL_REWARDS = 1_500_000
+
+  const newYieldPerToken = totalAfterStaking > 0 ? (1 / totalAfterStaking) * TOTAL_REWARDS * 100 : 0
+
+  return {
+    currentStakeInfo: {
+      totalStaked: currentlyStaked,
+      yieldPerToken: result.currentYield + '%',
+      rewardPerToken: result.currentReward
+    },
+    userProjection: {
+      userStakeAmount: userStakeAmount,
+      userShare:
+        totalAfterStaking > 0
+          ? Math.round((userStakeAmount / totalAfterStaking) * 100 * 100) / 100 + '%'
+          : '0%',
+      expectedYield: result.projectedYield + '%',
+      expectedReward: result.projectedReward
+    },
+    impact: {
+      newYield: Math.round(newYieldPerToken * 100) / 100 + '%',
+      newStakeSize: totalAfterStaking
+    }
+  }
+}

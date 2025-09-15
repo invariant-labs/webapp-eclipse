@@ -12,7 +12,7 @@ import { actions, LockLiquidityPayload } from '@store/reducers/xInvt'
 import { actions as walletActions } from '@store/reducers/solanaWallet'
 import { network } from '@store/selectors/solanaConnection'
 import { INVT_MAIN, xINVT_MAIN } from '@store/consts/static'
-import { getTokenPrice } from '@utils/utils'
+import { displayYieldComparison, getTokenPrice, printBN } from '@utils/utils'
 import { LockerSwitch } from '@store/consts/types'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { refreshIcon } from '@static/icons'
@@ -23,7 +23,8 @@ import {
   lockInputVal,
   unlockInputVal,
   success as successState,
-  inProgress
+  inProgress,
+  invtMarketData
 } from '@store/selectors/xInvt'
 import { StatsLocker } from '@components/XInvtLocker/StatsLocker/StatsLocker'
 import useStyles from './styles'
@@ -37,6 +38,7 @@ export const LockWrapper: React.FC = () => {
   const dispatch = useDispatch()
   const networkType = useSelector(network)
   const walletStatus = useSelector(status)
+  const marketData = useSelector(invtMarketData)
   const tokens = useSelector(swapTokensDict)
   const ethBalance = useSelector(balance)
   const isBalanceLoading = useSelector(balanceLoading)
@@ -57,6 +59,16 @@ export const LockWrapper: React.FC = () => {
     targetDate
   })
 
+  const amountFrom = useMemo(() => {
+    if (currentLockerTab === LockerSwitch.Lock) return lockInput
+    return unlockInput
+  }, [currentLockerTab, lockInput, unlockInput])
+
+  const yieldIncomes = useMemo(() => {
+    return displayYieldComparison(+printBN(marketData.lockedInvt, INVT_MAIN.decimals), +amountFrom)
+  }, [marketData, amountFrom])
+
+  console.log(yieldIncomes)
   const tokenFrom: SwapToken = useMemo(
     () =>
       currentLockerTab === LockerSwitch.Lock
@@ -96,6 +108,7 @@ export const LockWrapper: React.FC = () => {
   useEffect(() => {
     dispatch(walletActions.getBalance())
     dispatch(actions.getCurrentStats())
+
     fetchPrices()
   }, [dispatch])
 
