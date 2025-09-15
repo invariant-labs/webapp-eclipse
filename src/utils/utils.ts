@@ -124,6 +124,8 @@ import { Umi } from '@metaplex-foundation/umi'
 import { StakingStatsResponse } from '@store/reducers/sbitz-stats'
 import { DEFAULT_FEE_TIER, STRATEGIES } from '@store/consts/userStrategies'
 import { HoldersResponse } from '@store/reducers/sBitz'
+import { UTCTimestamp } from 'lightweight-charts'
+import { SwapToken } from '@store/selectors/solanaWallet'
 
 export const transformBN = (amount: BN): string => {
   return (amount.div(new BN(1e2)).toNumber() / 1e4).toString()
@@ -2699,4 +2701,84 @@ export const fetchMarketBitzStats = async () => {
     `https://api.invariant.app/explorer/get-holders?address=${sBITZ}`
   )
   return data
+}
+
+export interface Candle {
+  time: UTCTimestamp
+  open: number
+  high: number
+  low: number
+  close: number
+  volume: number
+}
+
+export interface TradingViewChartProps {
+  currentNetwork: NetworkType
+  tokenFromIndex: number | null
+  tokenToIndex: number | null
+  tokens: SwapToken[]
+}
+
+export interface PoolsMultiItem {
+  id: string
+  attributes: {
+    address: string
+    volume_usd?: Record<string, string | number>
+  }
+}
+
+export const parseNum = (v: unknown) => {
+  if (v == null) return 0
+  const n = typeof v === 'number' ? v : parseFloat(String(v))
+  return Number.isFinite(n) ? n : 0
+}
+
+export const fetchBestPoolAddress = async (addresses: string[]): Promise<string | null> => {
+  if (!addresses.length) return null
+  const url = `https://api.geckoterminal.com/api/v2/networks/eclipse/pools/multi/${addresses.join(',')}`
+  const res = await fetch(url)
+  if (!res.ok) return null
+  const json = await res.json()
+  const items: PoolsMultiItem[] = json?.data ?? []
+
+  let best: { addr: string; score: number } | null = null
+  for (const it of items) {
+    const vol = it.attributes.volume_usd ?? {}
+    const h24 = parseNum((vol as any).h24)
+    const fallbackSum: number =
+      h24 > 0
+        ? h24
+        : Number(Object.values(vol).reduce((acc, val) => Number(acc) + parseNum(val), 0))
+
+    const addr = it.attributes.address
+    if (!best || fallbackSum > best.score) best = { addr, score: fallbackSum }
+  }
+
+  return best?.addr ?? null
+}
+
+export const fetchData = async (poolAddress: string): Promise<Candle[]> => {
+  const params = new URLSearchParams({
+    aggregate: '15',
+    limit: '1000',
+    currency: 'token',
+    include_empty_intervals: 'false',
+    token: 'quote'
+  })
+  const url =
+    `https://api.geckoterminal.com/api/v2/networks/eclipse` +
+    `/pools/${poolAddress}/ohlcv/minute?${params.toString()}`
+
+  const res = await fetch(url)
+  const json = await res.json()
+  const list: any[][] = json.data.attributes.ohlcv_list
+
+  return list.map(([time, open, high, low, close, volume]) => ({
+    time: time as UTCTimestamp,
+    open,
+    high,
+    low,
+    close,
+    volume
+  }))
 }

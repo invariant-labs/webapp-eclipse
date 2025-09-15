@@ -19,6 +19,8 @@ import {
 import {
   addressToTicker,
   convertBalanceToBN,
+  fetchBestPoolAddress,
+  fetchData,
   findPairs,
   formatNumberWithoutSuffix,
   handleSimulate,
@@ -40,15 +42,26 @@ import { TokenPriceData } from '@store/consts/types'
 import TokensInfo from './TokensInfo/TokensInfo'
 import { VariantType } from 'notistack'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
-import { DECIMAL, fromFee, SimulationStatus } from '@invariant-labs/sdk-eclipse/lib/utils'
+import {
+  DECIMAL,
+  FEE_TIERS,
+  fromFee,
+  SimulationStatus
+} from '@invariant-labs/sdk-eclipse/lib/utils'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { PublicKey } from '@solana/web3.js'
 import { Tick, Tickmap, Market } from '@invariant-labs/sdk-eclipse/lib/market'
 import { auditIcon, refreshIcon, settingIcon, swapArrowsIcon, warningIcon } from '@static/icons'
 import { useNavigate } from 'react-router-dom'
-import { FetcherRecords, Pair, SimulationTwoHopResult } from '@invariant-labs/sdk-eclipse'
+import {
+  FetcherRecords,
+  getMarketAddress,
+  Pair,
+  SimulationTwoHopResult
+} from '@invariant-labs/sdk-eclipse'
 import { theme } from '@static/theme'
-import TradingViewChart from './TV'
+import { networkTypetoProgramNetwork } from '@utils/web3/connection'
+import { ISeriesApi, createChart, CandlestickSeries, ColorType } from 'lightweight-charts'
 
 export interface Pools {
   tokenX: PublicKey
@@ -888,13 +901,82 @@ export const Swap: React.FC<ISwap> = ({
 
   const warningsCount = [showOracle, showImpact, isUnkown].filter(Boolean).length
 
+  const containerRef = useRef<HTMLDivElement>(null)
+  const seriesRef = useRef<ISeriesApi<'Candlestick'>>()
+
+  useEffect(() => {
+    if (!containerRef.current) return
+    if (tokenFromIndex === null || tokenToIndex === null) return
+
+    const net = networkTypetoProgramNetwork(network)
+    const marketAddress = new PublicKey(getMarketAddress(net))
+    const tokenFrom = tokens[tokenFromIndex].assetAddress.toString()
+    const tokenTo = tokens[tokenToIndex].assetAddress.toString()
+    const tokenX = tokenFrom < tokenTo ? tokenFrom : tokenTo
+    const tokenY = tokenFrom < tokenTo ? tokenTo : tokenFrom
+    const addresses = FEE_TIERS.map(fee =>
+      new Pair(new PublicKey(tokenX), new PublicKey(tokenY), fee)
+        .getAddress(marketAddress)
+        .toString()
+    )
+
+    const chart = createChart(containerRef.current, {
+      width: containerRef.current.clientWidth,
+      height: 400,
+      layout: {
+        background: { type: ColorType.Solid, color: '#0b1220' },
+        textColor: '#e5e7eb'
+      },
+      grid: {
+        vertLines: { color: '#1f2937' },
+        horzLines: { color: '#1f2937' }
+      },
+      rightPriceScale: { borderColor: '#374151' },
+      timeScale: { borderColor: '#374151' }
+    })
+
+    seriesRef.current = chart.addSeries(CandlestickSeries)
+
+    fetchBestPoolAddress(addresses)
+      .then(bestAddr => {
+        if (!bestAddr) return fetchData(addresses[0])
+        return fetchData(bestAddr)
+      })
+      .then(data => {
+        const sorted = data.sort((a, b) => a.time - b.time)
+        const deduped = sorted.filter(
+          (candle, idx) => idx === 0 || candle.time > sorted[idx - 1].time
+        )
+
+        seriesRef.current?.setData(deduped)
+
+        if (deduped.length > 0) {
+          const N = Math.min(100, deduped.length)
+          const from = deduped[deduped.length - N].time
+          const to = deduped[deduped.length - 1].time
+          chart.timeScale().setVisibleRange({ from, to })
+        }
+      })
+      .catch(e => console.log(e))
+
+    return () => {
+      chart.remove()
+    }
+  }, [tokenFromIndex, tokenToIndex, tokens])
+
   return (
     <Grid container className={classes.swapWrapper} alignItems='center'>
-      <TradingViewChart
-        network='eclipse'
-        poolAddress='2qbbDqTtcFQL8tL5BpEuxozGPRjBfmJG6oYcvYnGzULE'
-        timeframe='hour'
-      />
+      <div
+        style={{
+          width: '50%',
+          padding: 16,
+          background: '#0f172a',
+          borderRadius: 12,
+          position: 'relative'
+        }}>
+        <div ref={containerRef} style={{ width: '100%', height: 400 }} />
+      </div>
+
       <Grid container className={classes.header}>
         <Box className={classes.leftSection}>
           <Typography component='h1'>Swap tokens</Typography>
