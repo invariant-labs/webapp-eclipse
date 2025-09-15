@@ -4,6 +4,7 @@ import { colors, theme } from '@static/theme'
 import { ProgressBar } from '@common/ProgressBar/ProgressBar'
 import React from 'react'
 import { InvtConvertedData } from '@store/consts/types'
+import { formatNumberWithSuffix } from '@utils/utils'
 
 interface StatsLocker {
   statsData: InvtConvertedData
@@ -78,7 +79,10 @@ export const StatsLocker: React.FC<StatsLocker> = ({ statsData, userLockedInvt }
               <Box className={classes.singleBoxStat}>
                 <Typography component='h3'>Your predicted income</Typography>
                 <Typography component='h2'>
-                  {statsData.currentStakeInfo.rewardPerToken * userLockedInvt + userLockedInvt} INVT
+                  {formatNumberWithSuffix(
+                    statsData.currentStakeInfo.rewardPerToken * userLockedInvt + userLockedInvt
+                  )}
+                  INVT
                 </Typography>
               </Box>
             </Box>
@@ -99,7 +103,12 @@ export const StatsLocker: React.FC<StatsLocker> = ({ statsData, userLockedInvt }
             <Box className={classes.yourStatsBoxesWrapper}>
               <Box className={classes.globalStatsBox}>
                 <Typography component='h3'>Your predicted income</Typography>
-                <Typography component='h2'>123 INVT</Typography>
+                <Typography component='h2'>
+                  {formatNumberWithSuffix(
+                    statsData.currentStakeInfo.rewardPerToken * userLockedInvt + userLockedInvt
+                  )}
+                  INVT
+                </Typography>
               </Box>
             </Box>
           </Box>
