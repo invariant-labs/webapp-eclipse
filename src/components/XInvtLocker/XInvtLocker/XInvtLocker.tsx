@@ -301,7 +301,7 @@ export const XInvtLocker: React.FC<ILocker> = ({
       </Box> */}
       <Separator isHorizontal width={1} color={colors.invariant.light} margin='16px 0' />
       <TransactionDetails
-        tokenToAmount={amountFrom}
+        tokenToAmount={printBN(calculateOtherTokenAmount('1', true, true), INVT_MAIN.decimals)}
         tokenFromTicker={tokenFrom.symbol}
         tokenToTicker={tokenTo.symbol}
         stakedDataLoading={false}

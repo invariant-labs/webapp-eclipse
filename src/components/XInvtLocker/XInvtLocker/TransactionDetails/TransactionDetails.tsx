@@ -32,7 +32,7 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
           <Skeleton width={125} height={24} />
         ) : (
           <Typography className={classes.value}>
-            1 {tokenFromTicker} = {Number(tokenToAmount).toFixed(4)} {tokenToTicker}
+            1 {tokenFromTicker} = {Number(tokenToAmount).toFixed(0)} {tokenToTicker}
           </Typography>
         )}
       </Box>
