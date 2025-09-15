@@ -324,3 +324,9 @@ export enum ChartSwitch {
   volume = 'Volume',
   fees = 'Fees'
 }
+export enum BannerPhase {
+  locksEnds = 'lockEnds',
+  redeemAvailable = 'redeemAvailable',
+  burnEnds = 'burnEnds',
+  ended = 'ended'
+}

@@ -11,13 +11,14 @@ import { convertBalanceToBN, printBN, trimDecimalZeros } from '@utils/utils'
 import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
 import AnimatedButton, { ProgressState } from '@common/AnimatedButton/AnimatedButton'
-import { LockerSwitch } from '@store/consts/types'
+import { BannerPhase, LockerSwitch } from '@store/consts/types'
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
 import { LockLiquidityPayload } from '@store/reducers/xInvt'
 import { colors, typography } from '@static/theme'
 import { LockIcon } from '@static/componentIcon/LockIcon'
 import TransactionDetails from './TransactionDetails/TransactionDetails'
 import { Separator } from '@common/Separator/Separator'
+import { BannerState } from '@containers/LockWrapper/LockWrapper'
 
 export interface ILocker {
   walletStatus: Status
@@ -42,6 +43,7 @@ export interface ILocker {
   invtPrice: number
   unlockDisabled: boolean
   startTimestamp: BN
+  bannerState: BannerState
 }
 
 export const XInvtLocker: React.FC<ILocker> = ({
@@ -65,7 +67,8 @@ export const XInvtLocker: React.FC<ILocker> = ({
   tokenTo,
   priceLoading,
   invtPrice,
-  unlockDisabled
+  unlockDisabled,
+  bannerState
   // startTimestamp
 }) => {
   const { classes } = useStyles()
@@ -148,6 +151,9 @@ export const XInvtLocker: React.FC<ILocker> = ({
       return `Not enough ${tokenFrom.symbol}`
 
     if (currentLockerTab === LockerSwitch.Lock) {
+      if (bannerState.key == BannerPhase.burnEnds) {
+        return 'Burn'
+      }
       return `Lock`
     } else {
       return `Unlock`
