@@ -1179,3 +1179,6 @@ export const ES_ETH_POOLS = {
 }
 export const PROOF_OF_INCLUSION_CACHE_KEY = 'PROOF_OF_INCLUSION_V2'
 export const PROOF_OF_INCLUSION_CACHE_TTL = 1000 * 60 * 60 * 1 // 1 hour
+
+export const TOTAL_INVT_REWARDS = 1_500_000
+export const INVT_DEPOSIT_LIMIT = 3_000_000

@@ -65,10 +65,9 @@ export const LockWrapper: React.FC = () => {
   }, [currentLockerTab, lockInput, unlockInput])
 
   const yieldIncomes = useMemo(() => {
-    return displayYieldComparison(+printBN(marketData.lockedInvt, INVT_MAIN.decimals), +amountFrom)
+    return displayYieldComparison(marketData.lockedInvt || 0, +amountFrom)
   }, [marketData, amountFrom])
 
-  console.log(yieldIncomes)
   const tokenFrom: SwapToken = useMemo(
     () =>
       currentLockerTab === LockerSwitch.Lock
@@ -83,6 +82,16 @@ export const LockWrapper: React.FC = () => {
         ? tokens[INVT_MAIN.address.toString()]
         : tokens[xINVT_MAIN.address.toString()],
     [currentLockerTab, tokens]
+  )
+  const userXInvtBalance = useMemo(
+    () =>
+      +printBN(
+        tokenFrom.assetAddress.toString() === xINVT_MAIN.address.toString()
+          ? tokenFrom.balance
+          : tokenTo.balance,
+        xINVT_MAIN?.decimals
+      ),
+    [tokenFrom, tokenTo]
   )
 
   const fetchPrices = () => {
@@ -201,13 +210,9 @@ export const LockWrapper: React.FC = () => {
           invtPrice={invtPrice}
           unlockDisabled={true}
           startTimestamp={new BN(0)}
+          statsData={yieldIncomes}
         />
-        <StatsLocker
-          percentage={20}
-          threeMonthsYield='10'
-          totalStaked='4,299'
-          yourStaked='73,238'
-        />
+        <StatsLocker statsData={yieldIncomes} userLockedInvt={userXInvtBalance} />
       </Box>
     </Grid>
   )

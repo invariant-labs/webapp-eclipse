@@ -105,7 +105,9 @@ import {
   INVT_MAIN,
   xINVT_MAIN,
   INVT_TEST,
-  xINVT_TEST
+  xINVT_TEST,
+  TOTAL_INVT_REWARDS,
+  INVT_DEPOSIT_LIMIT
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
@@ -113,6 +115,7 @@ import {
   FormatNumberThreshold,
   FullSnap,
   IncentiveRewardData,
+  InvtConvertedData,
   IPriceData,
   PoolSnapshot,
   Token,
@@ -2718,15 +2721,13 @@ export interface YieldIncome {
 }
 
 export function calculateYield(currentlyStaked: number, userStakeAmount: number): YieldIncome {
-  const TOTAL_REWARDS = 1_500_000
-
   const totalAfterStaking = currentlyStaked + userStakeAmount
 
   let currentYield = 0
   let currentReward = 0
 
   if (currentlyStaked > 0) {
-    const rewardPerToken = TOTAL_REWARDS / currentlyStaked
+    const rewardPerToken = TOTAL_INVT_REWARDS / currentlyStaked
     currentReward = rewardPerToken
     currentYield = (rewardPerToken / 1) * 100
   }
@@ -2736,7 +2737,7 @@ export function calculateYield(currentlyStaked: number, userStakeAmount: number)
 
   if (totalAfterStaking > 0 && userStakeAmount > 0) {
     const userShare = userStakeAmount / totalAfterStaking
-    projectedReward = userShare * TOTAL_REWARDS
+    projectedReward = userShare * TOTAL_INVT_REWARDS
     projectedYield = (projectedReward / userStakeAmount) * 100
   }
 
@@ -2748,30 +2749,42 @@ export function calculateYield(currentlyStaked: number, userStakeAmount: number)
   }
 }
 
-export function displayYieldComparison(currentlyStaked: number, userStakeAmount: number) {
-  const result = calculateYield(currentlyStaked, userStakeAmount)
+export function displayYieldComparison(
+  currentlyStaked: number,
+  userStakeAmount: number
+): InvtConvertedData {
   const totalAfterStaking = currentlyStaked + userStakeAmount
-  const TOTAL_REWARDS = 1_500_000
 
-  const newYieldPerToken = totalAfterStaking > 0 ? (1 / totalAfterStaking) * TOTAL_REWARDS * 100 : 0
+  const statsYeldPerToken =
+    currentlyStaked > 0
+      ? (1 / currentlyStaked) * TOTAL_INVT_REWARDS * 100
+      : TOTAL_INVT_REWARDS * 100
+
+  const statsRewardPerToken =
+    currentlyStaked > 0 ? (1 / currentlyStaked) * TOTAL_INVT_REWARDS : TOTAL_INVT_REWARDS
+
+  const newYieldPerToken =
+    totalAfterStaking > 0
+      ? (1 / totalAfterStaking) * TOTAL_INVT_REWARDS * 100
+      : TOTAL_INVT_REWARDS * 100
+
+  const newRewardPerToken =
+    totalAfterStaking > 0 ? (1 / totalAfterStaking) * TOTAL_INVT_REWARDS : TOTAL_INVT_REWARDS
 
   return {
     currentStakeInfo: {
-      totalStaked: currentlyStaked,
-      yieldPerToken: result.currentYield + '%',
-      rewardPerToken: result.currentReward
+      totalInvtStaked: currentlyStaked,
+      statsYieldPercentage: statsYeldPerToken,
+      rewardPerToken: statsRewardPerToken,
+      invtDepositFilledPercentage: (100 * currentlyStaked) / INVT_DEPOSIT_LIMIT
     },
     userProjection: {
       userStakeAmount: userStakeAmount,
-      userShare:
-        totalAfterStaking > 0
-          ? Math.round((userStakeAmount / totalAfterStaking) * 100 * 100) / 100 + '%'
-          : '0%',
-      expectedYield: result.projectedYield + '%',
-      expectedReward: result.projectedReward
+      expectedYieldPercentage: newYieldPerToken,
+      expectedReward: userStakeAmount * newRewardPerToken
     },
     impact: {
-      newYield: Math.round(newYieldPerToken * 100) / 100 + '%',
+      newYieldPercentage: newYieldPerToken,
       newStakeSize: totalAfterStaking
     }
   }

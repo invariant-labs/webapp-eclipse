@@ -3,19 +3,13 @@ import useStyles from './style'
 import { colors, theme } from '@static/theme'
 import { ProgressBar } from '@common/ProgressBar/ProgressBar'
 import React from 'react'
+import { InvtConvertedData } from '@store/consts/types'
 
 interface StatsLocker {
-  percentage: number
-  threeMonthsYield: string
-  totalStaked: string
-  yourStaked: string
+  statsData: InvtConvertedData
+  userLockedInvt: number
 }
-export const StatsLocker: React.FC<StatsLocker> = ({
-  percentage,
-  threeMonthsYield,
-  totalStaked,
-  yourStaked
-}) => {
+export const StatsLocker: React.FC<StatsLocker> = ({ statsData, userLockedInvt }) => {
   const { classes } = useStyles()
 
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
@@ -45,14 +39,16 @@ export const StatsLocker: React.FC<StatsLocker> = ({
               3 months yield:{' '}
             </Typography>
             <Typography style={{ color: colors.invariant.green }} component='h2'>
-              {threeMonthsYield}%
+              {statsData.currentStakeInfo.statsYieldPercentage.toFixed(2)} %
             </Typography>
           </Box>
         </Box>
         <Box className={classes.yourStatsBoxesWrapper}>
           <Box className={classes.statsBox}>
             <Typography component='h3'>Total INVT staked</Typography>
-            <Typography component='h2'>{totalStaked}</Typography>
+            <Typography component='h2'>
+              {statsData.currentStakeInfo.totalInvtStaked || 0}
+            </Typography>
           </Box>
           <Box className={classes.statsBox}>
             <Typography component='h3'>Deposit limit</Typography>
@@ -63,7 +59,10 @@ export const StatsLocker: React.FC<StatsLocker> = ({
           <Typography component='h3' color={colors.invariant.textGrey}>
             Total INVT deposit
           </Typography>
-          <ProgressBar percentage={percentage} gap={1} />
+          <ProgressBar
+            percentage={statsData.currentStakeInfo.invtDepositFilledPercentage}
+            gap={1}
+          />
         </Box>
         {!isSm && (
           <>
@@ -74,11 +73,13 @@ export const StatsLocker: React.FC<StatsLocker> = ({
             <Box className={classes.yourStatsBoxesWrapper} flexDirection={'column'}>
               <Box className={classes.singleBoxStat}>
                 <Typography component='h3'>Your INVT staked</Typography>
-                <Typography component='h2'>{yourStaked} INVT</Typography>
+                <Typography component='h2'>{userLockedInvt} INVT</Typography>
               </Box>
               <Box className={classes.singleBoxStat}>
                 <Typography component='h3'>Your predicted income</Typography>
-                <Typography component='h2'>123 INVT</Typography>
+                <Typography component='h2'>
+                  {statsData.currentStakeInfo.rewardPerToken * userLockedInvt + userLockedInvt} INVT
+                </Typography>
               </Box>
             </Box>
           </>
@@ -93,7 +94,7 @@ export const StatsLocker: React.FC<StatsLocker> = ({
           <Box className={classes.statsWrapper}>
             <Box className={classes.globalStatsBox}>
               <Typography component='h3'>Your INVT staked</Typography>
-              <Typography component='h2'>{yourStaked} INVT</Typography>
+              <Typography component='h2'>{userLockedInvt} INVT</Typography>
             </Box>
             <Box className={classes.yourStatsBoxesWrapper}>
               <Box className={classes.globalStatsBox}>

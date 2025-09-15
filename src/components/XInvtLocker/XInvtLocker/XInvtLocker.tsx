@@ -2,7 +2,7 @@ import { Box, Grid, Typography } from '@mui/material'
 import useStyles from './style'
 import Switcher from './Switcher/Switcher'
 import { useCallback, useLayoutEffect, useMemo, useState } from 'react'
-import { inputTarget, INVT_MAIN } from '@store/consts/static'
+import { inputTarget, INVT_DEPOSIT_LIMIT, INVT_MAIN } from '@store/consts/static'
 import ExchangeAmountInput from '@components/Inputs/ExchangeAmountInput/ExchangeAmountInput'
 import { Status } from '@store/reducers/solanaWallet'
 import { SwapToken } from '@store/selectors/solanaWallet'
@@ -11,7 +11,7 @@ import { convertBalanceToBN, printBN, trimDecimalZeros } from '@utils/utils'
 import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
 import AnimatedButton, { ProgressState } from '@common/AnimatedButton/AnimatedButton'
-import { LockerSwitch } from '@store/consts/types'
+import { InvtConvertedData, LockerSwitch } from '@store/consts/types'
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
 import { LockLiquidityPayload } from '@store/reducers/xInvt'
 import { colors, typography } from '@static/theme'
@@ -42,8 +42,8 @@ export interface ILocker {
   invtPrice: number
   unlockDisabled: boolean
   startTimestamp: BN
+  statsData: InvtConvertedData
 }
-
 export const XInvtLocker: React.FC<ILocker> = ({
   walletStatus,
   tokens,
@@ -65,7 +65,8 @@ export const XInvtLocker: React.FC<ILocker> = ({
   tokenTo,
   priceLoading,
   invtPrice,
-  unlockDisabled
+  unlockDisabled,
+  statsData
   // startTimestamp
 }) => {
   const { classes } = useStyles()
@@ -139,6 +140,12 @@ export const XInvtLocker: React.FC<ILocker> = ({
     if (progress !== 'none' || amountFrom === '' || Number(amountFrom) === 0)
       return 'Enter token amount'
 
+    if (
+      currentLockerTab === LockerSwitch.Lock &&
+      +amountFrom > INVT_DEPOSIT_LIMIT - statsData.currentStakeInfo.totalInvtStaked
+    ) {
+      return 'Limit reached'
+    }
     if (
       tokenFrom &&
       tokenFrom.balance &&
@@ -290,24 +297,16 @@ export const XInvtLocker: React.FC<ILocker> = ({
         limit={1e14}
         disabled={unlockDisabled}
       />
-
-      {/* <Box display='flex' marginTop={2} gap={0} flexDirection='column'>
-        <Box className={classes.timerWrapper}>
-          <Typography sx={{ color: colors.invariant.text, ...typography.body1 }}>
-            Lock ends in:
-          </Typography>
-          <Timer hours={hours} minutes={minutes} seconds={seconds} isSmall width={130} />
-        </Box>
-      </Box> */}
       <Separator isHorizontal width={1} color={colors.invariant.light} margin='16px 0' />
       <TransactionDetails
         tokenToAmount={printBN(calculateOtherTokenAmount('1', true, true), INVT_MAIN.decimals)}
+        tokenFromAmount={amountFrom}
         tokenFromTicker={tokenFrom.symbol}
         tokenToTicker={tokenTo.symbol}
         stakedDataLoading={false}
-        currentYield={'145%'}
-        yieldChange='143.3%'
-        income='212'
+        currentYield={statsData.currentStakeInfo.statsYieldPercentage}
+        yieldChange={statsData.impact.newYieldPercentage}
+        income={statsData.userProjection.expectedReward}
       />
       {walletStatus !== Status.Initialized ? (
         <ChangeWalletButton

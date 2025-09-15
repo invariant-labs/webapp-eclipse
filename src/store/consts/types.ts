@@ -324,3 +324,21 @@ export enum ChartSwitch {
   volume = 'Volume',
   fees = 'Fees'
 }
+
+export interface InvtConvertedData {
+  currentStakeInfo: {
+    totalInvtStaked: number
+    statsYieldPercentage: number
+    rewardPerToken: number
+    invtDepositFilledPercentage: number
+  }
+  userProjection: {
+    userStakeAmount: number
+    expectedYieldPercentage: number
+    expectedReward: number
+  }
+  impact: {
+    newYieldPercentage: number
+    newStakeSize: number
+  }
+}

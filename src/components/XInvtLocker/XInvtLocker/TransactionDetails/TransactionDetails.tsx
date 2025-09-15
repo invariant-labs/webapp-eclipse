@@ -2,19 +2,22 @@ import React from 'react'
 import { Box } from '@mui/system'
 import { Skeleton, Typography } from '@mui/material'
 import useStyles from './style'
+import { formatNumberWithSuffix } from '@utils/utils'
 
 interface ITransactionDetails {
   tokenFromTicker: string
+  tokenFromAmount: string
   tokenToTicker: string
   tokenToAmount: string
   stakedDataLoading: boolean
-  currentYield: string
-  yieldChange: string
-  income: string
+  currentYield: number
+  yieldChange: number
+  income: number
 }
 
 const TransactionDetails: React.FC<ITransactionDetails> = ({
   tokenFromTicker,
+  tokenFromAmount,
   tokenToTicker,
   tokenToAmount,
   stakedDataLoading,
@@ -24,6 +27,7 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
 }) => {
   const { classes } = useStyles()
 
+  const isYieldDifference = yieldChange.toFixed(2) !== currentYield.toFixed(2)
   return (
     <Box className={classes.wrapper}>
       <Box display='flex' justifyContent='space-between' alignItems='center'>
@@ -39,12 +43,16 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
       <Box display='flex' justifyContent='space-between' alignItems='center' mt='16px'>
         <Typography className={classes.label}>Yield change impact</Typography>
         <Typography className={classes.value}>
-          {currentYield} ⟶ {yieldChange}
+          {isYieldDifference
+            ? currentYield.toFixed(2) + ' %' + ' ⟶ ' + yieldChange.toFixed(2) + ' %'
+            : yieldChange.toFixed(2) + ' %'}
         </Typography>
       </Box>
       <Box display='flex' justifyContent='space-between' alignItems='center' mt='16px'>
         <Typography className={classes.label}>Predicted income</Typography>
-        <Typography className={classes.value}>{income} INVT</Typography>
+        <Typography className={classes.value}>
+          {tokenFromAmount ? tokenFromAmount + ' +' : ''} {formatNumberWithSuffix(income)} INVT
+        </Typography>
       </Box>
     </Box>
   )
