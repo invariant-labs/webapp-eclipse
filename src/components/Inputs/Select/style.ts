@@ -1,9 +1,8 @@
-import { Theme } from '@mui/material'
 import { colors, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
-export const useStyles = makeStyles()((theme: Theme) => {
-  return {
+export const useStyles = makeStyles<{ hideSelect: boolean; notRoundIcon: boolean }>()(
+  (theme, { hideSelect, notRoundIcon }) => ({
     button: {
       posiiton: 'relative',
       width: 'auto',
@@ -19,13 +18,15 @@ export const useStyles = makeStyles()((theme: Theme) => {
 
       filter: 'brightness(0.8)',
 
-      '&:hover': {
-        filter: 'brightness(1)',
-        backgroundColor: colors.invariant.light,
-        '@media (hover: none)': {
-          filter: 'brightness(0.8)'
-        }
-      },
+      '&:hover': hideSelect
+        ? { backgroundColor: colors.invariant.light, cursor: 'default' }
+        : {
+            filter: 'brightness(1)',
+            backgroundColor: colors.invariant.light,
+            '@media (hover: none)': {
+              filter: 'brightness(0.8)'
+            }
+          },
 
       [theme.breakpoints.down('sm')]: {
         minWidth: 'auto'
@@ -45,9 +46,10 @@ export const useStyles = makeStyles()((theme: Theme) => {
     },
     icon: {
       marginRight: 5,
+      borderRadius: '50%',
       minWidth: 20,
       height: 20,
-      borderRadius: '100%'
+      ...(notRoundIcon ? {} : { borderRadius: '100%' })
     },
     warningIcon: {
       position: 'absolute',
@@ -56,7 +58,6 @@ export const useStyles = makeStyles()((theme: Theme) => {
       bottom: -6,
       right: -6
     }
-  }
-})
-
+  })
+)
 export default useStyles

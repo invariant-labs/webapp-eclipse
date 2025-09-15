@@ -5,10 +5,11 @@ import { useStyles } from './style'
 import { Grid, Typography, Box, useMediaQuery } from '@mui/material'
 import Intervals from '../Intervals/Intervals'
 import { Separator } from '@common/Separator/Separator'
-import Volume from '../Volume/Volume'
 import Liquidity from '../Liquidity/Liquidity'
 import VolumeBar from '../volumeBar/VolumeBar'
 import { formatNumberWithoutSuffix } from '@utils/utils'
+import ColumnChart from '../ColumnChart/ColumnChart'
+import { ChartSwitch } from '@store/consts/types'
 
 interface IOverview {
   lastUsedInterval: IntervalsKeys | null
@@ -18,10 +19,12 @@ interface IOverview {
   isLoadingStats: boolean
   lastStatsTimestamp: number
   liquidityPlotData: TimeData[]
+  feesPlotData: TimeData[]
   tvlInterval: Value24H
   feesInterval: Value24H
   cumulativeVolume: CumulativeValue
   cumulativeFees: CumulativeValue
+  setChartType: (type: ChartSwitch) => void
 }
 
 const Overview: React.FC<IOverview> = ({
@@ -32,10 +35,12 @@ const Overview: React.FC<IOverview> = ({
   isLoadingStats,
   lastStatsTimestamp,
   liquidityPlotData,
+  feesPlotData,
   tvlInterval,
   feesInterval,
   cumulativeVolume,
-  cumulativeFees
+  cumulativeFees,
+  setChartType
 }) => {
   const { classes, cx } = useStyles()
 
@@ -44,7 +49,7 @@ const Overview: React.FC<IOverview> = ({
 
   return (
     <>
-      <Box display='flex' justifyContent='space-between' alignItems='center' mb={4}>
+      <Box display='flex' justifyContent='space-between' alignItems='center' mb={2}>
         <Typography className={classes.subheader}>Overview</Typography>
       </Box>
       <Grid
@@ -68,9 +73,17 @@ const Overview: React.FC<IOverview> = ({
                 alignItems='center'
                 gap={1}
                 justifyContent={isMd ? 'space-between' : 'flex-start'}>
-                <Typography className={classes.label}>Cumulative Volume:</Typography>
+                <Typography
+                  className={cx(classes.label, {
+                    [classes.addZIndex]: cumulativeVolume.value !== 0
+                  })}>
+                  Cumulative Volume:
+                </Typography>
 
-                <Typography className={classes.value}>
+                <Typography
+                  className={cx(classes.value, {
+                    [classes.addZIndex]: cumulativeVolume.value !== 0
+                  })}>
                   ${formatNumberWithoutSuffix(cumulativeVolume.value)}
                 </Typography>
               </Box>
@@ -80,9 +93,17 @@ const Overview: React.FC<IOverview> = ({
                 alignItems='center'
                 gap={1}
                 justifyContent={isMd ? 'space-between' : 'flex-start'}>
-                <Typography className={classes.label}>Cumulative Fee:</Typography>
+                <Typography
+                  className={cx(classes.label, {
+                    [classes.addZIndex]: cumulativeFees.value !== 0
+                  })}>
+                  Cumulative Fee:
+                </Typography>
 
-                <Typography className={classes.value}>
+                <Typography
+                  className={cx(classes.value, {
+                    [classes.addZIndex]: cumulativeFees.value !== 0
+                  })}>
                   ${formatNumberWithoutSuffix(cumulativeFees.value)}
                 </Typography>
               </Box>
@@ -119,13 +140,16 @@ const Overview: React.FC<IOverview> = ({
             gap={'24px'}
             flexDirection={isMd ? 'column' : 'row'}
             mt={isMd ? '24px' : 0}>
-            <Volume
+            <ColumnChart
               volume={volumeInterval.value}
-              data={volumePlotData}
+              fees={feesInterval.value}
+              volumeData={volumePlotData}
+              feesData={feesPlotData}
               className={classes.plot}
               isLoading={isLoadingStats}
               lastStatsTimestamp={lastStatsTimestamp}
               interval={lastUsedInterval ?? IntervalsKeys.Daily}
+              setChartType={setChartType}
             />
 
             <Separator

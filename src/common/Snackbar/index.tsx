@@ -10,20 +10,31 @@ type ExtraVariants = 'pending' | 'custom'
 
 export type SnackbarVariant = ExtraVariants
 
-export type IkonType = 'swap' | 'deposit' | 'withdraw' | 'claim'
+export type IkonType =
+  | 'swap'
+  | 'deposit'
+  | 'withdraw'
+  | 'claim'
+  | 'stake'
+  | 'unstake'
+  | 'purchase'
+  | 'claim-nft'
 export interface TokensDetailsProps {
   ikonType: IkonType
   tokenXAmount: string
-  tokenYAmount: string
+  tokenBetweenAmount?: string
+  tokenYAmount?: string
   tokenXIcon: string
-  tokenYIcon: string
+  tokenBetweenIcon?: string
+  tokenYIcon?: string
   tokenXSymbol: string
-  tokenYSymbol: string
-  earnedPoints?: string
+  tokenBetweenSymbol?: string
+  tokenYSymbol?: string
   tokenXIconAutoSwap?: string
   tokenYIconAutoSwap?: string
   tokenXAmountAutoSwap?: string
   tokenYAmountAutoSwap?: string
+  roundIcon?: boolean
 }
 export interface CustomProps {
   txid?: string
@@ -57,7 +68,7 @@ const Transition = (props: GrowProps) => <Grow {...props} />
 const Snackbar: React.FC<ISnackbarProps> = ({ maxSnack = 3, children }) => {
   const isNavbarVisible = useMediaQuery(theme.breakpoints.down(1200))
   const isExSmall = useMediaQuery(theme.breakpoints.down('sm'))
-  const { classes } = useStyles()
+  const { classes } = useStyles({})
 
   return (
     <SnackbarProvider

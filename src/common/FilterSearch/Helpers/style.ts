@@ -15,12 +15,25 @@ export const useStyles = makeStyles()((_theme: Theme) => ({
     alignItems: 'center',
     background: colors.invariant.component
   },
+  warningIcon: {
+    position: 'absolute',
+    width: 12,
+    bottom: -3,
+    right: 3
+  },
+  warningChipIcon: {
+    position: 'absolute',
+    width: 12,
+    bottom: -2,
+    right: -5
+  },
   avatarChip: {
-    width: 14,
-    height: 14,
+    width: 18,
+    height: 18,
     borderRadius: '50%'
   },
   typographyChip: {
+    marginTop: 2,
     ...typography.body2,
     color: colors.invariant.text
   },

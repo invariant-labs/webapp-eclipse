@@ -3,9 +3,8 @@ import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(theme => ({
   title: {
-    color: colors.invariant.text,
     ...typography.heading4,
-    fontWeight: 700,
+    color: colors.white.main,
     textWrap: 'nowrap'
   },
   cardsContainer: {

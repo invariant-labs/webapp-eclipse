@@ -10,6 +10,8 @@ import closeIcon from './svg/closeIcon.svg'
 import docsIcon from './svg/docsCircle.svg'
 import closeSmallIcon from './svg/closeSmall.svg'
 import closeSmallGreenIcon from './svg/closeSmallGreen.svg'
+import closeSmallRedIcon from './svg/closeSmallRed.svg'
+import closeSmallYellowIcon from './svg/closeSmallYellow.svg'
 import successIcon from './svg/successIcon.svg'
 import xIcon from './svg/xCircle.svg'
 import unknownTokenIcon from './svg/unknownToken.svg'
@@ -38,10 +40,9 @@ import dog1Icon from './svg/SolanaCreator/Dog1.svg'
 import dog2Icon from './svg/SolanaCreator/Dog2.svg'
 import lockIcon from './svg/lockIcon.svg'
 import lockPositionIcon from './svg/lock.svg'
-import airdropIcon from './svg/airdrop.svg'
 import nightlyIcon from './svg/nightly.svg'
-import airdropRainbowIcon from './svg/airdropRainbow.svg'
 import auditIcon from './svg/audit.svg'
+import auditByLogoIcon from './svg/auditbylogo.svg'
 import warning2Icon from './svg/warning2.svg'
 import closeWarningIcon from './svg/closeWarning.svg'
 import dropdownIcon from './svg/dropdown.svg'
@@ -49,8 +50,6 @@ import dropdownReverseIcon from './svg/dropdownReverse.svg'
 import arrowLeftIcon from './svg/arrowLeft.svg'
 import arrowRightIcon from './svg/arrowRight.svg'
 import infoCircleIcon from './svg/infoCircle.svg'
-import boostPointsIcon from './svg/boostPoints.svg'
-import airdropGreyIcon from './svg/airdropGrey.svg'
 import infoErrorIcon from './svg/infoError.svg'
 import okxLogoIcon from './svg/okx-logo.svg'
 import goldenInfoIcon from './svg/goldenInfoIcon.svg'
@@ -76,9 +75,6 @@ import searchIcon from './svg/lupaDark.svg'
 import navRightIcon from '@static/svg/navRight.svg'
 import navLeftIcon from '@static/svg/navLeft.svg'
 import checkIcon from '@static/svg/checkFill.svg'
-import leaderboardGoldenIcon from '@static/svg/leaderboardGolden.svg'
-import leaderboardSilverIcon from '@static/svg/leaderboardSilver.svg'
-import leaderboardBronzeIcon from '@static/svg/leaderboardBronze.svg'
 import disconnectIcon from '@static/svg/disconnect.svg'
 import refreshIcon from '@static/svg/refresh.svg'
 import backIcon from '@static/svg/back-arrow.svg'
@@ -90,19 +86,41 @@ import handleMinIcon from '@static/svg/narrowChartMinHandle.svg'
 import zoomInIcon from '@static/svg/zoom-in-icon.svg'
 import zoomOutIcon from '@static/svg/zoom-out-icon.svg'
 import lockIcon2 from '@static/svg/lock.svg'
-import boostPointsBoldIcon from '@static/svg/boostPointsBold.svg'
 import eyeYellowIcon from './svg/eyeYellow.svg'
 import closeYellowIcon from './svg/closeYellow.svg'
 import scrollArrowIcon from './svg/scrollArrow.svg'
 import snackbarSwapIcon from './svg/snackbarSwap.svg'
+import stakeIcon from './svg/stakeIcon.svg'
+import unstakeIcon from './svg/unstakeIcon.svg'
 import circleDolarIcon from './svg/circleDolar.svg'
 import depositIcon from './svg/depositIcon.svg'
 import withdrawIcon from './svg/withdrawIcon.svg'
 import centerToRangeIcon from './svg/centerToRange.svg'
 import warning3 from './svg/warning3.svg'
 import connectWalletIcon from './svg/connectWalletIcon.svg'
+import star from './svg/star.svg'
+import starFill from './svg/star-fill.svg'
+import swapArrowIcon from './svg/swapArrow.svg'
+import moreIcon from './svg/moreIcon.svg'
+import lqStakingIcon from './svg/lqStakingIcon.svg'
+import warningStroke from './svg/warningStroke.svg'
+import plusDisabled from './svg/plusDisabled.svg'
+import pointsQMarkIcon from './svg/pointsQmark.svg'
+import hornsUSDC from './svg/hornsUSDC.svg'
+import hornsETH from './svg/hornsETH.svg'
+import virtualCardIcon from './svg/virtualCard.svg'
+import greenInfoIcon from './svg/greenInfo.svg'
+import swapArrowClean from './svg/swapArrowClean.svg'
+import saleSelectedIcon from './svg/sale-selected.svg'
+import saleUnselectedIcon from './svg/sale-unselected.svg'
 
 export {
+  hornsUSDC,
+  warningStroke,
+  plusDisabled,
+  lqStakingIcon,
+  pointsQMarkIcon,
+  moreIcon,
   logoTitleIcon,
   logoShortIcon,
   arrowIcon,
@@ -114,7 +132,9 @@ export {
   closeIcon,
   docsIcon,
   closeSmallIcon,
+  closeSmallRedIcon,
   closeSmallGreenIcon,
+  closeSmallYellowIcon,
   successIcon,
   xIcon,
   unknownTokenIcon,
@@ -143,9 +163,7 @@ export {
   dog2Icon,
   lockIcon,
   lockPositionIcon,
-  airdropIcon,
   nightlyIcon,
-  airdropRainbowIcon,
   auditIcon,
   warning2Icon,
   closeWarningIcon,
@@ -154,8 +172,6 @@ export {
   arrowLeftIcon,
   arrowRightIcon,
   infoCircleIcon,
-  boostPointsIcon,
-  airdropGreyIcon,
   infoErrorIcon,
   okxLogoIcon,
   infoIcon,
@@ -181,9 +197,6 @@ export {
   navRightIcon,
   navLeftIcon,
   checkIcon,
-  leaderboardGoldenIcon,
-  leaderboardSilverIcon,
-  leaderboardBronzeIcon,
   disconnectIcon,
   refreshIcon,
   backIcon,
@@ -195,17 +208,28 @@ export {
   zoomInIcon,
   zoomOutIcon,
   lockIcon2,
-  boostPointsBoldIcon,
   eyeYellowIcon,
   scrollArrowIcon,
   goldenInfoIcon,
   snackbarSwapIcon,
+  stakeIcon,
+  unstakeIcon,
   circleDolarIcon,
   depositIcon,
+  virtualCardIcon,
   withdrawIcon,
   centerToRangeIcon,
   warning3,
-  connectWalletIcon
+  connectWalletIcon,
+  star,
+  starFill,
+  swapArrowIcon,
+  hornsETH,
+  auditByLogoIcon,
+  greenInfoIcon,
+  swapArrowClean,
+  saleSelectedIcon,
+  saleUnselectedIcon
 }
 
 export const chainIcons = {

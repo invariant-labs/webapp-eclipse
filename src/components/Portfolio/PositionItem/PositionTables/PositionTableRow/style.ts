@@ -17,12 +17,11 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     textAlign: 'left',
     padding: '14px 22px 14px 22px !important'
   },
-  airdropIcon: {
-    flexShrink: '0',
-    height: '32px',
-    width: '32px',
-    opacity: 0.3,
-    filter: 'grayscale(1)'
+  warningIcon: {
+    position: 'absolute',
+    width: 16,
+    bottom: -3,
+    right: -6
   },
   itemCellContainer: {
     width: '100%',

@@ -61,7 +61,7 @@ export const EmptyPlaceholder: React.FC<IEmptyPlaceholder> = ({
           <Grid className={classes.buttonContainer}>
             {withButton && (
               <Button scheme='pink' padding='0 48px' onClick={onAction}>
-                {buttonName ? buttonName : 'Add a position'}
+                {buttonName ? buttonName : 'Add position'}
               </Button>
             )}
             {onAction2 && connectButton && (

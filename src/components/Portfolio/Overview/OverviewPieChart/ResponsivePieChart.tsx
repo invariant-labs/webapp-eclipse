@@ -3,7 +3,13 @@ import { Box, Fade, Grid, Typography } from '@mui/material'
 import { colors } from '@static/theme'
 import { useStyles } from './style'
 
-const ResponsivePieChart = ({ data, chartColors, isLoading = true }) => {
+const ResponsivePieChart = ({
+  data,
+  chartColors,
+  isLoading = true,
+  tooltipPrefix = '$',
+  height = 200
+}) => {
   const { classes } = useStyles()
   const total = data?.reduce((sum, item) => sum + item.value, 0) || 0
   const loadingData = [{ id: 'loading', value: 1, label: '' }]
@@ -19,7 +25,7 @@ const ResponsivePieChart = ({ data, chartColors, isLoading = true }) => {
   const nivoData = hasPositiveValue ? formatDataForNivo(data) : loadingData
   const showPlaceholder = isLoading || !hasPositiveValue
   return (
-    <Box position='relative' height={200} width='100%'>
+    <Box position='relative' height={height} width='100%'>
       <Fade in={!showPlaceholder} timeout={{ enter: 0, exit: 400 }} unmountOnExit>
         <Box
           className={classes.sliceShadow}
@@ -50,7 +56,8 @@ const ResponsivePieChart = ({ data, chartColors, isLoading = true }) => {
                     {datum.label}
                   </Typography>
                   <Typography>
-                    ${datum.value.toLocaleString()} ({percentage}%)
+                    {tooltipPrefix}
+                    {datum.value.toLocaleString()} ({percentage}%)
                   </Typography>
                 </Grid>
               )

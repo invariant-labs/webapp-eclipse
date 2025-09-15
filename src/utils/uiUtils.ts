@@ -86,6 +86,32 @@ export const createButtonActions = (config: MaxButtonConfig) => {
       config.onAmountSet(trimDecimalZeros(printBN(amount, config.tokens[tokenIndex].decimals)))
     },
 
+    maxSale: (
+      tokenIndex: number | null,
+      currentRound: number,
+      deposited: number,
+      whitelistWalletLimit: BN,
+      currentAmount?: BN,
+      targetAmount?: BN
+    ) => {
+      if (tokenIndex === null || currentRound === undefined || currentRound === null) {
+        return
+      }
+
+      const amount = calculateAmount(tokenIndex)
+      const tokenDecimals = config.tokens[tokenIndex].decimals
+      let maxAllowedAmount: BN
+
+      if (currentRound <= 3) {
+        maxAllowedAmount = whitelistWalletLimit.sub(new BN(deposited))
+      } else {
+        maxAllowedAmount = targetAmount.sub(currentAmount)
+      }
+
+      const finalAmount = BN.min(amount, maxAllowedAmount)
+      config.onAmountSet(trimDecimalZeros(printBN(finalAmount, tokenDecimals)))
+    },
+
     half: (tokenIndex: number | null) => {
       if (tokenIndex === null) {
         return
@@ -275,4 +301,16 @@ export const getLabelDate = (
   }
 
   return `${day < 10 ? '0' : ''}${day} ${monthName}`
+}
+
+type RateType = 'APY' | 'APR'
+
+export const convertAPYValue = (apy: number, type: RateType) => {
+  return apy > 9999
+    ? '>9999%'
+    : apy === 0
+      ? type === 'APY'
+        ? '-'
+        : ''
+      : Math.abs(apy).toFixed(2) + '%'
 }

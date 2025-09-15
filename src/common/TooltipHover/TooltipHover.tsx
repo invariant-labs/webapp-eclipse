@@ -6,6 +6,7 @@ import { theme } from '@static/theme'
 import useIsMobile from '@store/hooks/isMobile'
 
 interface Props extends TooltipProps {
+  disabled?: boolean
   title: React.ReactNode
   children: React.ReactElement<any, any>
   top?: number | string
@@ -19,6 +20,7 @@ interface Props extends TooltipProps {
   allowEnterTooltip?: boolean
   textAlign?: 'left' | 'center' | 'right'
   maxWidth?: string | number
+  center?: boolean
 }
 
 export const TooltipHover = ({
@@ -28,16 +30,19 @@ export const TooltipHover = ({
   right,
   bottom,
   fullSpan = false,
+  removeOnMobile,
   gradient = false,
   increasePadding = false,
   allowEnterTooltip = true,
   title,
   textAlign = 'left',
   maxWidth,
-  placement = 'top', // default placement
+  placement = 'top', // default placement,
+  disabled,
+  center = false,
   ...props
 }: Props) => {
-  const { classes } = useStyles({ fullSpan, increasePadding, maxWidth })
+  const { classes } = useStyles({ fullSpan, increasePadding, maxWidth, center })
   const [open, setOpen] = useState(false)
   const [childrenHover, setChildrenHover] = useState(false)
   const [titleHover, setTitleHover] = useState(false)
@@ -101,7 +106,7 @@ export const TooltipHover = ({
     }
   }, [allowEnterTooltip])
 
-  if (!title) return children
+  if (!title || disabled) return children
 
   return (
     <Tooltip
@@ -135,6 +140,9 @@ export const TooltipHover = ({
         className={classes.tooltipSpan}
         onClick={e => {
           if (isMobile) {
+            if (removeOnMobile) {
+              return
+            }
             e.stopPropagation()
             setOpen(true)
           }
@@ -147,6 +155,9 @@ export const TooltipHover = ({
         }}
         onMouseDown={() => {
           if (allowEnterTooltip && isMobile) {
+            if (removeOnMobile) {
+              return
+            }
             setChildrenHover(true)
             setOpen(true)
           }

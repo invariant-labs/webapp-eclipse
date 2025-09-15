@@ -30,7 +30,7 @@ export const useStyles = makeStyles()(() => ({
       inset: 0,
       backgroundColor: alpha(colors.invariant.newDark, 0.7),
       backdropFilter: 'blur(4px)',
-      zIndex: 1,
+      zIndex: 10,
       pointerEvents: 'none',
       borderRadius: '24px'
     }
@@ -43,7 +43,7 @@ export const useStyles = makeStyles()(() => ({
     }
   },
   row: {
-    marginBottom: 16
+    marginBottom: 72
   },
   label: {
     ...typography.body3,
@@ -60,5 +60,8 @@ export const useStyles = makeStyles()(() => ({
     [theme.breakpoints.down('md')]: {
       ...typography.body1
     }
+  },
+  addZIndex: {
+    zIndex: 2
   }
 }))

@@ -1,6 +1,5 @@
 import {
   calculatePriceSqrt,
-  DENOMINATOR,
   FetcherRecords,
   getTokenProgramAddress,
   MAX_TICK,
@@ -10,12 +9,7 @@ import {
   routingEssentials
 } from '@invariant-labs/sdk-eclipse'
 import { PoolStructure, Tick } from '@invariant-labs/sdk-eclipse/src/market'
-import {
-  DECIMAL,
-  parseLiquidityOnTicks,
-  simulateSwap,
-  SimulationStatus
-} from '@invariant-labs/sdk-eclipse/src/utils'
+import { DECIMAL, simulateSwap, SimulationStatus } from '@invariant-labs/sdk-eclipse/src/utils'
 import { BN } from '@coral-xyz/anchor'
 import {
   getMint,
@@ -23,7 +17,7 @@ import {
   getTokenMetadata as fetchMetaData,
   unpackMint
 } from '@solana/spl-token'
-import { Connection, PublicKey } from '@solana/web3.js'
+import { Connection, ParsedInstruction, ParsedTransactionMeta, PublicKey } from '@solana/web3.js'
 import {
   Market,
   Tickmap,
@@ -50,33 +44,21 @@ import {
 import { PlotTickData, PositionWithAddress, PositionWithoutTicks } from '@store/reducers/positions'
 import {
   ADDRESSES_TO_REVERT_TOKEN_PAIRS,
-  AI16Z_MAIN,
-  BRICK_MAIN,
   BTC_DEV,
   BTC_TEST,
   PRICE_QUERY_COOLDOWN,
   DARKMOON_MAIN,
-  DOGO_MAIN,
-  DOGW_MAIN,
   DOGWIFHAT_MAIN,
-  EBULL_MAIN,
-  ECAT_MAIN,
-  EGOAT_MAIN,
   FormatConfig,
   getAddressTickerMap,
   getReversedAddressTickerMap,
   GSVM_MAIN,
   LAIKA_MAIN,
   MAX_U64,
-  MOCKED_TOKEN_MAIN,
-  MOO_MAIN,
   MOON_MAIN,
   MOON_TEST,
   NetworkType,
-  PANTY_MAIN,
-  PODAVINI_MAIN,
   PRICE_DECIMAL,
-  PUNKSTAR_MAIN,
   STTIA_MAIN,
   S22_TEST,
   SOL_MAIN,
@@ -84,34 +66,42 @@ import {
   TETH_MAIN,
   TIA_MAIN,
   tokensPrices,
-  TURBO_MAIN,
   USDC_DEV,
   USDC_MAIN,
   USDC_TEST,
-  VLR_MAIN,
   WETH_DEV,
   WETH_TEST,
   WRAPPED_ETH_ADDRESS,
   MAX_CROSSES_IN_SINGLE_TX,
   USDT_MAIN,
-  TURBO_AI_MAIN,
   ORCA_MAIN,
   SOLAR_MAIN,
   WETH_MAIN,
   KYSOL_MAIN,
   EZSOL_MAIN,
-  LEADERBOARD_DECIMAL,
   POSITIONS_PER_PAGE,
   MAX_CROSSES_IN_SINGLE_TX_WITH_LUTS,
+  ES_MAIN,
   BITZ_MAIN,
   PRICE_API_URL,
   Intervals,
+  SALE_TEST,
   ERROR_CODE_TO_MESSAGE,
   COMMON_ERROR_MESSAGE,
   ErrorCodeExtractionKeys,
   TUSD_MAIN,
   AlternativeFormatConfig,
-  defaultThresholds
+  defaultThresholds,
+  JITOSOL_MAIN,
+  WBTC_MAIN,
+  NPT_MAIN,
+  USDN_MAIN,
+  WEETHS_MAIN,
+  sBITZ_MAIN,
+  MAX_PLOT_VISIBLE_TICK_RANGE,
+  CHECKER_API_URL,
+  NoConfig,
+  muES_MAIN
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
@@ -131,10 +121,17 @@ import { fetchDigitalAsset } from '@metaplex-foundation/mpl-token-metadata'
 import { publicKey } from '@metaplex-foundation/umi-public-keys'
 import { createUmi } from '@metaplex-foundation/umi-bundle-defaults'
 import { Umi } from '@metaplex-foundation/umi'
+import { StakingStatsResponse } from '@store/reducers/sbitz-stats'
+import { DEFAULT_FEE_TIER, STRATEGIES } from '@store/consts/userStrategies'
+import { HoldersResponse } from '@store/reducers/sBitz'
 
 export const transformBN = (amount: BN): string => {
   return (amount.div(new BN(1e2)).toNumber() / 1e4).toString()
 }
+export const printBNandTrimZeros = (amount: BN, decimals: number, decimalPlaces?: number) => {
+  return trimZeros(Number(printBN(amount, decimals)).toFixed(decimalPlaces ?? decimals))
+}
+
 export const printBN = (amount: BN, decimals: number): string => {
   if (!amount) {
     return '0'
@@ -450,6 +447,21 @@ export const spacingMultiplicityGte = (arg: number, spacing: number): number => 
   return arg + (Math.abs(arg) % spacing)
 }
 
+export const parseLiquidityInRange = (currentTickIndex: number, ticks: Tick[]) => {
+  let currentLiquidity = new BN(0)
+
+  return ticks.map(tick => {
+    currentLiquidity = currentLiquidity.add(tick.liquidityChange.muln(tick.sign ? 1 : -1))
+    return {
+      liquidity:
+        Math.abs(tick.index - currentTickIndex) > MAX_PLOT_VISIBLE_TICK_RANGE
+          ? 0
+          : currentLiquidity,
+      index: tick.index
+    }
+  })
+}
+
 export const createLiquidityPlot = (
   rawTicks: Tick[],
   pool: PoolStructure,
@@ -458,7 +470,9 @@ export const createLiquidityPlot = (
   tokenYDecimal: number
 ) => {
   const sortedTicks = rawTicks.sort((a, b) => a.index - b.index)
-  const parsedTicks = rawTicks.length ? parseLiquidityOnTicks(sortedTicks) : []
+  const parsedTicks = rawTicks.length
+    ? parseLiquidityInRange(pool.currentTickIndex, sortedTicks)
+    : []
 
   const ticks = rawTicks.map((raw, index) => ({
     ...raw,
@@ -697,6 +711,7 @@ interface FormatNumberWithSuffixConfig {
   decimalsAfterDot?: number
   alternativeConfig?: boolean
   noSubNumbers?: boolean
+  noConfig?: boolean
 }
 
 export const getThresholdsDecimals = (
@@ -716,16 +731,22 @@ export const formatNumberWithSuffix = (
     noDecimals,
     decimalsAfterDot,
     alternativeConfig,
-    noSubNumbers
+    noSubNumbers,
+    noConfig
   }: Required<FormatNumberWithSuffixConfig> = {
     noDecimals: false,
     decimalsAfterDot: 3,
     alternativeConfig: false,
     noSubNumbers: false,
+    noConfig: false,
     ...config
   }
 
-  const formatConfig = alternativeConfig ? AlternativeFormatConfig : FormatConfig
+  const formatConfig = noConfig
+    ? NoConfig
+    : alternativeConfig
+      ? AlternativeFormatConfig
+      : FormatConfig
 
   const numberAsNumber = Number(number)
   const isNegative = numberAsNumber < 0
@@ -896,38 +917,31 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
     case NetworkType.Mainnet:
       return {
         [WETH_MAIN.address.toString()]: WETH_MAIN,
-        [MOCKED_TOKEN_MAIN.address.toString()]: MOCKED_TOKEN_MAIN,
         [TETH_MAIN.address.toString()]: TETH_MAIN,
         [USDC_MAIN.address.toString()]: USDC_MAIN,
         [USDT_MAIN.address.toString()]: USDT_MAIN,
         [SOL_MAIN.address.toString()]: SOL_MAIN,
         [BITZ_MAIN.address.toString()]: BITZ_MAIN,
+        [sBITZ_MAIN.address.toString()]: sBITZ_MAIN,
         [DOGWIFHAT_MAIN.address.toString()]: DOGWIFHAT_MAIN,
         [LAIKA_MAIN.address.toString()]: LAIKA_MAIN,
         [MOON_MAIN.address.toString()]: MOON_MAIN,
         [GSVM_MAIN.address.toString()]: GSVM_MAIN,
         [DARKMOON_MAIN.address.toString()]: DARKMOON_MAIN,
-        [ECAT_MAIN.address.toString()]: ECAT_MAIN,
-        [TURBO_MAIN.address.toString()]: TURBO_MAIN,
-        [MOO_MAIN.address.toString()]: MOO_MAIN,
-        [EBULL_MAIN.address.toString()]: EBULL_MAIN,
-        [EGOAT_MAIN.address.toString()]: EGOAT_MAIN,
-        [DOGO_MAIN.address.toString()]: DOGO_MAIN,
-        [PUNKSTAR_MAIN.address.toString()]: PUNKSTAR_MAIN,
-        [AI16Z_MAIN.address.toString()]: AI16Z_MAIN,
-        [VLR_MAIN.address.toString()]: VLR_MAIN,
         [TIA_MAIN.address.toString()]: TIA_MAIN,
         [STTIA_MAIN.address.toString()]: STTIA_MAIN,
-        [BRICK_MAIN.address.toString()]: BRICK_MAIN,
-        [PANTY_MAIN.address.toString()]: PANTY_MAIN,
-        [PODAVINI_MAIN.address.toString()]: PODAVINI_MAIN,
-        [DOGW_MAIN.address.toString()]: DOGW_MAIN,
-        [TURBO_AI_MAIN.address.toString()]: TURBO_AI_MAIN,
         [ORCA_MAIN.address.toString()]: ORCA_MAIN,
         [SOLAR_MAIN.address.toString()]: SOLAR_MAIN,
         [KYSOL_MAIN.address.toString()]: KYSOL_MAIN,
         [EZSOL_MAIN.address.toString()]: EZSOL_MAIN,
-        [TUSD_MAIN.address.toString()]: TUSD_MAIN
+        [ES_MAIN.address.toString()]: ES_MAIN,
+        [TUSD_MAIN.address.toString()]: TUSD_MAIN,
+        [JITOSOL_MAIN.address.toString()]: JITOSOL_MAIN,
+        [WBTC_MAIN.address.toString()]: WBTC_MAIN,
+        [NPT_MAIN.address.toString()]: NPT_MAIN,
+        [USDN_MAIN.address.toString()]: USDN_MAIN,
+        [WEETHS_MAIN.address.toString()]: WEETHS_MAIN,
+        [muES_MAIN.address.toString()]: muES_MAIN
       }
     case NetworkType.Devnet:
       return {
@@ -937,6 +951,7 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
       }
     case NetworkType.Testnet:
       return {
+        [SALE_TEST.address.toString()]: SALE_TEST,
         [USDC_TEST.address.toString()]: USDC_TEST,
         [BTC_TEST.address.toString()]: BTC_TEST,
         [WETH_TEST.address.toString()]: WETH_TEST,
@@ -1452,6 +1467,11 @@ export const getNetworkStats = async (name: string): Promise<Record<string, Pool
   return data
 }
 
+export const fetchProofOfInclusion = async (address: string): Promise<any> => {
+  const { data } = await axios.get(CHECKER_API_URL + `/${address}`)
+  return data
+}
+
 export const getPoolsFromAddresses = async (
   addresses: PublicKey[],
   marketProgram: Market
@@ -1921,59 +1941,52 @@ export const getMockedTokenPrice = (symbol: string, network: NetworkType): Token
   }
 }
 
-export const getTokenPrice = async (
-  addr: string,
-  network: NetworkType
-): Promise<number | undefined> => {
-  const cachedLastQueryTimestamp = localStorage.getItem('TOKEN_PRICE_LAST_QUERY_TIMESTAMP')
-  let lastQueryTimestamp = 0
-  if (cachedLastQueryTimestamp) {
-    lastQueryTimestamp = Number(cachedLastQueryTimestamp)
-  }
+type PriceMap = Record<string, { price: number }>
+type TokenPriceReturn<T extends string | undefined> = T extends string
+  ? number | undefined
+  : PriceMap | undefined
 
-  const cachedPriceData =
-    network === NetworkType.Mainnet
-      ? localStorage.getItem('TOKEN_PRICE_DATA')
-      : localStorage.getItem('TOKEN_PRICE_DATA_TESTNET')
+export async function getTokenPrice<T extends string | undefined = undefined>(
+  network: NetworkType,
+  addr?: T
+): Promise<TokenPriceReturn<T>> {
+  const isMainnet = network === NetworkType.Mainnet
+  const DATA_KEY = isMainnet ? 'TOKEN_PRICE_DATA' : 'TOKEN_PRICE_DATA_TESTNET'
+  const TS_KEY = isMainnet
+    ? 'TOKEN_PRICE_LAST_QUERY_TIMESTAMP'
+    : 'TOKEN_PRICE_LAST_QUERY_TIMESTAMP_TESTNET'
 
-  let priceData: Record<string, { price: number }> | null = null
+  const cachedLastQueryTimestamp = localStorage.getItem(TS_KEY)
+  const lastQueryTimestamp = cachedLastQueryTimestamp ? Number(cachedLastQueryTimestamp) : 0
 
-  if (!cachedPriceData || Number(lastQueryTimestamp) + PRICE_QUERY_COOLDOWN <= Date.now()) {
+  const cachedPriceData = localStorage.getItem(DATA_KEY)
+
+  let priceData: PriceMap | null = null
+
+  if (!cachedPriceData || lastQueryTimestamp + PRICE_QUERY_COOLDOWN <= Date.now()) {
     try {
       const { data } = await axios.get<IPriceData>(
-        `${PRICE_API_URL}/${network === NetworkType.Mainnet ? 'eclipse-mainnet' : 'eclipse-testnet'}`
+        `${PRICE_API_URL}/${isMainnet ? 'eclipse-mainnet' : 'eclipse-testnet'}`
       )
       priceData = data.data
-
-      localStorage.setItem(
-        network === NetworkType.Mainnet ? 'TOKEN_PRICE_DATA' : 'TOKEN_PRICE_DATA_TESTNET',
-        JSON.stringify(priceData)
-      )
-      localStorage.setItem(
-        network === NetworkType.Mainnet
-          ? 'TOKEN_PRICE_LAST_QUERY_TIMESTAMP'
-          : 'TOKEN_PRICE_LAST_QUERY_TIMESTAMP_TESTNET',
-        String(Date.now())
-      )
+      localStorage.setItem(DATA_KEY, JSON.stringify(priceData))
+      localStorage.setItem(TS_KEY, String(Date.now()))
     } catch (e: unknown) {
       const error = ensureError(e)
       console.log(error)
-
-      localStorage.removeItem(
-        network === NetworkType.Mainnet
-          ? 'TOKEN_PRICE_LAST_QUERY_TIMESTAMP'
-          : 'TOKEN_PRICE_LAST_QUERY_TIMESTAMP_TESTNET'
-      )
-      localStorage.removeItem(
-        network === NetworkType.Mainnet ? 'TOKEN_PRICE_DATA' : 'TOKEN_PRICE_DATA_TESTNET'
-      )
+      localStorage.removeItem(TS_KEY)
+      localStorage.removeItem(DATA_KEY)
       priceData = null
     }
   } else {
-    priceData = JSON.parse(cachedPriceData)
+    priceData = JSON.parse(cachedPriceData) as PriceMap
   }
 
-  return priceData && priceData[addr] ? priceData[addr].price : undefined
+  if (addr) {
+    return (priceData && priceData[addr] ? priceData[addr].price : undefined) as TokenPriceReturn<T>
+  }
+
+  return (priceData ?? undefined) as TokenPriceReturn<T>
 }
 
 export const getTicksList = async (
@@ -2055,6 +2068,12 @@ export const getIntervalsFullSnap = async (
     interval === Intervals.Daily ? 'daily' : interval === Intervals.Weekly ? 'weekly' : 'monthly'
   const { data } = await axios.get<FullSnap>(
     `https://stats.invariant.app/eclipse/intervals/eclipse-${name}?interval=${parsedInterval}`
+  )
+  return data
+}
+export const fetchStackedBitzStats = async (): Promise<StakingStatsResponse> => {
+  const { data } = await axios.get<StakingStatsResponse>(
+    `https://stats.invariant.app/eclipse/sbitz/eclipse-mainnet`
   )
   return data
 }
@@ -2151,24 +2170,6 @@ export const generateHash = (str: string): string => {
   }
 
   return Math.abs(hash).toString(16).padStart(8, '0')
-}
-
-export const calculatePoints = (
-  amount: BN,
-  decimals: number,
-  feePercentage: BN,
-  priceFeed: string,
-  priceDecimals: number,
-  pointsPerUSD: BN
-) => {
-  const nominator = amount
-    .mul(feePercentage)
-    .mul(new BN(priceFeed))
-    .mul(pointsPerUSD)
-    .mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL)))
-  const denominator = new BN(10).pow(new BN(priceDecimals + decimals))
-
-  return nominator.div(denominator).div(new BN(DENOMINATOR))
 }
 
 export const getConcentrationIndex = (concentrationArray: number[], neededValue: number = 34) => {
@@ -2298,13 +2299,14 @@ export const ROUTES = {
   EXCHANGE_WITH_PARAMS: '/exchange/:item1?/:item2?',
   LIQUIDITY: '/liquidity',
   STATISTICS: '/statistics',
+  SALE: '/presale',
   NEW_POSITION: '/newPosition',
   NEW_POSITION_WITH_PARAMS: '/newPosition/:item1?/:item2?/:item3?',
   POSITION: '/position',
   POSITION_WITH_ID: '/position/:id',
   PORTFOLIO: '/portfolio',
   CREATOR: '/creator',
-  POINTS: '/points',
+  STAKE: '/stake',
 
   getExchangeRoute: (item1?: string, item2?: string): string => {
     const parts = [item1, item2].filter(Boolean)
@@ -2448,4 +2450,253 @@ export interface ITokenDecimalAndProgramID {
   address: PublicKey
   decimals: number
   programId: PublicKey
+}
+export const findStrategy = (
+  tokenAddress: string,
+  currentNetwork: NetworkType = NetworkType.Mainnet
+) => {
+  const poolTicker = addressToTicker(currentNetwork, tokenAddress)
+  let strategy = STRATEGIES.find(s => {
+    const tickerA = addressToTicker(currentNetwork, s.tokenAddressA)
+    const tickerB = s.tokenAddressB ? addressToTicker(currentNetwork, s.tokenAddressB) : undefined
+    return tickerA === poolTicker || tickerB === poolTicker
+  })
+  if (!strategy) {
+    strategy = {
+      tokenAddressA: tokenAddress,
+      feeTier: DEFAULT_FEE_TIER
+    }
+  }
+
+  return {
+    ...strategy,
+    tokenSymbolA: addressToTicker(currentNetwork, strategy.tokenAddressA),
+    tokenSymbolB: strategy.tokenAddressB
+      ? addressToTicker(currentNetwork, strategy.tokenAddressB)
+      : '-'
+  }
+}
+
+export enum SwapTokenType {
+  TokenIn,
+  TokenBetween,
+  TokenOut
+}
+
+export const getAmountFromSwapInstruction = (
+  meta: ParsedTransactionMeta,
+  marketProgramAuthority: string,
+  token: string,
+  type: SwapTokenType
+): number => {
+  if (!meta.innerInstructions) {
+    return 0
+  }
+
+  const innerInstruction =
+    meta.innerInstructions.find(
+      innerInstruction =>
+        !!innerInstruction.instructions.find(
+          instruction =>
+            (instruction as ParsedInstruction)?.parsed.type === 'transfer' ||
+            (instruction as ParsedInstruction)?.parsed.type === 'transferChecked'
+        )
+    ) ?? meta.innerInstructions[2]
+
+  let instruction: ParsedInstruction | undefined
+
+  if (innerInstruction.instructions.length === 2) {
+    instruction = innerInstruction.instructions.find(ix =>
+      type === SwapTokenType.TokenIn
+        ? (ix as ParsedInstruction).parsed.info.authority !== marketProgramAuthority
+        : (ix as ParsedInstruction).parsed.info.authority === marketProgramAuthority
+    ) as ParsedInstruction | undefined
+  } else {
+    instruction = innerInstruction.instructions.find(
+      ix => (ix as ParsedInstruction).parsed.info.mint === token
+    ) as ParsedInstruction | undefined
+
+    if (!instruction) {
+      let position = 0
+
+      switch (type) {
+        case SwapTokenType.TokenIn:
+          position = 0
+          break
+        case SwapTokenType.TokenBetween:
+          position = 1
+          break
+        case SwapTokenType.TokenOut:
+          position = 2
+          break
+      }
+
+      instruction = innerInstruction.instructions.filter(
+        instruction =>
+          (instruction as ParsedInstruction)?.parsed.type === 'transfer' ||
+          (instruction as ParsedInstruction)?.parsed.type === 'transferChecked'
+      )[position] as ParsedInstruction | undefined
+    }
+  }
+
+  return instruction?.parsed.info.amount || instruction?.parsed.info.tokenAmount.amount
+}
+
+export enum TokenType {
+  TokenX,
+  TokenY
+}
+
+export const getAmountFromInitPositionInstruction = (
+  meta: ParsedTransactionMeta,
+  type: TokenType
+): number => {
+  if (!meta.innerInstructions) {
+    return 0
+  }
+
+  const innerInstruction =
+    meta.innerInstructions.find(
+      innerInstruction =>
+        !!innerInstruction.instructions.find(
+          instruction =>
+            (instruction as ParsedInstruction)?.parsed?.type === 'transfer' ||
+            (instruction as ParsedInstruction)?.parsed?.type === 'transferChecked'
+        )
+    ) ?? meta.innerInstructions[2]
+
+  const instruction = innerInstruction.instructions.filter(
+    instruction =>
+      (instruction as ParsedInstruction)?.parsed?.type === 'transfer' ||
+      (instruction as ParsedInstruction)?.parsed?.type === 'transferChecked'
+  )[type === TokenType.TokenX ? 0 : 1] as ParsedInstruction | undefined
+
+  return instruction?.parsed.info.amount || instruction?.parsed.info.tokenAmount.amount
+}
+
+export const getSwapAmountFromSwapAndAddLiquidity = (
+  meta: ParsedTransactionMeta,
+  marketProgramAuthority: string,
+  token: string,
+  type: SwapTokenType
+): number => {
+  if (!meta.innerInstructions) {
+    return 0
+  }
+
+  const innerInstruction =
+    meta.innerInstructions.find(
+      innerInstruction =>
+        !!innerInstruction.instructions.find(
+          instruction =>
+            (instruction as ParsedInstruction)?.parsed?.type === 'transfer' ||
+            (instruction as ParsedInstruction)?.parsed?.type === 'transferChecked'
+        )
+    ) ?? meta.innerInstructions[0]
+
+  let instruction = innerInstruction.instructions.find(
+    ix => (ix as ParsedInstruction).parsed?.info.mint === token
+  ) as ParsedInstruction | undefined
+
+  if (!instruction) {
+    instruction = innerInstruction.instructions.find(ix =>
+      type === SwapTokenType.TokenIn
+        ? (ix as ParsedInstruction).parsed?.info.authority &&
+          (ix as ParsedInstruction).parsed?.info.authority !== marketProgramAuthority
+        : (ix as ParsedInstruction).parsed?.info.authority === marketProgramAuthority
+    ) as ParsedInstruction | undefined
+  }
+
+  return instruction?.parsed?.info.amount || instruction?.parsed?.info.tokenAmount.amount
+}
+
+export const getAddAmountFromSwapAndAddLiquidity = (
+  meta: ParsedTransactionMeta,
+  type: TokenType
+): number => {
+  if (!meta.innerInstructions) {
+    return 0
+  }
+
+  const innerInstruction =
+    meta.innerInstructions.find(
+      innerInstruction =>
+        !!innerInstruction.instructions.find(
+          instruction =>
+            (instruction as ParsedInstruction)?.parsed?.type === 'transfer' ||
+            (instruction as ParsedInstruction)?.parsed?.type === 'transferChecked'
+        )
+    ) ?? meta.innerInstructions[0]
+
+  const instruction = innerInstruction.instructions.filter(
+    instruction =>
+      (instruction as ParsedInstruction)?.parsed?.type === 'transfer' ||
+      (instruction as ParsedInstruction)?.parsed?.type === 'transferChecked'
+  )[type === TokenType.TokenX ? 2 : 3] as ParsedInstruction | undefined
+
+  return instruction?.parsed.info.amount || instruction?.parsed.info.tokenAmount.amount
+}
+
+export const getAmountFromClaimFeeInstruction = (
+  meta: ParsedTransactionMeta,
+  type: TokenType
+): number => {
+  const transfers =
+    meta.innerInstructions
+      ?.flatMap(inner => inner.instructions)
+      .filter((ix): ix is ParsedInstruction =>
+        ['transfer', 'transferChecked'].includes((ix as ParsedInstruction)?.parsed?.type)
+      ) ?? []
+
+  if (transfers.length < 2) return 0
+
+  for (let i = transfers.length - 2; i >= 0; i--) {
+    const [a, b] = [transfers[i], transfers[i + 1]]
+    if (
+      (a as any).stackHeight === (b as any).stackHeight &&
+      a.parsed.info.authority === b.parsed.info.authority
+    ) {
+      const chosen = type === TokenType.TokenX ? a : b
+      return chosen.parsed.info.amount ?? chosen.parsed.info.tokenAmount?.amount ?? 0
+    }
+  }
+
+  const chosen = transfers[type === TokenType.TokenX ? 0 : 1]
+  return chosen?.parsed.info.amount ?? chosen?.parsed.info.tokenAmount?.amount ?? 0
+}
+
+export const getAmountFromClosePositionInstruction = (
+  meta: ParsedTransactionMeta,
+  type: TokenType
+): number => {
+  if (!meta.innerInstructions) {
+    return 0
+  }
+
+  const innerInstruction =
+    meta.innerInstructions.find(
+      innerInstruction =>
+        !!innerInstruction.instructions.find(
+          instruction =>
+            (instruction as ParsedInstruction)?.parsed.type === 'transfer' ||
+            (instruction as ParsedInstruction)?.parsed.type === 'transferChecked'
+        )
+    ) ?? meta.innerInstructions[0]
+
+  const instruction = innerInstruction.instructions.filter(
+    instruction =>
+      (instruction as ParsedInstruction)?.parsed.type === 'transfer' ||
+      (instruction as ParsedInstruction)?.parsed.type === 'transferChecked'
+  )[type === TokenType.TokenX ? 0 : 1] as ParsedInstruction | undefined
+
+  return instruction?.parsed.info.amount || instruction?.parsed.info.tokenAmount.amount
+}
+
+export const fetchMarketBitzStats = async () => {
+  const sBITZ = sBITZ_MAIN.address.toString()
+
+  const { data } = await axios.get<HoldersResponse>(
+    `https://api.invariant.app/explorer/get-holders?address=${sBITZ}`
+  )
+  return data
 }

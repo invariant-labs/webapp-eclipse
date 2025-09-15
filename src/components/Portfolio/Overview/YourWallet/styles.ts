@@ -302,10 +302,7 @@ export const useStyles = makeStyles<{ isLoading?: boolean; isScrollHide?: boolea
       width: 12,
       height: 12,
       bottom: -4,
-      right: '67%',
-      [theme.breakpoints.down('lg')]: {
-        right: '53%'
-      }
+      right: -4
     }
   })
 )

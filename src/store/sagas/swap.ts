@@ -21,7 +21,6 @@ import {
   APPROVAL_DENIED_MESSAGE,
   COMMON_ERROR_MESSAGE,
   ErrorCodeExtractionKeys,
-  LEADERBOARD_DECIMAL,
   MAX_CROSSES_IN_SINGLE_TX,
   MAX_CROSSES_IN_SINGLE_TX_WITH_LUTS,
   SIGNING_SNACKBAR_CONFIG,
@@ -32,15 +31,16 @@ import { network, rpcAddress } from '@store/selectors/solanaConnection'
 import { actions as connectionActions } from '@store/reducers/solanaConnection'
 import { closeSnackbar } from 'notistack'
 import {
-  calculatePoints,
   createLoaderKey,
   ensureApprovalDenied,
   ensureError,
   extractErrorCode,
   extractRuntimeErrorCode,
   formatNumberWithoutSuffix,
+  getAmountFromSwapInstruction,
   mapErrorCodeToMessage,
-  printBN
+  printBN,
+  SwapTokenType
 } from '@utils/utils'
 import { getMarketProgram } from '@utils/web3/programs/amm'
 import {
@@ -58,10 +58,6 @@ import {
 } from '@invariant-labs/sdk-eclipse/lib/market'
 import { PoolWithAddress } from '@store/reducers/pools'
 import nacl from 'tweetnacl'
-import { BN } from '@coral-xyz/anchor'
-import { ParsedInstruction } from '@solana/web3.js'
-import { NATIVE_MINT } from '@solana/spl-token'
-import { config, priceFeeds } from '@store/selectors/leaderboard'
 import { computeUnitsInstruction } from '@invariant-labs/sdk-eclipse/src'
 
 export function* handleSwapWithETH(): Generator {
@@ -88,8 +84,6 @@ export function* handleSwapWithETH(): Generator {
     const connection = yield* call(getConnection)
     const networkType = yield* select(network)
     const rpc = yield* select(rpcAddress)
-    const feeds = yield* select(priceFeeds)
-    const leaderboardConfig = yield* select(config)
     const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
 
     if (!firstPair) {
@@ -379,18 +373,6 @@ export function* handleSwapWithETH(): Generator {
       const meta = txDetails.meta
       if (meta?.innerInstructions && meta.innerInstructions) {
         try {
-          const nativeAmount = (
-            meta.innerInstructions[0].instructions.find(
-              ix => (ix as ParsedInstruction).parsed.info.amount
-            ) as ParsedInstruction
-          ).parsed.info.amount
-
-          const splAmount = (
-            meta.innerInstructions[0].instructions.find(
-              ix => (ix as ParsedInstruction).parsed.info.tokenAmount !== undefined
-            ) as ParsedInstruction
-          ).parsed.info.tokenAmount.amount
-
           const tokenIn = isXtoY
             ? allTokens[swapPool.tokenX.toString()]
             : allTokens[swapPool.tokenY.toString()]
@@ -398,38 +380,19 @@ export function* handleSwapWithETH(): Generator {
             ? allTokens[swapPool.tokenY.toString()]
             : allTokens[swapPool.tokenX.toString()]
 
-          const nativeIn = isXtoY
-            ? swapPool.tokenX.equals(NATIVE_MINT)
-            : swapPool.tokenY.equals(NATIVE_MINT)
+          const amountIn = getAmountFromSwapInstruction(
+            meta,
+            marketProgram.programAuthority.address.toString(),
+            tokenIn.address.toString(),
+            SwapTokenType.TokenIn
+          )
+          const amountOut = getAmountFromSwapInstruction(
+            meta,
+            marketProgram.programAuthority.address.toString(),
+            tokenOut.address.toString(),
+            SwapTokenType.TokenOut
+          )
 
-          const amountIn = nativeIn ? nativeAmount : splAmount
-          const amountOut = nativeIn ? splAmount : nativeAmount
-
-          let points = new BN(0)
-          try {
-            if (
-              leaderboardConfig.swapPairs.some(
-                item =>
-                  new PublicKey(item.tokenX).equals(swapPool.tokenX) &&
-                  new PublicKey(item.tokenY).equals(swapPool.tokenY)
-              )
-            ) {
-              const feed = feeds[tokenFrom.toString()]
-
-              if (feed && feed.price) {
-                points = calculatePoints(
-                  new BN(amountIn),
-                  tokenIn.decimals,
-                  swapPool.fee,
-                  feed.price,
-                  feed.priceDecimals,
-                  new BN(leaderboardConfig.pointsPerUsd, 'hex')
-                ).muln(Number(leaderboardConfig.swapMultiplier))
-              }
-            }
-          } catch {
-            // Sanity check
-          }
           yield put(
             snackbarsActions.add({
               tokensDetails: {
@@ -439,15 +402,13 @@ export function* handleSwapWithETH(): Generator {
                 tokenXIcon: tokenIn.logoURI,
                 tokenYIcon: tokenOut.logoURI,
                 tokenXSymbol: tokenIn.symbol ?? tokenIn.address.toString(),
-                tokenYSymbol: tokenOut.symbol ?? tokenOut.address.toString(),
-                earnedPoints: points.eqn(0)
-                  ? undefined
-                  : formatNumberWithoutSuffix(printBN(points, LEADERBOARD_DECIMAL))
+                tokenYSymbol: tokenOut.symbol ?? tokenOut.address.toString()
               },
               persist: false
             })
           )
-        } catch {
+        } catch (e) {
+          console.log(e)
           // Should never be triggered
         }
       }
@@ -580,8 +541,6 @@ export function* handleTwoHopSwapWithETH(): Generator {
     const connection = yield* call(getConnection)
     const networkType = yield* select(network)
     const rpc = yield* select(rpcAddress)
-    const feeds = yield* select(priceFeeds)
-    const leaderboardConfig = yield* select(config)
     const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
     let firstPool = allPools.find(
       pool =>
@@ -825,110 +784,50 @@ export function* handleTwoHopSwapWithETH(): Generator {
       const meta = txDetails.meta
       if (meta?.innerInstructions && meta.innerInstructions) {
         try {
-          const nativeAmount = (
-            meta.innerInstructions[0].instructions.find(
-              ix => (ix as ParsedInstruction).parsed.info.amount
-            ) as ParsedInstruction
-          ).parsed.info.amount
-
-          const splTranfsers = meta.innerInstructions[0].instructions.filter(
-            ix => (ix as ParsedInstruction).parsed.info.tokenAmount !== undefined
-          )
-
           const tokenIn = firstXtoY
             ? allTokens[firstPool.tokenX.toString()]
             : allTokens[firstPool.tokenY.toString()]
+          const tokenBetween = secondXtoY
+            ? allTokens[secondPool.tokenX.toString()]
+            : allTokens[secondPool.tokenY.toString()]
           const tokenOut = secondXtoY
             ? allTokens[secondPool.tokenY.toString()]
             : allTokens[secondPool.tokenX.toString()]
 
-          const nativeIn = tokenIn.address.equals(NATIVE_MINT)
-
-          const splAmount = (
-            splTranfsers.find(ix =>
-              (ix as ParsedInstruction).parsed.info.mint === nativeIn
-                ? tokenOut.address.toString()
-                : tokenIn.address.toString()
-            ) as ParsedInstruction
-          ).parsed.info.tokenAmount.amount
-
-          const amountIn = nativeIn ? nativeAmount : splAmount
-          const amountOut = nativeIn ? splAmount : nativeAmount
-
-          let points = new BN(0)
-
-          try {
-            if (
-              leaderboardConfig.swapPairs.some(
-                item =>
-                  new PublicKey(item.tokenX).equals(firstPool.tokenX) &&
-                  new PublicKey(item.tokenY).equals(firstPool.tokenY)
-              )
-            ) {
-              const feed = feeds[tokenFrom.toString()]
-
-              if (feed && feed.price) {
-                points = calculatePoints(
-                  new BN(amountIn),
-                  tokenIn.decimals,
-                  firstPool.fee,
-                  feed.price,
-                  feed.priceDecimals,
-                  new BN(leaderboardConfig.pointsPerUsd, 'hex')
-                ).muln(Number(leaderboardConfig.swapMultiplier))
-              }
-            }
-
-            if (
-              leaderboardConfig.swapPairs.some(
-                item =>
-                  new PublicKey(item.tokenX).equals(secondPool.tokenX) &&
-                  new PublicKey(item.tokenY).equals(secondPool.tokenY)
-              )
-            ) {
-              const tokenBetween = secondXtoY
-                ? allTokens[secondPool.tokenX.toString()]
-                : allTokens[secondPool.tokenY.toString()]
-
-              const feed = feeds[tokenBetween.address.toString()]
-
-              const amountBetween = (
-                splTranfsers.find(
-                  ix =>
-                    (ix as ParsedInstruction).parsed.info.mint === tokenBetween.address.toString()
-                ) as ParsedInstruction
-              ).parsed.info.tokenAmount.amount
-
-              if (feed && feed.price) {
-                points = points.add(
-                  calculatePoints(
-                    new BN(amountBetween),
-                    tokenBetween.decimals,
-                    secondPool.fee,
-                    feed.price,
-                    feed.priceDecimals,
-                    new BN(leaderboardConfig.pointsPerUsd, 'hex')
-                  ).muln(Number(leaderboardConfig.swapMultiplier))
-                )
-              }
-            }
-          } catch {
-            // Should never be triggered
-          }
+          const amountIn = getAmountFromSwapInstruction(
+            meta,
+            marketProgram.programAuthority.address.toString(),
+            tokenIn.address.toString(),
+            SwapTokenType.TokenIn
+          )
+          const amountBetween = getAmountFromSwapInstruction(
+            meta,
+            marketProgram.programAuthority.address.toString(),
+            tokenBetween.address.toString(),
+            SwapTokenType.TokenBetween
+          )
+          const amountOut = getAmountFromSwapInstruction(
+            meta,
+            marketProgram.programAuthority.address.toString(),
+            tokenOut.address.toString(),
+            SwapTokenType.TokenOut
+          )
 
           yield put(
             snackbarsActions.add({
               tokensDetails: {
                 ikonType: 'swap',
                 tokenXAmount: formatNumberWithoutSuffix(printBN(amountIn, tokenIn.decimals)),
+                tokenBetweenAmount: formatNumberWithoutSuffix(
+                  printBN(amountBetween, tokenBetween.decimals)
+                ),
                 tokenYAmount: formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals)),
                 tokenXIcon: tokenIn.logoURI,
+                tokenBetweenIcon: tokenBetween.logoURI,
                 tokenYIcon: tokenOut.logoURI,
                 tokenXSymbol: tokenIn.symbol ?? tokenIn.address.toString(),
-                tokenYSymbol: tokenOut.symbol ?? tokenOut.address.toString(),
-                earnedPoints: points.eqn(0)
-                  ? undefined
-                  : formatNumberWithoutSuffix(printBN(points, LEADERBOARD_DECIMAL))
+                tokenBetweenSymbol: tokenBetween.symbol ?? tokenBetween.address.toString(),
+                tokenYSymbol: tokenOut.symbol ?? tokenOut.address.toString()
               },
               persist: false
             })
@@ -1072,8 +971,6 @@ export function* handleTwoHopSwap(): Generator {
     const wallet = yield* call(getWallet)
     const tokensAccounts = yield* select(accounts)
     const networkType = yield* select(network)
-    const feeds = yield* select(priceFeeds)
-    const leaderboardConfig = yield* select(config)
     const rpc = yield* select(rpcAddress)
     const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
     let firstPool = allPools.find(
@@ -1251,129 +1148,55 @@ export function* handleTwoHopSwap(): Generator {
         )
 
         const meta = txDetails.meta
-        if (meta?.preTokenBalances && meta.postTokenBalances) {
-          const accountInPredicate = entry =>
-            entry.mint === firstXtoY
-              ? firstPool.tokenX.toString()
-              : firstPool.tokenY.toString() && entry.owner === wallet.publicKey.toString()
-          const accountBetweenPredicate = entry =>
-            entry.mint === firstXtoY
-              ? firstPool.tokenY.toString()
-              : firstPool.tokenX.toString() &&
-                entry.owner === marketProgram.programAuthority.address.toString()
-          const accountOutPredicate = entry =>
-            entry.mint === secondXtoY
-              ? secondPool.tokenY.toString()
-              : secondPool.tokenX.toString() && entry.owner === wallet.publicKey.toString()
+        if (meta?.innerInstructions) {
+          try {
+            const tokenIn =
+              allTokens[firstXtoY ? firstPool.tokenX.toString() : firstPool.tokenY.toString()]
+            const tokenBetween =
+              allTokens[secondXtoY ? secondPool.tokenX.toString() : secondPool.tokenY.toString()]
+            const tokenOut =
+              allTokens[secondXtoY ? secondPool.tokenY.toString() : secondPool.tokenX.toString()]
 
-          const preAccoutnIn = meta.preTokenBalances.find(accountInPredicate)
-          const postAccountIn = meta.postTokenBalances.find(accountInPredicate)
-          const preAccountBetween = meta.preTokenBalances.find(accountBetweenPredicate)
-          const postAccountBetween = meta.postTokenBalances.find(accountBetweenPredicate)
-          const preAccountOut = meta.preTokenBalances.find(accountOutPredicate)
-          const postAccountOut = meta.postTokenBalances.find(accountOutPredicate)
+            const amountIn = getAmountFromSwapInstruction(
+              meta,
+              marketProgram.programAuthority.address.toString(),
+              tokenIn.address.toString(),
+              SwapTokenType.TokenIn
+            )
+            const amountBetween = getAmountFromSwapInstruction(
+              meta,
+              marketProgram.programAuthority.address.toString(),
+              tokenBetween.address.toString(),
+              SwapTokenType.TokenBetween
+            )
+            const amountOut = getAmountFromSwapInstruction(
+              meta,
+              marketProgram.programAuthority.address.toString(),
+              tokenOut.address.toString(),
+              SwapTokenType.TokenOut
+            )
 
-          if (preAccoutnIn && postAccountIn && preAccountOut && postAccountOut) {
-            const preAmountIn = preAccoutnIn.uiTokenAmount.amount
-            const preAmountOut = preAccountOut.uiTokenAmount.amount
-
-            const postAmountIn = postAccountIn.uiTokenAmount.amount
-            const postAmountOut = postAccountOut.uiTokenAmount.amount
-
-            const amountIn = new BN(preAmountIn).sub(new BN(postAmountIn))
-
-            const amountOut = new BN(preAmountOut).sub(new BN(postAmountOut))
-
-            try {
-              const tokenIn =
-                allTokens[firstXtoY ? firstPool.tokenX.toString() : firstPool.tokenY.toString()]
-
-              const tokenOut =
-                allTokens[secondXtoY ? secondPool.tokenY.toString() : secondPool.tokenX.toString()]
-
-              let points = new BN(0)
-              try {
-                if (preAccountBetween && postAccountBetween) {
-                  const betweenAmountPre = new BN(preAccountBetween.uiTokenAmount.amount)
-                  const betweenAmountPost = new BN(postAccountBetween.uiTokenAmount.amount)
-
-                  const amountBetween = betweenAmountPost.gt(betweenAmountPre)
-                    ? betweenAmountPost.sub(betweenAmountPre)
-                    : betweenAmountPre.sub(betweenAmountPost)
-
-                  const tokenBetween =
-                    allTokens[
-                      secondXtoY ? firstPool.tokenX.toString() : firstPool.tokenY.toString()
-                    ]
-
-                  if (
-                    leaderboardConfig.swapPairs.some(
-                      item =>
-                        new PublicKey(item.tokenX).equals(firstPool.tokenX) &&
-                        new PublicKey(item.tokenY).equals(firstPool.tokenY)
-                    )
-                  ) {
-                    const feed = feeds[tokenFrom.toString()]
-
-                    if (feed && feed.price) {
-                      points = calculatePoints(
-                        amountIn,
-                        tokenIn.decimals,
-                        firstPool.fee,
-                        feed.price,
-                        feed.priceDecimals,
-                        new BN(leaderboardConfig.pointsPerUsd, 'hex')
-                      ).muln(Number(leaderboardConfig.swapMultiplier))
-                    }
-                  }
-
-                  if (
-                    leaderboardConfig.swapPairs.some(
-                      item =>
-                        new PublicKey(item.tokenX).equals(secondPool.tokenX) &&
-                        new PublicKey(item.tokenY).equals(secondPool.tokenY)
-                    )
-                  ) {
-                    const feed = feeds[tokenBetween.toString()]
-
-                    if (feed && feed.price) {
-                      points = points.add(
-                        calculatePoints(
-                          amountBetween,
-                          tokenBetween.decimals,
-                          secondPool.fee,
-                          feed.price,
-                          feed.priceDecimals,
-                          new BN(leaderboardConfig.pointsPerUsd, 'hex')
-                        ).muln(Number(leaderboardConfig.swapMultiplier))
-                      )
-                    }
-                  }
-                }
-              } catch {
-                // Should never be triggered
-              }
-
-              yield put(
-                snackbarsActions.add({
-                  tokensDetails: {
-                    ikonType: 'swap',
-                    tokenXAmount: formatNumberWithoutSuffix(printBN(amountIn, tokenIn.decimals)),
-                    tokenYAmount: formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals)),
-                    tokenXIcon: tokenIn.logoURI,
-                    tokenYIcon: tokenOut.logoURI,
-                    tokenXSymbol: tokenIn.symbol ?? tokenIn.address.toString(),
-                    tokenYSymbol: tokenOut.symbol ?? tokenOut.address.toString(),
-                    earnedPoints: points.eqn(0)
-                      ? undefined
-                      : formatNumberWithoutSuffix(printBN(points, LEADERBOARD_DECIMAL))
-                  },
-                  persist: false
-                })
-              )
-            } catch {
-              // Sanity wrapper, should never be triggered
-            }
+            yield put(
+              snackbarsActions.add({
+                tokensDetails: {
+                  ikonType: 'swap',
+                  tokenXAmount: formatNumberWithoutSuffix(printBN(amountIn, tokenIn.decimals)),
+                  tokenBetweenAmount: formatNumberWithoutSuffix(
+                    printBN(amountBetween, tokenBetween.decimals)
+                  ),
+                  tokenYAmount: formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals)),
+                  tokenXIcon: tokenIn.logoURI,
+                  tokenBetweenIcon: tokenBetween.logoURI,
+                  tokenYIcon: tokenOut.logoURI,
+                  tokenXSymbol: tokenIn.symbol ?? tokenIn.address.toString(),
+                  tokenBetweenSymbol: tokenBetween.symbol ?? tokenBetween.address.toString(),
+                  tokenYSymbol: tokenOut.symbol ?? tokenOut.address.toString()
+                },
+                persist: false
+              })
+            )
+          } catch {
+            // Sanity wrapper, should never be triggered
           }
         }
       } else {
@@ -1484,8 +1307,6 @@ export function* handleSwap(): Generator {
     const tokensAccounts = yield* select(accounts)
     const networkType = yield* select(network)
     const rpc = yield* select(rpcAddress)
-    const feeds = yield* select(priceFeeds)
-    const leaderboardConfig = yield* select(config)
     const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
     const connection = yield* call(getConnection)
 
@@ -1691,84 +1512,42 @@ export function* handleSwap(): Generator {
         )
 
         const meta = txDetails.meta
-        if (meta?.preTokenBalances && meta.postTokenBalances) {
-          const accountXPredicate = entry =>
-            entry.mint === swapPool.tokenX.toString() && entry.owner === wallet.publicKey.toString()
-          const accountYPredicate = entry =>
-            entry.mint === swapPool.tokenY.toString() && entry.owner === wallet.publicKey.toString()
+        if (meta?.innerInstructions) {
+          try {
+            const tokenIn =
+              allTokens[isXtoY ? swapPool.tokenX.toString() : swapPool.tokenY.toString()]
+            const tokenOut =
+              allTokens[isXtoY ? swapPool.tokenY.toString() : swapPool.tokenX.toString()]
 
-          const preAccountX = meta.preTokenBalances.find(accountXPredicate)
-          const postAccountX = meta.postTokenBalances.find(accountXPredicate)
-          const preAccountY = meta.preTokenBalances.find(accountYPredicate)
-          const postAccountY = meta.postTokenBalances.find(accountYPredicate)
+            const amountIn = getAmountFromSwapInstruction(
+              meta,
+              marketProgram.programAuthority.address.toString(),
+              tokenIn.address.toString(),
+              SwapTokenType.TokenIn
+            )
+            const amountOut = getAmountFromSwapInstruction(
+              meta,
+              marketProgram.programAuthority.address.toString(),
+              tokenOut.address.toString(),
+              SwapTokenType.TokenOut
+            )
 
-          if (preAccountX && postAccountX && preAccountY && postAccountY) {
-            const preAmountX = preAccountX.uiTokenAmount.amount
-            const preAmountY = preAccountY.uiTokenAmount.amount
-            const postAmountX = postAccountX.uiTokenAmount.amount
-            const postAmountY = postAccountY.uiTokenAmount.amount
-            const { amountIn, amountOut } = isXtoY
-              ? {
-                  amountIn: new BN(preAmountX).sub(new BN(postAmountX)),
-                  amountOut: new BN(postAmountY).sub(new BN(preAmountY))
-                }
-              : {
-                  amountIn: new BN(preAmountY).sub(new BN(postAmountY)),
-                  amountOut: new BN(postAmountX).sub(new BN(preAmountX))
-                }
-
-            try {
-              const tokenIn =
-                allTokens[isXtoY ? swapPool.tokenX.toString() : swapPool.tokenY.toString()]
-              const tokenOut =
-                allTokens[isXtoY ? swapPool.tokenY.toString() : swapPool.tokenX.toString()]
-
-              let points = new BN(0)
-              try {
-                if (
-                  leaderboardConfig.swapPairs.some(
-                    item =>
-                      new PublicKey(item.tokenX).equals(swapPool.tokenX) &&
-                      new PublicKey(item.tokenY).equals(swapPool.tokenY)
-                  )
-                ) {
-                  const feed = feeds[tokenFrom.toString()]
-
-                  if (feed && feed.price) {
-                    points = calculatePoints(
-                      amountIn,
-                      tokenIn.decimals,
-                      swapPool.fee,
-                      feed.price,
-                      feed.priceDecimals,
-                      new BN(leaderboardConfig.pointsPerUsd, 'hex')
-                    ).muln(Number(leaderboardConfig.swapMultiplier))
-                  }
-                }
-              } catch {
-                // Sanity check in case some leaderboard config is missing
-              }
-
-              yield put(
-                snackbarsActions.add({
-                  tokensDetails: {
-                    ikonType: 'swap',
-                    tokenXAmount: formatNumberWithoutSuffix(printBN(amountIn, tokenIn.decimals)),
-                    tokenYAmount: formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals)),
-                    tokenXIcon: tokenIn.logoURI,
-                    tokenYIcon: tokenOut.logoURI,
-                    tokenXSymbol: tokenIn.symbol ?? tokenIn.address.toString(),
-                    tokenYSymbol: tokenOut.symbol ?? tokenOut.address.toString(),
-                    earnedPoints: points.eqn(0)
-                      ? undefined
-                      : formatNumberWithoutSuffix(printBN(points, LEADERBOARD_DECIMAL))
-                  },
-                  persist: false
-                })
-              )
-            } catch {
-              // Sanity wrapper, should never be triggered
-            }
+            yield put(
+              snackbarsActions.add({
+                tokensDetails: {
+                  ikonType: 'swap',
+                  tokenXAmount: formatNumberWithoutSuffix(printBN(amountIn, tokenIn.decimals)),
+                  tokenYAmount: formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals)),
+                  tokenXIcon: tokenIn.logoURI,
+                  tokenYIcon: tokenOut.logoURI,
+                  tokenXSymbol: tokenIn.symbol ?? tokenIn.address.toString(),
+                  tokenYSymbol: tokenOut.symbol ?? tokenOut.address.toString()
+                },
+                persist: false
+              })
+            )
+          } catch {
+            // Sanity wrapper, should never be triggered
           }
         }
       } else {

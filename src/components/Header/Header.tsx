@@ -11,7 +11,6 @@ import useStyles from './style'
 import { ISelectChain, ISelectNetwork } from '@store/consts/types'
 import { RpcStatus } from '@store/reducers/solanaConnection'
 import { PublicKey } from '@solana/web3.js'
-import { YourPointsButton } from './HeaderButton/YourPointsButton'
 import { BN } from '@coral-xyz/anchor'
 import { Bar } from '@components/Bar/Bar'
 import { ROUTES } from '@utils/utils'
@@ -58,8 +57,9 @@ export const Header: React.FC<IHeader> = ({
     'exchange',
     'liquidity',
     'portfolio',
+    // 'presale',
     ...(typeOfNetwork === NetworkType.Testnet ? ['creator'] : []),
-    ...(typeOfNetwork === NetworkType.Mainnet ? ['points'] : []),
+    'stake',
     'statistics'
   ]
 
@@ -67,8 +67,8 @@ export const Header: React.FC<IHeader> = ({
     liquidity: [/^liquidity\/*/],
     exchange: [/^exchange\/*/],
     portfolio: [/^portfolio\/*/, /^newPosition\/*/, /^position\/*/],
-
-    ...(typeOfNetwork === NetworkType.Mainnet ? { leaderboard: [/^points\/*/] } : {}),
+    stake: [/^stake\/*/],
+    // presale: [/^presale\/*/],
     ...(typeOfNetwork === NetworkType.Testnet ? { creator: [/^creator\/*/] } : {})
   }
 
@@ -92,11 +92,11 @@ export const Header: React.FC<IHeader> = ({
       rpc: RPC.MAIN_TRITON,
       rpcName: 'Triton'
     },
-    {
-      networkType: NetworkType.Mainnet,
-      rpc: RPC.MAIN_HELIUS,
-      rpcName: 'Helius'
-    },
+    // {
+    //   networkType: NetworkType.Mainnet,
+    //   rpc: RPC.MAIN_HELIUS,
+    //   rpcName: 'Helius'
+    // },
     {
       networkType: NetworkType.Mainnet,
       rpc: RPC.MAIN,
@@ -144,7 +144,7 @@ export const Header: React.FC<IHeader> = ({
           item
           className={classes.routers}
           sx={{
-            display: { lg: 'block' },
+            display: { lg: 'flex' },
             [theme.breakpoints.down(1200)]: {
               display: 'none'
             }
@@ -180,20 +180,16 @@ export const Header: React.FC<IHeader> = ({
               }
             }}
           />
-          <Grid display='flex' gap='12px'>
-            <Bar
-              rpcs={rpcs}
-              activeNetwork={typeOfNetwork}
-              activeRPC={rpc}
-              onNetworkChange={onNetworkSelect}
-              onChainChange={onChainSelect}
-              onFaucet={onFaucet}
-            />
 
-            <Grid>
-              <YourPointsButton />
-            </Grid>
-          </Grid>
+          <Bar
+            rpcs={rpcs}
+            activeNetwork={typeOfNetwork}
+            activeRPC={rpc}
+            onNetworkChange={onNetworkSelect}
+            onChainChange={onChainSelect}
+            onFaucet={onFaucet}
+          />
+
           <ChangeWalletButton
             name={
               walletConnected

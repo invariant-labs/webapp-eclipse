@@ -203,6 +203,7 @@ export interface FullSnap {
   poolsData: PoolStatsDataWithString[]
   volumePlot: TimeData[]
   liquidityPlot: TimeData[]
+  feesPlot: TimeData[]
 }
 
 export interface TokenStatsDataWithString {
@@ -256,6 +257,8 @@ export interface Reward {
 export interface IPositionItem {
   tokenXName: string
   tokenYName: string
+  isUnknownX: boolean
+  isUnknownY: boolean
   tokenXIcon: string
   tokenYIcon: string
   tokenXLiq: number
@@ -306,4 +309,14 @@ export interface TokenSerialized {
   coingeckoId?: string
   isUnknown?: boolean
   tokenProgram?: string
+}
+
+export enum StakeSwitch {
+  Stake = 'Stake',
+  Unstake = 'Unstake'
+}
+
+export enum ChartSwitch {
+  volume = 'Volume',
+  fees = 'Fees'
 }

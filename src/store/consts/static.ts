@@ -14,7 +14,8 @@ import {
 import { MAINNET_TOKENS } from '@invariant-labs/sdk-eclipse/lib/network'
 import { cat1Icon, cat2Icon, dog1Icon, dog2Icon } from '@static/icons'
 import { TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token'
-
+import sBitzIcon from '@static/png/sBitzIcon.png'
+import BitzIcon from '@static/png/bitzIcon.png'
 import rewardsArray from '@store/consts/rewards/rewardsArray.json'
 
 export enum NetworkType {
@@ -92,6 +93,17 @@ export const WETH_DEV: Token = {
   coingeckoId: 'bridged-wrapped-ether-eclipse'
 }
 
+export const SALE_TEST: Token = {
+  tokenProgram: TOKEN_2022_PROGRAM_ID,
+  symbol: 'USDC',
+  address: new PublicKey('HqVpi4A8pXFV2kY7338mrczetd3LMQVJ5YSMfjVX5hak'),
+  decimals: 6,
+  name: 'USD Coin',
+  logoURI:
+    'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
+  coingeckoId: 'usd-coin'
+}
+
 export const USDC_TEST: Token = {
   tokenProgram: TOKEN_PROGRAM_ID,
   symbol: 'USDC',
@@ -145,16 +157,6 @@ export const S22_TEST: Token = {
   coingeckoId: ''
 }
 
-export const MOCKED_TOKEN_MAIN: Token = {
-  tokenProgram: TOKEN_PROGRAM_ID,
-  symbol: 'MCT',
-  address: new PublicKey('82kkga2kBcQNyV4VKJhGvE7Z58fFavVyuh5NapMVo7Qs'),
-  decimals: 9,
-  name: 'Mocked Token',
-  logoURI: dog1Icon,
-  coingeckoId: ''
-}
-
 export const USDC_MAIN: Token = {
   tokenProgram: TOKEN_2022_PROGRAM_ID,
   symbol: 'USDC',
@@ -172,8 +174,17 @@ export const BITZ_MAIN: Token = {
   address: new PublicKey('64mggk2nXg6vHC1qCdsZdEFzd5QGN4id54Vbho4PswCF'),
   decimals: 11,
   name: 'BITZ',
-  logoURI:
-    'https://www.geckoterminal.com/_next/image?url=https%3A%2F%2Fassets.geckoterminal.com%2Fpwhn8c5e9mxmannjvxi4yllnwk1d&w=64&q=75',
+  logoURI: BitzIcon,
+  coingeckoId: ''
+}
+
+export const sBITZ_MAIN: Token = {
+  tokenProgram: TOKEN_2022_PROGRAM_ID,
+  symbol: 'sBITZ',
+  address: new PublicKey('sBTZcSwRZhRq3JcjFh1xwxgCxmsN7MreyU3Zx8dA8uF'),
+  decimals: 11,
+  name: 'Staked BITZ',
+  logoURI: sBitzIcon,
   coingeckoId: ''
 }
 
@@ -261,77 +272,6 @@ export const DARKMOON_MAIN: Token = {
   coingeckoId: ''
 }
 
-export const ECAT_MAIN: Token = {
-  tokenProgram: TOKEN_2022_PROGRAM_ID,
-  symbol: 'ECAT',
-  address: new PublicKey('9iswScagJJkKAAsRtp7pJB62f3idZRxHr1Sr9hACThFh'),
-  decimals: 9,
-  name: 'EclipseCat',
-  logoURI: 'https://i.mij.rip/2024/10/24/b2e9d0150c4fe30d8a22f6d711ae3c44.jpeg',
-  coingeckoId: ''
-}
-
-export const TURBO_MAIN: Token = {
-  tokenProgram: TOKEN_2022_PROGRAM_ID,
-  symbol: 'Turbo',
-  address: new PublicKey('trbts2EsWyMdnCjsHUFBKLtgudmBD7Rfbz8zCg1s4EK'),
-  decimals: 9,
-  name: 'Eclip Turbo',
-  logoURI:
-    'https://bafybeicnocffdewuiq5d2kxi3pyn7yq3lkbiypcqgdhzpszh64agdwgju4.ipfs.w3s.link/Turbo%20logo.png',
-  coingeckoId: ''
-}
-
-export const MOO_MAIN: Token = {
-  tokenProgram: TOKEN_2022_PROGRAM_ID,
-  symbol: 'MOO',
-  address: new PublicKey('8nF4QmTxsFh5L7bBw9qfdfW67CEAdLWuK9EQjsTgk8d'),
-  decimals: 9,
-  name: 'cow',
-  logoURI: 'https://i.imgur.com/DoS5Dyn.png',
-  coingeckoId: ''
-}
-
-export const EBULL_MAIN: Token = {
-  tokenProgram: TOKEN_2022_PROGRAM_ID,
-  symbol: 'EBull',
-  address: new PublicKey('2vvZp5DXtfpm8MV4KLRKqwdqnKfsKZt4pmk31JHnMw3J'),
-  decimals: 9,
-  name: 'EclipseIsGood',
-  logoURI: 'https://wmimg.com/i/1303/2024/10/6719b01383638.jpeg',
-  coingeckoId: ''
-}
-
-export const PUNKSTAR_MAIN: Token = {
-  tokenProgram: TOKEN_PROGRAM_ID,
-  symbol: 'PUNKSTAR',
-  address: new PublicKey('5HMGZW3oGvHRYcqJ817iXvMv1iXruTYF9nyt9iWfg8Lr'),
-  decimals: 5,
-  name: 'Cryptopunkstar',
-  logoURI: 'https://gateway.irys.xyz/57e1EaYNzg86AoGJ59j5cycKH6H3i9V1Db1sJNcAXZhb',
-  coingeckoId: ''
-}
-
-export const AI16Z_MAIN: Token = {
-  tokenProgram: TOKEN_PROGRAM_ID,
-  symbol: 'ai16z',
-  address: new PublicKey('DZLJXHaNeCgjzhS6m2qLwRzAF8HFeyc6zTBU1AmuG79S'),
-  decimals: 9,
-  name: 'ai16z',
-  logoURI: 'https://gateway.irys.xyz/98qj6Hqi6VnYnVzop9RtAGmSe2TDXApdRMtYC4kkuG76',
-  coingeckoId: ''
-}
-
-export const VLR_MAIN: Token = {
-  tokenProgram: TOKEN_PROGRAM_ID,
-  symbol: 'vlr',
-  address: new PublicKey('89jLd8KJrW653MX7VGQKZKZjkqUNKh3ZZ7L6oN6xGtsK'),
-  decimals: 9,
-  name: 'valery',
-  logoURI: 'https://i.imgur.com/BSV6JOp.png',
-  coingeckoId: ''
-}
-
 export const TIA_MAIN: Token = {
   tokenProgram: TOKEN_2022_PROGRAM_ID,
   symbol: 'TIA',
@@ -353,46 +293,6 @@ export const STTIA_MAIN: Token = {
   coingeckoId: ''
 }
 
-export const BRICK_MAIN: Token = {
-  tokenProgram: TOKEN_2022_PROGRAM_ID,
-  symbol: 'Brick',
-  address: new PublicKey('3Q5RQRTKCH4RWGFVFht1RtM1fx3SSxNGAk1sTuVank6w'),
-  decimals: 9,
-  name: 'Brick',
-  logoURI: 'https://ipfs.io/ipfs/QmQqSjag5q4nQTDcAnqkGrxp5Y2DzBqWB4L6FMM38cszbm',
-  coingeckoId: ''
-}
-
-export const PANTY_MAIN: Token = {
-  tokenProgram: TOKEN_PROGRAM_ID,
-  symbol: 'PANTY',
-  address: new PublicKey('FZLbeANPzvtKPX7cZyRJ53Ce1wihgr57h5r348NziSRD'),
-  decimals: 9,
-  name: 'Panty Pussycat',
-  logoURI: 'https://uploader.irys.xyz/5kfRvn9JjexfBihhNwsnAfxGdJeppvNf89156vkaCkPF',
-  coingeckoId: ''
-}
-
-export const PODAVINI_MAIN: Token = {
-  tokenProgram: TOKEN_PROGRAM_ID,
-  symbol: 'PODAVINI',
-  address: new PublicKey('Aj6HETPRCwjLJBBpfSEnRy8jCp1ZipEs7FTMKi745tsJ'),
-  decimals: 9,
-  name: 'PODAVINI',
-  logoURI: 'https://uploader.irys.xyz/GH55FteKNSLkBPcQ1UtZS4RXUKS4waYeG2XvHaPzrqiR',
-  coingeckoId: ''
-}
-
-export const DOGW_MAIN: Token = {
-  tokenProgram: TOKEN_2022_PROGRAM_ID,
-  symbol: 'dogw',
-  address: new PublicKey('Ev6go111sv39uMrAQeWsatFWgSYdfENuQGtBmr5QRwbJ'),
-  decimals: 9,
-  name: 'dog wif meat',
-  logoURI: 'https://ipfs.io/ipfs/QmVYxFNgSnVFXrbaxTh7Pz6iQ9AJU8e7BLBMcyWiE476mU',
-  coingeckoId: ''
-}
-
 export const TETH_MAIN: Token = {
   tokenProgram: TOKEN_2022_PROGRAM_ID,
   symbol: 'tETH',
@@ -402,16 +302,6 @@ export const TETH_MAIN: Token = {
   logoURI:
     'https://www.geckoterminal.com/_next/image?url=https%3A%2F%2Fcoin-images.coingecko.com%2Fcoins%2Fimages%2F52492%2Flarge%2FtETH.png%3F1733441914&w=256&q=100',
   coingeckoId: 'turbo-eth'
-}
-
-export const TURBO_AI_MAIN: Token = {
-  tokenProgram: TOKEN_PROGRAM_ID,
-  symbol: 'TURBO',
-  address: new PublicKey('6G61dR9rbcGW4btoLFFFDtebUV8J8LmAobnvvzhdf4Vf'),
-  decimals: 6,
-  name: 'Turbo AI',
-  logoURI: 'https://ipfs.io/ipfs/QmV79VJXity4JEmELrRncRTUofFHdjP2bfPpjSXjyCK3xS',
-  coingeckoId: ''
 }
 
 export const ORCA_MAIN: Token = {
@@ -436,35 +326,70 @@ export const SOLAR_MAIN: Token = {
   coingeckoId: ''
 }
 
+export const JITOSOL_MAIN: Token = {
+  tokenProgram: TOKEN_2022_PROGRAM_ID,
+  symbol: 'JitoSOL',
+  address: new PublicKey('JAh5pFYn1Kbh7kCuqZab8viVFdNgTmpS6hzFstSGNBvG'),
+  decimals: 9,
+  name: 'Jito Staked SOL',
+  logoURI:
+    'https://raw.githubusercontent.com/hyperlane-xyz/hyperlane-registry/refs/heads/main/deployments/warp_routes/jitoSOL/logo.svg',
+  coingeckoId: 'jito-staked-sol'
+}
+
+export const WBTC_MAIN: Token = {
+  tokenProgram: TOKEN_2022_PROGRAM_ID,
+  symbol: 'WBTC',
+  address: new PublicKey('7UTjr1VC6Z9DPsWD6mh5wPzNtufN17VnzpKS3ASpfAji'),
+  decimals: 8,
+  name: 'Wrapped BTC',
+  logoURI:
+    'https://raw.githubusercontent.com/hyperlane-xyz/hyperlane-registry/refs/heads/main/deployments/warp_routes/WBTC/logo.svg',
+  coingeckoId: 'bitcoin'
+}
+
+export const NPT_MAIN: Token = {
+  tokenProgram: TOKEN_PROGRAM_ID,
+  symbol: 'NPT',
+  address: new PublicKey('HP5ksEQBkX5UZXxLThvF24TEh5ta9AUB8TLA1YSXKzDs'),
+  decimals: 9,
+  name: 'Neptune Protocol Token',
+  logoURI:
+    'https://statics.eclipsescan.xyz/cdn/imgs/s60?ref=68747470733a2f2f7261772e67697468756275736572636f6e74656e742e636f6d2f487964726f67656e2d4c6162732f6e657074756e652d746f6b656e2d6d696e742f726566732f68656164732f6d61696e2f6e70742e706e67',
+  coingeckoId: ''
+}
+
+export const USDN_MAIN: Token = {
+  tokenProgram: TOKEN_PROGRAM_ID,
+  symbol: 'USDN',
+  address: new PublicKey('FATF66HHhz8Yf2zxMXZXjmzu8NFArwtCJGEsj7rHC8i4'),
+  decimals: 9,
+  name: 'Neptune USD',
+  logoURI:
+    'https://statics.eclipsescan.xyz/cdn/imgs/s60?ref=68747470733a2f2f7261772e67697468756275736572636f6e74656e742e636f6d2f487964726f67656e2d4c6162732f6e657074756e652d746f6b656e2d6d696e742f726566732f68656164732f6d61696e2f7573646e2e706e67',
+  coingeckoId: ''
+}
+
+export const WEETHS_MAIN: Token = {
+  tokenProgram: TOKEN_2022_PROGRAM_ID,
+  symbol: 'weETHs',
+  address: new PublicKey('F72PqK74jc28zjC7kWDk6ykJ2ZAbjNzn2jaAY9v9M6om'),
+  decimals: 9,
+  name: 'Super Symbiotic LRT',
+  logoURI:
+    'https://raw.githubusercontent.com/hyperlane-xyz/hyperlane-registry/refs/heads/main/deployments/warp_routes/weETHs/logo.svg',
+  coingeckoId: ''
+}
+
 export enum RPC {
   TEST = 'https://testnet.dev2.eclipsenetwork.xyz',
   MAIN = 'https://mainnetbeta-rpc.eclipse.xyz',
-  MAIN_HELIUS = 'https://eclipse.helius-rpc.com',
+  // MAIN_HELIUS = 'https://eclipse.shelius-rpc.com',
   MAIN_TRITON = 'https://invarian-eclipse-1c78.mainnet.eclipse.rpcpool.com/',
   MAIN_LGNS = 'https://eclipse.lgns.net',
   DEV = 'https://staging-rpc.dev2.eclipsenetwork.xyz',
   DEV_EU = 'https://staging-rpc-eu.dev2.eclipsenetwork.xyz',
   LOCAL = 'http://127.0.0.1:8899'
-}
-
-export const EGOAT_MAIN: Token = {
-  tokenProgram: TOKEN_PROGRAM_ID,
-  symbol: 'EGoat',
-  address: new PublicKey('Hxazh1rGXPj2LHgvZBm5Us4rJbB4JZYgdBL6ymYfdt1v'),
-  decimals: 8,
-  name: 'Eclipse Goat',
-  logoURI: 'https://ice.frostsky.com/2024/10/25/07f27173568f10a102f09ee700046aa4.jpeg',
-  coingeckoId: ''
-}
-
-export const DOGO_MAIN: Token = {
-  tokenProgram: TOKEN_PROGRAM_ID,
-  symbol: 'DOGO',
-  address: new PublicKey('3imBwxNwVbPnz6yr87HjvdxjNvyCx7cqiuaDyahSB897'),
-  decimals: 9,
-  name: 'Dogo',
-  logoURI: 'https://gateway.irys.xyz/DD7oq5BBPmULMBPsSwyAUTbExKMHuisKtv4HpyUgRU2k',
-  coingeckoId: ''
 }
 
 export const EZSOL_MAIN: Token = {
@@ -488,6 +413,16 @@ export const KYSOL_MAIN: Token = {
   coingeckoId: ''
 }
 
+export const ES_MAIN: Token = {
+  tokenProgram: TOKEN_2022_PROGRAM_ID,
+  symbol: 'ES',
+  address: new PublicKey('GnBAskb2SQjrLgpTjtgatz4hEugUsYV7XrWU1idV3oqW'),
+  decimals: 6,
+  name: 'Eclipse',
+  logoURI: 'https://assets.coingecko.com/coins/images/54958/standard/image_%2832%29.png?1742979704',
+  coingeckoId: 'eclipse-3'
+}
+
 export const TUSD_MAIN: Token = {
   tokenProgram: TOKEN_2022_PROGRAM_ID,
   symbol: 'tUSD',
@@ -496,6 +431,16 @@ export const TUSD_MAIN: Token = {
   name: 'Turbo USD',
   logoURI:
     'https://raw.githubusercontent.com/hyperlane-xyz/hyperlane-registry/85fc184f345916356f0d1ad73fb89ea2f15b95d7/deployments/warp_routes/tUSD/logo.svg',
+  coingeckoId: ''
+}
+
+export const muES_MAIN: Token = {
+  tokenProgram: TOKEN_PROGRAM_ID,
+  symbol: 'muES',
+  address: new PublicKey('A9qpp2Ejxvy7xE4JxLLqSsqMcjsPUAJpyHTbA2WDJ4E3'),
+  decimals: 6,
+  name: 'Mushi ES',
+  logoURI: 'https://app.mushi.fi/images/mushi-short-logo.svg',
   coingeckoId: ''
 }
 
@@ -611,38 +556,36 @@ export const autoSwapPools = [
       address: new PublicKey('1Zxv7bYYzMuK8eey85ZSowa24S8B7QNfDx3GQpKQ4Bf'),
       feeIndex: 0
     }
-  }
-]
-export const promotedTiers = [
-  {
-    tokenX: USDC_MAIN.address,
-    tokenY: WETH_MAIN.address,
-    index: 3
   },
   {
-    tokenX: SOL_MAIN.address,
-    tokenY: WETH_MAIN.address,
-    index: 3
+    pair: {
+      tokenX: new PublicKey('So11111111111111111111111111111111111111112'),
+      tokenY: new PublicKey('sBTZcSwRZhRq3JcjFh1xwxgCxmsN7MreyU3Zx8dA8uF')
+    },
+    swapPool: {
+      address: new PublicKey('9RkzLPufg9RVxRLXZx1drZvf1gXLwgffnhW9oFJSstad'),
+      feeIndex: 6
+    }
   },
   {
-    tokenX: TETH_MAIN.address,
-    tokenY: WETH_MAIN.address,
-    index: 0
+    pair: {
+      tokenX: new PublicKey('GnBAskb2SQjrLgpTjtgatz4hEugUsYV7XrWU1idV3oqW'),
+      tokenY: new PublicKey('AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE')
+    },
+    swapPool: {
+      address: new PublicKey('8gSs6K4NVZSh4Rd5ABcNTos5sJ6wVRTR4xr5LgNLMt58'),
+      feeIndex: 5
+    }
   },
   {
-    tokenX: SOL_MAIN.address,
-    tokenY: USDC_MAIN.address,
-    index: 3
-  },
-  {
-    tokenX: BITZ_MAIN.address,
-    tokenY: WETH_MAIN.address,
-    index: 6
-  },
-  {
-    tokenX: USDC_MAIN.address,
-    tokenY: TUSD_MAIN.address,
-    index: 0
+    pair: {
+      tokenX: new PublicKey('GnBAskb2SQjrLgpTjtgatz4hEugUsYV7XrWU1idV3oqW'),
+      tokenY: new PublicKey('So11111111111111111111111111111111111111112')
+    },
+    swapPool: {
+      address: new PublicKey('6ciuuX2AZ3RFU6fJh2XrzJurZdRWuDeMonNsb7xzztp1'),
+      feeIndex: 5
+    }
   }
 ]
 
@@ -653,9 +596,9 @@ export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
     TETH_MAIN.address,
     USDC_MAIN.address,
     SOL_MAIN.address,
-    USDT_MAIN.address,
     BITZ_MAIN.address,
-    LAIKA_MAIN.address,
+    ES_MAIN.address,
+    sBITZ_MAIN.address,
     TUSD_MAIN.address
   ],
   Testnet: [USDC_TEST.address, BTC_TEST.address, WETH_TEST.address],
@@ -664,14 +607,14 @@ export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
 
 export const airdropTokens: Record<NetworkType, PublicKey[]> = {
   Devnet: [USDC_DEV.address, BTC_DEV.address],
-  Mainnet: [MOCKED_TOKEN_MAIN.address],
+  Mainnet: [],
   Testnet: [USDC_TEST.address, BTC_TEST.address],
   Local: []
 }
 
 export const airdropQuantities: Record<NetworkType, number[]> = {
   Devnet: [100 * 10 ** USDC_DEV.decimals, 0.0025 * 10 ** BTC_DEV.decimals],
-  Mainnet: [1000 * 10 ** MOCKED_TOKEN_MAIN.decimals],
+  Mainnet: [],
   Testnet: [2 * 10 ** USDC_TEST.decimals, 0.00005 * 10 ** BTC_TEST.decimals],
   Local: []
 }
@@ -698,6 +641,8 @@ export const WETH_CREATE_TOKEN_LAMPORTS_TEST = new BN(10100000)
 
 export const WETH_CLOSE_POSITION_LAMPORTS_MAIN = new BN(30000)
 export const WETH_CLOSE_POSITION_LAMPORTS_TEST = new BN(30000)
+
+export const WETH_MIN_STAKE_UNSTAKE_LAMPORTS = new BN(50)
 
 export const MINIMUM_PRICE_IMPACT = toDecimal(1, 4)
 
@@ -737,7 +682,8 @@ export const ADDRESSES_TO_REVERT_TOKEN_PAIRS: string[] = [
   KYSOL_MAIN.address.toString(),
   EZSOL_MAIN.address.toString(),
   TIA_MAIN.address.toString(),
-  BITZ_MAIN.address.toString()
+  BITZ_MAIN.address.toString(),
+  sBITZ_MAIN.address.toString()
 ]
 
 export const FormatConfig = {
@@ -757,6 +703,16 @@ export const AlternativeFormatConfig = {
   BDecimals: 9,
   MDecimals: 6,
   KDecimals: 3,
+  DecimalsAfterDot: 2
+}
+
+export const NoConfig = {
+  B: 1000000000000000,
+  M: 1000000000000000,
+  K: 1000000000000000,
+  BDecimals: 100,
+  MDecimals: 100,
+  KDecimals: 100,
   DecimalsAfterDot: 2
 }
 
@@ -789,29 +745,30 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
     return {
       ETH: WETH_ADDRESS[network].toString(),
       tETH: TETH_MAIN.address.toString(),
-      MCT: MOCKED_TOKEN_MAIN.address.toString(),
       USDC: USDC_MAIN.address.toString(),
       SOL: SOL_MAIN.address.toString(),
       USDT: USDT_MAIN.address.toString(),
       WIF: DOGWIFHAT_MAIN.address.toString(),
       LAIKA: LAIKA_MAIN.address.toString(),
       BITZ: BITZ_MAIN.address.toString(),
+      sBITZ: sBITZ_MAIN.address.toString(),
       MOON: MOON_MAIN.address.toString(),
       GSVM: GSVM_MAIN.address.toString(),
       DARKMOON: DARKMOON_MAIN.address.toString(),
-      ECAT: ECAT_MAIN.address.toString(),
-      Turbo: TURBO_MAIN.address.toString(),
-      MOO: MOO_MAIN.address.toString(),
-      EBull: EBULL_MAIN.address.toString(),
-      EGoat: EGOAT_MAIN.address.toString(),
-      DOGO: DOGO_MAIN.address.toString(),
-      PUNKSTAR: PUNKSTAR_MAIN.address.toString(),
-      TURBO_AI: TURBO_AI_MAIN.address.toString(),
       ORCA: ORCA_MAIN.address.toString(),
       SOLAR: SOLAR_MAIN.address.toString(),
+      KYSOL_MAIN: KYSOL_MAIN.address.toString(),
+      EZSOL_MAIN: EZSOL_MAIN.address.toString(),
+      ES: ES_MAIN.address.toString(),
       KYSOL: KYSOL_MAIN.address.toString(),
       EZSOL: EZSOL_MAIN.address.toString(),
-      TUSD: TUSD_MAIN.address.toString()
+      TUSD: TUSD_MAIN.address.toString(),
+      JITOSOL: JITOSOL_MAIN.address.toString(),
+      WBTC: WBTC_MAIN.address.toString(),
+      NPT: NPT_MAIN.address.toString(),
+      USDN: USDN_MAIN.address.toString(),
+      WEETHS: WEETHS_MAIN.address.toString(),
+      muES_MAIN: muES_MAIN.address.toString()
     }
   }
 }
@@ -825,10 +782,11 @@ export const getReversedAddressTickerMap = (network: NetworkType) => {
 export const MINIMAL_POOL_INIT_PRICE = 0.00000001
 
 export const DEFAULT_SWAP_SLIPPAGE = '0.50'
-export const DEFAULT_NEW_POSITION_SLIPPAGE = '0.50'
-export const DEFAULT_AUTOSWAP_MAX_PRICE_IMPACT = '0.50'
+export const DEFAULT_NEW_POSITION_SLIPPAGE = '2.00'
+export const DEFAULT_AUTOSWAP_MAX_PRICE_IMPACT = '2.00'
 export const DEFAULT_AUTOSWAP_MIN_UTILIZATION = '95.00'
 export const DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_CREATE_POSITION = '2.50'
+export const DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_ADD_LIQUIDITY = '0.50'
 export const DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_SWAP = '0.50'
 
 export const CHAINS = [
@@ -902,38 +860,66 @@ export const walletNames = {
 
 export const defaultImages: string[] = [dog1Icon, dog2Icon, cat1Icon, cat2Icon]
 
+export const disabledPools = [
+  {
+    tokenX: sBITZ_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    feeTiers: ['0.01']
+  },
+  {
+    tokenX: BITZ_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    feeTiers: ['0.01']
+  }
+]
+
 export const getPopularPools = (network: NetworkType) => {
   switch (network) {
     case NetworkType.Mainnet:
       return [
         {
-          tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE', // USDC
-          tokenY: 'So11111111111111111111111111111111111111112', // ETH
+          tokenX: ES_MAIN.address.toString(),
+          tokenY: WETH_MAIN.address.toString(),
+          fee: '0.3'
+        },
+        {
+          tokenX: USDC_MAIN.address.toString(),
+          tokenY: ES_MAIN.address.toString(),
+          fee: '0.3'
+        },
+        {
+          tokenX: USDC_MAIN.address.toString(),
+          tokenY: WETH_MAIN.address.toString(),
           fee: '0.09'
         },
         {
-          tokenX: '64mggk2nXg6vHC1qCdsZdEFzd5QGN4id54Vbho4PswCF', // BITZ
-          tokenY: 'So11111111111111111111111111111111111111112', // ETH
+          tokenX: WETH_MAIN.address.toString(), // ETH
+          tokenY: sBITZ_MAIN.address.toString(), // sBITZ
           fee: '1'
         },
         {
-          tokenX: 'BeRUj3h7BqkbdfFU7FBNYbodgf8GCHodzKvF9aVjNNfL', // SOL
-          tokenY: 'So11111111111111111111111111111111111111112', // ETH
+          tokenX: BITZ_MAIN.address.toString(), // BITZ
+          tokenY: WETH_MAIN.address.toString(), // ETH
+          fee: '1'
+        },
+        {
+          tokenX: SOL_MAIN.address.toString(), // SOL
+          tokenY: WETH_MAIN.address.toString(), // ETH
           fee: '0.09'
         },
         {
-          tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE', // USDC
-          tokenY: 'BeRUj3h7BqkbdfFU7FBNYbodgf8GCHodzKvF9aVjNNfL', // SOL
+          tokenX: USDC_MAIN.address.toString(), // USDC
+          tokenY: SOL_MAIN.address.toString(), // SOL
           fee: '0.09'
         },
         {
-          tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE', // USDC
-          tokenY: '27Kkn8PWJbKJsRZrxbsYDdedpUQKnJ5vNfserCxNEJ3R', // tUSD
+          tokenX: USDC_MAIN.address.toString(), // USDC
+          tokenY: TUSD_MAIN.address.toString(), // tUSD
           fee: '0.01'
         },
         {
-          tokenX: 'GU7NS9xCwgNPiAdJ69iusFrRfawjDDPjeMBovhV1d4kn', // tETH
-          tokenY: 'So11111111111111111111111111111111111111112', // ETH
+          tokenX: TETH_MAIN.address.toString(),
+          tokenY: WETH_MAIN.address.toString(),
           fee: '0.01'
         }
       ]
@@ -946,17 +932,7 @@ export const rewards = [...rewardsArray].sort(
   (a, b) => new Date(b.distributionDate).getTime() - new Date(a.distributionDate).getTime()
 ) as Reward[]
 
-export const LEADERBOARD_DECIMAL = 8
-
 export const LAUNCH_DATE = '2024-12-10T17:20:00'
-
-export enum PointsPageContent {
-  Leaderboard = 'leaderboard',
-  FAQ = 'faq',
-  Claim = 'claim'
-}
-
-export type LeaderBoardType = 'Liquidity' | 'Swap' | 'Total'
 
 export const BANNER_STORAGE_KEY = 'invariant-warning-banner'
 export const BANNER_HIDE_DURATION = 1000 * 60 * 60 * 1 // 1 hour
@@ -969,8 +945,8 @@ export enum OverviewSwitcher {
 }
 
 export const STATS_CACHE_TIME = 30 * 60 * 1000
-export const LEADERBOARD_API_URL = 'https://api.invariant.app/api'
 export const PRICE_API_URL = 'https://api.invariant.app/price'
+export const CHECKER_API_URL = 'https://api.invariant.app/check'
 
 export enum AutoswapCustomError {
   FetchError = 0
@@ -983,6 +959,12 @@ export enum ErrorCodeExtractionKeys {
   UndefinedOnSplit = "Cannot read properties of undefined (reading 'split')",
   RightBracket = '}',
   Dot = '.'
+}
+
+export enum inputTarget {
+  DEFAULT = 'default',
+  FROM = 'from',
+  TO = 'to'
 }
 
 const SLIPPAGE_ERROR_MESSAGE = 'Price changed – increase slippage or retry'
@@ -1119,3 +1101,21 @@ export const thresholdsWithTokenDecimal = (decimals: number): FormatNumberThresh
     divider: 1000000000
   }
 ]
+
+export const MAX_PLOT_VISIBLE_TICK_RANGE = 46154 // x100 difference
+export const DEFAULT_STRATEGY = {
+  tokenA: 'ETH',
+  tokenB: 'USDC',
+  feeTier: '0_09'
+}
+export const BITZ_TOKENS_ADDR = '5FgZ9W81khmNXG8i96HSsG7oJiwwpKnVzmHgn9ZnqQja'
+
+export const PORTFOLIO_STAKE_STORAGE_KEY = 'STAKE_STATS_EXPANDED'
+export const PORTFOLIO_STAKE_EXPAND_DELAY = 50
+export const PORTFOLIO_STAKE_COLLAPSE_DELAY = 200
+
+export const ES_ETH_POOLS = {
+  '0_03': '6ciuuX2AZ3RFU6fJh2XrzJurZdRWuDeMonNsb7xzztp1'
+}
+export const PROOF_OF_INCLUSION_CACHE_KEY = 'PROOF_OF_INCLUSION_V2'
+export const PROOF_OF_INCLUSION_CACHE_TTL = 1000 * 60 * 60 * 1 // 1 hour

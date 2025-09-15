@@ -34,21 +34,16 @@ export const useSliderStyles = makeStyles<{
     boxShadow: 'none !important'
   },
   rail: {
-    background:
-      disabledRange > 0
-        ? `linear-gradient(90deg, ${colors.invariant.lightGrey} 0%, ${
-            colors.invariant.lightGrey
-          } ${disabledRange}%, ${colors.invariant.green} ${disabledRange + 1}%, ${
-            colors.invariant.green
-          } 100%)`
-        : colors.invariant.green,
-    height: 6,
-    opacity: 1
-  },
-  track: {
-    background: colors.invariant.lightGrey,
+    background: disabledRange > 0 ? colors.invariant.green : colors.invariant.greenOpacity,
+    opacity: 1,
     height: 6
   },
+  track: {
+    background: colors.invariant.green,
+    height: 6,
+    border: 'none'
+  },
+
   markLabel: {
     color: colors.invariant.text,
     ...typography.body1,
@@ -75,11 +70,12 @@ export const useSliderStyles = makeStyles<{
     },
 
     '&[data-index="0"]': {
-      background: disabledRange > 0 ? colors.invariant.lightGrey : colors.invariant.green
+      background: disabledRange > 0 ? colors.invariant.lightGrey : colors.invariant.green,
+      opacity: 1
     },
 
     [`&[data-index="${valuesLength - 1}"]`]: {
-      background: colors.invariant.green
+      background: colors.invariant.greenOpacity
     }
   },
 

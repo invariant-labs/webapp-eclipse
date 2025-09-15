@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux'
 import PopularPools from '@components/PopularPools/PopularPools'
 import { isLoading, poolsStatsWithTokensDetails } from '@store/selectors/stats'
 import { unknownTokenIcon } from '@static/icons'
-import { Grid } from '@mui/material'
 import { network } from '@store/selectors/solanaConnection'
 import { getPopularPools, Intervals } from '@store/consts/static'
 import { PublicKey } from '@solana/web3.js'
@@ -108,22 +107,19 @@ export const PopularPoolsWrapper: React.FC<IPopularPoolsWrapper> = ({
 
     return data
   }, [poolsList])
-
   const showAPY = useMemo(() => {
     return list.some(pool => pool.apy !== 0)
   }, [list])
 
   return (
-    <Grid container>
-      <PopularPools
-        pools={list}
-        isLoading={isLoadingStats}
-        network={currentNetwork}
-        showAPY={showAPY}
-        lastUsedInterval={lastUsedInterval}
-        updateInterval={updateInterval}
-      />
-    </Grid>
+    <PopularPools
+      pools={list}
+      isLoading={isLoadingStats}
+      network={currentNetwork}
+      showAPY={showAPY}
+      lastUsedInterval={lastUsedInterval}
+      updateInterval={updateInterval}
+    />
   )
 }
 

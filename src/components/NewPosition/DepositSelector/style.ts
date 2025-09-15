@@ -14,20 +14,6 @@ export const useStyles = makeStyles()(theme => {
         padding: '16px 8px  16px 8px '
       }
     },
-    tooltip: {
-      paddingTop: 8,
-      paddingBottom: 8,
-      paddingLeft: 12,
-      paddingRight: 12,
-      color: colors.invariant.text,
-      ...typography.caption2,
-      background: colors.invariant.light,
-      borderRadius: 14,
-      lineHeight: '24px',
-      maxWidth: 255,
-      border: `1px solid ${colors.invariant.newDark}`
-    },
-
     autoButton: {
       display: 'flex',
       flexDirection: 'row',
@@ -36,8 +22,7 @@ export const useStyles = makeStyles()(theme => {
       gap: 0
     },
     autoText: {
-      marginRight: 3,
-      flex: '0 0 auto'
+      ...typography.caption1
     },
     infoTooltip: {
       marginLeft: 6,
@@ -65,7 +50,6 @@ export const useStyles = makeStyles()(theme => {
       gap: 8
     },
     depositHeaderContainer: {
-      height: 30,
       width: '100%',
       display: 'flex',
       flexDirection: 'row',
@@ -77,10 +61,10 @@ export const useStyles = makeStyles()(theme => {
       flexDirection: 'row',
       justifyContent: 'flex-end',
       alignItems: 'center',
-      gap: 4,
-      [theme.breakpoints.down('sm')]: {
-        alignItems: 'center',
-        justifyContent: 'center'
+      gap: 12,
+      marginLeft: 16,
+      [theme.breakpoints.down(370)]: {
+        gap: 4
       }
     },
     sectionTitle: {
@@ -90,7 +74,8 @@ export const useStyles = makeStyles()(theme => {
     },
     subsectionTitle: {
       ...typography.heading4,
-      color: colors.white.main
+      color: colors.white.main,
+      lineHeight: '30px'
     },
     sectionWrapper: {
       borderRadius: 8,
@@ -229,7 +214,7 @@ export const useStyles = makeStyles()(theme => {
         }
       },
       letterSpacing: '-0.03em',
-      width: 60,
+      width: 50,
       height: 26,
       padding: 0,
       [theme.breakpoints.down('sm')]: {
@@ -259,24 +244,36 @@ export const useStyles = makeStyles()(theme => {
       }
     },
     skeleton: {
-      width: 128,
+      width: 112,
       height: 28,
       borderRadius: 9,
-      backgroundColor: colors.invariant.light
+      backgroundColor: colors.invariant.light,
+      [theme.breakpoints.down(370)]: {
+        width: 79
+      }
     },
     unknownWarning: {
+      height: '100%',
       width: 'fit-content',
       maxWidth: 131,
-      alignSelf: 'flex-end',
       textAlign: 'center',
       border: `1px solid ${colors.invariant.lightGrey}`,
       ...typography.caption4,
       color: colors.invariant.lightGrey,
       padding: '5px 8px',
-      paddingInline: 8,
-      borderRadius: 9
+      borderRadius: 9,
+      textWrap: 'nowrap',
+      display: 'flex',
+      alignItems: 'center',
+      [theme.breakpoints.down(370)]: {
+        maxWidth: 79,
+        padding: '5px 6px'
+      }
     },
     errorWarning: {
+      display: 'flex',
+      alignItems: 'center',
+      height: '100%',
       width: 'fit-content',
       maxWidth: 131,
       textAlign: 'center',
@@ -285,7 +282,12 @@ export const useStyles = makeStyles()(theme => {
       color: colors.invariant.Error,
       padding: '5px 8px',
       paddingInline: 8,
-      borderRadius: 9
+      borderRadius: 9,
+      textWrap: 'nowrap',
+      [theme.breakpoints.down(370)]: {
+        maxWidth: 79,
+        padding: '5px 6px'
+      }
     },
     whiteIcon: {
       filter: 'brightness(0) invert(100%)',
@@ -367,6 +369,15 @@ export const useStyles = makeStyles()(theme => {
       position: 'absolute',
       top: 'calc(50% - 10px)',
       left: 'calc(50% - 10px)'
+    },
+    switchDepositContainer: {
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      gap: 12,
+      [theme.breakpoints.down(370)]: {
+        gap: 4
+      }
     }
   }
 })

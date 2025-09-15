@@ -1,10 +1,9 @@
 import { PublicKey } from '@solana/web3.js'
-import { NetworkType } from '@store/consts/static'
 import { SwapToken } from '@store/selectors/solanaWallet'
-import { printBN, getTokenPrice, ensureError } from '@utils/utils'
+import { ensureError, printBN } from '@utils/utils'
 import { useEffect, useState } from 'react'
 
-interface ProcessedToken {
+export interface ProcessedToken {
   id: PublicKey
   symbol: string
   icon: string
@@ -15,9 +14,9 @@ interface ProcessedToken {
 }
 
 export const useProcessedTokens = (
+  prices: Record<string, number>,
   tokensList: SwapToken[],
-  isBalanceLoading: boolean,
-  network: NetworkType
+  isBalanceLoading: boolean
 ) => {
   const [processedTokens, setProcessedTokens] = useState<ProcessedToken[]>([])
   const [isProcesing, setIsProcesing] = useState<boolean>(true)
@@ -29,30 +28,28 @@ export const useProcessedTokens = (
         return parseFloat(balance) > 0
       })
 
-      const processed = await Promise.all(
-        nonZeroTokens.map(async token => {
-          const balance = Number(printBN(token.balance, token.decimals).replace(',', '.'))
+      const processed = nonZeroTokens.map(token => {
+        const balance = Number(printBN(token.balance, token.decimals).replace(',', '.'))
+        let price = 0
 
-          let price = 0
-          try {
-            const priceData = await getTokenPrice(token.assetAddress.toString() ?? '', network)
-            price = priceData ?? 0
-          } catch (e: unknown) {
-            const error = ensureError(e)
-            console.error(`Failed to fetch price for ${token.symbol}:`, error)
-          }
+        try {
+          const priceData = prices[token.assetAddress.toString()]
+          price = priceData ?? 0
+        } catch (e: unknown) {
+          const error = ensureError(e)
+          console.error(`Failed to get price for ${token.symbol}:`, error)
+        }
 
-          return {
-            id: token.assetAddress,
-            symbol: token.symbol,
-            icon: token.logoURI,
-            isUnknown: token.isUnknown,
-            decimal: token.decimals,
-            amount: balance,
-            value: balance * price
-          }
-        })
-      )
+        return {
+          id: token.assetAddress,
+          symbol: token.symbol,
+          icon: token.logoURI,
+          isUnknown: token.isUnknown,
+          decimal: token.decimals,
+          amount: balance,
+          value: balance * price
+        }
+      })
 
       setProcessedTokens(processed)
       setIsProcesing(false)

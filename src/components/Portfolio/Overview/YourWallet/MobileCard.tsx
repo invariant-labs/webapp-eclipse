@@ -8,23 +8,25 @@ import { NetworkType } from '@store/consts/static'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 
 export const MobileCard: React.FC<{
-  pool: WalletToken
+  token: WalletToken
   getStrategy: () => StrategyConfig
   currentNetwork: NetworkType
-}> = ({ pool, getStrategy, currentNetwork }) => {
+}> = ({ token, getStrategy, currentNetwork }) => {
   const { classes } = useStyles({})
   const strategy = getStrategy()
   return (
     <Box className={classes.mobileCard}>
       <Box className={classes.mobileCardHeader}>
-        <Box className={classes.mobileTokenInfo} sx={{ position: 'relative' }}>
-          <img src={pool.icon} className={classes.tokenIcon} alt={pool.symbol} />
-          {pool.isUnknown && <img className={classes.warningIcon} src={warningIcon} />}
+        <Box className={classes.mobileTokenInfo}>
+          <Box display='flex' position='relative'>
+            <img src={token.icon} className={classes.tokenIcon} alt={token.symbol} />
+            {token.isUnknown && <img className={classes.warningIcon} src={warningIcon} />}
+          </Box>
 
-          <Typography className={classes.tokenSymbol}>{pool.symbol}</Typography>
+          <Typography className={classes.tokenSymbol}>{token.symbol}</Typography>
         </Box>
         <Box className={classes.mobileActionsContainer}>
-          <ActionButtons pool={pool} strategy={strategy} currentNetwork={currentNetwork} />
+          <ActionButtons pool={token} strategy={strategy} currentNetwork={currentNetwork} />
         </Box>
       </Box>
       <Box className={classes.mobileStatsContainer}>
@@ -33,7 +35,7 @@ export const MobileCard: React.FC<{
             Amount:
           </Typography>
           <Typography component='span' className={classes.mobileStatValue}>
-            {formatNumberWithoutSuffix(pool.amount)}
+            {formatNumberWithoutSuffix(token.amount)}
           </Typography>
         </Box>
         <Box className={classes.mobileStatItem}>
@@ -41,9 +43,9 @@ export const MobileCard: React.FC<{
             Value:
           </Typography>
           <Typography component='span' className={classes.mobileStatValue}>
-            ${pool.value.toFixed(2).toLocaleString().replace(',', '.')}
+            ${(token.value || 0).toFixed(2).toLocaleString().replace(',', '.')}
           </Typography>
-          {pool.isPriceWarning && (
+          {token.isPriceWarning && (
             <TooltipHover title='The price might not be shown correctly'>
               <img src={warning2Icon} width={14} />
             </TooltipHover>

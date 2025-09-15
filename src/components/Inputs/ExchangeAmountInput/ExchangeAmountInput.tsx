@@ -1,6 +1,6 @@
 import Select from '@components/Inputs/Select/Select'
 import { OutlinedButton } from '@common/OutlinedButton/OutlinedButton'
-import { Grid, Input, Typography, useMediaQuery } from '@mui/material'
+import { Box, Grid, Input, Typography, useMediaQuery } from '@mui/material'
 import loadingAnimation from '@static/gif/loading.gif'
 import { formatNumberWithoutSuffix, formatNumberWithSuffix, trimDecimalZeros } from '@utils/utils'
 import { SwapToken } from '@store/selectors/solanaWallet'
@@ -30,25 +30,26 @@ interface IProps {
   style?: CSSProperties
   current: SwapToken | null
   tokens: SwapToken[]
-  onSelect: (index: number) => void
-  disabled: boolean
+  onSelect?: (index: number) => void
+  disabled?: boolean
   balance?: string
   hideBalances?: boolean
-  handleAddToken: (address: string) => void
+  handleAddToken?: (address: string) => void
   commonTokens: PublicKey[]
   limit?: number
-  initialHideUnknownTokensValue: boolean
-  onHideUnknownTokensChange: (val: boolean) => void
+  initialHideUnknownTokensValue?: boolean
+  onHideUnknownTokensChange?: (val: boolean) => void
   percentageChange?: number
   tokenPrice?: number
   priceLoading?: boolean
   isBalanceLoading: boolean
   showMaxButton: boolean
   showBlur: boolean
-  hiddenUnknownTokens: boolean
-  network: NetworkType
-  isPairGivingPoints: boolean
+  hiddenUnknownTokens?: boolean
+  network?: NetworkType
   actionButtons?: ActionButton[]
+  hideSelect?: boolean
+  notRoundIcon?: boolean
 }
 
 export const ExchangeAmountInput: React.FC<IProps> = ({
@@ -62,23 +63,24 @@ export const ExchangeAmountInput: React.FC<IProps> = ({
   current,
   tokens,
   onSelect,
-  disabled,
+  disabled = false,
   balance,
   hideBalances = false,
   handleAddToken,
   commonTokens,
   limit,
-  initialHideUnknownTokensValue,
-  onHideUnknownTokensChange,
+  initialHideUnknownTokensValue = false,
+  onHideUnknownTokensChange = () => {},
   tokenPrice,
   priceLoading = false,
   isBalanceLoading,
   showMaxButton = true,
   showBlur,
   actionButtons = [],
-  hiddenUnknownTokens,
-  network,
-  isPairGivingPoints
+  hiddenUnknownTokens = false,
+  network = NetworkType.Mainnet,
+  hideSelect = false,
+  notRoundIcon = false
 }) => {
   const hideBalance = balance === '- -' || !balance || hideBalances
   const { classes, cx } = useStyles()
@@ -152,7 +154,7 @@ export const ExchangeAmountInput: React.FC<IProps> = ({
   }
 
   return (
-    <>
+    <Box className={classes.root}>
       <Grid container className={classes.exchangeContainer}>
         <Select
           centered={true}
@@ -167,6 +169,8 @@ export const ExchangeAmountInput: React.FC<IProps> = ({
           onHideUnknownTokensChange={onHideUnknownTokensChange}
           hiddenUnknownTokens={hiddenUnknownTokens}
           network={network}
+          hideSelect={hideSelect}
+          notRoundIcon={notRoundIcon}
         />
         {showBlur ? (
           <div className={classes.blur}></div>
@@ -174,11 +178,7 @@ export const ExchangeAmountInput: React.FC<IProps> = ({
           <Input
             inputRef={inputRef}
             error={!!error}
-            className={cx(
-              classes.amountInput,
-              className,
-              isPairGivingPoints && classes.pointsPairBackground
-            )}
+            className={cx(classes.amountInput, className)}
             classes={{ input: classes.input }}
             style={style}
             value={value}
@@ -190,7 +190,11 @@ export const ExchangeAmountInput: React.FC<IProps> = ({
             }}
             onBlur={() => {
               if (value) {
-                setValue(trimDecimalZeros(value))
+                const trimmed = trimDecimalZeros(value)
+
+                if (trimmed !== value) {
+                  setValue(trimDecimalZeros(value))
+                }
               }
             }}
           />
@@ -243,7 +247,7 @@ export const ExchangeAmountInput: React.FC<IProps> = ({
           ) : null}
         </Grid>
       </Grid>
-    </>
+    </Box>
   )
 }
 export default ExchangeAmountInput

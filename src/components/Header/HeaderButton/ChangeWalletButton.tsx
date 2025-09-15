@@ -5,11 +5,8 @@ import { blurContent, unblurContent } from '@utils/uiUtils'
 import ConnectWallet from '@components/Modals/ConnectWallet/ConnectWallet'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import SelectWalletModal from '@components/Modals/SelectWalletModal/SelectWalletModal'
-import { useDispatch, useSelector } from 'react-redux'
-import { actions } from '@store/reducers/leaderboard'
-import { leaderboardSelectors } from '@store/selectors/leaderboard'
 import { Button } from '@common/Button/Button'
-
+// import { actions as saleActions } from '@store/reducers/archive/sale'
 export interface IProps {
   name: string
   onConnect: () => void
@@ -22,9 +19,11 @@ export interface IProps {
   textClassName?: string
   isDisabled?: boolean
   margin?: string | number
+  defaultVariant?: 'green' | 'pink'
   width?: string | number
   height?: string | number
   isSwap?: boolean
+  noUnblur?: boolean
 }
 export const ChangeWalletButton: React.FC<IProps> = ({
   name,
@@ -34,20 +33,19 @@ export const ChangeWalletButton: React.FC<IProps> = ({
   startIcon,
   width,
   margin,
+  defaultVariant = 'pink',
   hideArrow,
   onDisconnect,
   isDisabled = false,
   onCopyAddress = () => {},
-  textClassName
+  textClassName,
+  noUnblur
 }) => {
   const { classes, cx } = useStyles()
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
   const [open, setOpen] = React.useState<boolean>(false)
   const [isOpenSelectWallet, setIsOpenSelectWallet] = React.useState<boolean>(false)
   const [isChangeWallet, setIsChangeWallet] = React.useState<boolean>(false)
-
-  const dispatch = useDispatch()
-  const itemsPerPage = useSelector(leaderboardSelectors.itemsPerPage)
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (!connected) {
@@ -64,29 +62,36 @@ export const ChangeWalletButton: React.FC<IProps> = ({
   const handleConnect = async () => {
     onConnect()
     setIsOpenSelectWallet(false)
-    unblurContent()
+    if (!noUnblur) {
+      unblurContent()
+    }
     setIsChangeWallet(false)
 
-    dispatch(actions.getLeaderboardData({ page: 1, itemsPerPage }))
+    // dispatch(saleActions.getUserStats())
   }
 
   const handleClose = () => {
-    unblurContent()
+    if (!noUnblur) {
+      unblurContent()
+    }
     setOpen(false)
   }
 
   const handleDisconnect = () => {
     onDisconnect()
-    unblurContent()
+    if (!noUnblur) {
+      unblurContent()
+    }
     setOpen(false)
     localStorage.setItem('WALLET_TYPE', '')
-    dispatch(actions.resetCurrentUser())
-    dispatch(actions.resetContentPoints())
+    // dispatch(saleActions.resetUserStats())
   }
 
   const handleChangeWallet = () => {
     setIsChangeWallet(true)
-    unblurContent()
+    if (!noUnblur) {
+      unblurContent()
+    }
     setOpen(false)
     setIsOpenSelectWallet(true)
     blurContent()
@@ -96,7 +101,9 @@ export const ChangeWalletButton: React.FC<IProps> = ({
 
   const handleCopyAddress = () => {
     onCopyAddress()
-    unblurContent()
+    if (!noUnblur) {
+      unblurContent()
+    }
     setOpen(false)
   }
 
@@ -106,7 +113,7 @@ export const ChangeWalletButton: React.FC<IProps> = ({
         margin={margin}
         height={height}
         width={width}
-        scheme={connected ? 'normal' : 'pink'}
+        scheme={connected ? 'normal' : defaultVariant === 'pink' ? 'pink' : 'green'}
         disabled={isDisabled}
         classes={{
           startIcon: classes.startIcon,
@@ -125,11 +132,15 @@ export const ChangeWalletButton: React.FC<IProps> = ({
         anchorEl={anchorEl}
         handleClose={() => {
           setIsOpenSelectWallet(false)
-          unblurContent()
+          if (!noUnblur) {
+            unblurContent()
+          }
         }}
         setIsOpenSelectWallet={() => {
           setIsOpenSelectWallet(false)
-          unblurContent()
+          if (!noUnblur) {
+            unblurContent()
+          }
         }}
         handleConnect={handleConnect}
         open={isOpenSelectWallet}

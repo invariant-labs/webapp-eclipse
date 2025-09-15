@@ -22,6 +22,10 @@ const useStyles = makeStyles()(() => {
           color: colors.invariant.light
         }
       }
+      // // Note: this is added only due to new presale card for desktop navigation 1260-1200 px
+      // [theme.breakpoints.down(1260)]: {
+      //   padding: '6px 10px'
+      // }
     },
     active: {
       background: colors.invariant.light,

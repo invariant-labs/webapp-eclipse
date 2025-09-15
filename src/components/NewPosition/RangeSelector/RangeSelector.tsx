@@ -1,6 +1,6 @@
 import RangeInput from '@components/Inputs/RangeInput/RangeInput'
 import PriceRangePlot, { TickPlotPositionData } from '@common/PriceRangePlot/PriceRangePlot'
-import { Box, Button, Grid, Typography } from '@mui/material'
+import { Button, Grid, Typography } from '@mui/material'
 import loader from '@static/gif/loader.gif'
 import {
   calcPriceByTickIndex,
@@ -10,18 +10,15 @@ import {
   formatNumberWithoutSuffix,
   getConcentrationIndex,
   nearestTickIndex,
-  printBN,
   toMaxNumericPlaces
 } from '@utils/utils'
 import { PlotTickData } from '@store/reducers/positions'
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import ConcentrationSlider from '../ConcentrationSlider/ConcentrationSlider'
 import useStyles from './style'
 import { PositionOpeningMethod } from '@store/consts/types'
-import { DECIMAL, getMaxTick, getMinTick } from '@invariant-labs/sdk-eclipse/lib/utils'
-import { boostPointsIcon, warning3 } from '@static/icons'
-import { TooltipHover } from '@common/TooltipHover/TooltipHover'
-import { ALL_FEE_TIERS_DATA } from '@store/consts/static'
+import { getMaxTick, getMinTick } from '@invariant-labs/sdk-eclipse/lib/utils'
+import PriceWarning from './PriceWarning/PriceWarning'
 
 export interface IRangeSelector {
   updatePath: (concIndex: number) => void
@@ -66,8 +63,13 @@ export interface IRangeSelector {
     price?: number
   } | null
   suggestedPrice: number
+  oraclePrice: number | null
   currentFeeIndex: number
   bestFeeIndex: number
+  showPriceWarning: boolean
+  oraclePriceWarning: boolean
+  diffPercentage: number
+  oracleDiffPercentage: number
 }
 
 export const RangeSelector: React.FC<IRangeSelector> = ({
@@ -103,8 +105,13 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
   // setOnlyUserPositions,
   usdcPrice,
   suggestedPrice,
+  oraclePrice,
   currentFeeIndex,
-  bestFeeIndex
+  bestFeeIndex,
+  showPriceWarning,
+  oraclePriceWarning,
+  diffPercentage,
+  oracleDiffPercentage
 }) => {
   const { classes } = useStyles()
 
@@ -326,7 +333,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
   useEffect(() => {
     const timer = setTimeout(() => {
       setShouldReversePlot(false)
-    }, 600)
+    }, 100)
 
     return () => {
       clearTimeout(timer)
@@ -504,12 +511,6 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     autoZoomHandler(leftRange, rightRange, true)
   }, [tokenASymbol, tokenBSymbol])
 
-  const diffPercentage = useMemo(() => {
-    return Math.abs((suggestedPrice - midPrice.x) / midPrice.x) * 100
-  }, [suggestedPrice, midPrice.x])
-
-  const showPriceWarning = useMemo(() => diffPercentage > 10, [diffPercentage])
-
   return (
     <Grid container className={classes.wrapper}>
       <Grid className={classes.topInnerWrapper}>
@@ -527,67 +528,19 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
                 {usdcPrice.token} ${formatNumberWithoutSuffix(usdcPrice.price)}
               </Typography>
             )}
-            {suggestedPrice !== 0 && showPriceWarning && !blocked && !isLoadingTicksOrTickmap && (
-              <Box className={classes.priceWarningContainer}>
-                <TooltipHover
-                  placement='bottom'
-                  title={
-                    bestFeeIndex !== -1 && currentFeeIndex !== -1 ? (
-                      <Box className={classes.tooltipContainer}>
-                        <span className={classes.suggestedPriceTooltipText}>
-                          <p>
-                            The price on the{' '}
-                            <span className={classes.boldedText}>
-                              {tokenASymbol}/{tokenBSymbol}{' '}
-                              {Number(
-                                printBN(ALL_FEE_TIERS_DATA[currentFeeIndex].tier.fee, DECIMAL - 2)
-                              ).toFixed(2)}
-                              %
-                            </span>{' '}
-                            pool differs significantly (over{' '}
-                            <span className={classes.boldedText}>
-                              {diffPercentage.toFixed(2)}%{' '}
-                            </span>
-                            ) from the most liquid{' '}
-                            <span className={classes.boldedText}>
-                              {tokenASymbol}/{tokenBSymbol}{' '}
-                              {Number(
-                                printBN(ALL_FEE_TIERS_DATA[bestFeeIndex].tier.fee, DECIMAL - 2)
-                              ).toFixed(2)}
-                              %{' '}
-                            </span>
-                            market.
-                          </p>
-                          <p>
-                            Please ensure you're opening your position within the correct price
-                            range. Opening a position with an incorrect range on this pool can
-                            result in a <span className={classes.boldedText}>loss of value</span> —
-                            essentially, it's like selling your tokens below the current market
-                            price or buying them above it.
-                          </p>
-                          <p>
-                            As an alternative, consider using the{' '}
-                            <span className={classes.boldedText}>
-                              {tokenASymbol}/{tokenBSymbol}{' '}
-                              {Number(
-                                printBN(ALL_FEE_TIERS_DATA[bestFeeIndex].tier.fee, DECIMAL - 2)
-                              ).toFixed(2)}
-                              %{' '}
-                            </span>
-                            pool, which is the most liquid market.
-                          </p>
-                        </span>
-                      </Box>
-                    ) : (
-                      ''
-                    )
-                  }>
-                  <img className={classes.priceWarningIcon} src={warning3} alt='warning icon' />
-                </TooltipHover>
-                <Typography className={classes.priceWarning}>
-                  The pool price may differ from the actual price
-                </Typography>
-              </Box>
+            {(showPriceWarning || oraclePriceWarning) && !blocked && !isLoadingTicksOrTickmap && (
+              <PriceWarning
+                bestFeeIndex={bestFeeIndex}
+                currentFeeIndex={currentFeeIndex}
+                oraclePrice={oraclePrice}
+                suggestedPrice={suggestedPrice}
+                tokenASymbol={tokenASymbol}
+                tokenBSymbol={tokenBSymbol}
+                diffPercentage={diffPercentage}
+                showPriceWarning={showPriceWarning}
+                oracleDiffPercentage={oracleDiffPercentage}
+                oraclePriceWarning={oraclePriceWarning}
+              />
             )}
           </Grid>
           <Grid className={classes.currentPriceContainer}>
@@ -616,7 +569,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
           plotMaxData={plotMax}
           zoomMinus={zoomMinus}
           zoomPlus={zoomPlus}
-          loading={isLoadingTicksOrTickmap && !blocked}
+          loading={isLoadingTicksOrTickmap && !shouldNotUpdatePriceRange && !blocked}
           isXtoY={isXtoY}
           spacing={tickSpacing}
           xDecimal={xDecimal}
@@ -648,7 +601,6 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
           <Typography className={classes.subheader}>Set price range</Typography>
           {positionOpeningMethod === 'range' && (
             <Grid className={classes.rangeConcentration}>
-              <img src={boostPointsIcon} alt='Concentration' width='14px' />
               <Typography>Concentration </Typography>
               <Typography>{calculateConcentration(leftRange, rightRange).toFixed(2)}x</Typography>
             </Grid>

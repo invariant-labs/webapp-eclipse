@@ -1,0 +1,12 @@
+{
+  "name": "Invariant Contributor NFT",
+  "symbol": "iNFT",
+  "description": "Invariant Contributor Badge. This non-transferable NFT marks participation in the Invariant Community Sale during Eclipse Summer 2025 and is intended to provide on-chain access to potential ecosystem benefits and future privileges.",
+  "image": "https://eclipse.invariant.app/iNFT.png",
+  "attributes": [
+    { "trait_type": "Sale", "value": "Invariant Community Sale" },
+    { "trait_type": "Role", "value": "Summer Contributor" },
+    { "trait_type": "Transferable", "value": "No" },
+    { "trait_type": "Minimum Contribution", "value": "$450" }
+  ]
+}

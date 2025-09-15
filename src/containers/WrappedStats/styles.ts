@@ -18,7 +18,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     color: colors.white.main
   },
   row: {
-    marginBottom: 16
+    marginBottom: 72
   },
   loading: {
     width: 150,
@@ -52,6 +52,49 @@ export const useStyles = makeStyles()((theme: Theme) => ({
       flexDirection: 'column',
       alignItems: 'flex-start'
     }
+  },
+
+  headerContainer: {
+    display: 'flex',
+    gap: 14,
+
+    [theme.breakpoints.down('sm')]: {
+      width: '100%'
+    }
+  },
+
+  showFavouritesButton: {
+    height: 40,
+    background: colors.invariant.component,
+    padding: '6px 8px',
+    borderRadius: 9,
+    display: 'flex',
+    alignItems: 'center',
+    gap: 8,
+    textTransform: 'none',
+    width: 155,
+    textAlign: 'right',
+
+    '&:hover': {
+      background: colors.invariant.componentDark,
+      boxShadow: 'none'
+    },
+
+    '& .MuiTouchRipple-root .MuiTouchRipple-child': {
+      backgroundColor: colors.invariant.lightGrey
+    },
+
+    [theme.breakpoints.down('md')]: {
+      minWidth: 40,
+      width: 40
+    }
+  },
+
+  showFavouritesText: {
+    ...typography.body2,
+    color: colors.invariant.textGrey,
+    marginTop: 2,
+    width: 108
   }
 }))
 

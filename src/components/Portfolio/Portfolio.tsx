@@ -22,22 +22,29 @@ import { addressToTicker, initialXtoY, parseFeeToPathFee, ROUTES } from '@utils/
 import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useStyles } from './style'
-
-import { SwapToken } from '@store/selectors/solanaWallet'
-import { useProcessedTokens } from '@store/hooks/userOverview/useProcessedToken'
+import { ProcessedToken } from '@store/hooks/userOverview/useProcessedToken'
 import { Overview } from './Overview/Overview/Overview'
 import { YourWallet } from './Overview/YourWallet/YourWallet'
 import { VariantType } from 'notistack'
-import { IPositionItem } from '@store/consts/types'
+import { ILiquidityToken, IPositionItem, TokenPriceData } from '@store/consts/types'
 import { PositionsTable } from './PositionItem/PositionTables/PositionTable.tsx/PositionsTable'
 import PositionCardsSkeletonMobile from './PositionItem/PositionTables/skeletons/PositionCardsSkeletonMobile'
 import { PositionItemMobile } from './PositionItem/PositionMobileCard/PositionItemMobile'
+import { ECBanner } from '@common/ECBanner/ECBanner'
 import { refreshIcon } from '@static/icons'
 import { PositionListSwitcher } from './PositionListSwitcher/PositionListSwitcher'
-import { LiquidityPools } from '@store/reducers/positions'
+import { LiquidityPools, PlotTickData } from '@store/reducers/positions'
 import { unblurContent } from '@utils/uiUtils'
 import { useDispatch } from 'react-redux'
 import { actions } from '@store/reducers/navigation'
+import { ChangeLiquidityModal } from '@components/Modals/ChangeLiquidityModal/ChangeLiquidityModal'
+import { BN } from '@coral-xyz/anchor'
+import { PublicKey } from '@solana/web3.js'
+import { TickPlotPositionData } from '@common/PriceRangePlot/PriceRangePlot'
+import { Status } from '@store/reducers/solanaWallet'
+import { PoolWithAddress } from '@store/reducers/pools'
+import { Tick, Tickmap } from '@invariant-labs/sdk-eclipse/lib/market'
+import { Pair } from '@invariant-labs/sdk-eclipse'
 
 interface IProps {
   initialPage: number
@@ -51,7 +58,6 @@ interface IProps {
   handleRefresh: () => void
   length: number
   lockedLength: number
-  noInitialPositions: boolean
   lockedData: IPositionItem[]
   currentNetwork: NetworkType
   handleLockPosition: (index: number) => void
@@ -59,16 +65,98 @@ interface IProps {
   handleClaimFee: (index: number, isLocked: boolean) => void
   handleSnackbar: (message: string, variant: VariantType) => void
   isBalanceLoading: boolean
-  tokensList: SwapToken[]
+  handleCloseBanner: () => void
+  isHiding: boolean
+  showBanner: boolean
   shouldDisable: boolean
   positionListAlignment: LiquidityPools
   setPositionListAlignment: (val: LiquidityPools) => void
   overviewSelectedTab: OverviewSwitcher
   handleOverviewSwitch: (panel: OverviewSwitcher) => void
+  setSelectedFilters: (token: ISearchToken[]) => void
+  selectedFilters: ISearchToken[]
+  isProcesing: boolean
+  processedTokens: ProcessedToken[]
+  tokenXAddress: PublicKey
+  tokenYAddress: PublicKey
+  leftRange: TickPlotPositionData
+  rightRange: TickPlotPositionData
+  tokens: {
+    assetAddress: PublicKey
+    balance: BN
+    tokenProgram?: PublicKey
+    symbol: string
+    address: PublicKey
+    decimals: number
+    name: string
+    logoURI: string
+    coingeckoId?: string
+    isUnknown?: boolean
+  }[]
+  walletStatus: Status
+  allPools: PoolWithAddress[]
+  currentPrice: number
+  tokenX: ILiquidityToken
+  tokenXPriceData?: TokenPriceData
+  tokenY: ILiquidityToken
+  tokenYPriceData?: TokenPriceData
+  fee: BN
+  min: number
+  max: number
+  ticksLoading: boolean
+  onConnectWallet: () => void
+  onDisconnectWallet: () => void
+  getPoolData: (pair: Pair) => void
+  setShouldNotUpdateRange: () => void
+  autoSwapPoolData: PoolWithAddress | null
+  autoSwapTicks: Tick[]
+  autoSwapTickMap: Tickmap | null
+  isLoadingAutoSwapPool: boolean
+  isLoadingAutoSwapPoolTicksOrTickMap: boolean
+  ticksData: PlotTickData[]
+  changeLiquiditySuccess: boolean
+  changeLiquidityInProgress: boolean
+  setChangeLiquiditySuccess: (value: boolean) => void
+  reloadHandler: () => void
+  isTimeoutError: boolean
+  changeLiquidity: (
+    liquidity: BN,
+    slippage: BN,
+    isAddLiquidity: boolean,
+    isClosePosition: boolean,
+    xAmount: BN,
+    yAmount: BN
+  ) => void
+  swapAndAddLiquidity: (
+    xAmount: BN,
+    yAmount: BN,
+    swapAmount: BN,
+    xToY: boolean,
+    byAmountIn: boolean,
+    estimatedPriceAfterSwap: BN,
+    crossedTicks: number[],
+    swapSlippage: BN,
+    positionSlippage: BN,
+    minUtilizationPercentage: BN,
+    poolIndex: number,
+    liquidity: BN
+  ) => void
+  positionLiquidity: BN
+  isChangeLiquidityModalShown: boolean
+  setIsChangeLiquidityModalShown: (value: boolean) => void
+  isAddLiquidity: boolean
+  setIsAddLiquidity: (value: boolean) => void
+  openPosition: (index: string) => void
+  prices: Record<string, number>
 }
 
 const Portfolio: React.FC<IProps> = ({
   isBalanceLoading,
+  showBanner,
+  handleCloseBanner,
+  isHiding,
+  setSelectedFilters,
+  selectedFilters,
   shouldDisable,
   handleSnackbar,
   data,
@@ -77,34 +165,68 @@ const Portfolio: React.FC<IProps> = ({
   showNoConnected = false,
   noConnectedBlockerProps,
   handleRefresh,
-  noInitialPositions,
   lockedData,
   currentNetwork,
   handleLockPosition,
   handleClosePosition,
   handleClaimFee,
-  tokensList,
   lockedLength,
   positionListAlignment,
   setPositionListAlignment,
   overviewSelectedTab,
-  handleOverviewSwitch
+  handleOverviewSwitch,
+  isProcesing,
+  processedTokens,
+  tokenXAddress,
+  tokenYAddress,
+  leftRange,
+  rightRange,
+  tokens,
+  walletStatus,
+  allPools,
+  currentPrice,
+  tokenX,
+  tokenXPriceData,
+  tokenY,
+  tokenYPriceData,
+  fee,
+  min,
+  max,
+  ticksLoading,
+  onConnectWallet,
+  onDisconnectWallet,
+  getPoolData,
+  setShouldNotUpdateRange,
+  autoSwapPoolData,
+  autoSwapTicks,
+  autoSwapTickMap,
+  isLoadingAutoSwapPool,
+  isLoadingAutoSwapPoolTicksOrTickMap,
+  ticksData,
+  changeLiquiditySuccess,
+  changeLiquidityInProgress,
+  setChangeLiquiditySuccess,
+  reloadHandler,
+  isTimeoutError,
+  changeLiquidity,
+  swapAndAddLiquidity,
+  positionLiquidity,
+  isChangeLiquidityModalShown,
+  setIsChangeLiquidityModalShown,
+  isAddLiquidity,
+  setIsAddLiquidity,
+  openPosition,
+  prices
 }) => {
   const { classes, cx } = useStyles()
 
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const location = useLocation()
-  const [selectedFilters, setSelectedFilters] = useState<ISearchToken[]>([])
   const isLg = useMediaQuery('@media (max-width: 1360px)')
   const isDownLg = useMediaQuery(theme.breakpoints.down('lg'))
   const isMb = useMediaQuery(theme.breakpoints.down('sm'))
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
-  const { processedTokens, isProcesing } = useProcessedTokens(
-    tokensList,
-    isBalanceLoading,
-    currentNetwork
-  )
 
   const setLiquidityPoolsAlignment = (val: LiquidityPools) => {
     setAlignment(val)
@@ -125,7 +247,6 @@ const Portfolio: React.FC<IProps> = ({
     newValue: OverviewSwitcher
   ) => {
     if (newValue === null) return
-    console.log(newValue)
     handleOverviewSwitch(newValue)
   }
 
@@ -202,12 +323,13 @@ const Portfolio: React.FC<IProps> = ({
   )
 
   const hidePlus = useMediaQuery(theme.breakpoints.down(350))
-  const currentData = useMemo(() => {
+
+  const { currentData, noInitialPositions } = useMemo(() => {
     if (alignment === LiquidityPools.Standard) {
-      return data
+      return { currentData: data, noInitialPositions: length === 0 }
     }
-    return lockedData
-  }, [alignment, data, lockedData])
+    return { currentData: lockedData, noInitialPositions: lockedLength === 0 }
+  }, [alignment, data, lockedData, length, lockedLength])
 
   const filteredData = useMemo(() => {
     if (selectedFilters.length === 0) return currentData
@@ -270,6 +392,7 @@ const Portfolio: React.FC<IProps> = ({
           handleClosePosition={handleClosePosition}
           handleClaimFee={handleClaimFee}
           createNewPosition={createNewPosition}
+          openPosition={openPosition}
         />
       )
     } else if (isLg && loading) {
@@ -314,6 +437,7 @@ const Portfolio: React.FC<IProps> = ({
           createNewPosition={() => {
             createNewPosition(element)
           }}
+          openPosition={() => openPosition(element.id)}
         />
       </Grid>
     ))
@@ -321,9 +445,57 @@ const Portfolio: React.FC<IProps> = ({
 
   return (
     <>
+      <ChangeLiquidityModal
+        open={isChangeLiquidityModalShown}
+        isAddLiquidity={isAddLiquidity}
+        setIsAddLiquidity={setIsAddLiquidity}
+        tokenX={tokenX}
+        tokenY={tokenY}
+        xToY={true}
+        inRange={min <= currentPrice && currentPrice <= max}
+        min={min}
+        max={max}
+        tvl={
+          tokenX.liqValue * (tokenXPriceData?.price ?? 0) +
+          tokenY.liqValue * (tokenYPriceData?.price ?? 0)
+        }
+        currentPrice={currentPrice ** 1}
+        onClose={() => setIsChangeLiquidityModalShown(false)}
+        tokenXAddress={tokenXAddress}
+        tokenYAddress={tokenYAddress}
+        fee={fee}
+        leftRange={leftRange.index}
+        rightRange={rightRange.index}
+        tokens={tokens}
+        walletStatus={walletStatus}
+        allPools={allPools}
+        isBalanceLoading={isBalanceLoading}
+        currentNetwork={currentNetwork}
+        ticksLoading={ticksLoading}
+        isTimeoutError={isTimeoutError}
+        getCurrentPlotTicks={reloadHandler}
+        onConnectWallet={onConnectWallet}
+        onDisconnectWallet={onDisconnectWallet}
+        getPoolData={getPoolData}
+        setShouldNotUpdateRange={setShouldNotUpdateRange}
+        autoSwapPoolData={autoSwapPoolData}
+        autoSwapTicks={autoSwapTicks}
+        autoSwapTickMap={autoSwapTickMap}
+        isLoadingAutoSwapPool={isLoadingAutoSwapPool}
+        isLoadingAutoSwapPoolTicksOrTickMap={isLoadingAutoSwapPoolTicksOrTickMap}
+        ticksData={ticksData}
+        changeLiquidity={changeLiquidity}
+        swapAndAddLiquidity={swapAndAddLiquidity}
+        success={changeLiquiditySuccess}
+        inProgress={changeLiquidityInProgress}
+        setChangeLiquiditySuccess={setChangeLiquiditySuccess}
+        positionLiquidity={positionLiquidity}
+      />
+
+      {showBanner && <ECBanner handleCloseBanner={handleCloseBanner} isHiding={isHiding} />}
       <Box className={classes.overviewContainer}>
         <Box>
-          <Grid display={'flex'} marginBottom={isDownLg ? '12px' : '20px'}>
+          <Grid display={'flex'} marginBottom={isDownLg ? '12px' : '16px'}>
             <Typography className={classes.overviewHeaderTitle}>Overview</Typography>
           </Grid>
         </Box>
@@ -331,7 +503,7 @@ const Portfolio: React.FC<IProps> = ({
         {isDownLg && !isMd && (
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <Overview poolAssets={data} />
+              <Overview poolAssets={data} prices={prices} />
               <Box className={classes.footer}>
                 <Box className={classes.footerItem}>{renderPositionDetails()}</Box>
               </Box>
@@ -408,7 +580,7 @@ const Portfolio: React.FC<IProps> = ({
             <Box>
               {overviewSelectedTab === OverviewSwitcher.Overview && (
                 <>
-                  <Overview poolAssets={data} />
+                  <Overview poolAssets={data} prices={prices} />
                   <Box className={classes.footer}>
                     <Box className={classes.footerItem}>{renderPositionDetails()}</Box>
                   </Box>
@@ -451,7 +623,7 @@ const Portfolio: React.FC<IProps> = ({
         {!isDownLg && (
           <>
             <Box display={'flex'}>
-              <Overview poolAssets={data} />
+              <Overview poolAssets={data} prices={prices} />
               <YourWallet
                 currentNetwork={currentNetwork}
                 handleSnackbar={handleSnackbar}
@@ -536,7 +708,7 @@ const Portfolio: React.FC<IProps> = ({
                     </Grid>
                   </TooltipHover>
                   <Button scheme='pink' onClick={onAddPositionClick}>
-                    <span className={classes.buttonText}>+ Add Position</span>
+                    <span className={classes.buttonText}>+ Add position</span>
                   </Button>
                 </Grid>
               </Grid>
@@ -574,7 +746,7 @@ const Portfolio: React.FC<IProps> = ({
                       </TooltipHover>
                     </Grid>
                     <Button scheme='pink' onClick={onAddPositionClick}>
-                      <span className={classes.buttonText}>{!hidePlus && '+ '}Add Position</span>
+                      <span className={classes.buttonText}>{!hidePlus && '+ '}Add position</span>
                     </Button>
                   </Grid>
                 </Grid>

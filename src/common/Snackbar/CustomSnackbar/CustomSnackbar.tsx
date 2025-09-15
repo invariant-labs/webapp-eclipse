@@ -2,7 +2,6 @@ import React, { useCallback, useMemo } from 'react'
 import { CustomContentProps, useSnackbar } from 'notistack'
 import { useDispatch } from 'react-redux'
 import { Grid } from '@mui/material'
-
 import { actions } from '@store/reducers/snackbars'
 import { NetworkType } from '@store/consts/static'
 import { colors } from '@static/theme'
@@ -60,7 +59,7 @@ const CustomSnackbar = React.forwardRef<HTMLDivElement, CustomContentProps & Cus
 
     const { closeSnackbar } = useSnackbar()
     const dispatch = useDispatch()
-    const { classes } = useStyles()
+    const { classes } = useStyles({})
 
     const handleDismiss = useCallback(() => {
       if (!snackbarId) return

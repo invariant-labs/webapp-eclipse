@@ -12,7 +12,7 @@ export const useStyles = makeStyles()(() => ({
     backgroundColor: `${colors.invariant.component} !important`,
     padding: '24px',
     [theme.breakpoints.down('sm')]: {
-      padding: '24px 12px'
+      padding: '24px 0px'
     },
 
     '&::-webkit-scrollbar': {
@@ -42,6 +42,10 @@ export const useStyles = makeStyles()(() => ({
       },
       marginBottom: '8px !important',
       marginTop: '8px !important',
+      [theme.breakpoints.down('sm')]: {
+        marginBottom: '0px !important',
+        marginTop: '0px !important'
+      },
       '&::after': {
         content: '""',
         position: 'absolute',
@@ -53,7 +57,10 @@ export const useStyles = makeStyles()(() => ({
         width: '100%',
         borderRadius: '24px',
         zIndex: 1,
-        background: colors.invariant.pinkGreenLinearGradientOpacity
+        background: colors.invariant.pinkGreenLinearGradientOpacity,
+        [theme.breakpoints.down('sm')]: {
+          borderRadius: 0
+        }
       }
     }
   },
@@ -67,6 +74,9 @@ export const useStyles = makeStyles()(() => ({
     gridTemplateColumns: '1fr 40px',
     alignItems: 'center',
     padding: '24px',
+    [theme.breakpoints.down('sm')]: {
+      padding: '24px 8px'
+    },
 
     '& .MuiAccordionSummary-content': {
       margin: 0
@@ -75,7 +85,10 @@ export const useStyles = makeStyles()(() => ({
       display: 'flex',
       justifyContent: 'center',
       zIndex: 5,
-      alignItems: 'center'
+      alignItems: 'center',
+      [theme.breakpoints.down('sm')]: {
+        marginLeft: 25
+      }
     },
     '& p': {
       color: colors.invariant.text,
@@ -88,6 +101,9 @@ export const useStyles = makeStyles()(() => ({
     color: colors.invariant.textGrey,
     fontSize: '20px',
     padding: '0px 24px 24px',
+    [theme.breakpoints.down('sm')]: {
+      padding: '0px 8px 24px'
+    },
     '& a': {
       color: colors.invariant.green,
       textDecoration: 'none',
