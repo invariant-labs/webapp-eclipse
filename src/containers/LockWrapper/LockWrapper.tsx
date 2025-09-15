@@ -57,6 +57,7 @@ export const LockWrapper: React.FC = () => {
     return displayYieldComparison(+printBN(marketData.lockedInvt, INVT_MAIN.decimals), +amountFrom)
   }, [marketData, amountFrom])
 
+  console.log(yieldIncomes)
   const tokenFrom: SwapToken = useMemo(
     () =>
       currentLockerTab === LockerSwitch.Lock

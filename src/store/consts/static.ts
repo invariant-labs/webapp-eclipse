@@ -477,7 +477,7 @@ export const muES_MAIN: Token = {
 export const INVT_TEST: Token = {
   tokenProgram: TOKEN_2022_PROGRAM_ID,
   symbol: 'INVT',
-  address: new PublicKey('GHcF3FdS9LtUEgzKmyz2XNDjSryLmZtNBch8ixbGdLR3'),
+  address: new PublicKey('G6akTE17fEDPXTvNyxcS1kxSdQnDL7bPH221He8eDbtc'),
   decimals: 4,
   name: 'Invariant',
   logoURI: invtLogo,
@@ -487,7 +487,7 @@ export const INVT_TEST: Token = {
 export const xINVT_TEST: Token = {
   tokenProgram: TOKEN_2022_PROGRAM_ID,
   symbol: 'xINVT',
-  address: new PublicKey('43Fd6ZdBxkUfqa6DSphjL9St2eyQVQZ7GisYExt8NTNc'),
+  address: new PublicKey('FaZTh693nDwEjWAh43GnLUveFLLfD6VKHGb6bFZqcg5D'),
   decimals: 4,
   name: 'xInvariant',
   logoURI: xInvtLogo,
