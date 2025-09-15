@@ -60,6 +60,14 @@ export const USDC_ADDRESS = {
   [NetworkType.Local]: emptyPublicKey
 }
 
+//TODO: REPLACE
+export const XINVT_ADDRESS = {
+  [NetworkType.Mainnet]: new PublicKey('43Fd6ZdBxkUfqa6DSphjL9St2eyQVQZ7GisYExt8NTNc'),
+  [NetworkType.Testnet]: new PublicKey('43Fd6ZdBxkUfqa6DSphjL9St2eyQVQZ7GisYExt8NTNc'),
+  [NetworkType.Devnet]: new PublicKey('43Fd6ZdBxkUfqa6DSphjL9St2eyQVQZ7GisYExt8NTNc'),
+  [NetworkType.Local]: emptyPublicKey
+}
+
 export const REFRESHER_INTERVAL = 30
 
 export const PRICE_DECIMAL = 24
