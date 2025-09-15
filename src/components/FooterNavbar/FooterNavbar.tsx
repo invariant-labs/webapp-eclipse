@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import {
   liquidityIcon,
   lqStakingIcon,
+  saleUnselectedIcon,
   statsIcon,
   swapArrowsIcon,
   tokenCreatorIcon,
@@ -98,6 +99,13 @@ export const FooterNavbar = () => {
       icon: walletIcon,
       url: 'portfolio',
       width: 26,
+      isLink: true
+    },
+    {
+      label: 'Lock',
+      icon: saleUnselectedIcon,
+      url: 'lock',
+      width: 34,
       isLink: true
     },
 

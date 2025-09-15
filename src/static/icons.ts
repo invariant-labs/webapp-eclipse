@@ -115,6 +115,7 @@ import saleSelectedIcon from './svg/sale-selected.svg'
 import saleUnselectedIcon from './svg/sale-unselected.svg'
 import InvtLogoIcon from './svg/INVT.svg'
 import xInvtLogoIcon from './svg/xINVT.svg'
+import lockIconGrey from './svg/lockIconGrey.svg'
 
 export {
   hornsUSDC,
@@ -233,7 +234,8 @@ export {
   saleSelectedIcon,
   saleUnselectedIcon,
   InvtLogoIcon,
-  xInvtLogoIcon
+  xInvtLogoIcon,
+  lockIconGrey
 }
 
 export const chainIcons = {

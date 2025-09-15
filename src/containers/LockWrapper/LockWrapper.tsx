@@ -28,6 +28,10 @@ import {
 } from '@store/selectors/xInvt'
 import { StatsLocker } from '@components/XInvtLocker/StatsLocker/StatsLocker'
 import useStyles from './styles'
+import { BN } from '@coral-xyz/anchor'
+import { useCountdown } from '@common/Timer/useCountdown'
+import { Timer } from '@common/Timer/Timer'
+import { typography } from '@static/theme'
 
 export const LockWrapper: React.FC = () => {
   const { classes } = useStyles()
@@ -47,6 +51,13 @@ export const LockWrapper: React.FC = () => {
   const [invtPrice, setInvtPrice] = useState(0)
   const [progress, setProgress] = useState<ProgressState>('none')
   const [priceLoading, setPriceLoading] = useState(false)
+
+  const startTimestamp = new BN(+(+new Date().valueOf() / 1000).toFixed(0) + 100000)
+
+  const targetDate = useMemo(() => new Date(startTimestamp.toNumber() * 1000), [startTimestamp])
+  const { hours, minutes, seconds } = useCountdown({
+    targetDate
+  })
 
   const amountFrom = useMemo(() => {
     if (currentLockerTab === LockerSwitch.Lock) return lockInput
@@ -131,6 +142,10 @@ export const LockWrapper: React.FC = () => {
 
   return (
     <Grid container className={classes.wrapper}>
+      <Box className={classes.banner}>
+        <Typography sx={{ ...typography.body1 }}>Lock ends in:</Typography>
+        <Timer hours={hours} minutes={minutes} seconds={seconds} isSmall width={130} />
+      </Box>
       <Box className={classes.titleWrapper}>
         <Box className={classes.titleTextWrapper}>
           <Typography component='h1'>INVT locking</Typography>
@@ -149,7 +164,6 @@ export const LockWrapper: React.FC = () => {
         </Box>
       </Box>
       <Box className={classes.panelsWrapper}>
-        <StatsLocker />
         <XInvtLocker
           walletStatus={walletStatus}
           tokens={tokens}
@@ -185,7 +199,14 @@ export const LockWrapper: React.FC = () => {
           tokenTo={tokenTo}
           priceLoading={priceLoading}
           invtPrice={invtPrice}
-          unlockDisabled={false}
+          unlockDisabled={true}
+          startTimestamp={new BN(0)}
+        />
+        <StatsLocker
+          percentage={20}
+          threeMonthsYield='10'
+          totalStaked='4,299'
+          yourStaked='73,238'
         />
       </Box>
     </Grid>

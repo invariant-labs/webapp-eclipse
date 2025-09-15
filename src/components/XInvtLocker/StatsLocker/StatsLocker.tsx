@@ -1,69 +1,109 @@
-import { Box, Typography, useMediaQuery } from '@mui/material'
+import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import useStyles from './style'
-import { Separator } from '@common/Separator/Separator'
 import { colors, theme } from '@static/theme'
+import { ProgressBar } from '@common/ProgressBar/ProgressBar'
+import React from 'react'
 
-export const StatsLocker = () => {
+interface StatsLocker {
+  percentage: number
+  threeMonthsYield: string
+  totalStaked: string
+  yourStaked: string
+}
+export const StatsLocker: React.FC<StatsLocker> = ({
+  percentage,
+  threeMonthsYield,
+  totalStaked,
+  yourStaked
+}) => {
   const { classes } = useStyles()
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
 
-  const MobileView = () => (
-    <>
-      <Box className={classes.mobileStatsBox}>
-        <Typography component='h4'>Total INVT staked</Typography>
-        <Typography component='h2'>$2,933,732.38</Typography>
-      </Box>
-      <Box className={classes.mobileStatsBox}>
-        <Typography component='h4'>3 months yield</Typography>
-        <Typography component='h2'>10%</Typography>
-      </Box>
-      <Box
-        className={classes.mobileStatsBox}
-        sx={{
-          background: 'linear-gradient(135deg, #202946 0%, rgba(46, 224, 154, 0.1) 100%)'
-        }}>
-        <Typography component='h4'>Your share</Typography>
-        <Typography component='h2'>$2,933,732.38</Typography>
-      </Box>
-      <Box className={classes.mobileStatsBox}>
-        <Typography component='h4'>Lock period</Typography>
-        <Typography component='h2'>3 months</Typography>
-      </Box>
-    </>
-  )
-  const DesktopView = () => (
-    <>
-      <Typography component='h5'>Your Stats</Typography>
-      <Box className={classes.yourStatsBoxesWrapper} mb={'auto'}>
-        <Box className={classes.statsBox}>
-          <Typography component='h3'>3 months yield</Typography>
-          <Typography component='h2'>10 %</Typography>
+  const isSm = useMediaQuery(theme.breakpoints.down('sm'))
+  const WrapperComponent = isSm ? Grid : React.Fragment
+  const wrapperProps = isSm ? { className: classes.wrapper } : {}
+  return (
+    <WrapperComponent {...wrapperProps}>
+      {isSm && <Typography component='h5'>Global Stats</Typography>}
+      <Box className={classes.statsWrapper}>
+        <Grid className={classes.titleWrapper}>
+          <Typography component='h5'>Global Stats</Typography>
+        </Grid>
+        <Box className={classes.yourStatsBoxesWrapper} mt={'auto'}>
+          <Box className={classes.statsBox}>
+            <Typography component='h3' color={colors.invariant.textGrey}>
+              Rewards
+            </Typography>
+            <Typography
+              style={{ color: colors.invariant.green }}
+              className={classes.greenText}
+              component='h2'>
+              1,5M INVT
+            </Typography>
+          </Box>
+          <Box className={classes.statsBox}>
+            <Typography component='h3' color={colors.invariant.textGrey}>
+              3 months yield:{' '}
+            </Typography>
+            <Typography style={{ color: colors.invariant.green }} component='h2'>
+              {threeMonthsYield}%
+            </Typography>
+          </Box>
         </Box>
-        <Box className={classes.statsBox}>
-          <Typography component='h3'>Total INVT staked</Typography>
-          <Typography component='h2'>$2,933,732.38</Typography>
+        <Box className={classes.yourStatsBoxesWrapper}>
+          <Box className={classes.statsBox}>
+            <Typography component='h3'>Total INVT staked</Typography>
+            <Typography component='h2'>{totalStaked}</Typography>
+          </Box>
+          <Box className={classes.statsBox}>
+            <Typography component='h3'>Deposit limit</Typography>
+            <Typography component='h2'>3M INVT</Typography>
+          </Box>
         </Box>
+        <Box mt='auto' mb='auto'>
+          <Typography component='h3' color={colors.invariant.textGrey}>
+            Total INVT deposit
+          </Typography>
+          <ProgressBar percentage={percentage} gap={1} />
+        </Box>
+        {!isSm && (
+          <>
+            <Typography component='h5' mt={'auto'}>
+              Your Stats
+            </Typography>
+
+            <Box className={classes.yourStatsBoxesWrapper} flexDirection={'column'}>
+              <Box className={classes.singleBoxStat}>
+                <Typography component='h3'>Your INVT staked</Typography>
+                <Typography component='h2'>{yourStaked} INVT</Typography>
+              </Box>
+              <Box className={classes.singleBoxStat}>
+                <Typography component='h3'>Your predicted income</Typography>
+                <Typography component='h2'>123 INVT</Typography>
+              </Box>
+            </Box>
+          </>
+        )}
       </Box>
 
-      <Separator isHorizontal color={colors.invariant.light} size={'100%'} width={1} />
-      <Typography component='h5' mt={'auto'}>
-        Global Stats
-      </Typography>
-      <Box className={classes.singleBoxStat}>
-        <Typography component='h3'>Your INVT staked</Typography>
-        <Typography component='h2'>73,238 INVT</Typography>
-      </Box>
-      <Box className={classes.yourStatsBoxesWrapper}>
-        <Box className={classes.globalStatsBox}>
-          <Typography component='h3'>Your share</Typography>
-          <Typography component='h2'>7.23%</Typography>
+      {isSm && (
+        <Box className={classes.mobileStatsWrapper}>
+          <Typography component='h5' mt={'auto'}>
+            Your Stats
+          </Typography>
+          <Box className={classes.statsWrapper}>
+            <Box className={classes.globalStatsBox}>
+              <Typography component='h3'>Your INVT staked</Typography>
+              <Typography component='h2'>{yourStaked} INVT</Typography>
+            </Box>
+            <Box className={classes.yourStatsBoxesWrapper}>
+              <Box className={classes.globalStatsBox}>
+                <Typography component='h3'>Your predicted income</Typography>
+                <Typography component='h2'>123 INVT</Typography>
+              </Box>
+            </Box>
+          </Box>
         </Box>
-        <Box className={classes.globalStatsBox}>
-          <Typography component='h3'>Lock period</Typography>
-          <Typography component='h2'>3 months</Typography>
-        </Box>
-      </Box>
-    </>
+      )}
+    </WrapperComponent>
   )
-  return <Box className={classes.statsWrapper}>{isMobile ? <MobileView /> : <DesktopView />}</Box>
 }
