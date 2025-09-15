@@ -327,6 +327,31 @@ export const useStyles = makeStyles()(() => ({
       flexDirection: 'column',
       alignItems: 'center'
     }
+  },
+  banner: {
+    minHeight: 48,
+    width: '100%',
+    maxWidth: 1040,
+    boxSizing: 'border-box',
+    background: 'rgba(239, 208, 99, 0.2)',
+    border: `2px solid ${colors.invariant.yellow}`,
+    borderRadius: 24,
+    color: colors.invariant.yellow,
+    paddingInline: 24,
+    display: 'flex',
+    justifyContent: 'center',
+
+    gap: 4,
+    alignItems: 'center',
+    transition: 'height 300ms',
+    marginBottom: 24,
+
+    '& *': {
+      color: colors.invariant.yellow
+    },
+    [theme.breakpoints.down('sm')]: {
+      paddingInline: 8
+    }
   }
 }))
 

@@ -43,6 +43,14 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     borderRadius: 8,
     gap: 4,
     alignItems: 'center'
+  },
+  timerWrapper: {
+    border: `1px solid ${colors.invariant.warning}`,
+    padding: '12px 8px',
+    borderRadius: 12,
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center'
   }
 }))
 

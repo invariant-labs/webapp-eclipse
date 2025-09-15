@@ -14,9 +14,10 @@ import AnimatedButton, { ProgressState } from '@common/AnimatedButton/AnimatedBu
 import { LockerSwitch } from '@store/consts/types'
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
 import { LockLiquidityPayload } from '@store/reducers/xInvt'
-import { ProgressBar } from '@common/ProgressBar/ProgressBar'
 import { colors, typography } from '@static/theme'
 import { LockIcon } from '@static/componentIcon/LockIcon'
+import TransactionDetails from './TransactionDetails/TransactionDetails'
+import { Separator } from '@common/Separator/Separator'
 
 export interface ILocker {
   walletStatus: Status
@@ -40,6 +41,7 @@ export interface ILocker {
   priceLoading: boolean
   invtPrice: number
   unlockDisabled: boolean
+  startTimestamp: BN
 }
 
 export const XInvtLocker: React.FC<ILocker> = ({
@@ -64,8 +66,14 @@ export const XInvtLocker: React.FC<ILocker> = ({
   priceLoading,
   invtPrice,
   unlockDisabled
+  // startTimestamp
 }) => {
   const { classes } = useStyles()
+
+  // const targetDate = useMemo(() => new Date(startTimestamp.toNumber() * 1000), [startTimestamp])
+  // const { hours, minutes, seconds } = useCountdown({
+  //   targetDate
+  // })
 
   const amountFrom = useMemo(() => {
     if (currentLockerTab === LockerSwitch.Lock) return lockInput
@@ -283,22 +291,24 @@ export const XInvtLocker: React.FC<ILocker> = ({
         disabled={unlockDisabled}
       />
 
-      <Box display='flex' marginTop={2} gap={0} flexDirection='column'>
-        {/* <Typography sx={{ color: colors.invariant.text, ...typography.body1 }}>
-          Lock deadline
-        </Typography> */}
-        <ProgressBar
-          height={14}
-          percentage={90}
-          displayCenterText={false}
-          gap={1}
-          startValue='Lock available until'
-          startUnit=''
-          endUnit=' days'
-          progressBarColor={colors.invariant.silver}
-        />
-      </Box>
-
+      {/* <Box display='flex' marginTop={2} gap={0} flexDirection='column'>
+        <Box className={classes.timerWrapper}>
+          <Typography sx={{ color: colors.invariant.text, ...typography.body1 }}>
+            Lock ends in:
+          </Typography>
+          <Timer hours={hours} minutes={minutes} seconds={seconds} isSmall width={130} />
+        </Box>
+      </Box> */}
+      <Separator isHorizontal width={1} color={colors.invariant.light} margin='16px 0' />
+      <TransactionDetails
+        tokenToAmount={amountFrom}
+        tokenFromTicker={tokenFrom.symbol}
+        tokenToTicker={tokenTo.symbol}
+        stakedDataLoading={false}
+        currentYield={'145%'}
+        yieldChange='143.3%'
+        income='212'
+      />
       {walletStatus !== Status.Initialized ? (
         <ChangeWalletButton
           margin={'24px 0 0 0'}

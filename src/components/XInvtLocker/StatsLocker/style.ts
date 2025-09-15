@@ -50,7 +50,10 @@ const useStyles = makeStyles()(() => ({
   },
   yourStatsBoxesWrapper: {
     display: 'flex',
-    gap: 20
+    gap: 20,
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column'
+    }
   },
   statsBox: {
     display: 'flex',
@@ -60,12 +63,12 @@ const useStyles = makeStyles()(() => ({
     boxSizing: 'border-box',
     height: 95,
     width: '100%',
-    maxWidth: 242,
     gap: 12,
     border: `1px solid ${colors.invariant.light}`,
     borderRadius: 24,
     [theme.breakpoints.down('sm')]: {
-      height: 80
+      height: 80,
+      width: '100%'
     },
     '& h3': {
       fontWeight: 400,
@@ -74,7 +77,7 @@ const useStyles = makeStyles()(() => ({
       letterSpacing: '-3%',
       color: colors.invariant.textGrey,
       [theme.breakpoints.down('sm')]: {
-        ...typography.caption2
+        ...typography.body2
       }
     },
     '& h2': {
@@ -85,13 +88,15 @@ const useStyles = makeStyles()(() => ({
       }
     }
   },
+  greenText: {
+    color: colors.invariant.green
+  },
   singleBoxStat: {
     display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
+    padding: '16px 24px',
     alignItems: 'center',
     boxSizing: 'border-box',
-    height: 95,
     width: '100%',
     maxWidth: 504,
     gap: 12,
@@ -107,7 +112,7 @@ const useStyles = makeStyles()(() => ({
       letterSpacing: '-3%',
       color: colors.invariant.textGrey,
       [theme.breakpoints.down('sm')]: {
-        ...typography.caption2
+        ...typography.body2
       }
     },
     '& h2': {
@@ -129,7 +134,6 @@ const useStyles = makeStyles()(() => ({
       height: 80
     },
     width: '100%',
-    maxWidth: 242,
     gap: 12,
     borderRadius: 24,
     background: colors.invariant.newDark,
@@ -140,7 +144,7 @@ const useStyles = makeStyles()(() => ({
       letterSpacing: '-3%',
       color: colors.invariant.textGrey,
       [theme.breakpoints.down('sm')]: {
-        ...typography.caption2
+        ...typography.body2
       }
     },
     '& h2': {
@@ -155,10 +159,9 @@ const useStyles = makeStyles()(() => ({
 
   lockPeriod: {
     display: 'flex',
-    // background: colors.invariant.newDark,
     border: `1px solid ${colors.invariant.light}`,
     justifyContent: 'center',
-    padding: '8px 24px',
+    height: 95,
     borderRadius: 24,
     gap: 4,
     flex: 1,
@@ -181,6 +184,14 @@ const useStyles = makeStyles()(() => ({
       ...typography.heading4,
       color: colors.invariant.text
     }
+  },
+  timerWrapper: {
+    border: `1px solid ${colors.invariant.green}`,
+    padding: '12px 8px',
+    borderRadius: 12,
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center'
   }
 }))
 
