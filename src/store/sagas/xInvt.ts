@@ -471,8 +471,6 @@ export function* getInvtStats() {
   const xInvtProgram = yield* call(getXInvtLockerProgram, networkType, rpc, wallet as IWallet)
   try {
     const invtState = yield* call([xInvtProgram, xInvtProgram.getState])
-    console.log(invtState.tokenMint.toBase58())
-    console.log(invtState.lockedTokenMint.toBase58())
     // const stateAddress = xInvtProgram.getStateAddress()
 
     // console.log(stateAddress)

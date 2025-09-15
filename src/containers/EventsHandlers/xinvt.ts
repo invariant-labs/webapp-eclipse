@@ -3,11 +3,12 @@ import { useEffect } from 'react'
 import { network, rpcAddress, status } from '@store/selectors/solanaConnection'
 import { Status } from '@store/reducers/solanaConnection'
 import { IWallet } from '@invariant-labs/sdk-eclipse'
-import { ROUTES } from '@utils/utils'
+import { printBN, ROUTES } from '@utils/utils'
 import { getEclipseWallet } from '@utils/web3/wallet'
 import { useLocation } from 'react-router-dom'
 import { getXInvtLockerProgram } from '@utils/web3/programs/amm'
 import { actions, InvtMarketData } from '@store/reducers/xInvt'
+import { INVT_MAIN } from '@store/consts/static'
 
 const XInvtEvents = () => {
   const dispatch = useDispatch()
@@ -32,7 +33,7 @@ const XInvtEvents = () => {
       const invtStats: InvtMarketData = {
         burnEndTime: xinvtState.burnEndTime,
         burnStartTime: xinvtState.burnStartTime,
-        lockedInvt: xinvtState.lockedInvt,
+        lockedInvt: +printBN(xinvtState.lockedInvt, INVT_MAIN.decimals),
         mintEndTime: xinvtState.mintEndTime,
         mintStartTime: xinvtState.mintStartTime
       }

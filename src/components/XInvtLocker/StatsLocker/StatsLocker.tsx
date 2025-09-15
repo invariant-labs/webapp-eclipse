@@ -77,11 +77,11 @@ export const StatsLocker: React.FC<StatsLocker> = ({ statsData, userLockedInvt }
                 <Typography component='h2'>{userLockedInvt} INVT</Typography>
               </Box>
               <Box className={classes.singleBoxStat}>
-                <Typography component='h3'>Your predicted income</Typography>
+                <Typography component='h3'>Your predicted income </Typography>
                 <Typography component='h2'>
                   {formatNumberWithSuffix(
                     statsData.currentStakeInfo.rewardPerToken * userLockedInvt + userLockedInvt
-                  )}
+                  )}{' '}
                   INVT
                 </Typography>
               </Box>
@@ -102,11 +102,11 @@ export const StatsLocker: React.FC<StatsLocker> = ({ statsData, userLockedInvt }
             </Box>
             <Box className={classes.yourStatsBoxesWrapper}>
               <Box className={classes.globalStatsBox}>
-                <Typography component='h3'>Your predicted income</Typography>
+                <Typography component='h3'>Your predicted income </Typography>
                 <Typography component='h2'>
                   {formatNumberWithSuffix(
                     statsData.currentStakeInfo.rewardPerToken * userLockedInvt + userLockedInvt
-                  )}
+                  )}{' '}
                   INVT
                 </Typography>
               </Box>
