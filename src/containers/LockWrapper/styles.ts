@@ -346,6 +346,10 @@ export const useStyles = makeStyles()(() => ({
     transition: 'height 300ms',
     marginBottom: 24,
 
+    [theme.breakpoints.down('md')]: {
+      maxWidth: 510
+    },
+
     '& *': {
       color: colors.invariant.yellow
     },

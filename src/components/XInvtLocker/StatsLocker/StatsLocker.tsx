@@ -1,31 +1,22 @@
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import useStyles from './style'
-import { colors, theme, typography } from '@static/theme'
+import { colors, theme } from '@static/theme'
 import { ProgressBar } from '@common/ProgressBar/ProgressBar'
-import React, { useMemo } from 'react'
-import { Timer } from '@common/Timer/Timer'
-import { useCountdown } from '@common/Timer/useCountdown'
-import { BN } from '@coral-xyz/anchor'
+import React from 'react'
 
 interface StatsLocker {
   percentage: number
   threeMonthsYield: string
   totalStaked: string
   yourStaked: string
-  startTimestamp: BN
 }
 export const StatsLocker: React.FC<StatsLocker> = ({
   percentage,
   threeMonthsYield,
   totalStaked,
-  yourStaked,
-  startTimestamp
+  yourStaked
 }) => {
   const { classes } = useStyles()
-  const targetDate = useMemo(() => new Date(startTimestamp.toNumber() * 1000), [startTimestamp])
-  const { hours, minutes, seconds } = useCountdown({
-    targetDate
-  })
 
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
   const WrapperComponent = isSm ? Grid : React.Fragment
@@ -34,14 +25,6 @@ export const StatsLocker: React.FC<StatsLocker> = ({
     <WrapperComponent {...wrapperProps}>
       {isSm && <Typography component='h5'>Global Stats</Typography>}
       <Box className={classes.statsWrapper}>
-        <Box display='flex' gap={0} flexDirection='column'>
-          <Box className={classes.timerWrapper}>
-            <Typography sx={{ color: colors.invariant.text, ...typography.body1 }}>
-              Lock ends in
-            </Typography>
-            <Timer hours={hours} minutes={minutes} seconds={seconds} isSmall width={130} />
-          </Box>
-        </Box>
         <Grid className={classes.titleWrapper}>
           <Typography component='h5'>Global Stats</Typography>
         </Grid>
@@ -76,8 +59,7 @@ export const StatsLocker: React.FC<StatsLocker> = ({
             <Typography component='h2'>3M INVT</Typography>
           </Box>
         </Box>
-
-        <Box>
+        <Box mt='auto' mb='auto'>
           <Typography component='h3' color={colors.invariant.textGrey}>
             Total INVT deposit
           </Typography>

@@ -39,7 +39,7 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
       <Box display='flex' justifyContent='space-between' alignItems='center' mt='16px'>
         <Typography className={classes.label}>Yield change impact</Typography>
         <Typography className={classes.value}>
-          {currentYield} {yieldChange}
+          {currentYield} ⟶ {yieldChange}
         </Typography>
       </Box>
       <Box display='flex' justifyContent='space-between' alignItems='center' mt='16px'>

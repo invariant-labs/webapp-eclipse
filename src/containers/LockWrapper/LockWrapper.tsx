@@ -194,7 +194,6 @@ export const LockWrapper: React.FC = () => {
           threeMonthsYield='10'
           totalStaked='4,299'
           yourStaked='73,238'
-          startTimestamp={new BN(startTimestamp)}
         />
       </Box>
     </Grid>
