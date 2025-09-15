@@ -494,7 +494,7 @@ export function* getInvtStats() {
 
     yield* put(
       actions.setCurrentStats({
-        totalXInvt: +printBN(invtState.lockedInvt, xINVT_MAIN.decimals),
+        lockedInvt: +printBN(invtState.lockedInvt, xINVT_MAIN.decimals),
         burnEndTime: invtState.burnEndTime.toString(),
         burnStartTime: invtState.burnStartTime.toString(),
         mintEndTime: invtState.mintEndTime.toString(),
