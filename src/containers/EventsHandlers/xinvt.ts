@@ -41,7 +41,7 @@ const XInvtEvents = () => {
   }, [dispatch, networkStatus, xinvtProgram, location.pathname])
 
   useEffect(() => {
-    if (!location.pathname.startsWith(ROUTES.SALE)) {
+    if (!location.pathname.startsWith(ROUTES.LOCK)) {
       const { stateAddress } = xinvtProgram.getStateAddress()
       xinvtProgram.program.account.state.unsubscribe(stateAddress)
     }

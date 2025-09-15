@@ -12,7 +12,7 @@ import { actions, LockLiquidityPayload } from '@store/reducers/xInvt'
 import { actions as walletActions } from '@store/reducers/solanaWallet'
 import { network } from '@store/selectors/solanaConnection'
 import { INVT_MAIN, xINVT_MAIN } from '@store/consts/static'
-import { calculateYield, getTokenPrice, printBN, YieldIncome } from '@utils/utils'
+import { displayYieldComparison, getTokenPrice, printBN } from '@utils/utils'
 import { LockerSwitch } from '@store/consts/types'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { refreshIcon } from '@static/icons'
@@ -44,7 +44,6 @@ export const LockWrapper: React.FC = () => {
   const success = useSelector(successState)
   const currentLockerTab = useSelector(lockerTab)
 
-  const [_yieldIncomes, setYieldIncomes] = useState<YieldIncome>()
   const [invtPrice, setInvtPrice] = useState(0)
   const [progress, setProgress] = useState<ProgressState>('none')
   const [priceLoading, setPriceLoading] = useState(false)
@@ -54,14 +53,9 @@ export const LockWrapper: React.FC = () => {
     return unlockInput
   }, [currentLockerTab, lockInput, unlockInput])
 
-  useEffect(() => {
-    const yieldIncomes = calculateYield(
-      +printBN(marketData.lockedInvt, INVT_MAIN.decimals),
-      +amountFrom
-    )
-
-    setYieldIncomes(yieldIncomes)
-  }, [marketData])
+  const yieldIncomes = useMemo(() => {
+    return displayYieldComparison(+printBN(marketData.lockedInvt, INVT_MAIN.decimals), +amountFrom)
+  }, [marketData, amountFrom])
 
   const tokenFrom: SwapToken = useMemo(
     () =>

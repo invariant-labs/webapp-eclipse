@@ -2726,9 +2726,9 @@ export function calculateYield(currentlyStaked: number, userStakeAmount: number)
   let currentReward = 0
 
   if (currentlyStaked > 0) {
-    const hypotheticalShare = 1 / currentlyStaked
-    currentReward = hypotheticalShare * TOTAL_REWARDS
-    currentYield = (currentReward / 1) * 100
+    const rewardPerToken = TOTAL_REWARDS / currentlyStaked
+    currentReward = rewardPerToken
+    currentYield = (rewardPerToken / 1) * 100
   }
 
   let projectedYield = 0
@@ -2745,5 +2745,34 @@ export function calculateYield(currentlyStaked: number, userStakeAmount: number)
     currentReward: Math.round(currentReward * 100) / 100,
     projectedYield: Math.round(projectedYield * 100) / 100,
     projectedReward: Math.round(projectedReward * 100) / 100
+  }
+}
+
+export function displayYieldComparison(currentlyStaked: number, userStakeAmount: number) {
+  const result = calculateYield(currentlyStaked, userStakeAmount)
+
+  return {
+    currentStakeInfo: {
+      totalStaked: currentlyStaked,
+      yieldPerToken: result.currentYield + '%',
+      rewardPerToken: result.currentReward
+    },
+    userProjection: {
+      userStakeAmount: userStakeAmount,
+      userShare:
+        currentlyStaked + userStakeAmount > 0
+          ? Math.round((userStakeAmount / (currentlyStaked + userStakeAmount)) * 100 * 100) / 100 +
+            '%'
+          : '0%',
+      expectedYield: result.projectedYield + '%',
+      expectedReward: result.projectedReward
+    },
+    impact: {
+      yieldChange:
+        result.currentYield > 0
+          ? Math.round((result.projectedYield - result.currentYield) * 100) / 100 + '%'
+          : 'N/A',
+      newStakeSize: currentlyStaked + userStakeAmount
+    }
   }
 }
