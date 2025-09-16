@@ -21,9 +21,11 @@ export const StatsLocker: React.FC<StatsLocker> = ({ statsData, userLockedInvt, 
     <WrapperComponent {...wrapperProps}>
       {isSm && <Typography component='h5'>Global Stats</Typography>}
       <Box className={classes.statsWrapper}>
-        <Grid className={classes.titleWrapper}>
-          <Typography component='h5'>Global Stats</Typography>
-        </Grid>
+        {!isSm && (
+          <Grid className={classes.titleWrapper}>
+            <Typography component='h5'>Global Stats</Typography>
+          </Grid>
+        )}
         <Box className={classes.yourStatsBoxesWrapper} mt={'auto'}>
           <Box className={classes.statsBox}>
             <Typography component='h3' color={colors.invariant.textGrey}>
@@ -120,9 +122,7 @@ export const StatsLocker: React.FC<StatsLocker> = ({ statsData, userLockedInvt, 
 
       {isSm && (
         <Box className={classes.mobileStatsWrapper}>
-          <Typography component='h5' mt={'auto'}>
-            Your Stats
-          </Typography>
+          <Typography component='h5'>Your Stats</Typography>
           <Box className={classes.statsWrapper}>
             <Box className={classes.globalStatsBox}>
               <Typography component='h3'>Your INVT staked</Typography>

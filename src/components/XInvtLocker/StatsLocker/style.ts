@@ -184,14 +184,6 @@ const useStyles = makeStyles()(() => ({
       ...typography.heading4,
       color: colors.invariant.text
     }
-  },
-  timerWrapper: {
-    border: `1px solid ${colors.invariant.green}`,
-    padding: '12px 8px',
-    borderRadius: 12,
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center'
   }
 }))
 
