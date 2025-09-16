@@ -31,6 +31,7 @@ import {
 import { StatsLocker } from '@components/XInvtLocker/StatsLocker/StatsLocker'
 import useStyles from './styles'
 import DynamicBanner from '@components/DynamicBanner/DynamicBanner'
+
 export interface BannerState {
   key: BannerPhase
   text: string
@@ -56,8 +57,17 @@ export const LockWrapper: React.FC = () => {
   const [progress, setProgress] = useState<ProgressState>('none')
   const [priceLoading, setPriceLoading] = useState(false)
   const [bannerInitialLoading, setBannerInitialLoading] = useState(true)
+  const [currentTime, setCurrentTime] = useState(Math.floor(Date.now() / 1000))
   const depositLoading = useSelector(lockOperationLoading)
   const statsLoading = useSelector(invtStatsLoading)
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(Math.floor(Date.now() / 1000))
+    }, 1000)
+
+    return () => clearInterval(timer)
+  }, [])
 
   const amountFrom = useMemo(() => {
     if (currentLockerTab === LockerSwitch.Lock) return lockInput
@@ -115,7 +125,6 @@ export const LockWrapper: React.FC = () => {
   useEffect(() => {
     dispatch(walletActions.getBalance())
     dispatch(actions.getCurrentStats())
-
     fetchPrices()
   }, [dispatch])
   useEffect(() => {
@@ -151,48 +160,57 @@ export const LockWrapper: React.FC = () => {
       clearTimeout(timeoutId2)
     }
   }, [success, isInProgress])
-  const currentUnix = Math.floor(Date.now() / 1000)
 
   const bannerState: BannerState = useMemo(() => {
-    const mintStart = marketData?.mintStartTime ? +marketData.mintStartTime : 0
-    const mintEnd = marketData?.mintEndTime ? +marketData.mintEndTime : 0
-    const burnStart = marketData?.burnStartTime ? +marketData.burnStartTime : 0
-    const burnEnd = marketData?.burnEndTime ? +marketData.burnEndTime : 0
+    // const mintStart = marketData?.mintStartTime ? +marketData.mintStartTime : 0
+    // const mintEnd = marketData?.mintEndTime ? +marketData.mintEndTime : 0
+    // const burnStart = marketData?.burnStartTime ? +marketData.burnStartTime : 0
+    // const burnEnd = marketData?.burnEndTime ? +marketData.burnEndTime : 0
+    const CYCLE_DURATION = 40
+    const PHASE_DURATION = 10
 
-    if (currentUnix < mintStart) {
+    const cyclePosition = currentTime % CYCLE_DURATION
+
+    const cycleStart = currentTime - cyclePosition
+
+    const mintEnd = cycleStart + PHASE_DURATION
+    const burnStart = cycleStart + PHASE_DURATION * 2
+    const burnEnd = cycleStart + PHASE_DURATION * 3
+
+    if (cyclePosition < PHASE_DURATION) {
       return {
         key: BannerPhase.beforeStartPhase,
         text: 'INVT locking available in:',
-        timestamp: mintStart
-      }
-    }
-
-    if (currentUnix < mintEnd) {
-      return {
-        key: BannerPhase.lockPhase,
-        text: 'Lock ends in:',
         timestamp: mintEnd
       }
     }
 
-    if (currentUnix < burnStart) {
+    if (cyclePosition < PHASE_DURATION * 2) {
       return {
-        key: BannerPhase.yieldPhase,
-        text: 'Redeem available in:',
+        key: BannerPhase.lockPhase,
+        text: 'Lock ends in:',
         timestamp: burnStart
       }
     }
 
-    if (currentUnix < burnEnd) {
+    if (cyclePosition < PHASE_DURATION * 3) {
       return {
-        key: BannerPhase.burningPhase,
-        text: 'Burn ends in:',
+        key: BannerPhase.yieldPhase,
+        text: 'Redeem available in:',
         timestamp: burnEnd
       }
     }
 
+    if (cyclePosition < PHASE_DURATION * 4) {
+      return {
+        key: BannerPhase.burningPhase,
+        text: 'Burn ends in:',
+        timestamp: cycleStart + CYCLE_DURATION
+      }
+    }
+
     return { key: BannerPhase.endPhase, text: 'Burn ended', timestamp: 0 }
-  }, [marketData, currentUnix])
+  }, [currentTime])
 
   return (
     <Grid container className={classes.wrapper}>
@@ -251,7 +269,7 @@ export const LockWrapper: React.FC = () => {
           tokenTo={tokenTo}
           priceLoading={priceLoading}
           invtPrice={invtPrice}
-          unlockDisabled={true}
+          unlockDisabled={false}
           statsData={yieldIncomes}
           statsLoading={statsLoading}
         />
