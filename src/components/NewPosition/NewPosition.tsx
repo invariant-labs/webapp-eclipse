@@ -876,7 +876,10 @@ export const NewPosition: React.FC<INewPosition> = ({
     isWaitingForNewPool
 
   const isPriceWarningVisible =
-    (showPriceWarning || oraclePriceWarning) && !blocked && !isLoadingTicksOrTickmap
+    (showPriceWarning || oraclePriceWarning) &&
+    !blocked &&
+    !isLoadingTicksOrTickmap &&
+    suggestedPrice > 0
 
   const onAddLiquidity = async () => {
     if (isPriceWarningVisible) {
