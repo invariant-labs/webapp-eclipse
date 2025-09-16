@@ -2,7 +2,7 @@ import React from 'react'
 import { Box } from '@mui/system'
 import { Skeleton, Typography } from '@mui/material'
 import useStyles from './style'
-import { formatNumberWithSuffix } from '@utils/utils'
+import { formatNumberWithSuffix, trimZeros } from '@utils/utils'
 
 interface ITransactionDetails {
   tokenFromTicker: string
@@ -27,7 +27,6 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
 }) => {
   const { classes } = useStyles()
 
-  const isYieldDifference = yieldChange.toFixed(2) !== currentYield.toFixed(2)
   return (
     <Box className={classes.wrapper}>
       <Box display='flex' justifyContent='space-between' alignItems='center'>
@@ -46,9 +45,9 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
           <Skeleton width={125} height={24} variant='rounded' sx={{ borderRadius: '8px' }} />
         ) : (
           <Typography className={classes.value}>
-            {isYieldDifference
-              ? currentYield.toFixed(2) + ' %' + ' ⟶ ' + yieldChange.toFixed(2) + ' %'
-              : yieldChange.toFixed(2) + ' %'}
+            {!!tokenFromAmount
+              ? currentYield.toFixed(2) + '%' + ' ⟶ ' + yieldChange.toFixed(2) + '%'
+              : '-'}
           </Typography>
         )}
       </Box>
@@ -58,7 +57,8 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
           <Skeleton width={125} height={24} variant='rounded' sx={{ borderRadius: '8px' }} />
         ) : (
           <Typography className={classes.greenValue}>
-            {tokenFromAmount ? tokenFromAmount + ' +' : ''} {formatNumberWithSuffix(income)} INVT
+            {tokenFromAmount ? trimZeros(tokenFromAmount) + ' +' : ''}{' '}
+            {formatNumberWithSuffix(income)} INVT
           </Typography>
         )}
       </Box>

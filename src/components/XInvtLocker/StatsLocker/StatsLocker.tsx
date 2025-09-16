@@ -53,9 +53,9 @@ export const StatsLocker: React.FC<StatsLocker> = ({ statsData, userLockedInvt, 
         </Box>
         <Box className={classes.yourStatsBoxesWrapper}>
           <Box className={classes.statsBox}>
-            <Typography component='h3'>Total INVT staked</Typography>
+            <Typography component='h3'>Total INVT deposit</Typography>
             {loading ? (
-              <Skeleton height={30} width={125} variant='rounded' sx={{ borderRadius: '8px' }} />
+              <Skeleton height={32} width={125} variant='rounded' sx={{ borderRadius: '8px' }} />
             ) : (
               <Typography component='h2'>
                 {statsData.currentStakeInfo.totalInvtStaked || 0}
