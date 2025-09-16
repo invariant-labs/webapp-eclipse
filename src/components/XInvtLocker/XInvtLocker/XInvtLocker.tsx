@@ -2,7 +2,12 @@ import { Box, Grid, Typography } from '@mui/material'
 import useStyles from './style'
 import Switcher from './Switcher/Switcher'
 import { useCallback, useLayoutEffect, useMemo, useState } from 'react'
-import { inputTarget, INVT_DEPOSIT_LIMIT, INVT_MAIN } from '@store/consts/static'
+import {
+  inputTarget,
+  INVT_DEPOSIT_LIMIT,
+  INVT_MAIN,
+  WETH_MIN_INVT_LOCK_LAMPORTS
+} from '@store/consts/static'
 import ExchangeAmountInput from '@components/Inputs/ExchangeAmountInput/ExchangeAmountInput'
 import { Status } from '@store/reducers/solanaWallet'
 import { SwapToken } from '@store/selectors/solanaWallet'
@@ -55,7 +60,7 @@ export const XInvtLocker: React.FC<ILocker> = ({
   onDisconnectWallet,
   currentLockerTab,
   changeLockerTab,
-  // ethBalance,
+  ethBalance,
   isBalanceLoading,
   lockInput,
   unlockInput,
@@ -136,9 +141,18 @@ export const XInvtLocker: React.FC<ILocker> = ({
     if (isBalanceLoading) {
       return 'Loading...'
     }
-    // if (ethBalance.lt(WETH_MIN_STAKE_UNSTAKE_LAMPORTS)) {
-    //   return `Insufficient ETH`
-    // }
+
+    if (bannerState.text === 'Redeem available in:') {
+      return 'Lock period ended'
+    }
+
+    if (bannerState.text === 'Event ended') {
+      return 'Unlock ended'
+    }
+
+    if (ethBalance.lt(WETH_MIN_INVT_LOCK_LAMPORTS)) {
+      return `Insufficient ETH`
+    }
 
     if (progress !== 'none' || amountFrom === '' || Number(amountFrom) === 0)
       return 'Enter token amount'

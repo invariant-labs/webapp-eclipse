@@ -186,7 +186,7 @@ export const LockWrapper: React.FC = () => {
 
     return { key: BannerPhase.ended, text: 'Event ended', timestamp: 0, meta: { isActive: false } }
   }, [marketData, currentUnix])
-
+  console.log(bannerState)
   return (
     <Grid container className={classes.wrapper}>
       <DynamicBanner bannerState={bannerState} />
