@@ -13,7 +13,7 @@ import { actions as walletActions } from '@store/reducers/solanaWallet'
 import { network } from '@store/selectors/solanaConnection'
 import { INVT_MAIN, xINVT_MAIN } from '@store/consts/static'
 import { displayYieldComparison, getTokenPrice, printBN } from '@utils/utils'
-import { LockerSwitch } from '@store/consts/types'
+import { BannerPhase, LockerSwitch } from '@store/consts/types'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { refreshIcon } from '@static/icons'
 import { ProgressState } from '@common/AnimatedButton/AnimatedButton'
@@ -29,9 +29,15 @@ import {
 import { StatsLocker } from '@components/XInvtLocker/StatsLocker/StatsLocker'
 import useStyles from './styles'
 import { BN } from '@coral-xyz/anchor'
-import { useCountdown } from '@common/Timer/useCountdown'
-import { Timer } from '@common/Timer/Timer'
-import { typography } from '@static/theme'
+import DynamicBanner from '@components/DynamicBanner/DynamicBanner'
+export interface BannerState {
+  key: BannerPhase
+  text: string
+  timestamp: number
+  meta?: {
+    isActive: boolean
+  }
+}
 
 export const LockWrapper: React.FC = () => {
   const { classes } = useStyles()
@@ -52,13 +58,6 @@ export const LockWrapper: React.FC = () => {
   const [progress, setProgress] = useState<ProgressState>('none')
   const [priceLoading, setPriceLoading] = useState(false)
 
-  const startTimestamp = new BN(+(+new Date().valueOf() / 1000).toFixed(0) + 100000)
-
-  const targetDate = useMemo(() => new Date(startTimestamp.toNumber() * 1000), [startTimestamp])
-  const { hours, minutes, seconds } = useCountdown({
-    targetDate
-  })
-
   const amountFrom = useMemo(() => {
     if (currentLockerTab === LockerSwitch.Lock) return lockInput
     return unlockInput
@@ -67,7 +66,6 @@ export const LockWrapper: React.FC = () => {
   const yieldIncomes = useMemo(() => {
     return displayYieldComparison(+printBN(marketData.lockedInvt, INVT_MAIN.decimals), +amountFrom)
   }, [marketData, amountFrom])
-
   console.log(yieldIncomes)
   const tokenFrom: SwapToken = useMemo(
     () =>
@@ -91,10 +89,8 @@ export const LockWrapper: React.FC = () => {
     const invtAddr = INVT_MAIN.address.toString()
 
     Promise.allSettled([getTokenPrice(networkType, invtAddr)])
-
       .then(([res]) => {
         const invtPrice = res.status === 'fulfilled' && res.value != null ? res.value : 0
-
         setInvtPrice(invtPrice ?? 0)
       })
       .finally(() => {
@@ -139,13 +135,46 @@ export const LockWrapper: React.FC = () => {
       clearTimeout(timeoutId2)
     }
   }, [success, isInProgress])
+  const currentUnix = Math.floor(Date.now() / 1000)
+
+  const bannerState: BannerState = useMemo(() => {
+    const mintEnd = marketData?.mintEndTime ? +marketData.mintEndTime : 0
+    const burnStart = marketData?.burnStartTime ? +marketData.burnStartTime : 0
+    const burnEnd = marketData?.burnEndTime ? +marketData.burnEndTime : 0
+
+    if (currentUnix < mintEnd) {
+      return {
+        key: BannerPhase.locksEnds,
+        text: 'Lock ends in:',
+        timestamp: mintEnd,
+        meta: { isActive: true }
+      }
+    }
+
+    if (currentUnix < burnStart) {
+      return {
+        key: BannerPhase.redeemAvailable,
+        text: 'Redeem available in:',
+        timestamp: burnStart,
+        meta: { isActive: true }
+      }
+    }
+
+    if (currentUnix < burnEnd) {
+      return {
+        key: BannerPhase.burnEnds,
+        text: 'Burn ends in:',
+        timestamp: burnEnd,
+        meta: { isActive: true }
+      }
+    }
+
+    return { key: BannerPhase.ended, text: 'Event ended', timestamp: 0, meta: { isActive: false } }
+  }, [marketData, currentUnix])
 
   return (
     <Grid container className={classes.wrapper}>
-      <Box className={classes.banner}>
-        <Typography sx={{ ...typography.body1 }}>Lock ends in:</Typography>
-        <Timer hours={hours} minutes={minutes} seconds={seconds} isSmall width={130} />
-      </Box>
+      <DynamicBanner bannerState={bannerState} />
       <Box className={classes.titleWrapper}>
         <Box className={classes.titleTextWrapper}>
           <Typography component='h1'>INVT locking</Typography>
@@ -165,6 +194,7 @@ export const LockWrapper: React.FC = () => {
       </Box>
       <Box className={classes.panelsWrapper}>
         <XInvtLocker
+          bannerState={bannerState}
           walletStatus={walletStatus}
           tokens={tokens}
           handleLock={(props: LockLiquidityPayload) => {
