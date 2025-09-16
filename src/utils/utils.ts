@@ -2749,10 +2749,10 @@ export function calculateYield(currentlyStaked: number, userStakeAmount: number)
   }
 }
 
-export function displayYieldComparison(
+export const displayYieldComparison = (
   currentlyStaked: number,
   userStakeAmount: number
-): InvtConvertedData {
+): InvtConvertedData => {
   const totalAfterStaking = currentlyStaked + userStakeAmount
 
   const statsYeldPerToken =

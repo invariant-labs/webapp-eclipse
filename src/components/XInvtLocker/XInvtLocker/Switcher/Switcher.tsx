@@ -15,7 +15,8 @@ interface ISwitcher {
   setInputRef: (val: inputTarget) => void
   isRotating: boolean
   setIsRotating: (isRotating: boolean) => void
-  disabled?: boolean
+  unlockDisabled?: boolean
+  lockDisabled?: boolean
 }
 
 const Switcher: React.FC<ISwitcher> = ({
@@ -24,12 +25,13 @@ const Switcher: React.FC<ISwitcher> = ({
   isRotating,
   setInputRef,
   setIsRotating,
-  disabled
+  unlockDisabled,
+  lockDisabled
 }) => {
   const { classes } = useStyles({ switchTab })
 
   const handleIntervalChange = (_: any, newTab: string) => {
-    if (disabled) return
+    if (unlockDisabled || lockDisabled) return
     if (!newTab) return
 
     setIsRotating(true)
@@ -61,7 +63,8 @@ const Switcher: React.FC<ISwitcher> = ({
             style={{
               color:
                 switchTab === LockerSwitch.Lock ? colors.invariant.text : colors.invariant.light
-            }}>
+            }}
+            disabled={lockDisabled}>
             Get xINVT{' '}
             <LiquidityPlus
               style={
@@ -80,9 +83,9 @@ const Switcher: React.FC<ISwitcher> = ({
               color:
                 switchTab === LockerSwitch.Unlock ? colors.invariant.text : colors.invariant.light
             }}
-            disabled={disabled}>
+            disabled={unlockDisabled}>
             <TooltipHover
-              title={disabled ? 'Available after end of 3 months lock period' : ''}
+              title={unlockDisabled ? 'Available after end of 3 months lock period' : ''}
               className={classes.tooltip}>
               <>
                 Redeem INVT{' '}
