@@ -31,6 +31,7 @@ import {
 import { StatsLocker } from '@components/XInvtLocker/StatsLocker/StatsLocker'
 import useStyles from './styles'
 import DynamicBanner from '@components/DynamicBanner/DynamicBanner'
+import PoolBanner from '@components/PoolBanner/PoolBanner'
 export interface BannerState {
   key: BannerPhase
   text: string
@@ -284,6 +285,7 @@ export const LockWrapper: React.FC = () => {
           loading={statsLoading}
         />
       </Box>
+      <PoolBanner />
     </Grid>
   )
 }
