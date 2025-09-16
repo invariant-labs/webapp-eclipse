@@ -4,9 +4,10 @@ import { colors, theme } from '@static/theme'
 import { ProgressBar } from '@common/ProgressBar/ProgressBar'
 import React from 'react'
 import { InvtConvertedData } from '@store/consts/types'
-import { formatNumberWithSuffix, trimZeros } from '@utils/utils'
+import { formatNumberWithCommas, formatNumberWithSuffix, trimZeros } from '@utils/utils'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { infoIcon } from '@static/icons'
+import { INVT_DEPOSIT_LIMIT } from '@store/consts/static'
 
 interface StatsLocker {
   statsData: InvtConvertedData
@@ -54,7 +55,7 @@ export const StatsLocker: React.FC<StatsLocker> = ({ statsData, userLockedInvt, 
               </TooltipHover>
             </Box>
             {loading ? (
-              <Skeleton height={32} width={125} variant='rounded' sx={{ borderRadius: '8px' }} />
+              <Skeleton height={28} width={125} variant='rounded' sx={{ borderRadius: '8px' }} />
             ) : (
               <Typography style={{ color: colors.invariant.green }} component='h2'>
                 {trimZeros(statsData.currentStakeInfo.statsYieldPercentage.toFixed(2))}%
@@ -66,7 +67,7 @@ export const StatsLocker: React.FC<StatsLocker> = ({ statsData, userLockedInvt, 
           <Box className={classes.statsBox}>
             <Typography component='h3'>Total INVT deposit</Typography>
             {loading ? (
-              <Skeleton height={32} width={125} variant='rounded' sx={{ borderRadius: '8px' }} />
+              <Skeleton height={28} width={125} variant='rounded' sx={{ borderRadius: '8px' }} />
             ) : (
               <Typography component='h2'>
                 {statsData.currentStakeInfo.totalInvtStaked || 0}
@@ -78,9 +79,21 @@ export const StatsLocker: React.FC<StatsLocker> = ({ statsData, userLockedInvt, 
             <Typography component='h2'>3M INVT</Typography>
           </Box>
         </Box>
-        <Box mt='auto' mb='auto'>
-          <Typography component='h3' color={colors.invariant.textGrey}>
-            Total INVT deposit
+        <Box
+          display={'flex'}
+          flexDirection={'column'}
+          justifyContent={'center'}
+          mt='auto'
+          mb='auto'>
+          <Typography className={classes.raisedInfo}>
+            <Typography className={classes.greyText}>Deposited:</Typography>
+            <Typography className={classes.greenBodyText}>
+              {formatNumberWithCommas(statsData.currentStakeInfo.totalInvtStaked.toString())}
+            </Typography>
+            <>
+              {' / '} {formatNumberWithCommas(INVT_DEPOSIT_LIMIT.toString())}
+            </>{' '}
+            INVT
           </Typography>
           <ProgressBar
             percentage={statsData.currentStakeInfo.invtDepositFilledPercentage}
@@ -99,7 +112,7 @@ export const StatsLocker: React.FC<StatsLocker> = ({ statsData, userLockedInvt, 
                 <Typography component='h3'>Your INVT staked</Typography>
                 {loading ? (
                   <Skeleton
-                    height={32}
+                    height={28}
                     width={125}
                     variant='rounded'
                     sx={{ borderRadius: '8px' }}
@@ -112,7 +125,7 @@ export const StatsLocker: React.FC<StatsLocker> = ({ statsData, userLockedInvt, 
                 <Typography component='h3'>Your predicted income </Typography>
                 {loading ? (
                   <Skeleton
-                    height={32}
+                    height={28}
                     width={125}
                     variant='rounded'
                     sx={{ borderRadius: '8px' }}
