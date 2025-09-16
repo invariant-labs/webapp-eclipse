@@ -55,7 +55,7 @@ export const LockWrapper: React.FC = () => {
   const [invtPrice, setInvtPrice] = useState(0)
   const [progress, setProgress] = useState<ProgressState>('none')
   const [priceLoading, setPriceLoading] = useState(false)
-
+  const [bannerInitialLoading, setBannerInitialLoading] = useState(true)
   const depositLoading = useSelector(lockOperationLoading)
   const statsLoading = useSelector(invtStatsLoading)
 
@@ -118,7 +118,11 @@ export const LockWrapper: React.FC = () => {
 
     fetchPrices()
   }, [dispatch])
-
+  useEffect(() => {
+    if (bannerInitialLoading && !statsLoading) {
+      setBannerInitialLoading(false)
+    }
+  }, [statsLoading, bannerInitialLoading])
   const onRefresh = () => {
     if (depositLoading) return
     dispatch(walletActions.getBalance())
@@ -191,7 +195,7 @@ export const LockWrapper: React.FC = () => {
   }, [marketData, currentUnix])
   return (
     <Grid container className={classes.wrapper}>
-      <DynamicBanner bannerState={bannerState} />
+      <DynamicBanner isLoading={bannerInitialLoading} bannerState={bannerState} />
       <Box className={classes.titleWrapper}>
         <Box className={classes.titleTextWrapper}>
           <Typography component='h1'>INVT locking</Typography>

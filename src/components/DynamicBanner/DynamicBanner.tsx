@@ -5,9 +5,10 @@ import { BannerPhase } from '@store/consts/types'
 
 interface DynamicBannerProps {
   bannerState: BannerState
+  isLoading: boolean
 }
 
-export const DynamicBanner: React.FC<DynamicBannerProps> = ({ bannerState }) => {
+export const DynamicBanner: React.FC<DynamicBannerProps> = ({ isLoading, bannerState }) => {
   const currentTime = Math.floor(Date.now() / 1000)
 
   const backgroundByKey: Record<BannerPhase, string> = {
@@ -51,6 +52,7 @@ export const DynamicBanner: React.FC<DynamicBannerProps> = ({ bannerState }) => 
     padding: '16px 24px',
     display: 'flex',
     gap: 1,
+    opacity: isLoading ? 0 : 1,
     justifyContent: 'center',
     alignItems: 'center',
     transition: 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)'
