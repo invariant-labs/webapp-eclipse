@@ -701,6 +701,8 @@ export const WETH_CLOSE_POSITION_LAMPORTS_TEST = new BN(30000)
 
 export const WETH_MIN_STAKE_UNSTAKE_LAMPORTS = new BN(50)
 
+export const WETH_MIN_INVT_LOCK_LAMPORTS = new BN(50)
+
 export const MINIMUM_PRICE_IMPACT = toDecimal(1, 4)
 
 export const getCreateTokenLamports = (network: NetworkType): BN => {
@@ -1179,3 +1181,6 @@ export const ES_ETH_POOLS = {
 }
 export const PROOF_OF_INCLUSION_CACHE_KEY = 'PROOF_OF_INCLUSION_V2'
 export const PROOF_OF_INCLUSION_CACHE_TTL = 1000 * 60 * 60 * 1 // 1 hour
+
+export const TOTAL_INVT_REWARDS = 1_500_000
+export const INVT_DEPOSIT_LIMIT = 3_000_000

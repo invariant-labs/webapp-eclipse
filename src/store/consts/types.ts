@@ -330,3 +330,21 @@ export enum BannerPhase {
   burnEnds = 'burnEnds',
   ended = 'ended'
 }
+
+export interface InvtConvertedData {
+  currentStakeInfo: {
+    totalInvtStaked: number
+    statsYieldPercentage: number
+    rewardPerToken: number
+    invtDepositFilledPercentage: number
+  }
+  userProjection: {
+    userStakeAmount: number
+    expectedYieldPercentage: number
+    expectedReward: number
+  }
+  impact: {
+    newYieldPercentage: number
+    newStakeSize: number
+  }
+}

@@ -1,8 +1,9 @@
-import { Box, Grid, Typography } from '@mui/material'
+import { Box, Grid, Skeleton, Typography } from '@mui/material'
 import useStyles from './styles'
 
 interface ProgressBarProps {
   percentage: number
+  loading: boolean
   gap?: number | string
   top?: number | string
   progressBarColor?: string
@@ -17,6 +18,7 @@ interface ProgressBarProps {
 
 export const ProgressBar: React.FC<ProgressBarProps> = ({
   percentage,
+  loading,
   gap,
   progressBarColor,
   centerTextColor,
@@ -39,12 +41,15 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
           {startValue}
           {startUnit}
         </Typography>
-        {displayCenterText && (
-          <Typography className={classes.colorSliderLabel}>
-            {percentage.toFixed(2)}
-            {endUnit}
-          </Typography>
-        )}
+        {displayCenterText &&
+          (loading ? (
+            <Skeleton height={20} width={60} variant='rounded' sx={{ borderRadius: '8px' }} />
+          ) : (
+            <Typography className={classes.colorSliderLabel}>
+              {percentage.toFixed(2)}
+              {endUnit}
+            </Typography>
+          ))}
         <Typography className={classes.sliderLabel}>
           {endValue}
           {endUnit}

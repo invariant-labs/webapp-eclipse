@@ -16,6 +16,7 @@ export const { invtMarketData, inProgress, success, lockerTab, lockInputVal, unl
   ])
 
 export const lockOperationLoading = (state: AnyProps) => selectLoadingStates(state).lockOperation
+export const invtStatsLoading = (state: AnyProps) => selectLoadingStates(state).invtMarketData
 
 export const xInvtSelectors = {
   invtMarketData,
@@ -24,6 +25,7 @@ export const xInvtSelectors = {
   lockOperationLoading,
   lockerTab,
   lockInputVal,
-  unlockInputVal
+  unlockInputVal,
+  invtStatsLoading
 }
 export default xInvtSelectors
