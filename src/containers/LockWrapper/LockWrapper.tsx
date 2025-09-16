@@ -35,9 +35,6 @@ export interface BannerState {
   key: BannerPhase
   text: string
   timestamp: number
-  meta?: {
-    isActive: boolean
-  }
 }
 
 export const LockWrapper: React.FC = () => {
@@ -58,7 +55,7 @@ export const LockWrapper: React.FC = () => {
   const [invtPrice, setInvtPrice] = useState(0)
   const [progress, setProgress] = useState<ProgressState>('none')
   const [priceLoading, setPriceLoading] = useState(false)
-
+  const [bannerInitialLoading, setBannerInitialLoading] = useState(true)
   const depositLoading = useSelector(lockOperationLoading)
   const statsLoading = useSelector(invtStatsLoading)
 
@@ -121,7 +118,11 @@ export const LockWrapper: React.FC = () => {
 
     fetchPrices()
   }, [dispatch])
-
+  useEffect(() => {
+    if (bannerInitialLoading && !statsLoading) {
+      setBannerInitialLoading(false)
+    }
+  }, [statsLoading, bannerInitialLoading])
   const onRefresh = () => {
     if (depositLoading) return
     dispatch(walletActions.getBalance())
@@ -153,43 +154,49 @@ export const LockWrapper: React.FC = () => {
   const currentUnix = Math.floor(Date.now() / 1000)
 
   const bannerState: BannerState = useMemo(() => {
+    const mintStart = marketData?.mintStartTime ? +marketData.mintStartTime : 0
     const mintEnd = marketData?.mintEndTime ? +marketData.mintEndTime : 0
     const burnStart = marketData?.burnStartTime ? +marketData.burnStartTime : 0
     const burnEnd = marketData?.burnEndTime ? +marketData.burnEndTime : 0
 
+    if (currentUnix < mintStart) {
+      return {
+        key: BannerPhase.beforeStartPhase,
+        text: 'INVT locking available in:',
+        timestamp: mintStart
+      }
+    }
+
     if (currentUnix < mintEnd) {
       return {
-        key: BannerPhase.locksEnds,
+        key: BannerPhase.lockPhase,
         text: 'Lock ends in:',
-        timestamp: mintEnd,
-        meta: { isActive: true }
+        timestamp: mintEnd
       }
     }
 
     if (currentUnix < burnStart) {
       return {
-        key: BannerPhase.redeemAvailable,
+        key: BannerPhase.yieldPhase,
         text: 'Redeem available in:',
-        timestamp: burnStart,
-        meta: { isActive: true }
+        timestamp: burnStart
       }
     }
 
     if (currentUnix < burnEnd) {
       return {
-        key: BannerPhase.burnEnds,
+        key: BannerPhase.burningPhase,
         text: 'Burn ends in:',
-        timestamp: burnEnd,
-        meta: { isActive: true }
+        timestamp: burnEnd
       }
     }
 
-    return { key: BannerPhase.ended, text: 'Event ended', timestamp: 0, meta: { isActive: false } }
+    return { key: BannerPhase.endPhase, text: 'Burn ended', timestamp: 0 }
   }, [marketData, currentUnix])
 
   return (
     <Grid container className={classes.wrapper}>
-      <DynamicBanner bannerState={bannerState} />
+      <DynamicBanner isLoading={bannerInitialLoading} bannerState={bannerState} />
       <Box className={classes.titleWrapper}>
         <Box className={classes.titleTextWrapper}>
           <Typography component='h1'>INVT locking</Typography>

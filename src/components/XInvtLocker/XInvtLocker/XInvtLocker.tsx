@@ -142,12 +142,15 @@ export const XInvtLocker: React.FC<ILocker> = ({
     if (isBalanceLoading) {
       return 'Loading...'
     }
+    if (bannerState.key === BannerPhase.beforeStartPhase) {
+      return 'Lock unavailable'
+    }
 
-    if (bannerState.text === 'Redeem available in:') {
+    if (bannerState.key === BannerPhase.yieldPhase) {
       return 'Lock period ended'
     }
 
-    if (bannerState.text === 'Event ended') {
+    if (bannerState.text === BannerPhase.endPhase) {
       return 'Unlock ended'
     }
 
@@ -173,9 +176,6 @@ export const XInvtLocker: React.FC<ILocker> = ({
       return `Not enough ${tokenFrom.symbol}`
 
     if (currentLockerTab === LockerSwitch.Lock) {
-      if (bannerState.key == BannerPhase.burnEnds) {
-        return 'Burn'
-      }
       return `Lock`
     } else {
       return `Unlock`
