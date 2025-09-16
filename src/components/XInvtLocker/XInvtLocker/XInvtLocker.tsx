@@ -48,6 +48,7 @@ export interface ILocker {
   priceLoading: boolean
   invtPrice: number
   unlockDisabled: boolean
+  lockDisabled: boolean
   bannerState: BannerState
   statsData: InvtConvertedData
   statsLoading: boolean
@@ -74,6 +75,7 @@ export const XInvtLocker: React.FC<ILocker> = ({
   priceLoading,
   invtPrice,
   unlockDisabled,
+  lockDisabled,
   bannerState,
   statsData,
   statsLoading
@@ -143,15 +145,27 @@ export const XInvtLocker: React.FC<ILocker> = ({
       return 'Loading...'
     }
     if (bannerState.key === BannerPhase.beforeStartPhase) {
-      return 'Lock unavailable'
+      if (currentLockerTab === LockerSwitch.Lock) {
+        return 'Lock unavailable'
+      } else {
+        return 'Unlock unavailable'
+      }
     }
 
     if (bannerState.key === BannerPhase.yieldPhase) {
-      return 'Lock period ended'
+      if (currentLockerTab === LockerSwitch.Lock) {
+        return 'Lock period ended'
+      } else {
+        return 'Unlock unavailable'
+      }
     }
 
-    if (bannerState.text === BannerPhase.endPhase) {
-      return 'Unlock ended'
+    if (bannerState.key === BannerPhase.endPhase) {
+      if (currentLockerTab === LockerSwitch.Lock) {
+        return 'Lock unavailable'
+      } else {
+        return 'Unlock ended'
+      }
     }
 
     if (ethBalance.lt(WETH_MIN_INVT_LOCK_LAMPORTS)) {
@@ -223,7 +237,8 @@ export const XInvtLocker: React.FC<ILocker> = ({
         setInputRef={setInputRef}
         isRotating={isRotating}
         setIsRotating={setIsRotating}
-        disabled={unlockDisabled}
+        unlockDisabled={unlockDisabled}
+        lockDisabled={lockDisabled}
       />
 
       <Box mt='24px' mb={'12px'} display='flex' justifyContent='space-between' alignItems='center'>
