@@ -1,4 +1,4 @@
-import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
+import { Box, Grid, Skeleton, Typography, useMediaQuery } from '@mui/material'
 import useStyles from './style'
 import { colors, theme } from '@static/theme'
 import { ProgressBar } from '@common/ProgressBar/ProgressBar'
@@ -9,8 +9,9 @@ import { formatNumberWithSuffix } from '@utils/utils'
 interface StatsLocker {
   statsData: InvtConvertedData
   userLockedInvt: number
+  loading: boolean
 }
-export const StatsLocker: React.FC<StatsLocker> = ({ statsData, userLockedInvt }) => {
+export const StatsLocker: React.FC<StatsLocker> = ({ statsData, userLockedInvt, loading }) => {
   const { classes } = useStyles()
 
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
@@ -39,17 +40,25 @@ export const StatsLocker: React.FC<StatsLocker> = ({ statsData, userLockedInvt }
             <Typography component='h3' color={colors.invariant.textGrey}>
               3 months yield:{' '}
             </Typography>
-            <Typography style={{ color: colors.invariant.green }} component='h2'>
-              {statsData.currentStakeInfo.statsYieldPercentage.toFixed(2)} %
-            </Typography>
+            {loading ? (
+              <Skeleton height={32} width={125} variant='rounded' sx={{ borderRadius: '8px' }} />
+            ) : (
+              <Typography style={{ color: colors.invariant.green }} component='h2'>
+                {statsData.currentStakeInfo.statsYieldPercentage.toFixed(2)} %
+              </Typography>
+            )}
           </Box>
         </Box>
         <Box className={classes.yourStatsBoxesWrapper}>
           <Box className={classes.statsBox}>
             <Typography component='h3'>Total INVT staked</Typography>
-            <Typography component='h2'>
-              {statsData.currentStakeInfo.totalInvtStaked || 0}
-            </Typography>
+            {loading ? (
+              <Skeleton height={30} width={125} variant='rounded' sx={{ borderRadius: '8px' }} />
+            ) : (
+              <Typography component='h2'>
+                {statsData.currentStakeInfo.totalInvtStaked || 0}
+              </Typography>
+            )}
           </Box>
           <Box className={classes.statsBox}>
             <Typography component='h3'>Deposit limit</Typography>
@@ -63,6 +72,7 @@ export const StatsLocker: React.FC<StatsLocker> = ({ statsData, userLockedInvt }
           <ProgressBar
             percentage={statsData.currentStakeInfo.invtDepositFilledPercentage}
             gap={1}
+            loading={loading}
           />
         </Box>
         {!isSm && (
@@ -74,16 +84,34 @@ export const StatsLocker: React.FC<StatsLocker> = ({ statsData, userLockedInvt }
             <Box className={classes.yourStatsBoxesWrapper} flexDirection={'column'}>
               <Box className={classes.singleBoxStat}>
                 <Typography component='h3'>Your INVT staked</Typography>
-                <Typography component='h2'>{userLockedInvt} INVT</Typography>
+                {loading ? (
+                  <Skeleton
+                    height={32}
+                    width={125}
+                    variant='rounded'
+                    sx={{ borderRadius: '8px' }}
+                  />
+                ) : (
+                  <Typography component='h2'>{userLockedInvt} INVT</Typography>
+                )}
               </Box>
               <Box className={classes.singleBoxStat}>
                 <Typography component='h3'>Your predicted income </Typography>
-                <Typography component='h2'>
-                  {formatNumberWithSuffix(
-                    statsData.currentStakeInfo.rewardPerToken * userLockedInvt + userLockedInvt
-                  )}{' '}
-                  INVT
-                </Typography>
+                {loading ? (
+                  <Skeleton
+                    height={32}
+                    width={125}
+                    variant='rounded'
+                    sx={{ borderRadius: '8px' }}
+                  />
+                ) : (
+                  <Typography component='h2'>
+                    {formatNumberWithSuffix(
+                      statsData.currentStakeInfo.rewardPerToken * userLockedInvt + userLockedInvt
+                    )}{' '}
+                    INVT
+                  </Typography>
+                )}
               </Box>
             </Box>
           </>
@@ -98,17 +126,30 @@ export const StatsLocker: React.FC<StatsLocker> = ({ statsData, userLockedInvt }
           <Box className={classes.statsWrapper}>
             <Box className={classes.globalStatsBox}>
               <Typography component='h3'>Your INVT staked</Typography>
-              <Typography component='h2'>{userLockedInvt} INVT</Typography>
+              {loading ? (
+                <Skeleton height={30} width={125} variant='rounded' sx={{ borderRadius: '8px' }} />
+              ) : (
+                <Typography component='h2'>{userLockedInvt} INVT</Typography>
+              )}
             </Box>
             <Box className={classes.yourStatsBoxesWrapper}>
               <Box className={classes.globalStatsBox}>
                 <Typography component='h3'>Your predicted income </Typography>
-                <Typography component='h2'>
-                  {formatNumberWithSuffix(
-                    statsData.currentStakeInfo.rewardPerToken * userLockedInvt + userLockedInvt
-                  )}{' '}
-                  INVT
-                </Typography>
+                {loading ? (
+                  <Skeleton
+                    height={30}
+                    width={125}
+                    variant='rounded'
+                    sx={{ borderRadius: '8px' }}
+                  />
+                ) : (
+                  <Typography component='h2'>
+                    {formatNumberWithSuffix(
+                      statsData.currentStakeInfo.rewardPerToken * userLockedInvt + userLockedInvt
+                    )}{' '}
+                    INVT
+                  </Typography>
+                )}
               </Box>
             </Box>
           </Box>

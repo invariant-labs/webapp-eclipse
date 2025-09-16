@@ -82,7 +82,7 @@ const Switcher: React.FC<ISwitcher> = ({
             }}
             disabled={disabled}>
             <TooltipHover
-              title={disabled ? 'Available after end of lock period' : ''}
+              title={disabled ? 'Available after end of 3 months lock period' : ''}
               className={classes.tooltip}>
               <>
                 Redeem INVT{' '}

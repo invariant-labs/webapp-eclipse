@@ -42,9 +42,9 @@ export interface ILocker {
   priceLoading: boolean
   invtPrice: number
   unlockDisabled: boolean
-  startTimestamp: BN
   bannerState: BannerState
   statsData: InvtConvertedData
+  statsLoading: boolean
 }
 export const XInvtLocker: React.FC<ILocker> = ({
   walletStatus,
@@ -69,8 +69,8 @@ export const XInvtLocker: React.FC<ILocker> = ({
   invtPrice,
   unlockDisabled,
   bannerState,
-  statsData
-  // startTimestamp
+  statsData,
+  statsLoading
 }) => {
   const { classes } = useStyles()
 
@@ -309,7 +309,7 @@ export const XInvtLocker: React.FC<ILocker> = ({
         tokenFromAmount={amountFrom}
         tokenFromTicker={tokenFrom.symbol}
         tokenToTicker={tokenTo.symbol}
-        stakedDataLoading={false}
+        loading={statsLoading}
         currentYield={statsData.currentStakeInfo.statsYieldPercentage}
         yieldChange={statsData.impact.newYieldPercentage}
         income={statsData.userProjection.expectedReward}

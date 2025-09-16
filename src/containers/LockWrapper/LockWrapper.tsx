@@ -24,11 +24,12 @@ import {
   unlockInputVal,
   success as successState,
   inProgress,
-  invtMarketData
+  invtMarketData,
+  lockOperationLoading,
+  invtStatsLoading
 } from '@store/selectors/xInvt'
 import { StatsLocker } from '@components/XInvtLocker/StatsLocker/StatsLocker'
 import useStyles from './styles'
-import { BN } from '@coral-xyz/anchor'
 import DynamicBanner from '@components/DynamicBanner/DynamicBanner'
 export interface BannerState {
   key: BannerPhase
@@ -57,6 +58,9 @@ export const LockWrapper: React.FC = () => {
   const [invtPrice, setInvtPrice] = useState(0)
   const [progress, setProgress] = useState<ProgressState>('none')
   const [priceLoading, setPriceLoading] = useState(false)
+
+  const depositLoading = useSelector(lockOperationLoading)
+  const statsLoading = useSelector(invtStatsLoading)
 
   const amountFrom = useMemo(() => {
     if (currentLockerTab === LockerSwitch.Lock) return lockInput
@@ -119,6 +123,7 @@ export const LockWrapper: React.FC = () => {
   }, [dispatch])
 
   const onRefresh = () => {
+    if (depositLoading) return
     dispatch(walletActions.getBalance())
     dispatch(actions.getCurrentStats())
     fetchPrices()
@@ -240,10 +245,14 @@ export const LockWrapper: React.FC = () => {
           priceLoading={priceLoading}
           invtPrice={invtPrice}
           unlockDisabled={true}
-          startTimestamp={new BN(0)}
           statsData={yieldIncomes}
+          statsLoading={statsLoading}
         />
-        <StatsLocker statsData={yieldIncomes} userLockedInvt={userXInvtBalance} />
+        <StatsLocker
+          statsData={yieldIncomes}
+          userLockedInvt={userXInvtBalance}
+          loading={statsLoading}
+        />
       </Box>
     </Grid>
   )

@@ -13,6 +13,11 @@ const useStyles = makeStyles()(() => {
       ...typography.body1
     },
     value: {
+      color: colors.invariant.text,
+      ...typography.body2,
+      height: 24
+    },
+    greenValue: {
       color: colors.invariant.green,
       ...typography.body2,
       height: 24

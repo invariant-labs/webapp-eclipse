@@ -467,30 +467,9 @@ export function* getInvtStats() {
   const networkType = yield* select(network)
   const rpc = yield* select(rpcAddress)
   const wallet = yield* call(getWallet)
-  // const connection = yield* call(getConnection)
   const xInvtProgram = yield* call(getXInvtLockerProgram, networkType, rpc, wallet as IWallet)
   try {
     const invtState = yield* call([xInvtProgram, xInvtProgram.getState])
-
-    // const stateAddress = xInvtProgram.getStateAddress()
-
-    // console.log(stateAddress)
-
-    // const tokenAccounts = yield* call(
-    //   [connection, connection.getTokenAccountsByOwner],
-    //   XINVT_ADDRESS[networkType],
-    //   {
-    //     mint: XINVT_ADDRESS[networkType]
-    //   }
-    // )
-
-    // let totalBalance = 0n
-    // for (const { account } of tokenAccounts.value) {
-    //   const data = AccountLayout.decode(account.data)
-    //   totalBalance += BigInt(data.amount.toString())
-    // }
-
-    // console.log(totalBalance)
 
     yield* put(
       actions.setCurrentStats({
