@@ -4,11 +4,10 @@ import { Grid, Typography, useMediaQuery } from '@mui/material'
 import { arrowRightIcon, infoCircleIcon } from '@static/icons'
 import bannerIMG from '@static/png/invt-usdc.png'
 import useStyles from './style'
-import { theme } from '@static/theme'
 
 const NewPoolSection = () => {
   const { classes } = useStyles()
-  const hideBanner = useMediaQuery(`(max-width: 429px), (min-width: 521px) and (max-width: 1064px)`)
+  const hideBanner = useMediaQuery(`(max-width: 429px), (min-width: 961px) and (max-width: 1064px)`)
 
   return (
     <Grid className={classes.newPoolWrapper}>

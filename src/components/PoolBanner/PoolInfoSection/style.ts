@@ -14,7 +14,7 @@ export const useStyles = makeStyles()(() => ({
     gap: 12,
     width: 265,
     background: colors.invariant.component,
-    [theme.breakpoints.down(520)]: {
+    [theme.breakpoints.down('md')]: {
       width: '100%'
     }
   },

@@ -12,11 +12,14 @@ export const useStyles = makeStyles()(() => ({
     display: 'flex',
     padding: '16px 24px',
     boxShadow: '3px 0px 8px rgba(0, 0, 0, 0.2)',
-    [theme.breakpoints.up(520)]: {
+    [theme.breakpoints.up('md')]: {
       maxWidth: 480
     },
-    [theme.breakpoints.down(520)]: {
+    [theme.breakpoints.down('md')]: {
       boxShadow: '2px 5px 8px rgba(0, 0, 0, 0.49)'
+    },
+    [theme.breakpoints.down(430)]: {
+      justifyContent: 'center'
     }
   },
   poolDescriptionWrapper: {

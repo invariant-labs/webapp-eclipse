@@ -25,7 +25,7 @@ export const useStyles = makeStyles()(() => ({
     maxWidth: 765,
     width: '100%',
     background: colors.invariant.component,
-    [theme.breakpoints.down(520)]: {
+    [theme.breakpoints.down('md')]: {
       height: 368,
       flexDirection: 'column'
     }
