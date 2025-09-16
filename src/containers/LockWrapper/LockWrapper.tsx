@@ -162,7 +162,7 @@ export const LockWrapper: React.FC = () => {
     if (currentUnix < mintStart) {
       return {
         key: BannerPhase.beforeStartPhase,
-        text: 'Lock starts in:',
+        text: 'INVT locking available in:',
         timestamp: mintStart
       }
     }

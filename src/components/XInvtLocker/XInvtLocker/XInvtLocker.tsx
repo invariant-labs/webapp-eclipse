@@ -142,6 +142,9 @@ export const XInvtLocker: React.FC<ILocker> = ({
     if (isBalanceLoading) {
       return 'Loading...'
     }
+    if (bannerState.key === BannerPhase.beforeStartPhase) {
+      return 'Lock unavailable'
+    }
 
     if (bannerState.key === BannerPhase.yieldPhase) {
       return 'Lock period ended'
