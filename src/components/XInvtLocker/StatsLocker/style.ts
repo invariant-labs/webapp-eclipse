@@ -81,10 +81,10 @@ const useStyles = makeStyles()(() => ({
       }
     },
     '& h2': {
-      ...typography.heading2,
+      ...typography.heading3,
       color: colors.invariant.text,
       [theme.breakpoints.down('sm')]: {
-        ...typography.heading3
+        ...typography.heading4
       }
     }
   },
@@ -116,10 +116,10 @@ const useStyles = makeStyles()(() => ({
       }
     },
     '& h2': {
-      ...typography.heading2,
+      ...typography.heading3,
       color: colors.invariant.text,
       [theme.breakpoints.down('sm')]: {
-        ...typography.heading3
+        ...typography.heading4
       }
     }
   },
@@ -148,11 +148,11 @@ const useStyles = makeStyles()(() => ({
       }
     },
     '& h2': {
-      ...typography.heading2,
+      ...typography.heading3,
       color: colors.invariant.text,
 
       [theme.breakpoints.down('sm')]: {
-        ...typography.heading3
+        ...typography.heading4
       }
     }
   },
