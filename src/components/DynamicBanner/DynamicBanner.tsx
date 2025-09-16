@@ -11,33 +11,33 @@ export const DynamicBanner: React.FC<DynamicBannerProps> = ({ bannerState }) => 
   const currentTime = Math.floor(Date.now() / 1000)
 
   const backgroundByKey: Record<BannerPhase, string> = {
-    lockEnds: 'rgba(239, 208, 99, 0.2)',
-    redeemAvailable: 'rgba(107, 114, 128, 0.2)',
-    burnEnds: 'rgba(107, 114, 128, 0.2)',
-    ended: 'rgba(107, 114, 128, 0.2)'
+    beforeStartPhase: 'rgba(30, 226, 192, 0.2)',
+    lockPhase: 'rgba(239, 208, 99, 0.2)',
+    yieldPhase: 'rgba(107, 114, 128, 0.2)',
+    burningPhase: 'rgba(107, 114, 128, 0.2)',
+    endPhase: 'rgba(107, 114, 128, 0.2)'
   }
 
   const borderByKey: Record<BannerPhase, string> = {
-    lockEnds: '2px solid #F0D063',
-    redeemAvailable: '2px solid #6b7280',
-    burnEnds: '2px solid #6b7280',
-    ended: '2px solid #6b7280'
+    beforeStartPhase: '2px solid #1EE2C0',
+    lockPhase: '2px solid #F0D063',
+    yieldPhase: '2px solid #6b7280',
+    burningPhase: '2px solid #6b7280',
+    endPhase: '2px solid #6b7280'
   }
 
   const colorByKey: Record<BannerPhase, string> = {
-    lockEnds: '#F0D063',
-    redeemAvailable: '#6b7280',
-    burnEnds: '#6b7280',
-    ended: '#6b7280'
+    beforeStartPhase: '#1EE2C0',
+    lockPhase: '#F0D063',
+    yieldPhase: '#6b7280',
+    burningPhase: '#6b7280',
+    endPhase: '#6b7280'
   }
 
   const targetDate = new Date((bannerState.timestamp || 0) * 1000)
 
   const { displayString } = useCountdown({
-    targetDate,
-    onExpire: () => {
-      console.log('Timer completed for:', bannerState.text)
-    }
+    targetDate
   })
 
   const bannerStyles = {
@@ -60,7 +60,7 @@ export const DynamicBanner: React.FC<DynamicBannerProps> = ({ bannerState }) => 
     <Box sx={bannerStyles}>
       <Typography sx={{ color: colorByKey[bannerState.key] }}>{bannerState.text}</Typography>
       <Typography sx={{ color: colorByKey[bannerState.key] }}>
-        {bannerState.timestamp > currentTime ? displayString : '00:00:00:00'}
+        {bannerState.timestamp > currentTime ? displayString : ''}
       </Typography>
     </Box>
   )

@@ -325,10 +325,11 @@ export enum ChartSwitch {
   fees = 'Fees'
 }
 export enum BannerPhase {
-  locksEnds = 'lockEnds',
-  redeemAvailable = 'redeemAvailable',
-  burnEnds = 'burnEnds',
-  ended = 'ended'
+  beforeStartPhase = 'beforeStartPhase',
+  lockPhase = 'lockPhase',
+  yieldPhase = 'yieldPhase',
+  burningPhase = 'burningPhase',
+  endPhase = 'endPhase'
 }
 
 export interface InvtConvertedData {

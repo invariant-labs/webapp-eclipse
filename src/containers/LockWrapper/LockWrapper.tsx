@@ -35,9 +35,6 @@ export interface BannerState {
   key: BannerPhase
   text: string
   timestamp: number
-  meta?: {
-    isActive: boolean
-  }
 }
 
 export const LockWrapper: React.FC = () => {
@@ -153,40 +150,45 @@ export const LockWrapper: React.FC = () => {
   const currentUnix = Math.floor(Date.now() / 1000)
 
   const bannerState: BannerState = useMemo(() => {
+    const mintStart = marketData?.mintStartTime ? +marketData.mintStartTime : 0
     const mintEnd = marketData?.mintEndTime ? +marketData.mintEndTime : 0
     const burnStart = marketData?.burnStartTime ? +marketData.burnStartTime : 0
     const burnEnd = marketData?.burnEndTime ? +marketData.burnEndTime : 0
 
+    if (currentUnix < mintStart) {
+      return {
+        key: BannerPhase.beforeStartPhase,
+        text: 'Lock starts in:',
+        timestamp: mintStart
+      }
+    }
+
     if (currentUnix < mintEnd) {
       return {
-        key: BannerPhase.locksEnds,
+        key: BannerPhase.lockPhase,
         text: 'Lock ends in:',
-        timestamp: mintEnd,
-        meta: { isActive: true }
+        timestamp: mintEnd
       }
     }
 
     if (currentUnix < burnStart) {
       return {
-        key: BannerPhase.redeemAvailable,
+        key: BannerPhase.yieldPhase,
         text: 'Redeem available in:',
-        timestamp: burnStart,
-        meta: { isActive: true }
+        timestamp: burnStart
       }
     }
 
     if (currentUnix < burnEnd) {
       return {
-        key: BannerPhase.burnEnds,
+        key: BannerPhase.burningPhase,
         text: 'Burn ends in:',
-        timestamp: burnEnd,
-        meta: { isActive: true }
+        timestamp: burnEnd
       }
     }
 
-    return { key: BannerPhase.ended, text: 'Event ended', timestamp: 0, meta: { isActive: false } }
+    return { key: BannerPhase.endPhase, text: 'Burn ended', timestamp: 0 }
   }, [marketData, currentUnix])
-  console.log(bannerState)
   return (
     <Grid container className={classes.wrapper}>
       <DynamicBanner bannerState={bannerState} />
