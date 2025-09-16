@@ -5,6 +5,8 @@ import { ProgressBar } from '@common/ProgressBar/ProgressBar'
 import React from 'react'
 import { InvtConvertedData } from '@store/consts/types'
 import { formatNumberWithSuffix } from '@utils/utils'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
+import { infoIcon } from '@static/icons'
 
 interface StatsLocker {
   statsData: InvtConvertedData
@@ -39,9 +41,18 @@ export const StatsLocker: React.FC<StatsLocker> = ({ statsData, userLockedInvt, 
             </Typography>
           </Box>
           <Box className={classes.statsBox}>
-            <Typography component='h3' color={colors.invariant.textGrey}>
-              3 months yield:{' '}
-            </Typography>
+            <Box display='flex' alignItems='center' gap={0.5}>
+              <Typography component='h3' color={colors.invariant.textGrey}>
+                3 months yield{' '}
+              </Typography>
+              <TooltipHover
+                title={
+                  'Current yield is all rewards proportionally distributed among all locked INVT'
+                }
+                increasePadding>
+                <img src={infoIcon} alt='i' width={14} />
+              </TooltipHover>
+            </Box>
             {loading ? (
               <Skeleton height={32} width={125} variant='rounded' sx={{ borderRadius: '8px' }} />
             ) : (
