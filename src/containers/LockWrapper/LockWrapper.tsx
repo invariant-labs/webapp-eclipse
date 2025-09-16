@@ -194,6 +194,28 @@ export const LockWrapper: React.FC = () => {
     return { key: BannerPhase.endPhase, text: 'Burn ended', timestamp: 0 }
   }, [marketData, currentUnix])
 
+  useEffect(() => {
+    if (bannerState.key === BannerPhase.burningPhase) {
+      dispatch(actions.setLockTab({ tab: LockerSwitch.Unlock }))
+    } else if (bannerState.key === BannerPhase.lockPhase) {
+      dispatch(actions.setLockTab({ tab: LockerSwitch.Lock }))
+    }
+  }, [bannerState])
+
+  const unlockDisabled = useMemo(() => {
+    if (bannerState.key === BannerPhase.lockPhase) {
+      return true
+    } else {
+      return false
+    }
+  }, [bannerState])
+  const lockDisabled = useMemo(() => {
+    if (bannerState.key === BannerPhase.burningPhase) {
+      return true
+    } else {
+      return false
+    }
+  }, [bannerState])
   return (
     <Grid container className={classes.wrapper}>
       <DynamicBanner isLoading={bannerInitialLoading} bannerState={bannerState} />
@@ -251,7 +273,8 @@ export const LockWrapper: React.FC = () => {
           tokenTo={tokenTo}
           priceLoading={priceLoading}
           invtPrice={invtPrice}
-          unlockDisabled={true}
+          unlockDisabled={unlockDisabled}
+          lockDisabled={lockDisabled}
           statsData={yieldIncomes}
           statsLoading={statsLoading}
         />
