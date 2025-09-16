@@ -4,7 +4,7 @@ import { colors, theme } from '@static/theme'
 import { ProgressBar } from '@common/ProgressBar/ProgressBar'
 import React from 'react'
 import { InvtConvertedData } from '@store/consts/types'
-import { formatNumberWithSuffix } from '@utils/utils'
+import { formatNumberWithSuffix, trimZeros } from '@utils/utils'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { infoIcon } from '@static/icons'
 
@@ -57,7 +57,7 @@ export const StatsLocker: React.FC<StatsLocker> = ({ statsData, userLockedInvt, 
               <Skeleton height={32} width={125} variant='rounded' sx={{ borderRadius: '8px' }} />
             ) : (
               <Typography style={{ color: colors.invariant.green }} component='h2'>
-                {statsData.currentStakeInfo.statsYieldPercentage.toFixed(2)} %
+                {trimZeros(statsData.currentStakeInfo.statsYieldPercentage.toFixed(2))}%
               </Typography>
             )}
           </Box>
