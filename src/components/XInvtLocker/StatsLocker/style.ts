@@ -184,6 +184,23 @@ const useStyles = makeStyles()(() => ({
       ...typography.heading4,
       color: colors.invariant.text
     }
+  },
+  raisedInfo: {
+    display: 'flex',
+    justifyContent: 'center',
+    height: '24px',
+    marginTop: '16px',
+    gap: '6px',
+    ...typography.body2,
+    color: colors.invariant.text
+  },
+  greyText: {
+    color: colors.invariant.textGrey,
+    ...typography.body2
+  },
+  greenBodyText: {
+    color: colors.invariant.green,
+    ...typography.body2
   }
 }))
 
