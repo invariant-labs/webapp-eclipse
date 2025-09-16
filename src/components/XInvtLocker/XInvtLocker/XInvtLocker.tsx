@@ -24,6 +24,7 @@ import { LockIcon } from '@static/componentIcon/LockIcon'
 import TransactionDetails from './TransactionDetails/TransactionDetails'
 import { Separator } from '@common/Separator/Separator'
 import { BannerState } from '@containers/LockWrapper/LockWrapper'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 
 export interface ILocker {
   walletStatus: Status
@@ -277,15 +278,19 @@ export const XInvtLocker: React.FC<ILocker> = ({
       />
       <Box mb={'12px'} display='flex' justifyContent='space-between' alignItems='center'>
         <Typography className={classes.title}>Recive</Typography>
-        <Box className={classes.lockPeriod}>
-          <LockIcon color={colors.invariant.textGrey} width={14} height={14} />
-          <Typography style={{ ...typography.caption4 }} color={colors.invariant.textGrey}>
-            Lock period:{' '}
-          </Typography>
-          <Typography style={{ ...typography.caption3 }} color={colors.invariant.green}>
-            3 months
-          </Typography>
-        </Box>
+        <TooltipHover
+          textAlign='center'
+          title='Redeem of INVT will be available after 3 months lock period'>
+          <Box className={classes.lockPeriod}>
+            <LockIcon color={colors.invariant.textGrey} width={14} height={14} />
+            <Typography style={{ ...typography.caption4 }} color={colors.invariant.textGrey}>
+              Lock period:{' '}
+            </Typography>
+            <Typography style={{ ...typography.caption3 }} color={colors.invariant.green}>
+              3 months
+            </Typography>
+          </Box>
+        </TooltipHover>
       </Box>
       <ExchangeAmountInput
         value={amountTo}

@@ -193,6 +193,7 @@ export const LockWrapper: React.FC = () => {
 
     return { key: BannerPhase.endPhase, text: 'Burn ended', timestamp: 0 }
   }, [marketData, currentUnix])
+
   return (
     <Grid container className={classes.wrapper}>
       <DynamicBanner isLoading={bannerInitialLoading} bannerState={bannerState} />
