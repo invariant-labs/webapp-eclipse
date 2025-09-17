@@ -3,10 +3,20 @@ import { star, starFill } from '@static/icons'
 import { USDC_MAIN, xINVT_MAIN } from '@store/consts/static'
 import useStyles from './style'
 
-const PoolInfoSection = () => {
+interface IProps {
+  poolDistribute: number
+  userEarn: number
+  toggleAddToFavourites: () => void
+  isFavourite: boolean
+}
+export const PoolInfoSection: React.FC<IProps> = ({
+  poolDistribute,
+  toggleAddToFavourites,
+  userEarn,
+  isFavourite
+}) => {
   const { classes } = useStyles()
 
-  const isFavorite = false
   return (
     <Grid className={classes.poolInfoWrapper}>
       <Grid className={classes.titleWrapper}>
@@ -15,7 +25,12 @@ const PoolInfoSection = () => {
           <img alt='token logo' width={32} src={USDC_MAIN.logoURI} />
           <Typography component='h1'>xINVT - USDC POOL</Typography>
         </Box>
-        <img alt='star icon' className={classes.starIcon} src={isFavorite ? starFill : star} />
+        <img
+          alt='star icon'
+          className={classes.starIcon}
+          src={isFavourite ? starFill : star}
+          onClick={toggleAddToFavourites}
+        />
       </Grid>
       <Grid className={classes.poolDistributeWapper}>
         <Grid className={classes.poolDistributeTitle}>
@@ -27,7 +42,9 @@ const PoolInfoSection = () => {
         </Grid>
         <Grid className={classes.poolDistributeValueWrapper}>
           <img src={xINVT_MAIN.logoURI} width={16} height={16} alt='xinvt logo' />
-          <Typography>$123,123.123</Typography>
+          <Typography>
+            {poolDistribute} {'(24H)'}
+          </Typography>
         </Grid>
       </Grid>
       <Grid className={classes.yourEarnWapper}>
@@ -37,7 +54,9 @@ const PoolInfoSection = () => {
         </Grid>
         <Grid className={classes.poolDistributeValueWrapper}>
           <img src={xINVT_MAIN.logoURI} width={16} height={16} alt='xinvt logo' />
-          <Typography>$123,123.123</Typography>
+          <Typography>
+            {userEarn} {'(24H)'}
+          </Typography>
         </Grid>
       </Grid>
     </Grid>

@@ -3,7 +3,10 @@ import { Grid, Typography } from '@mui/material'
 import { xINVT_MAIN } from '@store/consts/static'
 import useStyles from './style'
 
-export const ClaimSection = () => {
+interface IProps {
+  handleClaim: () => void
+}
+export const ClaimSection: React.FC<IProps> = ({ handleClaim }) => {
   const { classes } = useStyles()
   return (
     <>
@@ -12,7 +15,7 @@ export const ClaimSection = () => {
         <img width={36} src={xINVT_MAIN.logoURI} />
         <Typography component='h3'>30K xINVT</Typography>
       </Grid>
-      <Button width={'100%'} scheme='green'>
+      <Button width={'100%'} scheme='green' onClick={handleClaim}>
         Claim
       </Button>
     </>

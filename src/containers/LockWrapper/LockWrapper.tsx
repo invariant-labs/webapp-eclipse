@@ -10,9 +10,17 @@ import {
 } from '@store/selectors/solanaWallet'
 import { actions, LockLiquidityPayload } from '@store/reducers/xInvt'
 import { actions as walletActions } from '@store/reducers/solanaWallet'
+import { actions as navigationActions } from '@store/reducers/navigation'
 import { network } from '@store/selectors/solanaConnection'
-import { INVT_MAIN, xINVT_MAIN } from '@store/consts/static'
-import { displayYieldComparison, getTokenPrice, printBN } from '@utils/utils'
+import { INVT_MAIN, USDC_MAIN, xINVT_MAIN } from '@store/consts/static'
+import {
+  addressToTicker,
+  displayYieldComparison,
+  getTokenPrice,
+  parseFeeToPathFee,
+  printBN,
+  ROUTES
+} from '@utils/utils'
 import { BannerPhase, LockerSwitch } from '@store/consts/types'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { refreshIcon } from '@static/icons'
@@ -32,6 +40,8 @@ import { StatsLocker } from '@components/XInvtLocker/StatsLocker/StatsLocker'
 import useStyles from './styles'
 import DynamicBanner from '@components/DynamicBanner/DynamicBanner'
 import PoolBanner from '@components/PoolBanner/PoolBanner'
+import { useNavigate } from 'react-router-dom'
+import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 export interface BannerState {
   key: BannerPhase
   text: string
@@ -41,6 +51,8 @@ export interface BannerState {
 export const LockWrapper: React.FC = () => {
   const { classes } = useStyles()
   const dispatch = useDispatch()
+  const navigate = useNavigate()
+
   const networkType = useSelector(network)
   const walletStatus = useSelector(status)
   const marketData = useSelector(invtMarketData)
@@ -217,6 +229,22 @@ export const LockWrapper: React.FC = () => {
       return false
     }
   }, [bannerState])
+
+  const handleOpenPosition = () => {
+    const tokenA = addressToTicker(networkType, xINVT_MAIN.address.toString() ?? '')
+    const tokenB = addressToTicker(networkType, USDC_MAIN.address.toString() ?? '')
+
+    dispatch(navigationActions.setNavigation({ address: location.pathname }))
+    navigate(
+      ROUTES.getNewPositionRoute(
+        tokenA,
+        tokenB,
+        parseFeeToPathFee(Math.round(1 * 10 ** (DECIMAL - 2)))
+      ),
+      { state: { referer: 'stats' } }
+    )
+  }
+
   return (
     <Grid container className={classes.wrapper}>
       <DynamicBanner isLoading={bannerInitialLoading} bannerState={bannerState} />
@@ -285,7 +313,14 @@ export const LockWrapper: React.FC = () => {
           loading={statsLoading}
         />
       </Box>
-      <PoolBanner />
+      <PoolBanner
+        handleOpenPosition={handleOpenPosition}
+        handleClaim={() => {}}
+        isFavourite={true}
+        poolDistribute={12334}
+        toggleAddToFavourites={() => {}}
+        userEarn={321}
+      />
     </Grid>
   )
 }
