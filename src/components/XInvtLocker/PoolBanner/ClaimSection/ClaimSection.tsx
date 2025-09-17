@@ -1,5 +1,5 @@
 import { Button } from '@common/Button/Button'
-import { Grid, Typography } from '@mui/material'
+import { Box, Grid, Typography } from '@mui/material'
 import { xINVT_MAIN } from '@store/consts/static'
 import useStyles from './style'
 
@@ -9,7 +9,7 @@ interface IProps {
 export const ClaimSection: React.FC<IProps> = ({ handleClaim }) => {
   const { classes } = useStyles()
   return (
-    <>
+    <Box className={classes.wrapper}>
       <Typography component='h5'>Your unclaimed xINVT</Typography>
       <Grid className={classes.valueWrapper}>
         <img width={36} src={xINVT_MAIN.logoURI} />
@@ -18,6 +18,6 @@ export const ClaimSection: React.FC<IProps> = ({ handleClaim }) => {
       <Button width={'100%'} scheme='green' onClick={handleClaim}>
         Claim
       </Button>
-    </>
+    </Box>
   )
 }
