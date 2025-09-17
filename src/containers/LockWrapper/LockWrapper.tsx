@@ -39,7 +39,7 @@ import {
 import { StatsLocker } from '@components/XInvtLocker/StatsLocker/StatsLocker'
 import useStyles from './styles'
 import DynamicBanner from '@components/DynamicBanner/DynamicBanner'
-import PoolBanner from '@components/PoolBanner/PoolBanner'
+import PoolBanner from '@components/XInvtLocker/PoolBanner/PoolBanner'
 import { useNavigate } from 'react-router-dom'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import imgInvtXInvt from '@static/png/xInvt/invt-xInvt.png'
@@ -57,7 +57,7 @@ export const LockWrapper: React.FC = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
-  const networkType = useSelector(network)
+  const currentNetwork = useSelector(network)
   const walletStatus = useSelector(status)
   const marketData = useSelector(invtMarketData)
   const tokens = useSelector(swapTokensDict)
@@ -75,6 +75,26 @@ export const LockWrapper: React.FC = () => {
   const [bannerInitialLoading, setBannerInitialLoading] = useState(true)
   const depositLoading = useSelector(lockOperationLoading)
   const statsLoading = useSelector(invtStatsLoading)
+
+  const [favouritePools, setFavouritePools] = useState<Set<string>>(
+    new Set(
+      JSON.parse(
+        localStorage.getItem(`INVARIANT_FAVOURITE_POOLS_Eclipse_${currentNetwork}`) || '[]'
+      )
+    )
+  )
+
+  const switchFavouritePool = (poolAddress: string) => {
+    if (favouritePools.has(poolAddress)) {
+      const updatedFavouritePools = new Set(favouritePools)
+      updatedFavouritePools.delete(poolAddress)
+      setFavouritePools(updatedFavouritePools)
+    } else {
+      const updatedFavouritePools = new Set(favouritePools)
+      updatedFavouritePools.add(poolAddress)
+      setFavouritePools(updatedFavouritePools)
+    }
+  }
 
   const amountFrom = useMemo(() => {
     if (currentLockerTab === LockerSwitch.Lock) return lockInput
@@ -116,7 +136,7 @@ export const LockWrapper: React.FC = () => {
 
     const invtAddr = INVT_MAIN.address.toString()
 
-    Promise.allSettled([getTokenPrice(networkType, invtAddr)])
+    Promise.allSettled([getTokenPrice(currentNetwork, invtAddr)])
       .then(([res]) => {
         const invtPrice = res.status === 'fulfilled' && res.value != null ? res.value : 0
         setInvtPrice(invtPrice ?? 0)
@@ -234,9 +254,9 @@ export const LockWrapper: React.FC = () => {
     }
   }, [bannerState])
 
-  const handleOpenPosition = () => {
-    const tokenA = addressToTicker(networkType, xINVT_MAIN.address.toString() ?? '')
-    const tokenB = addressToTicker(networkType, USDC_MAIN.address.toString() ?? '')
+  const handleOpenPosition = (pool: PoolBannerItem) => {
+    const tokenA = addressToTicker(currentNetwork, pool.tokenX.address.toString() ?? '')
+    const tokenB = addressToTicker(currentNetwork, pool.tokenY.address.toString() ?? '')
 
     dispatch(navigationActions.setNavigation({ address: location.pathname }))
     navigate(
@@ -251,6 +271,7 @@ export const LockWrapper: React.FC = () => {
 
   const pools: PoolBannerItem[] = [
     {
+      poolAddress: '',
       tokenX: INVT_MAIN,
       tokenY: USDC_MAIN,
       fee: 1,
@@ -260,6 +281,7 @@ export const LockWrapper: React.FC = () => {
       image: imgUsdcInvt
     },
     {
+      poolAddress: '',
       tokenX: xINVT_MAIN,
       tokenY: INVT_MAIN,
       fee: 1,
@@ -269,6 +291,7 @@ export const LockWrapper: React.FC = () => {
       image: imgInvtXInvt
     },
     {
+      poolAddress: '',
       tokenX: xINVT_MAIN,
       tokenY: USDC_MAIN,
       fee: 0.3,
@@ -350,7 +373,7 @@ export const LockWrapper: React.FC = () => {
       <PoolBanner
         handleOpenPosition={handleOpenPosition}
         handleClaim={() => {}}
-        toggleAddToFavourites={() => {}}
+        switchFavouritePool={switchFavouritePool}
         pools={pools}
         isLoading={false}
       />

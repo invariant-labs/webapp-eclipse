@@ -8,24 +8,27 @@ import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import { PoolBannerItem } from '@store/consts/types'
 import { theme } from '@static/theme'
+import { useState } from 'react'
 
 export interface IPoolBanner {
-  handleOpenPosition: () => void
-  toggleAddToFavourites: () => void
-  handleClaim: () => void
+  handleOpenPosition: (pool: PoolBannerItem) => void
+  switchFavouritePool: (poolAddress: string) => void
+  handleClaim: (pool: PoolBannerItem) => void
   pools: PoolBannerItem[]
   isLoading: boolean
 }
 
 const PoolBanner: React.FC<IPoolBanner> = ({
   handleOpenPosition,
-  toggleAddToFavourites,
+  switchFavouritePool,
   handleClaim,
   pools,
   isLoading
 }) => {
   const { classes } = useStyles()
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
+
+  const [currentPoolIndex, setCurrentPoolIndex] = useState(0)
 
   return (
     <Grid className={classes.wrapper}>
@@ -47,7 +50,8 @@ const PoolBanner: React.FC<IPoolBanner> = ({
           rows={1}
           fade={true}
           vertical={!isMd}
-          verticalSwiping={!isMd}>
+          verticalSwiping={!isMd}
+          beforeChange={(_current, next) => setCurrentPoolIndex(next)}>
           {pools.map((pool, index) => {
             return (
               (isLoading || !isLoading) && (
@@ -55,10 +59,8 @@ const PoolBanner: React.FC<IPoolBanner> = ({
                   <Grid className={classes.leftBannerWrapper}>
                     <NewPoolSection handleOpenPosition={handleOpenPosition} pool={pool} />
                     <PoolInfoSection
-                      poolDistribute={pool.poolDistribute}
-                      toggleAddToFavourites={toggleAddToFavourites}
-                      userEarn={pool.userEarn}
-                      isFavourite={pool.isFavourite}
+                      switchFavouritePool={() => switchFavouritePool(pool.poolAddress)}
+                      pool={pool}
                     />
                   </Grid>
                 </Box>
@@ -69,7 +71,7 @@ const PoolBanner: React.FC<IPoolBanner> = ({
       </div>
 
       <Grid className={classes.rightBannerWapper}>
-        <ClaimSection handleClaim={handleClaim} />
+        <ClaimSection handleClaim={() => handleClaim(pools[currentPoolIndex])} />
       </Grid>
     </Grid>
   )

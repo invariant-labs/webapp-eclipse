@@ -2,19 +2,13 @@ import { Box, Grid, Typography } from '@mui/material'
 import { star, starFill } from '@static/icons'
 import { USDC_MAIN, xINVT_MAIN } from '@store/consts/static'
 import useStyles from './style'
+import { PoolBannerItem } from '@store/consts/types'
 
 interface IProps {
-  poolDistribute: number
-  userEarn: number
-  toggleAddToFavourites: () => void
-  isFavourite: boolean
+  pool: PoolBannerItem
+  switchFavouritePool: () => void
 }
-export const PoolInfoSection: React.FC<IProps> = ({
-  poolDistribute,
-  toggleAddToFavourites,
-  userEarn,
-  isFavourite
-}) => {
+export const PoolInfoSection: React.FC<IProps> = ({ pool, switchFavouritePool }) => {
   const { classes } = useStyles()
 
   return (
@@ -23,13 +17,15 @@ export const PoolInfoSection: React.FC<IProps> = ({
         <Box className={classes.tokenWrapper}>
           <img alt='token logo' width={32} src={xINVT_MAIN.logoURI} />
           <img alt='token logo' width={32} src={USDC_MAIN.logoURI} />
-          <Typography component='h1'>xINVT - USDC POOL</Typography>
+          <Typography component='h1'>
+            {pool.tokenX.symbol} - {pool.tokenY.symbol} POOL
+          </Typography>
         </Box>
         <img
           alt='star icon'
           className={classes.starIcon}
-          src={isFavourite ? starFill : star}
-          onClick={toggleAddToFavourites}
+          src={pool.isFavourite ? starFill : star}
+          onClick={switchFavouritePool}
         />
       </Grid>
       <Grid className={classes.poolDistributeWapper}>
@@ -43,7 +39,7 @@ export const PoolInfoSection: React.FC<IProps> = ({
         <Grid className={classes.poolDistributeValueWrapper}>
           <img src={xINVT_MAIN.logoURI} width={16} height={16} alt='xinvt logo' />
           <Typography>
-            {poolDistribute} {'(24H)'}
+            {pool.poolDistribute} {'(24H)'}
           </Typography>
         </Grid>
       </Grid>
@@ -55,7 +51,7 @@ export const PoolInfoSection: React.FC<IProps> = ({
         <Grid className={classes.poolDistributeValueWrapper}>
           <img src={xINVT_MAIN.logoURI} width={16} height={16} alt='xinvt logo' />
           <Typography>
-            {userEarn} {'(24H)'}
+            {pool.userEarn} {'(24H)'}
           </Typography>
         </Grid>
       </Grid>

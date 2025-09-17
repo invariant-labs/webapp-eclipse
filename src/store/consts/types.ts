@@ -351,6 +351,7 @@ export interface InvtConvertedData {
 }
 
 export interface PoolBannerItem {
+  poolAddress: string
   tokenX: Token
   tokenY: Token
   fee: number

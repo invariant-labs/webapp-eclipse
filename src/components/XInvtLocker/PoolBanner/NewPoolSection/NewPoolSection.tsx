@@ -5,7 +5,7 @@ import { arrowRightIcon, infoCircleIcon } from '@static/icons'
 import useStyles from './style'
 import { PoolBannerItem } from '@store/consts/types'
 export interface INewPoolSection {
-  handleOpenPosition: () => void
+  handleOpenPosition: (pool: PoolBannerItem) => void
   pool: PoolBannerItem
 }
 
@@ -28,8 +28,8 @@ const NewPoolSection: React.FC<INewPoolSection> = ({ handleOpenPosition, pool })
         <Typography height={34} component='span'>
           Provide liquidity and LP while {!hideBanner && <br />} earning fees!
         </Typography>
-        <Button scheme='pink' height={36} gap={6} onClick={handleOpenPosition}>
-          <Typography>Provide liquidity</Typography>
+        <Button scheme='pink' height={36} gap={6} onClick={() => handleOpenPosition(pool)}>
+          <Typography width={140}>Provide liquidity</Typography>
           <img
             alt='right arrow'
             src={arrowRightIcon}
