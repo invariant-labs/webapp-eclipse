@@ -6,7 +6,7 @@ export const useStyles = makeStyles()(() => ({
     marginTop: 24,
     display: 'flex',
     gap: 20,
-    height: 184,
+    // height: 184,
     borderRadius: 24,
     boxSizing: 'border-box',
     maxWidth: 1040,
@@ -27,14 +27,14 @@ export const useStyles = makeStyles()(() => ({
     background: colors.invariant.component,
     [theme.breakpoints.down('md')]: {
       height: 368,
-      flexDirection: 'column'
+      flexDirection: 'column',
+      paddingBottom: 24
     }
   },
   rightBannerWapper: {
     display: 'flex',
     maxWidth: 285,
     width: '100%',
-    height: 184,
     alignItems: 'center',
     flexDirection: 'column',
     boxSizing: 'border-box',
@@ -56,6 +56,120 @@ export const useStyles = makeStyles()(() => ({
     '& h3': {
       ...typography.heading1,
       color: colors.invariant.text
+    }
+  },
+  cardsContainer: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'row',
+    // padding: '0 51px 24px 51px',
+    flexWrap: 'nowrap',
+    borderRadius: 24,
+    background: colors.invariant.component
+  },
+  slider: {
+    minWidth: '100%',
+    '& .slick-track': {
+      // paddingTop: 30,
+      // display: 'flex',
+      // justifyContent: 'space-between'
+    },
+    '& .slick-slide': {
+      // display: 'flex',
+      // justifyContent: 'center'
+    }
+
+    // '& .slick-prev': {
+    //   left: -38,
+    //   [theme.breakpoints.down('lg')]: {
+    //     left: -40
+    //   },
+    //   [theme.breakpoints.down('sm')]: {
+    //     left: -4,
+    //     zIndex: 3
+    //   }
+    // },
+    // '& .slick-next': {
+    //   right: -18,
+    //   [theme.breakpoints.down('lg')]: {
+    //     right: -20
+    //   },
+    //   [theme.breakpoints.down('sm')]: {
+    //     right: 9,
+    //     zIndex: 3
+    //   }
+    // }
+  },
+  dots: {
+    position: 'absolute',
+    height: 10,
+    width: 188,
+    right: 180,
+    top: 94,
+    overflow: 'visible',
+    zIndex: 10,
+    transform: 'rotate(90deg)',
+
+    [theme.breakpoints.down('md')]: {
+      width: '100%',
+      height: 'auto',
+      top: 'auto',
+      bottom: 16,
+      right: 'auto',
+      transform: 'none'
+    },
+    '& li': {
+      borderRadius: '50%',
+      height: 14,
+      width: 14,
+      margin: '0 12px',
+      background: colors.invariant.newDark,
+      border: `2px solid transparent`,
+      transition: 'all 0.3s ease',
+      position: 'relative',
+      '&.slick-active': {
+        background: colors.invariant.component,
+        border: 'none',
+        '&::after': {
+          content: '""',
+          position: 'absolute',
+          top: -1,
+          left: -1,
+          right: -1,
+          bottom: -1,
+          borderRadius: '50%',
+          // background: `linear-gradient(to bottom, ${colors.invariant.green}, ${colors.invariant.pink})`,
+          background: colors.invariant.green,
+          zIndex: -1
+        }
+      },
+      '&': {
+        background: colors.invariant.newDark,
+        border: 'none',
+        '&::after': {
+          content: '""',
+          position: 'absolute',
+          top: -1,
+          left: -1,
+          right: -1,
+          bottom: -1,
+          borderRadius: '50%',
+          background: colors.invariant.light,
+          zIndex: -1
+        }
+      },
+      '& button': {
+        opacity: 0,
+        height: '100%',
+        width: '100%',
+        background: 'transparent',
+        border: 'none',
+        outline: 'none',
+        cursor: 'pointer'
+      },
+      '& button::before': {
+        content: '""'
+      }
     }
   }
 }))

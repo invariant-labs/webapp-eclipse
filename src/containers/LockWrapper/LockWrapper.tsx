@@ -21,7 +21,7 @@ import {
   printBN,
   ROUTES
 } from '@utils/utils'
-import { BannerPhase, LockerSwitch } from '@store/consts/types'
+import { BannerPhase, LockerSwitch, PoolBannerItem } from '@store/consts/types'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { refreshIcon } from '@static/icons'
 import { ProgressState } from '@common/AnimatedButton/AnimatedButton'
@@ -42,6 +42,10 @@ import DynamicBanner from '@components/DynamicBanner/DynamicBanner'
 import PoolBanner from '@components/PoolBanner/PoolBanner'
 import { useNavigate } from 'react-router-dom'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
+import imgInvtXInvt from '@static/png/xInvt/invt-xInvt.png'
+import imgUsdcInvt from '@static/png/xInvt/usdc-invt.png'
+import imgxInvtUsdc from '@static/png/xInvt/xInvt-usdc.png'
+
 export interface BannerState {
   key: BannerPhase
   text: string
@@ -245,6 +249,36 @@ export const LockWrapper: React.FC = () => {
     )
   }
 
+  const pools: PoolBannerItem[] = [
+    {
+      tokenX: INVT_MAIN,
+      tokenY: USDC_MAIN,
+      fee: 1,
+      poolDistribute: 122334,
+      userEarn: 32,
+      isFavourite: false,
+      image: imgUsdcInvt
+    },
+    {
+      tokenX: xINVT_MAIN,
+      tokenY: INVT_MAIN,
+      fee: 1,
+      poolDistribute: 4321,
+      userEarn: 321,
+      isFavourite: false,
+      image: imgInvtXInvt
+    },
+    {
+      tokenX: xINVT_MAIN,
+      tokenY: USDC_MAIN,
+      fee: 0.3,
+      poolDistribute: 32432,
+      userEarn: 12,
+      isFavourite: false,
+      image: imgxInvtUsdc
+    }
+  ]
+
   return (
     <Grid container className={classes.wrapper}>
       <DynamicBanner isLoading={bannerInitialLoading} bannerState={bannerState} />
@@ -316,10 +350,9 @@ export const LockWrapper: React.FC = () => {
       <PoolBanner
         handleOpenPosition={handleOpenPosition}
         handleClaim={() => {}}
-        isFavourite={true}
-        poolDistribute={12334}
         toggleAddToFavourites={() => {}}
-        userEarn={321}
+        pools={pools}
+        isLoading={false}
       />
     </Grid>
   )

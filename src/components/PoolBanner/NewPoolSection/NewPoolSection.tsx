@@ -2,13 +2,14 @@ import { Button } from '@common/Button/Button'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { Grid, Typography, useMediaQuery } from '@mui/material'
 import { arrowRightIcon, infoCircleIcon } from '@static/icons'
-import bannerIMG from '@static/png/invt-usdc.png'
 import useStyles from './style'
+import { PoolBannerItem } from '@store/consts/types'
 export interface INewPoolSection {
   handleOpenPosition: () => void
+  pool: PoolBannerItem
 }
 
-const NewPoolSection: React.FC<INewPoolSection> = ({ handleOpenPosition }) => {
+const NewPoolSection: React.FC<INewPoolSection> = ({ handleOpenPosition, pool }) => {
   const { classes } = useStyles()
   const hideBanner = useMediaQuery(`(max-width: 429px), (min-width: 961px) and (max-width: 1064px)`)
 
@@ -17,7 +18,9 @@ const NewPoolSection: React.FC<INewPoolSection> = ({ handleOpenPosition }) => {
       <Grid className={classes.poolDescriptionWrapper}>
         <Grid className={classes.titleWrapper}>
           <Typography component='h1'>NEW POOL:</Typography>
-          <Typography component='h2'>INVT-USDC</Typography>
+          <Typography component='h2'>
+            {pool.tokenX.symbol}-{pool.tokenY.symbol}
+          </Typography>
           <TooltipHover title='lorem ipsum'>
             <img style={{ zIndex: 1 }} alt='info circle' src={infoCircleIcon} />
           </TooltipHover>
@@ -35,7 +38,7 @@ const NewPoolSection: React.FC<INewPoolSection> = ({ handleOpenPosition }) => {
           />
         </Button>
       </Grid>
-      {!hideBanner && <img src={bannerIMG} className={classes.usdcImg} />}{' '}
+      {!hideBanner && <img src={pool.image} className={classes.usdcImg} height={'100%'} />}
     </Grid>
   )
 }
