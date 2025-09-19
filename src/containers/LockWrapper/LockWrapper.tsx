@@ -170,7 +170,7 @@ export const LockWrapper: React.FC = () => {
     if (currentUnix < mintEnd) {
       return {
         key: BannerPhase.lockPhase,
-        text: 'Lock ends in:',
+        text: 'Locking disabled in:',
         timestamp: mintEnd
       }
     }
@@ -178,7 +178,7 @@ export const LockWrapper: React.FC = () => {
     if (currentUnix < burnStart) {
       return {
         key: BannerPhase.yieldPhase,
-        text: 'Redeem available in:',
+        text: 'Unlocks in:',
         timestamp: burnStart
       }
     }
@@ -186,7 +186,7 @@ export const LockWrapper: React.FC = () => {
     if (currentUnix < burnEnd) {
       return {
         key: BannerPhase.burningPhase,
-        text: 'Burn ends in:',
+        text: 'Unlocking xINVT disabled in:',
         timestamp: burnEnd
       }
     }
