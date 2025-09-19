@@ -146,7 +146,7 @@ export const StatsLocker: React.FC<StatsLocker> = ({ statsData, userLockedInvt, 
 
       {isSm && (
         <Box className={classes.mobileStatsWrapper}>
-          <Typography component='h5'>Your Stats</Typography>
+          <Typography component='h5'>Your Deposit</Typography>
           <Box className={classes.statsWrapper}>
             <Box className={classes.globalStatsBox}>
               <Typography component='h3'>Staked INVT</Typography>
@@ -158,7 +158,7 @@ export const StatsLocker: React.FC<StatsLocker> = ({ statsData, userLockedInvt, 
             </Box>
             <Box className={classes.yourStatsBoxesWrapper}>
               <Box className={classes.globalStatsBox}>
-                <Typography component='h3'>Estimated income</Typography>
+                <Typography component='h3'>Estimated return</Typography>
                 {loading ? (
                   <Skeleton
                     height={30}

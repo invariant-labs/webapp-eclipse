@@ -221,7 +221,7 @@ export const LockWrapper: React.FC = () => {
       <DynamicBanner isLoading={bannerInitialLoading} bannerState={bannerState} />
       <Box className={classes.titleWrapper}>
         <Box className={classes.titleTextWrapper}>
-          <Typography component='h1'>INVT locking</Typography>
+          <Typography component='h1'>Staking</Typography>
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <TooltipHover title='Refresh'>

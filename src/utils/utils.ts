@@ -2317,7 +2317,7 @@ export const ROUTES = {
   POSITION_WITH_ID: '/position/:id',
   PORTFOLIO: '/portfolio',
   CREATOR: '/creator',
-  STAKE: '/stake',
+  sBITZ: '/sBITZ',
   XINVT: '/xINVT',
 
   getExchangeRoute: (item1?: string, item2?: string): string => {
