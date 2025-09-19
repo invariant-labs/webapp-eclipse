@@ -1,7 +1,6 @@
 import { Button } from '@common/Button/Button'
-import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { Grid, Typography, useMediaQuery } from '@mui/material'
-import { arrowRightIcon, infoCircleIcon } from '@static/icons'
+import { arrowRightIcon } from '@static/icons'
 import useStyles from './style'
 import { PoolBannerItem } from '@store/consts/types'
 export interface INewPoolSection {
@@ -21,12 +20,9 @@ const NewPoolSection: React.FC<INewPoolSection> = ({ handleOpenPosition, pool })
           <Typography component='h2'>
             {pool.tokenX.symbol}-{pool.tokenY.symbol}
           </Typography>
-          <TooltipHover title='lorem ipsum'>
-            <img style={{ zIndex: 1 }} alt='info circle' src={infoCircleIcon} />
-          </TooltipHover>
         </Grid>
         <Typography height={34} component='span'>
-          Provide liquidity and LP while {!hideBanner && <br />} earning fees!
+          Provide liquidity and collect xINVT {!hideBanner && <br />} while earning fees!
         </Typography>
         <Button scheme='pink' height={36} gap={6} onClick={() => handleOpenPosition(pool)}>
           <Typography width={140}>Provide liquidity</Typography>

@@ -30,29 +30,22 @@ export const PoolInfoSection: React.FC<IProps> = ({ pool, switchFavouritePool })
       </Grid>
       <Grid className={classes.poolDistributeWapper}>
         <Grid className={classes.poolDistributeTitle}>
-          <img alt='token logo' src={xINVT_MAIN.logoURI} height={16} width={16} />
           <Grid className={classes.textWrapper}>
-            <Typography component='h4'>Pool distribute</Typography>
-            <Typography component='h5'>(24h)</Typography>
+            <Typography component='h4'>Pool distribution (24H)</Typography>
           </Grid>
         </Grid>
         <Grid className={classes.poolDistributeValueWrapper}>
           <img src={xINVT_MAIN.logoURI} width={16} height={16} alt='xinvt logo' />
-          <Typography>
-            {pool.poolDistribute} {'(24H)'}
-          </Typography>
+          <Typography>{pool.poolDistribute}</Typography>
         </Grid>
       </Grid>
       <Grid className={classes.yourEarnWapper}>
         <Grid className={classes.yourEarnTitle}>
-          <img alt='token logo' src={xINVT_MAIN.logoURI} height={16} width={16} />
           <Typography component='h4'>Your earn (24h)</Typography>
         </Grid>
         <Grid className={classes.poolDistributeValueWrapper}>
           <img src={xINVT_MAIN.logoURI} width={16} height={16} alt='xinvt logo' />
-          <Typography>
-            {pool.userEarn} {'(24H)'}
-          </Typography>
+          <Typography>{pool.userEarn}</Typography>
         </Grid>
       </Grid>
     </Grid>

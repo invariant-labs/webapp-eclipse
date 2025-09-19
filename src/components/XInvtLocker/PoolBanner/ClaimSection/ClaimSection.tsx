@@ -10,7 +10,7 @@ export const ClaimSection: React.FC<IProps> = ({ handleClaim }) => {
   const { classes } = useStyles()
   return (
     <Box className={classes.wrapper}>
-      <Typography component='h5'>Your unclaimed xINVT</Typography>
+      <Typography component='h5'>Unclaimed xINVT</Typography>
       <Grid className={classes.valueWrapper}>
         <img width={36} src={xINVT_MAIN.logoURI} />
         <Typography component='h3'>30K xINVT</Typography>
