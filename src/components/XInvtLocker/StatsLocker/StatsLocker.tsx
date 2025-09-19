@@ -32,7 +32,7 @@ export const StatsLocker: React.FC<StatsLocker> = ({ statsData, userLockedInvt, 
         <Box className={classes.yourStatsBoxesWrapper} mt={'auto'}>
           <Box className={classes.statsBox}>
             <Typography component='h3' color={colors.invariant.textGrey}>
-              Rewards
+              Total Rewards
             </Typography>
             <Typography
               style={{ color: colors.invariant.green }}
@@ -44,13 +44,13 @@ export const StatsLocker: React.FC<StatsLocker> = ({ statsData, userLockedInvt, 
           <Box className={classes.statsBox}>
             <Box display='flex' alignItems='center' gap={0.5}>
               <Typography component='h3' color={colors.invariant.textGrey}>
-                3 months yield{' '}
+                3-month yield
               </Typography>
               <TooltipHover
                 title={
-                  'Current yield is all rewards proportionally distributed among all locked INVT'
+                  'Current yield represents rewards distributed proportionally among all locked INVT'
                 }
-                increasePadding>
+                textAlign='center'>
                 <img src={infoIcon} alt='i' width={14} />
               </TooltipHover>
             </Box>
@@ -65,7 +65,7 @@ export const StatsLocker: React.FC<StatsLocker> = ({ statsData, userLockedInvt, 
         </Box>
         <Box className={classes.yourStatsBoxesWrapper}>
           <Box className={classes.statsBox}>
-            <Typography component='h3'>Total INVT deposit</Typography>
+            <Typography component='h3'>Total INVT deposited</Typography>
             {loading ? (
               <Skeleton height={28} width={125} variant='rounded' sx={{ borderRadius: '8px' }} />
             ) : (
@@ -75,7 +75,7 @@ export const StatsLocker: React.FC<StatsLocker> = ({ statsData, userLockedInvt, 
             )}
           </Box>
           <Box className={classes.statsBox}>
-            <Typography component='h3'>Deposit limit</Typography>
+            <Typography component='h3'>Maximum deposit</Typography>
             <Typography component='h2'>3M INVT</Typography>
           </Box>
         </Box>
@@ -109,7 +109,7 @@ export const StatsLocker: React.FC<StatsLocker> = ({ statsData, userLockedInvt, 
 
             <Box className={classes.yourStatsBoxesWrapper} flexDirection={'column'}>
               <Box className={classes.singleBoxStat}>
-                <Typography component='h3'>Your INVT staked</Typography>
+                <Typography component='h3'>Staked INVT</Typography>
                 {loading ? (
                   <Skeleton
                     height={28}
@@ -122,7 +122,7 @@ export const StatsLocker: React.FC<StatsLocker> = ({ statsData, userLockedInvt, 
                 )}
               </Box>
               <Box className={classes.singleBoxStat}>
-                <Typography component='h3'>Your predicted income </Typography>
+                <Typography component='h3'>Estimated income</Typography>
                 {loading ? (
                   <Skeleton
                     height={28}
@@ -149,7 +149,7 @@ export const StatsLocker: React.FC<StatsLocker> = ({ statsData, userLockedInvt, 
           <Typography component='h5'>Your Stats</Typography>
           <Box className={classes.statsWrapper}>
             <Box className={classes.globalStatsBox}>
-              <Typography component='h3'>Your INVT staked</Typography>
+              <Typography component='h3'>Staked INVT</Typography>
               {loading ? (
                 <Skeleton height={30} width={125} variant='rounded' sx={{ borderRadius: '8px' }} />
               ) : (
@@ -158,7 +158,7 @@ export const StatsLocker: React.FC<StatsLocker> = ({ statsData, userLockedInvt, 
             </Box>
             <Box className={classes.yourStatsBoxesWrapper}>
               <Box className={classes.globalStatsBox}>
-                <Typography component='h3'>Your predicted income </Typography>
+                <Typography component='h3'>Estimated income</Typography>
                 {loading ? (
                   <Skeleton
                     height={30}

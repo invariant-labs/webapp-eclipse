@@ -60,7 +60,7 @@ export const Header: React.FC<IHeader> = ({
     // 'presale',
     ...(typeOfNetwork === NetworkType.Testnet ? ['creator'] : []),
     'stake',
-    'lock',
+    'xINVT',
     'statistics'
   ]
 
@@ -69,7 +69,7 @@ export const Header: React.FC<IHeader> = ({
     exchange: [/^exchange\/*/],
     portfolio: [/^portfolio\/*/, /^newPosition\/*/, /^position\/*/],
     stake: [/^stake\/*/],
-    lock: [/^lock\/*/],
+    xINVT: [/^xINVT\/*/],
     // presale: [/^presale\/*/],
     ...(typeOfNetwork === NetworkType.Testnet ? { creator: [/^creator\/*/] } : {})
   }

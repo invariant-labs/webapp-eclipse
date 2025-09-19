@@ -2318,7 +2318,7 @@ export const ROUTES = {
   PORTFOLIO: '/portfolio',
   CREATOR: '/creator',
   STAKE: '/stake',
-  LOCK: '/lock',
+  XINVT: '/xINVT',
 
   getExchangeRoute: (item1?: string, item2?: string): string => {
     const parts = [item1, item2].filter(Boolean)
