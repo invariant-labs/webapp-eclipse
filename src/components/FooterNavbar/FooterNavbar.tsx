@@ -102,9 +102,9 @@ export const FooterNavbar = () => {
       isLink: true
     },
     {
-      label: 'Lock',
+      label: 'xINVT',
       icon: saleUnselectedIcon,
-      url: 'lock',
+      url: 'xINVT',
       width: 34,
       isLink: true
     },
@@ -176,7 +176,7 @@ export const FooterNavbar = () => {
     liquidity: [/^liquidity\/*/],
     exchange: [/^exchange\/*/],
     sale: [/^presale\/*/],
-    lock: [/^lock\/*/],
+    xINVT: [/^xINVT\/*/],
     portfolio: [/^portfolio\/*/, /^newPosition\/*/, /^position\/*/],
 
     ...(typeOfNetwork === NetworkType.Testnet ? { creator: [/^creator\/*/] } : {}),

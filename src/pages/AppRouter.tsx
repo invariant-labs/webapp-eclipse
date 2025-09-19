@@ -30,7 +30,7 @@ const createRouter = (currentNetwork: NetworkType) =>
         <Route path={ROUTES.NEW_POSITION_WITH_PARAMS} element={<NewPositionPage />} />
         <Route path={ROUTES.POSITION_WITH_ID} element={<SinglePositionPage />} />
         <Route path={ROUTES.STAKE} element={<StakePage />} />
-        <Route path={ROUTES.LOCK} element={<LockPage />} />
+        <Route path={ROUTES.XINVT} element={<LockPage />} />
         {/* <Route path={ROUTES.SALE} element={<PreSalePage />} /> */}
         <Route path={ROUTES.PORTFOLIO} element={<PortfolioPage />} />
         {currentNetwork === NetworkType.Testnet && (

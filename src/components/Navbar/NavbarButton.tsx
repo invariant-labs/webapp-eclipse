@@ -19,6 +19,7 @@ export const NavbarButton: React.FC<IProps> = ({
   startIcon
 }) => {
   const { classes, cx } = useStyles()
+
   return (
     <Button
       className={cx(className, classes.button, active ? classes.active : undefined)}
@@ -27,7 +28,8 @@ export const NavbarButton: React.FC<IProps> = ({
       disabled={disabled}
       type={onClick ? 'button' : 'submit'}
       startIcon={startIcon}
-      onClick={onClick}>
+      onClick={onClick}
+      style={{ textTransform: name === 'xINVT' ? 'none' : 'capitalize' }}>
       {name}
     </Button>
   )
