@@ -52,7 +52,7 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
         )}
       </Box>
       <Box display='flex' justifyContent='space-between' alignItems='center' mt='16px'>
-        <Typography className={classes.label}>Estimated income</Typography>
+        <Typography className={classes.label}>Estimated return</Typography>
         {loading ? (
           <Skeleton width={125} height={24} variant='rounded' sx={{ borderRadius: '8px' }} />
         ) : (

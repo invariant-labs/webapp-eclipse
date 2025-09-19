@@ -22,11 +22,11 @@ export const StatsLocker: React.FC<StatsLocker> = ({ statsData, userLockedInvt, 
   const wrapperProps = isSm ? { className: classes.wrapper } : {}
   return (
     <WrapperComponent {...wrapperProps}>
-      {isSm && <Typography component='h5'>Global Stats</Typography>}
+      {isSm && <Typography component='h5'>Staking Overview</Typography>}
       <Box className={classes.statsWrapper}>
         {!isSm && (
           <Grid className={classes.titleWrapper}>
-            <Typography component='h5'>Global Stats</Typography>
+            <Typography component='h5'>Staking Overview</Typography>
           </Grid>
         )}
         <Box className={classes.yourStatsBoxesWrapper} mt={'auto'}>
@@ -75,7 +75,7 @@ export const StatsLocker: React.FC<StatsLocker> = ({ statsData, userLockedInvt, 
             )}
           </Box>
           <Box className={classes.statsBox}>
-            <Typography component='h3'>Maximum deposit</Typography>
+            <Typography component='h3'>Deposit limit</Typography>
             <Typography component='h2'>3M INVT</Typography>
           </Box>
         </Box>
@@ -104,7 +104,7 @@ export const StatsLocker: React.FC<StatsLocker> = ({ statsData, userLockedInvt, 
         {!isSm && (
           <>
             <Typography component='h5' mt={'auto'}>
-              Your Stats
+              Your Deposit
             </Typography>
 
             <Box className={classes.yourStatsBoxesWrapper} flexDirection={'column'}>
@@ -122,7 +122,7 @@ export const StatsLocker: React.FC<StatsLocker> = ({ statsData, userLockedInvt, 
                 )}
               </Box>
               <Box className={classes.singleBoxStat}>
-                <Typography component='h3'>Estimated income</Typography>
+                <Typography component='h3'> Estimated return</Typography>
                 {loading ? (
                   <Skeleton
                     height={28}
