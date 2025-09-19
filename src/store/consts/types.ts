@@ -349,3 +349,14 @@ export interface InvtConvertedData {
     newStakeSize: number
   }
 }
+
+export interface PoolBannerItem {
+  poolAddress: string
+  tokenX: Token
+  tokenY: Token
+  fee: number
+  poolDistribute: number
+  userEarn: number
+  isFavourite: boolean
+  image: string
+}

@@ -10,10 +10,18 @@ import {
 } from '@store/selectors/solanaWallet'
 import { actions, LockLiquidityPayload } from '@store/reducers/xInvt'
 import { actions as walletActions } from '@store/reducers/solanaWallet'
+import { actions as navigationActions } from '@store/reducers/navigation'
 import { network } from '@store/selectors/solanaConnection'
-import { INVT_MAIN, xINVT_MAIN } from '@store/consts/static'
-import { displayYieldComparison, getTokenPrice, printBN } from '@utils/utils'
-import { BannerPhase, LockerSwitch } from '@store/consts/types'
+import { INVT_MAIN, USDC_MAIN, xINVT_MAIN } from '@store/consts/static'
+import {
+  addressToTicker,
+  displayYieldComparison,
+  getTokenPrice,
+  parseFeeToPathFee,
+  printBN,
+  ROUTES
+} from '@utils/utils'
+import { BannerPhase, LockerSwitch, PoolBannerItem } from '@store/consts/types'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { refreshIcon } from '@static/icons'
 import { ProgressState } from '@common/AnimatedButton/AnimatedButton'
@@ -31,7 +39,13 @@ import {
 import { StatsLocker } from '@components/XInvtLocker/StatsLocker/StatsLocker'
 import useStyles from './styles'
 import DynamicBanner from '@components/DynamicBanner/DynamicBanner'
-import PoolBanner from '@components/PoolBanner/PoolBanner'
+import PoolBanner from '@components/XInvtLocker/PoolBanner/PoolBanner'
+import { useNavigate } from 'react-router-dom'
+import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
+import imgInvtXInvt from '@static/png/xInvt/invt-xInvt.png'
+import imgUsdcInvt from '@static/png/xInvt/usdc-invt.png'
+import imgxInvtUsdc from '@static/png/xInvt/xInvt-usdc.png'
+
 export interface BannerState {
   key: BannerPhase
   text: string
@@ -41,7 +55,9 @@ export interface BannerState {
 export const LockWrapper: React.FC = () => {
   const { classes } = useStyles()
   const dispatch = useDispatch()
-  const networkType = useSelector(network)
+  const navigate = useNavigate()
+
+  const currentNetwork = useSelector(network)
   const walletStatus = useSelector(status)
   const marketData = useSelector(invtMarketData)
   const tokens = useSelector(swapTokensDict)
@@ -59,6 +75,26 @@ export const LockWrapper: React.FC = () => {
   const [bannerInitialLoading, setBannerInitialLoading] = useState(true)
   const depositLoading = useSelector(lockOperationLoading)
   const statsLoading = useSelector(invtStatsLoading)
+
+  const [favouritePools, setFavouritePools] = useState<Set<string>>(
+    new Set(
+      JSON.parse(
+        localStorage.getItem(`INVARIANT_FAVOURITE_POOLS_Eclipse_${currentNetwork}`) || '[]'
+      )
+    )
+  )
+
+  const switchFavouritePool = (poolAddress: string) => {
+    if (favouritePools.has(poolAddress)) {
+      const updatedFavouritePools = new Set(favouritePools)
+      updatedFavouritePools.delete(poolAddress)
+      setFavouritePools(updatedFavouritePools)
+    } else {
+      const updatedFavouritePools = new Set(favouritePools)
+      updatedFavouritePools.add(poolAddress)
+      setFavouritePools(updatedFavouritePools)
+    }
+  }
 
   const amountFrom = useMemo(() => {
     if (currentLockerTab === LockerSwitch.Lock) return lockInput
@@ -100,7 +136,7 @@ export const LockWrapper: React.FC = () => {
 
     const invtAddr = INVT_MAIN.address.toString()
 
-    Promise.allSettled([getTokenPrice(networkType, invtAddr)])
+    Promise.allSettled([getTokenPrice(currentNetwork, invtAddr)])
       .then(([res]) => {
         const invtPrice = res.status === 'fulfilled' && res.value != null ? res.value : 0
         setInvtPrice(invtPrice ?? 0)
@@ -217,6 +253,55 @@ export const LockWrapper: React.FC = () => {
       return false
     }
   }, [bannerState])
+
+  const handleOpenPosition = (pool: PoolBannerItem) => {
+    const tokenA = addressToTicker(currentNetwork, pool.tokenX.address.toString() ?? '')
+    const tokenB = addressToTicker(currentNetwork, pool.tokenY.address.toString() ?? '')
+
+    dispatch(navigationActions.setNavigation({ address: location.pathname }))
+    navigate(
+      ROUTES.getNewPositionRoute(
+        tokenA,
+        tokenB,
+        parseFeeToPathFee(Math.round(1 * 10 ** (DECIMAL - 2)))
+      ),
+      { state: { referer: 'stats' } }
+    )
+  }
+
+  const pools: PoolBannerItem[] = [
+    {
+      poolAddress: '',
+      tokenX: INVT_MAIN,
+      tokenY: USDC_MAIN,
+      fee: 1,
+      poolDistribute: 122334,
+      userEarn: 32,
+      isFavourite: false,
+      image: imgUsdcInvt
+    },
+    {
+      poolAddress: '',
+      tokenX: xINVT_MAIN,
+      tokenY: INVT_MAIN,
+      fee: 1,
+      poolDistribute: 4321,
+      userEarn: 321,
+      isFavourite: false,
+      image: imgInvtXInvt
+    },
+    {
+      poolAddress: '',
+      tokenX: xINVT_MAIN,
+      tokenY: USDC_MAIN,
+      fee: 0.3,
+      poolDistribute: 32432,
+      userEarn: 12,
+      isFavourite: false,
+      image: imgxInvtUsdc
+    }
+  ]
+
   return (
     <Grid container className={classes.wrapper}>
       <DynamicBanner isLoading={bannerInitialLoading} bannerState={bannerState} />
@@ -285,7 +370,13 @@ export const LockWrapper: React.FC = () => {
           loading={statsLoading}
         />
       </Box>
-      <PoolBanner />
+      <PoolBanner
+        handleOpenPosition={handleOpenPosition}
+        handleClaim={() => {}}
+        switchFavouritePool={switchFavouritePool}
+        pools={pools}
+        isLoading={false}
+      />
     </Grid>
   )
 }

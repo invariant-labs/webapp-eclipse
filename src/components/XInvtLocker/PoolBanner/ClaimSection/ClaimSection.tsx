@@ -1,20 +1,23 @@
 import { Button } from '@common/Button/Button'
-import { Grid, Typography } from '@mui/material'
+import { Box, Grid, Typography } from '@mui/material'
 import { xINVT_MAIN } from '@store/consts/static'
 import useStyles from './style'
 
-export const ClaimSection = () => {
+interface IProps {
+  handleClaim: () => void
+}
+export const ClaimSection: React.FC<IProps> = ({ handleClaim }) => {
   const { classes } = useStyles()
   return (
-    <>
-      <Typography component='h5'>Your unclaimed xINVT</Typography>
+    <Box className={classes.wrapper}>
+      <Typography component='h5'>Unclaimed xINVT</Typography>
       <Grid className={classes.valueWrapper}>
         <img width={36} src={xINVT_MAIN.logoURI} />
         <Typography component='h3'>30K xINVT</Typography>
       </Grid>
-      <Button width={'100%'} scheme='green'>
+      <Button width={'100%'} scheme='green' onClick={handleClaim}>
         Claim
       </Button>
-    </>
+    </Box>
   )
 }
