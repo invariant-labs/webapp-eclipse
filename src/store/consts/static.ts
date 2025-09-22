@@ -465,7 +465,7 @@ export const INVT_MAIN: Token = {
 }
 
 export const xINVT_MAIN: Token = {
-  tokenProgram: TOKEN_2022_PROGRAM_ID,
+  tokenProgram: TOKEN_PROGRAM_ID,
   symbol: 'xINVT',
   address: new PublicKey('x1NVTS1g8Nv4bLhFjyGvxmMEx9YMze3aW5ReoUNzCC2'),
   decimals: 4,
