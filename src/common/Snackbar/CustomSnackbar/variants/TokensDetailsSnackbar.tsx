@@ -62,6 +62,10 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
         return stakeIcon
       case 'unstake':
         return unstakeIcon
+      case 'lock':
+        return stakeIcon
+      case 'unlock':
+        return unstakeIcon
       default:
         return ''
     }
@@ -85,6 +89,10 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
         return 'Staked:'
       case 'unstake':
         return 'Unstaked:'
+      case 'lock':
+        return 'Locked:'
+      case 'unlock':
+        return 'Unlocked:'
       default:
         return ''
     }
@@ -163,6 +171,8 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
                 {ikonType === 'swap' ||
                 ikonType === 'unstake' ||
                 ikonType === 'stake' ||
+                ikonType === 'lock' ||
+                ikonType === 'unlock' ||
                 ikonType === 'purchase' ? (
                   arrow
                 ) : hasBothAmounts ? (

@@ -58,6 +58,7 @@ const MarketEvents = () => {
               .map((address: string) => new PublicKey(address))
           : []
 
+      console.log(currentListUnkown)
       const currentListStr = localStorage.getItem(`CUSTOM_TOKENS_${networkType}`)
       const currentListBefore: PublicKey[] =
         currentListStr !== null
