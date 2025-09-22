@@ -192,7 +192,7 @@ export const LockWrapper: React.FC = () => {
       }
     }
 
-    return { key: BannerPhase.endPhase, text: 'Burn ended', timestamp: 0 }
+    return { key: BannerPhase.endPhase, text: 'Redemption ended', timestamp: 0 }
   }, [marketData, currentUnix])
 
   useEffect(() => {
