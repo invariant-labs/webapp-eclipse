@@ -112,9 +112,9 @@ export const FooterNavbar = () => {
     ...(typeOfNetwork === NetworkType.Mainnet
       ? [
           {
-            label: 'Stake',
+            label: 'sBITZ',
             icon: lqStakingIcon,
-            url: 'stake',
+            url: 'sBITZ',
 
             isLink: true,
             width: 29

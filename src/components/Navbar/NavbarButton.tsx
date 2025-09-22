@@ -29,7 +29,7 @@ export const NavbarButton: React.FC<IProps> = ({
       type={onClick ? 'button' : 'submit'}
       startIcon={startIcon}
       onClick={onClick}
-      style={{ textTransform: name === 'xINVT' ? 'none' : 'capitalize' }}>
+      style={{ textTransform: name === 'xINVT' || name == 'sBITZ' ? 'none' : 'capitalize' }}>
       {name}
     </Button>
   )
