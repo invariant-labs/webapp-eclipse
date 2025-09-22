@@ -20,6 +20,7 @@ import { reducer as navigationReducer, navigationSliceName } from './navigation'
 import { reducer as sBitzReducer, sBitzSliceName } from './sBitz'
 import { sbitzStatsSliceName, reducer as sbitzStatsReducer } from './sbitz-stats'
 // import { saleSliceName, reducer as saleReducer } from './archive/sale'
+import { reducer as xInvtReducer, xInvtSliceName } from './xInvt'
 
 const transformNetwork = createTransform(
   (inboundState: any, _key) => {
@@ -88,7 +89,8 @@ const combinedReducers = combineReducers({
   // [saleSliceName]: saleReducer,
   [navigationSliceName]: navigationReducer,
   [sBitzSliceName]: sBitzReducer,
-  [sbitzStatsSliceName]: sbitzStatsReducer
+  [sbitzStatsSliceName]: sbitzStatsReducer,
+  [xInvtSliceName]: xInvtReducer
 })
 
 export default combinedReducers
