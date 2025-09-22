@@ -82,11 +82,6 @@ export const XInvtLocker: React.FC<ILocker> = ({
 }) => {
   const { classes } = useStyles()
 
-  // const targetDate = useMemo(() => new Date(startTimestamp.toNumber() * 1000), [startTimestamp])
-  // const { hours, minutes, seconds } = useCountdown({
-  //   targetDate
-  // })
-
   const amountFrom = useMemo(() => {
     if (currentLockerTab === LockerSwitch.Lock) return lockInput
     return unlockInput
