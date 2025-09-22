@@ -25,11 +25,11 @@ export const SelectNetworkAndRPC = ({ rpcs, activeNetwork, activeRPC, onNetworkC
     customAddress
   )
 
-  // const networks = [
-  //   NetworkType.Mainnet,
-  //   ...(process.env.NODE_ENV === 'development' ? [NetworkType.Testnet] : [])
-  // ]
-  const networks = [NetworkType.Mainnet, NetworkType.Testnet]
+  const networks = [
+    NetworkType.Mainnet,
+    ...(process.env.NODE_ENV === 'development' ? [NetworkType.Testnet] : [])
+  ]
+
   return (
     <>
       <Box className={classes.container}>

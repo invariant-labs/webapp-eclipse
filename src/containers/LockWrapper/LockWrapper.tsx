@@ -151,6 +151,7 @@ export const LockWrapper: React.FC = () => {
       clearTimeout(timeoutId2)
     }
   }, [success, isInProgress])
+
   const currentUnix = Math.floor(Date.now() / 1000)
 
   const bannerState: BannerState = useMemo(() => {
@@ -216,6 +217,7 @@ export const LockWrapper: React.FC = () => {
       return false
     }
   }, [bannerState])
+
   return (
     <Grid container className={classes.wrapper}>
       <DynamicBanner isLoading={bannerInitialLoading} bannerState={bannerState} />

@@ -454,25 +454,25 @@ export const muES_MAIN: Token = {
   coingeckoId: ''
 }
 
-// export const INVT_MAIN: Token = {
-//   tokenProgram: TOKEN_2022_PROGRAM_ID,
-//   symbol: 'INVT',
-//   address: new PublicKey('EqwchrrGFppZYpTVAQH7ETm2QhSpu6eHV5fwZtUamfSM'),
-//   decimals: 4,
-//   name: 'Invariant',
-//   logoURI: invtLogo,
-//   coingeckoId: ''
-// }
+export const INVT_MAIN: Token = {
+  tokenProgram: TOKEN_2022_PROGRAM_ID,
+  symbol: 'INVT',
+  address: new PublicKey('EqwchrrGFppZYpTVAQH7ETm2QhSpu6eHV5fwZtUamfSM'),
+  decimals: 4,
+  name: 'Invariant',
+  logoURI: invtLogo,
+  coingeckoId: ''
+}
 
-// export const xINVT_MAIN: Token = {
-//   tokenProgram: TOKEN_2022_PROGRAM_ID,
-//   symbol: 'xINVT',
-//   address: new PublicKey('EqwchrrGFppZYpTVAQH7ETm2QhSpu6eHV5fwZtUamfSK'), //replace
-//   decimals: 4,
-//   name: 'xInvariant',
-//   logoURI: xInvtLogo,
-//   coingeckoId: ''
-// }
+export const xINVT_MAIN: Token = {
+  tokenProgram: TOKEN_2022_PROGRAM_ID,
+  symbol: 'xINVT',
+  address: new PublicKey('x1NVTS1g8Nv4bLhFjyGvxmMEx9YMze3aW5ReoUNzCC2'),
+  decimals: 4,
+  name: 'Invariant (Escrowed)',
+  logoURI: xInvtLogo,
+  coingeckoId: ''
+}
 
 export const INVT_TEST: Token = {
   tokenProgram: TOKEN_2022_PROGRAM_ID,
@@ -493,8 +493,6 @@ export const xINVT_TEST: Token = {
   logoURI: xInvtLogo,
   coingeckoId: ''
 }
-export const INVT_MAIN = INVT_TEST
-export const xINVT_MAIN = xINVT_TEST
 
 const DEFAULT_PUBLICKEY = new PublicKey(0)
 const MAX_U64 = new BN('18446744073709551615')
