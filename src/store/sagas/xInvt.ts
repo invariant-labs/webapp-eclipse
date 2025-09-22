@@ -34,7 +34,11 @@ import {
   printBN
 } from '@utils/utils'
 import { closeSnackbar } from 'notistack'
-import { getAssociatedTokenAddressSync, TOKEN_2022_PROGRAM_ID } from '@solana/spl-token'
+import {
+  getAssociatedTokenAddressSync,
+  TOKEN_2022_PROGRAM_ID,
+  TOKEN_PROGRAM_ID
+} from '@solana/spl-token'
 import { BN } from '@coral-xyz/anchor'
 import { actions, LockLiquidityPayload } from '@store/reducers/xInvt'
 
@@ -71,7 +75,7 @@ export function* handleLock(action: PayloadAction<LockLiquidityPayload>) {
       xINVT_MAIN.address,
       wallet.publicKey,
       false,
-      TOKEN_2022_PROGRAM_ID
+      TOKEN_PROGRAM_ID
     )
 
     const mintIx = yield* call([xInvtProgram, xInvtProgram.mintIx], {
