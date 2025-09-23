@@ -161,7 +161,7 @@ export const StakeChart: React.FC<StakeChartProps> = ({
             x={xPosition + (isMobile ? 5 : 0)}
             y={point.yPosition - (index === 0 || !isMobile ? 10 : 0)}
             textAnchor={textAnchor}
-            dominantBaseline='middle'
+            dominantBaseline='central'
             style={{
               fontSize: 14,
               fontWeight: 'bold',

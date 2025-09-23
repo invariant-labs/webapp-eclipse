@@ -1184,49 +1184,49 @@ export const TOTAL_INVT_REWARDS = 1_500_000
 export const INVT_DEPOSIT_LIMIT = 3_000_000
 
 export const promotedTiers = [
-  // {
-  //   tokenX: USDC_MAIN.address,
-  //   tokenY: WETH_MAIN.address,
-  //   index: 3
-  // },
-  // {
-  //   tokenX: SOL_MAIN.address,
-  //   tokenY: WETH_MAIN.address,
-  //   index: 3
-  // },
-  // {
-  //   tokenX: TETH_MAIN.address,
-  //   tokenY: WETH_MAIN.address,
-  //   index: 0
-  // },
-  // {
-  //   tokenX: SOL_MAIN.address,
-  //   tokenY: USDC_MAIN.address,
-  //   index: 3
-  // },
-  // {
-  //   tokenX: BITZ_MAIN.address,
-  //   tokenY: WETH_MAIN.address,
-  //   index: 6
-  // },
-  // {
-  //   tokenX: USDC_MAIN.address,
-  //   tokenY: TUSD_MAIN.address,
-  //   index: 0
-  // },
-  // {
-  //   tokenX: WETH_MAIN.address,
-  //   tokenY: sBITZ_MAIN.address,
-  //   index: 6
-  // },
-  // {
-  //   tokenX: ES_MAIN.address,
-  //   tokenY: WETH_MAIN.address,
-  //   index: 5
-  // },
-  // {
-  //   tokenX: USDC_MAIN.address,
-  //   tokenY: ES_MAIN.address,
-  //   index: 5
-  // }
+  {
+    tokenX: USDC_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    index: 3
+  },
+  {
+    tokenX: SOL_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    index: 3
+  },
+  {
+    tokenX: TETH_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    index: 0
+  },
+  {
+    tokenX: SOL_MAIN.address,
+    tokenY: USDC_MAIN.address,
+    index: 3
+  },
+  {
+    tokenX: BITZ_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    index: 6
+  },
+  {
+    tokenX: USDC_MAIN.address,
+    tokenY: TUSD_MAIN.address,
+    index: 0
+  },
+  {
+    tokenX: WETH_MAIN.address,
+    tokenY: sBITZ_MAIN.address,
+    index: 6
+  },
+  {
+    tokenX: ES_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    index: 5
+  },
+  {
+    tokenX: USDC_MAIN.address,
+    tokenY: ES_MAIN.address,
+    index: 5
+  }
 ]
