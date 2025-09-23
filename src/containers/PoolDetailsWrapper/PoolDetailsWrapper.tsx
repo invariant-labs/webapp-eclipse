@@ -26,7 +26,6 @@ import {
   lastSnapTimestamp,
   poolsStatsWithTokensDetails
 } from '@store/selectors/stats'
-import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import { actions as snackbarActions } from '@store/reducers/snackbars'
 import { actions as navigationActions } from '@store/reducers/navigation'
 import { address } from '@store/selectors/navigation'
@@ -155,8 +154,8 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
     const loadPrices = async () => {
       if (!tokenX || !tokenY) return
       const priceResults = await Promise.all([
-        await getTokenPrice(tokenX?.assetAddress.toString(), currentNetwork),
-        await getTokenPrice(tokenY?.assetAddress.toString(), currentNetwork)
+        await getTokenPrice(currentNetwork, tokenX?.assetAddress.toString()),
+        await getTokenPrice(currentNetwork, tokenY?.assetAddress.toString())
       ])
 
       const tokenXPrice = priceResults[0]
@@ -181,10 +180,6 @@ export const PoolDetailsWrapper: React.FC<IProps> = ({
 
     return address
   }
-
-  useEffect(() => {
-    dispatch(leaderboardActions.getLeaderboardConfig())
-  }, [])
 
   useEffect(() => {
     if (!lastUsedInterval || !poolData?.address) return

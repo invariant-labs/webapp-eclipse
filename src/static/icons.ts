@@ -113,6 +113,9 @@ import greenInfoIcon from './svg/greenInfo.svg'
 import swapArrowClean from './svg/swapArrowClean.svg'
 import saleSelectedIcon from './svg/sale-selected.svg'
 import saleUnselectedIcon from './svg/sale-unselected.svg'
+import InvtLogoIcon from './svg/INVT.svg'
+import xInvtLogoIcon from './svg/xINVT.svg'
+import lockIconGrey from './svg/lockIconGrey.svg'
 import poolStatsIcon from './svg/poolStats.svg'
 import poolStatsBtnIcon from './svg/poolStatsBtn.svg'
 
@@ -232,6 +235,9 @@ export {
   swapArrowClean,
   saleSelectedIcon,
   saleUnselectedIcon,
+  InvtLogoIcon,
+  xInvtLogoIcon,
+  lockIconGrey,
   poolStatsIcon,
   poolStatsBtnIcon
 }

@@ -202,7 +202,7 @@ export const DEXChart = () => {
                   <text
                     className={classes.leftAxisTickText}
                     textAnchor='start'
-                    dominantBaseline='center'>
+                    dominantBaseline='central'>
                     {`${(value * 100).toFixed(2)}%`}
                   </text>
                 </g>

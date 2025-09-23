@@ -19,6 +19,8 @@ export type IkonType =
   | 'unstake'
   | 'purchase'
   | 'claim-nft'
+  | 'lock'
+  | 'unlock'
 export interface TokensDetailsProps {
   ikonType: IkonType
   tokenXAmount: string
