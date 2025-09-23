@@ -3,12 +3,28 @@ import { colors, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()((theme: Theme) => ({
-  swapWrapper: {
-    maxWidth: '100%',
+  wrapper: {
+    maxWidth: 1210,
     display: 'flex',
     flexDirection: 'column',
-    [theme.breakpoints.down('sm')]: {
-      padding: '0 8px'
+    flex: 1
+  },
+  upperContainer: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'stretch',
+    gap: 24,
+
+    [theme.breakpoints.down('md')]: {
+      flexDirection: 'column'
+    }
+  },
+  swapWrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    width: 510,
+    [theme.breakpoints.down('md')]: {
+      width: '100%'
     }
   },
   refreshIconContainer: {
@@ -50,6 +66,9 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     paddingBottom: 16,
     rowGap: 8,
     flexWrap: 'wrap',
+    [theme.breakpoints.down('md')]: {
+      maxWidth: '100%'
+    },
 
     '& h1': {
       ...typography.heading4,
@@ -166,6 +185,9 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     paddingBottom: 22,
     paddingTop: 16,
     width: '100%',
+    [theme.breakpoints.down('md')]: {
+      maxWidth: '100%'
+    },
     [theme.breakpoints.down('sm')]: {
       padding: '16px 8px'
     }
@@ -264,7 +286,10 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
   collapseWrapper: {
     maxWidth: 510,
-    width: '100%'
+    width: '100%',
+    [theme.breakpoints.down('md')]: {
+      maxWidth: '100%'
+    }
   },
   transactionDetailsWrapper: {
     display: 'flex',
@@ -523,7 +548,11 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     maxWidth: 510,
     width: '100%',
     borderRadius: 24,
-    border: `1px solid ${colors.invariant.component}`
+    flex: 1,
+    border: `1px solid ${colors.invariant.component}`,
+    [theme.breakpoints.down('md')]: {
+      maxWidth: '100%'
+    }
   },
   textShadowLabel: {
     textShadow: '3px 3px 5px #3A466B'

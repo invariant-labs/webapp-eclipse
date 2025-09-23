@@ -348,6 +348,17 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const swapAccounts = useSelector(accounts)
   const swapIsLoading = useSelector(isLoading)
 
+  // const updateInterval = (interval: IntervalsKeys) => {
+  //   if (!poolData?.address) return
+  //   dispatch(
+  //     actions.getCurrentIntervalPoolStats({
+  //       interval,
+  //       poolAddress: poolData?.address.toString()
+  //     })
+  //   )
+  //   dispatch(actions.setCurrentInterval({ interval }))
+  // }
+
   return (
     <Swap
       isFetchingNewPool={isFetchingNewPool}
@@ -442,6 +453,7 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
       tokensDict={tokensDict}
       swapAccounts={swapAccounts}
       swapIsLoading={swapIsLoading}
+      updateInterval={() => {}}
     />
   )
 }
