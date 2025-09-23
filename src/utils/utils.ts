@@ -101,7 +101,13 @@ import {
   MAX_PLOT_VISIBLE_TICK_RANGE,
   CHECKER_API_URL,
   NoConfig,
-  muES_MAIN
+  muES_MAIN,
+  INVT_MAIN,
+  xINVT_MAIN,
+  INVT_TEST,
+  xINVT_TEST,
+  TOTAL_INVT_REWARDS,
+  INVT_DEPOSIT_LIMIT
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
@@ -109,6 +115,7 @@ import {
   FormatNumberThreshold,
   FullSnap,
   IncentiveRewardData,
+  InvtConvertedData,
   IPriceData,
   PoolSnapshot,
   Token,
@@ -941,7 +948,9 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
         [NPT_MAIN.address.toString()]: NPT_MAIN,
         [USDN_MAIN.address.toString()]: USDN_MAIN,
         [WEETHS_MAIN.address.toString()]: WEETHS_MAIN,
-        [muES_MAIN.address.toString()]: muES_MAIN
+        [muES_MAIN.address.toString()]: muES_MAIN,
+        [INVT_MAIN.address.toString()]: INVT_MAIN,
+        [xINVT_MAIN.address.toString()]: xINVT_MAIN
       }
     case NetworkType.Devnet:
       return {
@@ -956,7 +965,9 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
         [BTC_TEST.address.toString()]: BTC_TEST,
         [WETH_TEST.address.toString()]: WETH_TEST,
         [MOON_TEST.address.toString()]: MOON_TEST,
-        [S22_TEST.address.toString()]: S22_TEST
+        [S22_TEST.address.toString()]: S22_TEST,
+        [INVT_TEST.address.toString()]: INVT_TEST,
+        [xINVT_TEST.address.toString()]: xINVT_TEST
       }
     default:
       return {}
@@ -2306,7 +2317,8 @@ export const ROUTES = {
   POSITION_WITH_ID: '/position/:id',
   PORTFOLIO: '/portfolio',
   CREATOR: '/creator',
-  STAKE: '/stake',
+  sBITZ: '/sBITZ',
+  XINVT: '/xINVT',
 
   getExchangeRoute: (item1?: string, item2?: string): string => {
     const parts = [item1, item2].filter(Boolean)
@@ -2699,4 +2711,81 @@ export const fetchMarketBitzStats = async () => {
     `https://api.invariant.app/explorer/get-holders?address=${sBITZ}`
   )
   return data
+}
+
+export interface YieldIncome {
+  currentYield: number
+  currentReward: number
+  projectedYield: number
+  projectedReward: number
+}
+
+export function calculateYield(currentlyStaked: number, userStakeAmount: number): YieldIncome {
+  const totalAfterStaking = currentlyStaked + userStakeAmount
+
+  let currentYield = 0
+  let currentReward = 0
+
+  if (currentlyStaked > 0) {
+    const rewardPerToken = TOTAL_INVT_REWARDS / currentlyStaked
+    currentReward = rewardPerToken
+    currentYield = (rewardPerToken / 1) * 100
+  }
+
+  let projectedYield = 0
+  let projectedReward = 0
+
+  if (totalAfterStaking > 0 && userStakeAmount > 0) {
+    const userShare = userStakeAmount / totalAfterStaking
+    projectedReward = userShare * TOTAL_INVT_REWARDS
+    projectedYield = (projectedReward / userStakeAmount) * 100
+  }
+
+  return {
+    currentYield: Math.round(currentYield * 100) / 100,
+    currentReward: Math.round(currentReward * 100) / 100,
+    projectedYield: Math.round(projectedYield * 100) / 100,
+    projectedReward: Math.round(projectedReward * 100) / 100
+  }
+}
+
+export const displayYieldComparison = (
+  currentlyStaked: number,
+  userStakeAmount: number
+): InvtConvertedData => {
+  const totalAfterStaking = currentlyStaked + userStakeAmount
+
+  const statsYeldPerToken =
+    currentlyStaked > 0
+      ? (1 / currentlyStaked) * TOTAL_INVT_REWARDS * 100
+      : TOTAL_INVT_REWARDS * 100
+
+  const statsRewardPerToken =
+    currentlyStaked > 0 ? (1 / currentlyStaked) * TOTAL_INVT_REWARDS : TOTAL_INVT_REWARDS
+
+  const newYieldPerToken =
+    totalAfterStaking > 0
+      ? (1 / totalAfterStaking) * TOTAL_INVT_REWARDS * 100
+      : TOTAL_INVT_REWARDS * 100
+
+  const newRewardPerToken =
+    totalAfterStaking > 0 ? (1 / totalAfterStaking) * TOTAL_INVT_REWARDS : TOTAL_INVT_REWARDS
+
+  return {
+    currentStakeInfo: {
+      totalInvtStaked: currentlyStaked,
+      statsYieldPercentage: statsYeldPerToken,
+      rewardPerToken: statsRewardPerToken,
+      invtDepositFilledPercentage: (100 * currentlyStaked) / INVT_DEPOSIT_LIMIT
+    },
+    userProjection: {
+      userStakeAmount: userStakeAmount,
+      expectedYieldPercentage: newYieldPerToken,
+      expectedReward: userStakeAmount * newRewardPerToken
+    },
+    impact: {
+      newYieldPercentage: newYieldPerToken,
+      newStakeSize: totalAfterStaking
+    }
+  }
 }
