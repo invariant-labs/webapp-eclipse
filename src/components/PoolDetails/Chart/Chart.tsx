@@ -78,7 +78,7 @@ export const Chart: React.FC<IProps> = ({
 
   return (
     <Grid className={classes.wrapper}>
-      <Typography className={classes.header}>Pool Details</Typography>
+      <Typography className={classes.header}>Performance</Typography>
       <Box className={classes.container}>
         <ChartUpperSection
           copyAddressHandler={copyAddressHandler}
