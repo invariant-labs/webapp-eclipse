@@ -32,15 +32,11 @@ export interface ISolanaConnectionStore {
   timeoutError: boolean
 }
 
-// const network =
-//   process.env.NODE_ENV === 'development'
-//     ? (NetworkType[localStorage.getItem('INVARIANT_NETWORK_ECLIPSE') as keyof typeof NetworkType] ??
-//       NetworkType.Mainnet)
-//     : NetworkType.Mainnet
-
 const network =
-  NetworkType[localStorage.getItem('INVARIANT_NETWORK_ECLIPSE') as keyof typeof NetworkType] ??
-  NetworkType.Mainnet
+  process.env.NODE_ENV === 'development'
+    ? NetworkType[localStorage.getItem('INVARIANT_NETWORK_ECLIPSE') as keyof typeof NetworkType] ??
+      NetworkType.Mainnet
+    : NetworkType.Mainnet
 
 export const defaultState: ISolanaConnectionStore = {
   status: Status.Uninitialized,

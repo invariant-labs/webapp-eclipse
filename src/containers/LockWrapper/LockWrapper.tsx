@@ -188,6 +188,7 @@ export const LockWrapper: React.FC = () => {
       clearTimeout(timeoutId2)
     }
   }, [success, isInProgress])
+
   const currentUnix = Math.floor(Date.now() / 1000)
 
   const bannerState: BannerState = useMemo(() => {
@@ -207,7 +208,7 @@ export const LockWrapper: React.FC = () => {
     if (currentUnix < mintEnd) {
       return {
         key: BannerPhase.lockPhase,
-        text: 'Lock ends in:',
+        text: 'Locking disabled in:',
         timestamp: mintEnd
       }
     }
@@ -215,7 +216,7 @@ export const LockWrapper: React.FC = () => {
     if (currentUnix < burnStart) {
       return {
         key: BannerPhase.yieldPhase,
-        text: 'Redeem available in:',
+        text: 'Unlocks in:',
         timestamp: burnStart
       }
     }
@@ -223,12 +224,12 @@ export const LockWrapper: React.FC = () => {
     if (currentUnix < burnEnd) {
       return {
         key: BannerPhase.burningPhase,
-        text: 'Burn ends in:',
+        text: 'Unlocking xINVT disabled in:',
         timestamp: burnEnd
       }
     }
 
-    return { key: BannerPhase.endPhase, text: 'Burn ended', timestamp: 0 }
+    return { key: BannerPhase.endPhase, text: 'Redemption ended', timestamp: 0 }
   }, [marketData, currentUnix])
 
   useEffect(() => {
@@ -307,7 +308,7 @@ export const LockWrapper: React.FC = () => {
       <DynamicBanner isLoading={bannerInitialLoading} bannerState={bannerState} />
       <Box className={classes.titleWrapper}>
         <Box className={classes.titleTextWrapper}>
-          <Typography component='h1'>INVT locking</Typography>
+          <Typography component='h1'>Staking</Typography>
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <TooltipHover title='Refresh'>

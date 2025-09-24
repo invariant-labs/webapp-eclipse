@@ -118,8 +118,8 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const lastTokenFrom =
     initialTokenFrom && tickerToAddress(networkType, initialTokenFrom)
       ? tickerToAddress(networkType, initialTokenFrom)
-      : localStorage.getItem(`INVARIANT_LAST_TOKEN_FROM_${networkType}`) ??
-        WETH_MAIN.address.toString()
+      : (localStorage.getItem(`INVARIANT_LAST_TOKEN_FROM_${networkType}`) ??
+        WETH_MAIN.address.toString())
 
   const lastTokenTo =
     initialTokenTo && tickerToAddress(networkType, initialTokenTo)

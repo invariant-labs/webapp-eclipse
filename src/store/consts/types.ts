@@ -350,6 +350,24 @@ export interface InvtConvertedData {
   }
 }
 
+export enum PoolChartSwitch {
+  volume = 'Volume',
+  tvl = 'TVL',
+  fees = 'Fees'
+}
+
+export interface TokenReserve {
+  amount: string
+  decimals: number
+  uiAmount: number
+  uiAmountString: string
+}
+
+export enum SwitcherAlignment {
+  VOLUME_TVL = 'volume/tvl',
+  FEE_TVL = 'fee/tvl'
+}
+
 export interface PoolBannerItem {
   poolAddress: string
   tokenX: Token

@@ -82,6 +82,7 @@ const useStyles = makeStyles()(() => ({
     },
     '& h2': {
       ...typography.heading3,
+      fontSize: 22,
       color: colors.invariant.text,
       [theme.breakpoints.down('sm')]: {
         ...typography.heading4
@@ -117,6 +118,7 @@ const useStyles = makeStyles()(() => ({
     },
     '& h2': {
       ...typography.heading3,
+      fontSize: 22,
       color: colors.invariant.text,
       [theme.breakpoints.down('sm')]: {
         ...typography.heading4

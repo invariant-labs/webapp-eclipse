@@ -25,7 +25,9 @@ export const {
   columnChartType,
   currentInterval,
   cumulativeFees,
-  cumulativeVolume
+  cumulativeVolume,
+  currentPoolData,
+  poolDetailsChartType
 } = keySelectors(store, [
   'volumePlot',
   'liquidityPlot',
@@ -45,7 +47,9 @@ export const {
   'columnChartType',
   'currentInterval',
   'cumulativeFees',
-  'cumulativeVolume'
+  'cumulativeVolume',
+  'currentPoolData',
+  'poolDetailsChartType'
 ])
 
 export interface ExtendedPoolStatsData extends PoolStatsData {
@@ -97,7 +101,9 @@ export const statsSelectors = {
   columnChartType,
   currentInterval,
   cumulativeVolume,
-  cumulativeFees
+  cumulativeFees,
+  currentPoolData,
+  poolDetailsChartType
 }
 
 export default statsSelectors

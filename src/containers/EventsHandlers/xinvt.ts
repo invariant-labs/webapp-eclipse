@@ -23,7 +23,7 @@ const XInvtEvents = () => {
     if (
       networkStatus !== Status.Initialized ||
       !xinvtProgram ||
-      !location.pathname.startsWith(ROUTES.LOCK)
+      !location.pathname.startsWith(ROUTES.XINVT)
     ) {
       return
     }
@@ -42,7 +42,7 @@ const XInvtEvents = () => {
   }, [dispatch, networkStatus, xinvtProgram, location.pathname])
 
   useEffect(() => {
-    if (!location.pathname.startsWith(ROUTES.LOCK)) {
+    if (!location.pathname.startsWith(ROUTES.XINVT)) {
       const { stateAddress } = xinvtProgram.getStateAddress()
       xinvtProgram.program.account.state.unsubscribe(stateAddress)
     }

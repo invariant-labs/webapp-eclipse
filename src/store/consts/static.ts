@@ -454,25 +454,25 @@ export const muES_MAIN: Token = {
   coingeckoId: ''
 }
 
-// export const INVT_MAIN: Token = {
-//   tokenProgram: TOKEN_2022_PROGRAM_ID,
-//   symbol: 'INVT',
-//   address: new PublicKey('EqwchrrGFppZYpTVAQH7ETm2QhSpu6eHV5fwZtUamfSM'),
-//   decimals: 4,
-//   name: 'Invariant',
-//   logoURI: invtLogo,
-//   coingeckoId: ''
-// }
+export const INVT_MAIN: Token = {
+  tokenProgram: TOKEN_2022_PROGRAM_ID,
+  symbol: 'INVT',
+  address: new PublicKey('EqwchrrGFppZYpTVAQH7ETm2QhSpu6eHV5fwZtUamfSM'),
+  decimals: 4,
+  name: 'Invariant',
+  logoURI: invtLogo,
+  coingeckoId: ''
+}
 
-// export const xINVT_MAIN: Token = {
-//   tokenProgram: TOKEN_2022_PROGRAM_ID,
-//   symbol: 'xINVT',
-//   address: new PublicKey('EqwchrrGFppZYpTVAQH7ETm2QhSpu6eHV5fwZtUamfSK'), //replace
-//   decimals: 4,
-//   name: 'xInvariant',
-//   logoURI: xInvtLogo,
-//   coingeckoId: ''
-// }
+export const xINVT_MAIN: Token = {
+  tokenProgram: TOKEN_PROGRAM_ID,
+  symbol: 'xINVT',
+  address: new PublicKey('x1NVTS1g8Nv4bLhFjyGvxmMEx9YMze3aW5ReoUNzCC2'),
+  decimals: 4,
+  name: 'Invariant (Escrowed)',
+  logoURI: xInvtLogo,
+  coingeckoId: ''
+}
 
 export const INVT_TEST: Token = {
   tokenProgram: TOKEN_2022_PROGRAM_ID,
@@ -493,8 +493,6 @@ export const xINVT_TEST: Token = {
   logoURI: xInvtLogo,
   coingeckoId: ''
 }
-export const INVT_MAIN = INVT_TEST
-export const xINVT_MAIN = xINVT_TEST
 
 const DEFAULT_PUBLICKEY = new PublicKey(0)
 const MAX_U64 = new BN('18446744073709551615')
@@ -1184,3 +1182,51 @@ export const PROOF_OF_INCLUSION_CACHE_TTL = 1000 * 60 * 60 * 1 // 1 hour
 
 export const TOTAL_INVT_REWARDS = 1_500_000
 export const INVT_DEPOSIT_LIMIT = 3_000_000
+
+export const promotedTiers = [
+  {
+    tokenX: USDC_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    index: 3
+  },
+  {
+    tokenX: SOL_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    index: 3
+  },
+  {
+    tokenX: TETH_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    index: 0
+  },
+  {
+    tokenX: SOL_MAIN.address,
+    tokenY: USDC_MAIN.address,
+    index: 3
+  },
+  {
+    tokenX: BITZ_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    index: 6
+  },
+  {
+    tokenX: USDC_MAIN.address,
+    tokenY: TUSD_MAIN.address,
+    index: 0
+  },
+  {
+    tokenX: WETH_MAIN.address,
+    tokenY: sBITZ_MAIN.address,
+    index: 6
+  },
+  {
+    tokenX: ES_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    index: 5
+  },
+  {
+    tokenX: USDC_MAIN.address,
+    tokenY: ES_MAIN.address,
+    index: 5
+  }
+]

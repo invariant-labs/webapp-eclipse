@@ -102,9 +102,9 @@ export const FooterNavbar = () => {
       isLink: true
     },
     {
-      label: 'Lock',
+      label: 'xINVT',
       icon: saleUnselectedIcon,
-      url: 'lock',
+      url: 'xINVT',
       width: 34,
       isLink: true
     },
@@ -112,9 +112,9 @@ export const FooterNavbar = () => {
     ...(typeOfNetwork === NetworkType.Mainnet
       ? [
           {
-            label: 'Stake',
+            label: 'sBITZ',
             icon: lqStakingIcon,
-            url: 'stake',
+            url: 'sBITZ',
 
             isLink: true,
             width: 29
@@ -173,10 +173,10 @@ export const FooterNavbar = () => {
   }, [landing])
 
   const otherRoutesToHighlight: Record<string, RegExp[]> = {
-    liquidity: [/^liquidity\/*/],
+    liquidity: [/^liquidity\/*/, /^poolDetails\/*/],
     exchange: [/^exchange\/*/],
     sale: [/^presale\/*/],
-    lock: [/^lock\/*/],
+    xINVT: [/^xINVT\/*/],
     portfolio: [/^portfolio\/*/, /^newPosition\/*/, /^position\/*/],
 
     ...(typeOfNetwork === NetworkType.Testnet ? { creator: [/^creator\/*/] } : {}),
