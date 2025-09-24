@@ -118,6 +118,7 @@ import xInvtLogoIcon from './svg/xINVT.svg'
 import lockIconGrey from './svg/lockIconGrey.svg'
 import poolStatsIcon from './svg/poolStats.svg'
 import poolStatsBtnIcon from './svg/poolStatsBtn.svg'
+import fogoGlow from './svg/fogoGlow.svg'
 
 export {
   hornsUSDC,
@@ -239,13 +240,15 @@ export {
   xInvtLogoIcon,
   lockIconGrey,
   poolStatsIcon,
-  poolStatsBtnIcon
+  poolStatsBtnIcon,
+  fogoGlow
 }
 
 export const chainIcons = {
   eclipseGlow: eclipseGlowIcon,
   solanaGlow: solanaGlowIcon,
-  sonicGlow: sonicGlowIcon
+  sonicGlow: sonicGlowIcon,
+  fogoGlow: fogoGlow
 }
 
 export const netowrkIcons = {
