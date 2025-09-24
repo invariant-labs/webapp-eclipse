@@ -1,11 +1,12 @@
 import { Box, Grid, Typography } from '@mui/material'
 import { star, starFill } from '@static/icons'
-import { USDC_MAIN, xINVT_MAIN } from '@store/consts/static'
+import { INVT_MAIN, xINVT_MAIN } from '@store/consts/static'
 import useStyles from './style'
-import { PoolBannerItem } from '@store/consts/types'
+import { ConvertedPool } from '@containers/LockWrapper/LockWrapper'
+import { printBN } from '@utils/utils'
 
 interface IProps {
-  pool: PoolBannerItem
+  pool: ConvertedPool
   switchFavouritePool: () => void
 }
 export const PoolInfoSection: React.FC<IProps> = ({ pool, switchFavouritePool }) => {
@@ -15,8 +16,8 @@ export const PoolInfoSection: React.FC<IProps> = ({ pool, switchFavouritePool })
     <Grid className={classes.poolInfoWrapper}>
       <Grid className={classes.titleWrapper}>
         <Box className={classes.tokenWrapper}>
-          <img alt='token logo' width={32} src={xINVT_MAIN.logoURI} />
-          <img alt='token logo' width={32} src={USDC_MAIN.logoURI} />
+          <img alt={pool.tokenX.name} width={32} src={pool.tokenX.logoURI} />
+          <img alt={pool.tokenY.name} width={32} src={pool.tokenY.logoURI} />
           <Typography component='h1'>
             {pool.tokenX.symbol} - {pool.tokenY.symbol} POOL
           </Typography>
@@ -36,7 +37,7 @@ export const PoolInfoSection: React.FC<IProps> = ({ pool, switchFavouritePool })
         </Grid>
         <Grid className={classes.poolDistributeValueWrapper}>
           <img src={xINVT_MAIN.logoURI} width={16} height={16} alt='xinvt logo' />
-          <Typography>{pool.poolDistribute}</Typography>
+          <Typography>{pool?.poolPointsDistribiution}</Typography>
         </Grid>
       </Grid>
       <Grid className={classes.yourEarnWapper}>
@@ -45,7 +46,7 @@ export const PoolInfoSection: React.FC<IProps> = ({ pool, switchFavouritePool })
         </Grid>
         <Grid className={classes.poolDistributeValueWrapper}>
           <img src={xINVT_MAIN.logoURI} width={16} height={16} alt='xinvt logo' />
-          <Typography>{pool.userEarn}</Typography>
+          <Typography>{printBN(pool?.userPoints, INVT_MAIN.decimals)}</Typography>
         </Grid>
       </Grid>
     </Grid>

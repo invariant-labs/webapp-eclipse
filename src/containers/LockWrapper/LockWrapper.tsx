@@ -9,7 +9,9 @@ import {
   swapTokensDict
 } from '@store/selectors/solanaWallet'
 import { actions, LockLiquidityPayload } from '@store/reducers/xInvt'
-import { actions as walletActions } from '@store/reducers/solanaWallet'
+import { actions as positionsActions } from '@store/reducers/positions'
+import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
+import { actions as poolsActions } from '@store/reducers/pools'
 import { actions as navigationActions } from '@store/reducers/navigation'
 import { network } from '@store/selectors/solanaConnection'
 import { INVT_MAIN, USDC_MAIN, xINVT_MAIN } from '@store/consts/static'
@@ -21,7 +23,7 @@ import {
   printBN,
   ROUTES
 } from '@utils/utils'
-import { BannerPhase, LockerSwitch, PoolBannerItem } from '@store/consts/types'
+import { BannerPhase, LockerSwitch } from '@store/consts/types'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { refreshIcon } from '@static/icons'
 import { ProgressState } from '@common/AnimatedButton/AnimatedButton'
@@ -34,7 +36,9 @@ import {
   inProgress,
   invtMarketData,
   lockOperationLoading,
-  invtStatsLoading
+  invtStatsLoading,
+  config,
+  userPoints
 } from '@store/selectors/xInvt'
 import { StatsLocker } from '@components/XInvtLocker/StatsLocker/StatsLocker'
 import useStyles from './styles'
@@ -45,7 +49,22 @@ import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import imgInvtXInvt from '@static/png/xInvt/invt-xInvt.png'
 import imgUsdcInvt from '@static/png/xInvt/usdc-invt.png'
 import imgxInvtUsdc from '@static/png/xInvt/xInvt-usdc.png'
+import { BN } from '@coral-xyz/anchor'
+import { positionsWithPoolsData, PositionWithPoolData } from '@store/selectors/positions'
+import { estimatePointsForUserPositions } from '@invariant-labs/points-sdk'
+import { PublicKey } from '@solana/web3.js'
+import { poolsArraySortedByFees } from '@store/selectors/pools'
 
+export interface ConvertedPool {
+  poolAddress: string
+  poolPointsDistribiution: string
+  userPoints: BN
+  tokenX: SwapToken
+  tokenY: SwapToken
+  fee: BN
+  image: string
+  isFavourite: boolean
+}
 export interface BannerState {
   key: BannerPhase
   text: string
@@ -69,12 +88,44 @@ export const LockWrapper: React.FC = () => {
   const success = useSelector(successState)
   const currentLockerTab = useSelector(lockerTab)
 
+  const positionsList = useSelector(positionsWithPoolsData)
+  const pools = useSelector(poolsArraySortedByFees)
+  const xInvtConfig = useSelector(config)
+  const userPointsState = useSelector(userPoints)
+
   const [invtPrice, setInvtPrice] = useState(0)
   const [progress, setProgress] = useState<ProgressState>('none')
   const [priceLoading, setPriceLoading] = useState(false)
   const [bannerInitialLoading, setBannerInitialLoading] = useState(true)
   const depositLoading = useSelector(lockOperationLoading)
   const statsLoading = useSelector(invtStatsLoading)
+
+  const getPoolImage = (tokenX: PublicKey, tokenY: PublicKey) => {
+    if (
+      (tokenX.toString() === INVT_MAIN.address.toString() &&
+        tokenY.toString() === USDC_MAIN.address.toString()) ||
+      (tokenY.toString() === INVT_MAIN.address.toString() &&
+        tokenX.toString() === USDC_MAIN.address.toString())
+    ) {
+      return imgUsdcInvt
+    } else if (
+      (tokenX.toString() === xINVT_MAIN.address.toString() &&
+        tokenY.toString() === INVT_MAIN.address.toString()) ||
+      (tokenY.toString() === xINVT_MAIN.address.toString() &&
+        tokenX.toString() === INVT_MAIN.address.toString())
+    ) {
+      return imgInvtXInvt
+    } else if (
+      (tokenX.toString() === xINVT_MAIN.address.toString() &&
+        tokenY.toString() === USDC_MAIN.address.toString()) ||
+      (tokenY.toString() === xINVT_MAIN.address.toString() &&
+        tokenX.toString() === USDC_MAIN.address.toString())
+    ) {
+      return imgxInvtUsdc
+    } else {
+      return imgUsdcInvt
+    }
+  }
 
   const [favouritePools, setFavouritePools] = useState<Set<string>>(
     new Set(
@@ -83,6 +134,58 @@ export const LockWrapper: React.FC = () => {
       )
     )
   )
+
+  useEffect(() => {
+    localStorage.setItem(
+      `INVARIANT_FAVOURITE_POOLS_Eclipse_${currentNetwork}`,
+      JSON.stringify([...favouritePools])
+    )
+  }, [favouritePools])
+
+  const popularPools: ConvertedPool[] = useMemo(() => {
+    if (!xInvtConfig.promotedPools.length || !positionsList.length) return []
+
+    const convertedPools: ConvertedPool[] = []
+
+    xInvtConfig.promotedPools.map(pool => {
+      const poolData = pools.find(
+        poolData => poolData.address.toString() === pool.address.toString()
+      )
+      if (!poolData) return
+
+      let userPositions: PositionWithPoolData[] = []
+
+      positionsList.map(position => {
+        if (pool.address.toString() === position.pool.toString()) {
+          userPositions.push(position)
+        }
+      })
+
+      const poolPointsDistribiution = printBN(
+        new BN(pool.pointsPerSecond, 'hex').muln(24).muln(60).muln(60),
+        0
+      )
+
+      const userPoints = estimatePointsForUserPositions(
+        userPositions,
+        userPositions[0]?.poolData,
+        new BN(pool.pointsPerSecond, 'hex').mul(new BN(10).pow(new BN(xINVT_MAIN.decimals)))
+      )
+
+      convertedPools.push({
+        poolAddress: pool.address,
+        poolPointsDistribiution: poolPointsDistribiution,
+        userPoints: userPoints,
+        tokenX: tokens[poolData.tokenX.toString()],
+        tokenY: tokens[poolData.tokenY.toString()],
+        fee: poolData.fee,
+        image: getPoolImage(poolData.tokenX, poolData.tokenY),
+        isFavourite: favouritePools.has(poolData.address.toString())
+      })
+    })
+
+    return convertedPools
+  }, [positionsList.length, favouritePools, pools.length])
 
   const switchFavouritePool = (poolAddress: string) => {
     if (favouritePools.has(poolAddress)) {
@@ -152,9 +255,24 @@ export const LockWrapper: React.FC = () => {
   useEffect(() => {
     dispatch(walletActions.getBalance())
     dispatch(actions.getCurrentStats())
+    dispatch(actions.getXInvtConfig())
+    dispatch(positionsActions.getPositionsList())
 
     fetchPrices()
   }, [dispatch])
+
+  useEffect(() => {
+    xInvtConfig.promotedPools.map(pool =>
+      dispatch(poolsActions.getPoolDataByAddress(new PublicKey(pool.address)))
+    )
+  }, [xInvtConfig.promotedPools])
+
+  useEffect(() => {
+    if (walletStatus === Status.Initialized) {
+      dispatch(actions.getUserPoints())
+    }
+  }, [walletStatus])
+
   useEffect(() => {
     if (bannerInitialLoading && !statsLoading) {
       setBannerInitialLoading(false)
@@ -255,9 +373,9 @@ export const LockWrapper: React.FC = () => {
     }
   }, [bannerState])
 
-  const handleOpenPosition = (pool: PoolBannerItem) => {
-    const tokenA = addressToTicker(currentNetwork, pool.tokenX.address.toString() ?? '')
-    const tokenB = addressToTicker(currentNetwork, pool.tokenY.address.toString() ?? '')
+  const handleOpenPosition = (pool: ConvertedPool) => {
+    const tokenA = addressToTicker(currentNetwork, pool.tokenX.assetAddress.toString() ?? '')
+    const tokenB = addressToTicker(currentNetwork, pool.tokenY.assetAddress.toString() ?? '')
 
     dispatch(navigationActions.setNavigation({ address: location.pathname }))
     navigate(
@@ -269,39 +387,6 @@ export const LockWrapper: React.FC = () => {
       { state: { referer: 'stats' } }
     )
   }
-
-  const pools: PoolBannerItem[] = [
-    {
-      poolAddress: '',
-      tokenX: INVT_MAIN,
-      tokenY: USDC_MAIN,
-      fee: 1,
-      poolDistribute: 122334,
-      userEarn: 32,
-      isFavourite: false,
-      image: imgUsdcInvt
-    },
-    {
-      poolAddress: '',
-      tokenX: xINVT_MAIN,
-      tokenY: INVT_MAIN,
-      fee: 1,
-      poolDistribute: 4321,
-      userEarn: 321,
-      isFavourite: false,
-      image: imgInvtXInvt
-    },
-    {
-      poolAddress: '',
-      tokenX: xINVT_MAIN,
-      tokenY: USDC_MAIN,
-      fee: 0.3,
-      poolDistribute: 32432,
-      userEarn: 12,
-      isFavourite: false,
-      image: imgxInvtUsdc
-    }
-  ]
 
   return (
     <Grid container className={classes.wrapper}>
@@ -375,8 +460,9 @@ export const LockWrapper: React.FC = () => {
         handleOpenPosition={handleOpenPosition}
         handleClaim={() => {}}
         switchFavouritePool={switchFavouritePool}
-        pools={pools}
+        pools={popularPools}
         isLoading={false}
+        userPointsState={userPointsState}
       />
     </Grid>
   )

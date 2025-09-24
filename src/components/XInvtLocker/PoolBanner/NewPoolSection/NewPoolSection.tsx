@@ -2,10 +2,10 @@ import { Button } from '@common/Button/Button'
 import { Grid, Typography, useMediaQuery } from '@mui/material'
 import { arrowRightIcon } from '@static/icons'
 import useStyles from './style'
-import { PoolBannerItem } from '@store/consts/types'
+import { ConvertedPool } from '@containers/LockWrapper/LockWrapper'
 export interface INewPoolSection {
-  handleOpenPosition: (pool: PoolBannerItem) => void
-  pool: PoolBannerItem
+  handleOpenPosition: (pool: ConvertedPool) => void
+  pool: ConvertedPool
 }
 
 const NewPoolSection: React.FC<INewPoolSection> = ({ handleOpenPosition, pool }) => {

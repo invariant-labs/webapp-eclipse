@@ -6,16 +6,18 @@ import { ClaimSection } from './ClaimSection/ClaimSection'
 import Slider from 'react-slick'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
-import { PoolBannerItem } from '@store/consts/types'
 import { theme } from '@static/theme'
 import { useState } from 'react'
+import { UserPoints } from '@store/reducers/xInvt'
+import { ConvertedPool } from '@containers/LockWrapper/LockWrapper'
 
 export interface IPoolBanner {
-  handleOpenPosition: (pool: PoolBannerItem) => void
+  handleOpenPosition: (pool: ConvertedPool) => void
   switchFavouritePool: (poolAddress: string) => void
-  handleClaim: (pool: PoolBannerItem) => void
-  pools: PoolBannerItem[]
+  handleClaim: (pool: ConvertedPool) => void
+  pools: ConvertedPool[]
   isLoading: boolean
+  userPointsState: UserPoints
 }
 
 const PoolBanner: React.FC<IPoolBanner> = ({
@@ -23,7 +25,8 @@ const PoolBanner: React.FC<IPoolBanner> = ({
   switchFavouritePool,
   handleClaim,
   pools,
-  isLoading
+  isLoading,
+  userPointsState
 }) => {
   const { classes } = useStyles()
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
@@ -54,7 +57,7 @@ const PoolBanner: React.FC<IPoolBanner> = ({
           beforeChange={(_current, next) => setCurrentPoolIndex(next)}>
           {pools.map((pool, index) => {
             return (
-              (isLoading || !isLoading) && (
+              !isLoading && (
                 <Box key={index}>
                   <Grid className={classes.leftBannerWrapper}>
                     <NewPoolSection handleOpenPosition={handleOpenPosition} pool={pool} />
@@ -71,7 +74,10 @@ const PoolBanner: React.FC<IPoolBanner> = ({
       </div>
 
       <Grid className={classes.rightBannerWapper}>
-        <ClaimSection handleClaim={() => handleClaim(pools[currentPoolIndex])} />
+        <ClaimSection
+          handleClaim={() => handleClaim(pools[currentPoolIndex])}
+          userPointsState={userPointsState}
+        />
       </Grid>
     </Grid>
   )

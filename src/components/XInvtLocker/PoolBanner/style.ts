@@ -33,7 +33,7 @@ export const useStyles = makeStyles()(() => ({
   },
   rightBannerWapper: {
     display: 'flex',
-    maxWidth: 285,
+    maxWidth: 320,
     width: '100%',
     alignItems: 'center',
     flexDirection: 'column',

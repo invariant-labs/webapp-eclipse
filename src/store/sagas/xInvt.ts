@@ -29,6 +29,8 @@ import {
   ensureError,
   extractErrorCode,
   extractRuntimeErrorCode,
+  fetchXInvtConfig,
+  fetchxInvtPoints,
   formatNumberWithoutSuffix,
   mapErrorCodeToMessage,
   printBN
@@ -494,6 +496,51 @@ export function* getInvtStats() {
   }
 }
 
+export function* getXInvtConfig() {
+  try {
+    const { lastSnapTimestamp, pointsDecimal, promotedPools } = yield* call(fetchXInvtConfig)
+
+    yield* put(
+      actions.setXInvtConfig({
+        lastSnapTimestamp,
+        pointsDecimal,
+        promotedPools
+      })
+    )
+  } catch (e: unknown) {
+    const error = ensureError(e)
+    console.log(error)
+  }
+}
+
+export function* getXInvtPoints(): Generator {
+  try {
+    const wallet = yield* call(getWallet)
+    const pointsResp = yield* call(fetchxInvtPoints, wallet?.publicKey?.toString())
+
+    if (pointsResp) {
+      const { accumulatedRewards, claimableRewards } = pointsResp
+
+      const parsedAccumulatedRewards = printBN(
+        new BN(accumulatedRewards, 'hex'),
+        xINVT_MAIN.decimals
+      )
+
+      const parsedclaimableRewards = printBN(new BN(claimableRewards, 'hex'), xINVT_MAIN.decimals)
+
+      yield* put(
+        actions.setUserPoints({
+          accumulatedRewards: parsedAccumulatedRewards,
+          claimableRewards: parsedclaimableRewards
+        })
+      )
+    }
+  } catch (e: unknown) {
+    const error = ensureError(e)
+    console.log(error)
+  }
+}
+
 export function* stakeHandler(): Generator {
   yield* takeLatest(actions.lock, handleLock)
 }
@@ -506,6 +553,14 @@ export function* getInvtStatsHandler(): Generator {
   yield* takeLatest(actions.getCurrentStats, getInvtStats)
 }
 
+export function* getXInvtConfigHandler(): Generator {
+  yield* takeLatest(actions.getXInvtConfig, getXInvtConfig)
+}
+
+export function* getXInvtPointsHandler(): Generator {
+  yield* takeLatest(actions.getUserPoints, getXInvtPoints)
+}
+
 export function* xInvtSaga(): Generator {
-  yield all([stakeHandler, unstakeHandler, getInvtStatsHandler].map(spawn))
+  yield all([stakeHandler, unstakeHandler, getInvtStatsHandler, getXInvtConfigHandler].map(spawn))
 }

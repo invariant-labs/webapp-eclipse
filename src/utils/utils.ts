@@ -107,7 +107,8 @@ import {
   INVT_TEST,
   xINVT_TEST,
   TOTAL_INVT_REWARDS,
-  INVT_DEPOSIT_LIMIT
+  INVT_DEPOSIT_LIMIT,
+  XINVT_API_URL
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
@@ -133,6 +134,7 @@ import { StakingStatsResponse } from '@store/reducers/sbitz-stats'
 import { DEFAULT_FEE_TIER, STRATEGIES } from '@store/consts/userStrategies'
 import { HoldersResponse } from '@store/reducers/sBitz'
 import { PoolSnap } from '@store/reducers/stats'
+import { getPoinstxInvtResponse, IConfigResponse } from '@store/reducers/xInvt'
 
 export const transformBN = (amount: BN): string => {
   return (amount.div(new BN(1e2)).toNumber() / 1e4).toString()
@@ -2832,4 +2834,23 @@ export const getTokenReserve = async (
     console.error('Failed to fetch token reserve:', error)
     return null
   }
+}
+
+export const fetchxInvtPoints = async (address?: string) => {
+  try {
+    const { data } = await axios.get<getPoinstxInvtResponse>(`${XINVT_API_URL}/invt/${address}`)
+    console.log(data)
+    return data
+  } catch (error) {
+    console.log(error)
+    return null
+  }
+}
+
+export const fetchXInvtConfig = async () => {
+  const response = await fetch(`${XINVT_API_URL}/invt/config`)
+  if (!response.ok) {
+    throw new Error('Failed to fetch leaderboard data')
+  }
+  return response.json() as Promise<IConfigResponse>
 }
