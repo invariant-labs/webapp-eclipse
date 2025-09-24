@@ -175,7 +175,7 @@ export const LockWrapper: React.FC = () => {
       convertedPools.push({
         poolAddress: pool.address,
         poolPointsDistribiution: poolPointsDistribiution,
-        userPoints: userPoints,
+        userPoints: printBN(userPoints, INVT_MAIN.decimals),
         tokenX: tokens[poolData.tokenX.toString()],
         tokenY: tokens[poolData.tokenY.toString()],
         fee: poolData.fee,

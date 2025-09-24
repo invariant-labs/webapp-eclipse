@@ -1,9 +1,8 @@
 import { Box, Grid, Typography } from '@mui/material'
 import { star, starFill } from '@static/icons'
-import { INVT_MAIN, xINVT_MAIN } from '@store/consts/static'
+import { xINVT_MAIN } from '@store/consts/static'
 import useStyles from './style'
 import { ConvertedPool } from '@containers/LockWrapper/LockWrapper'
-import { printBN } from '@utils/utils'
 
 interface IProps {
   pool: ConvertedPool
@@ -46,7 +45,7 @@ export const PoolInfoSection: React.FC<IProps> = ({ pool, switchFavouritePool })
         </Grid>
         <Grid className={classes.poolDistributeValueWrapper}>
           <img src={xINVT_MAIN.logoURI} width={16} height={16} alt='xinvt logo' />
-          <Typography>{printBN(pool?.userPoints, INVT_MAIN.decimals)}</Typography>
+          <Typography>{pool?.userPoints}</Typography>
         </Grid>
       </Grid>
     </Grid>
