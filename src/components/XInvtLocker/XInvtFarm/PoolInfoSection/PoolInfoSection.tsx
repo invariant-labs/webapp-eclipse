@@ -55,7 +55,9 @@ export const PoolInfoSection: React.FC<IProps> = ({
           ) : (
             <>
               <img src={xINVT_MAIN.logoURI} width={16} height={16} alt='xinvt logo' />
-              <Typography>{formatNumberWithCommas(pool?.poolPointsDistribiution)}</Typography>
+              <Typography>
+                {formatNumberWithCommas(pool?.poolPointsDistribiution.toString())}
+              </Typography>
             </>
           )}
         </Grid>

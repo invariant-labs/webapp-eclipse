@@ -63,7 +63,7 @@ import { isLoadingLatestPoolsForTransaction, poolsArraySortedByFees } from '@sto
 
 export interface ConvertedPool {
   poolAddress: string
-  poolPointsDistribiution: string
+  poolPointsDistribiution: number
   userPoints: BN
   tokenX: SwapToken
   tokenY: SwapToken
@@ -177,17 +177,14 @@ export const LockWrapper: React.FC = () => {
         }
       })
 
-      const poolPointsDistribiution = printBN(
-        new BN(pool.pointsPerSecond, 'hex').muln(24).muln(60).muln(60),
-        0
-      )
+      const poolPointsDistribiution = +new BN(pool.pointsPerSecond, 'hex') * 24 * 60 * 60
 
       let userPoints = 0
       if (promotedUserPositions.length) {
         userPoints = estimatePointsForUserPositions(
           promotedUserPositions,
           poolData,
-          new BN(pool.pointsPerSecond, 'hex').mul(new BN(10).pow(new BN(xINVT_MAIN.decimals)))
+          new BN(pool.pointsPerSecond, 'hex').muln(10 ** xINVT_MAIN.decimals)
         )
       }
 

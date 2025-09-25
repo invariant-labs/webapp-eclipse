@@ -2838,8 +2838,7 @@ export const getTokenReserve = async (
 
 export const fetchxInvtPoints = async (address?: string) => {
   try {
-    const { data } = await axios.get<getPoinstxInvtResponse>(`${XINVT_API_URL}/invt/${address}`)
-    console.log(data)
+    const { data } = await axios.get<getPoinstxInvtResponse>(`${XINVT_API_URL}/${address}`)
     return data
   } catch (error) {
     console.log(error)
@@ -2848,7 +2847,7 @@ export const fetchxInvtPoints = async (address?: string) => {
 }
 
 export const fetchXInvtConfig = async () => {
-  const response = await fetch(`${XINVT_API_URL}/invt/config`)
+  const response = await fetch(`${XINVT_API_URL}/config`)
   if (!response.ok) {
     throw new Error('Failed to fetch leaderboard data')
   }
