@@ -3,6 +3,7 @@ import { star, starFill } from '@static/icons'
 import { xINVT_MAIN } from '@store/consts/static'
 import useStyles from './style'
 import { ConvertedPool } from '@containers/LockWrapper/LockWrapper'
+import { formatNumberWithCommas, removeAdditionalDecimals } from '@utils/utils'
 
 interface IProps {
   pool: ConvertedPool
@@ -36,7 +37,7 @@ export const PoolInfoSection: React.FC<IProps> = ({ pool, switchFavouritePool })
         </Grid>
         <Grid className={classes.poolDistributeValueWrapper}>
           <img src={xINVT_MAIN.logoURI} width={16} height={16} alt='xinvt logo' />
-          <Typography>{pool?.poolPointsDistribiution}</Typography>
+          <Typography>{formatNumberWithCommas(pool?.poolPointsDistribiution)}</Typography>
         </Grid>
       </Grid>
       <Grid className={classes.yourEarnWapper}>
@@ -45,7 +46,9 @@ export const PoolInfoSection: React.FC<IProps> = ({ pool, switchFavouritePool })
         </Grid>
         <Grid className={classes.poolDistributeValueWrapper}>
           <img src={xINVT_MAIN.logoURI} width={16} height={16} alt='xinvt logo' />
-          <Typography>{pool?.userPoints}</Typography>
+          <Typography>
+            {removeAdditionalDecimals(formatNumberWithCommas(pool?.userPoints), 2)}
+          </Typography>
         </Grid>
       </Grid>
     </Grid>

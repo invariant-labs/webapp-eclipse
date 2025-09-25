@@ -517,10 +517,8 @@ export function* getXInvtPoints(): Generator {
   try {
     const wallet = yield* call(getWallet)
     const pointsResp = yield* call(fetchxInvtPoints, wallet?.publicKey?.toString())
-
     if (pointsResp) {
       const { accumulatedRewards, claimableRewards } = pointsResp
-
       const parsedAccumulatedRewards = printBN(
         new BN(accumulatedRewards, 'hex'),
         xINVT_MAIN.decimals
@@ -562,5 +560,13 @@ export function* getXInvtPointsHandler(): Generator {
 }
 
 export function* xInvtSaga(): Generator {
-  yield all([stakeHandler, unstakeHandler, getInvtStatsHandler, getXInvtConfigHandler].map(spawn))
+  yield all(
+    [
+      stakeHandler,
+      unstakeHandler,
+      getInvtStatsHandler,
+      getXInvtConfigHandler,
+      getXInvtPointsHandler
+    ].map(spawn)
+  )
 }

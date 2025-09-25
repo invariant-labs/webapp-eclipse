@@ -11,7 +11,7 @@ import { useState } from 'react'
 import { UserPoints } from '@store/reducers/xInvt'
 import { ConvertedPool } from '@containers/LockWrapper/LockWrapper'
 
-export interface IPoolBanner {
+export interface IXInvtFarm {
   handleOpenPosition: (pool: ConvertedPool) => void
   switchFavouritePool: (poolAddress: string) => void
   handleClaim: (pool: ConvertedPool) => void
@@ -20,7 +20,7 @@ export interface IPoolBanner {
   userPointsState: UserPoints
 }
 
-const PoolBanner: React.FC<IPoolBanner> = ({
+const XInvtFarm: React.FC<IXInvtFarm> = ({
   handleOpenPosition,
   switchFavouritePool,
   handleClaim,
@@ -37,7 +37,7 @@ const PoolBanner: React.FC<IPoolBanner> = ({
     <Grid className={classes.wrapper}>
       <div className={classes.cardsContainer}>
         <Slider
-          dots={true}
+          dots={pools.length > 1}
           draggable={false}
           touchMove={isMd}
           speed={500}
@@ -83,4 +83,4 @@ const PoolBanner: React.FC<IPoolBanner> = ({
   )
 }
 
-export default PoolBanner
+export default XInvtFarm

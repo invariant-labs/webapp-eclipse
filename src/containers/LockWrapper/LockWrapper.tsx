@@ -43,7 +43,7 @@ import {
 import { StatsLocker } from '@components/XInvtLocker/StatsLocker/StatsLocker'
 import useStyles from './styles'
 import DynamicBanner from '@components/DynamicBanner/DynamicBanner'
-import PoolBanner from '@components/XInvtLocker/PoolBanner/PoolBanner'
+import PoolBanner from '@components/XInvtLocker/XInvtFarm/XInvtFarm'
 import { useNavigate } from 'react-router-dom'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import imgInvtXInvt from '@static/png/xInvt/invt-xInvt.png'
@@ -92,7 +92,7 @@ export const LockWrapper: React.FC = () => {
   const pools = useSelector(poolsArraySortedByFees)
   const xInvtConfig = useSelector(config)
   const userPointsState = useSelector(userPoints)
-
+  console.log(userPointsState)
   const [invtPrice, setInvtPrice] = useState(0)
   const [progress, setProgress] = useState<ProgressState>('none')
   const [priceLoading, setPriceLoading] = useState(false)
@@ -143,7 +143,12 @@ export const LockWrapper: React.FC = () => {
   }, [favouritePools])
 
   const popularPools: ConvertedPool[] = useMemo(() => {
-    if (!xInvtConfig.promotedPools.length || !positionsList.length) return []
+    if (!xInvtConfig.promotedPools.length) {
+      console.log(positionsList.length)
+      console.log(xInvtConfig.promotedPools)
+      setBannerInitialLoading(true)
+      return []
+    }
 
     const convertedPools: ConvertedPool[] = []
 
@@ -153,11 +158,11 @@ export const LockWrapper: React.FC = () => {
       )
       if (!poolData) return
 
-      let userPositions: PositionWithPoolData[] = []
+      let promotedUserPositions: PositionWithPoolData[] = []
 
       positionsList.map(position => {
         if (pool.address.toString() === position.pool.toString()) {
-          userPositions.push(position)
+          promotedUserPositions.push(position)
         }
       })
 
@@ -166,16 +171,19 @@ export const LockWrapper: React.FC = () => {
         0
       )
 
-      const userPoints = estimatePointsForUserPositions(
-        userPositions,
-        userPositions[0]?.poolData,
-        new BN(pool.pointsPerSecond, 'hex').mul(new BN(10).pow(new BN(xINVT_MAIN.decimals)))
-      )
+      let userPoints = 0
+      if (promotedUserPositions.length) {
+        userPoints = estimatePointsForUserPositions(
+          promotedUserPositions,
+          poolData,
+          new BN(pool.pointsPerSecond, 'hex').mul(new BN(10).pow(new BN(xINVT_MAIN.decimals)))
+        )
+      }
 
       convertedPools.push({
         poolAddress: pool.address,
         poolPointsDistribiution: poolPointsDistribiution,
-        userPoints: printBN(userPoints, INVT_MAIN.decimals),
+        userPoints: printBN(userPoints, xINVT_MAIN.decimals),
         tokenX: tokens[poolData.tokenX.toString()],
         tokenY: tokens[poolData.tokenY.toString()],
         fee: poolData.fee,
@@ -273,11 +281,6 @@ export const LockWrapper: React.FC = () => {
     }
   }, [walletStatus])
 
-  useEffect(() => {
-    if (bannerInitialLoading && !statsLoading) {
-      setBannerInitialLoading(false)
-    }
-  }, [statsLoading, bannerInitialLoading])
   const onRefresh = () => {
     if (depositLoading) return
     dispatch(walletActions.getBalance())

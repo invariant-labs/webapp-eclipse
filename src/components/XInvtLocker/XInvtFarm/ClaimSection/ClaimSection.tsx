@@ -3,6 +3,8 @@ import { Box, Grid, Typography } from '@mui/material'
 import { xINVT_MAIN } from '@store/consts/static'
 import useStyles from './style'
 import { UserPoints } from '@store/reducers/xInvt'
+import { formatNumberWithCommas, removeAdditionalDecimals } from '@utils/utils'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 
 interface IProps {
   handleClaim: () => void
@@ -10,13 +12,19 @@ interface IProps {
 }
 export const ClaimSection: React.FC<IProps> = ({ handleClaim, userPointsState }) => {
   const { classes } = useStyles()
+
   return (
     <Box className={classes.wrapper}>
       <Grid className={classes.valueWrapper}>
         <Typography component='h5'>Current round xINVT</Typography>
         <Box display={'flex'} alignItems={'center'} gap={0.5}>
           <img width={20} height={20} src={xINVT_MAIN.logoURI} />
-          <Typography component='h3'>{userPointsState?.accumulatedRewards || '0'} </Typography>
+          <Typography component='h3'>
+            {removeAdditionalDecimals(
+              formatNumberWithCommas(userPointsState?.accumulatedRewards || '0'),
+              2
+            )}
+          </Typography>
         </Box>
       </Grid>
       <Grid className={classes.claimWrapper}>
@@ -24,12 +32,29 @@ export const ClaimSection: React.FC<IProps> = ({ handleClaim, userPointsState })
           <Typography component='h5'>Unclaimed xINVT</Typography>
           <Box display={'flex'} alignItems={'center'} gap={0.5}>
             <img width={20} height={20} src={xINVT_MAIN.logoURI} />
-            <Typography component='h3'>{userPointsState?.claimableRewards || '0'} </Typography>
+            <Typography component='h3'>
+              {removeAdditionalDecimals(
+                formatNumberWithCommas(userPointsState?.claimableRewards || '0'),
+                2
+              )}
+            </Typography>
           </Box>
         </Box>
-        <Button width={'100%'} scheme='green' onClick={handleClaim}>
-          Claim
-        </Button>
+        <TooltipHover
+          textAlign='center'
+          title={
+            !+userPointsState?.claimableRewards
+              ? 'Claim will be available after finish of current round'
+              : ''
+          }>
+          <Button
+            width={'100%'}
+            scheme='green'
+            onClick={handleClaim}
+            disabled={!+userPointsState?.claimableRewards}>
+            Claim
+          </Button>
+        </TooltipHover>
       </Grid>
     </Box>
   )

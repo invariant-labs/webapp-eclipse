@@ -17,14 +17,14 @@ export const useStyles = makeStyles()(() => ({
   valueWrapper: {
     border: ` 1px solid ${colors.invariant.light}`,
     padding: '8px 12px',
-    borderRadius: 12,
+    borderRadius: 16,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
     width: '100%',
     gap: 8,
     '& h3': {
-      ...typography.heading4,
+      ...typography.body1,
       color: colors.invariant.text
     }
   },
@@ -34,7 +34,7 @@ export const useStyles = makeStyles()(() => ({
   },
   claimWrapper: {
     border: ` 1px solid ${colors.invariant.light}`,
-    borderRadius: 12,
+    borderRadius: 16,
     display: 'flex',
     alignItems: 'space-between',
     flexDirection: 'column',
@@ -42,7 +42,7 @@ export const useStyles = makeStyles()(() => ({
     width: '100%',
     gap: 8,
     '& h3': {
-      ...typography.heading4,
+      ...typography.body1,
       color: colors.invariant.text
     }
   }

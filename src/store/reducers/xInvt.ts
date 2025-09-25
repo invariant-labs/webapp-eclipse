@@ -139,6 +139,7 @@ const xinvtLockerSlice = createSlice({
       return state
     },
     getUserPoints(state) {
+      console.log('test')
       state.loadingStates.userPoints = true
       return state
     },
