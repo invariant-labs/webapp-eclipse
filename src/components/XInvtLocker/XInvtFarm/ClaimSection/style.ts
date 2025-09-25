@@ -24,7 +24,7 @@ export const useStyles = makeStyles()(() => ({
     width: '100%',
     gap: 8,
     '& h3': {
-      ...typography.body1,
+      ...typography.body3,
       color: colors.invariant.text
     }
   },
@@ -33,6 +33,7 @@ export const useStyles = makeStyles()(() => ({
     justifyContent: 'space-between'
   },
   claimWrapper: {
+    height: 82,
     border: ` 1px solid ${colors.invariant.light}`,
     borderRadius: 16,
     display: 'flex',
@@ -42,7 +43,7 @@ export const useStyles = makeStyles()(() => ({
     width: '100%',
     gap: 8,
     '& h3': {
-      ...typography.body1,
+      ...typography.body3,
       color: colors.invariant.text
     }
   }

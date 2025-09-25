@@ -6,10 +6,10 @@ export const useStyles = makeStyles()(() => ({
     marginTop: 24,
     display: 'flex',
     gap: 20,
-    // height: 184,
     borderRadius: 24,
     boxSizing: 'border-box',
     maxWidth: 1040,
+
     width: '100%',
     [theme.breakpoints.down('md')]: {
       flexDirection: 'column',
@@ -24,6 +24,7 @@ export const useStyles = makeStyles()(() => ({
     borderRadius: 24,
     maxWidth: 765,
     width: '100%',
+    flex: 1,
     background: colors.invariant.component,
     [theme.breakpoints.down('md')]: {
       height: 368,
@@ -62,43 +63,12 @@ export const useStyles = makeStyles()(() => ({
     width: '100%',
     display: 'flex',
     flexDirection: 'row',
-    // padding: '0 51px 24px 51px',
     flexWrap: 'nowrap',
     borderRadius: 24,
     background: colors.invariant.component
   },
   slider: {
-    minWidth: '100%',
-    '& .slick-track': {
-      // paddingTop: 30,
-      // display: 'flex',
-      // justifyContent: 'space-between'
-    },
-    '& .slick-slide': {
-      // display: 'flex',
-      // justifyContent: 'center'
-    }
-
-    // '& .slick-prev': {
-    //   left: -38,
-    //   [theme.breakpoints.down('lg')]: {
-    //     left: -40
-    //   },
-    //   [theme.breakpoints.down('sm')]: {
-    //     left: -4,
-    //     zIndex: 3
-    //   }
-    // },
-    // '& .slick-next': {
-    //   right: -18,
-    //   [theme.breakpoints.down('lg')]: {
-    //     right: -20
-    //   },
-    //   [theme.breakpoints.down('sm')]: {
-    //     right: 9,
-    //     zIndex: 3
-    //   }
-    // }
+    minWidth: '100%'
   },
   dots: {
     position: 'absolute',

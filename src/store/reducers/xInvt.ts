@@ -27,7 +27,7 @@ export interface LoadingStates {
   lockOperation: boolean
   invtMarketData: boolean
   config: boolean
-  userPoints: boolean
+  claimPoints: boolean
 }
 
 export interface InvtMarketData {
@@ -57,7 +57,7 @@ const defaultStatus: IxInvt = {
     lockOperation: false,
     invtMarketData: false,
     config: false,
-    userPoints: false
+    claimPoints: false
   },
   lockerTab: LockerSwitch.Lock,
   lockInputVal: '',
@@ -139,12 +139,11 @@ const xinvtLockerSlice = createSlice({
       return state
     },
     getUserPoints(state) {
-      console.log('test')
-      state.loadingStates.userPoints = true
+      state.loadingStates.claimPoints = true
       return state
     },
     setUserPoints(state, action: PayloadAction<UserPoints>) {
-      state.loadingStates.userPoints = false
+      state.loadingStates.claimPoints = false
       state.userPoints = action.payload
 
       return state

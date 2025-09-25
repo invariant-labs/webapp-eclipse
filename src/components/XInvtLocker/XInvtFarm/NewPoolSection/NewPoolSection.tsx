@@ -1,14 +1,16 @@
 import { Button } from '@common/Button/Button'
-import { Grid, Typography, useMediaQuery } from '@mui/material'
+import { Box, Grid, Skeleton, Typography, useMediaQuery } from '@mui/material'
 import { arrowRightIcon } from '@static/icons'
 import useStyles from './style'
 import { ConvertedPool } from '@containers/LockWrapper/LockWrapper'
+
 export interface INewPoolSection {
   handleOpenPosition: (pool: ConvertedPool) => void
-  pool: ConvertedPool
+  pool: ConvertedPool | null
+  isLoading: boolean
 }
 
-const NewPoolSection: React.FC<INewPoolSection> = ({ handleOpenPosition, pool }) => {
+const NewPoolSection: React.FC<INewPoolSection> = ({ handleOpenPosition, pool, isLoading }) => {
   const { classes } = useStyles()
   const hideBanner = useMediaQuery(`(max-width: 429px), (min-width: 961px) and (max-width: 1064px)`)
 
@@ -17,14 +19,27 @@ const NewPoolSection: React.FC<INewPoolSection> = ({ handleOpenPosition, pool })
       <Grid className={classes.poolDescriptionWrapper}>
         <Grid className={classes.titleWrapper}>
           <Typography component='h1'>NEW POOL:</Typography>
-          <Typography component='h2'>
-            {pool.tokenX.symbol}-{pool.tokenY.symbol}
-          </Typography>
+          {isLoading || pool === null ? (
+            <Skeleton variant='rounded' width={100} height={20} />
+          ) : (
+            <Typography component='h2'>
+              {pool.tokenX.symbol}-{pool.tokenY.symbol}
+            </Typography>
+          )}
         </Grid>
         <Typography height={34} component='span'>
           Provide liquidity and collect xINVT {!hideBanner && <br />} while earning fees!
         </Typography>
-        <Button scheme='pink' height={36} gap={6} onClick={() => handleOpenPosition(pool)}>
+        <Button
+          scheme='pink'
+          height={36}
+          gap={6}
+          onClick={() => {
+            if (pool === null) return
+
+            handleOpenPosition(pool)
+          }}
+          disabled={isLoading}>
           <Typography width={140}>Provide liquidity</Typography>
           <img
             alt='right arrow'
@@ -34,7 +49,12 @@ const NewPoolSection: React.FC<INewPoolSection> = ({ handleOpenPosition, pool })
           />
         </Button>
       </Grid>
-      {!hideBanner && <img src={pool.image} className={classes.usdcImg} height={'100%'} />}
+      {!hideBanner &&
+        (pool === null ? (
+          <Box height={156} width={150} />
+        ) : (
+          <img src={pool.image} className={classes.usdcImg} height={'100%'} />
+        ))}
     </Grid>
   )
 }

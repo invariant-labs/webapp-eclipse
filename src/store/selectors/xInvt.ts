@@ -27,6 +27,8 @@ export const {
 
 export const lockOperationLoading = (state: AnyProps) => selectLoadingStates(state).lockOperation
 export const invtStatsLoading = (state: AnyProps) => selectLoadingStates(state).invtMarketData
+export const xInvtConfingLoading = (state: AnyProps) => selectLoadingStates(state).config
+export const claimPointsLoading = (state: AnyProps) => selectLoadingStates(state).claimPoints
 
 export const xInvtSelectors = {
   invtMarketData,

@@ -38,7 +38,9 @@ import {
   lockOperationLoading,
   invtStatsLoading,
   config,
-  userPoints
+  userPoints,
+  xInvtConfingLoading,
+  claimPointsLoading
 } from '@store/selectors/xInvt'
 import { StatsLocker } from '@components/XInvtLocker/StatsLocker/StatsLocker'
 import useStyles from './styles'
@@ -50,10 +52,14 @@ import imgInvtXInvt from '@static/png/xInvt/invt-xInvt.png'
 import imgUsdcInvt from '@static/png/xInvt/usdc-invt.png'
 import imgxInvtUsdc from '@static/png/xInvt/xInvt-usdc.png'
 import { BN } from '@coral-xyz/anchor'
-import { positionsWithPoolsData, PositionWithPoolData } from '@store/selectors/positions'
+import {
+  isLoadingPositionsList,
+  positionsWithPoolsData,
+  PositionWithPoolData
+} from '@store/selectors/positions'
 import { estimatePointsForUserPositions } from '@invariant-labs/points-sdk'
 import { PublicKey } from '@solana/web3.js'
-import { poolsArraySortedByFees } from '@store/selectors/pools'
+import { isLoadingLatestPoolsForTransaction, poolsArraySortedByFees } from '@store/selectors/pools'
 
 export interface ConvertedPool {
   poolAddress: string
@@ -79,8 +85,10 @@ export const LockWrapper: React.FC = () => {
   const currentNetwork = useSelector(network)
   const walletStatus = useSelector(status)
   const marketData = useSelector(invtMarketData)
+
   const tokens = useSelector(swapTokensDict)
   const ethBalance = useSelector(balance)
+
   const isBalanceLoading = useSelector(balanceLoading)
   const lockInput = useSelector(lockInputVal)
   const unlockInput = useSelector(unlockInputVal)
@@ -92,13 +100,18 @@ export const LockWrapper: React.FC = () => {
   const pools = useSelector(poolsArraySortedByFees)
   const xInvtConfig = useSelector(config)
   const userPointsState = useSelector(userPoints)
-  console.log(userPointsState)
+
+  const depositLoading = useSelector(lockOperationLoading)
+  const statsLoading = useSelector(invtStatsLoading)
+  const isClaimPointsLoading = useSelector(claimPointsLoading)
+  const configLoading = useSelector(xInvtConfingLoading)
+  const positionListLoading = useSelector(isLoadingPositionsList)
+  const poolsLoading = useSelector(isLoadingLatestPoolsForTransaction)
+
   const [invtPrice, setInvtPrice] = useState(0)
   const [progress, setProgress] = useState<ProgressState>('none')
   const [priceLoading, setPriceLoading] = useState(false)
   const [bannerInitialLoading, setBannerInitialLoading] = useState(true)
-  const depositLoading = useSelector(lockOperationLoading)
-  const statsLoading = useSelector(invtStatsLoading)
 
   const getPoolImage = (tokenX: PublicKey, tokenY: PublicKey) => {
     if (
@@ -144,8 +157,6 @@ export const LockWrapper: React.FC = () => {
 
   const popularPools: ConvertedPool[] = useMemo(() => {
     if (!xInvtConfig.promotedPools.length) {
-      console.log(positionsList.length)
-      console.log(xInvtConfig.promotedPools)
       setBannerInitialLoading(true)
       return []
     }
@@ -158,7 +169,7 @@ export const LockWrapper: React.FC = () => {
       )
       if (!poolData) return
 
-      let promotedUserPositions: PositionWithPoolData[] = []
+      const promotedUserPositions: PositionWithPoolData[] = []
 
       positionsList.map(position => {
         if (pool.address.toString() === position.pool.toString()) {
@@ -278,6 +289,8 @@ export const LockWrapper: React.FC = () => {
   useEffect(() => {
     if (walletStatus === Status.Initialized) {
       dispatch(actions.getUserPoints())
+    } else {
+      dispatch(actions.setUserPoints({ accumulatedRewards: '0', claimableRewards: '0' }))
     }
   }, [walletStatus])
 
@@ -464,8 +477,11 @@ export const LockWrapper: React.FC = () => {
         handleClaim={() => {}}
         switchFavouritePool={switchFavouritePool}
         pools={popularPools}
-        isLoading={false}
+        configLoading={configLoading}
+        userEarnLoading={positionListLoading || poolsLoading}
+        claimPointsLoading={isClaimPointsLoading}
         userPointsState={userPointsState}
+        walletConnected={walletStatus === Status.Initialized}
       />
     </Grid>
   )

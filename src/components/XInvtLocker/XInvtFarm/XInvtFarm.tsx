@@ -16,8 +16,11 @@ export interface IXInvtFarm {
   switchFavouritePool: (poolAddress: string) => void
   handleClaim: (pool: ConvertedPool) => void
   pools: ConvertedPool[]
-  isLoading: boolean
+  configLoading: boolean
+  userEarnLoading: boolean
+  claimPointsLoading: boolean
   userPointsState: UserPoints
+  walletConnected: boolean
 }
 
 const XInvtFarm: React.FC<IXInvtFarm> = ({
@@ -25,7 +28,10 @@ const XInvtFarm: React.FC<IXInvtFarm> = ({
   switchFavouritePool,
   handleClaim,
   pools,
-  isLoading,
+  configLoading,
+  userEarnLoading,
+  claimPointsLoading,
+  walletConnected,
   userPointsState
 }) => {
   const { classes } = useStyles()
@@ -36,47 +42,77 @@ const XInvtFarm: React.FC<IXInvtFarm> = ({
   return (
     <Grid className={classes.wrapper}>
       <div className={classes.cardsContainer}>
-        <Slider
-          dots={pools.length > 1}
-          draggable={false}
-          touchMove={isMd}
-          speed={500}
-          slidesToShow={1}
-          slidesToScroll={1}
-          pauseOnHover={true}
-          arrows={false}
-          autoplay={true}
-          autoplaySpeed={5000}
-          className={classes.slider}
-          dotsClass={`slick-dots ${classes.dots}`}
-          appendDots={dots => <ul>{dots}</ul>}
-          rows={1}
-          fade={true}
-          vertical={!isMd}
-          verticalSwiping={!isMd}
-          beforeChange={(_current, next) => setCurrentPoolIndex(next)}>
-          {pools.map((pool, index) => {
-            return (
-              !isLoading && (
+        {pools.length ? (
+          <Slider
+            dots={pools.length > 1}
+            draggable={false}
+            touchMove={isMd}
+            speed={500}
+            slidesToShow={1}
+            slidesToScroll={1}
+            pauseOnHover={true}
+            arrows={false}
+            autoplay={true}
+            autoplaySpeed={5000}
+            className={classes.slider}
+            dotsClass={`slick-dots ${classes.dots}`}
+            appendDots={dots => <ul>{dots}</ul>}
+            rows={1}
+            fade={true}
+            vertical={!isMd}
+            verticalSwiping={!isMd}
+            beforeChange={(_current, next) => setCurrentPoolIndex(next)}>
+            {pools.map((pool, index) => {
+              return (
                 <Box key={index}>
                   <Grid className={classes.leftBannerWrapper}>
-                    <NewPoolSection handleOpenPosition={handleOpenPosition} pool={pool} />
-                    <PoolInfoSection
-                      switchFavouritePool={() => switchFavouritePool(pool.poolAddress)}
+                    <NewPoolSection
+                      handleOpenPosition={handleOpenPosition}
                       pool={pool}
+                      isLoading={configLoading}
+                    />
+                    <PoolInfoSection
+                      switchFavouritePool={() => {
+                        if (pool === null) return
+
+                        switchFavouritePool(pool.poolAddress)
+                      }}
+                      pool={pool}
+                      configLoading={configLoading}
+                      userEarnLoading={userEarnLoading}
+                      walletConnected={walletConnected}
                     />
                   </Grid>
                 </Box>
               )
-            )
-          })}
-        </Slider>
+            })}
+          </Slider>
+        ) : (
+          <Grid container pt={'1px'} pb={'1px'}>
+            <Grid className={classes.leftBannerWrapper}>
+              <NewPoolSection
+                handleOpenPosition={handleOpenPosition}
+                pool={null}
+                isLoading={configLoading}
+              />
+              <PoolInfoSection
+                switchFavouritePool={() => {}}
+                pool={null}
+                configLoading={configLoading}
+                userEarnLoading={userEarnLoading}
+                walletConnected={walletConnected}
+              />
+            </Grid>
+          </Grid>
+        )}
       </div>
 
       <Grid className={classes.rightBannerWapper}>
         <ClaimSection
           handleClaim={() => handleClaim(pools[currentPoolIndex])}
           userPointsState={userPointsState}
+          isLoading={claimPointsLoading}
+          walletConnected={walletConnected}
         />
       </Grid>
     </Grid>
