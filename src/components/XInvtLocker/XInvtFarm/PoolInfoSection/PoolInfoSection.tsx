@@ -56,7 +56,7 @@ export const PoolInfoSection: React.FC<IProps> = ({
             <>
               <img src={xINVT_MAIN.logoURI} width={16} height={16} alt='xinvt logo' />
               <Typography>
-                {formatNumberWithCommas(pool?.poolPointsDistribiution.toString())}
+                {formatNumberWithCommas(pool?.poolPointsDistribiution?.toString() || '0')}
               </Typography>
             </>
           )}
@@ -73,7 +73,7 @@ export const PoolInfoSection: React.FC<IProps> = ({
             <>
               <img src={xINVT_MAIN.logoURI} width={16} height={16} alt='xinvt logo' />
               <Typography>
-                {removeAdditionalDecimals(formatNumberWithCommas(pool?.userPoints), 2)}
+                {removeAdditionalDecimals(formatNumberWithCommas(pool?.userPoints || '0'), 2)}
               </Typography>
             </>
           ) : (
