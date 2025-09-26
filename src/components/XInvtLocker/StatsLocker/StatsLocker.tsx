@@ -87,9 +87,13 @@ export const StatsLocker: React.FC<StatsLocker> = ({ statsData, userLockedInvt, 
           mb='auto'>
           <Typography className={classes.raisedInfo}>
             <Typography className={classes.greyText}>Deposited:</Typography>
-            <Typography className={classes.greenBodyText}>
-              {formatNumberWithCommas(statsData.currentStakeInfo.totalInvtStaked.toString())}
-            </Typography>
+            {loading ? (
+              <Skeleton height={24} width={35} variant='rounded' />
+            ) : (
+              <Typography className={classes.greenBodyText}>
+                {formatNumberWithCommas(statsData.currentStakeInfo.totalInvtStaked.toString())}
+              </Typography>
+            )}
             <>
               {' / '} {formatNumberWithCommas(INVT_DEPOSIT_LIMIT.toString())}
             </>{' '}
