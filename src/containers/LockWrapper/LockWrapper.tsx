@@ -294,7 +294,11 @@ export const LockWrapper: React.FC = () => {
   const onRefresh = () => {
     dispatch(actions.getXInvtConfig())
     dispatch(positionsActions.getPositionsList())
-    dispatch(actions.getUserPoints())
+    if (walletStatus === Status.Initialized) {
+      dispatch(actions.getUserPoints())
+    } else {
+      dispatch(actions.setUserPoints({ accumulatedRewards: '0', claimableRewards: '0' }))
+    }
 
     if (depositLoading) return
     dispatch(walletActions.getBalance())
