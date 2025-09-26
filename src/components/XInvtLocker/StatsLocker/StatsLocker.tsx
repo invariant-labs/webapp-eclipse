@@ -58,7 +58,7 @@ export const StatsLocker: React.FC<StatsLocker> = ({ statsData, userLockedInvt, 
               <Skeleton height={28} width={125} variant='rounded' sx={{ borderRadius: '8px' }} />
             ) : (
               <Typography style={{ color: colors.invariant.green }} component='h2'>
-                {trimZeros(statsData.currentStakeInfo.statsYieldPercentage.toFixed(2))}%
+                {formatNumberWithSuffix(statsData.currentStakeInfo.statsYieldPercentage)}%
               </Typography>
             )}
           </Box>
