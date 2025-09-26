@@ -46,7 +46,7 @@ export const PoolInfoSection: React.FC<IProps> = ({
       <Grid className={classes.poolDistributeWapper}>
         <Grid className={classes.poolDistributeTitle}>
           <Grid className={classes.textWrapper}>
-            <Typography component='h4'>Pool distribution (24H)</Typography>
+            <Typography component='h4'>Total (24H)</Typography>
           </Grid>
         </Grid>
         <Grid className={classes.poolDistributeValueWrapper}>
@@ -77,7 +77,7 @@ export const PoolInfoSection: React.FC<IProps> = ({
               </Typography>
             </>
           ) : (
-            <Typography>Not connected</Typography>
+            <Typography>-</Typography>
           )}
         </Grid>
       </Grid>

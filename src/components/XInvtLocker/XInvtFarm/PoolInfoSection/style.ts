@@ -74,7 +74,7 @@ export const useStyles = makeStyles()(() => ({
     display: 'flex',
     gap: 2,
     '& p': {
-      ...typography.caption2,
+      ...typography.body3,
       color: colors.invariant.text
     }
   },
@@ -92,7 +92,7 @@ export const useStyles = makeStyles()(() => ({
     gap: 4,
     alignItems: 'center',
     '& h4': {
-      ...typography.caption1,
+      ...typography.body2,
       color: colors.invariant.textGrey
     }
   },

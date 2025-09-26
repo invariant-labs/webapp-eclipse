@@ -40,11 +40,11 @@ export const useStyles = makeStyles()(() => ({
     gap: 8,
     alignContent: 'center',
     '& h1': {
-      ...typography.body1,
+      ...typography.heading4,
       color: colors.invariant.green
     },
     '& h2': {
-      ...typography.body1,
+      ...typography.heading4,
       color: colors.invariant.text
     },
     '& img': {

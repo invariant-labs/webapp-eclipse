@@ -167,7 +167,10 @@ export const LockWrapper: React.FC = () => {
       const poolData = pools.find(
         poolData => poolData.address.toString() === pool.address.toString()
       )
-      if (!poolData) return
+      if (!poolData) {
+        dispatch(poolsActions.getPoolDataByAddress(new PublicKey(pool.address)))
+        return
+      }
 
       const promotedUserPositions: PositionWithPoolData[] = []
 
@@ -411,10 +414,9 @@ export const LockWrapper: React.FC = () => {
 
   return (
     <Grid container className={classes.wrapper}>
-      <DynamicBanner isLoading={bannerInitialLoading} bannerState={bannerState} />
       <Box className={classes.titleWrapper}>
         <Box className={classes.titleTextWrapper}>
-          <Typography component='h1'>Staking</Typography>
+          <Typography component='h1'>Liquidity mining</Typography>
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <TooltipHover title='Refresh'>
@@ -429,6 +431,22 @@ export const LockWrapper: React.FC = () => {
           </TooltipHover>
         </Box>
       </Box>
+      <PoolBanner
+        handleOpenPosition={handleOpenPosition}
+        handleClaim={() => {}}
+        switchFavouritePool={switchFavouritePool}
+        pools={popularPools}
+        configLoading={configLoading}
+        userEarnLoading={positionListLoading || poolsLoading}
+        claimPointsLoading={isClaimPointsLoading}
+        userPointsState={userPointsState}
+        walletConnected={walletStatus === Status.Initialized}
+      />
+      <Box className={classes.titleTextWrapper} mb={'12px'} mt={'24px'}>
+        <Typography component='h1'>Staking</Typography>
+      </Box>
+
+      <DynamicBanner isLoading={bannerInitialLoading} bannerState={bannerState} />
       <Box className={classes.panelsWrapper}>
         <XInvtLocker
           bannerState={bannerState}
@@ -477,17 +495,6 @@ export const LockWrapper: React.FC = () => {
           loading={statsLoading}
         />
       </Box>
-      <PoolBanner
-        handleOpenPosition={handleOpenPosition}
-        handleClaim={() => {}}
-        switchFavouritePool={switchFavouritePool}
-        pools={popularPools}
-        configLoading={configLoading}
-        userEarnLoading={positionListLoading || poolsLoading}
-        claimPointsLoading={isClaimPointsLoading}
-        userPointsState={userPointsState}
-        walletConnected={walletStatus === Status.Initialized}
-      />
     </Grid>
   )
 }
