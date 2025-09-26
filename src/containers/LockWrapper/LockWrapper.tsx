@@ -9,7 +9,9 @@ import {
   swapTokensDict
 } from '@store/selectors/solanaWallet'
 import { actions, LockLiquidityPayload } from '@store/reducers/xInvt'
-import { actions as walletActions } from '@store/reducers/solanaWallet'
+import { actions as positionsActions } from '@store/reducers/positions'
+import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
+import { actions as poolsActions } from '@store/reducers/pools'
 import { actions as navigationActions } from '@store/reducers/navigation'
 import { network } from '@store/selectors/solanaConnection'
 import { INVT_MAIN, USDC_MAIN, xINVT_MAIN } from '@store/consts/static'
@@ -21,7 +23,7 @@ import {
   printBN,
   ROUTES
 } from '@utils/utils'
-import { BannerPhase, LockerSwitch, PoolBannerItem } from '@store/consts/types'
+import { BannerPhase, LockerSwitch } from '@store/consts/types'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { refreshIcon } from '@static/icons'
 import { ProgressState } from '@common/AnimatedButton/AnimatedButton'
@@ -34,18 +36,41 @@ import {
   inProgress,
   invtMarketData,
   lockOperationLoading,
-  invtStatsLoading
+  invtStatsLoading,
+  config,
+  userPoints,
+  xInvtConfingLoading,
+  claimPointsLoading
 } from '@store/selectors/xInvt'
 import { StatsLocker } from '@components/XInvtLocker/StatsLocker/StatsLocker'
 import useStyles from './styles'
 import DynamicBanner from '@components/DynamicBanner/DynamicBanner'
-import PoolBanner from '@components/XInvtLocker/PoolBanner/PoolBanner'
+import PoolBanner from '@components/XInvtLocker/XInvtFarm/XInvtFarm'
 import { useNavigate } from 'react-router-dom'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import imgInvtXInvt from '@static/png/xInvt/invt-xInvt.png'
 import imgUsdcInvt from '@static/png/xInvt/usdc-invt.png'
 import imgxInvtUsdc from '@static/png/xInvt/xInvt-usdc.png'
+import { BN } from '@coral-xyz/anchor'
+import {
+  isLoadingPositionsList,
+  positionsWithPoolsData,
+  PositionWithPoolData
+} from '@store/selectors/positions'
+import { estimatePointsForUserPositions } from '@invariant-labs/points-sdk'
+import { PublicKey } from '@solana/web3.js'
+import { isLoadingLatestPoolsForTransaction, poolsArraySortedByFees } from '@store/selectors/pools'
 
+export interface ConvertedPool {
+  poolAddress: string
+  poolPointsDistribiution: number
+  userPoints: BN
+  tokenX: SwapToken
+  tokenY: SwapToken
+  fee: BN
+  image: string
+  isFavourite: boolean
+}
 export interface BannerState {
   key: BannerPhase
   text: string
@@ -60,8 +85,10 @@ export const LockWrapper: React.FC = () => {
   const currentNetwork = useSelector(network)
   const walletStatus = useSelector(status)
   const marketData = useSelector(invtMarketData)
+
   const tokens = useSelector(swapTokensDict)
   const ethBalance = useSelector(balance)
+
   const isBalanceLoading = useSelector(balanceLoading)
   const lockInput = useSelector(lockInputVal)
   const unlockInput = useSelector(unlockInputVal)
@@ -69,12 +96,49 @@ export const LockWrapper: React.FC = () => {
   const success = useSelector(successState)
   const currentLockerTab = useSelector(lockerTab)
 
+  const positionsList = useSelector(positionsWithPoolsData)
+  const pools = useSelector(poolsArraySortedByFees)
+  const xInvtConfig = useSelector(config)
+  const userPointsState = useSelector(userPoints)
+
+  const depositLoading = useSelector(lockOperationLoading)
+  const statsLoading = useSelector(invtStatsLoading)
+  const isClaimPointsLoading = useSelector(claimPointsLoading)
+  const configLoading = useSelector(xInvtConfingLoading)
+  const positionListLoading = useSelector(isLoadingPositionsList)
+  const poolsLoading = useSelector(isLoadingLatestPoolsForTransaction)
+
   const [invtPrice, setInvtPrice] = useState(0)
   const [progress, setProgress] = useState<ProgressState>('none')
   const [priceLoading, setPriceLoading] = useState(false)
   const [bannerInitialLoading, setBannerInitialLoading] = useState(true)
-  const depositLoading = useSelector(lockOperationLoading)
-  const statsLoading = useSelector(invtStatsLoading)
+
+  const getPoolImage = (tokenX: PublicKey, tokenY: PublicKey) => {
+    if (
+      (tokenX.toString() === INVT_MAIN.address.toString() &&
+        tokenY.toString() === USDC_MAIN.address.toString()) ||
+      (tokenY.toString() === INVT_MAIN.address.toString() &&
+        tokenX.toString() === USDC_MAIN.address.toString())
+    ) {
+      return imgUsdcInvt
+    } else if (
+      (tokenX.toString() === xINVT_MAIN.address.toString() &&
+        tokenY.toString() === INVT_MAIN.address.toString()) ||
+      (tokenY.toString() === xINVT_MAIN.address.toString() &&
+        tokenX.toString() === INVT_MAIN.address.toString())
+    ) {
+      return imgInvtXInvt
+    } else if (
+      (tokenX.toString() === xINVT_MAIN.address.toString() &&
+        tokenY.toString() === USDC_MAIN.address.toString()) ||
+      (tokenY.toString() === xINVT_MAIN.address.toString() &&
+        tokenX.toString() === USDC_MAIN.address.toString())
+    ) {
+      return imgxInvtUsdc
+    } else {
+      return imgUsdcInvt
+    }
+  }
 
   const [favouritePools, setFavouritePools] = useState<Set<string>>(
     new Set(
@@ -83,6 +147,61 @@ export const LockWrapper: React.FC = () => {
       )
     )
   )
+
+  useEffect(() => {
+    localStorage.setItem(
+      `INVARIANT_FAVOURITE_POOLS_Eclipse_${currentNetwork}`,
+      JSON.stringify([...favouritePools])
+    )
+  }, [favouritePools])
+
+  const popularPools: ConvertedPool[] = useMemo(() => {
+    if (!xInvtConfig.promotedPools.length) {
+      setBannerInitialLoading(true)
+      return []
+    }
+
+    const convertedPools: ConvertedPool[] = []
+
+    xInvtConfig.promotedPools.map(pool => {
+      const poolData = pools.find(
+        poolData => poolData.address.toString() === pool.address.toString()
+      )
+      if (!poolData) return
+
+      const promotedUserPositions: PositionWithPoolData[] = []
+
+      positionsList.map(position => {
+        if (pool.address.toString() === position.pool.toString()) {
+          promotedUserPositions.push(position)
+        }
+      })
+
+      const poolPointsDistribiution = +new BN(pool.pointsPerSecond, 'hex') * 24 * 60 * 60
+
+      let userPoints = 0
+      if (promotedUserPositions.length) {
+        userPoints = estimatePointsForUserPositions(
+          promotedUserPositions,
+          poolData,
+          new BN(pool.pointsPerSecond, 'hex').muln(10 ** xINVT_MAIN.decimals)
+        )
+      }
+
+      convertedPools.push({
+        poolAddress: pool.address,
+        poolPointsDistribiution: poolPointsDistribiution,
+        userPoints: printBN(userPoints, xINVT_MAIN.decimals),
+        tokenX: tokens[poolData.tokenX.toString()],
+        tokenY: tokens[poolData.tokenY.toString()],
+        fee: poolData.fee,
+        image: getPoolImage(poolData.tokenX, poolData.tokenY),
+        isFavourite: favouritePools.has(poolData.address.toString())
+      })
+    })
+
+    return convertedPools
+  }, [positionsList.length, favouritePools, pools.length])
 
   const switchFavouritePool = (poolAddress: string) => {
     if (favouritePools.has(poolAddress)) {
@@ -152,14 +271,26 @@ export const LockWrapper: React.FC = () => {
   useEffect(() => {
     dispatch(walletActions.getBalance())
     dispatch(actions.getCurrentStats())
+    dispatch(actions.getXInvtConfig())
+    dispatch(positionsActions.getPositionsList())
 
     fetchPrices()
   }, [dispatch])
+
   useEffect(() => {
-    if (bannerInitialLoading && !statsLoading) {
-      setBannerInitialLoading(false)
+    xInvtConfig.promotedPools.map(pool =>
+      dispatch(poolsActions.getPoolDataByAddress(new PublicKey(pool.address)))
+    )
+  }, [xInvtConfig.promotedPools])
+
+  useEffect(() => {
+    if (walletStatus === Status.Initialized) {
+      dispatch(actions.getUserPoints())
+    } else {
+      dispatch(actions.setUserPoints({ accumulatedRewards: '0', claimableRewards: '0' }))
     }
-  }, [statsLoading, bannerInitialLoading])
+  }, [walletStatus])
+
   const onRefresh = () => {
     if (depositLoading) return
     dispatch(walletActions.getBalance())
@@ -255,9 +386,9 @@ export const LockWrapper: React.FC = () => {
     }
   }, [bannerState])
 
-  const handleOpenPosition = (pool: PoolBannerItem) => {
-    const tokenA = addressToTicker(currentNetwork, pool.tokenX.address.toString() ?? '')
-    const tokenB = addressToTicker(currentNetwork, pool.tokenY.address.toString() ?? '')
+  const handleOpenPosition = (pool: ConvertedPool) => {
+    const tokenA = addressToTicker(currentNetwork, pool.tokenX.assetAddress.toString() ?? '')
+    const tokenB = addressToTicker(currentNetwork, pool.tokenY.assetAddress.toString() ?? '')
 
     dispatch(navigationActions.setNavigation({ address: location.pathname }))
     navigate(
@@ -269,39 +400,6 @@ export const LockWrapper: React.FC = () => {
       { state: { referer: 'stats' } }
     )
   }
-
-  const pools: PoolBannerItem[] = [
-    {
-      poolAddress: '',
-      tokenX: INVT_MAIN,
-      tokenY: USDC_MAIN,
-      fee: 1,
-      poolDistribute: 122334,
-      userEarn: 32,
-      isFavourite: false,
-      image: imgUsdcInvt
-    },
-    {
-      poolAddress: '',
-      tokenX: xINVT_MAIN,
-      tokenY: INVT_MAIN,
-      fee: 1,
-      poolDistribute: 4321,
-      userEarn: 321,
-      isFavourite: false,
-      image: imgInvtXInvt
-    },
-    {
-      poolAddress: '',
-      tokenX: xINVT_MAIN,
-      tokenY: USDC_MAIN,
-      fee: 0.3,
-      poolDistribute: 32432,
-      userEarn: 12,
-      isFavourite: false,
-      image: imgxInvtUsdc
-    }
-  ]
 
   return (
     <Grid container className={classes.wrapper}>
@@ -375,8 +473,12 @@ export const LockWrapper: React.FC = () => {
         handleOpenPosition={handleOpenPosition}
         handleClaim={() => {}}
         switchFavouritePool={switchFavouritePool}
-        pools={pools}
-        isLoading={false}
+        pools={popularPools}
+        configLoading={configLoading}
+        userEarnLoading={positionListLoading || poolsLoading}
+        claimPointsLoading={isClaimPointsLoading}
+        userPointsState={userPointsState}
+        walletConnected={walletStatus === Status.Initialized}
       />
     </Grid>
   )

@@ -367,14 +367,3 @@ export enum SwitcherAlignment {
   VOLUME_TVL = 'volume/tvl',
   FEE_TVL = 'fee/tvl'
 }
-
-export interface PoolBannerItem {
-  poolAddress: string
-  tokenX: Token
-  tokenY: Token
-  fee: number
-  poolDistribute: number
-  userEarn: number
-  isFavourite: boolean
-  image: string
-}

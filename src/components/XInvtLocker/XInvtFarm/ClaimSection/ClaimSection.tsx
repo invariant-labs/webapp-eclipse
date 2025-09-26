@@ -1,0 +1,78 @@
+import { Button } from '@common/Button/Button'
+import { Box, Grid, Skeleton, Typography } from '@mui/material'
+import { xINVT_MAIN } from '@store/consts/static'
+import useStyles from './style'
+import { UserPoints } from '@store/reducers/xInvt'
+import { formatNumberWithCommas, removeAdditionalDecimals } from '@utils/utils'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
+
+interface IProps {
+  handleClaim: () => void
+  userPointsState: UserPoints
+  isLoading: boolean
+  walletConnected: boolean
+}
+export const ClaimSection: React.FC<IProps> = ({
+  handleClaim,
+  userPointsState,
+  isLoading,
+  walletConnected
+}) => {
+  const { classes } = useStyles()
+
+  return (
+    <Box className={classes.wrapper}>
+      <Grid className={classes.valueWrapper}>
+        <Typography component='h5'>Current round xINVT</Typography>
+        {isLoading ? (
+          <Skeleton variant='rounded' width={60} height={24} />
+        ) : (
+          <Box display={'flex'} alignItems={'center'} gap={0.5}>
+            <img width={20} height={20} src={xINVT_MAIN.logoURI} />
+            <Typography component='h3'>
+              {removeAdditionalDecimals(
+                formatNumberWithCommas(userPointsState?.accumulatedRewards || '0'),
+                2
+              )}
+            </Typography>
+          </Box>
+        )}
+      </Grid>
+      <Grid className={classes.claimWrapper}>
+        <Box display={'flex'} alignItems={'center'} className={classes.claimValue}>
+          <Typography component='h5'>Unclaimed xINVT</Typography>
+          {isLoading ? (
+            <Skeleton variant='rounded' width={60} height={24} />
+          ) : (
+            <Box display={'flex'} alignItems={'center'} gap={0.5}>
+              <img width={20} height={20} src={xINVT_MAIN.logoURI} />
+              <Typography component='h3'>
+                {removeAdditionalDecimals(
+                  formatNumberWithCommas(userPointsState?.claimableRewards || '0'),
+                  2
+                )}
+              </Typography>
+            </Box>
+          )}
+        </Box>
+        <TooltipHover
+          textAlign='center'
+          title={
+            walletConnected
+              ? !+userPointsState?.claimableRewards
+                ? 'Claim will be available after finish of current round'
+                : ''
+              : 'Connect wallet to see your available xINVT'
+          }>
+          <Button
+            width={'100%'}
+            scheme='green'
+            onClick={handleClaim}
+            disabled={!+userPointsState?.claimableRewards || isLoading}>
+            Claim
+          </Button>
+        </TooltipHover>
+      </Grid>
+    </Box>
+  )
+}
