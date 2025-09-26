@@ -290,7 +290,7 @@ export const XInvtLocker: React.FC<ILocker> = ({
         disabled={unlockDisabled}
       />
       <Box mb={'12px'} display='flex' justifyContent='space-between' alignItems='center'>
-        <Typography className={classes.title}>Recive</Typography>
+        <Typography className={classes.title}>Receive</Typography>
         <TooltipHover
           textAlign='center'
           title='Redeem of INVT will be available after 3 months lock period'>

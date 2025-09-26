@@ -825,10 +825,9 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
       NPT: NPT_MAIN.address.toString(),
       USDN: USDN_MAIN.address.toString(),
       WEETHS: WEETHS_MAIN.address.toString(),
-      muES_MAIN: muES_MAIN.address.toString(),
-      TUSD_MAIN: TUSD_MAIN.address.toString(),
-      INVT_MAIN: INVT_MAIN.address.toString(),
-      xINVT_MAIN: xINVT_MAIN.address.toString()
+      meES: muES_MAIN.address.toString(),
+      INVT: INVT_MAIN.address.toString(),
+      xINVT: xINVT_MAIN.address.toString()
     }
   }
 }

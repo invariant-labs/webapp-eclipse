@@ -61,7 +61,7 @@ export const useStyles = makeStyles()(() => ({
     display: 'flex',
     flexDirection: 'column',
     '& h4': {
-      ...typography.caption1,
+      ...typography.body2,
       color: colors.invariant.textGrey
     },
     '& h5': {
@@ -72,9 +72,10 @@ export const useStyles = makeStyles()(() => ({
   },
   poolDistributeValueWrapper: {
     display: 'flex',
-    gap: 2,
+    alignItems: 'center',
+    gap: 3,
     '& p': {
-      ...typography.caption2,
+      ...typography.body3,
       color: colors.invariant.text
     }
   },
@@ -92,7 +93,7 @@ export const useStyles = makeStyles()(() => ({
     gap: 4,
     alignItems: 'center',
     '& h4': {
-      ...typography.caption1,
+      ...typography.body2,
       color: colors.invariant.textGrey
     }
   },

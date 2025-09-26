@@ -3,6 +3,7 @@ import { Box, Grid, Skeleton, Typography, useMediaQuery } from '@mui/material'
 import { arrowRightIcon } from '@static/icons'
 import useStyles from './style'
 import { ConvertedPool } from '@containers/LockWrapper/LockWrapper'
+import { typography } from '@static/theme'
 
 export interface INewPoolSection {
   handleOpenPosition: (pool: ConvertedPool) => void
@@ -27,7 +28,7 @@ const NewPoolSection: React.FC<INewPoolSection> = ({ handleOpenPosition, pool, i
             </Typography>
           )}
         </Grid>
-        <Typography height={34} component='span'>
+        <Typography height={34} component='span' style={{ ...typography.body2 }}>
           Provide liquidity and collect xINVT {!hideBanner && <br />} while earning fees!
         </Typography>
         <Button

@@ -46,7 +46,7 @@ export const PoolInfoSection: React.FC<IProps> = ({
       <Grid className={classes.poolDistributeWapper}>
         <Grid className={classes.poolDistributeTitle}>
           <Grid className={classes.textWrapper}>
-            <Typography component='h4'>Pool distribution (24H)</Typography>
+            <Typography component='h4'>Total (24H)</Typography>
           </Grid>
         </Grid>
         <Grid className={classes.poolDistributeValueWrapper}>
@@ -54,9 +54,9 @@ export const PoolInfoSection: React.FC<IProps> = ({
             <Skeleton variant='rounded' width={50} height={17} />
           ) : (
             <>
-              <img src={xINVT_MAIN.logoURI} width={16} height={16} alt='xinvt logo' />
+              <img src={xINVT_MAIN.logoURI} width={20} height={20} alt='xinvt logo' />
               <Typography>
-                {formatNumberWithCommas(pool?.poolPointsDistribiution.toString())}
+                {formatNumberWithCommas(pool?.poolPointsDistribiution?.toString() || '0')}
               </Typography>
             </>
           )}
@@ -71,13 +71,13 @@ export const PoolInfoSection: React.FC<IProps> = ({
             <Skeleton variant='rounded' width={50} height={17} />
           ) : walletConnected ? (
             <>
-              <img src={xINVT_MAIN.logoURI} width={16} height={16} alt='xinvt logo' />
+              <img src={xINVT_MAIN.logoURI} width={20} height={20} alt='xinvt logo' />
               <Typography>
-                {removeAdditionalDecimals(formatNumberWithCommas(pool?.userPoints), 2)}
+                {removeAdditionalDecimals(formatNumberWithCommas(pool?.userPoints || '0'), 2)}
               </Typography>
             </>
           ) : (
-            <Typography>Not connected</Typography>
+            <Typography>-</Typography>
           )}
         </Grid>
       </Grid>
