@@ -3,7 +3,7 @@ import { Box, Grid, Skeleton, Typography } from '@mui/material'
 import { xINVT_MAIN } from '@store/consts/static'
 import useStyles from './style'
 import { UserPoints } from '@store/reducers/xInvt'
-import { formatNumberWithCommas, removeAdditionalDecimals } from '@utils/utils'
+import { formatNumberWithSuffix } from '@utils/utils'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 
 interface IProps {
@@ -30,10 +30,7 @@ export const ClaimSection: React.FC<IProps> = ({
           <Box display={'flex'} alignItems={'center'} gap={0.5}>
             <img width={20} height={20} src={xINVT_MAIN.logoURI} />
             <Typography component='h3'>
-              {removeAdditionalDecimals(
-                formatNumberWithCommas(userPointsState?.accumulatedRewards || '0'),
-                2
-              )}
+              {formatNumberWithSuffix(userPointsState?.accumulatedRewards || '0')}
             </Typography>
           </Box>
         )}
@@ -47,10 +44,7 @@ export const ClaimSection: React.FC<IProps> = ({
             <Box display={'flex'} alignItems={'center'} gap={0.5}>
               <img width={20} height={20} src={xINVT_MAIN.logoURI} />
               <Typography component='h3'>
-                {removeAdditionalDecimals(
-                  formatNumberWithCommas(userPointsState?.claimableRewards || '0'),
-                  2
-                )}
+                {formatNumberWithSuffix(userPointsState?.claimableRewards || '0')}
               </Typography>
             </Box>
           )}
