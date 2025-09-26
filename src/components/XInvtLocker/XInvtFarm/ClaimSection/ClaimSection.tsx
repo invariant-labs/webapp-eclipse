@@ -23,7 +23,7 @@ export const ClaimSection: React.FC<IProps> = ({
   return (
     <Box className={classes.wrapper}>
       <Grid className={classes.valueWrapper}>
-        <Typography component='h5'>Current round xINVT</Typography>
+        <Typography component='h5'>Current round</Typography>
         {isLoading ? (
           <Skeleton variant='rounded' width={60} height={24} />
         ) : (
@@ -37,7 +37,7 @@ export const ClaimSection: React.FC<IProps> = ({
       </Grid>
       <Grid className={classes.claimWrapper}>
         <Box display={'flex'} alignItems={'center'} className={classes.claimValue}>
-          <Typography component='h5'>Unclaimed xINVT</Typography>
+          <Typography component='h5'>Unclaimed</Typography>
           {isLoading ? (
             <Skeleton variant='rounded' width={60} height={24} />
           ) : (
