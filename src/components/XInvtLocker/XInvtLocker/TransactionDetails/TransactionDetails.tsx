@@ -46,7 +46,11 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
         ) : (
           <Typography className={classes.value}>
             {tokenFromAmount
-              ? currentYield.toFixed(2) + '%' + ' ⟶ ' + yieldChange.toFixed(2) + '%'
+              ? formatNumberWithSuffix(currentYield) +
+                '%' +
+                ' ⟶ ' +
+                formatNumberWithSuffix(yieldChange) +
+                '%'
               : '-'}
           </Typography>
         )}

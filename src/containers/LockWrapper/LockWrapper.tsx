@@ -383,14 +383,14 @@ export const LockWrapper: React.FC = () => {
   }, [bannerState])
 
   const unlockDisabled = useMemo(() => {
-    if (bannerState.key === BannerPhase.lockPhase) {
+    if (bannerState.key === BannerPhase.lockPhase || !marketData.burnEndTime) {
       return true
     } else {
       return false
     }
   }, [bannerState])
   const lockDisabled = useMemo(() => {
-    if (bannerState.key === BannerPhase.burningPhase) {
+    if (bannerState.key === BannerPhase.burningPhase || !!marketData.burnEndTime) {
       return true
     } else {
       return false
