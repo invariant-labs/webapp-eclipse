@@ -25,7 +25,7 @@ export const PoolInfoSection: React.FC<IProps> = ({
     <Grid className={classes.poolInfoWrapper}>
       <Grid className={classes.titleWrapper}>
         {configLoading || pool === null ? (
-          <Skeleton variant='rounded' width={140} height={32} style={{ borderRadius: 12 }} />
+          <Skeleton variant='rounded' width={175} height={32} style={{ borderRadius: 12 }} />
         ) : (
           <Box className={classes.tokenWrapper}>
             <img alt={pool.tokenX.name} width={32} src={pool.tokenX.logoURI} />
