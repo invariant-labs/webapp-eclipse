@@ -28,10 +28,16 @@ export const ClaimSection: React.FC<IProps> = ({
           <Skeleton variant='rounded' width={60} height={24} />
         ) : (
           <Box display={'flex'} alignItems={'center'} gap={0.5}>
-            <img width={20} height={20} src={xINVT_MAIN.logoURI} />
-            <Typography component='h3'>
-              {formatNumberWithSuffix(userPointsState?.accumulatedRewards || '0')}
-            </Typography>
+            {walletConnected ? (
+              <>
+                <img width={20} height={20} src={xINVT_MAIN.logoURI} />
+                <Typography component='h3'>
+                  {formatNumberWithSuffix(userPointsState?.accumulatedRewards || '0')}
+                </Typography>
+              </>
+            ) : (
+              <Typography component='h3'>-</Typography>
+            )}
           </Box>
         )}
       </Grid>
@@ -42,10 +48,16 @@ export const ClaimSection: React.FC<IProps> = ({
             <Skeleton variant='rounded' width={60} height={24} />
           ) : (
             <Box display={'flex'} alignItems={'center'} gap={0.5}>
-              <img width={20} height={20} src={xINVT_MAIN.logoURI} />
-              <Typography component='h3'>
-                {formatNumberWithSuffix(userPointsState?.claimableRewards || '0')}
-              </Typography>
+              {walletConnected ? (
+                <>
+                  <img width={20} height={20} src={xINVT_MAIN.logoURI} />
+                  <Typography component='h3'>
+                    {formatNumberWithSuffix(userPointsState?.claimableRewards || '0')}
+                  </Typography>
+                </>
+              ) : (
+                <Typography component='h3'>-</Typography>
+              )}
             </Box>
           )}
         </Box>
