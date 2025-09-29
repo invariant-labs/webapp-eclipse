@@ -3,9 +3,9 @@ import useStyles from './style'
 import { Link, useLocation } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import {
-  airdropIcon,
   liquidityIcon,
   lqStakingIcon,
+  saleUnselectedIcon,
   statsIcon,
   swapArrowsIcon,
   tokenCreatorIcon,
@@ -64,21 +64,7 @@ export const FooterNavbar = () => {
   //           }
   //         }
   //       ]
-  //     : [
-  //         {
-  //           label: 'Points',
-  //           icon: airdropIcon,
-  //           url: 'points',
-  //           width: 22,
-  //           onClick: () => {
-  //             setIsMorePopupOpen(false)
-  //             setAnchorEl(null)
-  //             unblurContent()
-  //           },
-  //           isLink: true
-  //         }
-  //       ]),
-
+  //     : []),
   //   {
   //     label: 'Stats',
   //     icon: statsIcon,
@@ -115,13 +101,20 @@ export const FooterNavbar = () => {
       width: 26,
       isLink: true
     },
+    {
+      label: 'xINVT',
+      icon: saleUnselectedIcon,
+      url: 'xINVT',
+      width: 34,
+      isLink: true
+    },
 
     ...(typeOfNetwork === NetworkType.Mainnet
       ? [
           {
-            label: 'Stake',
+            label: 'sBITZ',
             icon: lqStakingIcon,
-            url: 'stake',
+            url: 'sBITZ',
 
             isLink: true,
             width: 29
@@ -138,16 +131,7 @@ export const FooterNavbar = () => {
             isLink: true
           }
         ]
-      : [
-          {
-            label: 'Points',
-            icon: airdropIcon,
-            url: 'points',
-            width: 22,
-
-            isLink: true
-          }
-        ]),
+      : []),
 
     {
       label: 'Stats',
@@ -192,9 +176,9 @@ export const FooterNavbar = () => {
     liquidity: [/^liquidity\/*/, /^poolDetails\/*/],
     exchange: [/^exchange\/*/],
     sale: [/^presale\/*/],
+    xINVT: [/^xINVT\/*/],
     portfolio: [/^portfolio\/*/, /^newPosition\/*/, /^position\/*/],
 
-    ...(typeOfNetwork === NetworkType.Mainnet ? { leaderboard: [/^points\/*/] } : {}),
     ...(typeOfNetwork === NetworkType.Testnet ? { creator: [/^creator\/*/] } : {}),
     ...(typeOfNetwork === NetworkType.Mainnet ? { more: [/^stake\/*/] } : {})
   }

@@ -63,7 +63,6 @@ export const PoolInfo: React.FC<IPros> = ({
   }, [tokenX, tokenY, tokenXReserve, tokenYReserve, prices])
 
   if (!tokenX || !tokenY) return null
-  console.log(noData && !isPoolDataLoading)
 
   return (
     <Grid className={classes.wrapper}>

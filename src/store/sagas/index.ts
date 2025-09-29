@@ -7,9 +7,9 @@ import { positionsSaga } from './positions'
 import { statsSaga } from './stats'
 import { creatorSaga } from './creator'
 import { lockerSaga } from './locker'
-import { leaderboardSaga } from './leaderboard'
 import { stakeSaga } from './sBitz'
 import { sbitzStatsSaga } from './sbitz-stats'
+import { xInvtSaga } from './xInvt'
 // import { saleSaga } from './archive/sale'
 
 export function* rootSaga(): Generator {
@@ -22,11 +22,11 @@ export function* rootSaga(): Generator {
       poolsSaga,
       statsSaga,
       creatorSaga,
-      leaderboardSaga,
       lockerSaga,
       sbitzStatsSaga,
-      stakeSaga
-      // saleSaga
+      stakeSaga,
+      // saleSaga,
+      xInvtSaga
     ].map(spawn)
   )
 }

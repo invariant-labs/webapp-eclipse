@@ -16,11 +16,11 @@ import { NetworkType } from '@store/consts/static'
 import { RPC } from '@utils/web3/connection'
 import { reducer as creatorReducer, creatorSliceName } from './creator'
 import { reducer as lockerReducer, lockerSliceName } from './locker'
-import { reducer as leaderboardReducer, leaderboardSliceName } from './leaderboard'
 import { reducer as navigationReducer, navigationSliceName } from './navigation'
 import { reducer as sBitzReducer, sBitzSliceName } from './sBitz'
 import { sbitzStatsSliceName, reducer as sbitzStatsReducer } from './sbitz-stats'
 // import { saleSliceName, reducer as saleReducer } from './archive/sale'
+import { reducer as xInvtReducer, xInvtSliceName } from './xInvt'
 
 const transformNetwork = createTransform(
   (inboundState: any, _key) => {
@@ -84,13 +84,13 @@ const combinedReducers = combineReducers({
   [swapSliceName]: swapReducer,
   [positionsSliceName]: positionsReducer,
   [statsSliceName]: statsReducer,
-  [leaderboardSliceName]: leaderboardReducer,
   [creatorSliceName]: creatorReducer,
   [lockerSliceName]: lockerReducer,
   // [saleSliceName]: saleReducer,
   [navigationSliceName]: navigationReducer,
   [sBitzSliceName]: sBitzReducer,
-  [sbitzStatsSliceName]: sbitzStatsReducer
+  [sbitzStatsSliceName]: sbitzStatsReducer,
+  [xInvtSliceName]: xInvtReducer
 })
 
 export default combinedReducers

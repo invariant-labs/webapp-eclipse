@@ -1,7 +1,7 @@
 import { Box, Typography, useMediaQuery } from '@mui/material'
 import { useStyles } from './style'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
-import { airdropRainbowIcon, backIcon, newTabIcon, poolStatsIcon } from '@static/icons'
+import { backIcon, newTabIcon, poolStatsIcon } from '@static/icons'
 import { theme } from '@static/theme'
 import MarketIdLabel from '@components/NewPosition/MarketIdLabel/MarketIdLabel'
 import { VariantType } from 'notistack'
@@ -32,7 +32,6 @@ type Props = {
   fee: number
   hasEnoughETH: boolean
   hasFees: boolean
-  isPromoted: boolean
   poolAddress: string
   networkUrl: string
   isLocked: boolean
@@ -57,7 +56,6 @@ export const PositionHeader = ({
   fee,
   hasEnoughETH,
   hasFees,
-  isPromoted,
   poolAddress,
   networkUrl,
   isLocked,
@@ -187,23 +185,6 @@ export const PositionHeader = ({
     </TooltipHover>
   )
 
-  const tooltipText = useMemo(() => {
-    if (isLocked) {
-      return (
-        <p>
-          This position is <b>locked</b> and <b>will not</b> earn points.
-          <br />
-          <br />A locked position does not generate points, even if it is active and the pool is
-          generating points.
-        </p>
-      )
-    } else if (isPromoted) {
-      return 'This pool distributes points'
-    } else {
-      return "This pool doesn't distribute points"
-    }
-  }, [isLocked, isPromoted])
-
   return (
     <Box className={classes.headerContainer}>
       <Box className={classes.navigation}>
@@ -284,15 +265,6 @@ export const PositionHeader = ({
                 {tokenA.ticker} - {tokenB.ticker}
               </Typography>
             </Box>
-            <TooltipHover title={tooltipText}>
-              <img
-                className={cx(classes.airdropIcon, {
-                  [classes.airdropIconInActive]: !(isPromoted && isActive && !isLocked)
-                })}
-                src={airdropRainbowIcon}
-                alt='Points'
-              />
-            </TooltipHover>
           </Box>
           <Box className={classes.wrapper}>
             <TooltipHover

@@ -19,6 +19,8 @@ export type IkonType =
   | 'unstake'
   | 'purchase'
   | 'claim-nft'
+  | 'lock'
+  | 'unlock'
 export interface TokensDetailsProps {
   ikonType: IkonType
   tokenXAmount: string
@@ -30,7 +32,6 @@ export interface TokensDetailsProps {
   tokenXSymbol: string
   tokenBetweenSymbol?: string
   tokenYSymbol?: string
-  earnedPoints?: string
   tokenXIconAutoSwap?: string
   tokenYIconAutoSwap?: string
   tokenXAmountAutoSwap?: string

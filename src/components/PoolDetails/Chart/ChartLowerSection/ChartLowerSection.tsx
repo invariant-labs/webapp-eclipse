@@ -345,7 +345,7 @@ const ChartLowerSection: React.FC<StatsInterface> = ({
                       <text
                         style={{ fill: colors.invariant.textGrey, ...typography.tiny2 }}
                         textAnchor='start'
-                        dominantBaseline='center'>
+                        dominantBaseline='central'>
                         {trimZeros(formatLargeNumber(value))}
                       </text>
                     </g>

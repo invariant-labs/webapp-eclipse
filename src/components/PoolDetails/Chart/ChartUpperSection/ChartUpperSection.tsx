@@ -3,7 +3,7 @@ import { Box, Grid, Skeleton, Typography, useMediaQuery } from '@mui/material'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { horizontalSwapIcon, plusDisabled, plusIcon } from '@static/icons'
 import { colors, theme, typography } from '@static/theme'
-import { commonTokensForNetworks, NetworkType, promotedTiers } from '@store/consts/static'
+import { commonTokensForNetworks, NetworkType } from '@store/consts/static'
 import { NewTabIcon } from '@static/componentIcon/NewTabIcon'
 import { CopyIcon } from '@static/componentIcon/CopyIcon'
 import { SwapToken } from '@store/selectors/solanaWallet'
@@ -95,17 +95,19 @@ export const ChartUpperSection: React.FC<IProps> = ({
   }
 
   const promotedPoolTierIndex = useMemo(() => {
-    const tierIndex =
-      tokenX === null || tokenY === null
-        ? undefined
-        : (promotedTiers.find(
-            tier =>
-              (tier.tokenX.equals(tokenX.assetAddress) &&
-                tier.tokenY.equals(tokenY.assetAddress)) ||
-              (tier.tokenX.equals(tokenY.assetAddress) && tier.tokenY.equals(tokenX.assetAddress))
-          )?.index ?? undefined)
+    // const tierIndex =
+    //   tokenX === null || tokenY === null
+    //     ? undefined
+    //     : promotedTiers.find(
+    //         tier =>
+    //           (tier.tokenX.equals(tokenX.assetAddress) &&
+    //             tier.tokenY.equals(tokenY.assetAddress)) ||
+    //           (tier.tokenX.equals(tokenY.assetAddress) && tier.tokenY.equals(tokenX.assetAddress))
+    //       )?.index ?? undefined
 
-    return tierIndex
+    // return tierIndex
+
+    return undefined //Removed leaderboard points
   }, [tokenX, tokenY])
 
   return (

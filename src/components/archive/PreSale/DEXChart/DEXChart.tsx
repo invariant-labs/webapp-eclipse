@@ -183,7 +183,7 @@ export const DEXChart = () => {
                         x={bar.x + bar.width / 2}
                         y={bar.y - 12}
                         textAnchor='middle'
-                        dominantBaseline='middle'
+                        dominantBaseline='central'
                         className={classes.barValueText}>
                         {formatValue(bar.data.value ?? 0)}
                       </text>

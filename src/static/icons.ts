@@ -40,9 +40,7 @@ import dog1Icon from './svg/SolanaCreator/Dog1.svg'
 import dog2Icon from './svg/SolanaCreator/Dog2.svg'
 import lockIcon from './svg/lockIcon.svg'
 import lockPositionIcon from './svg/lock.svg'
-import airdropIcon from './svg/airdrop.svg'
 import nightlyIcon from './svg/nightly.svg'
-import airdropRainbowIcon from './svg/airdropRainbow.svg'
 import auditIcon from './svg/audit.svg'
 import auditByLogoIcon from './svg/auditbylogo.svg'
 import warning2Icon from './svg/warning2.svg'
@@ -52,8 +50,6 @@ import dropdownReverseIcon from './svg/dropdownReverse.svg'
 import arrowLeftIcon from './svg/arrowLeft.svg'
 import arrowRightIcon from './svg/arrowRight.svg'
 import infoCircleIcon from './svg/infoCircle.svg'
-import boostPointsIcon from './svg/boostPoints.svg'
-import airdropGreyIcon from './svg/airdropGrey.svg'
 import infoErrorIcon from './svg/infoError.svg'
 import okxLogoIcon from './svg/okx-logo.svg'
 import goldenInfoIcon from './svg/goldenInfoIcon.svg'
@@ -79,9 +75,6 @@ import searchIcon from './svg/lupaDark.svg'
 import navRightIcon from '@static/svg/navRight.svg'
 import navLeftIcon from '@static/svg/navLeft.svg'
 import checkIcon from '@static/svg/checkFill.svg'
-import leaderboardGoldenIcon from '@static/svg/leaderboardGolden.svg'
-import leaderboardSilverIcon from '@static/svg/leaderboardSilver.svg'
-import leaderboardBronzeIcon from '@static/svg/leaderboardBronze.svg'
 import disconnectIcon from '@static/svg/disconnect.svg'
 import refreshIcon from '@static/svg/refresh.svg'
 import backIcon from '@static/svg/back-arrow.svg'
@@ -93,7 +86,6 @@ import handleMinIcon from '@static/svg/narrowChartMinHandle.svg'
 import zoomInIcon from '@static/svg/zoom-in-icon.svg'
 import zoomOutIcon from '@static/svg/zoom-out-icon.svg'
 import lockIcon2 from '@static/svg/lock.svg'
-import boostPointsBoldIcon from '@static/svg/boostPointsBold.svg'
 import eyeYellowIcon from './svg/eyeYellow.svg'
 import closeYellowIcon from './svg/closeYellow.svg'
 import scrollArrowIcon from './svg/scrollArrow.svg'
@@ -121,6 +113,9 @@ import greenInfoIcon from './svg/greenInfo.svg'
 import swapArrowClean from './svg/swapArrowClean.svg'
 import saleSelectedIcon from './svg/sale-selected.svg'
 import saleUnselectedIcon from './svg/sale-unselected.svg'
+import InvtLogoIcon from './svg/INVT.svg'
+import xInvtLogoIcon from './svg/xINVT.svg'
+import lockIconGrey from './svg/lockIconGrey.svg'
 import poolStatsIcon from './svg/poolStats.svg'
 import poolStatsBtnIcon from './svg/poolStatsBtn.svg'
 
@@ -173,9 +168,7 @@ export {
   dog2Icon,
   lockIcon,
   lockPositionIcon,
-  airdropIcon,
   nightlyIcon,
-  airdropRainbowIcon,
   auditIcon,
   warning2Icon,
   closeWarningIcon,
@@ -184,8 +177,6 @@ export {
   arrowLeftIcon,
   arrowRightIcon,
   infoCircleIcon,
-  boostPointsIcon,
-  airdropGreyIcon,
   infoErrorIcon,
   okxLogoIcon,
   infoIcon,
@@ -211,9 +202,6 @@ export {
   navRightIcon,
   navLeftIcon,
   checkIcon,
-  leaderboardGoldenIcon,
-  leaderboardSilverIcon,
-  leaderboardBronzeIcon,
   disconnectIcon,
   refreshIcon,
   backIcon,
@@ -225,7 +213,6 @@ export {
   zoomInIcon,
   zoomOutIcon,
   lockIcon2,
-  boostPointsBoldIcon,
   eyeYellowIcon,
   scrollArrowIcon,
   goldenInfoIcon,
@@ -248,6 +235,9 @@ export {
   swapArrowClean,
   saleSelectedIcon,
   saleUnselectedIcon,
+  InvtLogoIcon,
+  xInvtLogoIcon,
+  lockIconGrey,
   poolStatsIcon,
   poolStatsBtnIcon
 }
