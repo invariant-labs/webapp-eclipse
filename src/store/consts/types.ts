@@ -316,7 +316,54 @@ export enum StakeSwitch {
   Unstake = 'Unstake'
 }
 
+export enum LockerSwitch {
+  Lock = 'Lock',
+  Unlock = 'Unlock'
+}
 export enum ChartSwitch {
   volume = 'Volume',
   fees = 'Fees'
+}
+export enum BannerPhase {
+  beforeStartPhase = 'beforeStartPhase',
+  lockPhase = 'lockPhase',
+  yieldPhase = 'yieldPhase',
+  burningPhase = 'burningPhase',
+  endPhase = 'endPhase'
+}
+
+export interface InvtConvertedData {
+  currentStakeInfo: {
+    totalInvtStaked: number
+    statsYieldPercentage: number
+    rewardPerToken: number
+    invtDepositFilledPercentage: number
+  }
+  userProjection: {
+    userStakeAmount: number
+    expectedYieldPercentage: number
+    expectedReward: number
+  }
+  impact: {
+    newYieldPercentage: number
+    newStakeSize: number
+  }
+}
+
+export enum PoolChartSwitch {
+  volume = 'Volume',
+  tvl = 'TVL',
+  fees = 'Fees'
+}
+
+export interface TokenReserve {
+  amount: string
+  decimals: number
+  uiAmount: number
+  uiAmountString: string
+}
+
+export enum SwitcherAlignment {
+  VOLUME_TVL = 'volume/tvl',
+  FEE_TVL = 'fee/tvl'
 }

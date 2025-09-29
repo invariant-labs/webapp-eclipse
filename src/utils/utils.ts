@@ -101,7 +101,14 @@ import {
   MAX_PLOT_VISIBLE_TICK_RANGE,
   CHECKER_API_URL,
   NoConfig,
-  muES_MAIN
+  muES_MAIN,
+  INVT_MAIN,
+  xINVT_MAIN,
+  INVT_TEST,
+  xINVT_TEST,
+  TOTAL_INVT_REWARDS,
+  INVT_DEPOSIT_LIMIT,
+  XINVT_API_URL
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
@@ -109,10 +116,12 @@ import {
   FormatNumberThreshold,
   FullSnap,
   IncentiveRewardData,
+  InvtConvertedData,
   IPriceData,
   PoolSnapshot,
   Token,
-  TokenPriceData
+  TokenPriceData,
+  TokenReserve
 } from '@store/consts/types'
 import { sqrt } from '@invariant-labs/sdk-eclipse/lib/math'
 import { apyToApr } from './uiUtils'
@@ -124,6 +133,8 @@ import { Umi } from '@metaplex-foundation/umi'
 import { StakingStatsResponse } from '@store/reducers/sbitz-stats'
 import { DEFAULT_FEE_TIER, STRATEGIES } from '@store/consts/userStrategies'
 import { HoldersResponse } from '@store/reducers/sBitz'
+import { PoolSnap } from '@store/reducers/stats'
+import { getPoinstxInvtResponse, IConfigResponse } from '@store/reducers/xInvt'
 
 export const transformBN = (amount: BN): string => {
   return (amount.div(new BN(1e2)).toNumber() / 1e4).toString()
@@ -941,7 +952,9 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
         [NPT_MAIN.address.toString()]: NPT_MAIN,
         [USDN_MAIN.address.toString()]: USDN_MAIN,
         [WEETHS_MAIN.address.toString()]: WEETHS_MAIN,
-        [muES_MAIN.address.toString()]: muES_MAIN
+        [muES_MAIN.address.toString()]: muES_MAIN,
+        [INVT_MAIN.address.toString()]: INVT_MAIN,
+        [xINVT_MAIN.address.toString()]: xINVT_MAIN
       }
     case NetworkType.Devnet:
       return {
@@ -956,7 +969,9 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
         [BTC_TEST.address.toString()]: BTC_TEST,
         [WETH_TEST.address.toString()]: WETH_TEST,
         [MOON_TEST.address.toString()]: MOON_TEST,
-        [S22_TEST.address.toString()]: S22_TEST
+        [S22_TEST.address.toString()]: S22_TEST,
+        [INVT_TEST.address.toString()]: INVT_TEST,
+        [xINVT_TEST.address.toString()]: xINVT_TEST
       }
     default:
       return {}
@@ -2089,6 +2104,20 @@ export const isValidPublicKey = (keyString?: string | null) => {
   }
 }
 
+export const getIntervalsPoolSnap = async (
+  network: string,
+  interval: Intervals,
+  poolAddress: string
+): Promise<PoolSnap> => {
+  const parsedInterval =
+    interval === Intervals.Daily ? 'daily' : interval === Intervals.Weekly ? 'weekly' : 'monthly'
+  const { data } = await axios.get<PoolSnap>(
+    `https://stats.invariant.app/eclipse/pools/eclipse-${network}?interval=${parsedInterval}&address=${poolAddress}`
+  )
+
+  return data
+}
+
 export const trimDecimalZeros = (numStr: string): string => {
   if (/^[0.]+$/.test(numStr)) {
     return '0'
@@ -2306,7 +2335,10 @@ export const ROUTES = {
   POSITION_WITH_ID: '/position/:id',
   PORTFOLIO: '/portfolio',
   CREATOR: '/creator',
-  STAKE: '/stake',
+  sBITZ: '/sBITZ',
+  XINVT: '/xINVT',
+  POOL_DETAILS: '/poolDetails',
+  POOL_DETAILS_WITH_PARAMS: '/poolDetails/:item1?/:item2?/:item3?',
 
   getExchangeRoute: (item1?: string, item2?: string): string => {
     const parts = [item1, item2].filter(Boolean)
@@ -2316,6 +2348,11 @@ export const ROUTES = {
   getNewPositionRoute: (item1?: string, item2?: string, item3?: string): string => {
     const parts = [item1, item2, item3].filter(Boolean)
     return `${ROUTES.NEW_POSITION}${parts.length ? '/' + parts.join('/') : ''}`
+  },
+
+  getPoolDetailsRoute: (item1?: string, item2?: string, item3?: string): string => {
+    const parts = [item1, item2, item3].filter(Boolean)
+    return `${ROUTES.POOL_DETAILS}${parts.length ? '/' + parts.join('/') : ''}`
   },
 
   getPositionRoute: (id: string): string => `${ROUTES.POSITION}/${id}`
@@ -2699,4 +2736,120 @@ export const fetchMarketBitzStats = async () => {
     `https://api.invariant.app/explorer/get-holders?address=${sBITZ}`
   )
   return data
+}
+
+export interface YieldIncome {
+  currentYield: number
+  currentReward: number
+  projectedYield: number
+  projectedReward: number
+}
+
+export function calculateYield(currentlyStaked: number, userStakeAmount: number): YieldIncome {
+  const totalAfterStaking = currentlyStaked + userStakeAmount
+
+  let currentYield = 0
+  let currentReward = 0
+
+  if (currentlyStaked > 0) {
+    const rewardPerToken = TOTAL_INVT_REWARDS / currentlyStaked
+    currentReward = rewardPerToken
+    currentYield = (rewardPerToken / 1) * 100
+  }
+
+  let projectedYield = 0
+  let projectedReward = 0
+
+  if (totalAfterStaking > 0 && userStakeAmount > 0) {
+    const userShare = userStakeAmount / totalAfterStaking
+    projectedReward = userShare * TOTAL_INVT_REWARDS
+    projectedYield = (projectedReward / userStakeAmount) * 100
+  }
+
+  return {
+    currentYield: Math.round(currentYield * 100) / 100,
+    currentReward: Math.round(currentReward * 100) / 100,
+    projectedYield: Math.round(projectedYield * 100) / 100,
+    projectedReward: Math.round(projectedReward * 100) / 100
+  }
+}
+
+export const displayYieldComparison = (
+  currentlyStaked: number,
+  userStakeAmount: number
+): InvtConvertedData => {
+  const totalAfterStaking = currentlyStaked + userStakeAmount
+
+  const statsYeldPerToken =
+    currentlyStaked > 0
+      ? (1 / currentlyStaked) * TOTAL_INVT_REWARDS * 100
+      : TOTAL_INVT_REWARDS * 100
+
+  const statsRewardPerToken =
+    currentlyStaked > 0 ? (1 / currentlyStaked) * TOTAL_INVT_REWARDS : TOTAL_INVT_REWARDS
+
+  const newYieldPerToken =
+    totalAfterStaking > 0
+      ? (1 / totalAfterStaking) * TOTAL_INVT_REWARDS * 100
+      : TOTAL_INVT_REWARDS * 100
+
+  const newRewardPerToken =
+    totalAfterStaking > 0 ? (1 / totalAfterStaking) * TOTAL_INVT_REWARDS : TOTAL_INVT_REWARDS
+
+  return {
+    currentStakeInfo: {
+      totalInvtStaked: currentlyStaked,
+      statsYieldPercentage: statsYeldPerToken,
+      rewardPerToken: statsRewardPerToken,
+      invtDepositFilledPercentage: (100 * currentlyStaked) / INVT_DEPOSIT_LIMIT
+    },
+    userProjection: {
+      userStakeAmount: userStakeAmount,
+      expectedYieldPercentage: newYieldPerToken,
+      expectedReward: userStakeAmount * newRewardPerToken
+    },
+    impact: {
+      newYieldPercentage: newYieldPerToken,
+      newStakeSize: totalAfterStaking
+    }
+  }
+}
+
+export const getTokenReserve = async (
+  address: PublicKey,
+  connection: Connection
+): Promise<TokenReserve | null> => {
+  try {
+    const result = await connection.getTokenAccountBalance(address)
+
+    if (!result?.value) return null
+
+    return {
+      amount: result.value.amount,
+      decimals: result.value.decimals,
+      uiAmount: result.value.uiAmount ?? 0,
+      uiAmountString: result.value.uiAmountString || ''
+    }
+  } catch (error) {
+    console.error('Failed to fetch token reserve:', error)
+    return null
+  }
+}
+
+export const fetchxInvtPoints = async (address?: string) => {
+  try {
+    const { data } = await axios.get<getPoinstxInvtResponse>(`${XINVT_API_URL}/${address}`)
+    return data
+  } catch (error) {
+    console.log(error)
+    return null
+  }
+}
+
+export const fetchXInvtConfig = async () => {
+  const response = await fetch(`${XINVT_API_URL}/config`)
+  if (!response.ok) {
+    throw new Error('Failed to fetch leaderboard data')
+  }
+  return response.json() as Promise<IConfigResponse>
 }

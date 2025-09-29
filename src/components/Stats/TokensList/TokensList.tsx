@@ -5,6 +5,7 @@ import { Grid, useMediaQuery } from '@mui/material'
 import {
   BTC_TEST,
   Intervals,
+  INVT_TEST,
   ITEMS_PER_PAGE,
   NetworkType,
   SortTypeTokenList,
@@ -42,7 +43,7 @@ export interface ITokensList {
   switchFavouriteTokens: (tokenAddress: string) => void
 }
 
-const tokens = [BTC_TEST, USDC_TEST, WETH_TEST]
+const tokens = [BTC_TEST, USDC_TEST, WETH_TEST, INVT_TEST]
 
 const generateMockData = () => {
   return Array.from({ length: ITEMS_PER_PAGE }, (_, index) => ({

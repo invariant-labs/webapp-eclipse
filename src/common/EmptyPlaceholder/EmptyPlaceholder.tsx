@@ -16,7 +16,7 @@ export interface IEmptyPlaceholder {
   mainTitle?: string
   roundedCorners?: boolean
   buttonName?: string
-  height?: number
+  height?: number | string
   newVersion?: boolean
   img?: string
   desc2?: string
