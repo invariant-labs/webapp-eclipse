@@ -54,7 +54,7 @@ export const PoolInfoSection: React.FC<IProps> = ({
             <Skeleton variant='rounded' width={50} height={17} />
           ) : (
             <>
-              <img src={INVT_MAIN.logoURI} width={20} height={20} alt='xinvt logo' />
+              <img src={INVT_MAIN.logoURI} width={20} height={20} alt='invt logo' />
               <Typography>
                 {formatNumberWithCommas(pool?.poolPointsDistribiution?.toString() || '0')}
               </Typography>
@@ -71,7 +71,7 @@ export const PoolInfoSection: React.FC<IProps> = ({
             <Skeleton variant='rounded' width={50} height={17} />
           ) : walletConnected ? (
             <>
-              <img src={INVT_MAIN.logoURI} width={20} height={20} alt='xinvt logo' />
+              <img src={INVT_MAIN.logoURI} width={20} height={20} alt='invt logo' />
               <Typography>
                 {removeAdditionalDecimals(formatNumberWithCommas(pool?.userPoints || '0'), 2)}
               </Typography>
