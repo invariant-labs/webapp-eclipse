@@ -825,10 +825,9 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
       NPT: NPT_MAIN.address.toString(),
       USDN: USDN_MAIN.address.toString(),
       WEETHS: WEETHS_MAIN.address.toString(),
-      muES_MAIN: muES_MAIN.address.toString(),
-      TUSD_MAIN: TUSD_MAIN.address.toString(),
-      INVT_MAIN: INVT_MAIN.address.toString(),
-      xINVT_MAIN: xINVT_MAIN.address.toString()
+      meES: muES_MAIN.address.toString(),
+      INVT: INVT_MAIN.address.toString(),
+      xINVT: xINVT_MAIN.address.toString()
     }
   }
 }
@@ -1007,6 +1006,7 @@ export enum OverviewSwitcher {
 export const STATS_CACHE_TIME = 30 * 60 * 1000
 export const PRICE_API_URL = 'https://api.invariant.app/price'
 export const CHECKER_API_URL = 'https://api.invariant.app/check'
+export const XINVT_API_URL = 'https://api.invariant.app/api/invt'
 
 export enum AutoswapCustomError {
   FetchError = 0

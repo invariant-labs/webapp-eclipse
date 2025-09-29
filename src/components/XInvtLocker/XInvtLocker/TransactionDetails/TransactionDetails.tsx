@@ -45,8 +45,12 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
           <Skeleton width={125} height={24} variant='rounded' sx={{ borderRadius: '8px' }} />
         ) : (
           <Typography className={classes.value}>
-            {!!tokenFromAmount
-              ? currentYield.toFixed(2) + '%' + ' ⟶ ' + yieldChange.toFixed(2) + '%'
+            {tokenFromAmount
+              ? formatNumberWithSuffix(currentYield) +
+                '%' +
+                ' ⟶ ' +
+                formatNumberWithSuffix(yieldChange) +
+                '%'
               : '-'}
           </Typography>
         )}

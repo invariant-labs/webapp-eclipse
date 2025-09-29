@@ -1,6 +1,6 @@
 import { useCountdown } from '@common/Timer/useCountdown'
 import { BannerState } from '@containers/LockWrapper/LockWrapper'
-import { Box, Typography } from '@mui/material'
+import { Box, Grid, Typography } from '@mui/material'
 import { BannerPhase } from '@store/consts/types'
 
 interface DynamicBannerProps {
@@ -52,19 +52,29 @@ export const DynamicBanner: React.FC<DynamicBannerProps> = ({ isLoading, bannerS
     padding: '16px 24px',
     display: 'flex',
     gap: 1,
-    opacity: isLoading ? 0 : 1,
+    // opacity: isLoading ? 0 : 1,
     justifyContent: 'center',
     alignItems: 'center',
     transition: 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)'
   }
 
   return (
-    <Box sx={bannerStyles}>
-      <Typography sx={{ color: colorByKey[bannerState.key] }}>{bannerState.text}</Typography>
-      <Typography sx={{ color: colorByKey[bannerState.key] }}>
-        {bannerState.timestamp > currentTime ? displayString : ''}
-      </Typography>
-    </Box>
+    <Grid
+      container
+      display={'flex'}
+      justifyContent={'center'}
+      style={{
+        opacity: isLoading ? 0 : 1,
+        height: isLoading ? 0 : 80,
+        transition: '300ms'
+      }}>
+      <Box sx={bannerStyles}>
+        <Typography sx={{ color: colorByKey[bannerState.key] }}>{bannerState.text}</Typography>
+        <Typography sx={{ color: colorByKey[bannerState.key] }}>
+          {bannerState.timestamp > currentTime ? displayString : ''}
+        </Typography>
+      </Box>
+    </Grid>
   )
 }
 
