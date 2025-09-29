@@ -450,18 +450,6 @@ export const LockWrapper: React.FC = () => {
       />
       <Box className={classes.titleTextWrapper} mb={'12px'} mt={'24px'}>
         <Typography component='h1'>Staking</Typography>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <TooltipHover title='Refresh'>
-            <Grid className={classes.refreshIconContainer}>
-              <Button
-                onClick={onRefresh}
-                className={classes.refreshIconBtn}
-                disabled={isBalanceLoading}>
-                <img src={refreshIcon} className={classes.refreshIcon} alt='Refresh' />
-              </Button>
-            </Grid>
-          </TooltipHover>
-        </Box>
       </Box>
 
       <DynamicBanner isLoading={bannerInitialLoading} bannerState={bannerState} />
