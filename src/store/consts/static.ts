@@ -857,10 +857,16 @@ export const CHAINS = [
     iconGlow: 'eclipseGlow'
   },
   {
+    name: Chain.Fogo,
+    address: 'https://fogo.invariant.app/exchange',
+    iconGlow: 'fogoGlow'
+  },
+  {
     name: Chain.Sonic,
     address: 'https://sonic.invariant.app',
     iconGlow: 'sonicGlow'
   }
+
   // { name: Chain.Vara, address: 'https://vara.invariant.app/exchange' },
 ]
 
