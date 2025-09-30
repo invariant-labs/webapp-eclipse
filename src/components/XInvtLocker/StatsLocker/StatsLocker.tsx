@@ -70,7 +70,7 @@ export const StatsLocker: React.FC<StatsLocker> = ({ statsData, userLockedInvt, 
               <Skeleton height={28} width={125} variant='rounded' sx={{ borderRadius: '8px' }} />
             ) : (
               <Typography component='h2'>
-                {statsData.currentStakeInfo.totalInvtStaked || 0}
+                {formatNumberWithSuffix(statsData.currentStakeInfo.totalInvtStaked || 0)}
               </Typography>
             )}
           </Box>
@@ -91,7 +91,7 @@ export const StatsLocker: React.FC<StatsLocker> = ({ statsData, userLockedInvt, 
               <Skeleton height={24} width={35} variant='rounded' />
             ) : (
               <Typography className={classes.greenBodyText}>
-                {formatNumberWithCommas(statsData.currentStakeInfo.totalInvtStaked.toString())}
+                {formatNumberWithCommas(statsData.currentStakeInfo.totalInvtStaked.toFixed(2))}
               </Typography>
             )}
             <>
