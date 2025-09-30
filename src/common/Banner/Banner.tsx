@@ -83,7 +83,7 @@ export const Banner = ({ onClose, isHiding }: INormalBannerProps) => {
       )}
       {isSmallDevice && (
         <>
-          <Box className={classes.background} onClick={() => {}}></Box>
+          <Box className={classes.background} onClick={onClose}></Box>
           <Box className={classes.container}>
             <Box className={classes.modal}>
               <Box className={classes.header}>
