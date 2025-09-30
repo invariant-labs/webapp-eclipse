@@ -1,12 +1,13 @@
 import { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 import { Swap } from '@components/Swap/Swap'
 import {
+  ALL_FEE_TIERS_DATA,
   commonTokensForNetworks,
   DEFAULT_SWAP_SLIPPAGE,
   WETH_MAIN,
   WRAPPED_ETH_ADDRESS
 } from '@store/consts/static'
-import { actions as poolsActions } from '@store/reducers/pools'
+import { actions as poolsActions, PoolWithAddress } from '@store/reducers/pools'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { actions as walletActions } from '@store/reducers/solanaWallet'
 import { actions as connectionActions } from '@store/reducers/solanaConnection'
@@ -38,7 +39,6 @@ import {
   getNewTokenOrThrow,
   tickerToAddress
 } from '@utils/utils'
-
 import { TokenPriceData } from '@store/consts/types'
 import { getCurrentSolanaConnection } from '@utils/web3/connection'
 import { VariantType } from 'notistack'
@@ -48,6 +48,9 @@ import { getMarketProgramSync } from '@utils/web3/programs/amm'
 import { getEclipseWallet } from '@utils/web3/wallet'
 import { IWallet } from '@invariant-labs/sdk-eclipse'
 import { actions as swapActions } from '@store/reducers/swap'
+import { currentInterval, poolsStatsWithTokensDetails } from '@store/selectors/stats'
+import { actions as statsActions } from '@store/reducers/stats'
+import { Intervals as IntervalsKeys } from '@store/consts/static'
 
 type Props = {
   initialTokenFrom: string
@@ -81,6 +84,123 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const rpc = useSelector(rpcAddress)
   const wallet = getEclipseWallet()
   const market = getMarketProgramSync(networkType, rpc, wallet as IWallet)
+
+  const [chartPoolData, setChartPoolData] = useState<PoolWithAddress | null>(null)
+  const [selectedFee, setSelectedFee] = useState<BN | null>(null)
+  const [selectedFeeIndex, setSelectedFeeIndex] = useState(0)
+
+  const lastUsedInterval = useSelector(currentInterval)
+
+  const poolsList = useSelector(poolsStatsWithTokensDetails)
+
+  // const [triggerRefresh, setTriggerRefresh] = useState(false)
+
+  useEffect(() => {
+    const pairPools: PoolWithAddress[] = []
+    allPools.map(pool => {
+      if (
+        (pool.tokenX.toString() === tokenFrom?.toString() &&
+          pool.tokenY.toString() === tokenTo?.toString()) ||
+        (pool.tokenX.toString() === tokenTo?.toString() &&
+          pool.tokenY.toString() === tokenFrom?.toString())
+      ) {
+        pairPools.push(pool)
+      }
+    })
+
+    if (!pairPools.length) {
+      setChartPoolData(null)
+      return
+    }
+
+    const poolWithHighestLiquidity = pairPools.reduce((maxPool, currentPool) => {
+      return currentPool.liquidity.gt(maxPool.liquidity) ? currentPool : maxPool
+    }, pairPools[0])
+
+    const selectedFeeIndex = ALL_FEE_TIERS_DATA.findIndex(
+      fee => fee.tier.fee.toString() === poolWithHighestLiquidity.fee.toString()
+    )
+    setSelectedFee(poolWithHighestLiquidity.fee)
+
+    setSelectedFeeIndex(selectedFeeIndex)
+
+    setChartPoolData(poolWithHighestLiquidity)
+  }, [allPools.length, tokenFrom, tokenTo])
+
+  useEffect(() => {
+    const pairPools: PoolWithAddress[] = []
+    allPools.map(pool => {
+      if (
+        (pool.tokenX.toString() === tokenFrom?.toString() &&
+          pool.tokenY.toString() === tokenTo?.toString()) ||
+        (pool.tokenX.toString() === tokenTo?.toString() &&
+          pool.tokenY.toString() === tokenFrom?.toString())
+      ) {
+        pairPools.push(pool)
+      }
+    })
+
+    if (!pairPools.length) {
+      setChartPoolData(null)
+      return
+    }
+
+    const selectedPool = pairPools.find(pool => pool.fee.toString() === selectedFee?.toString())
+
+    if (selectedPool) {
+      setChartPoolData(selectedPool)
+      return
+    } else {
+      setChartPoolData(null)
+    }
+  }, [selectedFeeIndex, selectedFee])
+
+  const selectFeeTier = (index: number) => {
+    setSelectedFee(ALL_FEE_TIERS_DATA[index]?.tier.fee)
+  }
+
+  // const isPoolDataLoading = useMemo(() => {
+  //   return isFetchingNewPool
+  // }, [isFetchingNewPool])
+
+  useEffect(() => {
+    if (!lastUsedInterval || !chartPoolData?.address) return
+    dispatch(
+      statsActions.getCurrentIntervalPoolStats({
+        interval: lastUsedInterval,
+        poolAddress: chartPoolData?.address.toString()
+      })
+    )
+  }, [chartPoolData?.address.toString()])
+
+  useEffect(() => {
+    if (lastUsedInterval || !chartPoolData?.address) return
+    dispatch(
+      statsActions.getCurrentIntervalPoolStats({
+        interval: IntervalsKeys.Daily,
+        poolAddress: chartPoolData?.address.toString()
+      })
+    )
+
+    dispatch(statsActions.setCurrentInterval({ interval: IntervalsKeys.Daily }))
+  }, [lastUsedInterval, chartPoolData?.address])
+
+  const updateInterval = (interval: IntervalsKeys) => {
+    if (!chartPoolData?.address) return
+    dispatch(
+      statsActions.getCurrentIntervalPoolStats({
+        interval,
+        poolAddress: chartPoolData?.address.toString()
+      })
+    )
+    dispatch(statsActions.setCurrentInterval({ interval }))
+  }
+
+  useEffect(() => {
+    dispatch(
+      statsActions.getCurrentIntervalStats({ interval: lastUsedInterval ?? IntervalsKeys.Daily })
+    )
+  }, [lastUsedInterval])
 
   useEffect(() => {
     let timeoutId1: NodeJS.Timeout
@@ -118,8 +238,8 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const lastTokenFrom =
     initialTokenFrom && tickerToAddress(networkType, initialTokenFrom)
       ? tickerToAddress(networkType, initialTokenFrom)
-      : (localStorage.getItem(`INVARIANT_LAST_TOKEN_FROM_${networkType}`) ??
-        WETH_MAIN.address.toString())
+      : localStorage.getItem(`INVARIANT_LAST_TOKEN_FROM_${networkType}`) ??
+        WETH_MAIN.address.toString()
 
   const lastTokenTo =
     initialTokenTo && tickerToAddress(networkType, initialTokenTo)
@@ -348,17 +468,6 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const swapAccounts = useSelector(accounts)
   const swapIsLoading = useSelector(isLoading)
 
-  // const updateInterval = (interval: IntervalsKeys) => {
-  //   if (!poolData?.address) return
-  //   dispatch(
-  //     actions.getCurrentIntervalPoolStats({
-  //       interval,
-  //       poolAddress: poolData?.address.toString()
-  //     })
-  //   )
-  //   dispatch(actions.setCurrentInterval({ interval }))
-  // }
-
   return (
     <Swap
       isFetchingNewPool={isFetchingNewPool}
@@ -453,7 +562,12 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
       tokensDict={tokensDict}
       swapAccounts={swapAccounts}
       swapIsLoading={swapIsLoading}
-      updateInterval={() => {}}
+      updateInterval={updateInterval}
+      poolsList={poolsList}
+      lastUsedInterval={lastUsedInterval}
+      selectFeeTier={selectFeeTier}
+      selectedFee={selectedFee}
+      chartPoolData={chartPoolData}
     />
   )
 }

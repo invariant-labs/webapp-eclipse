@@ -33,7 +33,14 @@ export const useStyles = makeStyles()(() => ({
     height: 27,
     marginBottom: 16
   },
-  chart: {},
+  chart: {
+    borderRadius: 12,
+    overflow: 'hidden'
+  },
+  skeleton: {
+    borderRadius: 12,
+    top: 0
+  },
   iconsAndNames: {
     flexWrap: 'nowrap',
     width: '100%',

@@ -20,14 +20,11 @@ import {
 import {
   addressToTicker,
   convertBalanceToBN,
-  fetchBestPoolAddress,
-  fetchData,
   findPairs,
   formatNumberWithoutSuffix,
   handleSimulate,
   handleSimulateWithHop,
   initialXtoY,
-  parseFeeToPathFee,
   printBN,
   ROUTES,
   trimLeadingZeros
@@ -44,29 +41,16 @@ import { TokenPriceData } from '@store/consts/types'
 import TokensInfo from './TokensInfo/TokensInfo'
 import { VariantType } from 'notistack'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
-import {
-  DECIMAL,
-  FEE_TIERS,
-  fromFee,
-  SimulationStatus
-} from '@invariant-labs/sdk-eclipse/lib/utils'
+import { DECIMAL, fromFee, SimulationStatus } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { PublicKey } from '@solana/web3.js'
 import { Tick, Tickmap, Market } from '@invariant-labs/sdk-eclipse/lib/market'
 import { auditIcon, refreshIcon, settingIcon, swapArrowsIcon, warningIcon } from '@static/icons'
 import { useNavigate } from 'react-router-dom'
-import {
-  FetcherRecords,
-  getMarketAddress,
-  Pair,
-  SimulationTwoHopResult
-} from '@invariant-labs/sdk-eclipse'
+import { FetcherRecords, Pair, SimulationTwoHopResult } from '@invariant-labs/sdk-eclipse'
 import { theme } from '@static/theme'
-import { networkTypetoProgramNetwork } from '@utils/web3/connection'
-import { ISeriesApi, createChart, CandlestickSeries, ColorType } from 'lightweight-charts'
 import Chart from './Chart/Chart'
-import { useSelector } from 'react-redux'
-import { currentInterval, poolsStatsWithTokensDetails } from '@store/selectors/stats'
+import { ExtendedPoolStatsData } from '@store/selectors/stats'
 import { Intervals as IntervalsKeys } from '@store/consts/static'
 
 export interface Pools {
@@ -142,6 +126,11 @@ export interface ISwap {
   swapIsLoading: boolean
   wrappedETHBalance: BN | null
   updateInterval: (interval: IntervalsKeys) => void
+  poolsList: ExtendedPoolStatsData[]
+  lastUsedInterval: IntervalsKeys | null
+  selectedFee: BN | null
+  selectFeeTier: (i: number) => void
+  chartPoolData: PoolWithAddress | null
 }
 
 export type SimulationPath = {
@@ -196,7 +185,12 @@ export const Swap: React.FC<ISwap> = ({
   tokensDict,
   swapAccounts,
   swapIsLoading,
-  updateInterval
+  updateInterval,
+  poolsList,
+  lastUsedInterval,
+  selectedFee,
+  selectFeeTier,
+  chartPoolData
 }) => {
   const { classes, cx } = useStyles()
 
@@ -909,85 +903,6 @@ export const Swap: React.FC<ISwap> = ({
 
   const warningsCount = [showOracle, showImpact, isUnkown].filter(Boolean).length
 
-  const containerRef = useRef<HTMLDivElement>(null)
-  const seriesRef = useRef<ISeriesApi<'Candlestick'>>()
-
-  useEffect(() => {
-    if (!containerRef.current) return
-    if (tokenFromIndex === null || tokenToIndex === null) return
-
-    const net = networkTypetoProgramNetwork(network)
-    const marketAddress = new PublicKey(getMarketAddress(net))
-    const tokenFrom = tokens[tokenFromIndex].assetAddress.toString()
-    const tokenTo = tokens[tokenToIndex].assetAddress.toString()
-    const tokenX = tokenFrom < tokenTo ? tokenFrom : tokenTo
-    const tokenY = tokenFrom < tokenTo ? tokenTo : tokenFrom
-    const addresses = FEE_TIERS.map(fee =>
-      new Pair(new PublicKey(tokenX), new PublicKey(tokenY), fee)
-        .getAddress(marketAddress)
-        .toString()
-    )
-
-    const chart = createChart(containerRef.current, {
-      width: containerRef.current.clientWidth,
-      height: 400,
-      layout: {
-        background: { type: ColorType.Solid, color: '#0b1220' },
-        textColor: '#e5e7eb'
-      },
-      grid: {
-        vertLines: { color: '#1f2937' },
-        horzLines: { color: '#1f2937' }
-      },
-      rightPriceScale: { borderColor: '#374151' },
-      timeScale: { borderColor: '#374151' }
-    })
-
-    seriesRef.current = chart.addSeries(CandlestickSeries)
-
-    fetchBestPoolAddress(addresses)
-      .then(bestAddr => {
-        if (!bestAddr) return fetchData(addresses[0])
-        return fetchData(bestAddr)
-      })
-      .then(data => {
-        const sorted = data.sort((a, b) => a.time - b.time)
-        const deduped = sorted.filter(
-          (candle, idx) => idx === 0 || candle.time > sorted[idx - 1].time
-        )
-
-        seriesRef.current?.setData(deduped)
-
-        if (deduped.length > 0) {
-          const N = Math.min(100, deduped.length)
-          const from = deduped[deduped.length - N].time
-          const to = deduped[deduped.length - 1].time
-          chart.timeScale().setVisibleRange({ from, to })
-        }
-      })
-      .catch(e => console.log(e))
-
-    return () => {
-      chart.remove()
-    }
-  }, [tokenFromIndex, tokenToIndex, tokens])
-
-  const [chartFeeTier, setChartFeeTier] = useState('0_01')
-  const lastUsedInterval = useSelector(currentInterval)
-
-  const poolsList = useSelector(poolsStatsWithTokensDetails)
-
-  const selectFeeTier = (index: number) => {
-    if (index === -1) return
-
-    const fee = ALL_FEE_TIERS_DATA[index].tier.fee
-
-    const parsedFee = parseFeeToPathFee(fee)
-
-    // navigate(ROUTES.getPoolDetailsRoute(tokenA, tokenB, parsedFee))
-    setChartFeeTier(parsedFee)
-  }
-
   const revertTokens = () => {
     setIsReversingTokens(true)
     if (lockAnimation) return
@@ -1006,18 +921,19 @@ export const Swap: React.FC<ISwap> = ({
       setAmountFrom(tmpAmount)
     }, 10)
   }
+
+  const feeTiers = ALL_FEE_TIERS_DATA.map(tier => +printBN(tier.tier.fee, DECIMAL - 2))
   return (
     <Grid className={classes.wrapper}>
       <Grid className={classes.upperContainer}>
         <Chart
-          network={network}
-          tokenFromIndex={tokenFromIndex}
-          tokenToIndex={tokenToIndex}
+          tokenFrom={tokenFromIndex !== null ? tokens[tokenFromIndex] : null}
+          tokenTo={tokenToIndex !== null ? tokens[tokenToIndex] : null}
           tokens={tokens}
           disabledFeeTiers={[]}
-          feeTierIndex={1}
-          feeTiers={[]}
-          feeTiersWithTvl={[]}
+          selectedFee={selectedFee}
+          feeTiers={feeTiers}
+          poolsList={poolsList}
           interval={lastUsedInterval ?? IntervalsKeys.Daily}
           isDisabled={false}
           isLoading={false}
@@ -1026,6 +942,7 @@ export const Swap: React.FC<ISwap> = ({
           xToY={true}
           updateInterval={updateInterval}
           setXToY={revertTokens}
+          chartPoolData={chartPoolData}
         />
 
         <Grid className={classes.swapWrapper}>

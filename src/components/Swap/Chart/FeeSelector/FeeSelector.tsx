@@ -48,7 +48,7 @@ export const FeeSelector: React.FC<IProps> = ({
     handleClose()
   }
 
-  const feeTiersTVLValues = Object.values(feeTiersWithTvl)
+  const feeTiersTVLValues = feeTiersWithTvl ? Object.values(feeTiersWithTvl) : []
   const bestFee = feeTiersTVLValues.length > 0 ? Math.max(...feeTiersTVLValues) : 0
   const isPromotedPool = promotedPoolTierIndex !== undefined && promotedPoolTierIndex !== null
 

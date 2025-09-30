@@ -2890,20 +2890,58 @@ export const fetchBestPoolAddress = async (addresses: string[]): Promise<string 
   return best?.addr ?? null
 }
 
-export const fetchData = async (poolAddress: string): Promise<Candle[]> => {
+export enum CandleIntervals {
+  OneMinute = '1m',
+  FiveMinutes = '5m',
+  FifteenMinutes = '15m',
+  OneHour = '1h',
+  FourHours = '4h',
+  TwelveHours = '12h',
+  Daily = '1D',
+  Weekly = '1W',
+  Monthly = '1M'
+}
+
+export const intervalToParams: Record<
+  CandleIntervals,
+  { base: 'minute' | 'hour' | 'day'; aggregate: string }
+> = {
+  [CandleIntervals.OneMinute]: { base: 'minute', aggregate: '1' },
+  [CandleIntervals.FiveMinutes]: { base: 'minute', aggregate: '5' },
+  [CandleIntervals.FifteenMinutes]: { base: 'minute', aggregate: '15' },
+  [CandleIntervals.OneHour]: { base: 'hour', aggregate: '1' },
+  [CandleIntervals.FourHours]: { base: 'hour', aggregate: '4' },
+  [CandleIntervals.TwelveHours]: { base: 'hour', aggregate: '12' },
+  [CandleIntervals.Daily]: { base: 'day', aggregate: '1' },
+  [CandleIntervals.Weekly]: { base: 'day', aggregate: '1' },
+  [CandleIntervals.Monthly]: { base: 'day', aggregate: '1' }
+}
+export const fetchData = async (
+  poolAddress: string,
+  interval: CandleIntervals
+): Promise<Candle[]> => {
+  const { base, aggregate } = intervalToParams[interval]
+
   const params = new URLSearchParams({
-    aggregate: '15',
+    aggregate,
     limit: '1000',
     currency: 'token',
     include_empty_intervals: 'false',
     token: 'quote'
   })
+
   const url =
     `https://api.geckoterminal.com/api/v2/networks/eclipse` +
-    `/pools/${poolAddress}/ohlcv/minute?${params.toString()}`
+    `/pools/${poolAddress}/ohlcv/${base}?${params.toString()}`
 
   const res = await fetch(url)
   const json = await res.json()
+
+  if (!json?.data?.attributes?.ohlcv_list) {
+    console.warn('No OHLCV data returned:', json)
+    return []
+  }
+
   const list: any[][] = json.data.attributes.ohlcv_list
 
   return list.map(([time, open, high, low, close, volume]) => ({

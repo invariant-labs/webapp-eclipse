@@ -1,32 +1,34 @@
-import React, { useEffect, useMemo, useRef } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import useStyles from './style'
-import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
-import { CandlestickSeries, ColorType, createChart, ISeriesApi } from 'lightweight-charts'
-import { networkTypetoProgramNetwork } from '@utils/web3/connection'
+import { Box, Grid, Skeleton, Typography, useMediaQuery } from '@mui/material'
+import {
+  CandlestickSeries,
+  ColorType,
+  createChart,
+  ISeriesApi,
+  UTCTimestamp
+} from 'lightweight-charts'
 import { SwapToken } from '@store/selectors/solanaWallet'
-import { PublicKey } from '@solana/web3.js'
-import { NetworkType } from '@store/consts/static'
-import { getMarketAddress } from '@invariant-labs/sdk-eclipse'
-import { FEE_TIERS } from '@invariant-labs/sdk-eclipse/lib/utils'
-import { Pair } from '@invariant-labs/sdk-eclipse/src'
-import { fetchBestPoolAddress, fetchData } from '@utils/utils'
+import { ALL_FEE_TIERS_DATA } from '@store/consts/static'
+import { CandleIntervals, fetchData } from '@utils/utils'
 import { Intervals as IntervalsKeys } from '@store/consts/static'
 import { colors, theme, typography } from '@static/theme'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { swapListIcon, warningIcon } from '@static/icons'
 import { FeeSelector } from './FeeSelector/FeeSelector'
 import Intervals from '@components/Stats/Intervals/Intervals'
+import { ExtendedPoolStatsData } from '@store/selectors/stats'
+import { BN } from '@coral-xyz/anchor'
+import { PoolWithAddress } from '@store/reducers/pools'
 
 interface iProps {
-  tokenFromIndex: number | null
-  tokenToIndex: number | null
+  tokenFrom: SwapToken | null
+  tokenTo: SwapToken | null
   tokens: SwapToken[]
-  network: NetworkType
   isLoading: boolean
   selectFeeTier: (value: number) => void
   feeTiers: number[]
-  feeTierIndex: number
-  feeTiersWithTvl: Record<number, number>
+  selectedFee: BN | null
   isDisabled: boolean
   disabledFeeTiers: string[]
   interval: IntervalsKeys
@@ -34,17 +36,17 @@ interface iProps {
   xToY: boolean
   setXToY: (a: boolean) => void
   updateInterval: (interval: IntervalsKeys) => void
+  poolsList: ExtendedPoolStatsData[]
+  chartPoolData: PoolWithAddress | null
 }
 
 const Chart: React.FC<iProps> = ({
-  tokenFromIndex,
-  tokenToIndex,
+  tokenFrom,
+  tokenTo,
   tokens,
-  network,
   disabledFeeTiers,
-  feeTierIndex,
+  selectedFee,
   feeTiers,
-  feeTiersWithTvl,
   interval,
   // isDisabled,
   isLoading,
@@ -52,14 +54,31 @@ const Chart: React.FC<iProps> = ({
   noData,
   xToY,
   setXToY,
-  updateInterval
+  updateInterval,
+  poolsList,
+  chartPoolData
 }) => {
   const { classes } = useStyles()
-  // const isTablet = useMediaQuery(theme.breakpoints.down(1200))
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
 
+  const [chartLoading, setChartLoading] = useState(false)
+
+  const feeTierIndex = useMemo(() => {
+    if (selectedFee) {
+      return ALL_FEE_TIERS_DATA.findIndex(fee => fee.tier.fee.toString() === selectedFee.toString())
+    } else {
+      return 0
+    }
+  }, [selectedFee?.toString()])
+
+  const intervalToSeconds: Record<IntervalsKeys, number> = {
+    [IntervalsKeys.Daily]: 24 * 60 * 60,
+    [IntervalsKeys.Weekly]: 7 * 24 * 60 * 60,
+    [IntervalsKeys.Monthly]: 30 * 24 * 60 * 60 // approx, or adjust with actual month length
+  }
+
   const promotedPoolTierIndex = useMemo(() => {
-    if (tokenFromIndex === null || tokenToIndex === null) return undefined
+    if (tokenFrom === null || tokenTo === null) return undefined
 
     // const tokenX = tokens[tokenFromIndex]
     // const tokenY = tokens[tokenToIndex]
@@ -75,26 +94,38 @@ const Chart: React.FC<iProps> = ({
 
     // return tierIndex
     return undefined
-  }, [tokenFromIndex, tokenToIndex, tokens.length])
+  }, [tokenFrom, tokenTo, tokens.length])
+
+  const { feeTiersWithTvl } = useMemo(() => {
+    if (tokenFrom === null || tokenTo === null) {
+      return { feeTiersWithTvl: {} }
+    }
+    const feeTiersWithTvl: Record<number, number> = {}
+
+    poolsList.forEach(pool => {
+      const xMatch =
+        pool.tokenX.equals(tokenFrom.assetAddress) && pool.tokenY.equals(tokenTo.assetAddress)
+      const yMatch =
+        pool.tokenX.equals(tokenTo.assetAddress) && pool.tokenY.equals(tokenFrom.assetAddress)
+
+      if (xMatch || yMatch) {
+        feeTiersWithTvl[pool.fee] = pool.tvl
+      }
+    })
+
+    return { feeTiersWithTvl }
+  }, [poolsList, tokenFrom, tokenTo, interval])
 
   const containerRef = useRef<HTMLDivElement>(null)
   const seriesRef = useRef<ISeriesApi<'Candlestick'>>()
 
-  useEffect(() => {
-    if (!containerRef.current) return
-    if (tokenFromIndex === null || tokenToIndex === null || tokenFromIndex === tokenToIndex) return
+  function toUTCTimestamp(seconds: number): UTCTimestamp {
+    return seconds as UTCTimestamp
+  }
 
-    const net = networkTypetoProgramNetwork(network)
-    const marketAddress = new PublicKey(getMarketAddress(net))
-    const tokenFrom = tokens[tokenFromIndex].assetAddress.toString()
-    const tokenTo = tokens[tokenToIndex].assetAddress.toString()
-    const tokenX = tokenFrom < tokenTo ? tokenFrom : tokenTo
-    const tokenY = tokenFrom < tokenTo ? tokenTo : tokenFrom
-    const addresses = FEE_TIERS.map(fee =>
-      new Pair(new PublicKey(tokenX), new PublicKey(tokenY), fee)
-        .getAddress(marketAddress)
-        .toString()
-    )
+  useEffect(() => {
+    const selectedPoolAddress = chartPoolData?.address.toString()
+    if (!containerRef.current || !selectedPoolAddress) return
 
     const chart = createChart(containerRef.current, {
       width: containerRef.current.clientWidth,
@@ -111,14 +142,36 @@ const Chart: React.FC<iProps> = ({
       timeScale: { borderColor: '#374151' }
     })
 
+    chart.applyOptions({
+      timeScale: {
+        visible: true, // ensures horizontal axis is shown
+        borderColor: '#374151',
+        timeVisible: true, // show HH:mm if intraday
+        secondsVisible: false // hide seconds unless you need them
+      },
+      crosshair: {
+        mode: 1 // CrosshairMode.Normal
+      }
+    })
+
     seriesRef.current = chart.addSeries(CandlestickSeries)
 
-    fetchBestPoolAddress(addresses)
-      .then(bestAddr => {
-        if (!bestAddr) return fetchData(addresses[0])
-        return fetchData(bestAddr)
-      })
+    seriesRef.current?.applyOptions({
+      priceLineVisible: true,
+      priceLineColor: '#22c55e',
+      priceLineWidth: 2
+      // upColor: '#22c55e',
+      // borderUpColor: '#22c55e',
+      // wickUpColor: '#22c55e',
+      // downColor: '#ef4444',
+      // borderDownColor: '#ef4444',
+      // wickDownColor: '#ef4444'
+    })
+
+    fetchData(selectedPoolAddress, CandleIntervals.OneHour)
       .then(data => {
+        setChartLoading(true)
+        console.log(data)
         const sorted = data.sort((a, b) => a.time - b.time)
         const deduped = sorted.filter(
           (candle, idx) => idx === 0 || candle.time > sorted[idx - 1].time
@@ -127,38 +180,24 @@ const Chart: React.FC<iProps> = ({
         seriesRef.current?.setData(deduped)
 
         if (deduped.length > 0) {
-          const N = Math.min(100, deduped.length)
-          const from = deduped[deduped.length - N].time
-          const to = deduped[deduped.length - 1].time
+          const lastCandleTime = deduped[deduped.length - 1].time
+          const seconds = intervalToSeconds[interval]
+
+          const from = toUTCTimestamp(lastCandleTime - seconds)
+          const to = lastCandleTime
+
           chart.timeScale().setVisibleRange({ from, to })
         }
       })
       .catch(e => console.log(e))
+      .finally(() => setChartLoading(false))
 
     return () => {
       chart.remove()
     }
-  }, [tokenFromIndex, tokenToIndex, tokens])
+  }, [tokenFrom, tokenTo, tokens, chartPoolData, interval])
 
-  const { tokenXIcon, tokenXName, isUnknownX } = useMemo(() => {
-    if (tokenFromIndex === null) return { tokenXIcon: '' }
-
-    return {
-      tokenXIcon: tokens[tokenFromIndex].logoURI,
-      tokenXName: tokens[tokenFromIndex].symbol,
-      isUnknownX: tokens[tokenFromIndex].isUnknown
-    }
-  }, [tokens.length, tokenFromIndex])
-
-  const { tokenYIcon, tokenYName, isUnknownY } = useMemo(() => {
-    if (tokenToIndex === null) return { tokenYIcon: '' }
-
-    return {
-      tokenYIcon: tokens[tokenToIndex].logoURI,
-      tokenYName: tokens[tokenToIndex].symbol,
-      isUnknownY: tokens[tokenToIndex].isUnknown
-    }
-  }, [tokens.length, tokenToIndex])
+  if (!tokenFrom || !tokenTo) return
 
   return (
     <Grid className={classes.wrapper}>
@@ -178,10 +217,10 @@ const Chart: React.FC<iProps> = ({
                   <Grid display='flex' position='relative'>
                     <img
                       className={classes.tokenIcon}
-                      src={xToY ? tokenXIcon : tokenYIcon}
-                      alt={xToY ? tokenXName : tokenYName}
+                      src={xToY ? tokenFrom.logoURI : tokenTo.logoURI}
+                      alt={xToY ? tokenFrom.symbol : tokenTo.symbol}
                     />
-                    {(xToY ? isUnknownX : isUnknownY) && (
+                    {(xToY ? tokenFrom.isUnknown : tokenTo.isUnknown) && (
                       <img className={classes.warningIcon} src={warningIcon} />
                     )}
                   </Grid>
@@ -200,10 +239,10 @@ const Chart: React.FC<iProps> = ({
                   <Grid display='flex' position='relative'>
                     <img
                       className={classes.tokenIcon}
-                      src={xToY ? tokenYIcon : tokenXIcon}
-                      alt={xToY ? tokenYName : tokenXName}
+                      src={xToY ? tokenTo.logoURI : tokenFrom.logoURI}
+                      alt={xToY ? tokenTo.symbol : tokenFrom.symbol}
                     />
-                    {(xToY ? isUnknownY : isUnknownX) && (
+                    {(xToY ? tokenTo.isUnknown : tokenFrom.isUnknown) && (
                       <img className={classes.warningIcon} src={warningIcon} />
                     )}
                   </Grid>
@@ -211,7 +250,8 @@ const Chart: React.FC<iProps> = ({
 
                 <Box className={classes.tickersContainer}>
                   <Typography className={classes.names}>
-                    {xToY ? tokenXName : tokenYName} - {xToY ? tokenYName : tokenXName}
+                    {xToY ? tokenFrom.symbol : tokenTo.symbol} -{' '}
+                    {xToY ? tokenTo.symbol : tokenFrom.symbol}
                   </Typography>
                 </Box>
               </Grid>
@@ -234,8 +274,8 @@ const Chart: React.FC<iProps> = ({
                   disabledFeeTiers={disabledFeeTiers}
                   noData={noData}
                   isLoading={isLoading}
-                  tokenX={tokenFromIndex ? tokens[tokenFromIndex] : null}
-                  tokenY={tokenToIndex ? tokens[tokenToIndex] : null}
+                  tokenX={tokenFrom}
+                  tokenY={tokenTo}
                 />
                 <Box display={'flex'} width={isSm ? '100%' : 'auto'}>
                   <Intervals
@@ -250,7 +290,16 @@ const Chart: React.FC<iProps> = ({
           </Grid>
         </Box>
 
-        <div ref={containerRef} className={classes.chart} />
+        {chartLoading ? (
+          <Skeleton
+            width={'100%'}
+            height={350}
+            variant='rectangular'
+            className={classes.skeleton}
+          />
+        ) : (
+          <div ref={containerRef} className={classes.chart} />
+        )}
       </Box>
     </Grid>
   )
