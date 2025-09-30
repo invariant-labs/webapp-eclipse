@@ -118,19 +118,36 @@ export const XInvtLocker: React.FC<ILocker> = ({
   ) => {
     const balance = tokens[tokenAddress.toString()]?.balance || new BN(0)
     if (action === 'max') {
-      const valueString = trimDecimalZeros(printBN(balance, INVT_MAIN.decimals))
-      if (ref === inputTarget.FROM) {
-        setAmountFrom(valueString)
+      const valueString = +trimDecimalZeros(printBN(balance, INVT_MAIN.decimals))
+      let validatedValue = 0
+
+      if (valueString > INVT_DEPOSIT_LIMIT - statsData.currentStakeInfo.totalInvtStaked) {
+        validatedValue = INVT_DEPOSIT_LIMIT - statsData.currentStakeInfo.totalInvtStaked
       } else {
-        setAmountTo(valueString)
+        validatedValue = valueString
+      }
+
+      if (ref === inputTarget.FROM) {
+        setAmountFrom(validatedValue.toString())
+      } else {
+        setAmountTo(validatedValue.toString())
       }
     } else if (action === 'half') {
       const value = balance.div(new BN(2)) || new BN(0)
-      const valueString = trimDecimalZeros(printBN(value, INVT_MAIN.decimals))
-      if (ref === inputTarget.FROM) {
-        setAmountFrom(valueString)
+      const valueString = +trimDecimalZeros(printBN(value, INVT_MAIN.decimals))
+
+      let validatedValue = 0
+
+      if (valueString > INVT_DEPOSIT_LIMIT - statsData.currentStakeInfo.totalInvtStaked) {
+        validatedValue = INVT_DEPOSIT_LIMIT - statsData.currentStakeInfo.totalInvtStaked
       } else {
-        setAmountTo(valueString)
+        validatedValue = valueString
+      }
+
+      if (ref === inputTarget.FROM) {
+        setAmountFrom(validatedValue.toString())
+      } else {
+        setAmountTo(validatedValue.toString())
       }
     }
   }
