@@ -113,6 +113,16 @@ export const LockWrapper: React.FC = () => {
   const [priceLoading, setPriceLoading] = useState(false)
   const [bannerInitialLoading, setBannerInitialLoading] = useState(true)
 
+  const [currentTime, setCurrentTime] = useState(Math.floor(Date.now() / 1000))
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(Math.floor(Date.now() / 1000))
+    }, 1000)
+
+    return () => clearInterval(timer)
+  }, [])
+
   const getPoolImage = (tokenX: PublicKey, tokenY: PublicKey) => {
     if (
       (tokenX.toString() === INVT_MAIN.address.toString() &&
@@ -345,40 +355,50 @@ export const LockWrapper: React.FC = () => {
   const currentUnix = Math.floor(Date.now() / 1000)
 
   const bannerState: BannerState = useMemo(() => {
-    const mintStart = marketData?.mintStartTime ? +marketData.mintStartTime : 0
-    const mintEnd = marketData?.mintEndTime ? +marketData.mintEndTime : 0
-    const burnStart = marketData?.burnStartTime ? +marketData.burnStartTime : 0
-    const burnEnd = marketData?.burnEndTime ? +marketData.burnEndTime : 0
+    // const mintStart = marketData?.mintStartTime ? +marketData.mintStartTime : 0
+    // const mintEnd = marketData?.mintEndTime ? +marketData.mintEndTime : 0
+    // const burnStart = marketData?.burnStartTime ? +marketData.burnStartTime : 0
+    // const burnEnd = marketData?.burnEndTime ? +marketData.burnEndTime : 0
+    const CYCLE_DURATION = 40
+    const PHASE_DURATION = 10
 
-    if (currentUnix < mintStart) {
+    const cyclePosition = currentTime % CYCLE_DURATION
+
+    const cycleStart = currentTime - cyclePosition
+
+    const mintEnd = cycleStart + PHASE_DURATION
+    const burnStart = cycleStart + PHASE_DURATION * 2
+    const burnEnd = cycleStart + PHASE_DURATION * 3
+
+    if (cyclePosition < PHASE_DURATION) {
       return {
         key: BannerPhase.beforeStartPhase,
         text: 'INVT locking available in:',
-        timestamp: mintStart
-      }
-    }
-
-    if (currentUnix < mintEnd) {
-      return {
-        key: BannerPhase.lockPhase,
-        text: 'Locking disabled in:',
         timestamp: mintEnd
       }
     }
 
-    if (currentUnix < burnStart) {
+    if (cyclePosition < PHASE_DURATION * 2) {
       return {
-        key: BannerPhase.yieldPhase,
-        text: 'Unlocks in:',
+        key: BannerPhase.lockPhase,
+        text: 'Locking disabled in:',
         timestamp: burnStart
       }
     }
 
-    if (currentUnix < burnEnd) {
+    if (cyclePosition < PHASE_DURATION * 3) {
+      return {
+        key: BannerPhase.yieldPhase,
+        text: 'Unlocks in:',
+        timestamp: burnEnd
+      }
+    }
+
+    if (cyclePosition < PHASE_DURATION * 4) {
       return {
         key: BannerPhase.burningPhase,
         text: 'Unlocking xINVT disabled in:',
-        timestamp: burnEnd
+        timestamp: cycleStart + CYCLE_DURATION
       }
     }
 
