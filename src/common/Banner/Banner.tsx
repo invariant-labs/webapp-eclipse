@@ -16,8 +16,10 @@ export const Banner = ({ onClose, isHiding }: INormalBannerProps) => {
 
   const text = (
     <span>
-      Invariant Checker is live! Check it out
-      <span className={classes.text} onClick={() => window.open('https://claims.invariant.app')}>
+      Invariant Claim is live! Check it out
+      <span
+        className={classes.text}
+        onClick={() => window.open('https://claims.invariant.app/claim')}>
         here!
       </span>
       {/* {!isSmallDevice && `...`} And see also distribution of points in the
@@ -76,12 +78,12 @@ export const Banner = ({ onClose, isHiding }: INormalBannerProps) => {
               </Box>
             </Grid>
           </Box>
-          {close}
+          {/* {close} */}
         </Box>
       )}
       {isSmallDevice && (
         <>
-          <Box className={classes.background} onClick={onClose}></Box>
+          <Box className={classes.background} onClick={() => {}}></Box>
           <Box className={classes.container}>
             <Box className={classes.modal}>
               <Box className={classes.header}>
