@@ -18,7 +18,7 @@ import { getEclipseWallet } from '@utils/web3/wallet'
 import { ensureError, ROUTES } from '@utils/utils'
 import { Banner } from '@common/Banner/Banner'
 
-const BANNER_STORAGE_KEY = 'invariant-banner-state-8'
+const BANNER_STORAGE_KEY = 'invariant-banner-state-9'
 const BANNER_HIDE_DURATION = 1000 * 60 * 60 * 24 // 24 hours
 
 const RootPage: React.FC = memo(() => {
