@@ -138,8 +138,20 @@ const Chart: React.FC<iProps> = ({
         vertLines: { color: '#1f2937' },
         horzLines: { color: '#1f2937' }
       },
-      rightPriceScale: { borderColor: '#374151' },
-      timeScale: { borderColor: '#374151' }
+      rightPriceScale: {
+        visible: true, // enable left scale
+        borderColor: '#374151',
+        scaleMargins: {
+          top: 0.1,
+          bottom: 0.1
+        }
+      },
+
+      timeScale: {
+        visible: true,
+        borderColor: '#374151',
+        timeVisible: true
+      }
     })
 
     chart.applyOptions({
