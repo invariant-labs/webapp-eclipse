@@ -637,6 +637,16 @@ export const autoSwapPools = [
       address: new PublicKey('6ciuuX2AZ3RFU6fJh2XrzJurZdRWuDeMonNsb7xzztp1'),
       feeIndex: 5
     }
+  },
+  {
+    pair: {
+      tokenX: new PublicKey('AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE'),
+      tokenY: new PublicKey('EqwchrrGFppZYpTVAQH7ETm2QhSpu6eHV5fwZtUamfSM')
+    },
+    swapPool: {
+      address: new PublicKey('Fngz7ZYjFRZ16EeUWepxKrXVDtfXfZBiHnvE24wjS2er'),
+      feeIndex: 6
+    }
   }
 ]
 
