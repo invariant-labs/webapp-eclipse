@@ -50,6 +50,7 @@ interface IProps {
   actionButtons?: ActionButton[]
   hideSelect?: boolean
   notRoundIcon?: boolean
+  noPrice?: boolean
 }
 
 export const ExchangeAmountInput: React.FC<IProps> = ({
@@ -80,7 +81,8 @@ export const ExchangeAmountInput: React.FC<IProps> = ({
   hiddenUnknownTokens = false,
   network = NetworkType.Mainnet,
   hideSelect = false,
-  notRoundIcon = false
+  notRoundIcon = false,
+  noPrice
 }) => {
   const hideBalance = balance === '- -' || !balance || hideBalances
   const { classes, cx } = useStyles()
@@ -224,7 +226,7 @@ export const ExchangeAmountInput: React.FC<IProps> = ({
         </Grid>
 
         <Grid className={classes.percentages} container>
-          {current ? (
+          {current && !noPrice ? (
             priceLoading ? (
               <img src={loadingAnimation} className={classes.loading} alt='loading' />
             ) : tokenPrice ? (

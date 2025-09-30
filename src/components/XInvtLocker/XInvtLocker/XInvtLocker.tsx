@@ -299,6 +299,7 @@ export const XInvtLocker: React.FC<ILocker> = ({
         hideSelect
         notRoundIcon
         limit={1e14}
+        noPrice
       />
       <SwapSeparator
         onClick={unlockDisabled ? () => {} : handleSwitchTokens}
@@ -348,6 +349,7 @@ export const XInvtLocker: React.FC<ILocker> = ({
         notRoundIcon
         limit={1e14}
         disabled={unlockDisabled}
+        noPrice
       />
       <Separator isHorizontal width={1} color={colors.invariant.light} margin='16px 0' />
       <TransactionDetails
