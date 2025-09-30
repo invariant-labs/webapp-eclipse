@@ -32,13 +32,15 @@ const useStyles = makeStyles()((theme: Theme) => {
       minWidth: 40,
       height: 30,
       marginRight: 8,
-      [theme.breakpoints.up(430)]: {
+      [theme.breakpoints.up(600)]: {
         display: 'none'
       },
       [theme.breakpoints.down('sm')]: {
         marginRight: 0
       },
-
+      [theme.breakpoints.down(400)]: {
+        display: 'none'
+      },
       '&:hover': {
         cursor: 'pointer'
       }
@@ -76,7 +78,7 @@ const useStyles = makeStyles()((theme: Theme) => {
         width: '100%'
       },
 
-      [theme.breakpoints.down(430)]: {
+      [theme.breakpoints.down(600)]: {
         justifyContent: 'space-between',
         gap: 0
       }
@@ -128,7 +130,7 @@ const useStyles = makeStyles()((theme: Theme) => {
     leftSide: {
       width: 'auto',
       justifyContent: 'flex-start',
-      [theme.breakpoints.down(430)]: {
+      [theme.breakpoints.down(600)]: {
         display: 'none'
       },
 
