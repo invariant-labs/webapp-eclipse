@@ -180,20 +180,25 @@ export const LockWrapper: React.FC = () => {
         }
       })
 
-      const poolPointsDistribiution = +new BN(pool.pointsPerSecond, 'hex') * 24 * 60 * 60
+      const printedPointsPerSecond = printBN(
+        new BN(pool.pointsPerSecond, 'hex'),
+        xInvtConfig.pointsPerSecondDecimal
+      )
+      const poolPointsDistribiution = +printedPointsPerSecond * 24 * 60 * 60
 
       let userPoints = 0
+
       if (promotedUserPositions.length) {
         userPoints = estimatePointsForUserPositions(
           promotedUserPositions,
           poolData,
-          new BN(pool.pointsPerSecond, 'hex').muln(10 ** xINVT_MAIN.decimals)
+          new BN(+printedPointsPerSecond * 10 ** xINVT_MAIN.decimals)
         )
       }
 
       convertedPools.push({
         poolAddress: pool.address,
-        poolPointsDistribiution: poolPointsDistribiution,
+        poolPointsDistribiution: +poolPointsDistribiution.toFixed(0),
         userPoints: printBN(userPoints, xINVT_MAIN.decimals),
         tokenX: tokens[poolData.tokenX.toString()],
         tokenY: tokens[poolData.tokenY.toString()],

@@ -8,6 +8,7 @@ export interface IPromotedPool {
 }
 export interface IConfigResponse {
   pointsDecimal: number
+  pointsPerSecondDecimal: number
   promotedPools: IPromotedPool[]
   lastSnapTimestamp: number
 }
@@ -72,6 +73,7 @@ const defaultStatus: IxInvt = {
   config: {
     lastSnapTimestamp: 0,
     pointsDecimal: 0,
+    pointsPerSecondDecimal: 0,
     promotedPools: []
   },
   userPoints: {
