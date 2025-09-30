@@ -15,7 +15,8 @@ export const useStyles = makeStyles()(() => {
     link: {
       textDecoration: 'none',
       color: colors.invariant.text,
-      ...typography.body1
+      ...typography.body1,
+      textTransform: 'capitalize'
     },
     claimBtn: {
       background: colors.invariant.component,
