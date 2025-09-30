@@ -82,11 +82,6 @@ export const XInvtLocker: React.FC<ILocker> = ({
 }) => {
   const { classes } = useStyles()
 
-  // const targetDate = useMemo(() => new Date(startTimestamp.toNumber() * 1000), [startTimestamp])
-  // const { hours, minutes, seconds } = useCountdown({
-  //   targetDate
-  // })
-
   const amountFrom = useMemo(() => {
     if (currentLockerTab === LockerSwitch.Lock) return lockInput
     return unlockInput
@@ -295,7 +290,7 @@ export const XInvtLocker: React.FC<ILocker> = ({
         disabled={unlockDisabled}
       />
       <Box mb={'12px'} display='flex' justifyContent='space-between' alignItems='center'>
-        <Typography className={classes.title}>Recive</Typography>
+        <Typography className={classes.title}>Receive</Typography>
         <TooltipHover
           textAlign='center'
           title='Redeem of INVT will be available after 3 months lock period'>

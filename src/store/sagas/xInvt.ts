@@ -29,12 +29,18 @@ import {
   ensureError,
   extractErrorCode,
   extractRuntimeErrorCode,
+  fetchXInvtConfig,
+  fetchxInvtPoints,
   formatNumberWithoutSuffix,
   mapErrorCodeToMessage,
   printBN
 } from '@utils/utils'
 import { closeSnackbar } from 'notistack'
-import { getAssociatedTokenAddressSync, TOKEN_2022_PROGRAM_ID } from '@solana/spl-token'
+import {
+  getAssociatedTokenAddressSync,
+  TOKEN_2022_PROGRAM_ID,
+  TOKEN_PROGRAM_ID
+} from '@solana/spl-token'
 import { BN } from '@coral-xyz/anchor'
 import { actions, LockLiquidityPayload } from '@store/reducers/xInvt'
 
@@ -71,7 +77,7 @@ export function* handleLock(action: PayloadAction<LockLiquidityPayload>) {
       xINVT_MAIN.address,
       wallet.publicKey,
       false,
-      TOKEN_2022_PROGRAM_ID
+      TOKEN_PROGRAM_ID
     )
 
     const mintIx = yield* call([xInvtProgram, xInvtProgram.mintIx], {
@@ -490,6 +496,81 @@ export function* getInvtStats() {
   }
 }
 
+export function* getXInvtConfig() {
+  try {
+    const res = yield* call(fetchXInvtConfig)
+
+    if (!res) {
+      yield* put(
+        actions.setXInvtConfig({
+          lastSnapTimestamp: 0,
+          pointsDecimal: 0,
+          pointsPerSecondDecimal: 0,
+          promotedPools: []
+        })
+      )
+      return
+    }
+
+    const { lastSnapTimestamp, pointsDecimal, promotedPools, pointsPerSecondDecimal } = res
+    yield* put(
+      actions.setXInvtConfig({
+        lastSnapTimestamp,
+        pointsDecimal,
+        pointsPerSecondDecimal,
+        promotedPools
+      })
+    )
+  } catch (e: unknown) {
+    yield* put(
+      actions.setXInvtConfig({
+        lastSnapTimestamp: 0,
+        pointsDecimal: 0,
+        pointsPerSecondDecimal: 0,
+        promotedPools: []
+      })
+    )
+    const error = ensureError(e)
+    console.log(error)
+  }
+}
+
+export function* getXInvtPoints(): Generator {
+  try {
+    const wallet = yield* call(getWallet)
+
+    const pointsResp = yield* call(fetchxInvtPoints, wallet?.publicKey?.toString())
+
+    if (pointsResp) {
+      const { accumulatedRewards, claimableRewards } = pointsResp
+
+      const parsedAccumulatedRewards = printBN(
+        new BN(accumulatedRewards, 'hex'),
+        xINVT_MAIN.decimals
+      )
+
+      const parsedclaimableRewards = printBN(new BN(claimableRewards, 'hex'), xINVT_MAIN.decimals)
+
+      yield* put(
+        actions.setUserPoints({
+          accumulatedRewards: parsedAccumulatedRewards,
+          claimableRewards: parsedclaimableRewards
+        })
+      )
+    } else {
+      yield* put(
+        actions.setUserPoints({
+          accumulatedRewards: '0',
+          claimableRewards: '0'
+        })
+      )
+    }
+  } catch (e: unknown) {
+    const error = ensureError(e)
+    console.log(error)
+  }
+}
+
 export function* stakeHandler(): Generator {
   yield* takeLatest(actions.lock, handleLock)
 }
@@ -502,6 +583,22 @@ export function* getInvtStatsHandler(): Generator {
   yield* takeLatest(actions.getCurrentStats, getInvtStats)
 }
 
+export function* getXInvtConfigHandler(): Generator {
+  yield* takeLatest(actions.getXInvtConfig, getXInvtConfig)
+}
+
+export function* getXInvtPointsHandler(): Generator {
+  yield* takeLatest(actions.getUserPoints, getXInvtPoints)
+}
+
 export function* xInvtSaga(): Generator {
-  yield all([stakeHandler, unstakeHandler, getInvtStatsHandler].map(spawn))
+  yield all(
+    [
+      stakeHandler,
+      unstakeHandler,
+      getInvtStatsHandler,
+      getXInvtConfigHandler,
+      getXInvtPointsHandler
+    ].map(spawn)
+  )
 }

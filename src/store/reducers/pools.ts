@@ -80,15 +80,11 @@ export interface UpdateAutoSwapTicksAndTickmap {
   tickmap: Tickmap
   ticks: Tick[]
 }
-// const network =
-//   process.env.NODE_ENV === 'development'
-//     ? (NetworkType[localStorage.getItem('INVARIANT_NETWORK_ECLIPSE') as keyof typeof NetworkType] ??
-//       NetworkType.Mainnet)
-//     : NetworkType.Mainnet
-
 const network =
-  NetworkType[localStorage.getItem('INVARIANT_NETWORK_ECLIPSE') as keyof typeof NetworkType] ??
-  NetworkType.Mainnet
+  process.env.NODE_ENV === 'development'
+    ? NetworkType[localStorage.getItem('INVARIANT_NETWORK_ECLIPSE') as keyof typeof NetworkType] ??
+      NetworkType.Mainnet
+    : NetworkType.Mainnet
 
 export const defaultState: IPoolsStore = {
   tokens: { ...getNetworkTokensList(network) },
@@ -202,6 +198,11 @@ const poolsSlice = createSlice({
       ] = action.payload.tick
     },
     getPoolData(state, _action: PayloadAction<Pair>) {
+      state.isLoadingLatestPoolsForTransaction = true
+
+      return state
+    },
+    getPoolDataByAddress(state, _action: PayloadAction<PublicKey>) {
       state.isLoadingLatestPoolsForTransaction = true
 
       return state

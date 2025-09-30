@@ -1,6 +1,6 @@
 import { PublicKey, Transaction, VersionedTransaction } from '@solana/web3.js'
 import { WalletAdapter } from './types'
-import { DEFAULT_PUBLICKEY } from '@store/consts/static'
+import { DEFAULT_PUBLICKEY, ECLIPSE_MAINNET_GENESIS_HASH } from '@store/consts/static'
 import { ensureError } from '@utils/utils'
 
 interface NightlyProvider {
@@ -83,9 +83,9 @@ export class NightlyAdapter implements WalletAdapter {
 
     if (!provider.isConnected) {
       await provider.connect()
-      // await provider.changeNetwork({
-      //   genesisHash: ECLIPSE_MAINNET_GENESIS_HASH
-      // })
+      await provider.changeNetwork({
+        genesisHash: ECLIPSE_MAINNET_GENESIS_HASH
+      })
     }
 
     this._nightlyProvider = provider

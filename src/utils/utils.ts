@@ -107,7 +107,8 @@ import {
   INVT_TEST,
   xINVT_TEST,
   TOTAL_INVT_REWARDS,
-  INVT_DEPOSIT_LIMIT
+  INVT_DEPOSIT_LIMIT,
+  XINVT_API_URL
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
@@ -119,7 +120,8 @@ import {
   IPriceData,
   PoolSnapshot,
   Token,
-  TokenPriceData
+  TokenPriceData,
+  TokenReserve
 } from '@store/consts/types'
 import { sqrt } from '@invariant-labs/sdk-eclipse/lib/math'
 import { apyToApr } from './uiUtils'
@@ -131,6 +133,8 @@ import { Umi } from '@metaplex-foundation/umi'
 import { StakingStatsResponse } from '@store/reducers/sbitz-stats'
 import { DEFAULT_FEE_TIER, STRATEGIES } from '@store/consts/userStrategies'
 import { HoldersResponse } from '@store/reducers/sBitz'
+import { PoolSnap } from '@store/reducers/stats'
+import { getPoinstxInvtResponse, IConfigResponse } from '@store/reducers/xInvt'
 
 export const transformBN = (amount: BN): string => {
   return (amount.div(new BN(1e2)).toNumber() / 1e4).toString()
@@ -2100,6 +2104,20 @@ export const isValidPublicKey = (keyString?: string | null) => {
   }
 }
 
+export const getIntervalsPoolSnap = async (
+  network: string,
+  interval: Intervals,
+  poolAddress: string
+): Promise<PoolSnap> => {
+  const parsedInterval =
+    interval === Intervals.Daily ? 'daily' : interval === Intervals.Weekly ? 'weekly' : 'monthly'
+  const { data } = await axios.get<PoolSnap>(
+    `https://stats.invariant.app/eclipse/pools/eclipse-${network}?interval=${parsedInterval}&address=${poolAddress}`
+  )
+
+  return data
+}
+
 export const trimDecimalZeros = (numStr: string): string => {
   if (/^[0.]+$/.test(numStr)) {
     return '0'
@@ -2317,8 +2335,10 @@ export const ROUTES = {
   POSITION_WITH_ID: '/position/:id',
   PORTFOLIO: '/portfolio',
   CREATOR: '/creator',
-  STAKE: '/stake',
-  LOCK: '/lock',
+  sBITZ: '/sBITZ',
+  XINVT: '/xINVT',
+  POOL_DETAILS: '/poolDetails',
+  POOL_DETAILS_WITH_PARAMS: '/poolDetails/:item1?/:item2?/:item3?',
 
   getExchangeRoute: (item1?: string, item2?: string): string => {
     const parts = [item1, item2].filter(Boolean)
@@ -2328,6 +2348,11 @@ export const ROUTES = {
   getNewPositionRoute: (item1?: string, item2?: string, item3?: string): string => {
     const parts = [item1, item2, item3].filter(Boolean)
     return `${ROUTES.NEW_POSITION}${parts.length ? '/' + parts.join('/') : ''}`
+  },
+
+  getPoolDetailsRoute: (item1?: string, item2?: string, item3?: string): string => {
+    const parts = [item1, item2, item3].filter(Boolean)
+    return `${ROUTES.POOL_DETAILS}${parts.length ? '/' + parts.join('/') : ''}`
   },
 
   getPositionRoute: (id: string): string => `${ROUTES.POSITION}/${id}`
@@ -2787,5 +2812,48 @@ export const displayYieldComparison = (
       newYieldPercentage: newYieldPerToken,
       newStakeSize: totalAfterStaking
     }
+  }
+}
+
+export const getTokenReserve = async (
+  address: PublicKey,
+  connection: Connection
+): Promise<TokenReserve | null> => {
+  try {
+    const result = await connection.getTokenAccountBalance(address)
+
+    if (!result?.value) return null
+
+    return {
+      amount: result.value.amount,
+      decimals: result.value.decimals,
+      uiAmount: result.value.uiAmount ?? 0,
+      uiAmountString: result.value.uiAmountString || ''
+    }
+  } catch (error) {
+    console.error('Failed to fetch token reserve:', error)
+    return null
+  }
+}
+
+export const fetchxInvtPoints = async (address?: string) => {
+  try {
+    const { data } = await axios.get<getPoinstxInvtResponse>(`${XINVT_API_URL}/${address}`)
+    return data
+  } catch (error) {
+    console.log(error)
+    return null
+  }
+}
+
+export const fetchXInvtConfig = async () => {
+  try {
+    const response = await fetch(`${XINVT_API_URL}/config`)
+    if (!response.ok) {
+      throw new Error('Failed to fetch leaderboard data')
+    }
+    return response.json() as Promise<IConfigResponse>
+  } catch (error) {
+    console.log(error)
   }
 }

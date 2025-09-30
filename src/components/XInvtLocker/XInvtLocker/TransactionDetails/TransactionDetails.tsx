@@ -40,19 +40,23 @@ const TransactionDetails: React.FC<ITransactionDetails> = ({
         )}
       </Box>
       <Box display='flex' justifyContent='space-between' alignItems='center' mt='16px'>
-        <Typography className={classes.label}>Yield change impact</Typography>
+        <Typography className={classes.label}>Yield impact</Typography>
         {loading ? (
           <Skeleton width={125} height={24} variant='rounded' sx={{ borderRadius: '8px' }} />
         ) : (
           <Typography className={classes.value}>
-            {!!tokenFromAmount
-              ? currentYield.toFixed(2) + '%' + ' ⟶ ' + yieldChange.toFixed(2) + '%'
+            {tokenFromAmount
+              ? formatNumberWithSuffix(currentYield) +
+                '%' +
+                ' ⟶ ' +
+                formatNumberWithSuffix(yieldChange) +
+                '%'
               : '-'}
           </Typography>
         )}
       </Box>
       <Box display='flex' justifyContent='space-between' alignItems='center' mt='16px'>
-        <Typography className={classes.label}>Predicted income</Typography>
+        <Typography className={classes.label}>Estimated return</Typography>
         {loading ? (
           <Skeleton width={125} height={24} variant='rounded' sx={{ borderRadius: '8px' }} />
         ) : (
