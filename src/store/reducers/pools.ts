@@ -202,6 +202,11 @@ const poolsSlice = createSlice({
 
       return state
     },
+    getPoolDataByAddress(state, _action: PayloadAction<PublicKey>) {
+      state.isLoadingLatestPoolsForTransaction = true
+
+      return state
+    },
     getAutoSwapPoolData(state, _action: PayloadAction<Pair>) {
       state.isLoadingAutoSwapPool = true
       return state

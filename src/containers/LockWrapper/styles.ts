@@ -171,6 +171,9 @@ export const useStyles = makeStyles()(() => ({
   titleTextWrapper: {
     display: 'flex',
     alignItems: 'center',
+    justifyContent: 'space-between',
+    maxWidth: 1040,
+    width: '100%',
     gap: '16px',
     '& h1': {
       ...typography.heading4,
