@@ -48,12 +48,11 @@ export const FeeSelector: React.FC<IProps> = ({
     onSelect(value)
     handleClose()
   }
-  console.log(feeTiersWithTvl)
-  console.log(feeTiers)
+
   const feeTiersTVLValues = feeTiersWithTvl ? Object.values(feeTiersWithTvl) : []
   const bestFee = feeTiersTVLValues.length > 0 ? Math.max(...feeTiersTVLValues) : 0
   const isPromotedPool = promotedPoolTierIndex !== undefined && promotedPoolTierIndex !== null
-  console.log(feeTiersTVLValues)
+
   const originalBestTierIndex = isPromotedPool
     ? promotedPoolTierIndex!
     : feeTiers.findIndex(tier => feeTiersWithTvl[tier] === bestFee && bestFee > 0)

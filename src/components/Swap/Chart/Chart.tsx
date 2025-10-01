@@ -40,7 +40,6 @@ const Chart: React.FC<iProps> = ({
   disabledFeeTiers,
   selectedFee,
   feeTiers,
-  // isDisabled,
   isLoading,
   selectFeeTier,
   noData,
@@ -65,20 +64,6 @@ const Chart: React.FC<iProps> = ({
 
   const promotedPoolTierIndex = useMemo(() => {
     if (tokenFrom === null || tokenTo === null) return undefined
-
-    // const tokenX = tokens[tokenFromIndex]
-    // const tokenY = tokens[tokenToIndex]
-    // const tierIndex =
-    //   tokenX === null || tokenY === null
-    //     ? undefined
-    //     : promotedTiers.find(
-    //         tier =>
-    //           (tier.tokenX.equals(tokenX.assetAddress) &&
-    //             tier.tokenY.equals(tokenY.assetAddress)) ||
-    //           (tier.tokenX.equals(tokenY.assetAddress) && tier.tokenY.equals(tokenX.assetAddress))
-    //       )?.index ?? undefined
-
-    // return tierIndex
     return undefined
   }, [tokenFrom, tokenTo, tokens.length])
 
@@ -87,7 +72,6 @@ const Chart: React.FC<iProps> = ({
       return { feeTiersWithTvl: {} }
     }
     const feeTiersWithTvl: Record<number, number> = {}
-
     poolsList.forEach(pool => {
       const xMatch =
         pool.tokenX.equals(tokenFrom.assetAddress) && pool.tokenY.equals(tokenTo.assetAddress)
@@ -98,16 +82,16 @@ const Chart: React.FC<iProps> = ({
         feeTiersWithTvl[pool.fee] = pool.tvl
       }
     })
-
     return { feeTiersWithTvl }
   }, [poolsList, tokenFrom, tokenTo])
 
-  const containerRef = useRef<HTMLDivElement>(null)
-  const seriesRef = useRef<ISeriesApi<'Candlestick'>>()
+  const containerRef = useRef<HTMLDivElement | null>(null)
+  const seriesRef = useRef<ISeriesApi<'Candlestick'> | undefined>(undefined)
+  const chartRef = useRef<ReturnType<typeof createChart> | null>(null)
 
   useEffect(() => {
-    const selectedPoolAddress = chartPoolData?.address.toString()
-    if (!containerRef.current || !selectedPoolAddress) return
+    //setup chart
+    if (!containerRef.current) return
 
     const chart = createChart(containerRef.current, {
       width: containerRef.current.clientWidth,
@@ -123,12 +107,8 @@ const Chart: React.FC<iProps> = ({
       rightPriceScale: {
         visible: true,
         borderColor: '#374151',
-        scaleMargins: {
-          top: 0.1,
-          bottom: 0.1
-        }
+        scaleMargins: { top: 0.1, bottom: 0.1 }
       },
-
       timeScale: {
         visible: true,
         borderColor: '#374151',
@@ -137,61 +117,66 @@ const Chart: React.FC<iProps> = ({
     })
 
     chart.applyOptions({
-      timeScale: {
-        visible: true, // ensures horizontal axis is shown
-        borderColor: '#374151',
-        timeVisible: true, // show HH:mm if intraday
-        secondsVisible: false // hide seconds unless you need them
-      },
-      crosshair: {
-        mode: 1 // CrosshairMode.Normal
-      }
+      timeScale: { visible: true, timeVisible: true, secondsVisible: false },
+      crosshair: { mode: 1 }
     })
 
-    seriesRef.current = chart.addSeries(CandlestickSeries)
-
-    seriesRef.current?.applyOptions({
+    const series = chart.addSeries(CandlestickSeries)
+    series.applyOptions({
       priceLineVisible: true,
       priceLineColor: '#22c55e',
       priceLineWidth: 2,
       priceFormat: {
         type: 'custom',
-        minMove: 0.0001, // smallest tick
-        formatter: price => formatNumberWithSuffix(price) // custom formatter
+        minMove: 0.0001,
+        formatter: price => formatNumberWithSuffix(price)
       }
-      // upColor: '#22c55e',
-      // borderUpColor: '#22c55e',
-      // wickUpColor: '#22c55e',
-      // downColor: '#ef4444',
-      // borderDownColor: '#ef4444',
-      // wickDownColor: '#ef4444'
     })
+
+    seriesRef.current = series
+    chartRef.current = chart
+
+    const ro = new ResizeObserver(() => {
+      if (!containerRef.current || !chartRef.current) return
+
+      chartRef.current.applyOptions({ width: containerRef.current.clientWidth })
+    })
+    ro.observe(containerRef.current)
+
+    return () => {
+      ro.disconnect()
+      chart.remove()
+      chartRef.current = null
+      seriesRef.current = undefined
+    }
+  }, [containerRef.current?.isConnected])
+
+  useEffect(() => {
+    //fetch chart data
+    const selectedPoolAddress = chartPoolData?.address?.toString()
+    if (!selectedPoolAddress || !seriesRef.current || !chartRef.current) return
+
+    setChartLoading(true)
 
     fetchData(selectedPoolAddress, chartInterval)
       .then(data => {
-        setChartLoading(true)
-        const sorted = data.sort((a, b) => a.time - b.time)
+        const sorted = data.sort((a, b) => Number(a.time) - Number(b.time))
         const deduped = sorted.filter(
-          (candle, idx) => idx === 0 || candle.time > sorted[idx - 1].time
+          (candle, idx) => idx === 0 || Number(candle.time) > Number(sorted[idx - 1].time)
         )
 
-        seriesRef.current?.setData(deduped)
+        seriesRef.current?.setData(deduped as any)
 
-        if (deduped.length > 0) {
-          chart.timeScale()
-
-          chart.priceScale('right').setAutoScale(true)
+        if (deduped.length > 0 && chartRef.current) {
+          chartRef.current.timeScale()
+          chartRef.current.priceScale('right').setAutoScale(true)
         }
       })
       .catch(e => console.log(e))
       .finally(() => setChartLoading(false))
+  }, [chartPoolData?.address?.toString(), chartInterval])
 
-    return () => {
-      chart.remove()
-    }
-  }, [tokenFrom, tokenTo, tokens, chartPoolData, chartInterval])
-
-  if (!tokenFrom || !tokenTo) return
+  if (!tokenFrom || !tokenTo) return null
 
   return (
     <Grid className={classes.wrapper}>
@@ -285,16 +270,29 @@ const Chart: React.FC<iProps> = ({
           </Grid>
         </Box>
 
-        {chartLoading ? (
-          <Skeleton
-            width={'100%'}
-            height={350}
-            variant='rectangular'
-            className={classes.skeleton}
-          />
-        ) : (
+        <div style={{ position: 'relative' }}>
           <div ref={containerRef} className={classes.chart} />
-        )}
+
+          {chartLoading && (
+            <div
+              style={{
+                position: 'absolute',
+                inset: 0,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: 'rgba(11,18,32,0.6)',
+                pointerEvents: 'none'
+              }}>
+              <Skeleton
+                width={'100%'}
+                height={350}
+                variant='rectangular'
+                className={classes.skeleton}
+              />
+            </div>
+          )}
+        </div>
       </Box>
     </Grid>
   )
