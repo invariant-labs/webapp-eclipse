@@ -1253,8 +1253,5 @@ export enum CandleIntervals {
   FifteenMinutes = '15 minutes',
   OneHour = '1 hour',
   FourHours = '4 hours',
-  TwelveHours = '12 hours',
-  Daily = '1 day',
-  Weekly = '1 week',
-  Monthly = '1 month'
+  Daily = '1 day'
 }

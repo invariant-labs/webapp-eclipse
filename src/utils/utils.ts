@@ -2920,10 +2920,7 @@ export const intervalToParams: Record<
   [CandleIntervals.FifteenMinutes]: { base: 'minute', aggregate: '15' },
   [CandleIntervals.OneHour]: { base: 'hour', aggregate: '1' },
   [CandleIntervals.FourHours]: { base: 'hour', aggregate: '4' },
-  [CandleIntervals.TwelveHours]: { base: 'hour', aggregate: '12' },
-  [CandleIntervals.Daily]: { base: 'day', aggregate: '1' },
-  [CandleIntervals.Weekly]: { base: 'day', aggregate: '1' },
-  [CandleIntervals.Monthly]: { base: 'day', aggregate: '1' }
+  [CandleIntervals.Daily]: { base: 'day', aggregate: '1' }
 }
 
 export const intervalToWindow: Record<CandleIntervals, number> = {
@@ -2932,10 +2929,7 @@ export const intervalToWindow: Record<CandleIntervals, number> = {
   [CandleIntervals.FifteenMinutes]: 14 * 24 * 4, // ~2 weeks (1344 candles)
   [CandleIntervals.OneHour]: 60 * 24, // ~2 months (1440 candles)
   [CandleIntervals.FourHours]: 90 * 6, // ~3 months (540 candles)
-  [CandleIntervals.TwelveHours]: 180 * 2, // ~6 months (360 candles)
-  [CandleIntervals.Daily]: 365, // ~1 year
-  [CandleIntervals.Weekly]: 260, // ~5 years
-  [CandleIntervals.Monthly]: 120 // ~10 years
+  [CandleIntervals.Daily]: 365 // ~1 year
 }
 
 export const fetchData = async (
