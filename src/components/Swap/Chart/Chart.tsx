@@ -4,7 +4,7 @@ import { Box, Grid, Skeleton, Typography } from '@mui/material'
 import { CandlestickSeries, ColorType, createChart, ISeriesApi } from 'lightweight-charts'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { ALL_FEE_TIERS_DATA, CandleIntervals } from '@store/consts/static'
-import { fetchData, formatNumberWithSuffix } from '@utils/utils'
+import { Candle, fetchData, formatNumberWithSuffix } from '@utils/utils'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { swapListIcon, warningIcon } from '@static/icons'
 import { FeeSelector } from './FeeSelector/FeeSelector'
@@ -150,8 +150,25 @@ const Chart: React.FC<iProps> = ({
     }
   }, [containerRef.current?.isConnected])
 
+  const invertCandles = (candles: Candle[]): Candle[] => {
+    return candles.map(c => {
+      const invOpen = 1 / c.open
+      const invClose = 1 / c.close
+      const invHigh = 1 / c.low
+      const invLow = 1 / c.high
+
+      return {
+        ...c,
+        open: invOpen,
+        close: invClose,
+        high: invHigh,
+        low: invLow,
+        volume: c.volume
+      }
+    })
+  }
+
   useEffect(() => {
-    //fetch chart data
     const selectedPoolAddress = chartPoolData?.address?.toString()
     if (!selectedPoolAddress || !seriesRef.current || !chartRef.current) return
 
@@ -164,17 +181,18 @@ const Chart: React.FC<iProps> = ({
           (candle, idx) => idx === 0 || Number(candle.time) > Number(sorted[idx - 1].time)
         )
 
-        seriesRef.current?.setData(deduped as any)
+        const finalData = xToY ? invertCandles(deduped) : deduped
 
-        if (deduped.length > 0 && chartRef.current) {
-          chartRef.current.timeScale()
+        seriesRef.current?.setData(finalData as any)
+
+        if (finalData.length > 0 && chartRef.current) {
+          chartRef.current.timeScale().fitContent()
           chartRef.current.priceScale('right').setAutoScale(true)
         }
       })
       .catch(e => console.log(e))
       .finally(() => setChartLoading(false))
-  }, [chartPoolData?.address?.toString(), chartInterval])
-
+  }, [chartPoolData?.address?.toString(), chartInterval, xToY])
   if (!tokenFrom || !tokenTo) return null
 
   return (

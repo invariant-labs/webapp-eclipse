@@ -927,8 +927,24 @@ export const Swap: React.FC<ISwap> = ({
     <Grid className={classes.wrapper}>
       <Grid className={classes.upperContainer}>
         <Chart
-          tokenFrom={tokenFromIndex !== null ? tokens[tokenFromIndex] : null}
-          tokenTo={tokenToIndex !== null ? tokens[tokenToIndex] : null}
+          tokenFrom={
+            swap
+              ? tokenFromIndex !== null
+                ? tokens[tokenFromIndex]
+                : null
+              : tokenToIndex !== null
+                ? tokens[tokenToIndex]
+                : null
+          }
+          tokenTo={
+            swap
+              ? tokenToIndex !== null
+                ? tokens[tokenToIndex]
+                : null
+              : tokenFromIndex !== null
+                ? tokens[tokenFromIndex]
+                : null
+          }
           tokens={tokens}
           disabledFeeTiers={[]}
           selectedFee={selectedFee}
@@ -938,7 +954,7 @@ export const Swap: React.FC<ISwap> = ({
           isLoading={false}
           noData={false}
           selectFeeTier={selectFeeTier}
-          xToY={true}
+          xToY={swap ? swap : false}
           setXToY={revertTokens}
           chartPoolData={chartPoolData}
           chartInterval={chartInterval}
