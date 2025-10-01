@@ -62,6 +62,7 @@ interface IProps {
   tokenXPriceData?: TokenPriceData
   tokenYPriceData?: TokenPriceData
   onClickClaimFee: () => void
+  onClickCompound: () => void
   lockPosition: () => void
   closePosition: (claimFarmRewards?: boolean) => void
   changeLiquidity: (
@@ -152,6 +153,8 @@ interface IProps {
   isAddLiquidity: boolean
   setIsAddLiquidity: (value: boolean) => void
   openPosition?: (index: string) => void
+  isCompundDisabled: boolean
+  isSimulating: boolean
 }
 
 const PositionDetails: React.FC<IProps> = ({
@@ -171,6 +174,7 @@ const PositionDetails: React.FC<IProps> = ({
   tokenYPriceData,
   lockPosition,
   onClickClaimFee,
+  onClickCompound,
   closePosition,
   changeLiquidity,
   swapAndAddLiquidity,
@@ -223,7 +227,9 @@ const PositionDetails: React.FC<IProps> = ({
   isChangeLiquidityModalShown,
   setIsChangeLiquidityModalShown,
   isAddLiquidity,
-  setIsAddLiquidity
+  setIsAddLiquidity,
+  isCompundDisabled,
+  isSimulating
 }) => {
   const { classes } = useStyles()
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
@@ -541,6 +547,7 @@ const PositionDetails: React.FC<IProps> = ({
           <Box className={classes.container}>
             <Box className={classes.leftSide}>
               <SinglePositionInfo
+                onClickCompound={onClickCompound}
                 onClickClaimFee={onClickClaimFee}
                 tokenX={tokenX}
                 tokenY={tokenY}
@@ -560,6 +567,8 @@ const PositionDetails: React.FC<IProps> = ({
                   setIsChangeLiquidityModalShown(true)
                   setIsAddLiquidity(value)
                 }}
+                isCompundDisabled={isCompundDisabled}
+                isSimulating={isSimulating}
               />
             </Box>
             <Box className={classes.rightSide}>
