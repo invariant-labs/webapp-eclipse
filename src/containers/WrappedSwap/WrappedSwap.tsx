@@ -531,6 +531,7 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
       chartPoolData={chartPoolData}
       chartInterval={candleInterval}
       setChartInterval={updateChartInterval}
+      triggerReload={triggerFetchPrice}
     />
   )
 }

@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import useStyles from './style'
-import { Box, Grid, Skeleton, Typography } from '@mui/material'
+import { Box, Grid, Typography } from '@mui/material'
 import { CandlestickSeries, ColorType, createChart, ISeriesApi } from 'lightweight-charts'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { ALL_FEE_TIERS_DATA, CandleIntervals } from '@store/consts/static'
@@ -12,6 +12,7 @@ import { ExtendedPoolStatsData } from '@store/selectors/stats'
 import { BN } from '@coral-xyz/anchor'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { IntervalSelector } from './IntervalSelector/IntervalSelector'
+import loader from '@static/gif/loader.gif'
 
 interface iProps {
   tokenFrom: SwapToken | null
@@ -30,6 +31,7 @@ interface iProps {
   chartPoolData: PoolWithAddress | null
   chartInterval: CandleIntervals
   setChartInterval: (e: CandleIntervals) => void
+  triggerReload: boolean
 }
 
 const Chart: React.FC<iProps> = ({
@@ -47,7 +49,8 @@ const Chart: React.FC<iProps> = ({
   poolsList,
   chartPoolData,
   chartInterval,
-  setChartInterval
+  setChartInterval,
+  triggerReload
 }) => {
   const { classes } = useStyles()
 
@@ -192,7 +195,7 @@ const Chart: React.FC<iProps> = ({
       })
       .catch(e => console.log(e))
       .finally(() => setChartLoading(false))
-  }, [chartPoolData?.address?.toString(), chartInterval, xToY])
+  }, [chartPoolData?.address?.toString(), chartInterval, xToY, triggerReload])
   if (!tokenFrom || !tokenTo) return null
 
   return (
@@ -294,23 +297,9 @@ const Chart: React.FC<iProps> = ({
           <div ref={containerRef} className={classes.chart} />
 
           {chartLoading && (
-            <div
-              style={{
-                position: 'absolute',
-                inset: 0,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                background: 'rgba(11,18,32,0.6)',
-                pointerEvents: 'none'
-              }}>
-              <Skeleton
-                width={'100%'}
-                height={350}
-                variant='rectangular'
-                className={classes.skeleton}
-              />
-            </div>
+            <Grid container className={classes.cover}>
+              <img src={loader} className={classes.loader} alt='Loader' />
+            </Grid>
           )}
         </div>
       </Box>

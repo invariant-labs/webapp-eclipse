@@ -116,6 +116,7 @@ export const useStyles = makeStyles()(() => ({
     width: 36,
     marginLeft: 4,
     marginRight: 4,
+    cursor: 'pointer',
     [theme.breakpoints.down('lg')]: {
       width: 30
     },
@@ -126,6 +127,21 @@ export const useStyles = makeStyles()(() => ({
       filter: 'brightness(2)'
     },
     transition: '300ms'
+  },
+  cover: {
+    width: '100%',
+    height: '100%',
+    background: '#01051499',
+    position: 'absolute',
+    zIndex: 11,
+    borderRadius: 10,
+    backdropFilter: 'blur(1px)',
+    top: 0
+  },
+  loader: {
+    height: 100,
+    width: 100,
+    margin: 'auto'
   }
 }))
 

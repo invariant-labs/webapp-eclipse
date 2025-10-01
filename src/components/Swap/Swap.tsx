@@ -131,6 +131,7 @@ export interface ISwap {
   chartPoolData: PoolWithAddress | null
   chartInterval: CandleIntervals
   setChartInterval: (e: CandleIntervals) => void
+  triggerReload: boolean
 }
 
 export type SimulationPath = {
@@ -190,7 +191,8 @@ export const Swap: React.FC<ISwap> = ({
   selectFeeTier,
   chartPoolData,
   chartInterval,
-  setChartInterval
+  setChartInterval,
+  triggerReload
 }) => {
   const { classes, cx } = useStyles()
 
@@ -959,6 +961,7 @@ export const Swap: React.FC<ISwap> = ({
           chartPoolData={chartPoolData}
           chartInterval={chartInterval}
           setChartInterval={setChartInterval}
+          triggerReload={triggerReload}
         />
 
         <Grid className={classes.swapWrapper}>
