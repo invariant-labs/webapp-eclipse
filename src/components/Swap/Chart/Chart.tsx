@@ -144,7 +144,7 @@ const Chart: React.FC<iProps> = ({
       priceLineWidth: 2,
       priceFormat: {
         type: 'custom',
-        minMove: 0.0001,
+        minMove: 0.000000001,
         formatter: price => formatNumberWithSuffix(price)
       }
     })
