@@ -14,6 +14,7 @@ import { PoolWithAddress } from '@store/reducers/pools'
 import { IntervalSelector } from './IntervalSelector/IntervalSelector'
 import loader from '@static/gif/loader.gif'
 import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
+import { colors } from '@static/theme'
 
 interface iProps {
   tokenFrom: SwapToken | null
@@ -140,7 +141,7 @@ const Chart: React.FC<iProps> = ({
     const series = chart.addSeries(CandlestickSeries)
     series.applyOptions({
       priceLineVisible: true,
-      priceLineColor: '#22c55e',
+      priceLineColor: colors.invariant.green,
       priceLineWidth: 2,
       priceFormat: {
         type: 'custom',
