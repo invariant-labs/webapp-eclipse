@@ -14,6 +14,24 @@ export const useStyles = makeStyles()(() => ({
       width: '100%'
     }
   },
+  headerWrapper: {
+    display: 'flex',
+    marginBottom: 24,
+    gap: 8,
+    [theme.breakpoints.down('md')]: {
+      width: '100%'
+    }
+  },
+  labelWrapper: {
+    display: 'flex',
+    justifyContent: 'center',
+    flexDirection: 'column',
+    gap: 12,
+    [theme.breakpoints.down(1200)]: {
+      flexDirection: 'row',
+      alignItems: 'center'
+    }
+  },
   container: {
     display: 'flex',
     flexDirection: 'column',

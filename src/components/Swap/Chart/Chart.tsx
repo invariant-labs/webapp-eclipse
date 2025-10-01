@@ -5,7 +5,6 @@ import { CandlestickSeries, ColorType, createChart, ISeriesApi } from 'lightweig
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { ALL_FEE_TIERS_DATA, CandleIntervals } from '@store/consts/static'
 import { fetchData, formatNumberWithSuffix } from '@utils/utils'
-import { colors, typography } from '@static/theme'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { swapListIcon, warningIcon } from '@static/icons'
 import { FeeSelector } from './FeeSelector/FeeSelector'
@@ -184,13 +183,15 @@ const Chart: React.FC<iProps> = ({
 
       <Box className={classes.container}>
         <Box display='flex' alignItems='center' gap={'6px'} minHeight={'27px'}>
-          <Grid container mb={'24px'}>
-            <Grid display='flex' flexDirection={'column'} mr={'24px'}>
-              <Typography
-                sx={{ ...typography.body2, color: colors.invariant.textGrey }}
-                mb={'12px'}>
-                Pool
-              </Typography>
+          <Grid container className={classes.headerWrapper}>
+            <Grid display='flex' flexDirection={'column'} mr={'auto'}>
+              {/* {!isMedium && (
+                <Typography
+                  sx={{ ...typography.body2, color: colors.invariant.textGrey }}
+                  mb={'12px'}>
+                  Pool
+                </Typography>
+              )} */}
               <Grid container item className={classes.iconsAndNames}>
                 <Grid container item className={classes.iconsShared}>
                   <Grid display='flex' position='relative'>
@@ -235,14 +236,17 @@ const Chart: React.FC<iProps> = ({
                 </Box>
               </Grid>
             </Grid>
-            <Grid ml={'auto'}>
-              <Box display={'flex'} alignItems={'center'} justifyContent={'space-between'} gap={2}>
-                <Box>
-                  <Typography
-                    sx={{ ...typography.body2, color: colors.invariant.textGrey }}
-                    mb={'12px'}>
+            <Grid>
+              <Box
+                display={'flex'}
+                alignItems={'center'}
+                // justifyContent={'space-between'}
+                gap={2}
+                flexWrap={'wrap'}>
+                <Box className={classes.labelWrapper}>
+                  {/* <Typography sx={{ ...typography.body2, color: colors.invariant.textGrey }}>
                     Fee tier
-                  </Typography>
+                  </Typography> */}
                   <FeeSelector
                     onSelect={selectFeeTier}
                     feeTiers={feeTiers}
@@ -257,12 +261,10 @@ const Chart: React.FC<iProps> = ({
                   />
                 </Box>
 
-                <Box>
-                  <Typography
-                    sx={{ ...typography.body2, color: colors.invariant.textGrey }}
-                    mb={'12px'}>
+                <Box className={classes.labelWrapper}>
+                  {/* <Typography sx={{ ...typography.body2, color: colors.invariant.textGrey }}>
                     Interval
-                  </Typography>
+                  </Typography> */}
                   <IntervalSelector value={chartInterval} onChange={setChartInterval} />
                 </Box>
               </Box>

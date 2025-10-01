@@ -1,4 +1,4 @@
-import { colors, theme, typography } from '@static/theme'
+import { colors, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => ({
@@ -28,11 +28,7 @@ export const useStyles = makeStyles()(() => ({
     justifyContent: 'center',
     border: `2px solid ${colors.invariant.light}`,
     borderRadius: 11,
-    height: 44,
-
-    [theme.breakpoints.down(1200)]: {
-      height: 40
-    }
+    height: 36
   },
   topContainer: {
     display: 'flex',
