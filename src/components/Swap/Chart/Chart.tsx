@@ -13,6 +13,7 @@ import { BN } from '@coral-xyz/anchor'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { IntervalSelector } from './IntervalSelector/IntervalSelector'
 import loader from '@static/gif/loader.gif'
+import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
 
 interface iProps {
   tokenFrom: SwapToken | null
@@ -216,7 +217,6 @@ const Chart: React.FC<iProps> = ({
         setChartLoading(false)
       })
   }, [chartPoolData?.address?.toString(), chartInterval, xToY, triggerReload])
-  if (!tokenFrom || !tokenTo) return null
 
   return (
     <Grid className={classes.wrapper}>
@@ -233,95 +233,111 @@ const Chart: React.FC<iProps> = ({
                   Pool
                 </Typography>
               )} */}
-              <Grid container item className={classes.iconsAndNames}>
-                <Grid container item className={classes.iconsShared}>
-                  <Grid display='flex' position='relative'>
-                    <img
-                      className={classes.tokenIcon}
-                      src={xToY ? tokenFrom.logoURI : tokenTo.logoURI}
-                      alt={xToY ? tokenFrom.symbol : tokenTo.symbol}
-                    />
-                    {(xToY ? tokenFrom.isUnknown : tokenTo.isUnknown) && (
-                      <img className={classes.warningIcon} src={warningIcon} />
-                    )}
+              {tokenFrom && tokenTo ? (
+                <Grid container item className={classes.iconsAndNames}>
+                  <Grid container item className={classes.iconsShared}>
+                    <Grid display='flex' position='relative'>
+                      <img
+                        className={classes.tokenIcon}
+                        src={xToY ? tokenFrom.logoURI : tokenTo.logoURI}
+                        alt={xToY ? tokenFrom.symbol : tokenTo.symbol}
+                      />
+                      {(xToY ? tokenFrom.isUnknown : tokenTo.isUnknown) && (
+                        <img className={classes.warningIcon} src={warningIcon} />
+                      )}
+                    </Grid>
+
+                    <TooltipHover title='Reverse tokens'>
+                      <img
+                        className={classes.arrowsShared}
+                        src={swapListIcon}
+                        alt='Arrow'
+                        onClick={e => {
+                          e.stopPropagation()
+                          setXToY(!xToY)
+                        }}
+                      />
+                    </TooltipHover>
+                    <Grid display='flex' position='relative'>
+                      <img
+                        className={classes.tokenIcon}
+                        src={xToY ? tokenTo.logoURI : tokenFrom.logoURI}
+                        alt={xToY ? tokenTo.symbol : tokenFrom.symbol}
+                      />
+                      {(xToY ? tokenTo.isUnknown : tokenFrom.isUnknown) && (
+                        <img className={classes.warningIcon} src={warningIcon} />
+                      )}
+                    </Grid>
                   </Grid>
 
-                  <TooltipHover title='Reverse tokens'>
-                    <img
-                      className={classes.arrowsShared}
-                      src={swapListIcon}
-                      alt='Arrow'
-                      onClick={e => {
-                        e.stopPropagation()
-                        setXToY(!xToY)
-                      }}
-                    />
-                  </TooltipHover>
-                  <Grid display='flex' position='relative'>
-                    <img
-                      className={classes.tokenIcon}
-                      src={xToY ? tokenTo.logoURI : tokenFrom.logoURI}
-                      alt={xToY ? tokenTo.symbol : tokenFrom.symbol}
-                    />
-                    {(xToY ? tokenTo.isUnknown : tokenFrom.isUnknown) && (
-                      <img className={classes.warningIcon} src={warningIcon} />
-                    )}
-                  </Grid>
+                  <Box className={classes.tickersContainer}>
+                    <Typography className={classes.names}>
+                      {xToY ? tokenFrom.symbol : tokenTo.symbol} -{' '}
+                      {xToY ? tokenTo.symbol : tokenFrom.symbol}
+                    </Typography>
+                  </Box>
                 </Grid>
-
-                <Box className={classes.tickersContainer}>
-                  <Typography className={classes.names}>
-                    {xToY ? tokenFrom.symbol : tokenTo.symbol} -{' '}
-                    {xToY ? tokenTo.symbol : tokenFrom.symbol}
-                  </Typography>
-                </Box>
-              </Grid>
+              ) : (
+                <Typography className={classes.names}>Select tokens</Typography>
+              )}
             </Grid>
-            <Grid>
-              <Box
-                display={'flex'}
-                alignItems={'center'}
-                // justifyContent={'space-between'}
-                gap={2}
-                flexWrap={'wrap'}>
-                <Box className={classes.labelWrapper}>
-                  {/* <Typography sx={{ ...typography.body2, color: colors.invariant.textGrey }}>
+            {tokenFrom && tokenTo && (
+              <Grid>
+                <Box
+                  display={'flex'}
+                  alignItems={'center'}
+                  // justifyContent={'space-between'}
+                  gap={2}
+                  flexWrap={'wrap'}>
+                  <Box className={classes.labelWrapper}>
+                    {/* <Typography sx={{ ...typography.body2, color: colors.invariant.textGrey }}>
                     Fee tier
                   </Typography> */}
-                  <FeeSelector
-                    onSelect={selectFeeTier}
-                    feeTiers={feeTiers}
-                    currentFeeIndex={feeTierIndex}
-                    promotedPoolTierIndex={promotedPoolTierIndex}
-                    feeTiersWithTvl={feeTiersWithTvl}
-                    disabledFeeTiers={disabledFeeTiers}
-                    noData={noData}
-                    isLoading={isLoading}
-                    tokenX={tokenFrom}
-                    tokenY={tokenTo}
-                  />
-                </Box>
+                    <FeeSelector
+                      onSelect={selectFeeTier}
+                      feeTiers={feeTiers}
+                      currentFeeIndex={feeTierIndex}
+                      promotedPoolTierIndex={promotedPoolTierIndex}
+                      feeTiersWithTvl={feeTiersWithTvl}
+                      disabledFeeTiers={disabledFeeTiers}
+                      noData={noData}
+                      isLoading={isLoading}
+                      tokenX={tokenFrom}
+                      tokenY={tokenTo}
+                    />
+                  </Box>
 
-                <Box className={classes.labelWrapper}>
-                  {/* <Typography sx={{ ...typography.body2, color: colors.invariant.textGrey }}>
+                  <Box className={classes.labelWrapper}>
+                    {/* <Typography sx={{ ...typography.body2, color: colors.invariant.textGrey }}>
                     Interval
                   </Typography> */}
-                  <IntervalSelector value={chartInterval} onChange={setChartInterval} />
+                    <IntervalSelector value={chartInterval} onChange={setChartInterval} />
+                  </Box>
                 </Box>
-              </Box>
-            </Grid>
+              </Grid>
+            )}
           </Grid>
         </Box>
+        {tokenFrom && tokenTo ? (
+          <div style={{ position: 'relative' }}>
+            <div ref={containerRef} className={classes.chart} />
 
-        <div style={{ position: 'relative' }}>
-          <div ref={containerRef} className={classes.chart} />
-
-          {chartLoading && (
-            <Grid container className={classes.cover}>
-              <img src={loader} className={classes.loader} alt='Loader' />
-            </Grid>
-          )}
-        </div>
+            {chartLoading && (
+              <Grid container className={classes.cover}>
+                <img src={loader} className={classes.loader} alt='Loader' />
+              </Grid>
+            )}
+          </div>
+        ) : (
+          <EmptyPlaceholder
+            height={'100%'}
+            newVersion
+            mainTitle={'Select tokens'}
+            desc={'Not found pool data'}
+            withButton={false}
+            roundedCorners
+          />
+        )}
       </Box>
     </Grid>
   )
