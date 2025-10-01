@@ -178,7 +178,6 @@ const Chart: React.FC<iProps> = ({
         seriesRef.current?.setData(deduped)
 
         if (deduped.length > 0) {
-          // 👇 Automatically fit the entire range of data
           chart.timeScale()
 
           chart.priceScale('right').setAutoScale(true)

@@ -4,6 +4,7 @@ import useStyles from './style'
 import { colors, theme, typography } from '@static/theme'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { DropdownIcon } from '@static/componentIcon/DropdownIcon'
+import { formatNumberWithSuffix } from '@utils/utils'
 export interface IProps {
   onSelect: (value: number) => void
   feeTiers: number[]
@@ -47,11 +48,12 @@ export const FeeSelector: React.FC<IProps> = ({
     onSelect(value)
     handleClose()
   }
-
+  console.log(feeTiersWithTvl)
+  console.log(feeTiers)
   const feeTiersTVLValues = feeTiersWithTvl ? Object.values(feeTiersWithTvl) : []
   const bestFee = feeTiersTVLValues.length > 0 ? Math.max(...feeTiersTVLValues) : 0
   const isPromotedPool = promotedPoolTierIndex !== undefined && promotedPoolTierIndex !== null
-
+  console.log(feeTiersTVLValues)
   const originalBestTierIndex = isPromotedPool
     ? promotedPoolTierIndex!
     : feeTiers.findIndex(tier => feeTiersWithTvl[tier] === bestFee && bestFee > 0)
@@ -123,6 +125,8 @@ export const FeeSelector: React.FC<IProps> = ({
             const notCreated = !doesPoolExist(tier)
             const disabled = disabledFeeTiers.includes(tier.toString())
 
+            const tvl = feeTiersWithTvl[tier]
+
             return (
               <Box
                 key={tier}
@@ -142,7 +146,15 @@ export const FeeSelector: React.FC<IProps> = ({
                 }}>
                 <Typography className={classes.optionText}>{tier}%</Typography>
                 <Typography className={classes.tvlText}>
-                  {disabled ? 'Pool disabled' : notCreated ? 'Not created' : ''}
+                  {disabled ? (
+                    'Pool disabled'
+                  ) : notCreated ? (
+                    'Not created'
+                  ) : (
+                    <Grid>
+                      <span>{formatNumberWithSuffix(tvl) + ' TVL'}</span>
+                    </Grid>
+                  )}
                 </Typography>
               </Box>
             )
