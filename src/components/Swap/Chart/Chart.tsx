@@ -10,7 +10,7 @@ import {
 } from 'lightweight-charts'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { ALL_FEE_TIERS_DATA } from '@store/consts/static'
-import { CandleIntervals, fetchData } from '@utils/utils'
+import { CandleIntervals, fetchData, formatNumberWithSuffix } from '@utils/utils'
 import { Intervals as IntervalsKeys } from '@store/consts/static'
 import { colors, theme, typography } from '@static/theme'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
@@ -139,7 +139,7 @@ const Chart: React.FC<iProps> = ({
         horzLines: { color: '#1f2937' }
       },
       rightPriceScale: {
-        visible: true, // enable left scale
+        visible: true,
         borderColor: '#374151',
         scaleMargins: {
           top: 0.1,
@@ -171,7 +171,12 @@ const Chart: React.FC<iProps> = ({
     seriesRef.current?.applyOptions({
       priceLineVisible: true,
       priceLineColor: '#22c55e',
-      priceLineWidth: 2
+      priceLineWidth: 2,
+      priceFormat: {
+        type: 'custom',
+        minMove: 0.0001, // smallest tick
+        formatter: price => formatNumberWithSuffix(price) // custom formatter
+      }
       // upColor: '#22c55e',
       // borderUpColor: '#22c55e',
       // wickUpColor: '#22c55e',
@@ -180,7 +185,7 @@ const Chart: React.FC<iProps> = ({
       // wickDownColor: '#ef4444'
     })
 
-    fetchData(selectedPoolAddress, CandleIntervals.OneHour)
+    fetchData(selectedPoolAddress, CandleIntervals.OneMinute)
       .then(data => {
         setChartLoading(true)
         console.log(data)
@@ -199,6 +204,9 @@ const Chart: React.FC<iProps> = ({
           const to = lastCandleTime
 
           chart.timeScale().setVisibleRange({ from, to })
+
+          chart.priceScale('right').setAutoScale(true)
+          chart.timeScale().applyOptions({})
         }
       })
       .catch(e => console.log(e))
@@ -208,6 +216,21 @@ const Chart: React.FC<iProps> = ({
       chart.remove()
     }
   }, [tokenFrom, tokenTo, tokens, chartPoolData, interval])
+
+  // const moveChart = (direction: 'left' | 'right') => {
+  //   if (!containerRef.current) return
+  //   const ts = chartRef.current.timeScale()
+  //   const visible = ts.getVisibleRange()
+  //   if (!visible) return
+
+  //   const shift = Math.floor((visible.to - visible.from) / 2) // move by half window
+  //   const offset = direction === 'left' ? -shift : shift
+
+  //   ts.setVisibleRange({
+  //     from: visible.from + offset,
+  //     to: visible.to + offset
+  //   })
+  // }
 
   if (!tokenFrom || !tokenTo) return
 
