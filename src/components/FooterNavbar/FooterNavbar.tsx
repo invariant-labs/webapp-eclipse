@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import {
   liquidityIcon,
   lqStakingIcon,
+  saleUnselectedIcon,
   statsIcon,
   swapArrowsIcon,
   tokenCreatorIcon,
@@ -100,13 +101,20 @@ export const FooterNavbar = () => {
       width: 26,
       isLink: true
     },
+    {
+      label: 'xINVT',
+      icon: saleUnselectedIcon,
+      url: 'xINVT',
+      width: 34,
+      isLink: true
+    },
 
     ...(typeOfNetwork === NetworkType.Mainnet
       ? [
           {
-            label: 'Stake',
+            label: 'sBITZ',
             icon: lqStakingIcon,
-            url: 'stake',
+            url: 'sBITZ',
 
             isLink: true,
             width: 29
@@ -165,9 +173,10 @@ export const FooterNavbar = () => {
   }, [landing])
 
   const otherRoutesToHighlight: Record<string, RegExp[]> = {
-    liquidity: [/^liquidity\/*/],
+    liquidity: [/^liquidity\/*/, /^poolDetails\/*/],
     exchange: [/^exchange\/*/],
     sale: [/^presale\/*/],
+    xINVT: [/^xINVT\/*/],
     portfolio: [/^portfolio\/*/, /^newPosition\/*/, /^position\/*/],
 
     ...(typeOfNetwork === NetworkType.Testnet ? { creator: [/^creator\/*/] } : {}),

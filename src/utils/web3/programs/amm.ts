@@ -4,9 +4,12 @@ import { NetworkType } from '@store/consts/static'
 import { getSolanaConnection, networkTypetoProgramNetwork } from '../connection'
 import { Locker } from '@invariant-labs/locker-eclipse-sdk'
 import { LiquidityStaking } from '@invariant-labs/sbitz'
+import { Locker as XInvtLocker } from '@invariant-labs/sdk-xinvt'
+
 let _market: Market
 let _locker: Locker
 let _staking: LiquidityStaking
+let _xInvtLocker: XInvtLocker
 
 export const getCurrentMarketProgram = (): Market => {
   return _market
@@ -79,4 +82,19 @@ export const getStakingProgram = (
 
   _staking = LiquidityStaking.build(net, solWallet, getSolanaConnection(rpcAddress))
   return _staking
+}
+
+export const getXInvtLockerProgram = (
+  network: NetworkType,
+  rpcAddress: string,
+  solWallet: IWallet
+): XInvtLocker => {
+  if (_xInvtLocker) {
+    return _xInvtLocker
+  }
+
+  const net = networkTypetoProgramNetwork(network)
+
+  _xInvtLocker = XInvtLocker.build(net, solWallet, getSolanaConnection(rpcAddress))
+  return _xInvtLocker
 }

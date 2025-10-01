@@ -64,6 +64,32 @@ export function* fetchPoolData(action: PayloadAction<Pair>) {
   }
 }
 
+export function* fetchPoolDataByAddress(action: PayloadAction<PublicKey>) {
+  const networkType = yield* select(network)
+  const rpc = yield* select(rpcAddress)
+  const wallet = yield* call(getWallet)
+  const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
+  try {
+    const poolData = yield* call([marketProgram, marketProgram.getPoolByAddress], action.payload)
+
+    yield* put(
+      actions.addPools([
+        {
+          ...poolData,
+          address: action.payload
+        }
+      ])
+    )
+  } catch (e: unknown) {
+    const error = ensureError(e)
+    console.log(error)
+
+    yield* put(actions.addPools([]))
+
+    yield* call(handleRpcError, error.message)
+  }
+}
+
 export function* fetchAutoSwapPoolData(action: PayloadAction<Pair>) {
   const networkType = yield* select(network)
   const rpc = yield* select(rpcAddress)
@@ -353,6 +379,10 @@ export function* getPoolDataHandler(): Generator {
   yield* takeLatest(actions.getPoolData, fetchPoolData)
 }
 
+export function* getPoolDataByAddressHandler(): Generator {
+  yield* takeLatest(actions.getPoolDataByAddress, fetchPoolDataByAddress)
+}
+
 export function* getAutoSwapPoolDataHandler(): Generator {
   yield* takeLatest(actions.getAutoSwapPoolData, fetchAutoSwapPoolData)
 }
@@ -373,6 +403,7 @@ export function* poolsSaga(): Generator {
   yield all(
     [
       getPoolDataHandler,
+      getPoolDataByAddressHandler,
       getAllPoolsForPairDataHandler,
       getPoolsDataForListHandler,
       getTicksAndTickMapsHandler,

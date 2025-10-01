@@ -17,6 +17,8 @@ import { TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import sBitzIcon from '@static/png/sBitzIcon.png'
 import BitzIcon from '@static/png/bitzIcon.png'
 import rewardsArray from '@store/consts/rewards/rewardsArray.json'
+import invtLogo from '@static/png/INVT.png'
+import xInvtLogo from '@static/png/xINVT.png'
 
 export enum NetworkType {
   Local = 'Local',
@@ -55,6 +57,14 @@ export const USDC_ADDRESS = {
   [NetworkType.Mainnet]: new PublicKey(MAINNET_TOKENS.USDC),
   [NetworkType.Testnet]: new PublicKey('5gFSyxjNsuQsZKn9g5L9Ky3cSUvJ6YXqWVuPzmSi8Trx'),
   [NetworkType.Devnet]: new PublicKey('GEds1ARB3oywy2sSdiNGDyxz9MhpfqPkFYYStdZmHaiN'),
+  [NetworkType.Local]: emptyPublicKey
+}
+
+//TODO: REPLACE
+export const XINVT_ADDRESS = {
+  [NetworkType.Mainnet]: new PublicKey('43Fd6ZdBxkUfqa6DSphjL9St2eyQVQZ7GisYExt8NTNc'),
+  [NetworkType.Testnet]: new PublicKey('43Fd6ZdBxkUfqa6DSphjL9St2eyQVQZ7GisYExt8NTNc'),
+  [NetworkType.Devnet]: new PublicKey('43Fd6ZdBxkUfqa6DSphjL9St2eyQVQZ7GisYExt8NTNc'),
   [NetworkType.Local]: emptyPublicKey
 }
 
@@ -444,6 +454,46 @@ export const muES_MAIN: Token = {
   coingeckoId: ''
 }
 
+export const INVT_MAIN: Token = {
+  tokenProgram: TOKEN_2022_PROGRAM_ID,
+  symbol: 'INVT',
+  address: new PublicKey('EqwchrrGFppZYpTVAQH7ETm2QhSpu6eHV5fwZtUamfSM'),
+  decimals: 4,
+  name: 'Invariant',
+  logoURI: invtLogo,
+  coingeckoId: ''
+}
+
+export const xINVT_MAIN: Token = {
+  tokenProgram: TOKEN_PROGRAM_ID,
+  symbol: 'xINVT',
+  address: new PublicKey('x1NVTS1g8Nv4bLhFjyGvxmMEx9YMze3aW5ReoUNzCC2'),
+  decimals: 4,
+  name: 'Invariant (Escrowed)',
+  logoURI: xInvtLogo,
+  coingeckoId: ''
+}
+
+export const INVT_TEST: Token = {
+  tokenProgram: TOKEN_2022_PROGRAM_ID,
+  symbol: 'INVT',
+  address: new PublicKey('G6akTE17fEDPXTvNyxcS1kxSdQnDL7bPH221He8eDbtc'),
+  decimals: 4,
+  name: 'Invariant',
+  logoURI: invtLogo,
+  coingeckoId: ''
+}
+
+export const xINVT_TEST: Token = {
+  tokenProgram: TOKEN_2022_PROGRAM_ID,
+  symbol: 'xINVT',
+  address: new PublicKey('FaZTh693nDwEjWAh43GnLUveFLLfD6VKHGb6bFZqcg5D'),
+  decimals: 4,
+  name: 'xInvariant',
+  logoURI: xInvtLogo,
+  coingeckoId: ''
+}
+
 const DEFAULT_PUBLICKEY = new PublicKey(0)
 const MAX_U64 = new BN('18446744073709551615')
 
@@ -455,14 +505,15 @@ export const tokensPrices: Record<NetworkType, Record<string, TokenPriceData>> =
     BTC_TEST: { price: 64572.0 },
     WETH_TEST: { price: 3430.21 },
     MOON_TEST: { price: 0.00000005735 },
-    S22_TEST: { price: 0.01 }
+    S22_TEST: { price: 0.01 },
+    INVT_TEST: { price: 0.2 }
   },
   Local: {}
 }
 export const tokens: Record<NetworkType, Token[]> = {
   Devnet: [USDC_DEV, BTC_DEV],
   Mainnet: [],
-  Testnet: [USDC_TEST, BTC_TEST],
+  Testnet: [USDC_TEST, BTC_TEST, INVT_TEST],
   Local: []
 }
 
@@ -586,6 +637,16 @@ export const autoSwapPools = [
       address: new PublicKey('6ciuuX2AZ3RFU6fJh2XrzJurZdRWuDeMonNsb7xzztp1'),
       feeIndex: 5
     }
+  },
+  {
+    pair: {
+      tokenX: new PublicKey('AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE'),
+      tokenY: new PublicKey('EqwchrrGFppZYpTVAQH7ETm2QhSpu6eHV5fwZtUamfSM')
+    },
+    swapPool: {
+      address: new PublicKey('Fngz7ZYjFRZ16EeUWepxKrXVDtfXfZBiHnvE24wjS2er'),
+      feeIndex: 6
+    }
   }
 ]
 
@@ -599,23 +660,27 @@ export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
     BITZ_MAIN.address,
     ES_MAIN.address,
     sBITZ_MAIN.address,
-    TUSD_MAIN.address
+    INVT_MAIN.address
   ],
-  Testnet: [USDC_TEST.address, BTC_TEST.address, WETH_TEST.address],
+  Testnet: [USDC_TEST.address, BTC_TEST.address, WETH_TEST.address, INVT_TEST.address],
   Local: []
 }
 
 export const airdropTokens: Record<NetworkType, PublicKey[]> = {
   Devnet: [USDC_DEV.address, BTC_DEV.address],
   Mainnet: [],
-  Testnet: [USDC_TEST.address, BTC_TEST.address],
+  Testnet: [USDC_TEST.address, BTC_TEST.address, INVT_TEST.address],
   Local: []
 }
 
 export const airdropQuantities: Record<NetworkType, number[]> = {
   Devnet: [100 * 10 ** USDC_DEV.decimals, 0.0025 * 10 ** BTC_DEV.decimals],
   Mainnet: [],
-  Testnet: [2 * 10 ** USDC_TEST.decimals, 0.00005 * 10 ** BTC_TEST.decimals],
+  Testnet: [
+    2 * 10 ** USDC_TEST.decimals,
+    0.00005 * 10 ** BTC_TEST.decimals,
+    50 * 10 ** INVT_TEST.decimals
+  ],
   Local: []
 }
 
@@ -643,6 +708,8 @@ export const WETH_CLOSE_POSITION_LAMPORTS_MAIN = new BN(30000)
 export const WETH_CLOSE_POSITION_LAMPORTS_TEST = new BN(30000)
 
 export const WETH_MIN_STAKE_UNSTAKE_LAMPORTS = new BN(50)
+
+export const WETH_MIN_INVT_LOCK_LAMPORTS = new BN(50)
 
 export const MINIMUM_PRICE_IMPACT = toDecimal(1, 4)
 
@@ -768,7 +835,9 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
       NPT: NPT_MAIN.address.toString(),
       USDN: USDN_MAIN.address.toString(),
       WEETHS: WEETHS_MAIN.address.toString(),
-      muES_MAIN: muES_MAIN.address.toString()
+      meES: muES_MAIN.address.toString(),
+      INVT: INVT_MAIN.address.toString(),
+      xINVT: xINVT_MAIN.address.toString()
     }
   }
 }
@@ -798,10 +867,16 @@ export const CHAINS = [
     iconGlow: 'eclipseGlow'
   },
   {
+    name: Chain.Fogo,
+    address: 'https://fogo.invariant.app/exchange',
+    iconGlow: 'fogoGlow'
+  },
+  {
     name: Chain.Sonic,
     address: 'https://sonic.invariant.app',
     iconGlow: 'sonicGlow'
   }
+
   // { name: Chain.Vara, address: 'https://vara.invariant.app/exchange' },
 ]
 
@@ -947,6 +1022,7 @@ export enum OverviewSwitcher {
 export const STATS_CACHE_TIME = 30 * 60 * 1000
 export const PRICE_API_URL = 'https://api.invariant.app/price'
 export const CHECKER_API_URL = 'https://api.invariant.app/check'
+export const XINVT_API_URL = 'https://api.invariant.app/api/invt'
 
 export enum AutoswapCustomError {
   FetchError = 0
@@ -1119,3 +1195,54 @@ export const ES_ETH_POOLS = {
 }
 export const PROOF_OF_INCLUSION_CACHE_KEY = 'PROOF_OF_INCLUSION_V2'
 export const PROOF_OF_INCLUSION_CACHE_TTL = 1000 * 60 * 60 * 1 // 1 hour
+
+export const TOTAL_INVT_REWARDS = 1_500_000
+export const INVT_DEPOSIT_LIMIT = 3_000_000
+
+export const promotedTiers = [
+  {
+    tokenX: USDC_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    index: 3
+  },
+  {
+    tokenX: SOL_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    index: 3
+  },
+  {
+    tokenX: TETH_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    index: 0
+  },
+  {
+    tokenX: SOL_MAIN.address,
+    tokenY: USDC_MAIN.address,
+    index: 3
+  },
+  {
+    tokenX: BITZ_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    index: 6
+  },
+  {
+    tokenX: USDC_MAIN.address,
+    tokenY: TUSD_MAIN.address,
+    index: 0
+  },
+  {
+    tokenX: WETH_MAIN.address,
+    tokenY: sBITZ_MAIN.address,
+    index: 6
+  },
+  {
+    tokenX: ES_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    index: 5
+  },
+  {
+    tokenX: USDC_MAIN.address,
+    tokenY: ES_MAIN.address,
+    index: 5
+  }
+]
