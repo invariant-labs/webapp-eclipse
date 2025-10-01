@@ -108,7 +108,8 @@ import {
   xINVT_TEST,
   TOTAL_INVT_REWARDS,
   INVT_DEPOSIT_LIMIT,
-  XINVT_API_URL
+  XINVT_API_URL,
+  CandleIntervals
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
@@ -2910,18 +2911,6 @@ export const fetchBestPoolAddress = async (addresses: string[]): Promise<string 
   return best?.addr ?? null
 }
 
-export enum CandleIntervals {
-  OneMinute = '1m',
-  FiveMinutes = '5m',
-  FifteenMinutes = '15m',
-  OneHour = '1h',
-  FourHours = '4h',
-  TwelveHours = '12h',
-  Daily = '1D',
-  Weekly = '1W',
-  Monthly = '1M'
-}
-
 export const intervalToParams: Record<
   CandleIntervals,
   { base: 'minute' | 'hour' | 'day'; aggregate: string }
@@ -2936,6 +2925,19 @@ export const intervalToParams: Record<
   [CandleIntervals.Weekly]: { base: 'day', aggregate: '1' },
   [CandleIntervals.Monthly]: { base: 'day', aggregate: '1' }
 }
+
+export const intervalToWindow: Record<CandleIntervals, number> = {
+  [CandleIntervals.OneMinute]: 24 * 60, // ~1 day (1440 candles)
+  [CandleIntervals.FiveMinutes]: 7 * 24 * 12, // ~1 week (2016 candles)
+  [CandleIntervals.FifteenMinutes]: 14 * 24 * 4, // ~2 weeks (1344 candles)
+  [CandleIntervals.OneHour]: 60 * 24, // ~2 months (1440 candles)
+  [CandleIntervals.FourHours]: 90 * 6, // ~3 months (540 candles)
+  [CandleIntervals.TwelveHours]: 180 * 2, // ~6 months (360 candles)
+  [CandleIntervals.Daily]: 365, // ~1 year
+  [CandleIntervals.Weekly]: 260, // ~5 years
+  [CandleIntervals.Monthly]: 120 // ~10 years
+}
+
 export const fetchData = async (
   poolAddress: string,
   interval: CandleIntervals

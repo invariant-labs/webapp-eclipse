@@ -7,6 +7,7 @@ import { BN } from '@coral-xyz/anchor'
 import { Box, Button, Collapse, Grid, Typography, useMediaQuery } from '@mui/material'
 import {
   ALL_FEE_TIERS_DATA,
+  CandleIntervals,
   DEFAULT_TOKEN_DECIMAL,
   inputTarget,
   NetworkType,
@@ -51,7 +52,6 @@ import { FetcherRecords, Pair, SimulationTwoHopResult } from '@invariant-labs/sd
 import { theme } from '@static/theme'
 import Chart from './Chart/Chart'
 import { ExtendedPoolStatsData } from '@store/selectors/stats'
-import { Intervals as IntervalsKeys } from '@store/consts/static'
 
 export interface Pools {
   tokenX: PublicKey
@@ -125,12 +125,12 @@ export interface ISwap {
   swapAccounts: FetcherRecords
   swapIsLoading: boolean
   wrappedETHBalance: BN | null
-  updateInterval: (interval: IntervalsKeys) => void
   poolsList: ExtendedPoolStatsData[]
-  lastUsedInterval: IntervalsKeys | null
   selectedFee: BN | null
   selectFeeTier: (i: number) => void
   chartPoolData: PoolWithAddress | null
+  chartInterval: CandleIntervals
+  setChartInterval: (e: CandleIntervals) => void
 }
 
 export type SimulationPath = {
@@ -185,12 +185,12 @@ export const Swap: React.FC<ISwap> = ({
   tokensDict,
   swapAccounts,
   swapIsLoading,
-  updateInterval,
   poolsList,
-  lastUsedInterval,
   selectedFee,
   selectFeeTier,
-  chartPoolData
+  chartPoolData,
+  chartInterval,
+  setChartInterval
 }) => {
   const { classes, cx } = useStyles()
 
@@ -934,15 +934,15 @@ export const Swap: React.FC<ISwap> = ({
           selectedFee={selectedFee}
           feeTiers={feeTiers}
           poolsList={poolsList}
-          interval={lastUsedInterval ?? IntervalsKeys.Daily}
           isDisabled={false}
           isLoading={false}
           noData={false}
           selectFeeTier={selectFeeTier}
           xToY={true}
-          updateInterval={updateInterval}
           setXToY={revertTokens}
           chartPoolData={chartPoolData}
+          chartInterval={chartInterval}
+          setChartInterval={setChartInterval}
         />
 
         <Grid className={classes.swapWrapper}>

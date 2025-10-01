@@ -2,6 +2,7 @@ import { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 import { Swap } from '@components/Swap/Swap'
 import {
   ALL_FEE_TIERS_DATA,
+  CandleIntervals,
   commonTokensForNetworks,
   DEFAULT_SWAP_SLIPPAGE,
   WETH_MAIN,
@@ -28,7 +29,7 @@ import {
   balance,
   accounts as solanaAccounts
 } from '@store/selectors/solanaWallet'
-import { swap as swapPool, accounts, isLoading } from '@store/selectors/swap'
+import { swap as swapPool, accounts, isLoading, chartInterval } from '@store/selectors/swap'
 import { PublicKey } from '@solana/web3.js'
 import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -48,7 +49,7 @@ import { getMarketProgramSync } from '@utils/web3/programs/amm'
 import { getEclipseWallet } from '@utils/web3/wallet'
 import { IWallet } from '@invariant-labs/sdk-eclipse'
 import { actions as swapActions } from '@store/reducers/swap'
-import { currentInterval, poolsStatsWithTokensDetails } from '@store/selectors/stats'
+import { poolsStatsWithTokensDetails } from '@store/selectors/stats'
 import { actions as statsActions } from '@store/reducers/stats'
 import { Intervals as IntervalsKeys } from '@store/consts/static'
 
@@ -85,15 +86,16 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const wallet = getEclipseWallet()
   const market = getMarketProgramSync(networkType, rpc, wallet as IWallet)
 
+  const candleInterval = useSelector(chartInterval)
   const [chartPoolData, setChartPoolData] = useState<PoolWithAddress | null>(null)
   const [selectedFee, setSelectedFee] = useState<BN | null>(null)
   const [selectedFeeIndex, setSelectedFeeIndex] = useState(0)
 
-  const lastUsedInterval = useSelector(currentInterval)
-
   const poolsList = useSelector(poolsStatsWithTokensDetails)
 
-  // const [triggerRefresh, setTriggerRefresh] = useState(false)
+  const updateChartInterval = (e: CandleIntervals) => {
+    dispatch(actions.setChartInterval(e))
+  }
 
   useEffect(() => {
     const pairPools: PoolWithAddress[] = []
@@ -159,48 +161,9 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
     setSelectedFee(ALL_FEE_TIERS_DATA[index]?.tier.fee)
   }
 
-  // const isPoolDataLoading = useMemo(() => {
-  //   return isFetchingNewPool
-  // }, [isFetchingNewPool])
-
   useEffect(() => {
-    if (!lastUsedInterval || !chartPoolData?.address) return
-    dispatch(
-      statsActions.getCurrentIntervalPoolStats({
-        interval: lastUsedInterval,
-        poolAddress: chartPoolData?.address.toString()
-      })
-    )
-  }, [chartPoolData?.address.toString()])
-
-  useEffect(() => {
-    if (lastUsedInterval || !chartPoolData?.address) return
-    dispatch(
-      statsActions.getCurrentIntervalPoolStats({
-        interval: IntervalsKeys.Daily,
-        poolAddress: chartPoolData?.address.toString()
-      })
-    )
-
-    dispatch(statsActions.setCurrentInterval({ interval: IntervalsKeys.Daily }))
-  }, [lastUsedInterval, chartPoolData?.address])
-
-  const updateInterval = (interval: IntervalsKeys) => {
-    if (!chartPoolData?.address) return
-    dispatch(
-      statsActions.getCurrentIntervalPoolStats({
-        interval,
-        poolAddress: chartPoolData?.address.toString()
-      })
-    )
-    dispatch(statsActions.setCurrentInterval({ interval }))
-  }
-
-  useEffect(() => {
-    dispatch(
-      statsActions.getCurrentIntervalStats({ interval: lastUsedInterval ?? IntervalsKeys.Daily })
-    )
-  }, [lastUsedInterval])
+    dispatch(statsActions.getCurrentIntervalStats({ interval: IntervalsKeys.Daily }))
+  }, [])
 
   useEffect(() => {
     let timeoutId1: NodeJS.Timeout
@@ -562,12 +525,12 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
       tokensDict={tokensDict}
       swapAccounts={swapAccounts}
       swapIsLoading={swapIsLoading}
-      updateInterval={updateInterval}
       poolsList={poolsList}
-      lastUsedInterval={lastUsedInterval}
       selectFeeTier={selectFeeTier}
       selectedFee={selectedFee}
       chartPoolData={chartPoolData}
+      chartInterval={candleInterval}
+      setChartInterval={updateChartInterval}
     />
   )
 }

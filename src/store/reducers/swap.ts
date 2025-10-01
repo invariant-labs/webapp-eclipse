@@ -6,6 +6,7 @@ import { PublicKey } from '@solana/web3.js'
 import { PayloadType } from '@store/consts/types'
 import { FetcherRecords } from '@invariant-labs/sdk-eclipse'
 import { Pair } from '@invariant-labs/sdk-eclipse/src'
+import { CandleIntervals } from '@store/consts/static'
 
 export interface Swap {
   slippage: BN
@@ -37,6 +38,7 @@ export interface ISwapStore {
   swap: Swap
   accounts: FetcherRecords
   isLoading: boolean
+  chartInterval: CandleIntervals
 }
 
 export const defaultState: ISwapStore = {
@@ -57,7 +59,8 @@ export const defaultState: ISwapStore = {
     tickmaps: {},
     ticks: {}
   },
-  isLoading: false
+  isLoading: false,
+  chartInterval: CandleIntervals.FifteenMinutes
 }
 
 export const swapSliceName = 'swap'
@@ -98,6 +101,11 @@ const swapSlice = createSlice({
     ) {
       state.accounts = action.payload.accounts
       state.isLoading = false
+      return state
+    },
+    setChartInterval(state, action: PayloadAction<CandleIntervals>) {
+      state.chartInterval = action.payload
+
       return state
     }
   }

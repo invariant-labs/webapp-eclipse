@@ -1246,3 +1246,15 @@ export const promotedTiers = [
     index: 5
   }
 ]
+
+export enum CandleIntervals {
+  OneMinute = '1 minute',
+  FiveMinutes = '5 minutes',
+  FifteenMinutes = '15 minutes',
+  OneHour = '1 hour',
+  FourHours = '4 hours',
+  TwelveHours = '12 hours',
+  Daily = '1 day',
+  Weekly = '1 week',
+  Monthly = '1 month'
+}
