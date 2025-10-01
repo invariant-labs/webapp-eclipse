@@ -3,7 +3,7 @@ import useStyles from './style'
 import { Box, Grid, Typography } from '@mui/material'
 import { CandlestickSeries, ColorType, createChart, ISeriesApi } from 'lightweight-charts'
 import { SwapToken } from '@store/selectors/solanaWallet'
-import { ALL_FEE_TIERS_DATA, CandleIntervals } from '@store/consts/static'
+import { ALL_FEE_TIERS_DATA, CandleIntervals, disabledPools } from '@store/consts/static'
 import { Candle, fetchData, formatNumberWithSuffix } from '@utils/utils'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { swapListIcon, warningIcon } from '@static/icons'
@@ -22,8 +22,6 @@ interface iProps {
   selectFeeTier: (value: number) => void
   feeTiers: number[]
   selectedFee: BN | null
-  isDisabled: boolean
-  disabledFeeTiers: string[]
   noData: boolean
   xToY: boolean
   setXToY: (a: boolean) => void
@@ -38,7 +36,6 @@ const Chart: React.FC<iProps> = ({
   tokenFrom,
   tokenTo,
   tokens,
-  disabledFeeTiers,
   selectedFee,
   feeTiers,
   isLoading,
@@ -86,6 +83,22 @@ const Chart: React.FC<iProps> = ({
     })
     return { feeTiersWithTvl }
   }, [poolsList, tokenFrom, tokenTo])
+
+  const { disabledFeeTiers } = useMemo(() => {
+    if (!tokenFrom?.assetAddress || !tokenTo?.assetAddress) {
+      return { isDisabled: false, disabledFeeTiers: [] }
+    }
+
+    const matchingPools = disabledPools.filter(
+      pool =>
+        (pool.tokenX.equals(tokenFrom.assetAddress) && pool.tokenY.equals(tokenTo.assetAddress)) ||
+        (pool.tokenX.equals(tokenTo.assetAddress) && pool.tokenY.equals(tokenFrom.assetAddress))
+    )
+
+    const disabledFeeTiers = matchingPools.flatMap(p => p.feeTiers)
+
+    return { disabledFeeTiers }
+  }, [tokenFrom, tokenTo, disabledPools])
 
   const containerRef = useRef<HTMLDivElement | null>(null)
   const seriesRef = useRef<ISeriesApi<'Candlestick'> | undefined>(undefined)
@@ -173,7 +186,10 @@ const Chart: React.FC<iProps> = ({
 
   useEffect(() => {
     const selectedPoolAddress = chartPoolData?.address?.toString()
-    if (!selectedPoolAddress || !seriesRef.current || !chartRef.current) return
+
+    if (!selectedPoolAddress || !seriesRef.current || !chartRef.current) {
+      return
+    }
 
     setChartLoading(true)
 
@@ -193,8 +209,12 @@ const Chart: React.FC<iProps> = ({
           chartRef.current.priceScale('right').setAutoScale(true)
         }
       })
-      .catch(e => console.log(e))
-      .finally(() => setChartLoading(false))
+      .catch(e => {
+        console.log(e)
+      })
+      .finally(() => {
+        setChartLoading(false)
+      })
   }, [chartPoolData?.address?.toString(), chartInterval, xToY, triggerReload])
   if (!tokenFrom || !tokenTo) return null
 

@@ -925,6 +925,7 @@ export const Swap: React.FC<ISwap> = ({
   }
 
   const feeTiers = ALL_FEE_TIERS_DATA.map(tier => +printBN(tier.tier.fee, DECIMAL - 2))
+
   return (
     <Grid className={classes.wrapper}>
       <Grid className={classes.upperContainer}>
@@ -948,11 +949,9 @@ export const Swap: React.FC<ISwap> = ({
                 : null
           }
           tokens={tokens}
-          disabledFeeTiers={[]}
           selectedFee={selectedFee}
           feeTiers={feeTiers}
           poolsList={poolsList}
-          isDisabled={false}
           isLoading={false}
           noData={false}
           selectFeeTier={selectFeeTier}
