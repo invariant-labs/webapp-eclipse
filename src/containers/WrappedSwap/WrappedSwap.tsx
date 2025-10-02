@@ -89,13 +89,23 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const candleInterval = useSelector(chartInterval)
   const [chartPoolData, setChartPoolData] = useState<PoolWithAddress | null>(null)
   const [selectedFee, setSelectedFee] = useState<BN | null>(null)
-  const [selectedFeeIndex, setSelectedFeeIndex] = useState(0)
 
   const poolsList = useSelector(poolsStatsWithTokensDetails)
 
   const updateChartInterval = (e: CandleIntervals) => {
     dispatch(actions.setChartInterval(e))
   }
+
+  const poolPairString = useMemo(() => {
+    if (!tokenFrom || !tokenTo) return
+
+    const xToYPairAddress =
+      tokenFrom.toString() < tokenTo.toString()
+        ? tokenFrom.toString() + tokenTo.toString()
+        : tokenTo.toString() + tokenFrom.toString()
+
+    return xToYPairAddress
+  }, [tokenFrom, tokenTo])
 
   useEffect(() => {
     const pairPools: PoolWithAddress[] = []
@@ -119,15 +129,10 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
       return currentPool.liquidity.gt(maxPool.liquidity) ? currentPool : maxPool
     }, pairPools[0])
 
-    const selectedFeeIndex = ALL_FEE_TIERS_DATA.findIndex(
-      fee => fee.tier.fee.toString() === poolWithHighestLiquidity.fee.toString()
-    )
     setSelectedFee(poolWithHighestLiquidity.fee)
 
-    setSelectedFeeIndex(selectedFeeIndex)
-
     setChartPoolData(poolWithHighestLiquidity)
-  }, [allPools.length, tokenFrom, tokenTo])
+  }, [allPools.length, poolPairString])
 
   useEffect(() => {
     const pairPools: PoolWithAddress[] = []
@@ -148,14 +153,14 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
     }
 
     const selectedPool = pairPools.find(pool => pool.fee.toString() === selectedFee?.toString())
-
+    console.log('test')
     if (selectedPool) {
       setChartPoolData(selectedPool)
       return
     } else {
       setChartPoolData(null)
     }
-  }, [selectedFeeIndex, selectedFee])
+  }, [selectedFee])
 
   const selectFeeTier = (index: number) => {
     setSelectedFee(ALL_FEE_TIERS_DATA[index]?.tier.fee)
