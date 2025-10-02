@@ -6,6 +6,7 @@ import {
   inputTarget,
   INVT_DEPOSIT_LIMIT,
   INVT_MAIN,
+  USER_DEPOSIT_LIMIT,
   WETH_MIN_INVT_LOCK_LAMPORTS
 } from '@store/consts/static'
 import ExchangeAmountInput from '@components/Inputs/ExchangeAmountInput/ExchangeAmountInput'
@@ -52,6 +53,7 @@ export interface ILocker {
   bannerState: BannerState
   statsData: InvtConvertedData
   statsLoading: boolean
+  userXInvtBalance: number
 }
 export const XInvtLocker: React.FC<ILocker> = ({
   walletStatus,
@@ -78,7 +80,8 @@ export const XInvtLocker: React.FC<ILocker> = ({
   lockDisabled,
   bannerState,
   statsData,
-  statsLoading
+  statsLoading,
+  userXInvtBalance
 }) => {
   const { classes } = useStyles()
 
@@ -119,13 +122,28 @@ export const XInvtLocker: React.FC<ILocker> = ({
     const balance = tokens[tokenAddress.toString()]?.balance || new BN(0)
     if (action === 'max') {
       const valueString = +trimDecimalZeros(printBN(balance, INVT_MAIN.decimals))
-      let validatedValue = 0
+
+      let validateUserDeposit =
+        USER_DEPOSIT_LIMIT - userXInvtBalance < 0
+          ? 0
+          : USER_DEPOSIT_LIMIT - userXInvtBalance - valueString
+
+      if (valueString > USER_DEPOSIT_LIMIT - userXInvtBalance) {
+        validateUserDeposit =
+          USER_DEPOSIT_LIMIT - userXInvtBalance < 0 ? 0 : USER_DEPOSIT_LIMIT - userXInvtBalance
+      } else {
+        validateUserDeposit = valueString
+      }
+
+      let validateTotalDeposit = 0
 
       if (valueString > INVT_DEPOSIT_LIMIT - statsData.currentStakeInfo.totalInvtStaked) {
-        validatedValue = INVT_DEPOSIT_LIMIT - statsData.currentStakeInfo.totalInvtStaked
+        validateTotalDeposit = INVT_DEPOSIT_LIMIT - statsData.currentStakeInfo.totalInvtStaked
       } else {
-        validatedValue = valueString
+        validateTotalDeposit = valueString
       }
+
+      const validatedValue = Math.min(validateTotalDeposit, validateUserDeposit)
 
       if (ref === inputTarget.FROM) {
         setAmountFrom(validatedValue.toString())
@@ -136,14 +154,27 @@ export const XInvtLocker: React.FC<ILocker> = ({
       const value = balance.div(new BN(2)) || new BN(0)
       const valueString = +trimDecimalZeros(printBN(value, INVT_MAIN.decimals))
 
-      let validatedValue = 0
+      let validateUserDeposit =
+        USER_DEPOSIT_LIMIT - userXInvtBalance < 0
+          ? 0
+          : USER_DEPOSIT_LIMIT - userXInvtBalance - valueString
 
-      if (valueString > INVT_DEPOSIT_LIMIT - statsData.currentStakeInfo.totalInvtStaked) {
-        validatedValue = INVT_DEPOSIT_LIMIT - statsData.currentStakeInfo.totalInvtStaked
+      if (valueString > USER_DEPOSIT_LIMIT - userXInvtBalance) {
+        validateUserDeposit =
+          USER_DEPOSIT_LIMIT - userXInvtBalance < 0 ? 0 : USER_DEPOSIT_LIMIT - userXInvtBalance
       } else {
-        validatedValue = valueString
+        validateUserDeposit = valueString
       }
 
+      let validateTotalDeposit = 0
+
+      if (valueString > INVT_DEPOSIT_LIMIT - statsData.currentStakeInfo.totalInvtStaked) {
+        validateTotalDeposit = INVT_DEPOSIT_LIMIT - statsData.currentStakeInfo.totalInvtStaked
+      } else {
+        validateTotalDeposit = valueString
+      }
+
+      const validatedValue = Math.min(validateTotalDeposit, validateUserDeposit)
       if (ref === inputTarget.FROM) {
         setAmountFrom(validatedValue.toString())
       } else {
@@ -192,6 +223,12 @@ export const XInvtLocker: React.FC<ILocker> = ({
       +amountFrom > INVT_DEPOSIT_LIMIT - statsData.currentStakeInfo.totalInvtStaked
     ) {
       return 'Limit reached'
+    }
+    if (
+      currentLockerTab === LockerSwitch.Lock &&
+      USER_DEPOSIT_LIMIT - userXInvtBalance < +amountFrom
+    ) {
+      return 'Limit per user reached'
     }
     if (
       tokenFrom &&
@@ -383,6 +420,8 @@ export const XInvtLocker: React.FC<ILocker> = ({
             setProgress('progress')
             const amount = inputRef === inputTarget.FROM ? amountFrom : amountTo
             if (currentLockerTab === LockerSwitch.Lock) {
+              if (USER_DEPOSIT_LIMIT - userXInvtBalance < +amountFrom) return
+
               handleLock({
                 amount: convertBalanceToBN(amount, tokenFrom.decimals)
               })
