@@ -75,6 +75,7 @@ export interface Pools {
 
 export interface ISwap {
   isFetchingNewPool: boolean
+  isPathTokensLoading: boolean
   onRefresh: (tokenFrom: number | null, tokenTo: number | null) => void
   walletStatus: Status
   swapData: SwapData
@@ -148,6 +149,7 @@ export type SimulationPath = {
 
 export const Swap: React.FC<ISwap> = ({
   isFetchingNewPool,
+  isPathTokensLoading,
   onRefresh,
   walletStatus,
   tokens,
@@ -930,33 +932,13 @@ export const Swap: React.FC<ISwap> = ({
     <Grid className={classes.wrapper}>
       <Grid className={classes.upperContainer}>
         <Chart
-          tokenFrom={
-            swap
-              ? tokenFromIndex !== null
-                ? tokens[tokenFromIndex]
-                : null
-              : tokenToIndex !== null
-                ? tokens[tokenToIndex]
-                : null
-          }
-          tokenTo={
-            swap
-              ? tokenToIndex !== null
-                ? tokens[tokenToIndex]
-                : null
-              : tokenFromIndex !== null
-                ? tokens[tokenFromIndex]
-                : null
-          }
-          tokens={tokens}
+          tokens={tokensDict}
           selectedFee={selectedFee}
           feeTiers={feeTiers}
           poolsList={poolsList}
-          isLoading={false}
+          isLoading={(isFetchingNewPool && !wasSwapIsLoadingRun) || isPathTokensLoading}
           noData={false}
           selectFeeTier={selectFeeTier}
-          xToY={swap ? swap : false}
-          setXToY={revertTokens}
           chartPoolData={chartPoolData}
           chartInterval={chartInterval}
           setChartInterval={setChartInterval}

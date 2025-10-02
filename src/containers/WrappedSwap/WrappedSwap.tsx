@@ -434,6 +434,7 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   return (
     <Swap
       isFetchingNewPool={isFetchingNewPool}
+      isPathTokensLoading={isPathTokensLoading}
       onRefresh={onRefresh}
       onSwap={(
         slippage,

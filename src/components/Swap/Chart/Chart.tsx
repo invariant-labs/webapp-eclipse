@@ -4,7 +4,7 @@ import { Box, Grid, Typography } from '@mui/material'
 import { CandlestickSeries, ColorType, createChart, ISeriesApi } from 'lightweight-charts'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { ALL_FEE_TIERS_DATA, CandleIntervals, disabledPools } from '@store/consts/static'
-import { Candle, fetchData, formatNumberWithSuffix } from '@utils/utils'
+import { Candle, fetchData, formatNumberWithSuffix, initialXtoY } from '@utils/utils'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { swapListIcon, warningIcon } from '@static/icons'
 import { FeeSelector } from './FeeSelector/FeeSelector'
@@ -17,16 +17,12 @@ import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
 import { colors } from '@static/theme'
 
 interface iProps {
-  tokenFrom: SwapToken | null
-  tokenTo: SwapToken | null
-  tokens: SwapToken[]
+  tokens: Record<string, SwapToken>
   isLoading: boolean
   selectFeeTier: (value: number) => void
   feeTiers: number[]
   selectedFee: BN | null
   noData: boolean
-  xToY: boolean
-  setXToY: (a: boolean) => void
   poolsList: ExtendedPoolStatsData[]
   chartPoolData: PoolWithAddress | null
   chartInterval: CandleIntervals
@@ -35,16 +31,12 @@ interface iProps {
 }
 
 const Chart: React.FC<iProps> = ({
-  tokenFrom,
-  tokenTo,
   tokens,
   selectedFee,
   feeTiers,
   isLoading,
   selectFeeTier,
   noData,
-  xToY,
-  setXToY,
   poolsList,
   chartPoolData,
   chartInterval,
@@ -53,7 +45,18 @@ const Chart: React.FC<iProps> = ({
 }) => {
   const { classes } = useStyles()
 
-  const [chartLoading, setChartLoading] = useState(false)
+  const { tokenFrom, tokenTo } = useMemo(() => {
+    return {
+      tokenFrom: chartPoolData?.tokenX ? tokens[chartPoolData?.tokenX.toString()] : null,
+      tokenTo: chartPoolData?.tokenY ? tokens[chartPoolData?.tokenY.toString()] : null
+    }
+  }, [chartPoolData?.address?.toString(), tokens.length])
+
+  const [isXtoY, setIsXtoY] = useState(
+    initialXtoY(tokenFrom?.assetAddress?.toString(), tokenTo?.assetAddress?.toString())
+  )
+
+  const [chartLoading, setChartLoading] = useState(true)
 
   const feeTierIndex = useMemo(() => {
     if (selectedFee) {
@@ -64,14 +67,15 @@ const Chart: React.FC<iProps> = ({
   }, [selectedFee?.toString()])
 
   const promotedPoolTierIndex = useMemo(() => {
-    if (tokenFrom === null || tokenTo === null) return undefined
+    if (!tokenFrom || !tokenTo) return undefined
     return undefined
   }, [tokenFrom, tokenTo, tokens.length])
 
   const { feeTiersWithTvl } = useMemo(() => {
-    if (tokenFrom === null || tokenTo === null) {
+    if (!tokenFrom || !tokenTo) {
       return { feeTiersWithTvl: {} }
     }
+
     const feeTiersWithTvl: Record<number, number> = {}
     poolsList.forEach(pool => {
       const xMatch =
@@ -105,6 +109,10 @@ const Chart: React.FC<iProps> = ({
   const containerRef = useRef<HTMLDivElement | null>(null)
   const seriesRef = useRef<ISeriesApi<'Candlestick'> | undefined>(undefined)
   const chartRef = useRef<ReturnType<typeof createChart> | null>(null)
+
+  useEffect(() => {
+    setIsXtoY(initialXtoY(tokenFrom?.assetAddress?.toString(), tokenTo?.assetAddress?.toString()))
+  }, [chartPoolData?.address.toString()])
 
   useEffect(() => {
     //setup chart
@@ -202,7 +210,7 @@ const Chart: React.FC<iProps> = ({
           (candle, idx) => idx === 0 || Number(candle.time) > Number(sorted[idx - 1].time)
         )
 
-        const finalData = xToY ? invertCandles(deduped) : deduped
+        const finalData = isXtoY ? deduped : invertCandles(deduped)
 
         seriesRef.current?.setData(finalData as any)
 
@@ -217,7 +225,7 @@ const Chart: React.FC<iProps> = ({
       .finally(() => {
         setChartLoading(false)
       })
-  }, [chartPoolData?.address?.toString(), chartInterval, xToY, triggerReload])
+  }, [chartPoolData?.address?.toString(), chartInterval, isXtoY, triggerReload])
 
   return (
     <Grid className={classes.wrapper}>
@@ -240,10 +248,10 @@ const Chart: React.FC<iProps> = ({
                     <Grid display='flex' position='relative'>
                       <img
                         className={classes.tokenIcon}
-                        src={xToY ? tokenFrom.logoURI : tokenTo.logoURI}
-                        alt={xToY ? tokenFrom.symbol : tokenTo.symbol}
+                        src={isXtoY ? tokenFrom.logoURI : tokenTo.logoURI}
+                        alt={isXtoY ? tokenFrom.symbol : tokenTo.symbol}
                       />
-                      {(xToY ? tokenFrom.isUnknown : tokenTo.isUnknown) && (
+                      {(isXtoY ? tokenFrom.isUnknown : tokenTo.isUnknown) && (
                         <img className={classes.warningIcon} src={warningIcon} />
                       )}
                     </Grid>
@@ -255,17 +263,17 @@ const Chart: React.FC<iProps> = ({
                         alt='Arrow'
                         onClick={e => {
                           e.stopPropagation()
-                          setXToY(!xToY)
+                          setIsXtoY(!isXtoY)
                         }}
                       />
                     </TooltipHover>
                     <Grid display='flex' position='relative'>
                       <img
                         className={classes.tokenIcon}
-                        src={xToY ? tokenTo.logoURI : tokenFrom.logoURI}
-                        alt={xToY ? tokenTo.symbol : tokenFrom.symbol}
+                        src={isXtoY ? tokenTo.logoURI : tokenFrom.logoURI}
+                        alt={isXtoY ? tokenTo.symbol : tokenFrom.symbol}
                       />
-                      {(xToY ? tokenTo.isUnknown : tokenFrom.isUnknown) && (
+                      {(isXtoY ? tokenTo.isUnknown : tokenFrom.isUnknown) && (
                         <img className={classes.warningIcon} src={warningIcon} />
                       )}
                     </Grid>
@@ -273,8 +281,8 @@ const Chart: React.FC<iProps> = ({
 
                   <Box className={classes.tickersContainer}>
                     <Typography className={classes.names}>
-                      {xToY ? tokenFrom.symbol : tokenTo.symbol} -{' '}
-                      {xToY ? tokenTo.symbol : tokenFrom.symbol}
+                      {isXtoY ? tokenFrom.symbol : tokenTo.symbol} -{' '}
+                      {isXtoY ? tokenTo.symbol : tokenFrom.symbol}
                     </Typography>
                   </Box>
                 </Grid>
@@ -319,11 +327,11 @@ const Chart: React.FC<iProps> = ({
             )}
           </Grid>
         </Box>
-        {tokenFrom && tokenTo ? (
+        {(tokenFrom && tokenTo) || chartLoading || isLoading ? (
           <div style={{ position: 'relative' }}>
             <div ref={containerRef} className={classes.chart} />
 
-            {chartLoading && (
+            {(chartLoading || isLoading) && (
               <Grid container className={classes.cover}>
                 <img src={loader} className={classes.loader} alt='Loader' />
               </Grid>
