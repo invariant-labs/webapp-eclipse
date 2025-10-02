@@ -1,14 +1,13 @@
 import { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 import { Swap } from '@components/Swap/Swap'
 import {
-  ALL_FEE_TIERS_DATA,
   CandleIntervals,
   commonTokensForNetworks,
   DEFAULT_SWAP_SLIPPAGE,
   WETH_MAIN,
   WRAPPED_ETH_ADDRESS
 } from '@store/consts/static'
-import { actions as poolsActions, PoolWithAddress } from '@store/reducers/pools'
+import { actions as poolsActions } from '@store/reducers/pools'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { actions as walletActions } from '@store/reducers/solanaWallet'
 import { actions as connectionActions } from '@store/reducers/solanaConnection'
@@ -87,83 +86,11 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const market = getMarketProgramSync(networkType, rpc, wallet as IWallet)
 
   const candleInterval = useSelector(chartInterval)
-  const [chartPoolData, setChartPoolData] = useState<PoolWithAddress | null>(null)
-  const [selectedFee, setSelectedFee] = useState<BN | null>(null)
 
   const poolsList = useSelector(poolsStatsWithTokensDetails)
 
   const updateChartInterval = (e: CandleIntervals) => {
     dispatch(actions.setChartInterval(e))
-  }
-
-  const poolPairString = useMemo(() => {
-    if (!tokenFrom || !tokenTo) return
-
-    const xToYPairAddress =
-      tokenFrom.toString() < tokenTo.toString()
-        ? tokenFrom.toString() + tokenTo.toString()
-        : tokenTo.toString() + tokenFrom.toString()
-
-    return xToYPairAddress
-  }, [tokenFrom, tokenTo])
-
-  useEffect(() => {
-    const pairPools: PoolWithAddress[] = []
-    allPools.map(pool => {
-      if (
-        (pool.tokenX.toString() === tokenFrom?.toString() &&
-          pool.tokenY.toString() === tokenTo?.toString()) ||
-        (pool.tokenX.toString() === tokenTo?.toString() &&
-          pool.tokenY.toString() === tokenFrom?.toString())
-      ) {
-        pairPools.push(pool)
-      }
-    })
-
-    if (!pairPools.length) {
-      setChartPoolData(null)
-      return
-    }
-
-    const poolWithHighestLiquidity = pairPools.reduce((maxPool, currentPool) => {
-      return currentPool.liquidity.gt(maxPool.liquidity) ? currentPool : maxPool
-    }, pairPools[0])
-
-    setSelectedFee(poolWithHighestLiquidity.fee)
-
-    setChartPoolData(poolWithHighestLiquidity)
-  }, [allPools.length, poolPairString])
-
-  useEffect(() => {
-    const pairPools: PoolWithAddress[] = []
-    allPools.map(pool => {
-      if (
-        (pool.tokenX.toString() === tokenFrom?.toString() &&
-          pool.tokenY.toString() === tokenTo?.toString()) ||
-        (pool.tokenX.toString() === tokenTo?.toString() &&
-          pool.tokenY.toString() === tokenFrom?.toString())
-      ) {
-        pairPools.push(pool)
-      }
-    })
-
-    if (!pairPools.length) {
-      setChartPoolData(null)
-      return
-    }
-
-    const selectedPool = pairPools.find(pool => pool.fee.toString() === selectedFee?.toString())
-    console.log('test')
-    if (selectedPool) {
-      setChartPoolData(selectedPool)
-      return
-    } else {
-      setChartPoolData(null)
-    }
-  }, [selectedFee])
-
-  const selectFeeTier = (index: number) => {
-    setSelectedFee(ALL_FEE_TIERS_DATA[index]?.tier.fee)
   }
 
   useEffect(() => {
@@ -532,9 +459,6 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
       swapAccounts={swapAccounts}
       swapIsLoading={swapIsLoading}
       poolsList={poolsList}
-      selectFeeTier={selectFeeTier}
-      selectedFee={selectedFee}
-      chartPoolData={chartPoolData}
       chartInterval={candleInterval}
       setChartInterval={updateChartInterval}
       triggerReload={triggerFetchPrice}

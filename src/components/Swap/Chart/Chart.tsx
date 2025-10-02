@@ -15,48 +15,128 @@ import { IntervalSelector } from './IntervalSelector/IntervalSelector'
 import loader from '@static/gif/loader.gif'
 import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
 import { colors } from '@static/theme'
+import { PublicKey } from '@solana/web3.js'
 
 interface iProps {
+  tokenFromAddress: PublicKey | null
+  tokenToAddress: PublicKey | null
   tokens: Record<string, SwapToken>
+  allPools: PoolWithAddress[]
   isLoading: boolean
-  selectFeeTier: (value: number) => void
   feeTiers: number[]
-  selectedFee: BN | null
   noData: boolean
   poolsList: ExtendedPoolStatsData[]
-  chartPoolData: PoolWithAddress | null
   chartInterval: CandleIntervals
   setChartInterval: (e: CandleIntervals) => void
   triggerReload: boolean
 }
 
 const Chart: React.FC<iProps> = ({
+  tokenFromAddress,
+  tokenToAddress,
+  allPools,
   tokens,
-  selectedFee,
   feeTiers,
   isLoading,
-  selectFeeTier,
   noData,
   poolsList,
-  chartPoolData,
   chartInterval,
   setChartInterval,
   triggerReload
 }) => {
   const { classes } = useStyles()
+  const [chartPoolData, setChartPoolData] = useState<PoolWithAddress | null>(null)
+  const [selectedFee, setSelectedFee] = useState<BN | null>(null)
 
-  const { tokenFrom, tokenTo } = useMemo(() => {
-    return {
-      tokenFrom: chartPoolData?.tokenX ? tokens[chartPoolData?.tokenX.toString()] : null,
-      tokenTo: chartPoolData?.tokenY ? tokens[chartPoolData?.tokenY.toString()] : null
-    }
-  }, [chartPoolData?.address?.toString(), tokens.length])
+  const [chartLoading, setChartLoading] = useState(true)
+
+  const { poolPairString, tokenFrom, tokenTo } = useMemo(() => {
+    if (!tokenFromAddress || !tokenToAddress)
+      return { poolPairString: '', tokenFrom: null, tokenTo: null }
+
+    const isXtoYPair = tokenFromAddress.toString() < tokenToAddress.toString()
+
+    const poolPairString = isXtoYPair
+      ? tokenFromAddress.toString() + tokenToAddress.toString()
+      : tokenToAddress.toString() + tokenFromAddress.toString()
+
+    const tokenFrom = isXtoYPair
+      ? tokens[tokenFromAddress.toString()]
+      : tokens[tokenToAddress.toString()]
+
+    const tokenTo = isXtoYPair
+      ? tokens[tokenToAddress.toString()]
+      : tokens[tokenFromAddress.toString()]
+
+    return { poolPairString, tokenFrom, tokenTo }
+  }, [tokenFromAddress, tokenToAddress, tokens])
 
   const [isXtoY, setIsXtoY] = useState(
     initialXtoY(tokenFrom?.assetAddress?.toString(), tokenTo?.assetAddress?.toString())
   )
 
-  const [chartLoading, setChartLoading] = useState(true)
+  useEffect(() => {
+    setIsXtoY(initialXtoY(tokenFrom?.assetAddress?.toString(), tokenTo?.assetAddress?.toString()))
+  }, [chartPoolData?.address.toString()])
+
+  useEffect(() => {
+    const pairPools: PoolWithAddress[] = []
+    allPools.map(pool => {
+      if (
+        (pool.tokenX.toString() === tokenFrom?.assetAddress.toString() &&
+          pool.tokenY.toString() === tokenTo?.assetAddress.toString()) ||
+        (pool.tokenX.toString() === tokenTo?.assetAddress.toString() &&
+          pool.tokenY.toString() === tokenFrom?.assetAddress.toString())
+      ) {
+        pairPools.push(pool)
+      }
+    })
+
+    if (!pairPools.length) {
+      setChartPoolData(null)
+      return
+    }
+
+    const poolWithHighestLiquidity = pairPools.reduce((maxPool, currentPool) => {
+      return currentPool.liquidity.gt(maxPool.liquidity) ? currentPool : maxPool
+    }, pairPools[0])
+
+    setSelectedFee(poolWithHighestLiquidity.fee)
+
+    setChartPoolData(poolWithHighestLiquidity)
+  }, [allPools.length, poolPairString])
+
+  useEffect(() => {
+    const pairPools: PoolWithAddress[] = []
+    allPools.map(pool => {
+      if (
+        (pool.tokenX.toString() === tokenFrom?.assetAddress.toString() &&
+          pool.tokenY.toString() === tokenTo?.assetAddress.toString()) ||
+        (pool.tokenX.toString() === tokenTo?.assetAddress.toString() &&
+          pool.tokenY.toString() === tokenFrom?.assetAddress.toString())
+      ) {
+        pairPools.push(pool)
+      }
+    })
+
+    if (!pairPools.length) {
+      setChartPoolData(null)
+      return
+    }
+
+    const selectedPool = pairPools.find(pool => pool.fee.toString() === selectedFee?.toString())
+
+    if (selectedPool) {
+      setChartPoolData(selectedPool)
+      return
+    } else {
+      setChartPoolData(null)
+    }
+  }, [selectedFee])
+
+  const selectFeeTier = (index: number) => {
+    setSelectedFee(ALL_FEE_TIERS_DATA[index]?.tier.fee)
+  }
 
   const feeTierIndex = useMemo(() => {
     if (selectedFee) {
@@ -110,10 +190,7 @@ const Chart: React.FC<iProps> = ({
   const seriesRef = useRef<ISeriesApi<'Candlestick'> | undefined>(undefined)
   const chartRef = useRef<ReturnType<typeof createChart> | null>(null)
 
-  useEffect(() => {
-    setIsXtoY(initialXtoY(tokenFrom?.assetAddress?.toString(), tokenTo?.assetAddress?.toString()))
-  }, [chartPoolData?.address.toString()])
-
+  console.log(chartPoolData?.address.toString())
   useEffect(() => {
     //setup chart
     if (!containerRef.current) return

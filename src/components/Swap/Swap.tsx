@@ -127,9 +127,6 @@ export interface ISwap {
   swapIsLoading: boolean
   wrappedETHBalance: BN | null
   poolsList: ExtendedPoolStatsData[]
-  selectedFee: BN | null
-  selectFeeTier: (i: number) => void
-  chartPoolData: PoolWithAddress | null
   chartInterval: CandleIntervals
   setChartInterval: (e: CandleIntervals) => void
   triggerReload: boolean
@@ -189,9 +186,6 @@ export const Swap: React.FC<ISwap> = ({
   swapAccounts,
   swapIsLoading,
   poolsList,
-  selectedFee,
-  selectFeeTier,
-  chartPoolData,
   chartInterval,
   setChartInterval,
   triggerReload
@@ -932,17 +926,17 @@ export const Swap: React.FC<ISwap> = ({
     <Grid className={classes.wrapper}>
       <Grid className={classes.upperContainer}>
         <Chart
+          tokenFromAddress={tokenFromIndex === null ? null : tokens[tokenFromIndex].assetAddress}
+          tokenToAddress={tokenToIndex === null ? null : tokens[tokenToIndex].assetAddress}
           tokens={tokensDict}
-          selectedFee={selectedFee}
           feeTiers={feeTiers}
           poolsList={poolsList}
           isLoading={(isFetchingNewPool && !wasSwapIsLoadingRun) || isPathTokensLoading}
           noData={false}
-          selectFeeTier={selectFeeTier}
-          chartPoolData={chartPoolData}
           chartInterval={chartInterval}
           setChartInterval={setChartInterval}
           triggerReload={triggerReload}
+          allPools={pools}
         />
 
         <Grid className={classes.swapWrapper}>
