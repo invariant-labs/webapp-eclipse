@@ -76,7 +76,9 @@ export const StatsLocker: React.FC<StatsLocker> = ({ statsData, userLockedInvt, 
           </Box>
           <Box className={classes.statsBox}>
             <Typography component='h3'>Deposit limit</Typography>
-            <Typography component='h2'>3M INVT</Typography>
+            <Typography component='h2'>
+              {formatNumberWithSuffix(INVT_DEPOSIT_LIMIT, { noDecimals: true })} INVT
+            </Typography>
           </Box>
         </Box>
         <Box
