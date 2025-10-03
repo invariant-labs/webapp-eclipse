@@ -29,7 +29,7 @@ const NewPoolSection: React.FC<INewPoolSection> = ({ handleOpenPosition, pool, i
           )}
         </Grid>
         <Typography height={34} component='span' style={{ ...typography.body2 }}>
-          Provide liquidity and collect xINVT {!hideBanner && <br />} while earning fees!
+          Provide liquidity and collect INVT {!hideBanner && <br />} while earning fees!
         </Typography>
         <Button
           scheme='pink'

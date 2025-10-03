@@ -1,6 +1,6 @@
 import { Box, Grid, Skeleton, Typography } from '@mui/material'
 import { star, starFill } from '@static/icons'
-import { xINVT_MAIN } from '@store/consts/static'
+import { INVT_MAIN } from '@store/consts/static'
 import useStyles from './style'
 import { ConvertedPool } from '@containers/LockWrapper/LockWrapper'
 import { formatNumberWithCommas, removeAdditionalDecimals } from '@utils/utils'
@@ -25,7 +25,7 @@ export const PoolInfoSection: React.FC<IProps> = ({
     <Grid className={classes.poolInfoWrapper}>
       <Grid className={classes.titleWrapper}>
         {configLoading || pool === null ? (
-          <Skeleton variant='rounded' width={140} height={32} style={{ borderRadius: 12 }} />
+          <Skeleton variant='rounded' width={175} height={32} style={{ borderRadius: 12 }} />
         ) : (
           <Box className={classes.tokenWrapper}>
             <img alt={pool.tokenX.name} width={32} src={pool.tokenX.logoURI} />
@@ -54,7 +54,7 @@ export const PoolInfoSection: React.FC<IProps> = ({
             <Skeleton variant='rounded' width={50} height={17} />
           ) : (
             <>
-              <img src={xINVT_MAIN.logoURI} width={20} height={20} alt='xinvt logo' />
+              <img src={INVT_MAIN.logoURI} width={20} height={20} alt='invt logo' />
               <Typography>
                 {formatNumberWithCommas(pool?.poolPointsDistribiution?.toString() || '0')}
               </Typography>
@@ -71,7 +71,7 @@ export const PoolInfoSection: React.FC<IProps> = ({
             <Skeleton variant='rounded' width={50} height={17} />
           ) : walletConnected ? (
             <>
-              <img src={xINVT_MAIN.logoURI} width={20} height={20} alt='xinvt logo' />
+              <img src={INVT_MAIN.logoURI} width={20} height={20} alt='invt logo' />
               <Typography>
                 {removeAdditionalDecimals(formatNumberWithCommas(pool?.userPoints || '0'), 2)}
               </Typography>

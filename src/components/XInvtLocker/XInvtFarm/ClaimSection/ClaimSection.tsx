@@ -1,6 +1,6 @@
 import { Button } from '@common/Button/Button'
 import { Box, Grid, Skeleton, Typography } from '@mui/material'
-import { xINVT_MAIN } from '@store/consts/static'
+import { INVT_MAIN } from '@store/consts/static'
 import useStyles from './style'
 import { UserPoints } from '@store/reducers/xInvt'
 import { formatNumberWithSuffix } from '@utils/utils'
@@ -30,7 +30,7 @@ export const ClaimSection: React.FC<IProps> = ({
           <Box display={'flex'} alignItems={'center'} gap={0.5}>
             {walletConnected ? (
               <>
-                <img width={20} height={20} src={xINVT_MAIN.logoURI} />
+                <img width={20} height={20} src={INVT_MAIN.logoURI} />
                 <Typography component='h3'>
                   {formatNumberWithSuffix(userPointsState?.accumulatedRewards || '0')}
                 </Typography>
@@ -50,7 +50,7 @@ export const ClaimSection: React.FC<IProps> = ({
             <Box display={'flex'} alignItems={'center'} gap={0.5}>
               {walletConnected ? (
                 <>
-                  <img width={20} height={20} src={xINVT_MAIN.logoURI} />
+                  <img width={20} height={20} src={INVT_MAIN.logoURI} />
                   <Typography component='h3'>
                     {formatNumberWithSuffix(userPointsState?.claimableRewards || '0')}
                   </Typography>
@@ -68,7 +68,7 @@ export const ClaimSection: React.FC<IProps> = ({
               ? !+userPointsState?.claimableRewards
                 ? 'Claim will be available after finish of current round'
                 : ''
-              : 'Connect wallet to see your available xINVT'
+              : 'Connect wallet to see your available INVT'
           }>
           <Button
             width={'100%'}

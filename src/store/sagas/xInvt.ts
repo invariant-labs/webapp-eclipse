@@ -498,16 +498,38 @@ export function* getInvtStats() {
 
 export function* getXInvtConfig() {
   try {
-    const { lastSnapTimestamp, pointsDecimal, promotedPools } = yield* call(fetchXInvtConfig)
+    const res = yield* call(fetchXInvtConfig)
 
+    if (!res) {
+      yield* put(
+        actions.setXInvtConfig({
+          lastSnapTimestamp: 0,
+          pointsDecimal: 0,
+          pointsPerSecondDecimal: 0,
+          promotedPools: []
+        })
+      )
+      return
+    }
+
+    const { lastSnapTimestamp, pointsDecimal, promotedPools, pointsPerSecondDecimal } = res
     yield* put(
       actions.setXInvtConfig({
         lastSnapTimestamp,
         pointsDecimal,
+        pointsPerSecondDecimal,
         promotedPools
       })
     )
   } catch (e: unknown) {
+    yield* put(
+      actions.setXInvtConfig({
+        lastSnapTimestamp: 0,
+        pointsDecimal: 0,
+        pointsPerSecondDecimal: 0,
+        promotedPools: []
+      })
+    )
     const error = ensureError(e)
     console.log(error)
   }
@@ -516,9 +538,12 @@ export function* getXInvtConfig() {
 export function* getXInvtPoints(): Generator {
   try {
     const wallet = yield* call(getWallet)
+
     const pointsResp = yield* call(fetchxInvtPoints, wallet?.publicKey?.toString())
+
     if (pointsResp) {
       const { accumulatedRewards, claimableRewards } = pointsResp
+
       const parsedAccumulatedRewards = printBN(
         new BN(accumulatedRewards, 'hex'),
         xINVT_MAIN.decimals
@@ -530,6 +555,13 @@ export function* getXInvtPoints(): Generator {
         actions.setUserPoints({
           accumulatedRewards: parsedAccumulatedRewards,
           claimableRewards: parsedclaimableRewards
+        })
+      )
+    } else {
+      yield* put(
+        actions.setUserPoints({
+          accumulatedRewards: '0',
+          claimableRewards: '0'
         })
       )
     }

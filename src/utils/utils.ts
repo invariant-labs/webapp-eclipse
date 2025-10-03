@@ -2847,9 +2847,13 @@ export const fetchxInvtPoints = async (address?: string) => {
 }
 
 export const fetchXInvtConfig = async () => {
-  const response = await fetch(`${XINVT_API_URL}/config`)
-  if (!response.ok) {
-    throw new Error('Failed to fetch leaderboard data')
+  try {
+    const response = await fetch(`${XINVT_API_URL}/config`)
+    if (!response.ok) {
+      throw new Error('Failed to fetch leaderboard data')
+    }
+    return response.json() as Promise<IConfigResponse>
+  } catch (error) {
+    console.log(error)
   }
-  return response.json() as Promise<IConfigResponse>
 }
