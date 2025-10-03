@@ -484,6 +484,7 @@ export const LockWrapper: React.FC = () => {
           lockDisabled={lockDisabled}
           statsData={yieldIncomes}
           statsLoading={statsLoading}
+          userXInvtBalance={userXInvtBalance}
         />
         <StatsLocker
           statsData={yieldIncomes}
