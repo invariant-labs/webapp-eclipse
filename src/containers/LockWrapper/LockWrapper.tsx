@@ -318,8 +318,8 @@ export const LockWrapper: React.FC = () => {
   const bannerState: BannerState = useMemo(() => {
     const mintStart = marketData?.mintStartTime ? +marketData.mintStartTime : 0
     const mintEnd = marketData?.mintEndTime ? +marketData.mintEndTime : 0
-    const burnStart = marketData?.burnStartTime ? +marketData.burnStartTime : 0
-    const burnEnd = marketData?.burnEndTime ? +marketData.burnEndTime : 0
+    // const burnStart = marketData?.burnStartTime ? +marketData.burnStartTime : 0
+    // const burnEnd = marketData?.burnEndTime ? +marketData.burnEndTime : 0
 
     if (currentUnix < mintStart) {
       return {
@@ -337,21 +337,21 @@ export const LockWrapper: React.FC = () => {
       }
     }
 
-    if (currentUnix < burnStart) {
-      return {
-        key: BannerPhase.yieldPhase,
-        text: 'Unlocks in:',
-        timestamp: burnStart
-      }
-    }
+    // if (currentUnix < burnStart) {
+    //   return {
+    //     key: BannerPhase.yieldPhase,
+    //     text: 'Unlocks in:',
+    //     timestamp: burnStart
+    //   }
+    // }
 
-    if (currentUnix < burnEnd) {
-      return {
-        key: BannerPhase.burningPhase,
-        text: 'Unlocking xINVT disabled in:',
-        timestamp: burnEnd
-      }
-    }
+    // if (currentUnix < burnEnd) {
+    //   return {
+    //     key: BannerPhase.burningPhase,
+    //     text: 'Unlocking xINVT disabled in:',
+    //     timestamp: burnEnd
+    //   }
+    // }
 
     return { key: BannerPhase.endPhase, text: 'Redemption ended', timestamp: 0 }
   }, [marketData, currentUnix])
@@ -440,7 +440,9 @@ export const LockWrapper: React.FC = () => {
         </Box>
       </Box>
 
-      <DynamicBanner isLoading={bannerInitialLoading} bannerState={bannerState} />
+      {bannerState.key !== BannerPhase.endPhase ? (
+        <DynamicBanner isLoading={bannerInitialLoading} bannerState={bannerState} />
+      ) : null}
       <Box className={classes.panelsWrapper}>
         <XInvtLocker
           bannerState={bannerState}
