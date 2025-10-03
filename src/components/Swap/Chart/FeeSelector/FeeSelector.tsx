@@ -145,7 +145,7 @@ export const FeeSelector: React.FC<IProps> = ({
                     'Not created'
                   ) : (
                     <Grid>
-                      <span>{formatNumberWithSuffix(tvl) + ' TVL'}</span>
+                      <span>{'$' + formatNumberWithSuffix(tvl) + ' TVL'}</span>
                     </Grid>
                   )}
                 </Typography>

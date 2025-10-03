@@ -225,7 +225,7 @@ const Chart: React.FC<iProps> = ({
     series.applyOptions({
       priceLineVisible: true,
       priceLineColor: colors.invariant.green,
-      priceLineWidth: 2,
+      priceLineWidth: 1,
       priceFormat: {
         type: 'custom',
         minMove: 0.000000001,
