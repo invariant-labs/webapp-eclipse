@@ -921,7 +921,8 @@ export const Swap: React.FC<ISwap> = ({
   }
 
   const feeTiers = ALL_FEE_TIERS_DATA.map(tier => +printBN(tier.tier.fee, DECIMAL - 2))
-
+  const timestamp = Date.now()
+  console.log(timestamp - 1000 * 60)
   return (
     <Grid className={classes.wrapper}>
       <Grid className={classes.upperContainer}>

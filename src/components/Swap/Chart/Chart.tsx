@@ -12,9 +12,7 @@ import { ExtendedPoolStatsData } from '@store/selectors/stats'
 import { BN } from '@coral-xyz/anchor'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { IntervalSelector } from './IntervalSelector/IntervalSelector'
-import loader from '@static/gif/loader.gif'
-import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
-import { colors, theme, typography } from '@static/theme'
+import { colors, theme } from '@static/theme'
 import { PublicKey } from '@solana/web3.js'
 
 interface iProps {
@@ -47,9 +45,9 @@ const Chart: React.FC<iProps> = ({
 
   const [chartPoolData, setChartPoolData] = useState<PoolWithAddress | null>(null)
   const [selectedFee, setSelectedFee] = useState<BN | null>(null)
-  const [isNoData, setIsNoData] = useState(false)
+  const [_isNoData, setIsNoData] = useState(false)
 
-  const [chartLoading, setChartLoading] = useState(true)
+  const [_chartLoading, setChartLoading] = useState(true)
 
   const { poolPairString, tokenFrom, tokenTo } = useMemo(() => {
     if (!tokenFromAddress || !tokenToAddress)
@@ -409,7 +407,21 @@ const Chart: React.FC<iProps> = ({
             )}
           </Grid>
         </Box>
-        <Grid flex={isMd ? 'none' : '1 1 0'}>
+        <Grid container height={'100%'}>
+          <iframe
+            id='geckoterminal-embed'
+            title='GeckoTerminal Embed'
+            src={`https://www.geckoterminal.com/eclipse/pools/${chartPoolData?.address.toString()}?embed=1&info=0&swaps=0&light_chart=0&chart_type=price&resolution=1s&bg_color=111827`}
+            // frameborder={0}
+            allow='clipboard-write'
+            // allowfullscreen
+            onError={e => {
+              console.log(e)
+            }}
+            style={{ height: '100%', width: '100%' }}
+          />
+        </Grid>
+        {/* <Grid flex={isMd ? 'none' : '1 1 0'}>
           {(tokenFrom && tokenTo) || chartLoading || isLoading ? (
             <Grid style={{ position: 'relative', height: '100%' }}>
               <div ref={containerRef} className={classes.chart} />
@@ -439,7 +451,7 @@ const Chart: React.FC<iProps> = ({
               roundedCorners
             />
           )}
-        </Grid>
+        </Grid> */}
       </Box>
     </Grid>
   )
