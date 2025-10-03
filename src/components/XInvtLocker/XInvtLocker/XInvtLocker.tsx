@@ -123,10 +123,7 @@ export const XInvtLocker: React.FC<ILocker> = ({
     if (action === 'max') {
       const valueString = +trimDecimalZeros(printBN(balance, INVT_MAIN.decimals))
 
-      let validateUserDeposit =
-        USER_DEPOSIT_LIMIT - userXInvtBalance < 0
-          ? 0
-          : USER_DEPOSIT_LIMIT - userXInvtBalance - valueString
+      let validateUserDeposit = 0
 
       if (valueString > USER_DEPOSIT_LIMIT - userXInvtBalance) {
         validateUserDeposit =
@@ -154,10 +151,7 @@ export const XInvtLocker: React.FC<ILocker> = ({
       const value = balance.div(new BN(2)) || new BN(0)
       const valueString = +trimDecimalZeros(printBN(value, INVT_MAIN.decimals))
 
-      let validateUserDeposit =
-        USER_DEPOSIT_LIMIT - userXInvtBalance < 0
-          ? 0
-          : USER_DEPOSIT_LIMIT - userXInvtBalance - valueString
+      let validateUserDeposit = 0
 
       if (valueString > USER_DEPOSIT_LIMIT - userXInvtBalance) {
         validateUserDeposit =
@@ -175,6 +169,7 @@ export const XInvtLocker: React.FC<ILocker> = ({
       }
 
       const validatedValue = Math.min(validateTotalDeposit, validateUserDeposit)
+
       if (ref === inputTarget.FROM) {
         setAmountFrom(validatedValue.toString())
       } else {
