@@ -1,6 +1,7 @@
 import { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 import { Swap } from '@components/Swap/Swap'
 import {
+  CandleIntervals,
   commonTokensForNetworks,
   DEFAULT_SWAP_SLIPPAGE,
   WETH_MAIN,
@@ -27,7 +28,7 @@ import {
   balance,
   accounts as solanaAccounts
 } from '@store/selectors/solanaWallet'
-import { swap as swapPool, accounts, isLoading } from '@store/selectors/swap'
+import { swap as swapPool, accounts, isLoading, chartInterval } from '@store/selectors/swap'
 import { PublicKey } from '@solana/web3.js'
 import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -38,7 +39,6 @@ import {
   getNewTokenOrThrow,
   tickerToAddress
 } from '@utils/utils'
-
 import { TokenPriceData } from '@store/consts/types'
 import { getCurrentSolanaConnection } from '@utils/web3/connection'
 import { VariantType } from 'notistack'
@@ -48,6 +48,9 @@ import { getMarketProgramSync } from '@utils/web3/programs/amm'
 import { getEclipseWallet } from '@utils/web3/wallet'
 import { IWallet } from '@invariant-labs/sdk-eclipse'
 import { actions as swapActions } from '@store/reducers/swap'
+import { poolsStatsWithTokensDetails } from '@store/selectors/stats'
+import { actions as statsActions } from '@store/reducers/stats'
+import { Intervals as IntervalsKeys } from '@store/consts/static'
 
 type Props = {
   initialTokenFrom: string
@@ -81,6 +84,18 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const rpc = useSelector(rpcAddress)
   const wallet = getEclipseWallet()
   const market = getMarketProgramSync(networkType, rpc, wallet as IWallet)
+
+  const candleInterval = useSelector(chartInterval)
+
+  const poolsList = useSelector(poolsStatsWithTokensDetails)
+
+  const updateChartInterval = (e: CandleIntervals) => {
+    dispatch(actions.setChartInterval(e))
+  }
+
+  useEffect(() => {
+    dispatch(statsActions.getCurrentIntervalStats({ interval: IntervalsKeys.Daily }))
+  }, [])
 
   useEffect(() => {
     let timeoutId1: NodeJS.Timeout
@@ -118,8 +133,8 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const lastTokenFrom =
     initialTokenFrom && tickerToAddress(networkType, initialTokenFrom)
       ? tickerToAddress(networkType, initialTokenFrom)
-      : (localStorage.getItem(`INVARIANT_LAST_TOKEN_FROM_${networkType}`) ??
-        WETH_MAIN.address.toString())
+      : localStorage.getItem(`INVARIANT_LAST_TOKEN_FROM_${networkType}`) ??
+        WETH_MAIN.address.toString()
 
   const lastTokenTo =
     initialTokenTo && tickerToAddress(networkType, initialTokenTo)
@@ -351,6 +366,7 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   return (
     <Swap
       isFetchingNewPool={isFetchingNewPool}
+      isPathTokensLoading={isPathTokensLoading}
       onRefresh={onRefresh}
       onSwap={(
         slippage,
@@ -442,6 +458,10 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
       tokensDict={tokensDict}
       swapAccounts={swapAccounts}
       swapIsLoading={swapIsLoading}
+      poolsList={poolsList}
+      chartInterval={candleInterval}
+      setChartInterval={updateChartInterval}
+      triggerReload={triggerFetchPrice}
     />
   )
 }

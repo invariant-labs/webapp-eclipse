@@ -64,7 +64,7 @@ export function* getIntervalStats(action: PayloadAction<{ interval: Intervals }>
       currentNetwork.toLowerCase(),
       action.payload.interval
     )
-    console.log('test')
+
     const parsedFullSnap = {
       ...fullSnap,
       // @ts-expect-error FIXME: Interface missmatch.
