@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import useStyles from './style'
-import { Box, Grid, Typography } from '@mui/material'
+import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import { CandlestickSeries, ColorType, createChart, ISeriesApi } from 'lightweight-charts'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { ALL_FEE_TIERS_DATA, CandleIntervals, disabledPools } from '@store/consts/static'
@@ -14,7 +14,7 @@ import { PoolWithAddress } from '@store/reducers/pools'
 import { IntervalSelector } from './IntervalSelector/IntervalSelector'
 import loader from '@static/gif/loader.gif'
 import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
-import { colors, typography } from '@static/theme'
+import { colors, theme, typography } from '@static/theme'
 import { PublicKey } from '@solana/web3.js'
 
 interface iProps {
@@ -43,6 +43,8 @@ const Chart: React.FC<iProps> = ({
   triggerReload
 }) => {
   const { classes } = useStyles()
+  const isMd = useMediaQuery(theme.breakpoints.down('md'))
+
   const [chartPoolData, setChartPoolData] = useState<PoolWithAddress | null>(null)
   const [selectedFee, setSelectedFee] = useState<BN | null>(null)
   const [isNoData, setIsNoData] = useState(false)
@@ -195,7 +197,7 @@ const Chart: React.FC<iProps> = ({
 
     const chart = createChart(containerRef.current, {
       width: containerRef.current.clientWidth,
-      height: 350,
+      height: isMd ? 300 : containerRef.current.clientHeight,
       layout: {
         background: { type: ColorType.Solid, color: '#0b1220' },
         textColor: '#e5e7eb'
@@ -306,8 +308,7 @@ const Chart: React.FC<iProps> = ({
         setChartLoading(false)
       })
   }, [chartPoolData?.address?.toString(), chartInterval, isXtoY, triggerReload])
-  console.log(chartLoading)
-  console.log(isLoading)
+
   return (
     <Grid className={classes.wrapper}>
       <Typography className={classes.title}>Chart</Typography>
@@ -408,34 +409,37 @@ const Chart: React.FC<iProps> = ({
             )}
           </Grid>
         </Box>
-        {(tokenFrom && tokenTo) || chartLoading || isLoading ? (
-          <div style={{ position: 'relative' }}>
-            <div ref={containerRef} className={classes.chart} />
+        <Grid flex={isMd ? 'none' : '1 1 0'}>
+          {(tokenFrom && tokenTo) || chartLoading || isLoading ? (
+            <Grid style={{ position: 'relative', height: '100%' }}>
+              <div ref={containerRef} className={classes.chart} />
 
-            {(chartLoading || isLoading) && (
-              <Grid container className={classes.cover}>
-                <img src={loader} className={classes.loader} alt='Loader' />
-              </Grid>
-            )}
+              {(chartLoading || isLoading) && (
+                <Grid container className={classes.cover}>
+                  <img src={loader} className={classes.loader} alt='Loader' />
+                </Grid>
+              )}
 
-            {(isNoData || !chartPoolData?.address?.toString()) && !(chartLoading || isLoading) && (
-              <Grid container className={classes.cover}>
-                <Typography sx={{ ...typography.body3 }} color={colors.invariant.textGrey}>
-                  No pool data found
-                </Typography>
-              </Grid>
-            )}
-          </div>
-        ) : (
-          <EmptyPlaceholder
-            height={'100%'}
-            newVersion
-            mainTitle={'Select tokens'}
-            desc={'Not found pool data'}
-            withButton={false}
-            roundedCorners
-          />
-        )}
+              {(isNoData || !chartPoolData?.address?.toString()) &&
+                !(chartLoading || isLoading) && (
+                  <Grid container className={classes.cover}>
+                    <Typography sx={{ ...typography.body3 }} color={colors.invariant.textGrey}>
+                      No pool data found
+                    </Typography>
+                  </Grid>
+                )}
+            </Grid>
+          ) : (
+            <EmptyPlaceholder
+              height={'100%'}
+              newVersion
+              mainTitle={'Select tokens'}
+              desc={'Not found pool data'}
+              withButton={false}
+              roundedCorners
+            />
+          )}
+        </Grid>
       </Box>
     </Grid>
   )

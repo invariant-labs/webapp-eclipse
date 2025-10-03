@@ -53,7 +53,8 @@ export const useStyles = makeStyles()(() => ({
   },
   chart: {
     borderRadius: 12,
-    overflow: 'hidden'
+    overflow: 'hidden',
+    height: '100%'
   },
   skeleton: {
     borderRadius: 12,
