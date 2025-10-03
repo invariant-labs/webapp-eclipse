@@ -136,7 +136,10 @@ export const useStyles = makeStyles()(() => ({
     zIndex: 11,
     borderRadius: 10,
     backdropFilter: 'blur(1px)',
-    top: 0
+    top: 0,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   loader: {
     height: 100,

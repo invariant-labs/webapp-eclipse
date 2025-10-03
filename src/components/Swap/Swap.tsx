@@ -932,7 +932,6 @@ export const Swap: React.FC<ISwap> = ({
           feeTiers={feeTiers}
           poolsList={poolsList}
           isLoading={(isFetchingNewPool && !wasSwapIsLoadingRun) || isPathTokensLoading}
-          noData={false}
           chartInterval={chartInterval}
           setChartInterval={setChartInterval}
           triggerReload={triggerReload}

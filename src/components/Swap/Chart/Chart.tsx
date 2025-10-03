@@ -14,7 +14,7 @@ import { PoolWithAddress } from '@store/reducers/pools'
 import { IntervalSelector } from './IntervalSelector/IntervalSelector'
 import loader from '@static/gif/loader.gif'
 import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
-import { colors } from '@static/theme'
+import { colors, typography } from '@static/theme'
 import { PublicKey } from '@solana/web3.js'
 
 interface iProps {
@@ -24,7 +24,6 @@ interface iProps {
   allPools: PoolWithAddress[]
   isLoading: boolean
   feeTiers: number[]
-  noData: boolean
   poolsList: ExtendedPoolStatsData[]
   chartInterval: CandleIntervals
   setChartInterval: (e: CandleIntervals) => void
@@ -38,7 +37,6 @@ const Chart: React.FC<iProps> = ({
   tokens,
   feeTiers,
   isLoading,
-  noData,
   poolsList,
   chartInterval,
   setChartInterval,
@@ -47,6 +45,7 @@ const Chart: React.FC<iProps> = ({
   const { classes } = useStyles()
   const [chartPoolData, setChartPoolData] = useState<PoolWithAddress | null>(null)
   const [selectedFee, setSelectedFee] = useState<BN | null>(null)
+  const [isNoData, setIsNoData] = useState(false)
 
   const [chartLoading, setChartLoading] = useState(true)
 
@@ -190,7 +189,6 @@ const Chart: React.FC<iProps> = ({
   const seriesRef = useRef<ISeriesApi<'Candlestick'> | undefined>(undefined)
   const chartRef = useRef<ReturnType<typeof createChart> | null>(null)
 
-  console.log(chartPoolData?.address.toString())
   useEffect(() => {
     //setup chart
     if (!containerRef.current) return
@@ -273,7 +271,6 @@ const Chart: React.FC<iProps> = ({
 
   useEffect(() => {
     const selectedPoolAddress = chartPoolData?.address?.toString()
-
     if (!selectedPoolAddress || !seriesRef.current || !chartRef.current) {
       return
     }
@@ -289,6 +286,12 @@ const Chart: React.FC<iProps> = ({
 
         const finalData = isXtoY ? deduped : invertCandles(deduped)
 
+        if (!finalData.length) {
+          setIsNoData(true)
+        } else {
+          setIsNoData(false)
+        }
+
         seriesRef.current?.setData(finalData as any)
 
         if (finalData.length > 0 && chartRef.current) {
@@ -303,7 +306,8 @@ const Chart: React.FC<iProps> = ({
         setChartLoading(false)
       })
   }, [chartPoolData?.address?.toString(), chartInterval, isXtoY, triggerReload])
-
+  console.log(chartLoading)
+  console.log(isLoading)
   return (
     <Grid className={classes.wrapper}>
       <Typography className={classes.title}>Chart</Typography>
@@ -319,7 +323,7 @@ const Chart: React.FC<iProps> = ({
                   Pool
                 </Typography>
               )} */}
-              {tokenFrom && tokenTo ? (
+              {tokenFrom !== null && tokenTo !== null ? (
                 <Grid container item className={classes.iconsAndNames}>
                   <Grid container item className={classes.iconsShared}>
                     <Grid display='flex' position='relative'>
@@ -367,7 +371,7 @@ const Chart: React.FC<iProps> = ({
                 <Typography className={classes.names}>Select tokens</Typography>
               )}
             </Grid>
-            {tokenFrom && tokenTo && (
+            {tokenFrom !== null && tokenTo !== null && (
               <Grid>
                 <Box
                   display={'flex'}
@@ -386,7 +390,7 @@ const Chart: React.FC<iProps> = ({
                       promotedPoolTierIndex={promotedPoolTierIndex}
                       feeTiersWithTvl={feeTiersWithTvl}
                       disabledFeeTiers={disabledFeeTiers}
-                      noData={noData}
+                      noData={false}
                       isLoading={isLoading}
                       tokenX={tokenFrom}
                       tokenY={tokenTo}
@@ -411,6 +415,14 @@ const Chart: React.FC<iProps> = ({
             {(chartLoading || isLoading) && (
               <Grid container className={classes.cover}>
                 <img src={loader} className={classes.loader} alt='Loader' />
+              </Grid>
+            )}
+
+            {(isNoData || !chartPoolData?.address?.toString()) && !(chartLoading || isLoading) && (
+              <Grid container className={classes.cover}>
+                <Typography sx={{ ...typography.body3 }} color={colors.invariant.textGrey}>
+                  No pool data found
+                </Typography>
               </Grid>
             )}
           </div>

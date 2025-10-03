@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { Box, Button, Grid, Popover, Skeleton, Typography, useMediaQuery } from '@mui/material'
+import { Box, Button, Grid, Popover, Skeleton, Typography } from '@mui/material'
 import useStyles from './style'
-import { colors, theme, typography } from '@static/theme'
+import { colors, typography } from '@static/theme'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { DropdownIcon } from '@static/componentIcon/DropdownIcon'
 import { formatNumberWithSuffix } from '@utils/utils'
@@ -31,7 +31,6 @@ export const FeeSelector: React.FC<IProps> = ({
   tokenY
 }) => {
   const { classes, cx } = useStyles()
-  const isTablet = useMediaQuery(theme.breakpoints.down(1200))
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
   const open = Boolean(anchorEl)
@@ -73,12 +72,7 @@ export const FeeSelector: React.FC<IProps> = ({
   return (
     <Box display='flex' mt={'auto'}>
       {isLoading ? (
-        <Skeleton
-          variant='rounded'
-          width={132}
-          height={isTablet ? 40 : 44}
-          sx={{ borderRadius: '8px' }}
-        />
+        <Skeleton variant='rounded' width={132} height={36} sx={{ borderRadius: '8px' }} />
       ) : (
         <Button
           onClick={event => {
