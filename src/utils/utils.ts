@@ -2937,6 +2937,7 @@ export const fetchData = async (
   interval: CandleIntervals
 ): Promise<Candle[]> => {
   const { base, aggregate } = intervalToParams[interval]
+  const beforeTimeStamp = 'before_timestamp=1759484115982'
 
   const params = new URLSearchParams({
     aggregate,
@@ -2948,7 +2949,7 @@ export const fetchData = async (
 
   const url =
     `https://api.geckoterminal.com/api/v2/networks/eclipse` +
-    `/pools/${poolAddress}/ohlcv/${base}?${params.toString()}`
+    `/pools/${poolAddress}/ohlcv/${beforeTimeStamp}${base}?${params.toString()}`
 
   const res = await fetch(url)
   const json = await res.json()
